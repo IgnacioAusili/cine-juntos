@@ -6,6 +6,7 @@ const dom = {
   lobbyStatus: document.querySelector("#lobbyStatus"),
   connectionStatus: document.querySelector("#connectionStatus"),
   roomBadge: document.querySelector("#roomBadge"),
+  hostBadge: document.querySelector("#hostBadge"),
   roomInput: document.querySelector("#roomInput"),
   lobbyNameInput: document.querySelector("#lobbyNameInput"),
   createRoomButton: document.querySelector("#createRoomButton"),
@@ -90,6 +91,7 @@ dom.nameInput.value = initialDisplayName;
 dom.lobbyNameInput.value = initialDisplayName;
 dom.videoUrlInput.value = EXAMPLE_VIDEO_URL
 knownMembers.set(clientId, initialDisplayName);
+let hostRoomCode = sessionStorage.getItem("cine-juntos-host-room") || "";
 
 const requestedRoom = normalizeRoomCode(new URLSearchParams(window.location.search).get("room") || "");
 hydrateIcons();
@@ -125,6 +127,8 @@ function wireEvents() {
   dom.createRoomButton.addEventListener("click", () => {
     const roomCode = generateRoomCode();
     dom.roomInput.value = roomCode;
+    hostRoomCode = roomCode;
+    sessionStorage.setItem("cine-juntos-host-room", roomCode);
     joinRoom(roomCode);
   });
 
@@ -313,6 +317,7 @@ async function joinRoom(rawRoomCode) {
   });
 
   showSession();
+  setHostBadge(hostRoomCode === roomCode);
   setInsideChatVisible(false);
   resetInsideUnread();
   resetExternalUnread();
@@ -323,10 +328,12 @@ async function joinRoom(rawRoomCode) {
 }
 
 async function createTransport(roomCode) {
+  let firebaseError = null;
   if (hasFirebaseConfig(firebaseConfig)) {
     try {
       return await createFirebaseTransport(roomCode, firebaseConfig);
     } catch (error) {
+      firebaseError = error;
       console.error(error);
       logEvent("error", `Firebase no inicio: ${error.message || error}`);
       setConnection("error", "Firebase sin conexion");
@@ -334,7 +341,7 @@ async function createTransport(roomCode) {
     }
   }
 
-  return createLocalTransport(roomCode);
+  return createLocalTransport(roomCode, firebaseError);
 }
 
 async function createFirebaseTransport(roomCode, config) {
@@ -417,7 +424,7 @@ async function createFirebaseTransport(roomCode, config) {
   };
 }
 
-function createLocalTransport(roomCode) {
+function createLocalTransport(roomCode, firebaseError = null) {
   const channelName = `cine-juntos:${roomCode}`;
   const channel = "BroadcastChannel" in window ? new BroadcastChannel(channelName) : null;
   const storageKey = `${channelName}:event`;
@@ -465,8 +472,13 @@ function createLocalTransport(roomCode) {
     mode: "local",
     async connect(nextHandlers) {
       handlers = nextHandlers;
-      handlers.onConnection("local", "Modo local");
-      logEvent("local", "Transporte local conectado.");
+      if (firebaseError) {
+        handlers.onConnection("error", "Firebase sin conexion");
+        setSyncStatus(`Firebase fallo (${firebaseError.code || firebaseError.message || "sin detalle"}). Modo local activo.`);
+      } else {
+        handlers.onConnection("local", "Modo local");
+      }
+      logEvent("local", firebaseError ? "Transporte local conectado por fallo de Firebase." : "Transporte local conectado.");
       messageHandler = (event) => receive(event.data);
       storageHandler = (event) => {
         if (event.key === storageKey && event.newValue) receive(JSON.parse(event.newValue));
@@ -744,7 +756,11 @@ function renderMessage(message) {
 
   appendMessageTo(dom.messages, message);
   appendMessageTo(dom.overlayMessages, message);
-  if (message.from !== clientId && !dom.playerFrame.classList.contains("chat-inside-open")) {
+  if (
+    message.from !== clientId &&
+    !dom.playerFrame.classList.contains("chat-inside-open") &&
+    dom.sessionView.classList.contains("chat-collapsed")
+  ) {
     incrementInsideUnread();
   }
   if (message.from !== clientId && dom.sessionView.classList.contains("chat-collapsed")) {
@@ -781,7 +797,8 @@ function appendMessageTo(container, message) {
 
 function appendMessageContent(container, text) {
   const firstUrl = findFirstUrl(text);
-  const imageUrl = firstUrl && isRemoteImageUrl(firstUrl) ? firstUrl : "";
+  const explicitImageUrl = parseExplicitImageUrl(text);
+  const imageUrl = explicitImageUrl || (firstUrl && isRemoteImageUrl(firstUrl) ? firstUrl : "");
   const videoUrl = firstUrl && isRemoteVideoUrl(firstUrl) ? firstUrl : "";
   const trimmedText = String(text || "").trim();
 
@@ -816,12 +833,13 @@ function appendMessageContent(container, text) {
   }
 
   const link = document.createElement("a");
-  link.className = imageUrl ? "message-media-link" : "message-link";
+  const shouldAttemptImagePreview = Boolean(imageUrl || (firstUrl && trimmedText === firstUrl && !videoUrl));
+  link.className = shouldAttemptImagePreview ? "message-media-link" : "message-link";
   link.href = firstUrl;
   link.target = "_blank";
   link.rel = "noreferrer";
 
-  if (!imageUrl) {
+  if (!shouldAttemptImagePreview) {
     link.textContent = firstUrl;
     container.append(link);
     return;
@@ -829,10 +847,19 @@ function appendMessageContent(container, text) {
 
   const image = document.createElement("img");
   image.className = "message-media";
-  image.src = imageUrl;
+  image.src = imageUrl || firstUrl;
   image.alt = "Imagen enviada";
   image.loading = "lazy";
   image.referrerPolicy = "no-referrer";
+  image.addEventListener(
+    "error",
+    () => {
+      link.className = "message-link";
+      link.replaceChildren();
+      link.textContent = firstUrl;
+    },
+    { once: true },
+  );
 
   link.append(image);
   container.append(link);
@@ -855,6 +882,19 @@ function findFirstUrl(text) {
     }
   }
   return "";
+}
+
+function parseExplicitImageUrl(text) {
+  const match = String(text || "")
+    .trim()
+    .match(/^(?:img|image)\s*=\s*(https?:\/\/\S+)$/i);
+  if (!match) return "";
+  const candidate = match[1].replace(/[),.;]+$/g, "");
+  try {
+    return new URL(candidate).toString();
+  } catch {
+    return "";
+  }
 }
 
 function isRemoteImageUrl(value) {
@@ -930,12 +970,18 @@ function showLobby() {
   dom.lobbyScreen.hidden = false;
   dom.sessionView.hidden = true;
   document.body.classList.add("is-lobby");
+  setHostBadge(false);
 }
 
 function showSession() {
   dom.lobbyScreen.hidden = true;
   dom.sessionView.hidden = false;
   document.body.classList.remove("is-lobby");
+}
+
+function setHostBadge(visible) {
+  if (!dom.hostBadge) return;
+  dom.hostBadge.hidden = !visible;
 }
 
 function focusMainWorkspace() {

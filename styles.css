@@ -105,6 +105,7 @@ h1 {
 }
 
 body.is-lobby .room-pill,
+body.is-lobby .host-pill,
 body.is-lobby #copyInviteButton {
   display: none;
 }
@@ -131,6 +132,15 @@ body.is-lobby #copyInviteButton {
 .status-pill.local {
   border-color: rgba(240, 140, 58, 0.45);
   color: #ffc08b;
+}
+
+.host-pill {
+  border-color: rgba(47, 184, 164, 0.45);
+  background: rgba(47, 184, 164, 0.08);
+  color: #c9fff7;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
 }
 
 .status-pill.error {

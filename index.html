@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cine Juntos</title>
+    <meta
+      name="description"
+      content="Sala privada para ver un video directo con chat y sincronizacion en tiempo real."
+    />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' https://unpkg.com https://www.gstatic.com; style-src 'self' 'unsafe-inline'; img-src 'self' http: https: data: blob:; media-src 'self' http: https: blob: data:; connect-src 'self' http://localhost:* http://127.0.0.1:* https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; object-src 'none'; base-uri 'self'; form-action 'self'"
+    />
+    <link rel="preconnect" href="https://unpkg.com" />
+    <link rel="preconnect" href="https://www.gstatic.com" />
+    <link rel="stylesheet" href="./styles.css?v=20260705-19" />
+  </head>
+  <body class="is-lobby">
+    <div class="app-shell">
+      <header class="topbar">
+        <div>
+          <h1>Cine Juntos</h1>
+        </div>
+        <div class="topbar-actions">
+          <span class="status-pill" id="connectionStatus">Iniciando</span>
+          <span class="room-pill" id="roomBadge">Sin sala</span>
+          <button
+            class="icon-button"
+            id="copyInviteButton"
+            type="button"
+            aria-label="Copiar invitacion"
+            title="Copiar invitacion"
+            data-tooltip="Copiar invitacion"
+          >
+            <span data-lucide="copy"></span>
+          </button>
+        </div>
+      </header>
+
+      <section class="lobby-screen" id="lobbyScreen" aria-label="Entrada a sala">
+        <div class="lobby-panel">
+          <div class="lobby-mark">
+            <span data-lucide="film"></span>
+          </div>
+          <div class="lobby-fields">
+            <label class="field">
+              <span class="label-row">
+                Nombre
+                <button
+                  class="help-button"
+                  type="button"
+                  aria-label="Ayuda sobre nombre"
+                  data-tooltip="Este nombre aparece en tus mensajes y eventos de sincronizacion."
+                >
+                  <span data-lucide="circle-help"></span>
+                </button>
+              </span>
+              <input
+                id="lobbyNameInput"
+                type="text"
+                autocomplete="name"
+                maxlength="28"
+                title="Nombre visible en chat y sincronizacion"
+              />
+            </label>
+            <label class="field field-room">
+              <span class="label-row">
+                Codigo
+                <button
+                  class="help-button"
+                  type="button"
+                  aria-label="Ayuda sobre salas"
+                  data-tooltip="Crea una sala y comparte el codigo o el enlace para mirar juntos."
+                >
+                  <span data-lucide="circle-help"></span>
+                </button>
+              </span>
+              <input
+                id="roomInput"
+                type="text"
+                inputmode="latin"
+                autocomplete="off"
+                maxlength="12"
+                placeholder="AB12CD"
+              />
+            </label>
+            <div class="lobby-actions">
+              <button
+                class="button primary"
+                id="createRoomButton"
+                type="button"
+                title="Crear una sala nueva"
+                data-tooltip="Crear una sala nueva"
+              >
+                <span data-lucide="plus"></span>
+                Crear
+              </button>
+              <button
+                class="button"
+                id="joinRoomButton"
+                type="button"
+                title="Entrar con el codigo escrito"
+                data-tooltip="Entrar con el codigo escrito"
+              >
+                <span data-lucide="log-in"></span>
+                Entrar
+              </button>
+            </div>
+            <p class="lobby-status" id="lobbyStatus">Listo</p>
+          </div>
+        </div>
+      </section>
+
+      <main class="session-view" id="sessionView" data-chat-dock="right" hidden>
+        <section class="session-toolbar" aria-label="Controles de sala">
+          <div class="source-strip">
+            <label class="field">
+              <span class="label-row">
+                Video
+                <button
+                  class="help-button"
+                  type="button"
+                  aria-label="Ayuda sobre videos"
+                  data-tooltip="Usa un enlace directo a un archivo MP4, WebM u otro formato reproducible por el navegador."
+                >
+                  <span data-lucide="circle-help"></span>
+                </button>
+              </span>
+              <input
+                id="videoUrlInput"
+                type="url"
+                autocomplete="off"
+                placeholder="https://servidor.com/video.mp4"
+                title="Pega un link directo a MP4, WebM u otro video compatible"
+              />
+              <p
+                id="syncStatus"
+                class="sync-status video-status empty"
+                title="Estado de video"
+                data-tooltip="Estado de video"
+              >
+                <span class="video-status-icon" id="videoStatusIcon" data-lucide="circle"></span>
+                <span id="videoStatusText">Sin contenido</span>
+              </p>
+            </label>
+            <button
+              class="button primary"
+              id="loadVideoButton"
+              type="button"
+              title="Cargar y sincronizar este video en la sala"
+              data-tooltip="Cargar y sincronizar video"
+            >
+              <span data-lucide="play-square"></span>
+              Cargar
+            </button>
+          </div>
+
+        </section>
+
+        <section class="workspace">
+          <section class="video-area" aria-label="Reproductor sincronizado">
+            <div class="player-frame" id="playerFrame" data-chat-style="float">
+              <video
+                id="videoPlayer"
+                controls
+                controlslist="nofullscreen nodownload noremoteplayback"
+                disablepictureinpicture
+                playsinline
+                preload="metadata"
+              ></video>
+              <div class="empty-player" id="emptyPlayer">
+                <span data-lucide="film"></span>
+              </div>
+
+              <div class="player-actions" aria-label="Controles de reproductor">
+                <button
+                  class="icon-button player-tool compact-tool"
+                  id="playerChatToggleButton"
+                  type="button"
+                  aria-label="Mostrar u ocultar chat dentro del video"
+                  title="Mostrar u ocultar chat dentro del video"
+                  data-tooltip="Mostrar u ocultar chat dentro del video"
+                >
+                  <span data-lucide="message-square"></span>
+                  <span class="unread-badge" id="insideChatUnread" hidden>0</span>
+                </button>
+              </div>
+
+              <div class="player-bottom-actions" aria-label="Controles inferiores del reproductor">
+                <button
+                  class="video-control-button"
+                  id="pageFullscreenButton"
+                  type="button"
+                  aria-label="Pantalla completa de pagina"
+                  title="Pantalla completa de pagina"
+                  data-tooltip="Pantalla completa con controles visibles"
+                >
+                  <span data-lucide="maximize"></span>
+                </button>
+              </div>
+
+              <aside class="player-chat" id="playerChat" aria-label="Chat dentro del video">
+                <div class="player-chat-header">
+                  <div
+                    class="chat-style-toggle"
+                    id="chatStyleToggle"
+                    role="group"
+                    aria-label="Estilo del chat dentro del video"
+                  >
+                    <button
+                      type="button"
+                      data-chat-style="float"
+                      class="active"
+                      aria-label="Mensajes flotantes"
+                      title="Mensajes flotantes"
+                    >
+                      <span data-lucide="message-square"></span>
+                    </button>
+                    <button
+                      type="button"
+                      data-chat-style="panel"
+                      aria-label="Panel transparente"
+                      title="Panel transparente"
+                    >
+                      <span data-lucide="panel-right"></span>
+                    </button>
+                  </div>
+                  <button
+                    class="bare-icon-button"
+                    id="closeInsideChatButton"
+                    type="button"
+                    aria-label="Ocultar chat"
+                    title="Ocultar chat"
+                    data-tooltip="Ocultar chat"
+                  >
+                    <span data-lucide="x"></span>
+                  </button>
+                </div>
+                <div class="overlay-messages" id="overlayMessages" aria-live="polite"></div>
+                <form class="message-form overlay-message-form" id="overlayMessageForm">
+                  <div class="reply-preview" id="overlayReplyPreview" hidden></div>
+                  <textarea
+                    id="overlayMessageInput"
+                    autocomplete="off"
+                    maxlength="500"
+                    placeholder="Mensaje"
+                    rows="1"
+                    title="Escribir al chat de la sala"
+                  ></textarea>
+                  <button
+                    class="icon-button ghost emoji-trigger"
+                    id="overlayEmojiButton"
+                    type="button"
+                    aria-label="Abrir emojis"
+                    title="Emojis"
+                    data-tooltip="Agregar emoji"
+                  >
+                    <span data-lucide="smile-plus"></span>
+                  </button>
+                  <button class="icon-button send" type="submit" aria-label="Enviar mensaje">
+                    <span data-lucide="send"></span>
+                  </button>
+                </form>
+              </aside>
+            </div>
+          </section>
+
+          <aside class="chat-area" aria-label="Chat de la sala">
+            <div class="chat-tools">
+              <button
+                class="presence-pill"
+                id="presencePill"
+                type="button"
+                aria-label="Usuarios conectados"
+                title="Usuarios conectados"
+                data-tooltip="Conectados: vos"
+              >
+                <span class="presence-dot" aria-hidden="true"></span>
+                <span id="participantCount">1</span>
+              </button>
+              <label class="field">
+                <span class="label-row">
+                  Nombre
+                  <button
+                    class="help-button"
+                    type="button"
+                    aria-label="Ayuda sobre nombre"
+                    data-tooltip="Este nombre aparece en tus mensajes y eventos de sincronizacion."
+                  >
+                    <span data-lucide="circle-help"></span>
+                  </button>
+                </span>
+                <input
+                  id="nameInput"
+                  type="text"
+                  autocomplete="name"
+                  maxlength="28"
+                  title="Nombre visible en chat y sincronizacion"
+                />
+              </label>
+              <button
+                class="icon-button dock-button"
+                id="dockChatButton"
+                type="button"
+                aria-label="Mover chat"
+                title="Mover chat"
+                data-tooltip="Mover chat abajo"
+              >
+                <span data-lucide="panel-right"></span>
+              </button>
+            </div>
+
+            <div class="messages" id="messages" aria-live="polite"></div>
+
+            <form class="message-form" id="messageForm">
+              <div class="reply-preview" id="replyPreview" hidden></div>
+              <textarea
+                id="messageInput"
+                autocomplete="off"
+                maxlength="500"
+                placeholder="Mensaje"
+                rows="1"
+                title="Escribir al chat de la sala"
+              ></textarea>
+              <button
+                class="icon-button ghost emoji-trigger"
+                id="messageEmojiButton"
+                type="button"
+                aria-label="Abrir emojis"
+                title="Emojis"
+                data-tooltip="Agregar emoji"
+              >
+                <span data-lucide="smile-plus"></span>
+              </button>
+              <button class="icon-button send" type="submit" aria-label="Enviar mensaje">
+                <span data-lucide="send"></span>
+              </button>
+            </form>
+          </aside>
+          <button
+            class="chat-collapse-handle"
+            id="collapseChatButton"
+            type="button"
+            aria-label="Contraer chat"
+            title="Contraer chat"
+            data-tooltip="Contraer chat"
+          >
+            <span data-lucide="chevron-right"></span>
+            <span class="unread-badge chat-unread-badge" id="externalChatUnread" hidden>0</span>
+          </button>
+        </section>
+      </main>
+
+      <div class="emoji-popover" id="emojiPopover" hidden aria-label="Selector de emojis"></div>
+      <div class="message-menu" id="messageMenu" hidden>
+        <button type="button" data-action="copy">Copiar</button>
+        <button type="button" data-action="reply">Responder</button>
+      </div>
+      <div class="tooltip-layer" id="tooltipLayer" hidden></div>
+    </div>
+
+    <script src="./dev-runtime.js?v=20260705-19"></script>
+    <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="./firebase-config.js"></script>
+    <script type="module" src="./app.js?v=20260705-26"></script>
+  </body>
+</html>

@@ -1,0 +1,301 @@
+CINE JUNTOS - PASOS PARA DEJAR LA PAGINA FUNCIONAL
+
+Objetivo
+=======
+Publicar la pagina estatica "Cine Juntos" y activar Firebase para que la sala funcione entre dispositivos reales con chat, sincronizacion de video y presencia basica.
+
+La pagina no necesita servidor propio. Se puede publicar gratis en GitHub Pages o Cloudflare Pages. Firebase se usa para tiempo real.
+
+
+1. Archivos importantes del proyecto
+====================================
+Estos archivos deben subirse al hosting:
+
+- index.html
+- styles.css
+- app.js
+- firebase-config.js
+- dev-runtime.js
+- README.md
+
+No hace falta subir dev-server.log si existe.
+
+
+2. Crear el proyecto en Firebase
+================================
+Link:
+https://console.firebase.google.com/
+
+Pasos:
+
+1. Entrar a Firebase Console.
+2. Crear un proyecto nuevo.
+3. Elegir un nombre, por ejemplo: cine-juntos.
+4. Google Analytics es opcional. Para esta app no es necesario.
+5. Esperar a que Firebase cree el proyecto.
+
+Documentacion oficial:
+https://firebase.google.com/docs/web/setup
+
+
+3. Crear una app web dentro de Firebase
+=======================================
+Pasos:
+
+1. Dentro del proyecto Firebase, ir a Project Overview.
+2. Presionar el icono web: </>.
+3. Registrar la app con un nombre, por ejemplo: Cine Juntos Web.
+4. Firebase va a mostrar una configuracion parecida a esta:
+
+const firebaseConfig = {
+  apiKey: "...",
+  authDomain: "...",
+  databaseURL: "...",
+  projectId: "...",
+  storageBucket: "...",
+  messagingSenderId: "...",
+  appId: "..."
+};
+
+5. Copiar esos valores dentro de firebase-config.js:
+
+window.CINE_JUNTOS_FIREBASE_CONFIG = {
+  apiKey: "TU_API_KEY",
+  authDomain: "TU_AUTH_DOMAIN",
+  databaseURL: "TU_DATABASE_URL",
+  projectId: "TU_PROJECT_ID",
+  storageBucket: "TU_STORAGE_BUCKET",
+  messagingSenderId: "TU_MESSAGING_SENDER_ID",
+  appId: "TU_APP_ID",
+};
+
+Importante:
+La configuracion web de Firebase no es un token secreto. Puede estar en el frontend. La seguridad real se maneja con Authentication y reglas de base de datos.
+
+
+4. Activar Authentication anonimo
+=================================
+Link:
+https://console.firebase.google.com/
+
+Pasos:
+
+1. En Firebase Console, abrir Authentication.
+2. Ir a Sign-in method.
+3. Activar Anonymous.
+4. Guardar.
+
+Esto permite que cada visitante entre con una identidad anonima y que las reglas de Realtime Database puedan exigir auth != null.
+
+
+5. Crear Realtime Database
+==========================
+Documentacion oficial:
+https://firebase.google.com/docs/database
+https://firebase.google.com/docs/database/web/read-and-write
+
+Pasos:
+
+1. En Firebase Console, abrir Realtime Database.
+2. Crear database.
+3. Elegir una region cercana a tus usuarios.
+4. Si te pregunta modo inicial, se puede empezar en locked mode y luego pegar reglas propias.
+5. Copiar la URL de database. Tiene forma parecida a:
+
+https://TU_PROJECT_ID-default-rtdb.firebaseio.com
+
+6. Pegar esa URL en databaseURL dentro de firebase-config.js.
+
+
+6. Reglas iniciales para Realtime Database
+==========================================
+En Realtime Database > Rules, pegar algo como esto:
+
+{
+  "rules": {
+    "rooms": {
+      "$room": {
+        ".read": "auth != null",
+        ".write": "auth != null",
+        "messages": {
+          "$message": {
+            ".validate": "newData.hasChildren(['id', 'from', 'name', 'text', 'createdAt']) && newData.child('text').isString() && newData.child('text').val().length <= 500"
+          }
+        },
+        "state": {
+          ".validate": "newData.hasChildren(['action', 'from', 'name', 'sentAt'])"
+        },
+        "members": {
+          "$member": {
+            ".validate": "newData.hasChildren(['id', 'name', 'lastSeenAt'])"
+          }
+        }
+      }
+    }
+  }
+}
+
+Notas:
+
+- Estas reglas son una base para pruebas.
+- Para produccion conviene endurecerlas mas.
+- Cualquier persona autenticada anonimamente podria escribir en salas si conoce el codigo.
+- Para una app privada real, conviene agregar codigos de invitacion mas robustos o reglas por propietario.
+
+
+7. Probar localmente antes de publicar
+======================================
+Desde PowerShell, dentro de la carpeta del proyecto:
+
+node dev-server.js --port 8080
+
+Abrir:
+http://127.0.0.1:8080
+
+Prueba recomendada:
+
+1. Abrir la pagina en una pestana.
+2. Crear o entrar a una sala.
+3. Cargar el video de ejemplo:
+   https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4
+4. Abrir otra pestana con el mismo link de sala.
+5. Probar chat, play, pausa y seek.
+
+Si Firebase esta bien configurado, debe aparecer modo Firebase o conectado. Si falta configuracion, la pagina queda en modo local.
+
+
+8. Publicar gratis con GitHub Pages
+===================================
+Documentacion oficial:
+https://docs.github.com/pages/quickstart
+https://pages.github.com/
+
+Pasos:
+
+1. Crear un repositorio en GitHub.
+2. Subir los archivos del proyecto.
+3. Ir al repositorio en GitHub.
+4. Abrir Settings.
+5. Ir a Pages.
+6. En Build and deployment, elegir Deploy from a branch.
+7. Elegir branch main y carpeta root.
+8. Guardar.
+9. Esperar a que GitHub publique la pagina.
+
+La URL suele quedar asi:
+
+https://TU_USUARIO.github.io/NOMBRE_DEL_REPO/
+
+Despues de publicar:
+
+1. Abrir la URL publica.
+2. Crear una sala.
+3. Copiar el link de invitacion.
+4. Probar desde otro navegador o dispositivo.
+
+
+9. Publicar gratis con Cloudflare Pages
+=======================================
+Documentacion oficial:
+https://developers.cloudflare.com/pages/
+https://developers.cloudflare.com/pages/get-started/direct-upload/
+
+Opcion A - con Git:
+
+1. Crear cuenta en Cloudflare.
+2. Ir a Workers & Pages.
+3. Crear una aplicacion de Pages.
+4. Conectar tu repositorio de GitHub.
+5. Framework preset: None.
+6. Build command: dejar vacio.
+7. Build output directory: dejar en / o vacio segun la interfaz.
+8. Deploy.
+
+Opcion B - Direct Upload:
+
+1. Entrar a Cloudflare Pages.
+2. Crear proyecto.
+3. Elegir Direct Upload.
+4. Subir la carpeta con los archivos estaticos.
+5. Deploy.
+
+Cloudflare te da una URL parecida a:
+
+https://NOMBRE.pages.dev
+
+
+10. Configurar dominios autorizados si usas Firebase Auth
+=========================================================
+En Firebase:
+
+1. Ir a Authentication.
+2. Ir a Settings.
+3. Buscar Authorized domains.
+4. Agregar el dominio donde publicaste la pagina si no aparece.
+
+Ejemplos:
+
+- TU_USUARIO.github.io
+- NOMBRE.pages.dev
+- tu-dominio.com
+
+
+11. Videos compatibles
+======================
+La app necesita un link directo a un archivo reproducible por HTML5.
+
+Ejemplos que suelen funcionar:
+
+- .mp4
+- .webm
+- .ogg
+
+Ejemplo de prueba:
+https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4
+
+No funcionan como video directo:
+
+- Paginas de YouTube.
+- Paginas de Google Drive que no sean descarga directa.
+- Sitios que bloquean hotlinking.
+- Servidores que no permiten CORS o reproduccion embebida.
+
+
+12. Checklist final
+===================
+Antes de compartir la pagina:
+
+[ ] firebase-config.js tiene valores reales.
+[ ] Authentication Anonymous esta activado.
+[ ] Realtime Database existe.
+[ ] Las reglas fueron publicadas.
+[ ] La pagina esta subida a GitHub Pages o Cloudflare Pages.
+[ ] El dominio publicado esta autorizado en Firebase Authentication.
+[ ] Probaste dos pestanas o dos dispositivos.
+[ ] Probaste chat.
+[ ] Probaste play, pausa y adelantar/retroceder.
+[ ] Probaste un link directo .mp4.
+
+
+13. Links utiles
+================
+Firebase Console:
+https://console.firebase.google.com/
+
+Firebase Web setup:
+https://firebase.google.com/docs/web/setup
+
+Firebase Realtime Database:
+https://firebase.google.com/docs/database
+
+Firebase leer/escribir en web:
+https://firebase.google.com/docs/database/web/read-and-write
+
+GitHub Pages:
+https://docs.github.com/pages/quickstart
+
+Cloudflare Pages:
+https://developers.cloudflare.com/pages/
+
+Cloudflare Pages Direct Upload:
+https://developers.cloudflare.com/pages/get-started/direct-upload/

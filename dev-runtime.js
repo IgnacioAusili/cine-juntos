@@ -1,0 +1,1 @@
+window.CINE_JUNTOS_TERMINAL_LOGS = false;

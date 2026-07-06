@@ -397,10 +397,17 @@ async function createFirebaseTransport(roomCode, config) {
   return {
     mode: "firebase",
     async connect(handlers) {
+      try {
+        await dbModule.set(memberRef, makeMemberPayload());
+        dbModule.onDisconnect(memberRef).remove().catch(() => {});
+      } catch (error) {
+        const wrapped = new Error(error?.message || "No se pudo escribir en members.");
+        wrapped.code = error?.code || "FIREBASE_PERMISSION_DENIED";
+        throw wrapped;
+      }
+
       handlers.onConnection("firebase", "Firebase conectado");
       logEvent("firebase", "Sesion anonima conectada.");
-      await dbModule.set(memberRef, makeMemberPayload());
-      dbModule.onDisconnect(memberRef).remove().catch(() => {});
 
       unsubscribers.push(
         dbModule.onValue(serverTimeOffsetRef, (snapshot) => {

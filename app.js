@@ -293,6 +293,47 @@ async function joinRoom(rawRoomCode) {
     return;
   }
 
+  logEvent("room", `Entrando a sala ${roomCode}.`);
+
+  const previousTransport = transport;
+  const nextTransport = await createTransport(roomCode);
+  let activeTransport = null;
+  const connectionHandlers = {
+    onState: handleRemoteState,
+    onMessage: renderMessage,
+    onMembers: renderMembers,
+    onConnection: setConnection,
+  };
+
+  try {
+    await nextTransport.connect(connectionHandlers);
+    activeTransport = nextTransport;
+  } catch (error) {
+    console.error(error);
+    if (nextTransport.mode === "firebase") {
+      await nextTransport.close?.().catch(() => {});
+      const fallbackTransport = createLocalTransport(roomCode, error);
+      try {
+        await fallbackTransport.connect(connectionHandlers);
+        activeTransport = fallbackTransport;
+      } catch (fallbackError) {
+        console.error(fallbackError);
+        setConnection("error", "Sin conexion");
+        setSyncStatus("No se pudo entrar a la sala.");
+        logEvent("error", `No se pudo entrar a ${roomCode}: ${fallbackError.message || fallbackError}`);
+        return;
+      }
+    } else {
+      setConnection("error", "Sin conexion");
+      setSyncStatus("No se pudo entrar a la sala.");
+      logEvent("error", `No se pudo entrar a ${roomCode}: ${error.message || error}`);
+      return;
+    }
+  }
+
+  await previousTransport?.close?.().catch(() => {});
+  transport = activeTransport;
+
   activeRoom = roomCode;
   dom.roomInput.value = roomCode;
   dom.roomBadge.textContent = roomCode;
@@ -305,16 +346,6 @@ async function joinRoom(rawRoomCode) {
   renderPresence();
   lastRemoteState = null;
   updateUrlRoom(roomCode);
-  logEvent("room", `Entrando a sala ${roomCode}.`);
-
-  await transport?.close?.();
-  transport = await createTransport(roomCode);
-  await transport.connect({
-    onState: handleRemoteState,
-    onMessage: renderMessage,
-    onMembers: renderMembers,
-    onConnection: setConnection,
-  });
 
   showSession();
   setHostBadge(hostRoomCode === roomCode);

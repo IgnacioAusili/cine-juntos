@@ -1467,7 +1467,15 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 /* Fullscreen: topbar y toolbar siguen visibles. El video ocupa 100vh y
-   el resto del contenido queda accesible por scroll. */
+   el resto del contenido queda accesible por scroll.
+   Implementa Scroll Snap Proximity para efecto magnet/snap al scrollear cerca del video. */
+html.fullscreen-mode,
+body.fullscreen-mode {
+  scroll-snap-type: y proximity;
+  scroll-behavior: smooth;
+  overflow-y: scroll;
+}
+
 body.fullscreen-mode .app-shell {
   width: 100%;
   min-height: 100vh;
@@ -1485,10 +1493,10 @@ body.fullscreen-mode .session-view {
 
 body.fullscreen-mode .workspace {
   display: grid;
-  order: 0;
   height: auto;
   min-height: 100vh;
   gap: 0;
+  scroll-snap-align: start;
 }
 
 body.fullscreen-mode .session-view[data-chat-dock] .workspace {
@@ -1549,10 +1557,10 @@ body.fullscreen-mode .player-frame {
   border-radius: 0;
 }
 
+/* Se mantiene en su flujo natural (arriba del video) sin alterar order */
 body.fullscreen-mode .session-toolbar {
   width: min(710px, calc(100% - 16px));
-  margin: 8px;
-  order: 1;
+  margin: 8px auto;
 }
 
 body.fullscreen-mode .chat-area {

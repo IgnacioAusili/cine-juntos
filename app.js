@@ -1313,6 +1313,11 @@ function setChatDock(dock) {
   hydrateIcons();
   updateCollapseButton();
   logEvent("ui", `Chat lateral en posicion: ${meta.label}.`);
+
+  const isFullscreen = document.body.classList.contains("fullscreen-mode") || Boolean(document.fullscreenElement);
+  if (isFullscreen) {
+    focusFullscreenWorkspace();
+  }
 }
 
 function setExternalChatCollapsed(collapsed) {
@@ -1320,6 +1325,11 @@ function setExternalChatCollapsed(collapsed) {
   if (!collapsed) resetExternalUnread();
   updateCollapseButton();
   logEvent("ui", collapsed ? "Chat externo contraido." : "Chat externo expandido.");
+
+  const isFullscreen = document.body.classList.contains("fullscreen-mode") || Boolean(document.fullscreenElement);
+  if (isFullscreen) {
+    focusFullscreenWorkspace();
+  }
 }
 
 function updateCollapseButton() {

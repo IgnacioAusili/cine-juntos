@@ -45,6 +45,8 @@ const dom = {
   emojiPopover: document.querySelector("#emojiPopover"),
   insideChatUnread: document.querySelector("#insideChatUnread"),
   tooltipLayer: document.querySelector("#tooltipLayer"),
+  imagePreview: document.querySelector("#imagePreview"),
+  overlayImagePreview: document.querySelector("#overlayImagePreview"),
 };
 
 const FIREBASE_VERSION = "10.12.5";
@@ -82,6 +84,8 @@ let activeEmojiInput = null;
 let unreadInsideCount = 0;
 let unreadExternalCount = 0;
 let replyTarget = null;
+let pendingImage = "";
+let pendingOverlayImage = "";
 let menuMessage = null;
 let messageMenuOpenedAt = 0;
 let longPressTimer = null;
@@ -264,6 +268,9 @@ function wireEvents() {
       }
     });
   });
+
+  dom.messageInput.addEventListener("paste", (e) => handlePasteEvent(e, false));
+  dom.overlayMessageInput.addEventListener("paste", (e) => handlePasteEvent(e, true));
 
   dom.overlayMessages.addEventListener(
     "wheel",
@@ -870,7 +877,7 @@ function publishState(action) {
   logEvent("sync:send", `${action} en ${formatSeconds(payload.time)} (${payload.paused ? "pausado" : "play"}).`);
 }
 
-function sendMessage(text) {
+function sendMessage(text, attachedImage) {
   if (!activeRoom || !transport) {
     setSyncStatus("Primero entra a una sala.");
     logEvent("chat", "Mensaje no enviado: falta sala.");
@@ -881,7 +888,8 @@ function sendMessage(text) {
     id: crypto.randomUUID(),
     from: clientId,
     name: getDisplayName(),
-    text,
+    text: text || "",
+    image: attachedImage || null,
     replyTo: replyTarget
       ? {
           id: replyTarget.id,
@@ -974,7 +982,26 @@ function appendMessageTo(container, message) {
     reply.textContent = `${message.replyTo.name || "Invitado"}: ${truncateText(message.replyTo.text, 90)}`;
     bubble.append(reply);
   }
-  appendMessageContent(bubble, message.text);
+  
+  if (message.text) {
+    appendMessageContent(bubble, message.text);
+  }
+
+  if (message.image) {
+    const link = document.createElement("a");
+    link.className = "message-media-link";
+    link.href = message.image;
+    link.target = "_blank";
+
+    const imgElement = document.createElement("img");
+    imgElement.className = "message-media";
+    imgElement.src = message.image;
+    imgElement.alt = "Imagen adjunta";
+    imgElement.loading = "lazy";
+
+    link.append(imgElement);
+    bubble.append(link);
+  }
 
   item.append(meta, bubble);
   if (!message.system) wireMessageInteractions(item, message);
@@ -984,11 +1011,30 @@ function appendMessageTo(container, message) {
 }
 
 function appendMessageContent(container, text) {
+  const trimmedText = String(text || "").trim();
+  
+  // Si el texto es una imagen en base64 directa, la renderizamos de una
+  if (trimmedText.startsWith("data:image/") && trimmedText.includes("base64,")) {
+    const link = document.createElement("a");
+    link.className = "message-media-link";
+    link.href = trimmedText;
+    link.target = "_blank";
+
+    const img = document.createElement("img");
+    img.className = "message-media";
+    img.src = trimmedText;
+    img.alt = "Imagen base64";
+    img.loading = "lazy";
+
+    link.append(img);
+    container.append(link);
+    return;
+  }
+
   const firstUrl = findFirstUrl(text);
   const explicitImageUrl = parseExplicitImageUrl(text);
   const imageUrl = explicitImageUrl || (firstUrl && isRemoteImageUrl(firstUrl) ? firstUrl : "");
   const videoUrl = firstUrl && isRemoteVideoUrl(firstUrl) ? firstUrl : "";
-  const trimmedText = String(text || "").trim();
 
   if (!firstUrl) {
     if (container.childElementCount) {
@@ -1277,15 +1323,120 @@ function loadVideoFromUrl(source, origin) {
 }
 
 function submitMessageFrom(input) {
+  const isOverlay = (input === dom.overlayMessageInput);
   const text = input.value.trim();
-  if (!text) return;
-  const wasQueued = sendMessage(text);
+  const img = isOverlay ? pendingOverlayImage : pendingImage;
+
+  if (!text && !img) return;
+
+  const wasQueued = sendMessage(text, img);
   if (!wasQueued) return;
+
   input.value = "";
-  autoResizeMessageInput(input);
-  if (input === dom.overlayMessageInput) {
+  if (isOverlay) {
+    clearPendingImage(true);
     dom.overlayMessageInput.focus();
+  } else {
+    clearPendingImage(false);
   }
+  autoResizeMessageInput(input);
+}
+
+// Maneja el pegado de imágenes desde el portapapeles
+function handlePasteEvent(event, isOverlay) {
+  const items = event.clipboardData?.items;
+  if (!items) return;
+
+  for (const item of items) {
+    if (item.type.indexOf("image") !== -1) {
+      event.preventDefault();
+      const file = item.getAsFile();
+      if (!file) continue;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const rawBase64 = e.target.result;
+        // Comprimimos localmente en canvas antes de enviarla
+        compressImageBase64(rawBase64, 800, 800, 0.7, (compressedBase64) => {
+          if (isOverlay) {
+            pendingOverlayImage = compressedBase64;
+          } else {
+            pendingImage = compressedBase64;
+          }
+          renderImagePreview(isOverlay);
+        });
+      };
+      reader.readAsDataURL(file);
+      break;
+    }
+  }
+}
+
+// Comprime la imagen dibujándola en un canvas antes de enviarla
+function compressImageBase64(base64Str, maxWidth, maxHeight, quality, callback) {
+  const img = new Image();
+  img.src = base64Str;
+  img.onload = () => {
+    let width = img.width;
+    let height = img.height;
+
+    if (width > height) {
+      if (width > maxWidth) {
+        height = Math.round((height * maxWidth) / width);
+        width = maxWidth;
+      }
+    } else {
+      if (height > maxHeight) {
+        width = Math.round((width * maxHeight) / height);
+        height = maxHeight;
+      }
+    }
+
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0, width, height);
+
+    const compressedDataUrl = canvas.toDataURL("image/jpeg", quality);
+    callback(compressedDataUrl);
+  };
+}
+
+// Renderiza la vista previa de la imagen pegada
+function renderImagePreview(isOverlay) {
+  const container = isOverlay ? dom.overlayImagePreview : dom.imagePreview;
+  const base64 = isOverlay ? pendingOverlayImage : pendingImage;
+
+  if (!container) return;
+
+  if (!base64) {
+    container.hidden = true;
+    container.innerHTML = "";
+    return;
+  }
+
+  container.hidden = false;
+  container.innerHTML = `
+    <div class="preview-box">
+      <img src="${base64}" alt="Miniatura de imagen pegada" />
+      <button type="button" class="preview-remove-btn" aria-label="Quitar imagen">×</button>
+    </div>
+  `;
+
+  container.querySelector(".preview-remove-btn").addEventListener("click", () => {
+    clearPendingImage(isOverlay);
+  });
+}
+
+// Limpia la imagen pendiente
+function clearPendingImage(isOverlay) {
+  if (isOverlay) {
+    pendingOverlayImage = "";
+  } else {
+    pendingImage = "";
+  }
+  renderImagePreview(isOverlay);
 }
 
 function autoResizeMessageInput(input) {

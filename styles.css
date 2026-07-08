@@ -117,7 +117,7 @@ body.is-lobby #copyInviteButton {
   align-items: center;
   justify-content: center;
   border: 1px solid var(--line);
-  border-radius: 999px;
+  border-radius: 6px;
   background: rgba(27, 31, 35, 0.78);
   color: var(--muted);
   padding: 0 12px;
@@ -503,8 +503,8 @@ select {
 }
 
 .source-strip .button {
-  align-self: center;
-  margin-top: 16px;
+  align-self: end;
+  margin-bottom: 1px;
 }
 
 .button.compact {
@@ -987,6 +987,11 @@ video::-webkit-media-controls-fullscreen-button {
   backdrop-filter: blur(8px);
 }
 
+/* Panel oculta el header propio: el layout interno queda identico al modo float */
+.player-frame[data-chat-style="panel"] .player-chat-header {
+  display: none;
+}
+
 .player-frame[data-chat-style="float"] .player-chat {
   border: 0;
   background: transparent;
@@ -1207,6 +1212,7 @@ video::-webkit-media-controls-fullscreen-button {
 }
 
 .message-bubble {
+  display: inline-block;
   max-width: min(86%, 32rem);
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -1460,15 +1466,12 @@ textarea::-webkit-scrollbar-thumb {
   pointer-events: none;
 }
 
+/* Fullscreen: topbar y toolbar siguen visibles. El video ocupa 100vh y
+   el resto del contenido queda accesible por scroll. */
 body.fullscreen-mode .app-shell {
   width: 100%;
   min-height: 100vh;
   padding: 0;
-}
-
-body.fullscreen-mode .topbar,
-body.fullscreen-mode .lobby-screen {
-  display: none;
 }
 
 body.fullscreen-mode .session-view {

@@ -279,8 +279,15 @@ function wireEvents() {
   });
 
   dom.videoPlayer.addEventListener("pause", () => {
+    // El evento 'ended' dispara 'pause' internamente; lo ignoramos para no mostrar "pausó" al terminar
+    if (dom.videoPlayer.ended) return;
     logEvent("video", `Pausa local en ${formatSeconds(dom.videoPlayer.currentTime)}.`);
     if (!suppressVideoEvents) publishState("pause");
+  });
+
+  dom.videoPlayer.addEventListener("ended", () => {
+    logEvent("video", "Video terminado.");
+    // No publicar estado: el video terminó naturalmente, no es una acción del usuario
   });
 
   dom.videoPlayer.addEventListener("seeked", () => {
@@ -295,7 +302,7 @@ function wireEvents() {
 
   dom.videoPlayer.addEventListener("loadedmetadata", () => {
     dom.emptyPlayer.classList.add("hidden");
-    setVideoStatus("loaded", "Cargado");
+    setVideoStatus("loaded", "Incorporado en sala");
   });
 
   dom.videoPlayer.addEventListener("error", () => {
@@ -304,11 +311,25 @@ function wireEvents() {
   });
 }
 
+// Registro global de salas abiertas en esta sesión de navegador (máximo 2)
+const openRooms = JSON.parse(sessionStorage.getItem("cine-juntos-open-rooms") || "[]");
+
 async function joinRoom(rawRoomCode) {
   const roomCode = normalizeRoomCode(rawRoomCode);
   if (!roomCode) {
     setSyncStatus("Codigo invalido.");
     return;
+  }
+
+  // Limitar a 2 salas distintas por sesión (evita abrir demasiadas conexiones Firebase)
+  if (!openRooms.includes(roomCode)) {
+    if (openRooms.length >= 2) {
+      setSyncStatus(`Límite de 2 salas alcanzado. Cierra otra pestaña.`);
+      logEvent("room", `Bloqueado: ya hay ${openRooms.length} salas abiertas en esta sesión.`);
+      return;
+    }
+    openRooms.push(roomCode);
+    sessionStorage.setItem("cine-juntos-open-rooms", JSON.stringify(openRooms));
   }
 
   logEvent("room", `Entrando a sala ${roomCode}.`);
@@ -354,7 +375,7 @@ async function joinRoom(rawRoomCode) {
 
   activeRoom = roomCode;
   dom.roomInput.value = roomCode;
-  dom.roomBadge.textContent = roomCode;
+  dom.roomBadge.textContent = `Sala: ${roomCode}`;
   dom.messages.innerHTML = "";
   dom.overlayMessages.innerHTML = "";
   lastMessageIds = new Set();
@@ -903,14 +924,15 @@ function renderMessage(message) {
 
   appendMessageTo(dom.messages, message);
   appendMessageTo(dom.overlayMessages, message);
-  if (
-    message.from !== clientId &&
-    !dom.playerFrame.classList.contains("chat-inside-open") &&
-    dom.sessionView.classList.contains("chat-collapsed")
-  ) {
+  const insideChatOpen = dom.playerFrame.classList.contains("chat-inside-open");
+  const externalChatOpen = !dom.sessionView.classList.contains("chat-collapsed");
+
+  // Unread del chat interno: solo si el chat interno está cerrado
+  if (message.from !== clientId && !insideChatOpen) {
     incrementInsideUnread();
   }
-  if (message.from !== clientId && dom.sessionView.classList.contains("chat-collapsed")) {
+  // Unread del chat externo: solo si el chat externo está cerrado
+  if (message.from !== clientId && !externalChatOpen) {
     incrementExternalUnread();
   }
   logEvent("chat:recv", `Mensaje recibido de ${message.name || "Invitado"}.`);
@@ -980,7 +1002,9 @@ function appendMessageContent(container, text) {
   }
 
   const link = document.createElement("a");
-  const shouldAttemptImagePreview = Boolean(imageUrl || (firstUrl && trimmedText === firstUrl && !videoUrl));
+  // Intentamos mostrar como imagen cualquier URL que no sea explicitamente un video.
+  // Si el servidor no devuelve una imagen, el listener 'error' lo degrada a link de texto.
+  const shouldAttemptImagePreview = Boolean(!videoUrl && firstUrl);
   link.className = shouldAttemptImagePreview ? "message-media-link" : "message-link";
   link.href = firstUrl;
   link.target = "_blank";
@@ -1001,6 +1025,7 @@ function appendMessageContent(container, text) {
   image.addEventListener(
     "error",
     () => {
+      // No se pudo cargar como imagen: mostrar como link de texto normal
       link.className = "message-link";
       link.replaceChildren();
       link.textContent = firstUrl;

@@ -74,6 +74,9 @@ let knownParticipants = new Set([clientId]);
 let knownMembers = new Map();
 let suppressVideoEvents = false;
 let lastStateSentAt = 0;
+let lastActionAt = 0;
+let lastActionAuthor = "";
+let remoteStateActive = false;
 let syncStatusTimer = null;
 let activeEmojiInput = null;
 let unreadInsideCount = 0;
@@ -390,6 +393,7 @@ async function createFirebaseTransport(roomCode, config) {
   const messagesRef = dbModule.ref(db, `${roomPath}/messages`);
   const membersRef = dbModule.ref(db, `${roomPath}/members`);
   const memberRef = dbModule.ref(db, `${roomPath}/members/${clientId}`);
+  const roomRef = dbModule.ref(db, roomPath);
   const serverTimeOffsetRef = dbModule.ref(db, ".info/serverTimeOffset");
   const unsubscribers = [];
   let serverTimeOffset = 0;
@@ -399,6 +403,7 @@ async function createFirebaseTransport(roomCode, config) {
     async connect(handlers) {
       try {
         await dbModule.set(memberRef, makeMemberPayload());
+        // Al desconectarse del servidor, remover el miembro
         dbModule.onDisconnect(memberRef).remove().catch(() => {});
       } catch (error) {
         const wrapped = new Error(error?.message || "No se pudo escribir en members.");
@@ -424,7 +429,10 @@ async function createFirebaseTransport(roomCode, config) {
 
       unsubscribers.push(
         dbModule.onValue(membersRef, (snapshot) => {
-          handlers.onMembers(snapshot.val() || {});
+          const val = snapshot.val() || {};
+          // Si el nodo de members existe pero no tiene llaves (o quedó vacío de forma inesperada)
+          // no hace falta hacer nada aquí, pero manejamos la notificación normal.
+          handlers.onMembers(val);
         }),
       );
 
@@ -457,7 +465,19 @@ async function createFirebaseTransport(roomCode, config) {
     },
     async close() {
       unsubscribers.forEach((unsubscribe) => unsubscribe());
-      await dbModule.remove(memberRef).catch(() => {});
+      try {
+        // Al salir activamente, removemos nuestra presencia
+        await dbModule.remove(memberRef);
+        // Hacemos una verificación rápida: si ya no quedan miembros tras nuestra salida,
+        // limpiamos la sala completa para que no queden datos huérfanos.
+        const snap = await dbModule.get(membersRef);
+        if (!snap.exists() || Object.keys(snap.val() || {}).length === 0) {
+          logEvent("firebase", "Limpiando sala vacia al salir.");
+          await dbModule.remove(roomRef);
+        }
+      } catch (e) {
+        console.warn("Error en la limpieza al desconectar:", e);
+      }
     },
   };
 }
@@ -640,6 +660,11 @@ function handleRemoteState(state) {
   rememberParticipant(state.from, state.name);
   lastRemoteState = state;
   logEvent("sync:recv", `${state.action || "evento"} de ${state.name || "otro usuario"} en ${formatSeconds(state.time)}.`);
+  
+  // Registrar el tiempo y autor de la última acción recibida de Firebase
+  lastActionAt = Date.now();
+  lastActionAuthor = state.from;
+  
   applyRemoteState(state);
 }
 
@@ -647,10 +672,11 @@ async function applyRemoteState(state, force = false) {
   if (!state.src && !dom.videoPlayer.currentSrc) return;
 
   suppressVideoEvents = true;
+  remoteStateActive = true;
   try {
     if (state.src && state.src !== dom.videoPlayer.currentSrc && state.src !== dom.videoPlayer.src) {
       setVideoSource(state.src, false);
-      await waitForVideoMetadata();
+      await waitForVideoMetadata().catch(() => {});
     }
 
     const targetTime = getRemoteTargetTime(state);
@@ -665,16 +691,23 @@ async function applyRemoteState(state, force = false) {
     if (state.paused) {
       dom.videoPlayer.pause();
     } else {
-      await dom.videoPlayer.play().catch(() => {
-        setSyncStatus("Play recibido. El navegador bloqueo el inicio automatico.");
-      });
+      // Manejar de forma robusta la promesa de play() para evitar congelamiento o errores no capturados
+      try {
+        await dom.videoPlayer.play();
+      } catch (playError) {
+        console.warn("La reproducción automática fue bloqueada o interrumpida:", playError);
+        setSyncStatus("Play recibido. Haz click para reproducir.");
+      }
     }
 
     setSyncStatus(`Sincronizado con ${state.name || "la sala"}.`);
     logEvent("sync:apply", `Aplicado ${state.action || "evento"} a ${formatSeconds(dom.videoPlayer.currentTime)}.`);
+  } catch (err) {
+    console.error("Error aplicando el estado remoto:", err);
   } finally {
     window.setTimeout(() => {
       suppressVideoEvents = false;
+      remoteStateActive = false;
     }, 550);
   }
 }
@@ -696,9 +729,41 @@ function publishState(action) {
     return;
   }
 
+  // Si estamos aplicando un estado remoto, ignoramos disparar un evento local
+  if (remoteStateActive) return;
+
   const localNow = Date.now();
+  
+  // Mecanismo Antilag/Cooldown:
+  // Si la última acción de la sala la hizo OTRO usuario hace menos de 2000 ms, bloqueamos el control.
+  if (lastActionAuthor && lastActionAuthor !== clientId && (localNow - lastActionAt < 2000)) {
+    logEvent("antilag", `Acción '${action}' bloqueada temporalmente (cooldown de otro usuario activo).`);
+    setSyncStatus("Espera 2s para interactuar (cooldown).");
+    
+    // Revertir nuestro reproductor local al último estado remoto conocido para evitar desincronizaciones
+    if (lastRemoteState && !suppressVideoEvents) {
+      suppressVideoEvents = true;
+      try {
+        if (lastRemoteState.paused) {
+          dom.videoPlayer.pause();
+        } else {
+          dom.videoPlayer.play().catch(() => {});
+        }
+        dom.videoPlayer.currentTime = getRemoteTargetTime(lastRemoteState);
+      } finally {
+        window.setTimeout(() => { suppressVideoEvents = false; }, 300);
+      }
+    }
+    return;
+  }
+
   if (localNow - lastStateSentAt < SEND_THROTTLE_MS && action !== "video" && action !== "sync") return;
+  
+  // Registrar que nosotros iniciamos esta acción
+  lastActionAt = localNow;
+  lastActionAuthor = clientId;
   lastStateSentAt = localNow;
+  
   const syncNow = getTransportNow();
 
   const payload = {
@@ -1537,18 +1602,18 @@ function getDisplayName() {
 }
 
 function makeGuestName() {
-  return `Invitado ${clientId.slice(-4).toUpperCase()}`;
+  return `Usuario ${clientId.slice(-4).toUpperCase()}`;
 }
 
 function makeParticipantLabel(participantId) {
-  return `Invitado ${String(participantId).slice(-4).toUpperCase()}`;
+  return `Usuario ${String(participantId).slice(-4).toUpperCase()}`;
 }
 
 function getOrCreateClientId() {
-  const stored = sessionStorage.getItem("cine-juntos-client-id");
+  const stored = localStorage.getItem("cine-juntos-client-id");
   if (stored) return stored;
   const next = crypto.randomUUID();
-  sessionStorage.setItem("cine-juntos-client-id", next);
+  localStorage.setItem("cine-juntos-client-id", next);
   return next;
 }
 

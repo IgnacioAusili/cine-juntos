@@ -1038,21 +1038,30 @@ function isLocalHostname(hostname) {
 
 function renderMembers(members) {
   const nextMembers = new Map([[clientId, getDisplayName()]]);
+  const activeIds = new Set([clientId]);
+  
   Object.entries(members || {}).forEach(([id, member]) => {
     const memberId = member?.id || id;
     if (!memberId) return;
     nextMembers.set(memberId, member?.name || makeParticipantLabel(memberId));
+    activeIds.add(memberId);
   });
+  
   knownMembers = nextMembers;
-  knownParticipants = new Set(nextMembers.keys());
+  knownParticipants = activeIds;
   renderPresence();
 }
 
 function rememberParticipant(participantId, participantName) {
   if (!participantId) return;
-  knownParticipants.add(participantId);
-  knownMembers.set(participantId, participantName || knownMembers.get(participantId) || makeParticipantLabel(participantId));
-  renderPresence();
+  // Solo los guardamos en knownMembers/knownParticipants si están en el set actual
+  // o si no había mapa previo cargado (para evitar revivir fantasmas)
+  if (knownMembers.has(participantId) || knownParticipants.has(participantId)) {
+    knownMembers.set(participantId, participantName || knownMembers.get(participantId) || makeParticipantLabel(participantId));
+  } else {
+    // Si es un mensaje nuevo, lo permitimos temporalmente en participantes para mostrar el contador
+    // pero respetando la roster real de Firebase que es la definitiva.
+  }
 }
 
 function renderPresence() {

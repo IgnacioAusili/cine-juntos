@@ -239,7 +239,13 @@
                     <span data-lucide="x"></span>
                   </button>
                 </div>
-                <div class="overlay-messages" id="overlayMessages" aria-live="polite"></div>
+                <div class="messages-wrap">
+                  <div class="overlay-messages" id="overlayMessages" aria-live="polite"></div>
+                  <button class="scroll-bottom-btn" id="overlayScrollBottomBtn" hidden aria-label="Ir al último mensaje">
+                    <span data-lucide="chevrons-down"></span>
+                    <span class="scroll-bottom-badge" id="overlayScrollBadge">0</span>
+                  </button>
+                </div>
                 <form class="message-form overlay-message-form" id="overlayMessageForm">
                   <div class="reply-preview" id="overlayReplyPreview" hidden></div>
                   <div class="image-preview-container" id="overlayImagePreview" hidden></div>
@@ -247,7 +253,6 @@
                     <textarea
                       id="overlayMessageInput"
                       autocomplete="off"
-                      maxlength="500"
                       placeholder="Mensaje"
                       rows="1"
                       title="Escribir al chat de la sala"
@@ -262,10 +267,11 @@
                     >
                       <span data-lucide="smile-plus"></span>
                     </button>
-                    <button class="icon-button send" type="submit" aria-label="Enviar mensaje">
+                    <button class="icon-button send" id="overlayMessageSend" type="submit" aria-label="Enviar mensaje">
                       <span data-lucide="send"></span>
                     </button>
                   </div>
+                  <div class="char-counter" id="overlayCharCounter">0 / 1500</div>
                 </form>
               </aside>
             </div>
@@ -316,7 +322,13 @@
               </button>
             </div>
 
-            <div class="messages" id="messages" aria-live="polite"></div>
+            <div class="messages-wrap">
+              <div class="messages" id="messages" aria-live="polite"></div>
+              <button class="scroll-bottom-btn" id="mainScrollBottomBtn" hidden aria-label="Ir al último mensaje">
+                <span data-lucide="chevrons-down"></span>
+                <span class="scroll-bottom-badge" id="mainScrollBadge">0</span>
+              </button>
+            </div>
 
             <form class="message-form" id="messageForm">
               <div class="reply-preview" id="replyPreview" hidden></div>
@@ -325,7 +337,6 @@
                 <textarea
                   id="messageInput"
                   autocomplete="off"
-                  maxlength="500"
                   placeholder="Mensaje"
                   rows="1"
                   title="Escribir al chat de la sala"
@@ -340,10 +351,11 @@
                 >
                   <span data-lucide="smile-plus"></span>
                 </button>
-                <button class="icon-button send" type="submit" aria-label="Enviar mensaje">
+                <button class="icon-button send" id="mainMessageSend" type="submit" aria-label="Enviar mensaje">
                   <span data-lucide="send"></span>
                 </button>
               </div>
+              <div class="char-counter" id="mainCharCounter">0 / 1500</div>
             </form>
           </aside>
           <button

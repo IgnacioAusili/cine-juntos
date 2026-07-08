@@ -35,8 +35,10 @@ const dom = {
   overlayMessages: document.querySelector("#overlayMessages"),
   messageForm: document.querySelector("#messageForm"),
   messageInput: document.querySelector("#messageInput"),
+  mainMessageSend: document.querySelector("#mainMessageSend"),
   overlayMessageForm: document.querySelector("#overlayMessageForm"),
   overlayMessageInput: document.querySelector("#overlayMessageInput"),
+  overlayMessageSend: document.querySelector("#overlayMessageSend"),
   replyPreview: document.querySelector("#replyPreview"),
   overlayReplyPreview: document.querySelector("#overlayReplyPreview"),
   messageMenu: document.querySelector("#messageMenu"),
@@ -47,6 +49,12 @@ const dom = {
   tooltipLayer: document.querySelector("#tooltipLayer"),
   imagePreview: document.querySelector("#imagePreview"),
   overlayImagePreview: document.querySelector("#overlayImagePreview"),
+  mainScrollBottomBtn: document.querySelector("#mainScrollBottomBtn"),
+  overlayScrollBottomBtn: document.querySelector("#overlayScrollBottomBtn"),
+  mainScrollBadge: document.querySelector("#mainScrollBadge"),
+  overlayScrollBadge: document.querySelector("#overlayScrollBadge"),
+  mainCharCounter: document.querySelector("#mainCharCounter"),
+  overlayCharCounter: document.querySelector("#overlayCharCounter"),
 };
 
 const FIREBASE_VERSION = "10.12.5";
@@ -259,8 +267,15 @@ function wireEvents() {
   });
 
   [dom.messageInput, dom.overlayMessageInput].forEach((input) => {
-    input.addEventListener("input", () => autoResizeMessageInput(input));
-    input.addEventListener("paste", () => window.setTimeout(() => autoResizeMessageInput(input), 0));
+    const isOverlay = input === dom.overlayMessageInput;
+    input.addEventListener("input", () => {
+      autoResizeMessageInput(input);
+      updateCharCounter(input, isOverlay);
+    });
+    input.addEventListener("paste", () => window.setTimeout(() => {
+      autoResizeMessageInput(input);
+      updateCharCounter(input, isOverlay);
+    }, 0));
     input.addEventListener("keydown", (event) => {
       if (event.key === "Enter" && !event.shiftKey) {
         event.preventDefault();
@@ -272,6 +287,20 @@ function wireEvents() {
   dom.messageInput.addEventListener("paste", (e) => handlePasteEvent(e, false));
   dom.overlayMessageInput.addEventListener("paste", (e) => handlePasteEvent(e, true));
 
+  // Scroll-to-bottom buttons
+  dom.mainScrollBottomBtn.addEventListener("click", () => {
+    dom.messages.scrollTo({ top: dom.messages.scrollHeight, behavior: "smooth" });
+    resetScrollIndicator(false);
+  });
+  dom.overlayScrollBottomBtn.addEventListener("click", () => {
+    dom.overlayMessages.scrollTo({ top: dom.overlayMessages.scrollHeight, behavior: "smooth" });
+    resetScrollIndicator(true);
+  });
+
+  // Detectar cuando el usuario scrollea manualmente en los contenedores de mensajes
+  dom.messages.addEventListener("scroll", () => checkScrollPosition(false), { passive: true });
+  dom.overlayMessages.addEventListener("scroll", () => checkScrollPosition(true), { passive: true });
+
   dom.overlayMessages.addEventListener(
     "wheel",
     (event) => {
@@ -279,6 +308,7 @@ function wireEvents() {
     },
     { passive: true },
   );
+
 
   let scrollSnapTimer = null;
   window.addEventListener("scroll", () => {
@@ -977,9 +1007,11 @@ function appendMessageTo(container, message) {
   const bubble = document.createElement("div");
   bubble.className = "message-bubble";
   if (message.replyTo?.text) {
-    const reply = document.createElement("div");
+    const reply = document.createElement("button");
+    reply.type = "button";
     reply.className = "message-reply";
-    reply.textContent = `${message.replyTo.name || "Invitado"}: ${truncateText(message.replyTo.text, 90)}`;
+    reply.innerHTML = `<span class="message-reply-name">${message.replyTo.name || "Invitado"}</span><span class="message-reply-body">${truncateText(message.replyTo.text, 90)}</span>`;
+    reply.addEventListener("click", () => scrollToMessage(message.replyTo.id));
     bubble.append(reply);
   }
   
@@ -1007,7 +1039,17 @@ function appendMessageTo(container, message) {
   if (!message.system) wireMessageInteractions(item, message);
   container.append(item);
   trimRenderedMessages(container);
-  container.scrollTop = container.scrollHeight;
+
+  // Si el usuario está viendo el final del chat → auto-scroll
+  // Si no está al final → mostrar el indicador de nuevo mensaje
+  const isOverlay = container === dom.overlayMessages;
+  const threshold = 120;
+  const distanceFromBottom = container.scrollHeight - container.scrollTop - container.clientHeight;
+  if (distanceFromBottom <= threshold || message.from === clientId) {
+    container.scrollTop = container.scrollHeight;
+  } else if (message.from !== clientId) {
+    incrementScrollIndicator(isOverlay);
+  }
 }
 
 function appendMessageContent(container, text) {
@@ -1329,10 +1371,21 @@ function submitMessageFrom(input) {
 
   if (!text && !img) return;
 
+  // Bloquear si supera el límite de caracteres
+  if (input.value.length > MAX_CHARS) {
+    const counter = isOverlay ? dom.overlayCharCounter : dom.mainCharCounter;
+    if (counter) {
+      counter.classList.add("char-counter--shake");
+      window.setTimeout(() => counter.classList.remove("char-counter--shake"), 500);
+    }
+    return;
+  }
+
   const wasQueued = sendMessage(text, img);
   if (!wasQueued) return;
 
   input.value = "";
+  updateCharCounter(input, isOverlay);
   if (isOverlay) {
     clearPendingImage(true);
     dom.overlayMessageInput.focus();
@@ -1693,23 +1746,85 @@ function renderReplyPreview() {
     if (!container) return;
     container.innerHTML = "";
     if (!replyTarget) {
-      container.hidden = true;
+      container.classList.remove("reply-preview--visible");
+      window.setTimeout(() => {
+        if (!replyTarget) container.hidden = true;
+      }, 200);
       return;
     }
 
-    const text = document.createElement("span");
-    text.textContent = `Respondiendo a ${replyTarget.name}: ${truncateText(replyTarget.text, 54)}`;
+    const replyIcon = document.createElement("span");
+    replyIcon.className = "reply-preview-icon";
+    replyIcon.innerHTML = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><polyline points='9 17 4 12 9 7'/><path d='M20 18v-2a4 4 0 0 0-4-4H4'/></svg>`;
+
+    const textBtn = document.createElement("button");
+    textBtn.type = "button";
+    textBtn.className = "reply-preview-text";
+    textBtn.innerHTML = `<span class="reply-preview-name">${replyTarget.name}</span><span class="reply-preview-body">${truncateText(replyTarget.text || "", 60)}</span>`;
+    textBtn.addEventListener("click", () => scrollToMessage(replyTarget.id));
+
     const close = document.createElement("button");
     close.type = "button";
-    close.textContent = "x";
+    close.className = "reply-preview-close";
+    close.innerHTML = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5'><line x1='18' y1='6' x2='6' y2='18'/><line x1='6' y1='6' x2='18' y2='18'/></svg>`;
     close.setAttribute("aria-label", "Cancelar respuesta");
     close.addEventListener("click", clearReplyTarget);
-    container.append(text, close);
+
+    container.append(replyIcon, textBtn, close);
     container.hidden = false;
+    // Forzamos reflow para que la transición de entrada funcione
+    container.getBoundingClientRect();
+    container.classList.add("reply-preview--visible");
   });
 }
 
 function wireMessageInteractions(item, message) {
+  const SWIPE_THRESHOLD = 60;   // px mínimos para activar reply
+  const SWIPE_MAX_VISUAL = 90;  // px máximo desplazamiento visual
+  let swipeStartX = null;
+  let swipeStartY = null;
+  let swiping = false;
+  let swipeActivated = false;
+
+  // Mostrar ícono de reply durante el swipe
+  const hint = document.createElement("span");
+  hint.className = "swipe-reply-hint";
+  hint.innerHTML = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><polyline points='9 17 4 12 9 7'/><path d='M20 18v-2a4 4 0 0 0-4-4H4'/></svg>`;
+  item.append(hint);
+
+  function applySwipeTransform(rawDelta) {
+    // Resistencia progresiva: a medida que se aleja, la resistencia aumenta
+    const sign = rawDelta < 0 ? -1 : 1;
+    const abs = Math.abs(rawDelta);
+    const damped = SWIPE_MAX_VISUAL * (1 - Math.exp(-abs / SWIPE_MAX_VISUAL));
+    const clamped = Math.min(damped, SWIPE_MAX_VISUAL);
+    const ratio = clamped / SWIPE_MAX_VISUAL;
+
+    item.style.transition = "none";
+    item.style.transform = `translateX(${sign * clamped}px)`;
+    hint.style.opacity = String(Math.min(1, ratio * 2));
+    hint.style.transform = `translateX(${sign * clamped * 0.45}px) scale(${0.5 + ratio * 0.5})`;
+
+    // Resaltado cuando supera el umbral
+    if (clamped >= SWIPE_THRESHOLD) {
+      item.classList.add("swipe-ready");
+    } else {
+      item.classList.remove("swipe-ready");
+    }
+  }
+
+  function resetSwipe() {
+    item.style.transition = "transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94)";
+    item.style.transform = "";
+    hint.style.opacity = "0";
+    hint.style.transform = "";
+    item.classList.remove("swipe-ready");
+    swiping = false;
+    swipeActivated = false;
+    swipeStartX = null;
+    swipeStartY = null;
+  }
+
   item.addEventListener("contextmenu", (event) => {
     event.preventDefault();
     showMessageMenu(message, event.clientX, event.clientY);
@@ -1717,30 +1832,75 @@ function wireMessageInteractions(item, message) {
 
   item.addEventListener("pointerdown", (event) => {
     if (event.button && event.button !== 0) return;
+    swipeStartX = event.clientX;
+    swipeStartY = event.clientY;
+    swiping = false;
+    swipeActivated = false;
     longPressStart = { x: event.clientX, y: event.clientY, message };
     window.clearTimeout(longPressTimer);
     longPressTimer = window.setTimeout(() => {
-      showMessageMenu(message, event.clientX, event.clientY);
+      if (!swiping) showMessageMenu(message, event.clientX, event.clientY);
     }, 560);
   });
 
   item.addEventListener("pointermove", (event) => {
-    if (!longPressStart) return;
-    const distance = Math.hypot(event.clientX - longPressStart.x, event.clientY - longPressStart.y);
-    if (distance > 10) window.clearTimeout(longPressTimer);
+    if (swipeStartX === null) return;
+
+    const dx = event.clientX - swipeStartX;
+    const dy = event.clientY - swipeStartY;
+
+    // Determinar si es un gesto horizontal genuino
+    if (!swiping) {
+      if (Math.abs(dy) > Math.abs(dx) + 6) {
+        // Gesto vertical → cancelar
+        swipeStartX = null;
+        swipeStartY = null;
+        return;
+      }
+      if (Math.abs(dx) > 8) {
+        swiping = true;
+        window.clearTimeout(longPressTimer);
+        longPressStart = null;
+        item.setPointerCapture(event.pointerId);
+      } else {
+        return;
+      }
+    }
+
+    applySwipeTransform(dx);
   });
 
   item.addEventListener("pointerup", (event) => {
     window.clearTimeout(longPressTimer);
-    if (longPressStart?.message === message && Math.abs(event.clientX - longPressStart.x) > 54) {
-      setReplyTarget(message);
+
+    if (swiping && !swipeActivated) {
+      const dx = event.clientX - swipeStartX;
+      const abs = Math.abs(dx);
+      const damped = SWIPE_MAX_VISUAL * (1 - Math.exp(-abs / SWIPE_MAX_VISUAL));
+
+      if (damped >= SWIPE_THRESHOLD) {
+        swipeActivated = true;
+        // Pequeño rebote antes de activar
+        item.style.transition = "transform 0.15s ease-out";
+        item.style.transform = `translateX(${dx < 0 ? -18 : 18}px)`;
+        window.setTimeout(() => {
+          resetSwipe();
+          setReplyTarget(message);
+        }, 150);
+      } else {
+        resetSwipe();
+      }
+    } else if (!swiping) {
+      longPressStart = null;
     }
-    longPressStart = null;
+
+    if (!swiping) longPressStart = null;
   });
 
   item.addEventListener("pointercancel", () => {
     window.clearTimeout(longPressTimer);
     longPressStart = null;
+    if (swiping) resetSwipe();
   });
 }
 
@@ -1945,5 +2105,108 @@ function detectTerminalLogEndpoint() {
 function hydrateIcons() {
   if (window.lucide) {
     window.lucide.createIcons();
+  }
+}
+
+// ─── Scroll-to-message (citas clickeables) ──────────────────────────────────
+
+function scrollToMessage(messageId) {
+  if (!messageId) return;
+  const containers = [dom.messages, dom.overlayMessages];
+  for (const container of containers) {
+    const target = container.querySelector(`article[data-message-id="${messageId}"]`);
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth", block: "center" });
+      highlightMessage(target);
+      return;
+    }
+  }
+}
+
+function highlightMessage(element) {
+  element.classList.remove("message-highlight");
+  // Forzar reflow para reiniciar la animación
+  void element.offsetWidth;
+  element.classList.add("message-highlight");
+  window.setTimeout(() => {
+    element.classList.remove("message-highlight");
+  }, 2600);
+}
+
+// ─── Indicador de mensajes nuevos (flecha flotante) ─────────────────────────
+
+let mainScrollUnread = 0;
+let overlayScrollUnread = 0;
+
+function checkScrollPosition(isOverlay) {
+  const container = isOverlay ? dom.overlayMessages : dom.messages;
+  const btn = isOverlay ? dom.overlayScrollBottomBtn : dom.mainScrollBottomBtn;
+  const threshold = 80;
+  const distanceFromBottom = container.scrollHeight - container.scrollTop - container.clientHeight;
+
+  if (distanceFromBottom <= threshold) {
+    // El usuario llegó al final → ocultar y resetear
+    resetScrollIndicator(isOverlay);
+  }
+}
+
+function incrementScrollIndicator(isOverlay) {
+  const btn = isOverlay ? dom.overlayScrollBottomBtn : dom.mainScrollBottomBtn;
+  const badge = isOverlay ? dom.overlayScrollBadge : dom.mainScrollBadge;
+
+  if (isOverlay) {
+    overlayScrollUnread++;
+    badge.textContent = overlayScrollUnread > 99 ? "99+" : String(overlayScrollUnread);
+  } else {
+    mainScrollUnread++;
+    badge.textContent = mainScrollUnread > 99 ? "99+" : String(mainScrollUnread);
+  }
+
+  const count = isOverlay ? overlayScrollUnread : mainScrollUnread;
+  badge.hidden = count === 0;
+  btn.hidden = false;
+  btn.classList.add("scroll-bottom-btn--visible");
+}
+
+function resetScrollIndicator(isOverlay) {
+  const btn = isOverlay ? dom.overlayScrollBottomBtn : dom.mainScrollBottomBtn;
+  const badge = isOverlay ? dom.overlayScrollBadge : dom.mainScrollBadge;
+
+  if (isOverlay) {
+    overlayScrollUnread = 0;
+  } else {
+    mainScrollUnread = 0;
+  }
+
+  badge.textContent = "0";
+  badge.hidden = true;
+  btn.classList.remove("scroll-bottom-btn--visible");
+  window.setTimeout(() => {
+    if (!btn.classList.contains("scroll-bottom-btn--visible")) {
+      btn.hidden = true;
+    }
+  }, 300);
+}
+
+// ─── Contador de caracteres y validación ────────────────────────────────────
+
+const MAX_CHARS = 1500;
+
+function updateCharCounter(input, isOverlay) {
+  const counter = isOverlay ? dom.overlayCharCounter : dom.mainCharCounter;
+  const form = isOverlay ? dom.overlayMessageForm : dom.messageForm;
+  const sendBtn = isOverlay ? dom.overlayMessageSend : dom.mainMessageSend;
+  const len = input.value.length;
+  const remaining = MAX_CHARS - len;
+
+  if (counter) {
+    counter.textContent = `${len} / ${MAX_CHARS}`;
+  }
+
+  const isOver = len > MAX_CHARS;
+  form.classList.toggle("over-limit", isOver);
+  if (sendBtn) {
+    sendBtn.disabled = isOver;
+    sendBtn.setAttribute("aria-disabled", String(isOver));
   }
 }

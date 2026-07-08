@@ -1368,45 +1368,17 @@ textarea::-webkit-scrollbar-thumb {
   color: var(--accent-2);
 }
 
-.reply-preview {
-  display: flex;
-  width: 100%;
-  min-height: 28px;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  border-left: 2px solid var(--accent-2);
-  border-radius: 5px;
-  background: rgba(47, 184, 164, 0.08);
-  color: var(--muted);
-  font-size: 0.76rem;
-  line-height: 1.2;
-  padding: 5px 7px;
-}
+/* reply-preview y message-reply: ver sección "Reply preview renovado" al final del archivo */
 
 .reply-preview[hidden] {
   display: none !important;
-}
-
-.reply-preview button {
-  border: 0;
-  background: transparent;
-  color: var(--muted);
-}
-
-.message-reply {
-  margin-bottom: 6px;
-  border-left: 2px solid rgba(255, 255, 255, 0.24);
-  color: var(--muted);
-  font-size: 0.74rem;
-  line-height: 1.25;
-  padding-left: 7px;
 }
 
 .message:not(.mine) .message-bubble {
   border-color: rgba(240, 140, 58, 0.28);
   background: rgba(240, 140, 58, 0.12);
 }
+
 
 .message-menu {
   position: fixed;
@@ -1784,4 +1756,320 @@ body.fullscreen-mode .player-chat {
 
 .preview-remove-btn:hover {
   background: var(--danger);
+}
+
+/* ─── messages-wrap: contenedor relativo para el botón flotante ──── */
+
+.messages-wrap {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.messages-wrap .messages,
+.messages-wrap .overlay-messages {
+  flex: 1 1 auto;
+}
+
+/* ─── Botón flotante scroll-to-bottom ───────────────────────────── */
+
+.scroll-bottom-btn {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  z-index: 20;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 32px;
+  border: 1px solid rgba(47, 184, 164, 0.35);
+  border-radius: 999px;
+  background: rgba(18, 22, 26, 0.9);
+  color: var(--accent-2);
+  padding: 0 12px 0 10px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transform: translateX(-50%) translateY(10px);
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+  pointer-events: none;
+}
+
+.scroll-bottom-btn svg {
+  width: 15px;
+  height: 15px;
+  stroke-width: 2.5;
+}
+
+.scroll-bottom-btn--visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+
+.scroll-bottom-btn:hover {
+  background: rgba(47, 184, 164, 0.2);
+  border-color: rgba(47, 184, 164, 0.6);
+}
+
+.scroll-bottom-badge {
+  display: inline-grid;
+  min-width: 18px;
+  height: 18px;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--danger);
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 800;
+  padding: 0 4px;
+}
+
+/* ─── Reply preview renovado ────────────────────────────────────── */
+
+.reply-preview {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border-left: 2px solid var(--accent-2);
+  border-radius: 5px;
+  background: rgba(47, 184, 164, 0.07);
+  padding: 6px 8px;
+  overflow: hidden;
+  /* Animación de entrada */
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 0.22s ease,
+    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reply-preview--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reply-preview-icon {
+  flex-shrink: 0;
+  display: flex;
+  color: var(--accent-2);
+  opacity: 0.8;
+}
+
+.reply-preview-icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+.reply-preview-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  padding: 0;
+  cursor: pointer;
+  color: inherit;
+}
+
+.reply-preview-text:hover .reply-preview-body {
+  color: var(--text);
+}
+
+.reply-preview-name {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--accent-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.reply-preview-body {
+  font-size: 0.72rem;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.15s ease;
+}
+
+.reply-preview-close {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  min-height: 22px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted-2);
+  padding: 0;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.reply-preview-close:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+}
+
+.reply-preview-close svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* ─── Cita dentro de burbuja (clickeable) ───────────────────────── */
+
+.message-reply {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  width: 100%;
+  margin-bottom: 7px;
+  border: 0;
+  border-left: 2px solid rgba(255, 255, 255, 0.28);
+  border-radius: 0 4px 4px 0;
+  background: rgba(255, 255, 255, 0.04);
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: 1.25;
+  padding: 4px 7px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.message-reply:hover {
+  background: rgba(255, 255, 255, 0.09);
+  border-left-color: var(--accent-2);
+}
+
+.message-reply-name {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--accent-2);
+  display: block;
+}
+
+.message-reply-body {
+  font-size: 0.74rem;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+/* ─── Highlight de mensaje al hacer click en cita ───────────────── */
+
+@keyframes messageHighlightPulse {
+  0%   { background-color: transparent; }
+  18%  { background-color: rgba(47, 184, 164, 0.22); }
+  55%  { background-color: rgba(47, 184, 164, 0.14); }
+  100% { background-color: transparent; }
+}
+
+.message-highlight .message-bubble {
+  animation: messageHighlightPulse 2.5s ease forwards;
+  border-radius: 8px;
+}
+
+/* ─── Swipe-reply: ícono que aparece al deslizar ────────────────── */
+
+.message {
+  position: relative;
+  overflow: visible;
+}
+
+.swipe-reply-hint {
+  position: absolute;
+  top: 50%;
+  left: -28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--panel-2);
+  color: var(--accent-2);
+  border: 1px solid rgba(47, 184, 164, 0.35);
+  opacity: 0;
+  transform: translateY(-50%) scale(0.5);
+  pointer-events: none;
+  transition: opacity 0.1s ease, transform 0.1s ease;
+  z-index: 5;
+}
+
+.message.mine .swipe-reply-hint {
+  left: auto;
+  right: -28px;
+}
+
+.swipe-reply-hint svg {
+  width: 13px;
+  height: 13px;
+  stroke-width: 2.2;
+}
+
+.message.swipe-ready .swipe-reply-hint {
+  color: var(--accent-2);
+  background: rgba(47, 184, 164, 0.18);
+}
+
+/* ─── Contador de caracteres ────────────────────────────────────── */
+
+.char-counter {
+  display: flex;
+  justify-content: flex-end;
+  padding: 3px 2px 0;
+  font-size: 0.65rem;
+  color: var(--muted-2);
+  transition: color 0.2s ease;
+  pointer-events: none;
+  user-select: none;
+}
+
+.message-form.over-limit .char-counter,
+.overlay-message-form.over-limit .char-counter {
+  color: var(--danger);
+  font-weight: 700;
+}
+
+.message-form.over-limit .input-wrapper textarea,
+.overlay-message-form.over-limit .input-wrapper textarea {
+  border-color: rgba(233, 68, 68, 0.65);
+  box-shadow: 0 0 0 3px rgba(233, 68, 68, 0.12);
+}
+
+.message-form.over-limit .send,
+.overlay-message-form.over-limit .send {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+@keyframes counterShake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-4px); }
+  40% { transform: translateX(4px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+}
+
+.char-counter--shake {
+  animation: counterShake 0.45s ease;
 }

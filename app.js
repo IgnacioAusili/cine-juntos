@@ -273,6 +273,25 @@ function wireEvents() {
     { passive: true },
   );
 
+  let scrollSnapTimer = null;
+  window.addEventListener("scroll", () => {
+    const isFullscreen = document.body.classList.contains("fullscreen-mode") || Boolean(document.fullscreenElement);
+    if (!isFullscreen || !dom.workspace) return;
+
+    if (scrollSnapTimer) window.clearTimeout(scrollSnapTimer);
+    scrollSnapTimer = window.setTimeout(() => {
+      const targetY = dom.workspace.offsetTop;
+      const currentY = window.scrollY;
+      const diff = Math.abs(currentY - targetY);
+      if (diff > 0 && diff < 65) {
+        window.scrollTo({
+          top: targetY,
+          behavior: "smooth"
+        });
+      }
+    }, 100);
+  }, { passive: true });
+
   dom.videoPlayer.addEventListener("play", () => {
     logEvent("video", `Play local en ${formatSeconds(dom.videoPlayer.currentTime)}.`);
     if (!suppressVideoEvents) publishState("play");

@@ -347,15 +347,25 @@ body.is-lobby #copyInviteButton {
 }
 
 .source-strip {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: start;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
-.source-strip,
-.sync-bar,
-.chat-tools {
-  align-items: end;
+.input-with-button {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  align-items: center;
+}
+
+.input-with-button input {
+  flex: 1;
+  min-width: 0;
+}
+
+.input-with-button button {
+  flex-shrink: 0;
 }
 
 .chat-tools {
@@ -987,10 +997,7 @@ video::-webkit-media-controls-fullscreen-button {
   backdrop-filter: blur(8px);
 }
 
-/* Panel oculta el header propio: el layout interno queda identico al modo float */
-.player-frame[data-chat-style="panel"] .player-chat-header {
-  display: none;
-}
+
 
 .player-frame[data-chat-style="float"] .player-chat {
   border: 0;
@@ -1073,9 +1080,17 @@ video::-webkit-media-controls-fullscreen-button {
 .overlay-message-form {
   position: relative;
   gap: 5px;
+  width: 100%;
 }
 
-.overlay-message-form textarea {
+.overlay-message-form .input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.overlay-message-form .input-wrapper textarea {
   width: 100%;
   min-height: 30px;
   border-color: rgba(255, 255, 255, 0.12);
@@ -1086,7 +1101,7 @@ video::-webkit-media-controls-fullscreen-button {
   backdrop-filter: blur(8px);
 }
 
-.overlay-message-form .icon-button {
+.overlay-message-form .input-wrapper .icon-button {
   position: absolute;
   top: 50%;
   width: 30px;
@@ -1095,13 +1110,14 @@ video::-webkit-media-controls-fullscreen-button {
   border: 0;
   background: transparent;
   transform: translateY(-50%);
+  z-index: 2;
 }
 
-.overlay-message-form .emoji-trigger {
+.overlay-message-form .input-wrapper .emoji-trigger {
   right: 42px;
 }
 
-.overlay-message-form .send {
+.overlay-message-form .input-wrapper .send {
   right: 8px;
   color: #7ff5e5;
 }
@@ -1313,19 +1329,28 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 .message-form {
-  align-items: center;
-  flex-wrap: wrap;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
 }
 
-.message-form textarea {
-  flex: 1 1 auto;
+.message-form .input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.message-form .input-wrapper textarea {
+  width: 100%;
   min-height: 38px;
   padding-right: 90px;
 }
 
-.chat-area > .message-form .emoji-trigger,
-.chat-area > .message-form .send {
+.chat-area .input-wrapper .emoji-trigger,
+.chat-area .input-wrapper .send {
   position: absolute;
   top: 50%;
   right: 48px;
@@ -1333,9 +1358,12 @@ textarea::-webkit-scrollbar-thumb {
   min-height: 30px;
   flex-basis: 30px;
   transform: translateY(-50%);
+  z-index: 2;
+  border: 0;
+  background: transparent;
 }
 
-.chat-area > .message-form .send {
+.chat-area .input-wrapper .send {
   right: 10px;
 }
 
@@ -1467,19 +1495,12 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 /* Fullscreen: topbar y toolbar siguen visibles. El video ocupa 100vh y
-   el resto del contenido queda accesible por scroll.
-   Implementa Scroll Snap Proximity para efecto magnet/snap al scrollear cerca del video. */
-html.fullscreen-mode,
-body.fullscreen-mode {
-  scroll-snap-type: y proximity;
-  scroll-behavior: smooth;
-  overflow-y: scroll;
-}
-
+   el resto del contenido queda accesible por scroll. */
 body.fullscreen-mode .app-shell {
-  width: 100%;
+  width: min(1680px, 100%);
   min-height: 100vh;
-  padding: 0;
+  margin: 0 auto;
+  padding: 10px;
 }
 
 body.fullscreen-mode .session-view {
@@ -1496,7 +1517,6 @@ body.fullscreen-mode .workspace {
   height: auto;
   min-height: 100vh;
   gap: 0;
-  scroll-snap-align: start;
 }
 
 body.fullscreen-mode .session-view[data-chat-dock] .workspace {
@@ -1557,10 +1577,10 @@ body.fullscreen-mode .player-frame {
   border-radius: 0;
 }
 
-/* Se mantiene en su flujo natural (arriba del video) sin alterar order */
+/* Se mantiene en su flujo natural (arriba del video) a la izquierda y sin alterar order */
 body.fullscreen-mode .session-toolbar {
-  width: min(710px, calc(100% - 16px));
-  margin: 8px auto;
+  width: min(710px, 100%);
+  margin: 8px 0;
 }
 
 body.fullscreen-mode .chat-area {

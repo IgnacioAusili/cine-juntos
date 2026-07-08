@@ -127,13 +127,25 @@
                   <span data-lucide="circle-help"></span>
                 </button>
               </span>
-              <input
-                id="videoUrlInput"
-                type="url"
-                autocomplete="off"
-                placeholder="https://servidor.com/video.mp4"
-                title="Pega un link directo a MP4, WebM u otro video compatible"
-              />
+              <div class="input-with-button">
+                <input
+                  id="videoUrlInput"
+                  type="url"
+                  autocomplete="off"
+                  placeholder="https://servidor.com/video.mp4"
+                  title="Pega un link directo a MP4, WebM u otro video compatible"
+                />
+                <button
+                  class="button primary"
+                  id="loadVideoButton"
+                  type="button"
+                  title="Cargar y sincronizar este video en la sala"
+                  data-tooltip="Cargar y sincronizar video"
+                >
+                  <span data-lucide="play-square"></span>
+                  Cargar
+                </button>
+              </div>
               <p
                 id="syncStatus"
                 class="sync-status video-status empty"
@@ -144,16 +156,6 @@
                 <span id="videoStatusText">Sin contenido</span>
               </p>
             </label>
-            <button
-              class="button primary"
-              id="loadVideoButton"
-              type="button"
-              title="Cargar y sincronizar este video en la sala"
-              data-tooltip="Cargar y sincronizar video"
-            >
-              <span data-lucide="play-square"></span>
-              Cargar
-            </button>
           </div>
 
         </section>
@@ -240,27 +242,29 @@
                 <div class="overlay-messages" id="overlayMessages" aria-live="polite"></div>
                 <form class="message-form overlay-message-form" id="overlayMessageForm">
                   <div class="reply-preview" id="overlayReplyPreview" hidden></div>
-                  <textarea
-                    id="overlayMessageInput"
-                    autocomplete="off"
-                    maxlength="500"
-                    placeholder="Mensaje"
-                    rows="1"
-                    title="Escribir al chat de la sala"
-                  ></textarea>
-                  <button
-                    class="icon-button ghost emoji-trigger"
-                    id="overlayEmojiButton"
-                    type="button"
-                    aria-label="Abrir emojis"
-                    title="Emojis"
-                    data-tooltip="Agregar emoji"
-                  >
-                    <span data-lucide="smile-plus"></span>
-                  </button>
-                  <button class="icon-button send" type="submit" aria-label="Enviar mensaje">
-                    <span data-lucide="send"></span>
-                  </button>
+                  <div class="input-wrapper">
+                    <textarea
+                      id="overlayMessageInput"
+                      autocomplete="off"
+                      maxlength="500"
+                      placeholder="Mensaje"
+                      rows="1"
+                      title="Escribir al chat de la sala"
+                    ></textarea>
+                    <button
+                      class="icon-button ghost emoji-trigger"
+                      id="overlayEmojiButton"
+                      type="button"
+                      aria-label="Abrir emojis"
+                      title="Emojis"
+                      data-tooltip="Agregar emoji"
+                    >
+                      <span data-lucide="smile-plus"></span>
+                    </button>
+                    <button class="icon-button send" type="submit" aria-label="Enviar mensaje">
+                      <span data-lucide="send"></span>
+                    </button>
+                  </div>
                 </form>
               </aside>
             </div>
@@ -315,27 +319,29 @@
 
             <form class="message-form" id="messageForm">
               <div class="reply-preview" id="replyPreview" hidden></div>
-              <textarea
-                id="messageInput"
-                autocomplete="off"
-                maxlength="500"
-                placeholder="Mensaje"
-                rows="1"
-                title="Escribir al chat de la sala"
-              ></textarea>
-              <button
-                class="icon-button ghost emoji-trigger"
-                id="messageEmojiButton"
-                type="button"
-                aria-label="Abrir emojis"
-                title="Emojis"
-                data-tooltip="Agregar emoji"
-              >
-                <span data-lucide="smile-plus"></span>
-              </button>
-              <button class="icon-button send" type="submit" aria-label="Enviar mensaje">
-                <span data-lucide="send"></span>
-              </button>
+              <div class="input-wrapper">
+                <textarea
+                  id="messageInput"
+                  autocomplete="off"
+                  maxlength="500"
+                  placeholder="Mensaje"
+                  rows="1"
+                  title="Escribir al chat de la sala"
+                ></textarea>
+                <button
+                  class="icon-button ghost emoji-trigger"
+                  id="messageEmojiButton"
+                  type="button"
+                  aria-label="Abrir emojis"
+                  title="Emojis"
+                  data-tooltip="Agregar emoji"
+                >
+                  <span data-lucide="smile-plus"></span>
+                </button>
+                <button class="icon-button send" type="submit" aria-label="Enviar mensaje">
+                  <span data-lucide="send"></span>
+                </button>
+              </div>
             </form>
           </aside>
           <button

@@ -110,6 +110,21 @@ setChatDock(localStorage.getItem("cine-juntos-chat-dock") || "right");
 window.addEventListener("load", hydrateIcons);
 detectTerminalLogEndpoint();
 
+// Limpieza al cerrar pestaña, recargar o navegar fuera
+// close() ya no es async: dispara el remove() de Firebase pero no bloquea.
+// Para el caso abrupto, Firebase.onDisconnect se encarga del memberRef en el servidor.
+window.addEventListener("pagehide", (event) => {
+  if (transport) {
+    transport.close();
+  }
+});
+
+window.addEventListener("beforeunload", () => {
+  if (transport) {
+    transport.close();
+  }
+});
+
 if (requestedRoom) {
   dom.roomInput.value = requestedRoom;
   joinRoom(requestedRoom);
@@ -402,14 +417,27 @@ async function createFirebaseTransport(roomCode, config) {
     mode: "firebase",
     async connect(handlers) {
       try {
+        // === LIMPIEZA PEREZOSA AL ENTRAR ===
+        // Si la sala tiene datos viejos (state/messages) pero ningún miembro activo,
+        // es una sala huérfana de una sesión anterior. La borramos antes de entrar.
+        const existingMembersSnap = await dbModule.get(membersRef).catch(() => null);
+        if (existingMembersSnap !== null && !existingMembersSnap.exists()) {
+          // No hay miembros registrados: verificar si hay datos residuales
+          const existingRoomSnap = await dbModule.get(roomRef).catch(() => null);
+          if (existingRoomSnap?.exists()) {
+            logEvent("firebase", "Sala huerfana detectada al entrar. Limpiando datos residuales.");
+            await dbModule.remove(roomRef).catch(() => {});
+          }
+        }
+
+        // Registrar nuestra presencia
         await dbModule.set(memberRef, makeMemberPayload());
-        
-        // Al desconectarse abruptamente, remover presencia del miembro.
+
+        // onDisconnect: Firebase borra nuestra presencia si nos desconectamos abruptamente
+        // (cierre de pestaña, pérdida de red). Cuando memberRef se borra y members queda
+        // vacío, el trigger del listener en otros clientes limpiará la sala.
         dbModule.onDisconnect(memberRef).remove().catch(() => {});
-        
-        // Configurar una regla en onDisconnect en cascada para la sala completa.
-        // Como Firebase no permite condicionales complejos locales en onDisconnect directamente sin Cloud Functions,
-        // al menos garantizamos que nuestra presencia se remueva del servidor.
+
       } catch (error) {
         const wrapped = new Error(error?.message || "No se pudo escribir en members.");
         wrapped.code = error?.code || "FIREBASE_PERMISSION_DENIED";
@@ -436,13 +464,14 @@ async function createFirebaseTransport(roomCode, config) {
         dbModule.onValue(membersRef, (snapshot) => {
           const val = snapshot.val() || {};
           const membersList = Object.keys(val);
-          
-          // Si el nodo de members está vacío, procedemos a borrar la sala completa para que sea efímera
-          if (membersList.length === 0) {
-            logEvent("firebase", "Sala detectada como vacia en tiempo real. Autolimpiando.");
+
+          // Cuando la sala queda completamente vacía (todos se fueron),
+          // el último cliente activo que recibe este evento limpia la sala.
+          if (!snapshot.exists() || membersList.length === 0) {
+            logEvent("firebase", "Sala vacia detectada. Limpiando datos residuales.");
             dbModule.remove(roomRef).catch(() => {});
           }
-          
+
           handlers.onMembers(val);
         }),
       );
@@ -474,21 +503,25 @@ async function createFirebaseTransport(roomCode, config) {
     async updateMember() {
       await dbModule.set(memberRef, makeMemberPayload());
     },
-    async close() {
+    close() {
+      // Cancelar listeners locales inmediatamente
       unsubscribers.forEach((unsubscribe) => unsubscribe());
-      try {
-        // Al salir activamente, removemos nuestra presencia
-        await dbModule.remove(memberRef);
-        // Hacemos una verificación rápida: si ya no quedan miembros tras nuestra salida,
-        // limpiamos la sala completa para que no queden datos huérfanos.
-        const snap = await dbModule.get(membersRef);
-        if (!snap.exists() || Object.keys(snap.val() || {}).length === 0) {
-          logEvent("firebase", "Limpiando sala vacia al salir.");
-          await dbModule.remove(roomRef);
+
+      // Remover presencia: si cierra tab (beforeunload), el navegador puede
+      // no esperar la promesa; Firebase lo maneja via onDisconnect del servidor.
+      // Si es un cierre voluntario (cambio de sala), la promesa se completa normalmente.
+      dbModule.remove(memberRef).then(async () => {
+        // Verificar si quedan miembros. Si no, limpiar la sala completa.
+        try {
+          const snap = await dbModule.get(membersRef);
+          if (!snap.exists() || Object.keys(snap.val() || {}).length === 0) {
+            logEvent("firebase", "Limpiando sala vacia al salir.");
+            await dbModule.remove(roomRef);
+          }
+        } catch (e) {
+          console.warn("Error al verificar limpieza al salir:", e);
         }
-      } catch (e) {
-        console.warn("Error en la limpieza al desconectar:", e);
-      }
+      }).catch(() => {});
     },
   };
 }

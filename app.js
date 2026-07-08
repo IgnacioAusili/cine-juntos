@@ -403,8 +403,13 @@ async function createFirebaseTransport(roomCode, config) {
     async connect(handlers) {
       try {
         await dbModule.set(memberRef, makeMemberPayload());
-        // Al desconectarse del servidor, remover el miembro
+        
+        // Al desconectarse abruptamente, remover presencia del miembro.
         dbModule.onDisconnect(memberRef).remove().catch(() => {});
+        
+        // Configurar una regla en onDisconnect en cascada para la sala completa.
+        // Como Firebase no permite condicionales complejos locales en onDisconnect directamente sin Cloud Functions,
+        // al menos garantizamos que nuestra presencia se remueva del servidor.
       } catch (error) {
         const wrapped = new Error(error?.message || "No se pudo escribir en members.");
         wrapped.code = error?.code || "FIREBASE_PERMISSION_DENIED";
@@ -430,8 +435,14 @@ async function createFirebaseTransport(roomCode, config) {
       unsubscribers.push(
         dbModule.onValue(membersRef, (snapshot) => {
           const val = snapshot.val() || {};
-          // Si el nodo de members existe pero no tiene llaves (o quedó vacío de forma inesperada)
-          // no hace falta hacer nada aquí, pero manejamos la notificación normal.
+          const membersList = Object.keys(val);
+          
+          // Si el nodo de members está vacío, procedemos a borrar la sala completa para que sea efímera
+          if (membersList.length === 0) {
+            logEvent("firebase", "Sala detectada como vacia en tiempo real. Autolimpiando.");
+            dbModule.remove(roomRef).catch(() => {});
+          }
+          
           handlers.onMembers(val);
         }),
       );

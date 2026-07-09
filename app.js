@@ -1036,7 +1036,7 @@ function appendMessageTo(container, message) {
   }
 
   item.append(meta, bubble);
-  if (!message.system) wireMessageInteractions(item, message);
+  if (!message.system) wireMessageInteractions(bubble, message);
   container.append(item);
   trimRenderedMessages(container);
 
@@ -1538,7 +1538,8 @@ function setChatDock(dock) {
   dom.dockChatButton.removeAttribute("title");
   dom.dockChatButton.setAttribute("aria-label", `Chat ${meta.label}. ${meta.tooltip}`);
   if (icon) {
-    icon.setAttribute("data-lucide", meta.icon);
+    const nextMeta = CHAT_DOCK_META[meta.next];
+    icon.setAttribute("data-lucide", nextMeta.icon);
     icon.innerHTML = "";
   }
   localStorage.setItem("cine-juntos-chat-dock", nextDock);

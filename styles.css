@@ -325,6 +325,7 @@ body.is-lobby #copyInviteButton {
   gap: 8px;
   padding: 10px;
   transition: padding 160ms ease;
+  overflow-x: hidden;
 }
 
 .session-view[data-chat-dock="bottom"] .chat-area,
@@ -369,9 +370,27 @@ body.is-lobby #copyInviteButton {
 }
 
 .chat-tools {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+}
+
+.chat-tools-label-row {
+  display: flex;
+  width: 100%;
+}
+
+.chat-tools-controls {
+  display: flex;
   align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.chat-tools-controls input[type="text"] {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .field {
@@ -397,22 +416,6 @@ body.is-lobby #copyInviteButton {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-}
-
-.label-row--between {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-}
-
-.label-title-group {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.label-row--between .sync-status {
-  margin: 0;
 }
 
 .help-button {
@@ -567,7 +570,6 @@ select {
   width: 38px;
   min-height: 38px;
   flex-basis: 38px;
-  align-self: end;
 }
 
 .chat-collapse-handle {
@@ -610,8 +612,6 @@ select {
   font-weight: 700;
   line-height: 1;
   padding: 0 2px;
-  align-self: end;
-  margin-bottom: 10px;
 }
 
 .presence-dot {
@@ -628,12 +628,7 @@ select {
   place-items: center;
 }
 
-.chat-tools .field {
-  grid-template-columns: 1fr;
-  gap: 4px;
-}
-
-.chat-tools input[type="text"] {
+.chat-tools-controls input[type="text"] {
   min-height: 36px;
   padding: 0 10px;
 }
@@ -1174,19 +1169,19 @@ video::-webkit-media-controls-fullscreen-button {
   display: inline-flex;
   min-width: 0;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: 6px;
-  margin: 4px 0 0;
+  margin: 5px 0 0;
   color: var(--muted-2);
   font-size: 0.78rem;
   overflow: hidden;
-  text-align: right;
+  text-align: left;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .video-status {
-  justify-self: end;
+  justify-self: start;
 }
 
 .video-status-icon svg,
@@ -1267,6 +1262,8 @@ video::-webkit-media-controls-fullscreen-button {
 }
 
 .message-bubble {
+  position: relative;
+  overflow: visible;
   display: inline-block;
   max-width: min(86%, 32rem);
   border: 1px solid var(--line);
@@ -1837,6 +1834,7 @@ body.fullscreen-mode .player-chat {
   min-height: 0;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
 }
 
 .messages-wrap .messages,
@@ -2093,7 +2091,7 @@ body.fullscreen-mode .player-chat {
   stroke-width: 2.2;
 }
 
-.message.swipe-ready .swipe-reply-hint {
+.message-bubble.swipe-ready .swipe-reply-hint {
   color: var(--accent-2);
   background: rgba(47, 184, 164, 0.18);
 }

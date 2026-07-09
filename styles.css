@@ -383,6 +383,9 @@ body.is-lobby #copyInviteButton {
 .chat-tools-label-row {
   display: flex;
   width: 100%;
+  /* Indentar la etiqueta para que empiece donde empieza el input,
+     compensando el ancho del presence-pill (auto) + gap (8px) */
+  padding-left: calc(44px + 8px); /* 44px = ancho del presence-pill */
 }
 
 .chat-tools-controls {
@@ -2076,7 +2079,17 @@ body.fullscreen-mode .player-chat {
   display: flex;
   align-items: center;
   position: relative;
+  /* No usar width:100% para que la burbuja no se estire:
+     el flex row se ajusta al contenido */
   width: 100%;
+  /* La burbuja es flex item: por defecto no se estira (align-items:center) */
+}
+
+/* La burbuja como flex-item debe respetar su max-width */
+.message-bubble-row > .message-bubble {
+  flex: 0 1 min(86%, 32rem);
+  max-width: min(86%, 32rem);
+  min-width: 0;
 }
 
 .message.mine .message-bubble-row {

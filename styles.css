@@ -339,12 +339,16 @@ body.is-lobby #copyInviteButton {
 
 .source-strip,
 .sync-bar,
-.chat-tools,
 .message-form {
   position: relative;
   z-index: 1;
   display: flex;
   gap: 8px;
+}
+
+.chat-tools {
+  position: relative;
+  z-index: 1;
 }
 
 .source-strip {

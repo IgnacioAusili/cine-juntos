@@ -975,7 +975,7 @@ function describeVideoEvent(action, state) {
 }
 
 function renderMessage(message) {
-  if (!message?.text || lastMessageIds.has(message.id)) return;
+  if ((!message?.text && !message?.image) || lastMessageIds.has(message.id)) return;
   lastMessageIds.add(message.id);
   rememberParticipant(message.from, message.name);
 
@@ -1328,6 +1328,10 @@ function handleFullscreenChange() {
     document.body.classList.add("fullscreen-mode");
   }
 
+  if (!document.fullscreenElement) {
+    document.body.classList.remove("fullscreen-mode");
+  }
+
   const isFullscreen = Boolean(document.fullscreenElement) || document.body.classList.contains("fullscreen-mode");
   const icon = dom.pageFullscreenButton.querySelector("[data-lucide]");
 
@@ -1473,7 +1477,12 @@ function renderImagePreview(isOverlay) {
   container.innerHTML = `
     <div class="preview-box">
       <img src="${base64}" alt="Miniatura de imagen pegada" />
-      <button type="button" class="preview-remove-btn" aria-label="Quitar imagen">×</button>
+      <button type="button" class="preview-remove-btn" aria-label="Quitar imagen">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
     </div>
   `;
 

@@ -115,17 +115,28 @@
       <main class="session-view" id="sessionView" data-chat-dock="right" hidden>
         <section class="session-toolbar" aria-label="Controles de sala">
           <div class="source-strip">
-            <label class="field">
-              <span class="label-row">
-                Video
-                <button
-                  class="help-button"
-                  type="button"
-                  aria-label="Ayuda sobre videos"
-                  data-tooltip="Usa un enlace directo a un archivo MP4, WebM u otro formato reproducible por el navegador."
+            <div class="field">
+              <span class="label-row label-row--between">
+                <span class="label-title-group">
+                  Video
+                  <button
+                    class="help-button"
+                    type="button"
+                    aria-label="Ayuda sobre videos"
+                    data-tooltip="Usa un enlace directo a un archivo MP4, WebM u otro formato reproducible por el navegador."
+                  >
+                    <span data-lucide="circle-help"></span>
+                  </button>
+                </span>
+                <span
+                  id="syncStatus"
+                  class="sync-status video-status empty"
+                  title="Estado de video"
+                  data-tooltip="Estado de video"
                 >
-                  <span data-lucide="circle-help"></span>
-                </button>
+                  <span class="video-status-icon" id="videoStatusIcon" data-lucide="circle"></span>
+                  <span id="videoStatusText">Sin contenido</span>
+                </span>
               </span>
               <div class="input-with-button">
                 <input
@@ -146,16 +157,7 @@
                   Cargar
                 </button>
               </div>
-              <p
-                id="syncStatus"
-                class="sync-status video-status empty"
-                title="Estado de video"
-                data-tooltip="Estado de video"
-              >
-                <span class="video-status-icon" id="videoStatusIcon" data-lucide="circle"></span>
-                <span id="videoStatusText">Sin contenido</span>
-              </p>
-            </label>
+            </div>
           </div>
 
         </section>

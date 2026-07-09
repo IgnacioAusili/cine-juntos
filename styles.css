@@ -386,6 +386,7 @@ body.is-lobby #copyInviteButton {
   align-items: center;
   gap: 8px;
   width: 100%;
+  min-height: 36px;
 }
 
 .chat-tools-controls input[type="text"] {
@@ -567,9 +568,13 @@ select {
 }
 
 .dock-button {
-  width: 38px;
-  min-height: 38px;
-  flex-basis: 38px;
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .chat-collapse-handle {
@@ -598,8 +603,9 @@ select {
 }
 
 .presence-pill {
+  flex: 0 0 auto;
   display: inline-flex;
-  min-height: 22px;
+  height: 36px;
   align-items: center;
   justify-content: center;
   gap: 6px;
@@ -611,7 +617,8 @@ select {
   font-size: 0.74rem;
   font-weight: 700;
   line-height: 1;
-  padding: 0 2px;
+  padding: 0 4px;
+  cursor: pointer;
 }
 
 .presence-dot {
@@ -1246,6 +1253,8 @@ video::-webkit-media-controls-fullscreen-button {
   display: grid;
   gap: 3px;
   margin-bottom: 8px;
+  position: relative;
+  overflow: visible;
 }
 
 .message:last-child {
@@ -2059,16 +2068,29 @@ body.fullscreen-mode .player-chat {
 
 /* ─── Swipe-reply: ícono que aparece al deslizar ────────────────── */
 
-.message {
+.message-bubble-row {
+  display: flex;
+  align-items: center;
   position: relative;
+  width: 100%;
+}
+
+.message.mine .message-bubble-row {
+  justify-content: flex-end;
+}
+
+.swipe-reply-hint-wrapper {
+  position: relative;
+  width: 0;
+  height: 26px;
   overflow: visible;
+  pointer-events: none;
 }
 
 .swipe-reply-hint {
   position: absolute;
   top: 50%;
-  /* Al deslizar a la izquierda, el hint aparece a la DERECHA del mensaje */
-  right: -34px;
+  left: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2084,14 +2106,13 @@ body.fullscreen-mode .player-chat {
   z-index: 5;
 }
 
-
 .swipe-reply-hint svg {
   width: 13px;
   height: 13px;
   stroke-width: 2.2;
 }
 
-.message-bubble.swipe-ready .swipe-reply-hint {
+.message-bubble.swipe-ready + .swipe-reply-hint-wrapper .swipe-reply-hint {
   color: var(--accent-2);
   background: rgba(47, 184, 164, 0.18);
 }

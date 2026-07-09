@@ -1035,8 +1035,24 @@ function appendMessageTo(container, message) {
     bubble.append(link);
   }
 
-  item.append(meta, bubble);
-  if (!message.system) wireMessageInteractions(bubble, message);
+  if (message.system) {
+    item.append(meta, bubble);
+  } else {
+    const bubbleRow = document.createElement("div");
+    bubbleRow.className = "message-bubble-row";
+
+    const hintWrapper = document.createElement("div");
+    hintWrapper.className = "swipe-reply-hint-wrapper";
+    const hint = document.createElement("span");
+    hint.className = "swipe-reply-hint";
+    hint.innerHTML = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><polyline points='9 17 4 12 9 7'/><path d='M20 18v-2a4 4 0 0 0-4-4H4'/></svg>`;
+    hintWrapper.append(hint);
+
+    bubbleRow.append(bubble, hintWrapper);
+    item.append(meta, bubbleRow);
+
+    wireMessageInteractions(bubble, message, hint);
+  }
   container.append(item);
   trimRenderedMessages(container);
 
@@ -1788,7 +1804,7 @@ function renderReplyPreview() {
   });
 }
 
-function wireMessageInteractions(item, message) {
+function wireMessageInteractions(bubble, message, hint) {
   // Solo swipe de derecha a izquierda (dx negativo) activa reply
   const SWIPE_THRESHOLD = 55;   // desplazamiento visual mínimo para activar
   const SWIPE_MAX_VISUAL = 80;  // límite visual de desplazamiento
@@ -1799,12 +1815,6 @@ function wireMessageInteractions(item, message) {
   let tracking = false;   // ¿está haciendo drag activo?
   let dirLocked = false;  // ¿dirección bloqueada como horizontal?
   let cancelledByVertical = false;
-
-  // Ícono hint que aparece al costado
-  const hint = document.createElement("span");
-  hint.className = "swipe-reply-hint";
-  hint.innerHTML = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><polyline points='9 17 4 12 9 7'/><path d='M20 18v-2a4 4 0 0 0-4-4H4'/></svg>`;
-  item.append(hint);
 
   function applySwipe(rawDx) {
     // Solo aceptar swipe hacia la izquierda
@@ -1817,19 +1827,20 @@ function wireMessageInteractions(item, message) {
     const clamped = Math.min(damped, SWIPE_MAX_VISUAL);
     const ratio = clamped / SWIPE_MAX_VISUAL;
 
-    item.style.transition = "none";
-    item.style.transform = `translateX(${-clamped}px)`;
+    bubble.style.transition = "none";
+    bubble.style.transform = `translateX(${-clamped}px)`;
     hint.style.opacity = String(Math.min(1, ratio * 2.2));
-    hint.style.transform = `translateX(${-clamped * 0.5}px) translateY(-50%) scale(${0.5 + ratio * 0.5})`;
-    item.classList.toggle("swipe-ready", clamped >= SWIPE_THRESHOLD);
+    // No mover en X el hint para que no se encime sobre la burbuja
+    hint.style.transform = `translateY(-50%) scale(${0.5 + ratio * 0.5})`;
+    bubble.classList.toggle("swipe-ready", clamped >= SWIPE_THRESHOLD);
   }
 
   function resetSwipe() {
-    item.style.transition = "transform 0.32s cubic-bezier(0.25, 0.46, 0.45, 0.94)";
-    item.style.transform = "";
+    bubble.style.transition = "transform 0.32s cubic-bezier(0.25, 0.46, 0.45, 0.94)";
+    bubble.style.transform = "";
     hint.style.opacity = "0";
     hint.style.transform = "translateY(-50%) scale(0.5)";
-    item.classList.remove("swipe-ready");
+    bubble.classList.remove("swipe-ready");
     startX = null;
     startY = null;
     tracking = false;
@@ -1895,8 +1906,8 @@ function wireMessageInteractions(item, message) {
 
     if (dx < 0 && damped >= SWIPE_THRESHOLD) {
       // Rebote de confirmación
-      item.style.transition = "transform 0.12s ease-out";
-      item.style.transform = `translateX(-14px)`;
+      bubble.style.transition = "transform 0.12s ease-out";
+      bubble.style.transform = `translateX(-14px)`;
       window.setTimeout(() => {
         resetSwipe();
         setReplyTarget(message);
@@ -1907,29 +1918,29 @@ function wireMessageInteractions(item, message) {
   }
 
   // ── Pointer events (mouse / stylus) ──────────────────────────────
-  item.addEventListener("contextmenu", (e) => {
+  bubble.addEventListener("contextmenu", (e) => {
     e.preventDefault();
     showMessageMenu(message, e.clientX, e.clientY);
   });
 
-  item.addEventListener("pointerdown", (e) => {
+  bubble.addEventListener("pointerdown", (e) => {
     if (e.pointerType === "touch") return; // Touch lo manejan los touch events
     if (e.button && e.button !== 0) return;
     onStart(e.clientX, e.clientY);
   });
 
-  item.addEventListener("pointermove", (e) => {
+  bubble.addEventListener("pointermove", (e) => {
     if (e.pointerType === "touch") return;
     if (!tracking) return;
     onMove(e.clientX, e.clientY);
   });
 
-  item.addEventListener("pointerup", (e) => {
+  bubble.addEventListener("pointerup", (e) => {
     if (e.pointerType === "touch") return;
     onEnd(e.clientX);
   });
 
-  item.addEventListener("pointercancel", (e) => {
+  bubble.addEventListener("pointercancel", (e) => {
     if (e.pointerType === "touch") return;
     window.clearTimeout(longPressTimer);
     longPressStart = null;
@@ -1937,12 +1948,12 @@ function wireMessageInteractions(item, message) {
   });
 
   // ── Touch events (móvil / tablet) ────────────────────────────────
-  item.addEventListener("touchstart", (e) => {
+  bubble.addEventListener("touchstart", (e) => {
     const t = e.touches[0];
     onStart(t.clientX, t.clientY);
   }, { passive: true });
 
-  item.addEventListener("touchmove", (e) => {
+  bubble.addEventListener("touchmove", (e) => {
     const t = e.touches[0];
     if (!tracking) return;
     const dx = t.clientX - startX;
@@ -1951,7 +1962,7 @@ function wireMessageInteractions(item, message) {
     onMove(t.clientX, t.clientY);
   }, { passive: false });
 
-  item.addEventListener("touchend", (e) => {
+  bubble.addEventListener("touchend", (e) => {
     const t = e.changedTouches[0];
     onEnd(t.clientX);
   }, { passive: true });

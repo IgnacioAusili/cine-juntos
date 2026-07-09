@@ -1788,129 +1788,178 @@ function renderReplyPreview() {
 }
 
 function wireMessageInteractions(item, message) {
-  const SWIPE_THRESHOLD = 60;   // px mínimos para activar reply
-  const SWIPE_MAX_VISUAL = 90;  // px máximo desplazamiento visual
-  let swipeStartX = null;
-  let swipeStartY = null;
-  let swiping = false;
-  let swipeActivated = false;
+  // Solo swipe de derecha a izquierda (dx negativo) activa reply
+  const SWIPE_THRESHOLD = 55;   // desplazamiento visual mínimo para activar
+  const SWIPE_MAX_VISUAL = 80;  // límite visual de desplazamiento
+  const DIR_LOCK_ANGLE = 30;    // ángulo máximo en grados del movimiento horizontal
 
-  // Mostrar ícono de reply durante el swipe
+  let startX = null;
+  let startY = null;
+  let tracking = false;   // ¿está haciendo drag activo?
+  let dirLocked = false;  // ¿dirección bloqueada como horizontal?
+  let cancelledByVertical = false;
+
+  // Ícono hint que aparece al costado
   const hint = document.createElement("span");
   hint.className = "swipe-reply-hint";
   hint.innerHTML = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><polyline points='9 17 4 12 9 7'/><path d='M20 18v-2a4 4 0 0 0-4-4H4'/></svg>`;
   item.append(hint);
 
-  function applySwipeTransform(rawDelta) {
-    // Resistencia progresiva: a medida que se aleja, la resistencia aumenta
-    const sign = rawDelta < 0 ? -1 : 1;
-    const abs = Math.abs(rawDelta);
+  function applySwipe(rawDx) {
+    // Solo aceptar swipe hacia la izquierda
+    if (rawDx >= 0) {
+      resetSwipe();
+      return;
+    }
+    const abs = Math.abs(rawDx);
     const damped = SWIPE_MAX_VISUAL * (1 - Math.exp(-abs / SWIPE_MAX_VISUAL));
     const clamped = Math.min(damped, SWIPE_MAX_VISUAL);
     const ratio = clamped / SWIPE_MAX_VISUAL;
 
     item.style.transition = "none";
-    item.style.transform = `translateX(${sign * clamped}px)`;
-    hint.style.opacity = String(Math.min(1, ratio * 2));
-    hint.style.transform = `translateX(${sign * clamped * 0.45}px) scale(${0.5 + ratio * 0.5})`;
-
-    // Resaltado cuando supera el umbral
-    if (clamped >= SWIPE_THRESHOLD) {
-      item.classList.add("swipe-ready");
-    } else {
-      item.classList.remove("swipe-ready");
-    }
+    item.style.transform = `translateX(${-clamped}px)`;
+    hint.style.opacity = String(Math.min(1, ratio * 2.2));
+    hint.style.transform = `translateX(${-clamped * 0.5}px) translateY(-50%) scale(${0.5 + ratio * 0.5})`;
+    item.classList.toggle("swipe-ready", clamped >= SWIPE_THRESHOLD);
   }
 
   function resetSwipe() {
-    item.style.transition = "transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94)";
+    item.style.transition = "transform 0.32s cubic-bezier(0.25, 0.46, 0.45, 0.94)";
     item.style.transform = "";
     hint.style.opacity = "0";
-    hint.style.transform = "";
+    hint.style.transform = "translateY(-50%) scale(0.5)";
     item.classList.remove("swipe-ready");
-    swiping = false;
-    swipeActivated = false;
-    swipeStartX = null;
-    swipeStartY = null;
+    startX = null;
+    startY = null;
+    tracking = false;
+    dirLocked = false;
+    cancelledByVertical = false;
   }
 
-  item.addEventListener("contextmenu", (event) => {
-    event.preventDefault();
-    showMessageMenu(message, event.clientX, event.clientY);
-  });
-
-  item.addEventListener("pointerdown", (event) => {
-    if (event.button && event.button !== 0) return;
-    swipeStartX = event.clientX;
-    swipeStartY = event.clientY;
-    swiping = false;
-    swipeActivated = false;
-    longPressStart = { x: event.clientX, y: event.clientY, message };
+  function onStart(clientX, clientY) {
+    startX = clientX;
+    startY = clientY;
+    tracking = true;
+    dirLocked = false;
+    cancelledByVertical = false;
+    longPressStart = { x: clientX, y: clientY, message };
     window.clearTimeout(longPressTimer);
     longPressTimer = window.setTimeout(() => {
-      if (!swiping) showMessageMenu(message, event.clientX, event.clientY);
+      if (!dirLocked) showMessageMenu(message, clientX, clientY);
     }, 560);
-  });
+  }
 
-  item.addEventListener("pointermove", (event) => {
-    if (swipeStartX === null) return;
+  function onMove(clientX, clientY) {
+    if (!tracking || cancelledByVertical) return;
 
-    const dx = event.clientX - swipeStartX;
-    const dy = event.clientY - swipeStartY;
+    const dx = clientX - startX;
+    const dy = clientY - startY;
 
-    // Determinar si es un gesto horizontal genuino
-    if (!swiping) {
-      if (Math.abs(dy) > Math.abs(dx) + 6) {
-        // Gesto vertical → cancelar
-        swipeStartX = null;
-        swipeStartY = null;
-        return;
-      }
-      if (Math.abs(dx) > 8) {
-        swiping = true;
+    if (!dirLocked) {
+      if (Math.abs(dy) > Math.abs(dx) + 5) {
+        // Gesto vertical → cancelar todo el swipe
+        cancelledByVertical = true;
         window.clearTimeout(longPressTimer);
-        longPressStart = null;
-        item.setPointerCapture(event.pointerId);
-      } else {
+        tracking = false;
         return;
       }
-    }
-
-    applySwipeTransform(dx);
-  });
-
-  item.addEventListener("pointerup", (event) => {
-    window.clearTimeout(longPressTimer);
-
-    if (swiping && !swipeActivated) {
-      const dx = event.clientX - swipeStartX;
-      const abs = Math.abs(dx);
-      const damped = SWIPE_MAX_VISUAL * (1 - Math.exp(-abs / SWIPE_MAX_VISUAL));
-
-      if (damped >= SWIPE_THRESHOLD) {
-        swipeActivated = true;
-        // Pequeño rebote antes de activar
-        item.style.transition = "transform 0.15s ease-out";
-        item.style.transform = `translateX(${dx < 0 ? -18 : 18}px)`;
-        window.setTimeout(() => {
-          resetSwipe();
-          setReplyTarget(message);
-        }, 150);
+      if (Math.abs(dx) > 10) {
+        // Solo hacia la izquierda
+        if (dx > 0) {
+          cancelledByVertical = true;
+          tracking = false;
+          return;
+        }
+        dirLocked = true;
+        longPressStart = null;
+        window.clearTimeout(longPressTimer);
       } else {
-        resetSwipe();
+        return; // No se decidió aún la dirección
       }
-    } else if (!swiping) {
-      longPressStart = null;
     }
 
-    if (!swiping) longPressStart = null;
+    applySwipe(dx);
+  }
+
+  function onEnd(clientX) {
+    window.clearTimeout(longPressTimer);
+    if (!tracking || !dirLocked) {
+      longPressStart = null;
+      return;
+    }
+
+    const dx = clientX - startX;
+    const abs = Math.abs(dx);
+    const damped = SWIPE_MAX_VISUAL * (1 - Math.exp(-abs / SWIPE_MAX_VISUAL));
+
+    if (dx < 0 && damped >= SWIPE_THRESHOLD) {
+      // Rebote de confirmación
+      item.style.transition = "transform 0.12s ease-out";
+      item.style.transform = `translateX(-14px)`;
+      window.setTimeout(() => {
+        resetSwipe();
+        setReplyTarget(message);
+      }, 130);
+    } else {
+      resetSwipe();
+    }
+  }
+
+  // ── Pointer events (mouse / stylus) ──────────────────────────────
+  item.addEventListener("contextmenu", (e) => {
+    e.preventDefault();
+    showMessageMenu(message, e.clientX, e.clientY);
   });
 
-  item.addEventListener("pointercancel", () => {
+  item.addEventListener("pointerdown", (e) => {
+    if (e.pointerType === "touch") return; // Touch lo manejan los touch events
+    if (e.button && e.button !== 0) return;
+    onStart(e.clientX, e.clientY);
+  });
+
+  item.addEventListener("pointermove", (e) => {
+    if (e.pointerType === "touch") return;
+    if (!tracking) return;
+    onMove(e.clientX, e.clientY);
+  });
+
+  item.addEventListener("pointerup", (e) => {
+    if (e.pointerType === "touch") return;
+    onEnd(e.clientX);
+  });
+
+  item.addEventListener("pointercancel", (e) => {
+    if (e.pointerType === "touch") return;
     window.clearTimeout(longPressTimer);
     longPressStart = null;
-    if (swiping) resetSwipe();
+    resetSwipe();
   });
+
+  // ── Touch events (móvil / tablet) ────────────────────────────────
+  item.addEventListener("touchstart", (e) => {
+    const t = e.touches[0];
+    onStart(t.clientX, t.clientY);
+  }, { passive: true });
+
+  item.addEventListener("touchmove", (e) => {
+    const t = e.touches[0];
+    if (!tracking) return;
+    const dx = t.clientX - startX;
+    // Si está en medio de un swipe horizontal, prevenir scroll nativo
+    if (dirLocked && dx < 0) e.preventDefault();
+    onMove(t.clientX, t.clientY);
+  }, { passive: false });
+
+  item.addEventListener("touchend", (e) => {
+    const t = e.changedTouches[0];
+    onEnd(t.clientX);
+  }, { passive: true });
+
+  item.addEventListener("touchcancel", () => {
+    window.clearTimeout(longPressTimer);
+    longPressStart = null;
+    resetSwipe();
+  }, { passive: true });
 }
 
 function showMessageMenu(message, x, y) {

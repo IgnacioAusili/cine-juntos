@@ -1038,7 +1038,8 @@ video::-webkit-media-controls-fullscreen-button {
   min-height: 0;
   flex-direction: column;
   justify-content: flex-start;
-  overflow: hidden auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   overscroll-behavior: contain;
   pointer-events: auto;
   border: 0;
@@ -1107,7 +1108,7 @@ video::-webkit-media-controls-fullscreen-button {
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 6px;
   background: rgba(12, 15, 17, 0.52);
-  padding: 0 4px;
+  padding: 0 0 0 4px;
   backdrop-filter: blur(8px);
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
@@ -1238,7 +1239,8 @@ video::-webkit-media-controls-fullscreen-button {
 .messages {
   position: relative;
   z-index: 1;
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: #13171a;
@@ -1381,7 +1383,7 @@ textarea::-webkit-scrollbar-thumb {
   border: 1px solid var(--line);
   border-radius: 6px;
   background: #111518;
-  padding: 0 4px;
+  padding: 0 0 0 4px;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -2067,12 +2069,13 @@ body.fullscreen-mode .player-chat {
 .swipe-reply-hint {
   position: absolute;
   top: 50%;
-  left: -28px;
+  /* Al deslizar a la izquierda, el hint aparece a la DERECHA del mensaje */
+  right: -34px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   border-radius: 999px;
   background: var(--panel-2);
   color: var(--accent-2);
@@ -2080,14 +2083,9 @@ body.fullscreen-mode .player-chat {
   opacity: 0;
   transform: translateY(-50%) scale(0.5);
   pointer-events: none;
-  transition: opacity 0.1s ease, transform 0.1s ease;
   z-index: 5;
 }
 
-.message.mine .swipe-reply-hint {
-  left: auto;
-  right: -28px;
-}
 
 .swipe-reply-hint svg {
   width: 13px;

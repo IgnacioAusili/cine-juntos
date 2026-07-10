@@ -100,8 +100,6 @@ let longPressTimer = null;
 let longPressStart = null;
 let tooltipTarget = null;
 let tooltipPressTimer = null;
-let chatDebugObserversStarted = false;
-let chatDebugLayoutTimer = null;
 
 const initialDisplayName = localStorage.getItem("cine-juntos-name") || makeGuestName();
 dom.nameInput.value = initialDisplayName;
@@ -913,11 +911,6 @@ function sendMessage(text, attachedImage) {
   if (!activeRoom || !transport) {
     setSyncStatus("Primero entra a una sala.");
     logEvent("chat", "Mensaje no enviado: falta sala.");
-    debugChatConsole("send:block", {
-      reason: "missing-room-or-transport",
-      activeRoom,
-      hasTransport: Boolean(transport),
-    });
     return false;
   }
 
@@ -937,16 +930,10 @@ function sendMessage(text, attachedImage) {
     createdAt: getTransportNow(),
   };
 
-  debugChatConsole("send:queue", summarizeMessageForDebug(message));
-
   transport.sendMessage(message).catch((error) => {
     console.error(error);
     logEvent("error", `No se pudo enviar mensaje: ${error.message || error}`);
     setSyncStatus("No se pudo enviar el mensaje.");
-    debugChatConsole("send:error", {
-      error: error?.message || String(error),
-      message: summarizeMessageForDebug(message),
-    });
   });
 
   if (transport.mode === "local") renderMessage(message);
@@ -988,19 +975,7 @@ function describeVideoEvent(action, state) {
 }
 
 function renderMessage(message) {
-  if (!message) {
-    debugChatConsole("render:skip", { reason: "missing-message" });
-    return;
-  }
-  if ((!message.text && !message.image) || lastMessageIds.has(message.id)) {
-    debugChatConsole("render:skip", {
-      reason: !message.text && !message.image ? "empty-message" : "duplicate-message",
-      message: summarizeMessageForDebug(message),
-      alreadySeen: lastMessageIds.has(message.id),
-    });
-    return;
-  }
-  debugChatConsole("render:start", summarizeMessageForDebug(message));
+  if ((!message?.text && !message?.image) || lastMessageIds.has(message.id)) return;
   lastMessageIds.add(message.id);
   rememberParticipant(message.from, message.name);
 
@@ -1017,18 +992,10 @@ function renderMessage(message) {
   if (message.from !== clientId && !externalChatOpen) {
     incrementExternalUnread();
   }
-  scheduleChatLayoutDebug("renderMessage");
   logEvent("chat:recv", `Mensaje recibido de ${message.name || "Invitado"}.`);
 }
 
 function appendMessageTo(container, message) {
-  if (!container) {
-    debugChatConsole("append:missing-container", {
-      target: containerDebugName(container),
-      message: summarizeMessageForDebug(message),
-    });
-    return;
-  }
   const item = document.createElement("article");
   item.className = `message${message.from === clientId ? " mine" : ""}${message.system ? " system" : ""}`;
   item.dataset.messageId = message.id;
@@ -1088,11 +1055,6 @@ function appendMessageTo(container, message) {
   }
   container.append(item);
   trimRenderedMessages(container);
-  debugChatConsole("append:done", {
-    target: containerDebugName(container),
-    children: container.children.length,
-    message: summarizeMessageForDebug(message),
-  });
 
   // Si el usuario está viendo el final del chat → auto-scroll
   // Si no está al final → mostrar el indicador de nuevo mensaje
@@ -1104,9 +1066,6 @@ function appendMessageTo(container, message) {
   } else if (message.from !== clientId) {
     incrementScrollIndicator(isOverlay);
   }
-  window.requestAnimationFrame(() => {
-    debugContainerSnapshot(`append:${containerDebugName(container)}`, container);
-  });
 }
 
 function appendMessageContent(container, text) {
@@ -1311,147 +1270,6 @@ function renderPresence() {
   dom.presencePill.setAttribute("aria-label", `${uniqueMembers.length} usuarios conectados`);
 }
 
-function summarizeMessageForDebug(message) {
-  return {
-    id: message?.id || "(sin-id)",
-    from: message?.from || "(sin-from)",
-    name: message?.name || "(sin-name)",
-    system: Boolean(message?.system),
-    hasText: Boolean(message?.text),
-    textLength: String(message?.text || "").length,
-    hasImage: Boolean(message?.image),
-    replyTo: message?.replyTo?.id || null,
-    createdAt: message?.createdAt || null,
-  };
-}
-
-function containerDebugName(container) {
-  if (!container) return "(sin-contenedor)";
-  if (container === dom.messages) return "messages";
-  if (container === dom.overlayMessages) return "overlayMessages";
-  return container.id || container.className || container.tagName || "(contenedor)";
-}
-
-function debugChatConsole(event, data = {}) {
-  console.debug(`[chat-debug] ${event}`, data);
-}
-
-function debugContainerSnapshot(reason, container) {
-  if (!container) {
-    debugChatConsole(reason, { error: "container-missing" });
-    return;
-  }
-
-  const rect = container.getBoundingClientRect();
-  const styles = window.getComputedStyle(container);
-  const firstMessage = container.firstElementChild;
-  const lastMessage = container.lastElementChild;
-  debugChatConsole(reason, {
-    target: containerDebugName(container),
-    childCount: container.children.length,
-    scrollTop: Math.round(container.scrollTop),
-    scrollHeight: Math.round(container.scrollHeight),
-    clientHeight: Math.round(container.clientHeight),
-    rect: {
-      width: Math.round(rect.width),
-      height: Math.round(rect.height),
-      top: Math.round(rect.top),
-      left: Math.round(rect.left),
-    },
-    styles: {
-      display: styles.display,
-      visibility: styles.visibility,
-      opacity: styles.opacity,
-      overflowX: styles.overflowX,
-      overflowY: styles.overflowY,
-      position: styles.position,
-    },
-    firstMessageId: firstMessage?.dataset?.messageId || null,
-    lastMessageId: lastMessage?.dataset?.messageId || null,
-  });
-}
-
-function scheduleChatLayoutDebug(reason) {
-  window.clearTimeout(chatDebugLayoutTimer);
-  chatDebugLayoutTimer = window.setTimeout(() => {
-    const chatArea = document.querySelector(".chat-area");
-    const messagesWrap = document.querySelector(".messages-wrap");
-    debugContainerSnapshot(`${reason}:main`, dom.messages);
-    debugContainerSnapshot(`${reason}:overlay`, dom.overlayMessages);
-    if (chatArea) {
-      const rect = chatArea.getBoundingClientRect();
-      const styles = window.getComputedStyle(chatArea);
-      debugChatConsole(`${reason}:chat-area`, {
-        rect: {
-          width: Math.round(rect.width),
-          height: Math.round(rect.height),
-          top: Math.round(rect.top),
-          left: Math.round(rect.left),
-        },
-        styles: {
-          display: styles.display,
-          gridTemplateRows: styles.gridTemplateRows,
-          overflow: styles.overflow,
-          visibility: styles.visibility,
-        },
-      });
-    }
-    if (messagesWrap) {
-      const rect = messagesWrap.getBoundingClientRect();
-      const styles = window.getComputedStyle(messagesWrap);
-      debugChatConsole(`${reason}:messages-wrap`, {
-        rect: {
-          width: Math.round(rect.width),
-          height: Math.round(rect.height),
-          top: Math.round(rect.top),
-          left: Math.round(rect.left),
-        },
-        styles: {
-          display: styles.display,
-          minHeight: styles.minHeight,
-          overflow: styles.overflow,
-          visibility: styles.visibility,
-        },
-      });
-    }
-  }, 60);
-}
-
-function ensureChatDebugObservers() {
-  if (chatDebugObserversStarted) return;
-  chatDebugObserversStarted = true;
-
-  const targets = [dom.messages, dom.overlayMessages, document.querySelector(".chat-area"), document.querySelector(".messages-wrap")]
-    .filter(Boolean);
-
-  if (window.ResizeObserver) {
-    const resizeObserver = new ResizeObserver((entries) => {
-      entries.forEach((entry) => {
-        const rect = entry.target.getBoundingClientRect();
-        debugChatConsole("resize", {
-          target: containerDebugName(entry.target),
-          width: Math.round(rect.width),
-          height: Math.round(rect.height),
-        });
-      });
-      scheduleChatLayoutDebug("resize");
-    });
-    targets.forEach((target) => resizeObserver.observe(target));
-  }
-
-  [dom.messages, dom.overlayMessages].filter(Boolean).forEach((container) => {
-    const observer = new MutationObserver((mutations) => {
-      debugChatConsole("mutation", {
-        target: containerDebugName(container),
-        mutations: mutations.length,
-        childCount: container.children.length,
-      });
-      scheduleChatLayoutDebug(`mutation:${containerDebugName(container)}`);
-    });
-    observer.observe(container, { childList: true, subtree: false });
-  });
-}
-
 function showLobby() {
   dom.lobbyScreen.hidden = false;
   dom.sessionView.hidden = true;
@@ -1463,8 +1281,6 @@ function showSession() {
   dom.lobbyScreen.hidden = true;
   dom.sessionView.hidden = false;
   document.body.classList.remove("is-lobby");
-  ensureChatDebugObservers();
-  scheduleChatLayoutDebug("showSession");
 }
 
 function setHostBadge(visible) {
@@ -1751,7 +1567,6 @@ function setChatDock(dock) {
   if (isFullscreen) {
     focusFullscreenWorkspace();
   }
-  scheduleChatLayoutDebug(`setChatDock:${nextDock}`);
 }
 
 function setExternalChatCollapsed(collapsed) {
@@ -1764,7 +1579,6 @@ function setExternalChatCollapsed(collapsed) {
   if (isFullscreen) {
     focusFullscreenWorkspace();
   }
-  scheduleChatLayoutDebug(`setExternalChatCollapsed:${collapsed ? "collapsed" : "expanded"}`);
 }
 
 function updateCollapseButton() {

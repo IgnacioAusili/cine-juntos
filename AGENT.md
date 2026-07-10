@@ -40,3 +40,4 @@ Crear una pagina web estatica para ver videos sincronizados con otra persona en 
 - Priorizar cambios acotados en `index.html`, `styles.css` y `app.js`.
 - Mantener logs tecnicos en consola o terminal, no como paneles visibles dentro de la UI.
 - Validar despues de cada cambio con `node --check app.js` y revisar visualmente en `http://127.0.0.1:8080`.
+- Si un fix ya esta en `main` pero GitHub Pages sigue cargando una version vieja de `app.js`, `styles.css` u otro asset versionado, actualizar el query param `?v=` en `index.html` para forzar cache-busting antes de seguir debuggeando.

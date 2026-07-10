@@ -1279,8 +1279,8 @@ video::-webkit-media-controls-fullscreen-button {
 
 .message-bubble {
   position: relative;
-  overflow: visible;
   display: inline-block;
+  width: fit-content;
   max-width: min(86%, 32rem);
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -1307,10 +1307,12 @@ video::-webkit-media-controls-fullscreen-button {
 
 .message.system .message-bubble {
   max-width: 92%;
-  border-color: rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.055);
+  border: 0;
+  background: transparent;
   color: var(--muted);
   font-size: 0.74rem;
+  line-height: 1.25;
+  padding: 2px 0;
   text-align: center;
 }
 
@@ -1321,12 +1323,12 @@ video::-webkit-media-controls-fullscreen-button {
 }
 
 .overlay-messages .message.system .message-bubble {
-  background: rgba(9, 12, 14, 0.32);
+  border: 0;
+  background: transparent;
   color: rgba(255, 255, 255, 0.72);
   font-size: 0.62rem;
-  padding: 4px 7px;
+  padding: 2px 0;
   text-align: center;
-  backdrop-filter: blur(8px);
 }
 
 .message-media-link {
@@ -1455,6 +1457,11 @@ textarea::-webkit-scrollbar-thumb {
 .message:not(.mine) .message-bubble {
   border-color: rgba(240, 140, 58, 0.28);
   background: rgba(240, 140, 58, 0.12);
+}
+
+.message.system .message-bubble {
+  border: 0;
+  background: transparent;
 }
 
 
@@ -2076,13 +2083,10 @@ body.fullscreen-mode .player-chat {
 /* ─── Swipe-reply: ícono que aparece al deslizar ────────────────── */
 
 .message-bubble-row {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   position: relative;
-  /* No usar width:100% para que la burbuja no se estire:
-     el flex row se ajusta al contenido */
-  width: 100%;
-  /* La burbuja es flex item: por defecto no se estira (align-items:center) */
+  max-width: 100%;
 }
 
 /* La burbuja como flex-item debe respetar su max-width */

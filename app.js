@@ -2153,7 +2153,7 @@ function wireMessageInteractions(bubble, message, hint) {
     onEnd(t.clientX);
   }, { passive: true });
 
-  item.addEventListener("touchcancel", () => {
+  bubble.addEventListener("touchcancel", () => {
     window.clearTimeout(longPressTimer);
     longPressStart = null;
     resetSwipe();

@@ -2,7 +2,7 @@ const http = require("node:http");
 const fs = require("node:fs");
 const path = require("node:path");
 
-const root = __dirname;
+const root = path.resolve(__dirname, "..");
 const portArgIndex = process.argv.indexOf("--port");
 const port = Number(process.env.PORT || (portArgIndex >= 0 ? process.argv[portArgIndex + 1] : 8080));
 
@@ -79,7 +79,7 @@ const server = http.createServer(async (req, res) => {
   }
 
   const url = new URL(req.url, "http://localhost");
-  if (url.pathname === "/dev-runtime.js") {
+  if (url.pathname === "/public/dev-runtime.js") {
     res.writeHead(200, {
       "Content-Type": "text/javascript; charset=utf-8",
       "Cache-Control": "no-store",

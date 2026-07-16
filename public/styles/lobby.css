@@ -1,0 +1,68 @@
+.lobby-screen {
+  display: grid;
+  min-height: calc(100vh - 96px);
+  place-items: center;
+}
+
+.lobby-panel {
+  position: relative;
+  display: grid;
+  width: min(560px, 100%);
+  gap: 22px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(27, 31, 35, 0.92);
+  box-shadow: var(--shadow);
+  padding: 26px;
+}
+
+.lobby-panel::before {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(145deg, rgba(240, 140, 58, 0.11), transparent 32%),
+    linear-gradient(315deg, rgba(47, 184, 164, 0.09), transparent 34%);
+  content: "";
+  pointer-events: none;
+}
+
+.lobby-mark,
+.lobby-fields {
+  position: relative;
+  z-index: 1;
+}
+
+.lobby-mark {
+  display: grid;
+  width: 58px;
+  min-height: 58px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--muted);
+}
+
+.lobby-mark svg {
+  width: 30px;
+  height: 30px;
+}
+
+.lobby-fields {
+  display: grid;
+  gap: 14px;
+}
+
+.lobby-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.lobby-status {
+  min-height: 20px;
+  margin: 0;
+  color: var(--muted-2);
+  font-size: 0.9rem;
+}

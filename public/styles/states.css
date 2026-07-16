@@ -1,0 +1,132 @@
+html.fullscreen-mode,
+body.fullscreen-mode {
+  scrollbar-width: none;
+}
+
+html.fullscreen-mode::-webkit-scrollbar,
+body.fullscreen-mode::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+body.fullscreen-mode {
+  overflow: auto;
+  background: #050607;
+}
+
+body.fullscreen-mode .app-shell {
+  width: min(1680px, 100%);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: var(--app-shell-gutter);
+}
+
+body.fullscreen-mode .session-view {
+  display: flex;
+  height: auto;
+  min-height: 100vh;
+  flex-direction: column;
+  gap: var(--workspace-gap);
+  padding: 0;
+}
+
+body.fullscreen-mode .workspace {
+  display: grid;
+  height: auto;
+  min-height: 100vh;
+  gap: 0;
+}
+
+body.fullscreen-mode .session-view[data-chat-dock] .workspace {
+  grid-template-columns: 1fr;
+  grid-template-rows: 100vh minmax(620px, 68vh);
+  grid-template-areas:
+    "video"
+    "chat";
+}
+
+body.fullscreen-mode .session-view[data-chat-dock="right"] .workspace {
+  grid-template-columns: minmax(0, 1fr) var(--chat-panel-width);
+  grid-template-rows: 100vh;
+  grid-template-areas: "video chat";
+}
+
+body.fullscreen-mode .session-view[data-chat-dock="top"] .workspace {
+  grid-template-columns: 1fr;
+  grid-template-rows: minmax(620px, 68vh) 100vh;
+  grid-template-areas:
+    "chat"
+    "video";
+}
+
+body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock] .workspace {
+  grid-template-columns: 1fr;
+  grid-template-rows: 100vh;
+  grid-template-areas: "video";
+}
+
+body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="right"] .workspace {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: 100vh;
+  grid-template-areas: "video";
+}
+
+body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="top"] .workspace {
+  grid-template-rows: 100vh;
+  grid-template-areas: "video";
+}
+
+body.fullscreen-mode .video-area {
+  height: 100%;
+  min-height: 0;
+  border: 0;
+  border-radius: 0;
+  background: #050607;
+}
+
+body.fullscreen-mode .player-frame {
+  height: 100%;
+  border-radius: 0;
+}
+
+body.fullscreen-mode .session-toolbar {
+  width: min(710px, 100%);
+  margin: 0;
+}
+
+body.fullscreen-mode .chat-area {
+  min-height: 0;
+  margin: 0;
+}
+
+body.fullscreen-mode .session-view[data-chat-dock="bottom"] .workspace {
+  height: auto;
+  grid-template-rows: 100vh minmax(620px, 68vh);
+}
+
+body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="bottom"] .workspace {
+  height: auto;
+  grid-template-rows: 100vh;
+}
+
+body.fullscreen-mode .player-actions {
+  top: 14px;
+  right: 14px;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+body.fullscreen-mode .session-view[data-chat-dock="right"] .chat-collapse-handle {
+  right: var(--chat-panel-width);
+}
+
+body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-handle {
+  right: 0;
+}
+
+body.fullscreen-mode .player-chat {
+  top: 14px;
+  right: 24px;
+  bottom: 14px;
+  max-height: min(58vh, 380px);
+}

@@ -1,0 +1,262 @@
+MAPA DE ARQUITECTURA PRAGMATICA
+Proyecto: Cine Juntos
+
+Objetivo actual
+- Mantener la app en HTML + CSS + JS vanilla.
+- Seguir ordenando el frontend con cambios chicos y de bajo riesgo.
+- Separar responsabilidades sin reescribir la aplicacion.
+
+
+1. ESTADO VIGENTE
+
+Lo que ya quedo resuelto:
+- `public/styles.css` ya funciona como entrada de modulos CSS chicos.
+- chat ya esta separado en `chat.js`, `chat-render.js`, `chat-input.js`, `chat-message-interactions.js` y `chat-message-content.js`.
+- player ya separo `player.js`, `playerSync.js` y `fullscreen.js`.
+- el estado global ya vive en `src/state/appState.js` con sub-estados:
+  - `session`
+  - `player`
+  - `chat`
+  - `ui`
+- `src/core/state.js` queda como puente de compatibilidad para imports.
+- `ui.js` ya fue limpiado y ahora queda enfocado en UI compartida.
+- presencia e identidad ya viven en `presence.js`.
+- lobby, foco y estados breves de sesion ya viven en `session-ui.js`.
+
+
+2. ESTRUCTURA ACTUAL
+
+Pagina/
+  index.html
+  public/
+    styles.css
+    styles/
+      tokens.css
+      base.css
+      layout.css
+      components.css
+      lobby.css
+      player.css
+      chat.css
+      chat-overlay.css
+      states.css
+      responsive.css
+    firebase-config.js
+    dev-runtime.js
+  src/
+    main.js
+    core/
+      dom.js
+      state.js
+      utils.js
+    state/
+      appState.js
+    features/
+      room.js
+      player.js
+      playerSync.js
+      fullscreen.js
+      chat.js
+      chat-render.js
+      chat-input.js
+      chat-message-interactions.js
+      chat-message-content.js
+      image-utils.js
+      unread-counters.js
+      presence.js
+      session-ui.js
+      ui.js
+    services/
+      transport.js
+      firebaseTransport.js
+      localTransport.js
+
+
+3. CRITERIO DE ORDEN
+
+Reglas practicas:
+- `core` = referencias y helpers neutros.
+- `state` = estado global y sub-estados.
+- `features` = logica por dominio o interfaz.
+- `services` = transporte e integraciones.
+
+Principio de trabajo:
+- tocar poco por vez
+- validar cada paso
+- no mover codigo por deporte
+- no meter tooling nuevo si no hace falta
+
+
+4. PASOS RESUELTOS
+
+PASO 5 - LIMPIEZA CHICA DE `ui.js`
+
+Ya quedo hecho:
+- `ui.js` conserva solo UI transversal:
+  - iconos
+  - tooltips
+  - estado visual general de conexion
+- `presence.js` absorbe:
+  - presencia
+  - miembros conectados
+  - nombre de usuario
+  - identidad
+- `session-ui.js` absorbe:
+  - lobby y sesion
+  - foco del workspace
+  - host badge
+  - `setSyncStatus()`
+
+Resultado practico:
+- `ui.js` dejo de ser un archivo comodin
+- las responsabilidades quedaron mas faciles de ubicar
+- el siguiente cuello de botella ya se ve con claridad
+
+
+PASO 6 - EXTRAER INTERACCIONES DE MENSAJE
+
+Modulo creado:
+- `src/features/chat-message-interactions.js`
+
+Contiene:
+- `wireMessageInteractions()` (swipe-to-reply, long-press, context menu)
+- `showMessageMenu()`
+- `hideMessageMenu()`
+- `copyMessageText()`
+
+Dejo en `chat-render.js`:
+- `renderMessage()`
+- `appendMessageTo()`
+- `renderReplyPreview()`
+- `scrollToMessage()`
+- indicadores de unread y scroll
+
+Resultado:
+- `chat-render.js` reducido significativamente
+- gestos y replies aislados en su propio modulo
+- menor riesgo al tocar interacciones
+
+
+PASO 7 - EXTRAER CONTENIDO DE MENSAJE
+
+Modulo creado:
+- `src/features/chat-message-content.js`
+
+Contiene:
+- `appendMessageContent()` (parseo de URL, imagenes base64, imagenes remotas, videos)
+- `truncateText()`
+- helpers internos: `findFirstUrl`, `parseExplicitImageUrl`, `isRemoteImageUrl`, `isRemoteVideoUrl`, `isLocalHostname`
+
+`chat-render.js` solo importa:
+- `appendMessageContent` y `truncateText` desde el nuevo modulo
+
+Resultado:
+- `chat-render.js` queda centrado en render y estado visual
+- la logica de parseo de contenido esta completamente separada
+
+
+PASO 8 - EXTRAER COMPRESION DE IMAGENES
+
+Modulo creado:
+- `src/features/image-utils.js`
+
+Contiene:
+- `compressImageBase64()` (redimensionado con canvas y calidad JPEG)
+- `renderImagePreview()` (miniatura de imagen pegada)
+- `clearPendingImage()` (limpieza de estado + re-render)
+
+`chat-input.js` solo importa:
+- `compressImageBase64`, `renderImagePreview`, `clearPendingImage`
+
+Resultado:
+- `chat-input.js` queda enfocado en composicion y envio de mensajes
+- la logica de canvas e imagenes pegadas vive aparte
+
+
+PASO 9 - EXTRAER CONTADORES DE UNREAD Y SCROLL
+
+Modulo creado:
+- `src/features/unread-counters.js`
+
+Contiene:
+- `incrementInsideUnread()`, `resetInsideUnread()`
+- `incrementExternalUnread()`, `resetExternalUnread()`
+- `incrementScrollIndicator()`, `resetScrollIndicator()`
+- `checkScrollPosition()`
+
+`chat-render.js` solo importa:
+- `incrementInsideUnread`, `resetInsideUnread`, `incrementExternalUnread`,
+  `resetExternalUnread`, `incrementScrollIndicator` desde el nuevo modulo
+
+`chat.js` reexporta `checkScrollPosition`, `resetExternalUnread`,
+`resetInsideUnread` desde `unread-counters.js`.
+
+Resultado:
+- `chat-render.js` queda solo con render de mensajes y reply preview
+- los contadores de no leidos y scroll estan aislados
+
+
+PASO 10 - MOVER setConnection() A session-ui.js
+
+Hecho:
+- `setConnection()` paso de `ui.js` a `session-ui.js`
+- `ui.js` queda solo con un reexport para compatibilidad
+
+Resultado:
+- `ui.js` queda 100% enfocado en UI transversal (iconos, tooltips)
+- la logica de estado de conexion vive junto al resto de la sesion
+
+
+PASO 11 - DIFERIR SIDE EFFECTS DE DOM EN appState.js
+
+Hecho:
+- la mutacion de `dom.nameInput.value`, `dom.lobbyNameInput.value` y
+  `dom.videoUrlInput.value` ya no ocurre al importar el modulo
+- se mueve a una funcion explicita `applyInitialDefaults()`
+- `main.js` la llama al inicio, antes de `initializeUi()`
+
+Resultado:
+- importar `state` ya no muta el DOM como efecto colateral
+- se corrige un antipatron real
+- la inicializacion queda explicita y predecible
+
+
+5. FOCO ACTUAL
+
+La separacion del chat esta completa. La capa de estado quedo mas limpia.
+
+Modulos del chat:
+- `chat.js` — coordinacion de eventos, layout y reexport.
+- `chat-render.js` — render de mensajes y reply preview.
+- `chat-input.js` — composicion de mensajes, emoji, char counter.
+- `chat-message-interactions.js` — swipe, long-press, menu contextual.
+- `chat-message-content.js` — parseo de URLs, imagenes, videos.
+- `image-utils.js` — compresion y preview de imagenes pegadas.
+- `unread-counters.js` — contadores de no leidos y scroll.
+
+Modulos transversales:
+- `ui.js` — iconos y tooltips (reexporta `setConnection` por compatibilidad).
+- `session-ui.js` — lobby, sesion, host badge, sync status, estado de conexion.
+- `presence.js` — presencia, identidad, miembros conectados.
+
+Proximos candidatos a evaluar (sin urgencia):
+- `room.js` y `player.js` si se necesita refactor menor.
+- tooltip system de `ui.js` si crece.
+
+
+6. PROXIMOS PASOS
+
+Sin pasos definidos. La separacion del chat esta completa.
+Evaluar si hace falta tocar otro modulo antes de avanzar.
+
+
+7. ORDEN RECOMENDADO
+
+- no abrir `room.js` ni `player.js` sin necesidad concreta
+- validar visualmente en http://127.0.0.1:8080 antes de cada cambio
+
+Que no hacer ahora:
+- no migrar a React
+- no rehacer `index.html`
+- no inventar una arquitectura grande
+- no mezclar varios refactors en el mismo paso

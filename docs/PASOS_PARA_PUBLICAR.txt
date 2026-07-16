@@ -12,10 +12,10 @@ La pagina no necesita servidor propio. Se puede publicar gratis en GitHub Pages 
 Estos archivos deben subirse al hosting:
 
 - index.html
-- styles.css
-- app.js
-- firebase-config.js
-- dev-runtime.js
+- public/styles.css
+- src/main.js
+- public/firebase-config.js
+- public/dev-runtime.js
 - README.md
 
 No hace falta subir dev-server.log si existe.
@@ -57,7 +57,7 @@ const firebaseConfig = {
   appId: "..."
 };
 
-5. Copiar esos valores dentro de firebase-config.js:
+5. Copiar esos valores dentro de public/firebase-config.js:
 
 window.CINE_JUNTOS_FIREBASE_CONFIG = {
   apiKey: "TU_API_KEY",
@@ -104,7 +104,7 @@ Pasos:
 
 https://TU_PROJECT_ID-default-rtdb.firebaseio.com
 
-6. Pegar esa URL en databaseURL dentro de firebase-config.js.
+6. Pegar esa URL en databaseURL dentro de public/firebase-config.js.
 
 
 6. Reglas iniciales para Realtime Database
@@ -147,7 +147,7 @@ Notas:
 ======================================
 Desde PowerShell, dentro de la carpeta del proyecto:
 
-node dev-server.js --port 8080
+node scripts/dev-server.js --port 8080
 
 Abrir:
 http://127.0.0.1:8080
@@ -265,7 +265,7 @@ No funcionan como video directo:
 ===================
 Antes de compartir la pagina:
 
-[ ] firebase-config.js tiene valores reales.
+[ ] public/firebase-config.js tiene valores reales.
 [ ] Authentication Anonymous esta activado.
 [ ] Realtime Database existe.
 [ ] Las reglas fueron publicadas.

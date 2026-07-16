@@ -10,7 +10,7 @@ Crear una pagina web estatica para ver videos sincronizados con otra persona en 
 - Firebase preparado para comunicacion en tiempo real cuando exista configuracion valida.
 - Modo local como fallback cuando no hay credenciales de Firebase.
 - Iconos desde CDN con Lucide.
-- Servidor local de desarrollo con `dev-server.js`.
+- Servidor local de desarrollo con `scripts/dev-server.js`.
 
 ## Funcionamiento
 
@@ -37,7 +37,7 @@ Crear una pagina web estatica para ver videos sincronizados con otra persona en 
 
 ## Notas para continuar
 
-- Priorizar cambios acotados en `index.html`, `styles.css` y `app.js`.
+- Priorizar cambios acotados en `index.html`, `public/styles.css` y `src/main.js`.
 - Mantener logs tecnicos en consola o terminal, no como paneles visibles dentro de la UI.
-- Validar despues de cada cambio con `node --check app.js` y revisar visualmente en `http://127.0.0.1:8080`.
-- Si un fix ya esta en `main` pero GitHub Pages sigue cargando una version vieja de `app.js`, `styles.css` u otro asset versionado, actualizar el query param `?v=` en `index.html` para forzar cache-busting antes de seguir debuggeando.
+- Validar despues de cada cambio con `node --check src/main.js` y revisar visualmente en `http://127.0.0.1:8080`.
+- Si un fix ya esta en `main` pero GitHub Pages sigue cargando una version vieja de `src/main.js`, `public/styles.css` u otro asset versionado, actualizar el query param `?v=` en `index.html` para forzar cache-busting antes de seguir debuggeando.

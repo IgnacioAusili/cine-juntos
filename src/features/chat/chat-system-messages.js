@@ -43,7 +43,12 @@ export function sendVideoEventMessage(action, currentState) {
 function describeVideoEvent(action, currentState) {
   const name = currentState.name || getDisplayName();
   const time = formatClockTime(currentState.time);
-  if (action === "play") return `${name} reprodujo el video en ${time}`;
+  if (action === "play") {
+    if (currentState.time === 0 || time === "0:00") {
+      return `${name} inició el video`;
+    }
+    return `${name} reprodujo el video en ${time}`;
+  }
   if (action === "pause") return `${name} pauso el video en ${time}`;
   if (action === "seek") return `${name} salto a ${time}`;
   if (action === "rate")

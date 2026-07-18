@@ -246,7 +246,8 @@ function syncPlayerControls(forceSliderSync = false) {
     if (forceSliderSync || !isSeekingElementFocused) {
       dom.playerSeekInput.value = String(Math.min(currentTime, duration || 0));
     }
-    updateSeekVisuals(Number(dom.playerSeekInput.value || 0), duration);
+    // Si el video terminó, forzar 100% visualmente aunque currentTime != duration por precisión de float
+    updateSeekVisuals(Number(dom.playerSeekInput.value || 0), duration, dom.videoPlayer.ended);
   }
 
   if (dom.playerPlayButton) {
@@ -296,9 +297,11 @@ function syncPlayerControls(forceSliderSync = false) {
   }
 }
 
-function updateSeekVisuals(currentTime, duration) {
+function updateSeekVisuals(currentTime, duration, forceEnd = false) {
   if (!dom.playerSeekInput) return;
-  const progress = duration > 0 ? Math.min(100, Math.max(0, (currentTime / duration) * 100)) : 0;
+  const progress = forceEnd || (duration > 0 && currentTime >= duration)
+    ? 100
+    : duration > 0 ? Math.min(100, Math.max(0, (currentTime / duration) * 100)) : 0;
   dom.playerSeekInput.style.setProperty("--player-progress", `${progress}%`);
 }
 

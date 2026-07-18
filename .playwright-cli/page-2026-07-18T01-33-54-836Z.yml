@@ -1,0 +1,21 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - heading "Cine Juntos" [level=1] [ref=e5]
+    - 'generic "Estado de la aplicacion: Funcionando" [ref=e8]': Funcionando
+  - region "Entrada a sala" [ref=e11]:
+    - complementary "Descripción de la aplicación" [ref=e13]:
+      - paragraph [ref=e14]: Salas con reproducción sincronizada de videos entre todos los participantes, con controles compartidos y chat integrado
+    - generic [ref=e19]:
+      - generic [ref=e20]:
+        - generic [ref=e21]:
+          - text: Nombre
+          - button "Ayuda sobre nombre" [ref=e22] [cursor=pointer]
+        - textbox "Nombre visible en chat y sincronizacion" [ref=e26]: Usuario 7C7B
+      - generic [ref=e27]:
+        - generic [ref=e28]:
+          - text: Codigo
+          - button "Ayuda sobre salas" [ref=e29] [cursor=pointer]
+        - textbox "AB12C" [ref=e33]
+      - generic [ref=e34]:
+        - button "Crear" [ref=e35] [cursor=pointer]
+        - button "Entrar" [disabled] [ref=e37]

@@ -44,7 +44,7 @@ export function formatTime(value) {
   return date.toLocaleTimeString("es-AR", {
     hour: "2-digit",
     minute: "2-digit",
-  });
+  }).replace(/\s*a\.\s*m\.?$/i, "a.m.").replace(/\s*p\.\s*m\.?$/i, "p.m.");
 }
 
 export function formatSeconds(value) {
@@ -73,6 +73,6 @@ export function generateRoomCode() {
   crypto.getRandomValues(bytes);
   return Array.from(bytes, (byte) => byte.toString(36).padStart(2, "0"))
     .join("")
-    .slice(0, 8)
+    .slice(0, 5)
     .toUpperCase();
 }

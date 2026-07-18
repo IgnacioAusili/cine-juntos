@@ -1,5 +1,5 @@
-import { dom } from "../core/dom.js";
-import { state } from "../core/state.js";
+import { dom } from "../../core/dom.js";
+import { state } from "../../core/state.js";
 
 export function compressImageBase64(base64Str, maxWidth, maxHeight, quality, callback) {
   const img = new Image();

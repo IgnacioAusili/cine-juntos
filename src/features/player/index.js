@@ -3,14 +3,16 @@ import { wireFullscreenEvents } from "./fullscreen.js";
 import { wirePlayerCoreEvents } from "./player.js";
 
 export {
-  handleRemoteState,
   initializePlayer,
   loadVideoFromUrl,
-  publishState,
   setVideoSource,
   setVideoStatus,
   waitForVideoMetadata,
 } from "./player.js";
+export {
+  handleRemoteState,
+  publishState,
+} from "./player-sync-logic.js";
 export {
   handleFullscreenChange,
   snapFullscreenScroll,

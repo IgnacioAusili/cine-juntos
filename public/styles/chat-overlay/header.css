@@ -1,0 +1,17 @@
+.player-chat-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding-right: 14px;
+}
+
+.player-chat-header .bare-icon-button {
+  display: none;
+}
+
+.player-chat-unread-badge {
+  top: -6px;
+  right: 2px;
+}

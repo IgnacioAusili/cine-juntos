@@ -1,0 +1,28 @@
+.message-menu {
+  position: fixed;
+  z-index: 9500;
+  display: grid;
+  min-width: 128px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: rgba(12, 15, 17, 0.98);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.34);
+  padding: 4px;
+}
+
+.message-menu button {
+  min-height: 32px;
+  justify-content: flex-start;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--text);
+  padding: 0 10px;
+  text-align: left;
+}
+
+.message-menu button:hover,
+.message-menu button:focus-visible {
+  background: rgba(255, 255, 255, 0.08);
+}

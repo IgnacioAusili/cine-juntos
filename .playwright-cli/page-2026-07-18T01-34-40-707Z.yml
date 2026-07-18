@@ -1,0 +1,91 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - heading "Cine Juntos" [level=1] [ref=e5]
+    - generic [ref=e6]:
+      - generic [ref=e7]:
+        - 'generic "Estado de la aplicacion: Funcionando" [ref=e8]': Funcionando
+        - generic [ref=e41]:
+          - generic [ref=e42]: Sala
+          - generic [ref=e43]: 6I2J4
+          - button "Copiar invitacion" [ref=e44] [cursor=pointer]
+      - generic [ref=e48]: Sos host
+  - main [ref=e51]:
+    - region "Controles de sala" [ref=e52]:
+      - generic [ref=e54]:
+        - generic [ref=e55]:
+          - text: Video
+          - button "Ayuda sobre videos" [ref=e56] [cursor=pointer]
+        - generic [ref=e60]:
+          - textbox "Pega un link directo a MP4, WebM u otro video compatible" [ref=e61]:
+            - /placeholder: https://servidor.com/video.mp4
+            - text: https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4
+          - button "Cargar" [ref=e62] [cursor=pointer]
+        - paragraph [ref=e66]:
+          - generic [ref=e69]: Sin contenido
+    - generic [ref=e70]:
+      - region "Reproductor sincronizado" [ref=e71]:
+        - generic [ref=e72]:
+          - generic "Controles de reproductor" [ref=e74]:
+            - button "Mostrar u ocultar chat dentro del video" [ref=e75] [cursor=pointer]
+          - generic "Controles inferiores del reproductor" [ref=e78]:
+            - button "Pantalla completa de pagina" [ref=e79] [cursor=pointer]
+          - complementary "Chat dentro del video":
+            - generic:
+              - button "1 usuarios conectados":
+                - generic: "1"
+              - group "Estilo del chat dentro del video":
+                - button "Mensajes flotantes"
+                - button "Panel transparente"
+            - generic:
+              - generic:
+                - article:
+                  - generic: Usuario 7C7B
+                  - generic: asdsaas
+                  - generic: 10:34 p. m.
+                - article:
+                  - generic: Usuario 7C7B
+                  - generic:
+                    - generic:
+                      - button "Usuario 7C7B asdsaas":
+                        - generic: Usuario 7C7B
+                        - generic: asdsaas
+                      - generic: Este es un mensaje suficientemente largo para ocupar buena parte del ancho disponible del panel de chat y poder medir la animacion de respuesta.
+                  - generic: 10:34 p. m.
+            - generic:
+              - generic:
+                - textbox "Escribir al chat de la sala":
+                  - /placeholder: Mensaje
+                - button "Abrir emojis"
+                - button "Enviar mensaje"
+              - generic: 0 / 600
+      - complementary "Chat de la sala" [ref=e85]:
+        - generic [ref=e86]:
+          - button "1 usuarios conectados" [ref=e87] [cursor=pointer]:
+            - generic [ref=e89]: "1"
+          - generic [ref=e90]:
+            - generic [ref=e91]:
+              - text: Nombre
+              - button "Ayuda sobre nombre" [ref=e92] [cursor=pointer]
+            - textbox "Nombre visible en chat y sincronizacion" [ref=e96]: Usuario 7C7B
+          - button "Chat lateral. Mover chat abajo" [ref=e97] [cursor=pointer]
+        - generic [ref=e101]:
+          - article [ref=e116]:
+            - generic [ref=e117]: Usuario 7C7B
+            - generic [ref=e119]: asdsaas
+            - generic [ref=e121]: 10:34 p. m.
+          - article [ref=e134]:
+            - generic [ref=e135]: Usuario 7C7B
+            - generic [ref=e138]:
+              - button "Usuario 7C7B asdsaas" [ref=e139] [cursor=pointer]:
+                - generic [ref=e140]: Usuario 7C7B
+                - generic [ref=e141]: asdsaas
+              - generic [ref=e142]: Este es un mensaje suficientemente largo para ocupar buena parte del ancho disponible del panel de chat y poder medir la animacion de respuesta.
+            - generic [ref=e143]: 10:34 p. m.
+        - generic [ref=e102]:
+          - generic [ref=e103]:
+            - textbox "Escribir al chat de la sala" [ref=e104]:
+              - /placeholder: Mensaje
+            - button "Abrir emojis" [ref=e105] [cursor=pointer]
+            - button "Enviar mensaje" [active] [ref=e109] [cursor=pointer]
+          - generic: 0 / 600
+      - button "Contraer chat" [ref=e113] [cursor=pointer]

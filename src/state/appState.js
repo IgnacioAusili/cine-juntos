@@ -21,6 +21,8 @@ export const playerState = {
   lastStateSentAt: 0,
   lastActionAt: 0,
   lastActionAuthor: "",
+  lastPlaybackIssueAt: 0,
+  lastPlaybackIssueReason: "",
   remoteStateActive: false,
   syncStatusTimer: null,
 };

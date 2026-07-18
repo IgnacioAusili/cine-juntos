@@ -3,14 +3,14 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Cine Juntos</title>
+    <title>Cine Juntos | Mirar, chatear y sincronizar en vivo</title>
     <meta
       name="description"
       content="Sala privada para ver un video directo con chat y sincronizacion en tiempo real."
     />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' https://unpkg.com https://www.gstatic.com; style-src 'self' 'unsafe-inline'; img-src 'self' http: https: data: blob:; media-src 'self' http: https: blob: data:; connect-src 'self' https://unpkg.com http://localhost:* http://127.0.0.1:* https://www.gstatic.com https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; object-src 'none'; base-uri 'self'; form-action 'self'"
+      content="default-src 'self'; script-src 'self' https://unpkg.com https://www.gstatic.com https://cinecompartidopagina-default-rtdb.firebaseio.com https://*.firebaseio.com https://*.firebasedatabase.app; script-src-elem 'self' https://unpkg.com https://www.gstatic.com https://cinecompartidopagina-default-rtdb.firebaseio.com https://*.firebaseio.com https://*.firebasedatabase.app; style-src 'self' 'unsafe-inline'; img-src 'self' http: https: data: blob:; media-src 'self' http: https: blob: data:; connect-src 'self' https://unpkg.com http://localhost:* http://127.0.0.1:* https://www.gstatic.com https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; object-src 'none'; base-uri 'self'; form-action 'self'"
     />
     <link rel="preconnect" href="https://unpkg.com" />
     <link rel="preconnect" href="https://www.gstatic.com" />
@@ -19,7 +19,7 @@
   <body class="is-lobby">
     <div class="app-shell">
       <header class="topbar">
-        <div>
+        <div class="topbar-brand">
           <h1>Cine Juntos</h1>
         </div>
         <div class="topbar-actions">
@@ -50,6 +50,14 @@
       </header>
 
       <section class="lobby-screen" id="lobbyScreen" aria-label="Entrada a sala">
+        <div class="lobby-hero">
+          <aside class="lobby-description-card" aria-label="Descripción de la aplicación">
+            <p class="lobby-description">
+              Salas con reproducción sincronizada de videos entre todos los participantes, con controles
+              compartidos y chat integrado
+            </p>
+          </aside>
+        </div>
         <div class="lobby-panel">
           <div class="lobby-mark">
             <span data-lucide="film"></span>
@@ -70,7 +78,11 @@
               <input
                 id="lobbyNameInput"
                 type="text"
-                autocomplete="name"
+                autocomplete="off"
+                autocapitalize="off"
+                spellcheck="false"
+                data-bwignore="true"
+                data-lpignore="true"
                 maxlength="28"
                 title="Nombre visible en chat y sincronizacion"
               />
@@ -92,8 +104,12 @@
                 type="text"
                 inputmode="latin"
                 autocomplete="off"
-                maxlength="12"
-                placeholder="AB12CD"
+                autocapitalize="off"
+                spellcheck="false"
+                data-bwignore="true"
+                data-lpignore="true"
+                maxlength="5"
+                placeholder="AB12C"
               />
             </label>
             <div class="lobby-actions">
@@ -142,6 +158,10 @@
                   id="videoUrlInput"
                   type="url"
                   autocomplete="off"
+                  autocapitalize="off"
+                  spellcheck="false"
+                  data-bwignore="true"
+                  data-lpignore="true"
                   placeholder="https://servidor.com/video.mp4"
                   title="Pega un link directo a MP4, WebM u otro video compatible"
                 />
@@ -174,7 +194,6 @@
             <div class="player-frame" id="playerFrame" data-chat-style="float">
               <video
                 id="videoPlayer"
-                controls
                 controlslist="nofullscreen nodownload noremoteplayback"
                 disablepictureinpicture
                 playsinline
@@ -194,25 +213,98 @@
                   data-tooltip="Mostrar u ocultar chat dentro del video"
                 >
                   <span data-lucide="message-square"></span>
-                  <span class="unread-badge" id="insideChatUnread" hidden>0</span>
                 </button>
               </div>
 
               <div class="player-bottom-actions" aria-label="Controles inferiores del reproductor">
-                <button
-                  class="video-control-button"
-                  id="pageFullscreenButton"
-                  type="button"
-                  aria-label="Pantalla completa de pagina"
-                  title="Pantalla completa de pagina"
-                  data-tooltip="Pantalla completa con controles visibles"
-                >
-                  <span data-lucide="maximize"></span>
-                </button>
+                <div class="player-controls-bar">
+                  <button
+                    class="video-control-button primary-video-control"
+                    id="playerPlayButton"
+                    type="button"
+                    aria-label="Reproducir video"
+                    title="Reproducir video"
+                    data-tooltip="Reproducir video"
+                  >
+                    <span data-lucide="play"></span>
+                  </button>
+
+                  <div class="player-progress-group">
+                    <span class="player-time" id="playerCurrentTime">0:00</span>
+                    <input
+                      class="player-seek-input"
+                      id="playerSeekInput"
+                      type="range"
+                      min="0"
+                      max="0"
+                      step="0.1"
+                      value="0"
+                      aria-label="Avance del video"
+                    />
+                    <span class="player-time player-time-total" id="playerDuration">0:00</span>
+                  </div>
+
+                  <div class="player-volume-group" id="playerVolumeGroup">
+                    <button
+                      class="video-control-button"
+                      id="playerMuteButton"
+                      type="button"
+                      aria-label="Silenciar"
+                      title="Silenciar"
+                      data-tooltip="Silenciar"
+                    >
+                      <span data-lucide="volume-2"></span>
+                    </button>
+                    <div class="player-volume-slider-wrap">
+                      <input
+                        class="player-volume-input"
+                        id="playerVolumeInput"
+                        type="range"
+                        min="0"
+                        max="1"
+                        step="0.05"
+                        value="1"
+                        aria-label="Volumen"
+                      />
+                    </div>
+                  </div>
+
+                  <label class="player-select player-rate-select" for="playerRateSelect">
+                    <select id="playerRateSelect" aria-label="Velocidad de reproduccion">
+                      <option value="0.5">0.5x</option>
+                      <option value="0.75">0.75x</option>
+                      <option value="1" selected>1x</option>
+                      <option value="1.25">1.25x</option>
+                      <option value="1.5">1.5x</option>
+                      <option value="2">2x</option>
+                    </select>
+                  </label>
+
+                  <button
+                    class="video-control-button"
+                    id="pageFullscreenButton"
+                    type="button"
+                    aria-label="Pantalla completa de pagina"
+                    title="Pantalla completa de pagina"
+                    data-tooltip="Pantalla completa"
+                  >
+                    <span data-lucide="maximize"></span>
+                  </button>
+                </div>
               </div>
 
               <aside class="player-chat" id="playerChat" aria-label="Chat dentro del video">
                 <div class="player-chat-header">
+                  <button
+                    class="presence-pill player-chat-presence"
+                    id="overlayPresencePill"
+                    type="button"
+                    aria-label="Usuarios conectados"
+                    data-tooltip="Conectados: vos"
+                  >
+                    <span class="presence-dot" aria-hidden="true"></span>
+                    <span id="overlayParticipantCount">1</span>
+                  </button>
                   <div
                     class="chat-style-toggle"
                     id="chatStyleToggle"
@@ -237,16 +329,17 @@
                       <span data-lucide="panel-right"></span>
                     </button>
                   </div>
-                  <button
-                    class="bare-icon-button"
-                    id="closeInsideChatButton"
-                    type="button"
-                    aria-label="Ocultar chat"
-                    title="Ocultar chat"
-                    data-tooltip="Ocultar chat"
-                  >
-                    <span data-lucide="x"></span>
-                  </button>
+                    <button
+                      class="bare-icon-button"
+                      id="closeInsideChatButton"
+                      type="button"
+                      aria-label="Ocultar chat"
+                      title="Ocultar chat"
+                      data-tooltip="Ocultar chat"
+                    >
+                      <span data-lucide="x"></span>
+                    </button>
+                  <span class="unread-badge player-chat-unread-badge" id="insideChatUnread" hidden>0</span>
                 </div>
                 <div class="messages-wrap">
                   <div class="overlay-messages" id="overlayMessages" aria-live="polite"></div>
@@ -256,17 +349,21 @@
                   </button>
                 </div>
                 <form class="message-form overlay-message-form" id="overlayMessageForm">
-                  <div class="reply-preview" id="overlayReplyPreview" hidden></div>
-                  <div class="image-preview-container" id="overlayImagePreview" hidden></div>
-                  <div class="input-wrapper">
-                    <textarea
-                      id="overlayMessageInput"
-                      autocomplete="off"
-                      maxlength="600"
-                      placeholder="Mensaje"
-                      rows="1"
-                      title="Escribir al chat de la sala"
-                    ></textarea>
+                <div class="reply-preview" id="overlayReplyPreview" hidden></div>
+                <div class="image-preview-container" id="overlayImagePreview" hidden></div>
+                <div class="input-wrapper">
+                  <textarea
+                    id="overlayMessageInput"
+                    autocomplete="off"
+                    autocapitalize="off"
+                    spellcheck="false"
+                    data-bwignore="true"
+                    data-lpignore="true"
+                    maxlength="600"
+                    placeholder="Mensaje"
+                    rows="1"
+                    title="Escribir al chat de la sala"
+                  ></textarea>
                     <button
                       class="icon-button ghost emoji-trigger"
                       id="overlayEmojiButton"
@@ -314,7 +411,11 @@
                 <input
                   id="nameInput"
                   type="text"
-                  autocomplete="name"
+                  autocomplete="off"
+                  autocapitalize="off"
+                  spellcheck="false"
+                  data-bwignore="true"
+                  data-lpignore="true"
                   maxlength="28"
                   title="Nombre visible en chat y sincronizacion"
                 />
@@ -345,6 +446,10 @@
                 <textarea
                   id="messageInput"
                   autocomplete="off"
+                  autocapitalize="off"
+                  spellcheck="false"
+                  data-bwignore="true"
+                  data-lpignore="true"
                   maxlength="600"
                   placeholder="Mensaje"
                   rows="1"

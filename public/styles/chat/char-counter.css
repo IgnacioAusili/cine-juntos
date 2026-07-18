@@ -1,0 +1,57 @@
+.char-counter {
+  display: block;
+  min-height: 0;
+  padding: 0 2px;
+  font-size: 0.58rem;
+  line-height: 1;
+  color: var(--muted-2);
+  text-align: right;
+  transition: color 0.2s ease;
+  pointer-events: none;
+  user-select: none;
+}
+
+.message-form.over-limit .char-counter,
+.overlay-message-form.over-limit .char-counter {
+  color: var(--danger);
+  font-weight: 700;
+}
+
+.message-form.over-limit .input-wrapper,
+.overlay-message-form.over-limit .input-wrapper {
+  border-color: rgba(233, 68, 68, 0.65);
+  box-shadow: 0 0 0 3px rgba(233, 68, 68, 0.12);
+}
+
+.message-form.over-limit .send,
+.overlay-message-form.over-limit .send {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+@keyframes counterShake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  20% {
+    transform: translateX(-4px);
+  }
+
+  40% {
+    transform: translateX(4px);
+  }
+
+  60% {
+    transform: translateX(-3px);
+  }
+
+  80% {
+    transform: translateX(3px);
+  }
+}
+
+.char-counter--shake {
+  animation: counterShake 0.45s ease;
+}

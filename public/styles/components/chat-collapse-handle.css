@@ -1,0 +1,78 @@
+.chat-collapse-handle {
+  position: absolute;
+  z-index: 12;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.78);
+  padding: 0;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.chat-collapse-handle:hover,
+.chat-collapse-handle:focus-visible {
+  color: #fff;
+  background: transparent;
+}
+
+.chat-collapse-handle:focus-visible {
+  outline: 2px solid rgba(47, 184, 164, 0.45);
+  outline-offset: 2px;
+}
+
+.session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-handle {
+  position: relative;
+  top: auto;
+  right: auto;
+  bottom: auto;
+  grid-area: handle;
+  width: var(--chat-handle-gap);
+  height: 100%;
+  min-width: 0;
+  transform: none;
+  justify-self: center;
+  align-self: stretch;
+}
+
+.session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-handle {
+  position: relative;
+  top: auto;
+  right: auto;
+  bottom: auto;
+  grid-area: handle;
+  width: var(--chat-handle-gap-collapsed);
+  height: 100%;
+  min-width: 0;
+  transform: none;
+  justify-self: center;
+  align-self: stretch;
+  border-radius: 6px 0 0 6px;
+}
+
+.session-view[data-chat-dock="bottom"] .chat-collapse-handle {
+  left: 50%;
+  bottom: 0;
+  width: 34px;
+  height: 22px;
+  transform: translate(-50%, 50%);
+}
+
+.session-view.chat-collapsed[data-chat-dock="bottom"] .chat-collapse-handle {
+  transform: translateX(-50%);
+  border-radius: 6px 6px 0 0;
+}
+
+.session-view[data-chat-dock="top"] .chat-collapse-handle {
+  top: 0;
+  left: 50%;
+  width: 34px;
+  height: 22px;
+  transform: translate(-50%, -50%);
+}
+
+.session-view.chat-collapsed[data-chat-dock="top"] .chat-collapse-handle {
+  transform: translateX(-50%);
+  border-radius: 0 0 6px 6px;
+}

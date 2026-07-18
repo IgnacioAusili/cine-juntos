@@ -1,68 +1,24 @@
-import {
-  dom,
-} from "../core/dom.js";
+// Sincronizacion del player con la sala: estado remoto, aplicacion y publicacion.
+import { dom } from "../../core/dom.js";
 import {
   state,
   getDisplayName,
   getTransportNow,
   logEvent,
-} from "../core/state.js";
+} from "../../core/state.js";
 import {
   MAX_DRIFT_SECONDS,
   SEND_THROTTLE_MS,
   formatSeconds,
-} from "../core/utils.js";
-import {
-  hydrateIcons,
-} from "./ui.js";
-import { rememberParticipant } from "./presence.js";
-import { setSyncStatus } from "./session-ui.js";
-import { sendVideoEventMessage } from "./chat.js";
+} from "../../core/utils.js";
+import { rememberParticipant } from "../presence.js";
+import { setSyncStatus } from "../session-ui.js";
+import { sendVideoEventMessage, renderMessage } from "../chat/index.js";
+// Import circular intencional y seguro: estas funciones se invocan en runtime,
+// no durante la carga del modulo, y player.js a su vez importa publishState.
+import { setVideoSource, waitForVideoMetadata } from "./player.js";
 
-export function initializePlayer() {
-  setVideoStatus("empty", "Sin contenido");
-}
-
-export function wirePlayerCoreEvents() {
-  dom.loadVideoButton.addEventListener("click", () => {
-    loadVideoFromUrl(dom.videoUrlInput.value.trim(), "manual");
-  });
-
-  dom.videoPlayer.addEventListener("play", () => {
-    logEvent("video", `Play local en ${formatSeconds(dom.videoPlayer.currentTime)}.`);
-    if (!state.player.suppressVideoEvents) publishState("play");
-  });
-
-  dom.videoPlayer.addEventListener("pause", () => {
-    if (dom.videoPlayer.ended) return;
-    logEvent("video", `Pausa local en ${formatSeconds(dom.videoPlayer.currentTime)}.`);
-    if (!state.player.suppressVideoEvents) publishState("pause");
-  });
-
-  dom.videoPlayer.addEventListener("ended", () => {
-    logEvent("video", "Video terminado.");
-  });
-
-  dom.videoPlayer.addEventListener("seeked", () => {
-    logEvent("video", `Seek local a ${formatSeconds(dom.videoPlayer.currentTime)}.`);
-    if (!state.player.suppressVideoEvents) publishState("seek");
-  });
-
-  dom.videoPlayer.addEventListener("ratechange", () => {
-    logEvent("video", `Velocidad local ${dom.videoPlayer.playbackRate}x.`);
-    if (!state.player.suppressVideoEvents) publishState("rate");
-  });
-
-  dom.videoPlayer.addEventListener("loadedmetadata", () => {
-    dom.emptyPlayer.classList.add("hidden");
-    setVideoStatus("loaded", "Incorporado en sala");
-  });
-
-  dom.videoPlayer.addEventListener("error", () => {
-    setVideoStatus("error", "Error");
-    logEvent("error", "El navegador no pudo cargar el video.");
-  });
-}
+const PLAYBACK_ISSUE_SYNC_COOLDOWN_MS = 2200;
 
 export function handleRemoteState(statePayload) {
   if (!statePayload || statePayload.from === state.session.clientId) return;
@@ -73,7 +29,7 @@ export function handleRemoteState(statePayload) {
   state.player.lastActionAt = Date.now();
   state.player.lastActionAuthor = statePayload.from;
 
-  applyRemoteState(statePayload);
+  applyRemoteState(statePayload, statePayload.action === "hold");
 }
 
 async function applyRemoteState(statePayload, force = false) {
@@ -107,7 +63,7 @@ async function applyRemoteState(statePayload, force = false) {
       }
     }
 
-    setSyncStatus(`Sincronizado con ${statePayload.name || "la sala"}.`);
+    setSyncStatus(getRemoteStatusText(statePayload));
     logEvent("sync:apply", `Aplicado ${statePayload.action || "evento"} a ${formatSeconds(dom.videoPlayer.currentTime)}.`);
   } catch (error) {
     console.error("Error aplicando el estado remoto:", error);
@@ -130,7 +86,79 @@ function getRemoteTargetTime(statePayload) {
   return baseTime + elapsed * rate;
 }
 
-export function publishState(action) {
+function getRemoteStatusText(statePayload) {
+  if (statePayload.action === "hold") {
+    return `${statePayload.name || "Alguien"} detuvo la sala por ${describePlaybackIssue(statePayload.issueReason)}.`;
+  }
+  return `Sincronizado con ${statePayload.name || "la sala"}.`;
+}
+
+function describePlaybackIssue(reason) {
+  if (reason === "waiting") return "espera de carga";
+  if (reason === "stalled") return "video trabado";
+  if (reason === "error") return "error de reproduccion";
+  return "un problema de reproduccion";
+}
+
+export function pauseRoomForPlaybackIssue(reason) {
+  if (state.player.remoteStateActive || state.player.suppressVideoEvents) return;
+  if (!dom.videoPlayer.currentSrc && !dom.videoPlayer.src && !dom.videoUrlInput.value.trim()) return;
+  if (dom.videoPlayer.ended) return;
+  if (reason !== "error" && dom.videoPlayer.paused) return;
+
+  const localNow = Date.now();
+  if (
+    state.player.lastPlaybackIssueReason === reason &&
+    (localNow - state.player.lastPlaybackIssueAt < PLAYBACK_ISSUE_SYNC_COOLDOWN_MS)
+  ) {
+    return;
+  }
+
+  state.player.lastPlaybackIssueAt = localNow;
+  state.player.lastPlaybackIssueReason = reason;
+  logEvent("sync:issue", `Incidencia local: ${describePlaybackIssue(reason)} en ${formatSeconds(dom.videoPlayer.currentTime)}.`);
+
+  // Mostrar aviso en el chat local siempre, independientemente de si hay sala activa.
+  const displayName = state.session.displayName || "Vos";
+  const issueText = `${displayName} ${describePlaybackIssueChat(reason)}`;
+  renderMessage({
+    id: `issue-${localNow}-${reason}`,
+    from: state.session.clientId,
+    name: displayName,
+    text: issueText,
+    system: true,
+    createdAt: localNow,
+  });
+
+  if (!state.session.activeRoom || !state.session.transport) return;
+
+  const previousSuppress = state.player.suppressVideoEvents;
+  state.player.suppressVideoEvents = true;
+  try {
+    dom.videoPlayer.pause();
+  } finally {
+    window.setTimeout(() => {
+      if (!state.player.remoteStateActive) {
+        state.player.suppressVideoEvents = previousSuppress;
+      }
+    }, 280);
+  }
+
+  setSyncStatus(`Pausa sincronizada por ${describePlaybackIssue(reason)}.`);
+  publishState("hold", {
+    paused: true,
+    issueReason: reason,
+  });
+}
+
+function describePlaybackIssueChat(reason) {
+  if (reason === "waiting") return "está cargando el video";
+  if (reason === "stalled") return "tiene el video trabado";
+  if (reason === "error") return "tiene un error en el video";
+  return "tiene un problema con el video";
+}
+
+export function publishState(action, overrides = {}) {
   if (!state.session.activeRoom || !state.session.transport) {
     setSyncStatus("Primero entra a una sala.");
     return;
@@ -141,6 +169,7 @@ export function publishState(action) {
   const localNow = Date.now();
 
   if (
+    action !== "hold" &&
     state.player.lastActionAuthor &&
     state.player.lastActionAuthor !== state.session.clientId &&
     (localNow - state.player.lastActionAt < 2000)
@@ -166,7 +195,12 @@ export function publishState(action) {
     return;
   }
 
-  if (localNow - state.player.lastStateSentAt < SEND_THROTTLE_MS && action !== "video" && action !== "sync") return;
+  if (
+    localNow - state.player.lastStateSentAt < SEND_THROTTLE_MS &&
+    action !== "video" &&
+    action !== "sync" &&
+    action !== "hold"
+  ) return;
 
   state.player.lastActionAt = localNow;
   state.player.lastActionAuthor = state.session.clientId;
@@ -182,6 +216,7 @@ export function publishState(action) {
     paused: dom.videoPlayer.paused,
     rate: Number(dom.videoPlayer.playbackRate || 1),
     sentAt: syncNow,
+    ...overrides,
   };
 
   state.session.transport.sendState(payload).catch((error) => {
@@ -191,50 +226,4 @@ export function publishState(action) {
   });
   sendVideoEventMessage(action, payload);
   logEvent("sync:send", `${action} en ${formatSeconds(payload.time)} (${payload.paused ? "pausado" : "play"}).`);
-}
-
-export function loadVideoFromUrl(source, origin) {
-  if (!source) {
-    setVideoStatus("empty", "Sin contenido");
-    logEvent("video", "No se cargo video: falta URL.");
-    return;
-  }
-
-  setVideoSource(source, true);
-  logEvent("video", `Video ${origin} cargado: ${source}`);
-  if (state.session.activeRoom && state.session.transport) {
-    publishState("video");
-  }
-}
-
-export function setVideoSource(source, shouldAnnounce) {
-  dom.videoPlayer.src = source;
-  setVideoStatus("loading", "Cargando");
-  dom.videoPlayer.load();
-  dom.emptyPlayer.classList.add("hidden");
-  dom.videoUrlInput.value = source;
-  if (shouldAnnounce) logEvent("video", "Carga de video iniciada.");
-}
-
-export function setVideoStatus(videoState, text) {
-  const iconByState = {
-    empty: "circle",
-    loading: "refresh-cw",
-    loaded: "check-circle",
-    error: "circle-alert",
-  };
-  dom.syncStatus.className = `sync-status video-status ${videoState}`;
-  dom.videoStatusText.textContent = text;
-  dom.videoStatusIcon.setAttribute("data-lucide", iconByState[videoState] || "circle");
-  dom.videoStatusIcon.innerHTML = "";
-  hydrateIcons();
-}
-
-export function waitForVideoMetadata() {
-  if (Number.isFinite(dom.videoPlayer.duration)) return Promise.resolve();
-  return new Promise((resolve) => {
-    const done = () => resolve();
-    dom.videoPlayer.addEventListener("loadedmetadata", done, { once: true });
-    dom.videoPlayer.addEventListener("error", done, { once: true });
-  });
 }

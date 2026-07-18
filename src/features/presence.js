@@ -40,10 +40,20 @@ export function renderPresence() {
     );
 
   const uniqueMembers = members.length ? members : [`${getDisplayName()} (vos)`];
+  const tooltip = `Conectados: ${uniqueMembers.join(", ")}`;
+  const label = `${uniqueMembers.length} usuarios conectados`;
+
   dom.participantCount.textContent = String(uniqueMembers.length);
-  dom.presencePill.dataset.tooltip = `Conectados: ${uniqueMembers.join(", ")}`;
+  dom.presencePill.dataset.tooltip = tooltip;
   dom.presencePill.removeAttribute("title");
-  dom.presencePill.setAttribute("aria-label", `${uniqueMembers.length} usuarios conectados`);
+  dom.presencePill.setAttribute("aria-label", label);
+
+  if (dom.overlayParticipantCount && dom.overlayPresencePill) {
+    dom.overlayParticipantCount.textContent = String(uniqueMembers.length);
+    dom.overlayPresencePill.dataset.tooltip = tooltip;
+    dom.overlayPresencePill.removeAttribute("title");
+    dom.overlayPresencePill.setAttribute("aria-label", label);
+  }
 }
 
 export function updateDisplayName(value, sourceInput) {

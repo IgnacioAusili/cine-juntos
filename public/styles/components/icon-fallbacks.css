@@ -1,0 +1,116 @@
+.button svg,
+.icon-button svg,
+.empty-player svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2.2;
+}
+
+[data-lucide]:empty::before {
+  display: inline-block;
+  min-width: 1em;
+  font-weight: 800;
+  line-height: 1;
+  text-align: center;
+}
+
+[data-lucide="plus"]:empty::before {
+  content: "+";
+}
+
+[data-lucide="log-in"]:empty::before {
+  content: "->";
+}
+
+[data-lucide="copy"]:empty::before {
+  content: "[]";
+}
+
+[data-lucide="play-square"]:empty::before {
+  content: ">";
+}
+
+[data-lucide="clapperboard"]:empty::before {
+  content: "MP4";
+  font-size: 0.72rem;
+}
+
+[data-lucide="refresh-cw"]:empty::before {
+  content: "R";
+}
+
+[data-lucide="message-square"]:empty::before {
+  content: "#";
+}
+
+[data-lucide="circle-help"]:empty::before {
+  content: "?";
+}
+
+[data-lucide="circle"]:empty::before {
+  content: "o";
+}
+
+[data-lucide="check-circle"]:empty::before {
+  content: "✓";
+}
+
+[data-lucide="circle-alert"]:empty::before {
+  content: "!";
+}
+
+[data-lucide="panel-right"]:empty::before {
+  content: "|";
+}
+
+[data-lucide="panel-bottom"]:empty::before {
+  content: "_";
+}
+
+[data-lucide="panel-top"]:empty::before {
+  content: "T";
+}
+
+[data-lucide="smile-plus"]:empty::before {
+  content: ":)";
+  font-size: 0.78rem;
+}
+
+[data-lucide="maximize"]:empty::before {
+  content: "[]";
+}
+
+[data-lucide="minimize"]:empty::before {
+  content: "][";
+}
+
+[data-lucide="x"]:empty::before {
+  content: "x";
+}
+
+[data-lucide="send"]:empty::before {
+  content: ">";
+}
+
+[data-lucide="chevron-right"]:empty::before {
+  content: ">";
+}
+
+[data-lucide="chevron-left"]:empty::before {
+  content: "<";
+}
+
+[data-lucide="chevron-down"]:empty::before {
+  content: "v";
+}
+
+[data-lucide="chevron-up"]:empty::before {
+  content: "^";
+}
+
+[data-lucide="film"]:empty::before {
+  content: "VIDEO";
+  color: #59636d;
+  font-size: 0.85rem;
+  letter-spacing: 0;
+}

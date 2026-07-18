@@ -1,24 +1,27 @@
 import {
   dom,
-} from "../core/dom.js";
+} from "../../core/dom.js";
 import {
   FULLSCREEN_END_GAP,
   FULLSCREEN_SNAP_DELAY_MS,
   FULLSCREEN_SNAP_THRESHOLD,
-} from "../core/utils.js";
+} from "../../core/utils.js";
 import {
   hydrateIcons,
-} from "./ui.js";
-import { focusFullscreenWorkspace, setSyncStatus } from "./session-ui.js";
+} from "../icons-tooltips.js";
+import { focusFullscreenWorkspace, setSyncStatus } from "../session-ui.js";
 import {
   logEvent,
-} from "../core/state.js";
+} from "../../core/state.js";
+
+const PLAYER_OVERLAY_IDLE_MS = 1800;
 
 export function wireFullscreenEvents() {
   dom.pageFullscreenButton.addEventListener("click", () => {
     togglePageFullscreen();
   });
 
+  wirePlayerOverlayControls();
   document.addEventListener("fullscreenchange", handleFullscreenChange);
 
   dom.videoPlayer.addEventListener("dblclick", (event) => {
@@ -39,6 +42,50 @@ export function wireFullscreenEvents() {
       snapFullscreenScroll();
     }, FULLSCREEN_SNAP_DELAY_MS);
   }, { passive: true });
+}
+
+function wirePlayerOverlayControls() {
+  if (!dom.playerFrame || !dom.pageFullscreenButton) return;
+
+  let hideTimer = null;
+
+  const setOverlayVisible = (isVisible) => {
+    dom.playerFrame.classList.toggle("player-overlay-visible", isVisible);
+  };
+
+  const clearHideTimer = () => {
+    if (!hideTimer) return;
+    window.clearTimeout(hideTimer);
+    hideTimer = null;
+  };
+
+  const scheduleHide = () => {
+    clearHideTimer();
+    hideTimer = window.setTimeout(() => {
+      if (dom.playerFrame.matches(":hover") || dom.playerFrame.matches(":focus-within")) return;
+      setOverlayVisible(false);
+    }, PLAYER_OVERLAY_IDLE_MS);
+  };
+
+  const revealOverlay = () => {
+    setOverlayVisible(true);
+    scheduleHide();
+  };
+
+  ["pointermove", "pointerdown", "touchstart"].forEach((eventName) => {
+    dom.playerFrame.addEventListener(eventName, revealOverlay, { passive: true });
+  });
+  dom.playerFrame.addEventListener("mouseenter", revealOverlay);
+  dom.playerFrame.addEventListener("focusin", revealOverlay);
+  dom.playerFrame.addEventListener("mouseleave", scheduleHide);
+  dom.playerFrame.addEventListener("focusout", scheduleHide);
+
+  dom.videoPlayer.addEventListener("play", scheduleHide);
+  dom.videoPlayer.addEventListener("pause", revealOverlay);
+  dom.videoPlayer.addEventListener("loadedmetadata", revealOverlay);
+  dom.videoPlayer.addEventListener("emptied", revealOverlay);
+
+  revealOverlay();
 }
 
 function isPageFullscreenActive() {
@@ -143,7 +190,7 @@ export function handleFullscreenChange() {
   document.documentElement.classList.toggle("fullscreen-mode", isFullscreen);
   document.body.classList.toggle("fullscreen-mode", isFullscreen);
   dom.pageFullscreenButton.classList.toggle("active", isFullscreen);
-  dom.pageFullscreenButton.dataset.tooltip = isFullscreen ? "Salir de pantalla completa" : "Pantalla completa con controles visibles";
+  dom.pageFullscreenButton.dataset.tooltip = isFullscreen ? "Salir de pantalla completa" : "Pantalla completa";
   dom.pageFullscreenButton.removeAttribute("title");
   dom.pageFullscreenButton.setAttribute("aria-label", dom.pageFullscreenButton.dataset.tooltip);
   if (icon) {

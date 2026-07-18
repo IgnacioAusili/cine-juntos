@@ -1,5 +1,16 @@
 # Cine Juntos
 
+## Indice
+
+- `index.html`: estructura base de la pagina.
+- `public/`: estilos globales, modulos CSS y archivos de runtime.
+- `src/main.js`: punto de entrada e inicializacion.
+- `src/core/`: utilidades, DOM y compatibilidad de estado.
+- `src/state/`: estado global de la aplicacion.
+- `src/features/`: logica por dominio como chat, player, sala y presencia.
+- `src/services/`: transporte en tiempo real y fallback local.
+- `scripts/` y `docs/`: desarrollo local y documentacion del proyecto.
+
 ## Objetivo
 
 Crear una pagina web estatica para ver videos sincronizados con otra persona en una sala compartida. La experiencia principal debe ser directa: entrar con nombre y codigo de sala, cargar un enlace directo de video, ver el reproductor grande y chatear en tiempo real.
@@ -12,6 +23,21 @@ Crear una pagina web estatica para ver videos sincronizados con otra persona en 
 - Iconos desde CDN con Lucide.
 - Servidor local de desarrollo con `scripts/dev-server.js`.
 
+## Arquitectura
+
+La app sigue una arquitectura simple y modular en JavaScript vanilla. El punto de entrada es `src/main.js`, que coordina la inicializacion general, conecta la UI y pone a trabajar los modulos del proyecto.
+
+- `src/state/appState.js` concentra el estado global en cuatro bloques: `session`, `player`, `chat` y `ui`.
+- `src/core/` contiene utilidades neutras, referencias DOM y el puente `state.js` para mantener compatibilidad de imports.
+- `src/features/` agrupa la logica por dominio:
+  - `chat/` maneja render, input, replies, menu contextual, layout y contadores.
+  - `player/` maneja eventos del video, fullscreen y sincronizacion.
+  - archivos como `room.js`, `presence.js` y `session-ui.js` resuelven coordinacion de sala, presencia e interfaz de sesion.
+- `src/services/` abstrae el transporte en tiempo real con dos caminos: Firebase cuando hay configuracion valida y modo local como fallback.
+- `public/styles/` divide el CSS por capas y areas de UI, con `public/styles.css` como entrada principal.
+
+La idea general es separar responsabilidades sin meter frameworks ni refactors grandes: estado centralizado, modulos por feature y servicios aislados para no mezclar logica de interfaz con sincronizacion o transporte.
+
 ## Funcionamiento
 
 - Cada sala sincroniza mensajes, presencia, video cargado y eventos de reproduccion.
@@ -21,23 +47,11 @@ Crear una pagina web estatica para ver videos sincronizados con otra persona en 
 - El chat renderiza enlaces clickeables, imagenes, GIFs y videos remotos cuando el mensaje contiene una URL compatible.
 - Para evitar crecimiento indefinido, la interfaz conserva hasta 100 mensajes renderizados.
 
-## Preferencias de interfaz
 
-- Interfaz oscura, minimalista y coherente entre controles.
-- El reproductor y el chat deben ocupar la mayor parte de la vista disponible.
-- El panel para cargar video debe ser compacto y no competir con el area de video.
-- En pantalla completa se debe ampliar la pagina completa, no solo el elemento `video`.
-- En pantalla completa el primer viewport debe mostrar el reproductor completo con el chat si esta abierto; el panel de carga queda disponible al hacer scroll.
-- La barra de scroll en pantalla completa debe quedar invisible, pero el scroll debe seguir funcionando.
-- El boton de pantalla completa debe integrarse visualmente con los controles inferiores del reproductor y no activar el fullscreen nativo del video.
-- El chat interno debe ser sutil: controles chicos, input transparente y mensajes flotantes o en panel opaco segun selector.
-- El chat externo debe poder ubicarse a la derecha, abajo o arriba, y contraerse dejando solo una flecha discreta.
-- Si el chat externo esta contraido y llegan mensajes, debe mostrar un contador pequeno de no leidos.
-- Los tooltips deben ser discretos, pequenos, estar por encima de paneles y no duplicarse con tooltips nativos.
+## Tener en cuenta
 
-## Notas para continuar
-
-- Priorizar cambios acotados en `index.html`, `public/styles.css` y `src/main.js`.
-- Mantener logs tecnicos en consola o terminal, no como paneles visibles dentro de la UI.
-- Validar despues de cada cambio con `node --check src/main.js` y revisar visualmente en `http://127.0.0.1:8080`.
-- Si un fix ya esta en `main` pero GitHub Pages sigue cargando una version vieja de `src/main.js`, `public/styles.css` u otro asset versionado, actualizar el query param `?v=` en `index.html` para forzar cache-busting antes de seguir debuggeando.
+- Priorizar cambios acotados en pasos
+- Mantener logs tecnicos en consola o terminal
+- Si consideras necesario validar cambios con `node --check src/main.js` y se puede revisar visualmente en `http://127.0.0.1:8080` levantado el servidor, aunque es preferible evitarlo.
+- Si un fix ya esta en `main` pero GitHub Pages sigue cargando una version vieja, actualizar el query param `?v=` en `index.html` para forzar cache-busting.
+-  las clases no deben superar nunca las 200 lineas, si estas modificando una clase y notas que supera ese limite, decime que habria que refactorizarla al terminar tu trabajo.

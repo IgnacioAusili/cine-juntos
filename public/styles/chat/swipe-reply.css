@@ -1,0 +1,92 @@
+.message-bubble-row {
+  --reply-swipe-reserve: 64px;
+  display: inline-block;
+  position: relative;
+  max-width: calc(100% - var(--reply-swipe-reserve));
+  isolation: isolate;
+}
+
+.message-bubble-row > .message-bubble {
+  max-width: 100%;
+  min-width: 0;
+  touch-action: pan-y;
+  z-index: 1;
+  order: initial;
+}
+
+.message-bubble.swipe-dragging,
+.message-bubble.swipe-settling {
+  will-change: transform;
+}
+
+.message-bubble.swipe-dragging {
+  user-select: none;
+}
+
+.message.mine .message-bubble-row {
+  align-self: flex-end;
+}
+
+/* Los mensajes recibidos reservan el mismo margen a la izquierda para el swipe. */
+.message:not(.mine) .message-bubble-row {
+  align-self: flex-start;
+  margin-left: var(--reply-swipe-reserve);
+}
+
+.swipe-reply-hint-wrapper {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: 0;
+  height: 0;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.swipe-reply-hint {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--panel-2);
+  color: var(--accent-2);
+  border: 1px solid rgba(47, 184, 164, 0.35);
+  opacity: 0;
+  transform: translate(13px, -50%) scale(0.72);
+  transform-origin: center;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.swipe-reply-hint svg {
+  width: 13px;
+  height: 13px;
+  stroke-width: 2.2;
+}
+
+.message-bubble.swipe-ready + .swipe-reply-hint-wrapper .swipe-reply-hint {
+  color: var(--accent-2);
+  background: rgba(47, 184, 164, 0.18);
+}
+
+.message-bubble.swipe-confirmed + .swipe-reply-hint-wrapper .swipe-reply-hint {
+  animation: replySwipeConfirmPulse 180ms ease-out;
+  background: rgba(47, 184, 164, 0.24);
+  border-color: rgba(47, 184, 164, 0.5);
+}
+
+@keyframes replySwipeConfirmPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(47, 184, 164, 0.28);
+  }
+
+  100% {
+    box-shadow: 0 0 0 12px rgba(47, 184, 164, 0);
+  }
+}

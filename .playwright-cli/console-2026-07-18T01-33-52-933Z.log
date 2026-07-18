@@ -1,0 +1,69 @@
+[    1166ms] [INFO] [10:33:54 p. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:91
+[    1231ms] [INFO] [10:33:54 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:91
+[    1245ms] [INFO] [10:33:54 p. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:91
+[    1255ms] [INFO] [10:33:54 p. m.] [connection] Funcionando @ http://127.0.0.1:8080/src/state/appState.js:91
+[    1258ms] [INFO] [10:33:54 p. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:91
+[    1800ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:8080/favicon.ico:0
+[    5466ms] [INFO] [10:33:58 p. m.] [connection] Conectando... @ http://127.0.0.1:8080/src/state/appState.js:91
+[    5476ms] [INFO] [10:33:58 p. m.] [room] Entrando a sala 6I2J4. @ http://127.0.0.1:8080/src/state/appState.js:91
+[    8229ms] [INFO] [10:34:01 p. m.] [connection] Funcionando @ http://127.0.0.1:8080/src/state/appState.js:91
+[    8231ms] [INFO] [10:34:01 p. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:91
+[    8234ms] [INFO] [10:34:01 p. m.] [firebase] Offset de tiempo: 3467 ms. @ http://127.0.0.1:8080/src/state/appState.js:91
+[    8341ms] [INFO] [10:34:01 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:91
+[    8345ms] [INFO] [10:34:01 p. m.] [room] Sala 6I2J4 activa. @ http://127.0.0.1:8080/src/state/appState.js:91
+[   19692ms] [INFO] [10:34:12 p. m.] [chat:recv] Mensaje recibido de Usuario 7C7B. @ http://127.0.0.1:8080/src/state/appState.js:91
+[   19695ms] [INFO] [10:34:12 p. m.] [chat:send] Mensaje de Usuario 7C7B. @ http://127.0.0.1:8080/src/state/appState.js:91
+[   19859ms] [INFO] [10:34:12 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:91
+[   45355ms] [INFO] [10:34:38 p. m.] [chat:recv] Mensaje recibido de Usuario 7C7B. @ http://127.0.0.1:8080/src/state/appState.js:91
+[   45372ms] [INFO] [10:34:38 p. m.] [chat:send] Mensaje de Usuario 7C7B. @ http://127.0.0.1:8080/src/state/appState.js:91
+[   45603ms] [INFO] [10:34:38 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  153558ms] [INFO] [10:36:26 p. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  153562ms] [INFO] [10:36:26 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  153573ms] [INFO] [10:36:26 p. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  153579ms] [INFO] [10:36:26 p. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  153749ms] [INFO] [10:36:26 p. m.] [connection] Conectando... @ http://127.0.0.1:8080/src/state/appState.js:91
+[  153763ms] [INFO] [10:36:26 p. m.] [room] Entrando a sala 6I2J4. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  157345ms] [INFO] [10:36:30 p. m.] [firebase] Sala huerfana detectada al entrar. Limpiando datos residuales. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  157749ms] [INFO] [10:36:30 p. m.] [connection] Funcionando @ http://127.0.0.1:8080/src/state/appState.js:91
+[  157759ms] [INFO] [10:36:30 p. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  157787ms] [INFO] [10:36:30 p. m.] [firebase] Offset de tiempo: 3464 ms. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  157843ms] [INFO] [10:36:30 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  157845ms] [INFO] [10:36:30 p. m.] [room] Sala 6I2J4 activa. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  206568ms] [INFO] [10:37:19 p. m.] [chat:recv] Mensaje recibido de Usuario 7C7B. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  206570ms] [INFO] [10:37:19 p. m.] [chat:send] Mensaje de Usuario 7C7B. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  206753ms] [INFO] [10:37:19 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  344636ms] [INFO] [10:39:37 p. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  344639ms] [INFO] [10:39:37 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  344649ms] [INFO] [10:39:37 p. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  344654ms] [INFO] [10:39:37 p. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  344663ms] [INFO] [10:39:37 p. m.] [connection] Conectando... @ http://127.0.0.1:8080/src/state/appState.js:91
+[  344665ms] [INFO] [10:39:37 p. m.] [room] Entrando a sala 6I2J4. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  345822ms] [INFO] [10:39:38 p. m.] [firebase] Sala huerfana detectada al entrar. Limpiando datos residuales. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  346180ms] [INFO] [10:39:39 p. m.] [connection] Funcionando @ http://127.0.0.1:8080/src/state/appState.js:91
+[  346182ms] [INFO] [10:39:39 p. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  346184ms] [INFO] [10:39:39 p. m.] [firebase] Offset de tiempo: 3492 ms. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  346202ms] [INFO] [10:39:39 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  346204ms] [INFO] [10:39:39 p. m.] [room] Sala 6I2J4 activa. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  351886ms] [INFO] [10:39:44 p. m.] [chat:recv] Mensaje recibido de Usuario 7C7B. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  351889ms] [INFO] [10:39:44 p. m.] [chat:send] Mensaje de Usuario 7C7B. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  352055ms] [INFO] [10:39:44 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  366467ms] [INFO] [10:39:59 p. m.] [chat:recv] Mensaje recibido de Usuario 7C7B. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  366469ms] [INFO] [10:39:59 p. m.] [chat:send] Mensaje de Usuario 7C7B. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  366639ms] [INFO] [10:39:59 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  508932ms] [INFO] [10:42:21 p. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  508939ms] [INFO] [10:42:21 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  508950ms] [INFO] [10:42:21 p. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  508961ms] [INFO] [10:42:21 p. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  508971ms] [INFO] [10:42:21 p. m.] [connection] Conectando... @ http://127.0.0.1:8080/src/state/appState.js:91
+[  508973ms] [INFO] [10:42:21 p. m.] [room] Entrando a sala 6I2J4. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  510298ms] [INFO] [10:42:23 p. m.] [firebase] Sala huerfana detectada al entrar. Limpiando datos residuales. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  510656ms] [INFO] [10:42:23 p. m.] [connection] Funcionando @ http://127.0.0.1:8080/src/state/appState.js:91
+[  510658ms] [INFO] [10:42:23 p. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  510661ms] [INFO] [10:42:23 p. m.] [firebase] Offset de tiempo: 3480 ms. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  510683ms] [INFO] [10:42:23 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  510692ms] [INFO] [10:42:23 p. m.] [room] Sala 6I2J4 activa. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  559472ms] [INFO] [10:43:12 p. m.] [chat:recv] Mensaje recibido de Usuario 7C7B. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  559474ms] [INFO] [10:43:12 p. m.] [chat:send] Mensaje de Usuario 7C7B. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  559643ms] [INFO] [10:43:12 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  641796ms] [INFO] [10:44:34 p. m.] [firebase] Sala vacia detectada. Limpiando datos residuales. @ http://127.0.0.1:8080/src/state/appState.js:91
+[  642268ms] [INFO] [10:44:35 p. m.] [firebase] Offset de tiempo: 3494 ms. @ http://127.0.0.1:8080/src/state/appState.js:91

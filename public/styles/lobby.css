@@ -1,20 +1,32 @@
 .lobby-screen {
   display: grid;
-  min-height: calc(100vh - 96px);
+  min-height: calc(100vh - 72px);
+  gap: 12px;
+  align-content: center;
   place-items: center;
+}
+
+.lobby-hero {
+  display: grid;
+  width: min(760px, 100%);
+  align-items: center;
+  justify-items: center;
+  gap: 16px;
+  padding-inline: 8px;
 }
 
 .lobby-panel {
   position: relative;
   display: grid;
   width: min(560px, 100%);
-  gap: 22px;
+  justify-self: center;
+  gap: 14px;
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: rgba(27, 31, 35, 0.92);
   box-shadow: var(--shadow);
-  padding: 26px;
+  padding: 18px;
 }
 
 .lobby-panel::before {
@@ -31,6 +43,46 @@
 .lobby-fields {
   position: relative;
   z-index: 1;
+}
+
+.lobby-description-card {
+  position: relative;
+  display: grid;
+  max-width: 680px;
+  align-content: center;
+  gap: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 10px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), transparent 40%),
+    rgba(12, 15, 17, 0.62);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 18px 32px rgba(0, 0, 0, 0.18);
+  padding: 14px 16px;
+  text-align: center;
+}
+
+.lobby-description-card::before {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(circle at top right, rgba(240, 140, 58, 0.12), transparent 42%),
+    radial-gradient(circle at bottom left, rgba(47, 184, 164, 0.1), transparent 38%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.05), transparent 26%);
+  content: "";
+  pointer-events: none;
+}
+
+.lobby-description {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.45;
 }
 
 .lobby-mark {
@@ -51,18 +103,11 @@
 
 .lobby-fields {
   display: grid;
-  gap: 14px;
+  gap: 10px;
 }
 
 .lobby-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.lobby-status {
-  min-height: 20px;
-  margin: 0;
-  color: var(--muted-2);
-  font-size: 0.9rem;
+  gap: 8px;
 }

@@ -1,0 +1,75 @@
+.sync-bar {
+  min-width: 150px;
+  justify-content: flex-end;
+}
+
+.sync-bar.status-only {
+  min-width: 130px;
+  align-self: end;
+}
+
+.sync-status {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  margin: 5px 0 0;
+  color: var(--muted-2);
+  font-size: 0.78rem;
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.video-status {
+  justify-self: start;
+}
+
+.video-status-icon svg,
+.video-status-icon {
+  width: 13px;
+  height: 13px;
+}
+
+.video-status.empty {
+  color: var(--muted-2);
+}
+
+.video-status.loading {
+  color: #ffc08b;
+}
+
+.video-status.loaded {
+  color: #9ee9dd;
+}
+
+.video-status.error {
+  color: #ffb0b0;
+}
+
+.video-status.loading .video-status-icon {
+  animation: spin 900ms linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--muted);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.toggle input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent-2);
+}

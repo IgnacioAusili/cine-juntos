@@ -10,7 +10,7 @@ body.fullscreen-mode::-webkit-scrollbar {
 }
 
 body.fullscreen-mode {
-  overflow: auto;
+  overflow-y: auto;
   background: #050607;
 }
 
@@ -46,9 +46,10 @@ body.fullscreen-mode .session-view[data-chat-dock] .workspace {
 }
 
 body.fullscreen-mode .session-view[data-chat-dock="right"] .workspace {
-  grid-template-columns: minmax(0, 1fr) var(--chat-panel-width);
+  column-gap: 0;
+  grid-template-columns: minmax(0, 1fr) var(--chat-handle-gap) var(--chat-panel-width);
   grid-template-rows: 100vh;
-  grid-template-areas: "video chat";
+  grid-template-areas: "video handle chat";
 }
 
 body.fullscreen-mode .session-view[data-chat-dock="top"] .workspace {
@@ -116,12 +117,8 @@ body.fullscreen-mode .player-actions {
   align-items: flex-end;
 }
 
-body.fullscreen-mode .session-view[data-chat-dock="right"] .chat-collapse-handle {
-  right: var(--chat-panel-width);
-}
-
 body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-handle {
-  right: 0;
+  right: 8px;
 }
 
 body.fullscreen-mode .player-chat {

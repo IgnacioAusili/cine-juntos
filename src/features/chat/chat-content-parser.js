@@ -1,7 +1,7 @@
 import {
   REMOTE_IMAGE_EXTENSIONS,
   REMOTE_VIDEO_EXTENSIONS,
-} from "../core/utils.js";
+} from "../../core/utils.js";
 
 export function appendMessageContent(container, text) {
   const trimmedText = String(text || "").trim();

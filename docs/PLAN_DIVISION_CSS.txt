@@ -1,0 +1,132 @@
+PLAN DE IMPLEMENTACION PARA DIVIDIR CSS GRANDES
+Proyecto: Cine Juntos
+Fecha: 2026-07-17
+
+Objetivo
+- Dividir `components.css`, `layout.css`, `chat.css` y `chat-overlay.css`
+  en submodulos mas chicos sin romper la UI ni alterar la arquitectura actual.
+- Mantener `public/styles.css` como entrypoint principal.
+- Hacer cambios chicos, validables e incrementales.
+
+Principios de trabajo
+- No renombrar selectores existentes.
+- No cambiar HTML ni JS en esta etapa.
+- No modificar el orden global de imports de `public/styles.css`.
+- Mantener la cascada actual de cada archivo grande.
+- Dividir por responsabilidad interna, no por reescritura total.
+- Validar cada paso antes de seguir con el siguiente.
+
+Base arquitectonica
+- El mapa del proyecto ya define que `public/styles.css` funciona como entrada
+  de modulos CSS chicos.
+- La estructura de JS ya esta separada por dominios en `src/features/`.
+- El refactor de CSS debe acompañar esa separacion sin introducir tooling nuevo.
+
+Objetivos a dividir
+- `public/styles/layout.css`
+- `public/styles/components.css`
+- `public/styles/chat.css`
+- `public/styles/chat-overlay.css`
+
+Estructura propuesta
+public/
+  styles.css
+  styles/
+    layout.css
+    components.css
+    chat.css
+    chat-overlay.css
+
+    layout/
+      app-shell.css
+      topbar.css
+      session-view.css
+      workspace.css
+      chat-panel.css
+      form-layout.css
+
+    components/
+      app-status.css
+      room-chip.css
+      host-badge.css
+      buttons.css
+      chat-collapse-handle.css
+      presence.css
+      icon-fallbacks.css
+      unread-badges.css
+      emoji-popover.css
+      tooltip-layer.css
+
+    chat/
+      messages.css
+      message-media.css
+      composer.css
+      message-menu.css
+      image-preview.css
+      messages-wrap.css
+      scroll-bottom.css
+      reply-preview.css
+      message-reply.css
+      message-highlight.css
+      swipe-reply.css
+      char-counter.css
+
+    chat-overlay/
+      shell.css
+      header.css
+      messages.css
+      composer.css
+      sync-status.css
+
+Fases
+1. Convertir cada archivo grande en un archivo contenedor con `@import`,
+   manteniendo el mismo orden efectivo de carga.
+2. Dividir `layout.css` en piezas estructurales puras.
+3. Dividir `components.css` por componentes visuales autonomos.
+4. Dividir `chat.css` por subfeature alineada con `src/features/chat/`.
+5. Dividir `chat-overlay.css` manteniendo sus overrides sobre `chat.css`.
+6. Validar visualmente cada fase antes de avanzar.
+
+Orden global que no debe cambiar
+- `tokens.css`
+- `base.css`
+- `layout.css`
+- `components.css`
+- `lobby.css`
+- `player.css`
+- `chat.css`
+- `chat-overlay.css`
+- `states.css`
+- `responsive.css`
+
+Reglas para no romper nada
+- No mover responsive a submodulos en esta etapa.
+- No tocar `states.css` en esta fase.
+- No cambiar especificidad salvo necesidad real.
+- Si un bloque depende del orden, moverlo a un subarchivo respetando su
+  posicion relativa original.
+- Si hay selectores hibridos entre layout y chat, priorizar estabilidad antes
+  que pureza semantica.
+
+Checklist de validacion
+- Lobby y topbar.
+- Room chip y estado de conexion.
+- Chat dock en `right`, `bottom` y `top`.
+- Colapso de chat en modo normal y fullscreen.
+- Mensajes normales, propios, sistema, reply, swipe y highlight.
+- Composer, menu contextual, preview de imagen y emoji popover.
+- Overlay del player y sus diferencias respecto al chat normal.
+- Breakpoints en `1100px`, `980px` y `680px`.
+
+Secuencia recomendada
+- Commit 1: split de `layout.css`.
+- Commit 2: split de `components.css`.
+- Commit 3: split de `chat.css`.
+- Commit 4: split de `chat-overlay.css`.
+- Commit 5: limpieza menor y deduplicacion puntual, solo si todo esta estable.
+
+Paso 1 ejecutable
+- Crear subcarpetas `layout/`, `components/`, `chat/` y `chat-overlay/`.
+- Mover el contenido actual a subarchivos nuevos.
+- Reemplazar cada archivo grande por un set de `@import`.
+- Confirmar que el contenido efectivo siga en el mismo orden.

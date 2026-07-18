@@ -6,9 +6,21 @@
   display: none !important;
 }
 
+html {
+  height: 100%;
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
 body {
+  height: 100%;
   min-height: 100vh;
   margin: 0;
+  overflow-y: auto;
   background:
     linear-gradient(180deg, rgba(240, 140, 58, 0.07), transparent 260px),
     linear-gradient(90deg, rgba(47, 184, 164, 0.05) 1px, transparent 1px),
@@ -19,6 +31,14 @@ body {
     56px 56px,
     56px 56px;
   color: var(--text);
+}
+
+body:not(.app-ready) {
+  visibility: hidden;
+}
+
+body.is-lobby {
+  overflow: hidden;
 }
 
 body::before {

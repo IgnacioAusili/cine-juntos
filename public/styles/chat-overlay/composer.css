@@ -1,0 +1,65 @@
+.overlay-message-form {
+  position: relative;
+  gap: 5px;
+  width: 100%;
+}
+
+.overlay-message-form .input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  background: rgba(12, 15, 17, 0.52);
+  padding: 0 0 0 4px;
+  backdrop-filter: blur(8px);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.overlay-message-form .input-wrapper:focus-within {
+  border-color: rgba(255, 255, 255, 0.28);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08);
+}
+
+.overlay-message-form .input-wrapper textarea {
+  flex: 1 1 auto;
+  width: 0;
+  min-height: 30px;
+  max-height: 86px;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 7px 6px;
+  font-size: 0.78rem;
+  outline: none;
+  resize: none;
+  color: var(--text);
+}
+
+.overlay-message-form .input-wrapper .icon-button {
+  position: static;
+  transform: none;
+  flex: 0 0 28px;
+  width: 28px;
+  min-height: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  margin-bottom: 2px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.overlay-message-form .input-wrapper .emoji-trigger:hover {
+  color: var(--text);
+}
+
+.overlay-message-form .input-wrapper .send {
+  color: #7ff5e5;
+}

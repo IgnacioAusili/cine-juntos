@@ -15,7 +15,7 @@ import {
   hydrateIcons,
   initializeUi,
   setConnection,
-} from "./features/ui.js";
+} from "./features/icons-tooltips.js";
 import {
   renderPresence,
   wireIdentityEvents,
@@ -31,15 +31,16 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat.js";
+} from "./features/chat/index.js";
 import {
   initializePlayer,
   wirePlayerEvents,
-} from "./features/playerSync.js";
+} from "./features/player/index.js";
 import { joinRoom, wireRoomEvents } from "./features/room.js";
 
 const requestedRoom = normalizeRoomCode(new URLSearchParams(window.location.search).get("room") || "");
 
+document.body.classList.remove("app-ready");
 applyInitialDefaults();
 initializeUi();
 renderPresence();
@@ -56,6 +57,9 @@ updateCollapseButton();
 updateCharCounter(dom.messageInput, false);
 updateCharCounter(dom.overlayMessageInput, true);
 window.addEventListener("load", hydrateIcons);
+window.addEventListener("load", () => {
+  document.body.classList.add("app-ready");
+});
 detectTerminalLogEndpoint();
 
 window.addEventListener("pagehide", () => {
@@ -72,10 +76,20 @@ window.addEventListener("beforeunload", () => {
 
 if (requestedRoom) {
   dom.roomInput.value = requestedRoom;
-  joinRoom(requestedRoom);
+  dom.roomInput.dispatchEvent(new Event("input", { bubbles: true }));
 } else {
   setConnection("local", "Modo local");
   showLobby();
+}
+
+if (requestedRoom) {
+  window.addEventListener(
+    "load",
+    () => {
+      void joinRoom(requestedRoom);
+    },
+    { once: true },
+  );
 }
 
 logEvent("app", "Interfaz lista. Video de ejemplo precargado.");

@@ -1,0 +1,84 @@
+.source-strip,
+.sync-bar {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 8px;
+}
+
+.chat-tools {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  align-items: end;
+  gap: 8px;
+  grid-template-columns: auto minmax(0, 1fr) 36px;
+  width: 100%;
+}
+
+.chat-name-field {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.chat-name-field .label-row {
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.chat-name-field input[type="text"] {
+  min-height: 36px;
+  padding: 0 10px;
+}
+
+.source-strip {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.input-with-button {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  align-items: center;
+}
+
+.input-with-button input {
+  flex: 1;
+  min-width: 0;
+}
+
+.input-with-button button {
+  flex-shrink: 0;
+}
+
+.field {
+  display: grid;
+  min-width: 0;
+  flex: 1 1 auto;
+  gap: 5px;
+}
+
+.field-room {
+  flex: 0 1 190px;
+}
+
+.field span {
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.label-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding-inline-start: 12px;
+}

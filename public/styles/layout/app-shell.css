@@ -1,0 +1,50 @@
+.app-shell {
+  display: grid;
+  width: min(1680px, 100%);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: var(--app-shell-gutter);
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 6px;
+}
+
+body.is-lobby .topbar {
+  align-items: start;
+}
+
+body.is-lobby .topbar-brand {
+  display: grid;
+  gap: 4px;
+}
+
+body.is-lobby .topbar-actions {
+  padding-top: 2px;
+}
+
+.topbar-actions {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.topbar-actions-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+body.is-lobby .room-chip,
+body.is-lobby .host-badge {
+  display: none;
+}

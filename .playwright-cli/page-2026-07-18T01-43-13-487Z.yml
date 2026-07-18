@@ -1,0 +1,73 @@
+- generic [ref=f3e2]:
+  - banner [ref=f3e3]:
+    - heading "Cine Juntos" [level=1] [ref=f3e5]
+    - generic [ref=f3e6]:
+      - generic [ref=f3e7]:
+        - 'generic "Estado de la aplicacion: Funcionando" [ref=f3e37]': Funcionando
+        - generic [ref=f3e38]:
+          - generic [ref=f3e39]: Sala
+          - generic [ref=f3e40]: 6I2J4
+          - button "Copiar invitacion" [ref=f3e41] [cursor=pointer]
+      - generic [ref=f3e45]: Sos host
+  - main [ref=f3e48]:
+    - region "Controles de sala" [ref=f3e49]:
+      - generic [ref=f3e51]:
+        - generic [ref=f3e52]:
+          - text: Video
+          - button "Ayuda sobre videos" [ref=f3e53] [cursor=pointer]
+        - generic [ref=f3e57]:
+          - textbox "Pega un link directo a MP4, WebM u otro video compatible" [ref=f3e58]:
+            - /placeholder: https://servidor.com/video.mp4
+            - text: https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4
+          - button "Cargar" [ref=f3e59] [cursor=pointer]
+        - paragraph [ref=f3e63]:
+          - generic [ref=f3e66]: Sin contenido
+    - generic [ref=f3e67]:
+      - region "Reproductor sincronizado" [ref=f3e68]:
+        - generic [ref=f3e69]:
+          - generic "Controles de reproductor" [ref=f3e71]:
+            - button "Mostrar u ocultar chat dentro del video" [ref=f3e72] [cursor=pointer]
+          - generic "Controles inferiores del reproductor" [ref=f3e75]:
+            - button "Pantalla completa de pagina" [ref=f3e76] [cursor=pointer]
+          - complementary "Chat dentro del video":
+            - generic:
+              - button "1 usuarios conectados":
+                - generic: "1"
+              - group "Estilo del chat dentro del video":
+                - button "Mensajes flotantes"
+                - button "Panel transparente"
+            - generic:
+              - generic:
+                - article:
+                  - generic: Usuario 7C7B
+                  - generic: Este mensaje de prueba es deliberadamente largo para comprobar que la burbuja reserva el ancho completo del gesto de respuesta sin salir del panel de chat ni aumentar el ancho de la pagina.
+                  - generic: 10:43 p. m.
+            - generic:
+              - generic:
+                - textbox "Escribir al chat de la sala":
+                  - /placeholder: Mensaje
+                - button "Abrir emojis"
+                - button "Enviar mensaje"
+              - generic: 0 / 600
+      - complementary "Chat de la sala" [ref=f3e82]:
+        - generic [ref=f3e83]:
+          - button "1 usuarios conectados" [ref=f3e84] [cursor=pointer]:
+            - generic [ref=f3e86]: "1"
+          - generic [ref=f3e87]:
+            - generic [ref=f3e88]:
+              - text: Nombre
+              - button "Ayuda sobre nombre" [ref=f3e89] [cursor=pointer]
+            - textbox "Nombre visible en chat y sincronizacion" [ref=f3e93]: Usuario 7C7B
+          - button "Chat lateral. Mover chat abajo" [ref=f3e94] [cursor=pointer]
+        - article [ref=f3e113]:
+          - generic [ref=f3e114]: Usuario 7C7B
+          - generic [ref=f3e116]: Este mensaje de prueba es deliberadamente largo para comprobar que la burbuja reserva el ancho completo del gesto de respuesta sin salir del panel de chat ni aumentar el ancho de la pagina.
+          - generic [ref=f3e118]: 10:43 p. m.
+        - generic [ref=f3e99]:
+          - generic [ref=f3e100]:
+            - textbox "Escribir al chat de la sala" [ref=f3e101]:
+              - /placeholder: Mensaje
+            - button "Abrir emojis" [ref=f3e102] [cursor=pointer]
+            - button "Enviar mensaje" [active] [ref=f3e106] [cursor=pointer]
+          - generic: 0 / 600
+      - button "Contraer chat" [ref=f3e110] [cursor=pointer]

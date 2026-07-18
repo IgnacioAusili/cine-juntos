@@ -1,28 +1,26 @@
 import {
   dom,
-} from "../core/dom.js";
+} from "../../core/dom.js";
 import {
   state,
   getDisplayName,
   getTransportNow,
   logEvent,
-} from "../core/state.js";
+} from "../../core/state.js";
 import {
   EMOJIS,
   MAX_CHARS,
-} from "../core/utils.js";
+} from "../../core/utils.js";
 import {
   setSyncStatus,
-} from "./session-ui.js";
-import {
-  clearReplyTarget,
-  renderMessage,
-} from "./chat-render.js";
+} from "../session-ui.js";
+import { clearReplyTarget } from "./chat-reply.js";
+import { renderMessage } from "./chat-render.js";
 import {
   compressImageBase64,
   renderImagePreview,
   clearPendingImage,
-} from "./image-utils.js";
+} from "./image-compress.js";
 
 export function sendMessage(text, attachedImage) {
   if (!state.session.activeRoom || !state.session.transport) {

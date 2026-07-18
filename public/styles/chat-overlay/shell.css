@@ -1,0 +1,45 @@
+.player-chat {
+  position: absolute;
+  z-index: 6;
+  top: 42px;
+  right: 24px;
+  bottom: 8px;
+  display: grid;
+  width: min(260px, calc(100% - 10px));
+  max-height: min(62%, 330px);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 6px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(16px);
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease;
+}
+
+.player-frame.chat-inside-open .player-chat {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0);
+}
+
+.player-frame:not(.chat-inside-open) .player-chat,
+.player-frame:not(.chat-inside-open) .player-chat * {
+  pointer-events: none;
+}
+
+.player-frame[data-chat-style="panel"] .player-chat {
+  border: 0;
+  border-radius: 8px 0 0 8px;
+  background: rgba(7, 10, 12, 0.2);
+  box-shadow: -14px 14px 30px rgba(0, 0, 0, 0.16);
+  padding: 6px 5px 6px 8px;
+  backdrop-filter: blur(8px);
+}
+
+.player-frame[data-chat-style="float"] .player-chat {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+}

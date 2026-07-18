@@ -1,0 +1,91 @@
+.overlay-messages {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  justify-content: flex-start;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  pointer-events: auto;
+  border: 0;
+  background: transparent;
+  padding: 14px 13px 16px 0;
+  mask-image:
+    linear-gradient(90deg, #000 0 calc(100% - 22px), transparent 100%),
+    linear-gradient(180deg, transparent 0, #000 16px, #000 calc(100% - 16px), transparent 100%);
+  mask-composite: intersect;
+  -webkit-mask-image:
+    linear-gradient(90deg, #000 0 calc(100% - 22px), transparent 100%),
+    linear-gradient(180deg, transparent 0, #000 16px, #000 calc(100% - 16px), transparent 100%);
+  -webkit-mask-composite: source-in;
+}
+
+.overlay-messages::before {
+  content: "";
+  margin-top: auto;
+}
+
+.overlay-messages .message {
+  display: flex;
+  flex-direction: column;
+  max-width: 82%;
+  margin-bottom: 6px;
+}
+
+.overlay-messages .message.mine {
+  align-self: flex-end;
+  align-items: flex-end;
+}
+
+.overlay-messages .message-meta {
+  color: rgba(255, 255, 255, 0.74);
+  font-size: 0.58rem;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.72);
+}
+
+.overlay-messages .message-meta-name {
+  display: block;
+  padding-inline-start: 10px;
+}
+
+.overlay-messages .message-time {
+  display: block;
+  width: 100%;
+  font-size: 0.54rem;
+  text-align: right;
+}
+
+.overlay-messages .message-bubble {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(9, 12, 14, 0.45);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+  font-size: 0.76rem;
+  line-height: 1.25;
+  padding: 6px 8px;
+  backdrop-filter: blur(8px);
+}
+
+.player-frame[data-chat-style="float"] .overlay-messages .message-bubble {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(7, 9, 10, 0.36);
+}
+
+.overlay-messages .message.mine .message-bubble {
+  background: rgba(47, 184, 164, 0.28);
+}
+
+.overlay-messages .message.system {
+  align-items: center;
+  align-self: center;
+  max-width: 88%;
+  margin: 3px auto 6px;
+}
+
+.overlay-messages .message.system .message-bubble {
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.62rem;
+  padding: 2px 0;
+  text-align: center;
+}

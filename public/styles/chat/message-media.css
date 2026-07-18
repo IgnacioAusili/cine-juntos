@@ -1,0 +1,37 @@
+.message-media-link {
+  display: block;
+  max-width: min(100%, 300px);
+  overflow: hidden;
+  border-radius: 7px;
+  color: inherit;
+}
+
+.message-media {
+  display: block;
+  width: 100%;
+  max-height: 260px;
+  object-fit: contain;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.message-video {
+  display: block;
+  width: min(100%, 340px);
+  max-height: 240px;
+  border-radius: 7px;
+  background: #050607;
+}
+
+.message-link {
+  color: #9ee9dd;
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.message-link:hover {
+  text-decoration: underline;
+}
+
+.message-text + .message-media-link {
+  margin-top: 8px;
+}

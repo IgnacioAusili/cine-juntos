@@ -96,7 +96,7 @@ input[type="url"]:focus,
 textarea:focus,
 select:focus {
   border-color: var(--accent-2);
-  box-shadow: 0 0 0 3px rgba(47, 184, 164, 0.14);
+  box-shadow: none;
 }
 
 .message-form textarea:focus,

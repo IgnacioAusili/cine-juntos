@@ -63,7 +63,6 @@ function wirePlayerOverlayControls() {
   const scheduleHide = (delay = PLAYER_OVERLAY_IDLE_MS) => {
     clearHideTimer();
     hideTimer = window.setTimeout(() => {
-      if (dom.playerFrame.matches(":focus-within")) return;
       setOverlayVisible(false);
     }, delay);
   };
@@ -80,13 +79,16 @@ function wirePlayerOverlayControls() {
 
   dom.playerFrame.addEventListener("mouseenter", revealOverlay);
   dom.playerFrame.addEventListener("focusin", revealOverlay);
-  
+
   dom.playerFrame.addEventListener("mouseleave", () => {
-    // Al salir de la zona del reproductor, ocultamos más rápido (en 400ms)
+    // Quitar foco de cualquier control antes de esconder, para que no trabe el timer
+    if (document.activeElement && dom.playerFrame.contains(document.activeElement)) {
+      document.activeElement.blur();
+    }
     scheduleHide(400);
   });
   dom.playerFrame.addEventListener("focusout", () => {
-    scheduleHide(400);
+    scheduleHide(800);
   });
 
   dom.videoPlayer.addEventListener("play", () => {

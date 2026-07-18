@@ -19,7 +19,6 @@
 
 .overlay-message-form .input-wrapper:focus-within {
   border-color: rgba(255, 255, 255, 0.28);
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08);
 }
 
 .overlay-message-form .input-wrapper textarea {

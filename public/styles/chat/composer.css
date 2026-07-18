@@ -23,7 +23,6 @@
 
 .message-form .input-wrapper:focus-within {
   border-color: var(--accent-2);
-  box-shadow: 0 0 0 3px rgba(47, 184, 164, 0.14);
 }
 
 .message-form .input-wrapper textarea {

@@ -244,9 +244,10 @@ function syncPlayerControls(forceSliderSync = false) {
     dom.playerSeekInput.max = String(duration || 0);
     dom.playerSeekInput.disabled = !hasMedia || duration <= 0;
     if (forceSliderSync || !isSeekingElementFocused) {
-      dom.playerSeekInput.value = String(Math.min(currentTime, duration || 0));
+      // Si el video terminó, forzar el value al máximo para que el thumb llegue al final
+      const seekValue = dom.videoPlayer.ended && duration > 0 ? duration : Math.min(currentTime, duration || 0);
+      dom.playerSeekInput.value = String(seekValue);
     }
-    // Si el video terminó, forzar 100% visualmente aunque currentTime != duration por precisión de float
     updateSeekVisuals(Number(dom.playerSeekInput.value || 0), duration, dom.videoPlayer.ended);
   }
 

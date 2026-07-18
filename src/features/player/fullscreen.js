@@ -73,12 +73,15 @@ function wirePlayerOverlayControls() {
     scheduleHide();
   };
 
-  ["pointermove", "pointerdown", "touchstart"].forEach((eventName) => {
+  ["mousemove", "mousedown", "touchstart"].forEach((eventName) => {
     dom.playerFrame.addEventListener(eventName, revealOverlay, { passive: true });
   });
   dom.playerFrame.addEventListener("mouseenter", revealOverlay);
   dom.playerFrame.addEventListener("focusin", revealOverlay);
-  dom.playerFrame.addEventListener("mouseleave", scheduleHide);
+  dom.playerFrame.addEventListener("mouseleave", () => {
+    // Al salir, ocultamos después de una pequeña espera, a menos que tenga focus
+    scheduleHide();
+  });
   dom.playerFrame.addEventListener("focusout", scheduleHide);
 
   dom.videoPlayer.addEventListener("play", scheduleHide);

@@ -74,7 +74,7 @@ export function getDisplayName() {
     if (saved !== inputVal) {
       localStorage.setItem("cine-juntos-name", inputVal);
     }
-    return inputVal.slice(0, 28);
+    return inputVal.slice(0, 20);
   }
   return saved || initialDisplayName;
 }

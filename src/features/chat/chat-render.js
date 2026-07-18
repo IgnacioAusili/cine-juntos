@@ -75,7 +75,38 @@ function appendMessageTo(container, message) {
 
   if (message.text) {
     if (message.system) {
-      appendMessageContent(bubble, `--- ${message.text} ---`);
+      let displayText = message.text;
+      if (message.from === state.session.clientId) {
+        // Obtenemos el nombre exacto con el que se envió
+        const nameKey = message.name || "Invitado";
+        if (displayText.startsWith(nameKey)) {
+          // Reemplazar nombre por "Tú" y conjugar verbos comunes
+          let sub = displayText.substring(nameKey.length).trim();
+          
+          // Mapeo de verbos en tercera persona a segunda persona
+          const verbReplacements = [
+            { from: /^inició el video/, to: "iniciaste el video" },
+            { from: /^reprodujo el video en/, to: "reprodujiste el video en" },
+            { from: /^pauso el video en/, to: "pausaste el video en" },
+            { from: /^salto a/, to: "saltaste a" },
+            { from: /^cambio la velocidad a/, to: "cambiaste la velocidad a" },
+            { from: /^cargo un video nuevo/, to: "cargaste un video nuevo" },
+            { from: /^quedó en espera/, to: "quedaste en espera" },
+            { from: /^tiene el video pausado/, to: "tienes el video pausado" },
+            { from: /^tuvo un error/, to: "tuviste un error" },
+            { from: /^tiene inconvenientes/, to: "tienes inconvenientes" }
+          ];
+
+          for (const rep of verbReplacements) {
+            if (rep.from.test(sub)) {
+              sub = sub.replace(rep.from, rep.to);
+              break;
+            }
+          }
+          displayText = `Tú ${sub}`;
+        }
+      }
+      appendMessageContent(bubble, `--- ${displayText} ---`);
     } else {
       appendMessageContent(bubble, message.text);
     }

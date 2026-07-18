@@ -69,3 +69,23 @@ export function setConnection(mode, label) {
   dom.connectionStatus.setAttribute("aria-label", `Estado de la aplicacion: ${nextLabel}`);
   logEvent("connection", nextLabel);
 }
+
+let dialogInitialized = false;
+
+export function showErrorDialog(message) {
+  if (!dom.errorDialog) return;
+
+  if (message) {
+    const msgEl = dom.errorDialog.querySelector("#dialogMessage");
+    if (msgEl) msgEl.textContent = message;
+  }
+
+  if (!dialogInitialized && dom.closeDialogButton) {
+    dom.closeDialogButton.addEventListener("click", () => {
+      dom.errorDialog.close();
+    });
+    dialogInitialized = true;
+  }
+
+  dom.errorDialog.showModal();
+}

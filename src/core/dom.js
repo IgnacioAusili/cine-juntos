@@ -67,4 +67,6 @@ export const dom = {
   overlayScrollBadge: document.querySelector("#overlayScrollBadge"),
   mainCharCounter: document.querySelector("#mainCharCounter"),
   overlayCharCounter: document.querySelector("#overlayCharCounter"),
+  errorDialog: document.querySelector("#errorDialog"),
+  closeDialogButton: document.querySelector("#closeDialogButton"),
 };

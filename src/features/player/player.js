@@ -19,6 +19,8 @@ import {
   publishState,
 } from "./player-sync-logic.js";
 
+import { showErrorDialog } from "../session-ui.js";
+
 export function initializePlayer() {
   setVideoStatus("empty", "Sin contenido");
   syncPlayerControls(true);
@@ -143,6 +145,17 @@ export function wirePlayerCoreEvents() {
     logEvent("error", "El navegador no pudo cargar el video.");
     syncPlayerControls(true);
     pauseRoomForPlaybackIssue("error");
+    
+    // Mostrar diálogo de error al usuario
+    const error = dom.videoPlayer.error;
+    let details = "No se pudo cargar el video seleccionado. Por favor, verifica el formato o que el enlace sea accesible.";
+    if (error) {
+      if (error.code === 1) details = "La carga del video fue abortada.";
+      else if (error.code === 2) details = "Error de red al intentar descargar el video.";
+      else if (error.code === 3) details = "El video está corrupto o tiene un formato no soportado por tu navegador.";
+      else if (error.code === 4) details = "No se pudo encontrar el video o el formato no es compatible.";
+    }
+    showErrorDialog(details);
   });
 
   dom.videoPlayer.addEventListener("emptied", () => {

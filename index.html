@@ -494,6 +494,14 @@
       <div class="tooltip-layer" id="tooltipLayer" hidden></div>
     </div>
 
+    <dialog id="errorDialog" class="error-dialog" aria-modal="true" aria-labelledby="dialogTitle">
+      <div class="dialog-content">
+        <h2 id="dialogTitle">Error de Video</h2>
+        <p id="dialogMessage">No se pudo cargar el video seleccionado. Por favor, verifica el formato o que el enlace sea accesible.</p>
+        <button id="closeDialogButton" type="button" class="btn">Entendido</button>
+      </div>
+    </dialog>
+
     <script src="./public/dev-runtime.js?v=20260715-02"></script>
     <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script src="./public/firebase-config.js"></script>

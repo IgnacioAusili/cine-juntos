@@ -67,8 +67,6 @@ video::-webkit-media-controls-fullscreen-button {
   pointer-events: none;
 }
 
-.player-frame:hover .player-bottom-actions,
-.player-frame:focus-within .player-bottom-actions,
 .player-frame.player-overlay-visible .player-bottom-actions {
   opacity: 1;
   transform: translateY(0);

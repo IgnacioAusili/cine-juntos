@@ -31,11 +31,40 @@
   color: var(--muted-2);
   font-size: 0.66rem;
   order: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .message-meta-name {
   display: block;
-  padding-inline-start: 10px;
+}
+
+.message-video-ts {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(47, 184, 164, 0.12);
+  border: 1px solid rgba(47, 184, 164, 0.3);
+  color: var(--brand-active, #2fb8a4);
+  border-radius: 4px;
+  padding: 1px 4px;
+  font-size: 0.62rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.message-video-ts:hover {
+  background: rgba(47, 184, 164, 0.22);
+  border-color: rgba(47, 184, 164, 0.5);
+  transform: translateY(-0.5px);
+}
+
+.message-video-ts svg {
+  flex-shrink: 0;
+  fill: currentColor;
 }
 
 .message-time {
@@ -47,7 +76,7 @@
   letter-spacing: 0.01em;
   order: 2;
   text-align: right;
-  margin-top: -1px;
+  margin-top: 3px;
 }
 
 .message-bubble {

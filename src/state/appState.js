@@ -61,13 +61,22 @@ const initialDisplayName =
 state.session.knownMembers = new Map([[state.session.clientId, initialDisplayName]]);
 
 export function applyInitialDefaults() {
-  dom.nameInput.value = initialDisplayName;
-  dom.lobbyNameInput.value = initialDisplayName;
+  const name = localStorage.getItem("cine-juntos-name") || initialDisplayName;
+  if (dom.nameInput) dom.nameInput.value = name;
+  if (dom.lobbyNameInput) dom.lobbyNameInput.value = name;
   dom.videoUrlInput.value = EXAMPLE_VIDEO_URL;
 }
 
 export function getDisplayName() {
-  return dom.nameInput.value.trim().slice(0, 28) || makeGuestName(state.session.clientId);
+  const saved = localStorage.getItem("cine-juntos-name");
+  const inputVal = ((dom.nameInput && dom.nameInput.value) || (dom.lobbyNameInput && dom.lobbyNameInput.value) || "").trim();
+  if (inputVal) {
+    if (saved !== inputVal) {
+      localStorage.setItem("cine-juntos-name", inputVal);
+    }
+    return inputVal.slice(0, 28);
+  }
+  return saved || initialDisplayName;
 }
 
 export function getTransportNow() {

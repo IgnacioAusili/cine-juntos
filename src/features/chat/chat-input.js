@@ -29,6 +29,14 @@ export function sendMessage(text, attachedImage) {
     return false;
   }
 
+  const videoEl = dom.videoPlayer;
+  const isPlaying =
+    videoEl &&
+    !videoEl.paused &&
+    !videoEl.ended &&
+    Number.isFinite(videoEl.currentTime) &&
+    videoEl.currentTime > 0;
+
   const message = {
     id: crypto.randomUUID(),
     from: state.session.clientId,
@@ -44,6 +52,10 @@ export function sendMessage(text, attachedImage) {
       : null,
     createdAt: getTransportNow(),
   };
+
+  if (isPlaying) {
+    message.videoTimestamp = videoEl.currentTime;
+  }
 
   state.session.transport.sendMessage(message).catch((error) => {
     console.error(error);

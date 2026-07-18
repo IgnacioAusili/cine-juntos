@@ -1,6 +1,6 @@
 import { dom } from "../../core/dom.js";
 import { state, logEvent } from "../../core/state.js";
-import { MAX_RENDERED_MESSAGES, formatTime } from "../../core/utils.js";
+import { MAX_RENDERED_MESSAGES, formatTime, formatClockTime } from "../../core/utils.js";
 import { rememberParticipant } from "../presence.js";
 import { wireMessageInteractions } from "./chat-message-interactions.js";
 import { appendMessageContent, truncateText } from "./chat-content-parser.js";
@@ -41,6 +41,21 @@ function appendMessageTo(container, message) {
 
   const meta = document.createElement("div");
   meta.className = "message-meta";
+
+  if (message.videoTimestamp != null && !message.system) {
+    const tsBtn = document.createElement("button");
+    tsBtn.type = "button";
+    tsBtn.className = "message-video-ts";
+    tsBtn.title = `Ir al minuto ${formatClockTime(message.videoTimestamp)} del video`;
+    tsBtn.setAttribute("aria-label", `Saltar a ${formatClockTime(message.videoTimestamp)} en el video`);
+    tsBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="8" height="8" aria-hidden="true"><polygon points="5,3 19,12 5,21"/></svg><span>${formatClockTime(message.videoTimestamp)}</span>`;
+    tsBtn.addEventListener("click", () => {
+      if (dom.videoPlayer && Number.isFinite(message.videoTimestamp)) {
+        dom.videoPlayer.currentTime = message.videoTimestamp;
+      }
+    });
+    meta.append(tsBtn);
+  }
 
   const metaName = document.createElement("span");
   metaName.className = "message-meta-name";

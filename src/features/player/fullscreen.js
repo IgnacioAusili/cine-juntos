@@ -14,7 +14,7 @@ import {
   logEvent,
 } from "../../core/state.js";
 
-const PLAYER_OVERLAY_IDLE_MS = 1800;
+const PLAYER_OVERLAY_IDLE_MS = 2500;
 
 export function wireFullscreenEvents() {
   dom.pageFullscreenButton.addEventListener("click", () => {
@@ -62,7 +62,8 @@ function wirePlayerOverlayControls() {
   const scheduleHide = () => {
     clearHideTimer();
     hideTimer = window.setTimeout(() => {
-      if (dom.playerFrame.matches(":hover") || dom.playerFrame.matches(":focus-within")) return;
+      // No ocultar si hay un elemento de control con foco dentro del frame
+      if (dom.playerFrame.matches(":focus-within")) return;
       setOverlayVisible(false);
     }, PLAYER_OVERLAY_IDLE_MS);
   };

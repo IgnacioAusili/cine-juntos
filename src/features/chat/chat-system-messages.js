@@ -54,13 +54,13 @@ function describeVideoEvent(action, currentState) {
   if (action === "rate")
     return `${name} cambio la velocidad a ${currentState.rate}x`;
   if (action === "video") return `${name} cargo un video nuevo`;
-  if (action === "hold") return `${name} se ${describePlaybackIssue(currentState.issueReason)} en ${time}`;
+  if (action === "hold") return `${name} ${describePlaybackIssue(currentState.issueReason)} en ${time}`;
   return "";
 }
 
 function describePlaybackIssue(reason) {
-  if (reason === "waiting") return "tiene cargando el video";
-  if (reason === "stalled") return "tiene trabado el video";
-  if (reason === "error") return "tiene con error el video";
-  return "tiene con problemas el video";
+  if (reason === "waiting") return "quedó en espera (cargando buffer)";
+  if (reason === "stalled") return "tiene el video pausado por problemas de conexión";
+  if (reason === "error") return "tuvo un error al cargar el video";
+  return "tiene inconvenientes para reproducir el video";
 }

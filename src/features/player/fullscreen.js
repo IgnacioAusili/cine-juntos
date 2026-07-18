@@ -44,28 +44,28 @@ export function wireFullscreenEvents() {
   }, { passive: true });
 }
 
+let hideTimer = null;
+
 function wirePlayerOverlayControls() {
   if (!dom.playerFrame || !dom.pageFullscreenButton) return;
-
-  let hideTimer = null;
 
   const setOverlayVisible = (isVisible) => {
     dom.playerFrame.classList.toggle("player-overlay-visible", isVisible);
   };
 
   const clearHideTimer = () => {
-    if (!hideTimer) return;
-    window.clearTimeout(hideTimer);
-    hideTimer = null;
+    if (hideTimer) {
+      window.clearTimeout(hideTimer);
+      hideTimer = null;
+    }
   };
 
-  const scheduleHide = () => {
+  const scheduleHide = (delay = PLAYER_OVERLAY_IDLE_MS) => {
     clearHideTimer();
     hideTimer = window.setTimeout(() => {
-      // No ocultar si hay un elemento de control con foco dentro del frame
       if (dom.playerFrame.matches(":focus-within")) return;
       setOverlayVisible(false);
-    }, PLAYER_OVERLAY_IDLE_MS);
+    }, delay);
   };
 
   const revealOverlay = () => {
@@ -73,18 +73,25 @@ function wirePlayerOverlayControls() {
     scheduleHide();
   };
 
-  ["mousemove", "mousedown", "touchstart"].forEach((eventName) => {
-    dom.playerFrame.addEventListener(eventName, revealOverlay, { passive: true });
-  });
+  // Al mover o clickear el mouse en el player frame, se muestra el overlay
+  dom.playerFrame.addEventListener("mousemove", revealOverlay, { passive: true });
+  dom.playerFrame.addEventListener("mousedown", revealOverlay, { passive: true });
+  dom.playerFrame.addEventListener("touchstart", revealOverlay, { passive: true });
+
   dom.playerFrame.addEventListener("mouseenter", revealOverlay);
   dom.playerFrame.addEventListener("focusin", revealOverlay);
+  
   dom.playerFrame.addEventListener("mouseleave", () => {
-    // Al salir, ocultamos después de una pequeña espera, a menos que tenga focus
+    // Al salir de la zona del reproductor, ocultamos más rápido (en 800ms)
+    scheduleHide(800);
+  });
+  dom.playerFrame.addEventListener("focusout", () => {
+    scheduleHide(800);
+  });
+
+  dom.videoPlayer.addEventListener("play", () => {
     scheduleHide();
   });
-  dom.playerFrame.addEventListener("focusout", scheduleHide);
-
-  dom.videoPlayer.addEventListener("play", scheduleHide);
   dom.videoPlayer.addEventListener("pause", revealOverlay);
   dom.videoPlayer.addEventListener("loadedmetadata", revealOverlay);
   dom.videoPlayer.addEventListener("emptied", revealOverlay);

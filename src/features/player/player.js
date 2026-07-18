@@ -60,6 +60,7 @@ export function wirePlayerCoreEvents() {
       if (vol > 0 && dom.videoPlayer.muted) {
         dom.videoPlayer.muted = false;
       }
+      dom.playerVolumeInput.style.setProperty("--volume-progress", `${vol * 100}%`);
       syncPlayerControls();
     }
   });
@@ -290,6 +291,8 @@ function syncPlayerControls(forceSliderSync = false) {
     if (!isFocused) {
       dom.playerVolumeInput.value = String(dom.videoPlayer.muted ? 0 : dom.videoPlayer.volume);
     }
+    const currentVol = dom.videoPlayer.muted ? 0 : dom.videoPlayer.volume;
+    dom.playerVolumeInput.style.setProperty("--volume-progress", `${currentVol * 100}%`);
   }
 }
 

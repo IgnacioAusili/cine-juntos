@@ -14,7 +14,7 @@ import {
   logEvent,
 } from "../../core/state.js";
 
-const PLAYER_OVERLAY_IDLE_MS = 2500;
+const PLAYER_OVERLAY_IDLE_MS = 1600;
 
 export function wireFullscreenEvents() {
   dom.pageFullscreenButton.addEventListener("click", () => {
@@ -82,11 +82,11 @@ function wirePlayerOverlayControls() {
   dom.playerFrame.addEventListener("focusin", revealOverlay);
   
   dom.playerFrame.addEventListener("mouseleave", () => {
-    // Al salir de la zona del reproductor, ocultamos más rápido (en 800ms)
-    scheduleHide(800);
+    // Al salir de la zona del reproductor, ocultamos más rápido (en 400ms)
+    scheduleHide(400);
   });
   dom.playerFrame.addEventListener("focusout", () => {
-    scheduleHide(800);
+    scheduleHide(400);
   });
 
   dom.videoPlayer.addEventListener("play", () => {

@@ -14,7 +14,7 @@
     />
     <link rel="preconnect" href="https://unpkg.com" />
     <link rel="preconnect" href="https://www.gstatic.com" />
-    <link rel="stylesheet" href="./public/styles.css?v=20260715-02" />
+    <link rel="stylesheet" href="./public/styles.css?v=20260719-02" />
   </head>
   <body class="is-lobby">
     <div class="app-shell">
@@ -50,91 +50,137 @@
       </header>
 
       <section class="lobby-screen" id="lobbyScreen" aria-label="Entrada a sala">
-        <div class="lobby-hero">
-          <aside class="lobby-description-card" aria-label="Descripción de la aplicación">
-            <p class="lobby-description">
-              Salas con reproducción sincronizada de videos entre todos los participantes, con controles
-              compartidos y chat integrado
-            </p>
-          </aside>
+        <div class="lobby-marquee" aria-hidden="true">
+          <span class="lobby-marquee-track">
+            <span class="live">En vivo</span><span>Salas privadas</span><span>Video compartido</span><span>Chat integrado</span><span class="spacer"></span><span class="live">En vivo</span><span>Salas privadas</span><span>Video compartido</span><span>Chat integrado</span><span class="spacer"></span><span class="live">En vivo</span><span>Salas privadas</span><span>Video compartido</span><span>Chat integrado</span><span class="spacer"></span><span class="live">En vivo</span><span>Salas privadas</span><span>Video compartido</span><span>Chat integrado</span><span class="spacer"></span>
+          </span>
         </div>
-        <div class="lobby-panel">
-          <div class="lobby-mark">
-            <span data-lucide="film"></span>
+
+        <div class="lobby-grid">
+          <div class="lobby-hero">
+            <h1 class="lobby-title">
+              <span class="lobby-title-line">Cine</span>
+              <span class="lobby-title-line lobby-title-accent">Juntos</span>
+            </h1>
+            <p class="lobby-description">
+              Salas privadas con reproducción sincronizada entre todos los participantes.
+              Controles compartidos, chat en vivo y una experiencia que se siente como
+              compartir el mismo sillón.
+            </p>
+            <ul class="lobby-features">
+              <li class="lobby-feature">
+                <span class="lobby-feature-icon" data-lucide="users"></span>
+                <span class="lobby-feature-text">
+                  <strong>Sincronizado</strong>
+                  <small>Play, pausa y seek compartidos</small>
+                </span>
+              </li>
+              <li class="lobby-feature">
+                <span class="lobby-feature-icon" data-lucide="message-square"></span>
+                <span class="lobby-feature-text">
+                  <strong>Chat en vivo</strong>
+                  <small>Mensajes, imágenes y replies</small>
+                </span>
+              </li>
+              <li class="lobby-feature">
+                <span class="lobby-feature-icon" data-lucide="film"></span>
+                <span class="lobby-feature-text">
+                  <strong>Tu video</strong>
+                  <small>Cualquier enlace MP4 directo</small>
+                </span>
+              </li>
+            </ul>
           </div>
-          <div class="lobby-fields">
-            <label class="field">
-              <span class="label-row">
-                Nombre
-                <button
-                  class="help-button"
-                  type="button"
-                  aria-label="Ayuda sobre nombre"
-                  data-tooltip="Este nombre aparece en tus mensajes y eventos de sincronizacion."
-                >
-                  <span data-lucide="circle-help"></span>
-                </button>
-              </span>
-              <input
-                id="lobbyNameInput"
-                type="text"
-                autocomplete="off"
-                autocapitalize="off"
-                spellcheck="false"
-                data-bwignore="true"
-                data-lpignore="true"
-                maxlength="20"
-                title="Nombre visible en chat y sincronizacion"
-              />
-            </label>
-            <label class="field field-room">
-              <span class="label-row">
-                Codigo
-                <button
-                  class="help-button"
-                  type="button"
-                  aria-label="Ayuda sobre salas"
-                  data-tooltip="Crea una sala y comparte el codigo o el enlace para mirar juntos."
-                >
-                  <span data-lucide="circle-help"></span>
-                </button>
-              </span>
-              <input
-                id="roomInput"
-                type="text"
-                inputmode="latin"
-                autocomplete="off"
-                autocapitalize="off"
-                spellcheck="false"
-                data-bwignore="true"
-                data-lpignore="true"
-                maxlength="5"
-                placeholder="AB12C"
-              />
-            </label>
-            <div class="lobby-actions">
-              <button
-                class="button primary"
-                id="createRoomButton"
-                type="button"
-                title="Crear una sala nueva"
-                data-tooltip="Crear una sala nueva"
-              >
-                <span data-lucide="plus"></span>
-                Crear
-              </button>
-              <button
-                class="button"
-                id="joinRoomButton"
-                type="button"
-                title="Entrar con el codigo escrito"
-                data-tooltip="Entrar con el codigo escrito"
-              >
-                <span data-lucide="log-in"></span>
-                Entrar
-              </button>
+
+          <aside class="lobby-ticket" aria-label="Ingresar a una sala">
+            <div class="lobby-ticket-stub">
+              <span class="lobby-ticket-no">N°</span>
+              <span class="lobby-ticket-id">SALA</span>
             </div>
-          </div>
+            <div class="lobby-ticket-body">
+              <div class="lobby-ticket-head">
+                <div class="lobby-ticket-meta">
+                  <span class="lobby-ticket-label">Boleto de entrada</span>
+                  <span class="lobby-ticket-hint">Unite</span>
+                </div>
+              </div>
+              <div class="lobby-fields">
+                <label class="field">
+                  <span class="label-row">
+                    Nombre
+                    <button
+                      class="help-button"
+                      type="button"
+                      aria-label="Ayuda sobre nombre"
+                      data-tooltip="Este nombre aparece en tus mensajes y eventos de sincronizacion."
+                    >
+                      <span data-lucide="circle-help"></span>
+                    </button>
+                  </span>
+                  <input
+                    id="lobbyNameInput"
+                    type="text"
+                    autocomplete="off"
+                    autocapitalize="off"
+                    spellcheck="false"
+                    data-bwignore="true"
+                    data-lpignore="true"
+                    maxlength="20"
+                    placeholder="Tu nombre"
+                    title="Nombre visible en chat y sincronizacion"
+                  />
+                </label>
+                <label class="field field-room">
+                  <span class="label-row">
+                    Codigo
+                    <button
+                      class="help-button"
+                      type="button"
+                      aria-label="Ayuda sobre salas"
+                      data-tooltip="Crea una sala y comparte el codigo o el enlace para mirar juntos."
+                    >
+                      <span data-lucide="circle-help"></span>
+                    </button>
+                  </span>
+                  <input
+                    id="roomInput"
+                    type="text"
+                    inputmode="latin"
+                    autocomplete="off"
+                    autocapitalize="off"
+                    spellcheck="false"
+                    data-bwignore="true"
+                    data-lpignore="true"
+                    maxlength="5"
+                    placeholder="AB12C"
+                  />
+                </label>
+                <div class="lobby-actions">
+                  <button
+                    class="button primary"
+                    id="createRoomButton"
+                    type="button"
+                    title="Crear una sala nueva"
+                    data-tooltip="Crear una sala nueva"
+                  >
+                    <span data-lucide="plus"></span>
+                    Crear sala
+                  </button>
+                  <button
+                    class="button"
+                    id="joinRoomButton"
+                    type="button"
+                    title="Entrar con el codigo escrito"
+                    data-tooltip="Entrar con el codigo escrito"
+                  >
+                    <span data-lucide="log-in"></span>
+                    Entrar
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="lobby-ticket-perforation" aria-hidden="true"></div>
+          </aside>
         </div>
       </section>
 
@@ -494,11 +540,32 @@
       <div class="tooltip-layer" id="tooltipLayer" hidden></div>
     </div>
 
-    <dialog id="errorDialog" class="error-dialog" aria-modal="true" aria-labelledby="dialogTitle">
+    <dialog id="errorDialog" class="app-dialog error-dialog" aria-modal="true" aria-labelledby="dialogTitle">
       <div class="dialog-content">
         <h2 id="dialogTitle">Error de Video</h2>
         <p id="dialogMessage">No se pudo cargar el video seleccionado. Por favor, verifica el formato o que el enlace sea accesible.</p>
         <button id="closeDialogButton" type="button" class="btn">Entendido</button>
+      </div>
+    </dialog>
+
+    <dialog
+      id="confirmLoadDialog"
+      class="app-dialog confirm-dialog"
+      aria-modal="true"
+      aria-labelledby="confirmLoadDialogTitle"
+      aria-describedby="confirmLoadDialogMessage"
+    >
+      <div class="dialog-content dialog-content-left">
+        <h2 id="confirmLoadDialogTitle">Cargar otro video</h2>
+        <p id="confirmLoadDialogMessage">Hay un video reproduciendose. ¿Seguro que queres cargar otro ahora?</p>
+        <label class="dialog-checkbox" for="skipLoadConfirmCheckbox">
+          <input id="skipLoadConfirmCheckbox" type="checkbox" />
+          <span>No volver a mostrar</span>
+        </label>
+        <div class="dialog-actions">
+          <button id="cancelLoadDialogButton" type="button" class="button">Cancelar</button>
+          <button id="confirmLoadDialogButton" type="button" class="button primary">Cargar</button>
+        </div>
       </div>
     </dialog>
 

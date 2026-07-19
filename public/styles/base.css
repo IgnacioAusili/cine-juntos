@@ -22,14 +22,24 @@ body {
   margin: 0;
   overflow-y: auto;
   background:
-    linear-gradient(180deg, rgba(240, 140, 58, 0.07), transparent 260px),
-    linear-gradient(90deg, rgba(47, 184, 164, 0.05) 1px, transparent 1px),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    /* Mesh glow superior: luz de proyector ambar */
+    radial-gradient(circle at 18% -8%, rgba(240, 140, 58, 0.18), transparent 42%),
+    /* Glow teal lateral, contrapunto frio */
+    radial-gradient(circle at 92% 8%, rgba(47, 184, 164, 0.13), transparent 44%),
+    /* Brillo tenue abajo-centro */
+    radial-gradient(circle at 50% 108%, rgba(240, 140, 58, 0.08), transparent 50%),
+    /* Rejilla tecnica fina */
+    linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px),
     var(--bg);
   background-size:
     auto,
+    auto,
+    auto,
     56px 56px,
-    56px 56px;
+    56px 56px,
+    auto;
+  background-attachment: fixed;
   color: var(--text);
 }
 
@@ -41,11 +51,25 @@ body.is-lobby {
   overflow: hidden;
 }
 
+/* Grano de film sutil sobre todo (textura cinematografica) */
 body::before {
   position: fixed;
   inset: 0;
   z-index: -1;
-  background: linear-gradient(135deg, transparent 0 45%, rgba(255, 255, 255, 0.025) 45% 46%, transparent 46%);
+  background:
+    linear-gradient(135deg, transparent 0 45%, rgba(255, 255, 255, 0.025) 45% 46%, transparent 46%);
+  content: "";
+  pointer-events: none;
+}
+
+/* Grano SVG muy sutil: da profundidad sin distraer */
+body::after {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.45'/%3E%3C/svg%3E");
+  opacity: 0.035;
+  mix-blend-mode: overlay;
   content: "";
   pointer-events: none;
 }
@@ -60,11 +84,14 @@ button {
   cursor: pointer;
 }
 
+/* h1 con halo cinematografico (ambar tenue) */
 h1 {
   margin: 0;
   font-size: clamp(1.55rem, 2.5vw, 2.35rem);
+  font-weight: 800;
   line-height: 0.95;
-  letter-spacing: 0;
+  letter-spacing: -0.02em;
+  text-shadow: 0 0 32px rgba(240, 140, 58, 0.35);
 }
 
 input[type="text"],
@@ -74,11 +101,15 @@ select {
   width: 100%;
   min-height: 40px;
   border: 1px solid var(--line);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   outline: none;
-  background: #111518;
+  background: rgba(7, 9, 11, 0.6);
   color: var(--text);
   padding: 0 12px;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease;
 }
 
 textarea {
@@ -91,18 +122,20 @@ textarea {
   scrollbar-gutter: stable;
 }
 
+/* Focus refinado: ring teal sutil en lugar de nada */
 input[type="text"]:focus,
 input[type="url"]:focus,
 textarea:focus,
 select:focus {
-  border-color: var(--accent-2);
-  box-shadow: none;
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(47, 184, 164, 0.18);
+  background: rgba(7, 9, 11, 0.85);
 }
 
 .message-form textarea:focus,
 .overlay-message-form textarea:focus {
-  border-color: rgba(255, 255, 255, 0.16);
-  box-shadow: none;
+  border-color: var(--glass-border-strong);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.06);
 }
 
 select {
@@ -111,7 +144,7 @@ select {
   background:
     linear-gradient(45deg, transparent 50%, var(--muted) 50%) calc(100% - 16px) 18px / 6px 6px no-repeat,
     linear-gradient(135deg, var(--muted) 50%, transparent 50%) calc(100% - 10px) 18px / 6px 6px no-repeat,
-    #111518;
+    rgba(7, 9, 11, 0.6);
   padding-right: 32px;
 }
 

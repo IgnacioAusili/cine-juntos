@@ -69,4 +69,9 @@ export const dom = {
   overlayCharCounter: document.querySelector("#overlayCharCounter"),
   errorDialog: document.querySelector("#errorDialog"),
   closeDialogButton: document.querySelector("#closeDialogButton"),
+  confirmLoadDialog: document.querySelector("#confirmLoadDialog"),
+  confirmLoadDialogMessage: document.querySelector("#confirmLoadDialogMessage"),
+  confirmLoadDialogButton: document.querySelector("#confirmLoadDialogButton"),
+  cancelLoadDialogButton: document.querySelector("#cancelLoadDialogButton"),
+  skipLoadConfirmCheckbox: document.querySelector("#skipLoadConfirmCheckbox"),
 };

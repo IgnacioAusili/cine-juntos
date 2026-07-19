@@ -51,8 +51,8 @@
 
 .session-view.chat-collapsed[data-chat-dock="right"] .workspace {
   column-gap: 0;
-  grid-template-columns: minmax(0, 1fr) var(--chat-handle-gap-collapsed);
-  grid-template-areas: "video handle";
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "video";
 }
 
 .session-view.chat-collapsed[data-chat-dock="bottom"] .workspace {

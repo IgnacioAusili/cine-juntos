@@ -37,18 +37,22 @@
 }
 
 .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-handle {
-  position: relative;
-  top: auto;
-  right: auto;
-  bottom: auto;
-  grid-area: handle;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
   width: var(--chat-handle-gap-collapsed);
   height: 100%;
   min-width: 0;
   transform: none;
-  justify-self: center;
-  align-self: stretch;
+  opacity: 0;
   border-radius: 6px 0 0 6px;
+  transition: opacity 160ms ease, color 160ms ease, background 160ms ease;
+}
+
+.session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-handle:hover,
+.session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-handle:focus-visible {
+  opacity: 1;
 }
 
 .session-view[data-chat-dock="bottom"] .chat-collapse-handle {

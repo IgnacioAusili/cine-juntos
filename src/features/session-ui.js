@@ -70,7 +70,9 @@ export function setConnection(mode, label) {
   logEvent("connection", nextLabel);
 }
 
-let dialogInitialized = false;
+let errorDialogInitialized = false;
+let confirmLoadDialogInitialized = false;
+let pendingLoadDialogResolver = null;
 
 export function showErrorDialog(message) {
   if (!dom.errorDialog) return;
@@ -80,12 +82,68 @@ export function showErrorDialog(message) {
     if (msgEl) msgEl.textContent = message;
   }
 
-  if (!dialogInitialized && dom.closeDialogButton) {
+  if (!errorDialogInitialized && dom.closeDialogButton) {
     dom.closeDialogButton.addEventListener("click", () => {
       dom.errorDialog.close();
     });
-    dialogInitialized = true;
+    errorDialogInitialized = true;
   }
 
   dom.errorDialog.showModal();
+}
+
+export function showLoadReplaceDialog(message) {
+  if (!dom.confirmLoadDialog) {
+    return Promise.resolve({ confirmed: true, skipFutureWarnings: false });
+  }
+
+  initializeConfirmLoadDialog();
+  if (pendingLoadDialogResolver) {
+    pendingLoadDialogResolver({ confirmed: false, skipFutureWarnings: false });
+    pendingLoadDialogResolver = null;
+  }
+  if (dom.confirmLoadDialog.open) {
+    dom.confirmLoadDialog.close();
+  }
+
+  if (dom.confirmLoadDialogMessage && message) {
+    dom.confirmLoadDialogMessage.textContent = message;
+  }
+  if (dom.skipLoadConfirmCheckbox) {
+    dom.skipLoadConfirmCheckbox.checked = false;
+  }
+
+  return new Promise((resolve) => {
+    pendingLoadDialogResolver = resolve;
+    dom.confirmLoadDialog.showModal();
+  });
+}
+
+function initializeConfirmLoadDialog() {
+  if (confirmLoadDialogInitialized || !dom.confirmLoadDialog) return;
+
+  dom.confirmLoadDialogButton?.addEventListener("click", () => {
+    resolveLoadReplaceDialog(true);
+  });
+
+  dom.cancelLoadDialogButton?.addEventListener("click", () => {
+    resolveLoadReplaceDialog(false);
+  });
+
+  dom.confirmLoadDialog.addEventListener("cancel", (event) => {
+    event.preventDefault();
+    resolveLoadReplaceDialog(false);
+  });
+
+  confirmLoadDialogInitialized = true;
+}
+
+function resolveLoadReplaceDialog(confirmed) {
+  const skipFutureWarnings = confirmed && Boolean(dom.skipLoadConfirmCheckbox?.checked);
+  if (dom.confirmLoadDialog?.open) {
+    dom.confirmLoadDialog.close();
+  }
+  const resolver = pendingLoadDialogResolver;
+  pendingLoadDialogResolver = null;
+  resolver?.({ confirmed, skipFutureWarnings });
 }

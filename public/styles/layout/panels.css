@@ -2,19 +2,23 @@
 .chat-area {
   position: relative;
   min-height: 0;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: rgba(27, 31, 35, 0.9);
-  box-shadow: var(--shadow);
+  border: 1px solid var(--glass-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--glass-bg);
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(16px);
 }
 
+/* Highlight superior + sutil glow interno (profundidad cinematografica) */
 .video-area::before,
 .chat-area::before,
 .session-toolbar::before {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 28%);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 22%),
+    radial-gradient(circle at top right, var(--amber-glow-soft), transparent 60%);
   content: "";
   pointer-events: none;
 }

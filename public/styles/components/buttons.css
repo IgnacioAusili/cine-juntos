@@ -27,6 +27,7 @@
 .icon-button:hover {
   border-color: rgba(255, 255, 255, 0.22);
   background: #2a3036;
+  transform: translateY(-1px);
 }
 
 .button:disabled,
@@ -80,10 +81,24 @@
 }
 
 .button.primary {
-  border-color: rgba(240, 140, 58, 0.35);
-  background: var(--accent);
+  position: relative;
+  border-color: rgba(240, 140, 58, 0.45);
+  background: linear-gradient(180deg, var(--amber), var(--accent));
   color: #17120e;
   font-weight: 800;
+  box-shadow:
+    0 0 0 1px rgba(240, 140, 58, 0.2),
+    0 8px 22px rgba(240, 140, 58, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.32);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.button.primary:hover {
+  background: linear-gradient(180deg, #ffb070, var(--amber));
+  box-shadow:
+    0 0 0 1px rgba(240, 140, 58, 0.32),
+    0 12px 30px rgba(240, 140, 58, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.42);
 }
 
 .button > * {

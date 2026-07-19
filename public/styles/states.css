@@ -70,6 +70,8 @@ body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="right"] .works
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: 100vh;
   grid-template-areas: "video";
+  width: calc(100% + var(--app-shell-gutter));
+  margin-right: calc(var(--app-shell-gutter) * -1);
 }
 
 body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="top"] .workspace {

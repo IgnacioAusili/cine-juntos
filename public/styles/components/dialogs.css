@@ -1,16 +1,25 @@
-.error-dialog {
-  border: 1px solid rgba(233, 68, 68, 0.28);
-  border-radius: 12px;
-  background: linear-gradient(180deg, #161213, #0d0909);
-  padding: 24px;
+.app-dialog {
   max-width: 400px;
   width: calc(100% - 32px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
   color: var(--text);
   outline: none;
 }
 
-.error-dialog::backdrop {
+.error-dialog,
+.confirm-dialog {
+  border: 1px solid rgba(233, 68, 68, 0.28);
+  border-radius: 12px;
+  background: linear-gradient(180deg, #161213, #0d0909);
+  padding: 24px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.confirm-dialog {
+  border-color: var(--glass-border-strong);
+  background: linear-gradient(180deg, rgba(22, 27, 31, 0.98), rgba(10, 14, 17, 0.98));
+}
+
+.app-dialog::backdrop {
   background: rgba(4, 5, 6, 0.72);
   backdrop-filter: blur(8px);
 }
@@ -23,11 +32,20 @@
   text-align: center;
 }
 
+.dialog-content-left {
+  align-items: stretch;
+  text-align: left;
+}
+
 .dialog-content h2 {
   font-size: 1.15rem;
   font-weight: 700;
   color: #ff7575;
   margin: 0;
+}
+
+.confirm-dialog .dialog-content h2 {
+  color: var(--text);
 }
 
 .dialog-content p {
@@ -37,7 +55,7 @@
   margin: 0;
 }
 
-.dialog-content button {
+.error-dialog .dialog-content button {
   margin-top: 8px;
   min-width: 110px;
   background: #ff5555;
@@ -51,6 +69,31 @@
   transition: background 0.15s ease;
 }
 
-.dialog-content button:hover {
+.error-dialog .dialog-content button:hover {
   background: #ff3c3c;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  width: 100%;
+}
+
+.dialog-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  font-size: 0.9rem;
+  color: var(--text-soft);
+  cursor: pointer;
+  user-select: none;
+}
+
+.dialog-checkbox input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--accent);
 }

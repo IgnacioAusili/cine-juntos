@@ -48,3 +48,17 @@ body.is-lobby .room-chip,
 body.is-lobby .host-badge {
   display: none;
 }
+
+/* En el lobby el titulo dramatico vive en el hero: el del topbar sobra */
+body.is-lobby .topbar-brand h1 {
+  display: none;
+}
+
+/* En sesion no se muestra el badge "En vivo" decorativo del topbar */
+body:not(.is-lobby) .live-badge {
+  display: none;
+}
+
+body:not(.is-lobby) .topbar-brand {
+  display: none;
+}

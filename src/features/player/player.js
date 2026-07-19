@@ -19,7 +19,9 @@ import {
   publishState,
 } from "./player-sync-logic.js";
 
-import { showErrorDialog } from "../session-ui.js";
+import { showErrorDialog, showLoadReplaceDialog } from "../session-ui.js";
+
+const SKIP_LOAD_REPLACE_DIALOG_KEY = "cine-juntos-skip-load-replace-dialog";
 
 export function initializePlayer() {
   setVideoStatus("empty", "Sin contenido");
@@ -27,8 +29,8 @@ export function initializePlayer() {
 }
 
 export function wirePlayerCoreEvents() {
-  dom.loadVideoButton.addEventListener("click", () => {
-    loadVideoFromUrl(dom.videoUrlInput.value.trim(), "manual");
+  dom.loadVideoButton.addEventListener("click", async () => {
+    await handleManualLoadRequest();
   });
 
   dom.playerPlayButton?.addEventListener("click", () => {
@@ -175,6 +177,26 @@ export function loadVideoFromUrl(source, origin) {
   if (state.session.activeRoom && state.session.transport) {
     publishState("video");
   }
+}
+
+async function handleManualLoadRequest() {
+  const source = dom.videoUrlInput.value.trim();
+  if (!source) {
+    loadVideoFromUrl(source, "manual");
+    return;
+  }
+
+  if (shouldConfirmLoadReplacement()) {
+    const { confirmed, skipFutureWarnings } = await showLoadReplaceDialog(
+      "Hay un video reproduciendose. ¿Seguro que queres cargar otro ahora?",
+    );
+    if (!confirmed) return;
+    if (skipFutureWarnings) {
+      localStorage.setItem(SKIP_LOAD_REPLACE_DIALOG_KEY, "1");
+    }
+  }
+
+  loadVideoFromUrl(source, "manual");
 }
 
 export function setVideoSource(source, shouldAnnounce) {
@@ -325,4 +347,12 @@ function getFiniteDuration() {
 
 function hasLoadedMediaSource() {
   return Boolean(dom.videoPlayer.currentSrc || dom.videoPlayer.getAttribute("src"));
+}
+
+function shouldConfirmLoadReplacement() {
+  return isVideoCurrentlyPlaying() && localStorage.getItem(SKIP_LOAD_REPLACE_DIALOG_KEY) !== "1";
+}
+
+function isVideoCurrentlyPlaying() {
+  return hasLoadedMediaSource() && !dom.videoPlayer.paused && !dom.videoPlayer.ended;
 }

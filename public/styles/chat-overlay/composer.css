@@ -9,16 +9,36 @@
   display: flex;
   align-items: flex-end;
   width: 100%;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-sizing: border-box;
+  border: 1px solid transparent;
   border-radius: 6px;
   background: rgba(12, 15, 17, 0.52);
   padding: 0 0 0 4px;
   backdrop-filter: blur(8px);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.player-frame[data-chat-style="float"] .overlay-message-form .input-wrapper {
+  background: linear-gradient(
+    90deg,
+    rgba(12, 15, 17, 0.34) 0%,
+    rgba(12, 15, 17, 0.22) 56%,
+    rgba(12, 15, 17, 0.14) 82%,
+    rgba(12, 15, 17, 0.14) 100%
+  );
+  border-color: transparent;
+  backdrop-filter: blur(2px);
+  background-clip: padding-box;
+  overflow: hidden;
+  box-shadow: none;
 }
 
 .overlay-message-form .input-wrapper:focus-within {
-  border-color: rgba(255, 255, 255, 0.28);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12) inset;
+}
+
+.player-frame[data-chat-style="panel"] .overlay-message-form .input-wrapper:focus-within {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14) inset;
 }
 
 .overlay-message-form .input-wrapper textarea {
@@ -51,14 +71,21 @@
   padding: 0;
   margin-bottom: 2px;
   color: var(--muted);
+  opacity: 0.62;
   cursor: pointer;
-  transition: color 0.2s ease;
+  transition: color 0.2s ease, opacity 0.2s ease;
 }
 
 .overlay-message-form .input-wrapper .emoji-trigger:hover {
   color: var(--text);
+  opacity: 0.82;
 }
 
 .overlay-message-form .input-wrapper .send {
   color: #7ff5e5;
+  opacity: 0.68;
+}
+
+.overlay-message-form .input-wrapper .send:hover {
+  opacity: 0.9;
 }

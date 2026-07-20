@@ -61,7 +61,7 @@
   display: grid;
   min-width: 0;
   flex: 1 1 auto;
-  gap: 5px;
+  gap: 4px;
 }
 
 .field-room {
@@ -79,6 +79,17 @@
 .label-row {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding-inline-start: 12px;
+  gap: 4px;
+  padding-inline-start: 0;
+}
+
+.field .help-button {
+  width: 22px;
+  min-height: 22px;
+}
+
+.field .help-button svg {
+  width: 16px;
+  height: 16px;
+  aspect-ratio: 1 / 1;
 }

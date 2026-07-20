@@ -2,7 +2,7 @@
 import { dom } from "../../core/dom.js";
 import { logEvent } from "../../core/state.js";
 import { CHAT_DOCKS, CHAT_DOCK_META } from "../../core/utils.js";
-import { hydrateIcons } from "../icons-tooltips.js";
+import { hydrateIcons, refreshTooltipForTarget } from "../icons-tooltips.js";
 import { focusFullscreenWorkspace } from "../session-ui.js";
 import { syncUnreadBadgesWithVisibility } from "./unread-counters.js";
 
@@ -10,6 +10,11 @@ export function setInsideChatVisible(visible) {
   dom.playerFrame.classList.toggle("chat-inside-open", visible);
   dom.playerChatToggleButton.classList.toggle("active", visible);
   dom.playerChatToggleButton.setAttribute("aria-pressed", String(visible));
+  const tooltipLabel = visible ? "Ocultar chat" : "Mostrar chat";
+  dom.playerChatToggleButton.dataset.tooltip = tooltipLabel;
+  dom.playerChatToggleButton.setAttribute("aria-label", tooltipLabel);
+  dom.playerChatToggleButton.removeAttribute("title");
+  refreshTooltipForTarget(dom.playerChatToggleButton);
 
   if (visible) {
     dom.overlayMessages.scrollTop = dom.overlayMessages.scrollHeight;
@@ -68,7 +73,9 @@ export function setExternalChatCollapsed(collapsed) {
 export function updateCollapseButton() {
   const collapsed = dom.sessionView.classList.contains("chat-collapsed");
   const dock = dom.sessionView.dataset.chatDock || "right";
-  const icon = dom.collapseChatButton.querySelector("[data-lucide]");
+  const iconAnchor = dom.collapseChatButton.querySelector(".chat-collapse-icon-anchor");
+  const icon = iconAnchor?.querySelector("[data-lucide]");
+  dom.collapseChatButton.removeAttribute("data-tooltip");
   const iconName =
     dock === "right"
       ? collapsed
@@ -79,9 +86,11 @@ export function updateCollapseButton() {
         : "chevron-down";
   const label = collapsed ? "Expandir chat" : "Contraer chat";
 
-  dom.collapseChatButton.dataset.tooltip = label;
   dom.collapseChatButton.removeAttribute("title");
   dom.collapseChatButton.setAttribute("aria-label", label);
+  if (iconAnchor) {
+    iconAnchor.dataset.tooltip = label;
+  }
   if (icon) {
     icon.setAttribute("data-lucide", iconName);
     icon.innerHTML = "";

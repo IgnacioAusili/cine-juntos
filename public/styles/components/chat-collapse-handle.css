@@ -11,6 +11,15 @@
   cursor: pointer;
 }
 
+.chat-collapse-icon-anchor {
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 16px;
+}
+
 .chat-collapse-handle:hover,
 .chat-collapse-handle:focus-visible {
   color: #fff;

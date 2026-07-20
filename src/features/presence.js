@@ -40,19 +40,32 @@ export function renderPresence() {
     );
 
   const uniqueMembers = members.length ? members : [`${getDisplayName()} (vos)`];
-  const tooltip = `Conectados: ${uniqueMembers.join(", ")}`;
-  const label = `${uniqueMembers.length} usuarios conectados`;
+  const isSoloSelf = uniqueMembers.length === 1 && uniqueMembers[0]?.endsWith("(vos)");
+  const tooltip = `${isSoloSelf ? "Conectado" : "Conectados"}: ${uniqueMembers.join(", ")}`;
+  const label = uniqueMembers.length === 1 ? "1 usuario conectado" : `${uniqueMembers.length} usuarios conectados`;
+  const nextState = isSoloSelf ? "solo" : "online";
+  const selfLabelText = isSoloSelf ? "(vos)" : "";
 
   dom.participantCount.textContent = String(uniqueMembers.length);
+  dom.presencePill.dataset.state = nextState;
   dom.presencePill.dataset.tooltip = tooltip;
   dom.presencePill.removeAttribute("title");
   dom.presencePill.setAttribute("aria-label", label);
+  if (dom.presenceSelfLabel) {
+    dom.presenceSelfLabel.textContent = selfLabelText;
+    dom.presenceSelfLabel.hidden = !isSoloSelf;
+  }
 
   if (dom.overlayParticipantCount && dom.overlayPresencePill) {
     dom.overlayParticipantCount.textContent = String(uniqueMembers.length);
+    dom.overlayPresencePill.dataset.state = nextState;
     dom.overlayPresencePill.dataset.tooltip = tooltip;
     dom.overlayPresencePill.removeAttribute("title");
     dom.overlayPresencePill.setAttribute("aria-label", label);
+    if (dom.overlayPresenceSelfLabel) {
+      dom.overlayPresenceSelfLabel.textContent = selfLabelText;
+      dom.overlayPresenceSelfLabel.hidden = !isSoloSelf;
+    }
   }
 }
 

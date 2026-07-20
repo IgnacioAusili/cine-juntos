@@ -43,6 +43,10 @@
   content: "#";
 }
 
+[data-lucide="square"]:empty::before {
+  content: "□";
+}
+
 [data-lucide="circle-help"]:empty::before {
   content: "?";
 }

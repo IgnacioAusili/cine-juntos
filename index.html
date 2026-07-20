@@ -25,7 +25,7 @@
         <div class="topbar-actions">
           <div class="topbar-actions-group">
             <span class="app-status" id="connectionStatus" data-state="starting">
-              <span class="app-status-dot" aria-hidden="true"></span>
+              <span class="app-status-dot" aria-hidden="true" data-tooltip="Funcionando"></span>
               <span class="app-status-label">Iniciando</span>
             </span>
             <div class="room-chip" id="roomChip">
@@ -101,7 +101,10 @@
               <div class="lobby-ticket-head">
                 <div class="lobby-ticket-meta">
                   <span class="lobby-ticket-label">Boleto de entrada</span>
-                  <span class="lobby-ticket-hint">Unite</span>
+                  <span class="lobby-ticket-hint">
+                    <span>Unirte</span>
+                    <span class="lobby-ticket-hint-icon" data-lucide="chevron-down" aria-hidden="true"></span>
+                  </span>
                 </div>
               </div>
               <div class="lobby-fields">
@@ -112,9 +115,8 @@
                       class="help-button"
                       type="button"
                       aria-label="Ayuda sobre nombre"
-                      data-tooltip="Este nombre aparece en tus mensajes y eventos de sincronizacion."
                     >
-                      <span data-lucide="circle-help"></span>
+                      <span data-lucide="circle-help" data-tooltip="Este nombre sera el que veran los demas usuarios en la sala"></span>
                     </button>
                   </span>
                   <input
@@ -137,9 +139,8 @@
                       class="help-button"
                       type="button"
                       aria-label="Ayuda sobre salas"
-                      data-tooltip="Crea una sala y comparte el codigo o el enlace para mirar juntos."
                     >
-                      <span data-lucide="circle-help"></span>
+                      <span data-lucide="circle-help" data-tooltip="Crea una sala y comparte el codigo o el enlace para mirar juntos."></span>
                     </button>
                   </span>
                   <input
@@ -194,9 +195,8 @@
                   class="help-button"
                   type="button"
                   aria-label="Ayuda sobre videos"
-                  data-tooltip="Usa un enlace directo a un archivo MP4, WebM u otro formato reproducible por el navegador."
                 >
-                  <span data-lucide="circle-help"></span>
+                  <span data-lucide="circle-help" data-tooltip="Usa un enlace directo a un archivo MP4, WebM u otro formato reproducible por el navegador."></span>
                 </button>
               </span>
               <div class="input-with-button">
@@ -250,14 +250,14 @@
               </div>
 
               <div class="player-actions" aria-label="Controles de reproductor">
-                <button
-                  class="icon-button player-tool compact-tool"
-                  id="playerChatToggleButton"
-                  type="button"
-                  aria-label="Mostrar u ocultar chat dentro del video"
-                  title="Mostrar u ocultar chat dentro del video"
-                  data-tooltip="Mostrar u ocultar chat dentro del video"
-                >
+                  <button
+                    class="icon-button player-tool compact-tool"
+                    id="playerChatToggleButton"
+                    type="button"
+                    aria-label="Mostrar chat"
+                    title="Mostrar chat"
+                    data-tooltip="Mostrar chat"
+                  >
                   <span data-lucide="message-square"></span>
                 </button>
               </div>
@@ -349,6 +349,7 @@
                     data-tooltip="Conectados: vos"
                   >
                     <span class="presence-dot" aria-hidden="true"></span>
+                    <span class="presence-self-label" id="overlayPresenceSelfLabel" hidden></span>
                     <span id="overlayParticipantCount">1</span>
                   </button>
                   <div
@@ -361,18 +362,18 @@
                       type="button"
                       data-chat-style="float"
                       class="active"
-                      aria-label="Mensajes flotantes"
-                      title="Mensajes flotantes"
+                      aria-label="Panel translucido"
+                      title="Panel translucido"
                     >
-                      <span data-lucide="message-square"></span>
+                      <span data-lucide="square"></span>
                     </button>
                     <button
                       type="button"
                       data-chat-style="panel"
-                      aria-label="Panel transparente"
-                      title="Panel transparente"
+                      aria-label="Panel opaco"
+                      title="Panel opaco"
                     >
-                      <span data-lucide="panel-right"></span>
+                      <span data-lucide="square"></span>
                     </button>
                   </div>
                     <button
@@ -440,6 +441,7 @@
                 data-tooltip="Conectados: vos"
               >
                 <span class="presence-dot" aria-hidden="true"></span>
+                <span class="presence-self-label" id="presenceSelfLabel" hidden></span>
                 <span id="participantCount">1</span>
               </button>
               <div class="chat-name-field">
@@ -449,9 +451,8 @@
                     class="help-button"
                     type="button"
                     aria-label="Ayuda sobre nombre"
-                    data-tooltip="Este nombre aparece en tus mensajes y eventos de sincronizacion."
                   >
-                    <span data-lucide="circle-help"></span>
+                    <span data-lucide="circle-help" data-tooltip="Este nombre sera el que veran los demas usuarios en la sala"></span>
                   </button>
                 </span>
                 <input
@@ -524,9 +525,10 @@
             type="button"
             aria-label="Contraer chat"
             title="Contraer chat"
-            data-tooltip="Contraer chat"
           >
-            <span data-lucide="chevron-right"></span>
+            <span class="chat-collapse-icon-anchor">
+              <span data-lucide="chevron-right"></span>
+            </span>
             <span class="unread-badge chat-unread-badge" id="externalChatUnread" hidden>0</span>
           </button>
         </section>

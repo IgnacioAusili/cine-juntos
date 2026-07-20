@@ -64,6 +64,14 @@ export function wireTooltipEvents() {
   window.addEventListener("scroll", hideTooltip, true);
 }
 
+export function refreshTooltipForTarget(target) {
+  if (!dom.tooltipLayer || state.ui.tooltipTarget !== target || dom.tooltipLayer.hidden) return;
+  const text = target?.dataset?.tooltip;
+  if (!text) return;
+  dom.tooltipLayer.textContent = text;
+  positionTooltip(target);
+}
+
 function isPointInsideElement(element, clientX, clientY) {
   const rect = element.getBoundingClientRect();
   return clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom;

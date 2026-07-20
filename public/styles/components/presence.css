@@ -25,10 +25,25 @@
   box-shadow: 0 0 0 3px rgba(56, 216, 121, 0.14);
 }
 
+.presence-pill[data-state="solo"] .presence-dot {
+  background: #e06b6b;
+  box-shadow: 0 0 0 3px rgba(224, 107, 107, 0.14);
+}
+
+.presence-self-label,
 .presence-pill span:last-child {
   display: inline-grid;
   min-width: 0.75rem;
   place-items: center;
+}
+
+.presence-self-label {
+  color: var(--text);
+  font-weight: 800;
+}
+
+.presence-pill[data-state="solo"] span:last-child {
+  color: var(--text);
 }
 
 .chat-tools-controls input[type="text"] {

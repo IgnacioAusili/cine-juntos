@@ -345,6 +345,7 @@ video::-webkit-media-controls-fullscreen-button {
   width: 20px;
   min-height: 20px;
   place-items: center;
+  position: relative;
   border: 0;
   border-radius: 999px;
   background: transparent;
@@ -353,13 +354,36 @@ video::-webkit-media-controls-fullscreen-button {
 }
 
 .chat-style-toggle button.active {
-  background: transparent;
   color: #d8fff9;
 }
 
+.chat-style-toggle button.active::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.chat-style-toggle button.active svg {
+  position: relative;
+  z-index: 1;
+}
+
 .chat-style-toggle svg {
-  width: 13px;
-  height: 13px;
+  display: block;
+  width: 14px;
+  height: 14px;
+  stroke-width: 2.2;
+}
+
+.chat-style-toggle button[data-chat-style="float"] svg {
+  fill: transparent;
+}
+
+.chat-style-toggle button[data-chat-style="panel"] svg {
+  fill: currentColor;
 }
 
 .bare-icon-button {

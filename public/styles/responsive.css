@@ -1,6 +1,6 @@
 @media (max-width: 1100px) {
   .session-toolbar {
-    grid-template-columns: 1fr;
+    width: 100%;
   }
 
   .sync-bar {
@@ -57,16 +57,46 @@
     justify-content: flex-start;
   }
 
+  .room-chip {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .room-chip-title {
+    gap: 8px;
+    font-size: clamp(1.55rem, 8vw, 2rem);
+  }
+
+  .room-chip-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
   .lobby-actions,
-  .source-strip,
   .sync-bar {
     align-items: stretch;
     flex-direction: column;
     grid-template-columns: 1fr;
   }
 
-  .source-strip {
-    display: grid;
+  .session-toolbar {
+    padding: 12px;
+  }
+
+  /* En movil apilamos input + boton de carga, como en la referencia */
+  .session-toolbar-body {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .session-toolbar-body input {
+    width: 100%;
+  }
+
+  .session-toolbar-body .button.primary {
+    width: 100%;
+    justify-content: center;
   }
 
   .sync-status {

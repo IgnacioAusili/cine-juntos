@@ -173,7 +173,12 @@ export async function joinRoom(rawRoomCode) {
   try {
     const previousTransport = state.session.transport;
     const nextTransport = await createTransport(roomCode);
-    let activeTransport = null;
+
+    // Resetear el estado de sesión ANTES de conectar para que el
+    // callback onMembers no sea pisado por el reseteo posterior.
+    state.session.knownParticipants = new Set([state.session.clientId]);
+    state.session.knownMembers = new Map([[state.session.clientId, getDisplayName()]]);
+
     const connectionHandlers = {
       onState: handleRemoteState,
       onMessage: renderMessage,
@@ -183,7 +188,7 @@ export async function joinRoom(rawRoomCode) {
     };
 
     await nextTransport.connect(connectionHandlers);
-    activeTransport = nextTransport;
+    const activeTransport = nextTransport;
 
     await previousTransport?.close?.().catch(() => {});
     state.session.transport = activeTransport;
@@ -196,8 +201,6 @@ export async function joinRoom(rawRoomCode) {
     dom.messages.innerHTML = "";
     dom.overlayMessages.innerHTML = "";
     state.chat.lastMessageIds = new Set();
-    state.session.knownParticipants = new Set([state.session.clientId]);
-    state.session.knownMembers = new Map([[state.session.clientId, getDisplayName()]]);
     state.chat.replyTarget = null;
     renderPresence();
     state.player.lastRemoteState = null;

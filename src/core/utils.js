@@ -48,15 +48,25 @@ export function formatTime(value) {
 }
 
 export function formatSeconds(value) {
-  const seconds = Number(value || 0);
-  if (!Number.isFinite(seconds)) return "0.0s";
-  return `${seconds.toFixed(1)}s`;
+  const totalSeconds = Math.max(0, Math.floor(Number(value || 0)));
+  if (!Number.isFinite(totalSeconds)) return "0:00";
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = String(totalSeconds % 60).padStart(2, "0");
+  if (hours > 0) {
+    return `${hours}:${String(minutes).padStart(2, "0")}:${seconds}`;
+  }
+  return `${minutes}:${seconds}`;
 }
 
 export function formatClockTime(value) {
   const totalSeconds = Math.max(0, Math.floor(Number(value || 0)));
-  const minutes = Math.floor(totalSeconds / 60);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = String(totalSeconds % 60).padStart(2, "0");
+  if (hours > 0) {
+    return `${hours}:${String(minutes).padStart(2, "0")}:${seconds}`;
+  }
   return `${minutes}:${seconds}`;
 }
 

@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Cine Juntos | Mirar, chatear y sincronizar en vivo</title>
+    <title>Cine Juntos | Mirar, chatear y disfrutar en vivo</title>
     <meta
       name="description"
-      content="Sala privada para ver un video directo con chat y sincronizacion en tiempo real."
+      content="Mirar videos juntos, chatear en vivo y disfrutar una sala compartida con reproducción sincronizada."
     />
     <meta
       http-equiv="Content-Security-Policy"
@@ -23,29 +23,30 @@
           <h1>Cine Juntos</h1>
         </div>
         <div class="topbar-actions">
-          <div class="topbar-actions-group">
-            <span class="app-status" id="connectionStatus" data-state="starting">
-              <span class="app-status-dot" aria-hidden="true" data-tooltip="Funcionando"></span>
-              <span class="app-status-label">Iniciando</span>
-            </span>
-            <div class="room-chip" id="roomChip">
-              <span class="room-chip-label">Sala</span>
-              <span class="room-chip-code" id="roomBadge">Sin sala</span>
+          <div class="room-chip" id="roomChip">
+            <div class="room-chip-heading">
+              <span class="room-chip-label">Sala de video</span>
+              <h1 class="room-chip-title">
+                SALA <span class="room-chip-code room-glow" id="roomBadge">Sin sala</span>
+              </h1>
+            </div>
+            <div class="room-chip-actions">
+              <span class="app-status" id="connectionStatus" data-state="starting">
+                <span class="app-status-dot" aria-hidden="true" data-tooltip="Funcionando"></span>
+                <span class="app-status-label">Iniciando</span>
+              </span>
               <button
                 class="room-chip-copy"
                 id="copyInviteButton"
                 type="button"
-                aria-label="Copiar invitacion"
-                data-tooltip="Copiar invitacion"
+                aria-label="Compartir invitacion"
+                data-tooltip="Compartir invitacion"
               >
-                <span data-lucide="copy"></span>
+                <span data-lucide="share-2"></span>
+                <span class="room-chip-copy-label">Compartir</span>
               </button>
             </div>
           </div>
-          <span class="host-badge" id="hostBadge" hidden>
-            <span class="host-badge-dot" aria-hidden="true"></span>
-            <span class="host-badge-label">Sos host</span>
-          </span>
         </div>
       </header>
 
@@ -186,31 +187,26 @@
       </section>
 
       <main class="session-view" id="sessionView" data-chat-dock="right" hidden>
-        <section class="session-toolbar" aria-label="Controles de sala">
-          <div class="source-strip">
-            <div class="field">
-              <span class="label-row">
-                Video
-                <button
-                  class="help-button"
-                  type="button"
-                  aria-label="Ayuda sobre videos"
-                >
-                  <span data-lucide="circle-help" data-tooltip="Usa un enlace directo a un archivo MP4, WebM u otro formato reproducible por el navegador."></span>
-                </button>
-              </span>
-              <div class="input-with-button">
-                <input
-                  id="videoUrlInput"
-                  type="url"
-                  autocomplete="off"
-                  autocapitalize="off"
-                  spellcheck="false"
-                  data-bwignore="true"
-                  data-lpignore="true"
-                  placeholder="https://servidor.com/video.mp4"
-                  title="Pega un link directo a MP4, WebM u otro video compatible"
-                />
+        <section class="workspace">
+          <section class="video-area" aria-label="Reproductor sincronizado">
+            <section class="session-toolbar" aria-label="Controles de sala">
+              <div class="session-toolbar-body">
+                <div class="session-toolbar-field">
+                  <span class="session-toolbar-label">
+                    Enlace del video
+                  </span>
+                  <input
+                    id="videoUrlInput"
+                    type="url"
+                    autocomplete="off"
+                    autocapitalize="off"
+                    spellcheck="false"
+                    data-bwignore="true"
+                    data-lpignore="true"
+                    placeholder="https://servidor.com/video.mp4"
+                    title="Pega un link directo a MP4, WebM u otro video compatible"
+                  />
+                </div>
                 <button
                   class="button primary"
                   id="loadVideoButton"
@@ -222,21 +218,7 @@
                   Cargar
                 </button>
               </div>
-              <p
-                id="syncStatus"
-                class="sync-status video-status empty"
-                title="Estado de video"
-                data-tooltip="Estado de video"
-              >
-                <span class="video-status-icon" id="videoStatusIcon" data-lucide="circle"></span>
-                <span id="videoStatusText">Sin contenido</span>
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <section class="workspace">
-          <section class="video-area" aria-label="Reproductor sincronizado">
+            </section>
             <div class="player-frame" id="playerFrame" data-chat-style="float">
               <video
                 id="videoPlayer"
@@ -248,6 +230,15 @@
               <div class="empty-player" id="emptyPlayer">
                 <span data-lucide="film"></span>
               </div>
+              <p
+                id="syncStatus"
+                class="sync-status video-status empty player-status-badge"
+                title="Estado de video"
+                data-tooltip="Estado de video"
+              >
+                <span class="video-status-dot" id="videoStatusIcon" aria-hidden="true"></span>
+                <span id="videoStatusText">Sin contenido</span>
+              </p>
 
               <div class="player-actions" aria-label="Controles de reproductor">
                   <button
@@ -315,7 +306,11 @@
                     </div>
                   </div>
 
-                  <label class="player-select player-rate-select" for="playerRateSelect">
+                  <label
+                    class="player-select player-rate-select"
+                    for="playerRateSelect"
+                    data-tooltip="Velocidad de reproduccion"
+                  >
                     <select id="playerRateSelect" aria-label="Velocidad de reproduccion">
                       <option value="0.5">0.5x</option>
                       <option value="0.75">0.75x</option>
@@ -455,17 +450,44 @@
                     <span data-lucide="circle-help" data-tooltip="Este nombre sera el que veran los demas usuarios en la sala"></span>
                   </button>
                 </span>
-                <input
-                  id="nameInput"
-                  type="text"
-                  autocomplete="off"
-                  autocapitalize="off"
-                  spellcheck="false"
-                  data-bwignore="true"
-                  data-lpignore="true"
-                  maxlength="20"
-                  title="Nombre visible en chat y sincronizacion"
-                />
+                <div class="chat-name-editor" id="chatNameField" data-editing="false">
+                  <div class="chat-name-display-row">
+                    <span class="chat-name-display" id="nameDisplay">Invitado</span>
+                    <button
+                      class="chat-name-edit-button"
+                      id="editNameButton"
+                      type="button"
+                      aria-label="Editar nombre"
+                      title="Editar nombre"
+                      data-tooltip="Editar nombre"
+                    >
+                      <span data-lucide="pencil"></span>
+                    </button>
+                  </div>
+                  <div class="chat-name-edit-row">
+                    <input
+                      id="nameInput"
+                      type="text"
+                      autocomplete="off"
+                      autocapitalize="off"
+                      spellcheck="false"
+                      data-bwignore="true"
+                      data-lpignore="true"
+                      maxlength="20"
+                      title="Nombre visible en chat y sincronizacion"
+                    />
+                    <button
+                      class="chat-name-confirm-button"
+                      id="confirmNameButton"
+                      type="button"
+                      aria-label="Aceptar nombre"
+                      title="Aceptar nombre"
+                      data-tooltip="Aceptar nombre"
+                    >
+                      <span data-lucide="check"></span>
+                    </button>
+                  </div>
+                </div>
               </div>
               <button
                 class="icon-button dock-button"

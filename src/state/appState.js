@@ -69,7 +69,7 @@ export function applyInitialDefaults() {
 
 export function getDisplayName() {
   const saved = localStorage.getItem("cine-juntos-name");
-  const inputVal = ((dom.nameInput && dom.nameInput.value) || (dom.lobbyNameInput && dom.lobbyNameInput.value) || "").trim();
+  const inputVal = ((dom.lobbyNameInput && dom.lobbyNameInput.value) || "").trim();
   if (inputVal) {
     if (saved !== inputVal) {
       localStorage.setItem("cine-juntos-name", inputVal);

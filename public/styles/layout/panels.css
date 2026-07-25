@@ -1,16 +1,22 @@
-.video-area,
 .chat-area {
   position: relative;
+  height: 100%;
   min-height: 0;
+  display: grid;
+  grid-area: chat;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 8px;
+  padding: 8px;
   border: 1px solid var(--glass-border-strong);
   border-radius: var(--radius-md);
   background: var(--glass-bg);
   box-shadow: var(--shadow-lg);
   backdrop-filter: blur(16px);
+  transition: padding 160ms ease;
+  overflow-x: hidden;
 }
 
-/* Highlight superior + sutil glow interno (profundidad cinematografica) */
-.video-area::before,
+/* Highlight superior + sutil glow interno para chat y toolbar */
 .chat-area::before,
 .session-toolbar::before {
   position: absolute;
@@ -24,20 +30,19 @@
 }
 
 .video-area {
-  display: grid;
-  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  overflow: visible;
   grid-area: video;
   padding: 0;
-}
-
-.chat-area {
-  display: grid;
-  grid-area: chat;
-  grid-template-rows: auto minmax(0, 1fr) auto;
-  gap: 8px;
-  padding: 8px;
-  transition: padding 160ms ease;
-  overflow-x: hidden;
 }
 
 /* Evita que el preview de respuesta amplie una columna de chat angosta. */

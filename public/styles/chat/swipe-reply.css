@@ -27,10 +27,9 @@
   align-self: flex-end;
 }
 
-/* Los mensajes recibidos reservan el mismo margen a la izquierda para el swipe. */
+/* Los mensajes recibidos se alinean al borde izquierdo sin margen adicional. */
 .message:not(.mine) .message-bubble-row {
   align-self: flex-start;
-  margin-left: var(--reply-swipe-reserve);
 }
 
 .swipe-reply-hint-wrapper {
@@ -42,6 +41,12 @@
   overflow: visible;
   pointer-events: none;
   z-index: 2;
+}
+
+/* Para mensajes recibidos, el hint aparece a la derecha del bubble */
+.message:not(.mine) .swipe-reply-hint-wrapper {
+  right: 0;
+  left: auto;
 }
 
 .swipe-reply-hint {

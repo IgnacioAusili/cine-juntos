@@ -23,6 +23,18 @@
   border-left-color: var(--accent-2);
 }
 
+/* Para mensajes propios, la barra del reply va a la derecha */
+.message.mine .message-reply {
+  border-left: 0;
+  border-right: 2px solid rgba(255, 255, 255, 0.28);
+  border-radius: 4px 0 0 4px;
+  text-align: right;
+}
+
+.message.mine .message-reply:hover {
+  border-right-color: var(--accent-2);
+}
+
 .message-reply-name {
   font-size: 0.7rem;
   font-weight: 700;

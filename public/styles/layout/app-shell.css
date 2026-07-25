@@ -2,6 +2,7 @@
   display: grid;
   width: min(1680px, 100%);
   min-height: 100vh;
+  gap:20px;
   margin: 0 auto;
   padding: var(--app-shell-gutter);
   grid-template-rows: auto minmax(0, 1fr);

@@ -89,6 +89,7 @@ export function wirePlayerCoreEvents() {
   });
 
   dom.videoPlayer.addEventListener("play", () => {
+    setVideoStatus("loaded", "En vivo");
     logEvent("video", `Play local en ${formatSeconds(dom.videoPlayer.currentTime)}.`);
     syncPlayerControls();
     if (!state.player.suppressVideoEvents) publishState("play");
@@ -96,12 +97,14 @@ export function wirePlayerCoreEvents() {
 
   dom.videoPlayer.addEventListener("pause", () => {
     if (dom.videoPlayer.ended) return;
+    setVideoStatus("loaded", "Incorporado");
     logEvent("video", `Pausa local en ${formatSeconds(dom.videoPlayer.currentTime)}.`);
     syncPlayerControls();
     if (!state.player.suppressVideoEvents) publishState("pause");
   });
 
   dom.videoPlayer.addEventListener("ended", () => {
+    setVideoStatus("loaded", "Incorporado");
     logEvent("video", "Video terminado.");
     syncPlayerControls(true);
   });
@@ -120,7 +123,7 @@ export function wirePlayerCoreEvents() {
 
   dom.videoPlayer.addEventListener("loadedmetadata", () => {
     dom.emptyPlayer.classList.add("hidden");
-    setVideoStatus("loaded", "Incorporado en sala");
+    setVideoStatus("loaded", "Incorporado");
     syncPlayerControls(true);
   });
 
@@ -210,17 +213,10 @@ export function setVideoSource(source, shouldAnnounce) {
 }
 
 export function setVideoStatus(videoState, text) {
-  const iconByState = {
-    empty: "circle",
-    loading: "refresh-cw",
-    loaded: "check-circle",
-    error: "circle-alert",
-  };
-  dom.syncStatus.className = `sync-status video-status ${videoState}`;
-  dom.videoStatusText.textContent = text;
-  dom.videoStatusIcon.setAttribute("data-lucide", iconByState[videoState] || "circle");
-  dom.videoStatusIcon.innerHTML = "";
-  hydrateIcons();
+  dom.syncStatus.className = `sync-status video-status player-status-badge ${videoState}`;
+  if (dom.videoStatusText) {
+    dom.videoStatusText.textContent = text;
+  }
 }
 
 export function waitForVideoMetadata() {
@@ -263,7 +259,10 @@ function commitSeekPosition() {
 
 function syncPlayerControls(forceSliderSync = false) {
   const duration = getFiniteDuration();
-  const currentTime = Number.isFinite(dom.videoPlayer.currentTime) ? Math.max(0, dom.videoPlayer.currentTime) : 0;
+  const isEnded = dom.videoPlayer.ended;
+  const currentTime = isEnded && duration > 0 
+    ? duration 
+    : Number.isFinite(dom.videoPlayer.currentTime) ? Math.max(0, dom.videoPlayer.currentTime) : 0;
   const hasMedia = hasLoadedMediaSource();
   const isSeekingElementFocused = document.activeElement === dom.playerSeekInput;
 
@@ -279,11 +278,11 @@ function syncPlayerControls(forceSliderSync = false) {
     dom.playerSeekInput.max = String(duration || 0);
     dom.playerSeekInput.disabled = !hasMedia || duration <= 0;
     if (forceSliderSync || !isSeekingElementFocused) {
-      // Si el video terminó, forzar el value al máximo para que el thumb llegue al final
-      const seekValue = dom.videoPlayer.ended && duration > 0 ? duration : Math.min(currentTime, duration || 0);
+      // Si el video terminó, forzar el value al máximo exacto para que el thumb llegue hasta el final
+      const seekValue = isEnded && duration > 0 ? duration : Math.min(currentTime, duration || 0);
       dom.playerSeekInput.value = String(seekValue);
     }
-    updateSeekVisuals(Number(dom.playerSeekInput.value || 0), duration, dom.videoPlayer.ended);
+    updateSeekVisuals(Number(dom.playerSeekInput.value || 0), duration, isEnded);
   }
 
   if (dom.playerPlayButton) {
@@ -307,6 +306,10 @@ function syncPlayerControls(forceSliderSync = false) {
   if (dom.playerRateSelect) {
     dom.playerRateSelect.disabled = !hasMedia;
     dom.playerRateSelect.value = String(Number(dom.videoPlayer.playbackRate || 1));
+    const rateSelectWrap = dom.playerRateSelect.closest(".player-select");
+    if (rateSelectWrap) {
+      rateSelectWrap.dataset.disabled = dom.playerRateSelect.disabled ? "true" : "false";
+    }
   }
 
   if (dom.playerMuteButton) {

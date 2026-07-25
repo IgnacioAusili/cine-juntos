@@ -2,6 +2,38 @@ import { dom } from "../core/dom.js";
 import { state, getDisplayName, logEvent } from "../core/state.js";
 import { makeGuestName, makeParticipantLabel } from "../core/utils.js";
 
+function renderDisplayName(name = getDisplayName()) {
+  if (dom.nameDisplay) {
+    dom.nameDisplay.textContent = name || makeGuestName(state.session.clientId);
+  }
+}
+
+function setIdentityEditing(isEditing) {
+  if (!dom.chatNameField) return;
+  dom.chatNameField.dataset.editing = isEditing ? "true" : "false";
+
+  if (!isEditing) {
+    dom.nameInput.value = getDisplayName();
+    return;
+  }
+
+  dom.nameInput.value = getDisplayName();
+  window.requestAnimationFrame(() => {
+    dom.nameInput.focus();
+    dom.nameInput.select();
+  });
+}
+
+function commitDisplayNameChange() {
+  updateDisplayName(dom.nameInput.value, dom.nameInput);
+  const confirmedName = getDisplayName();
+  dom.nameInput.value = confirmedName;
+  if (dom.lobbyNameInput) dom.lobbyNameInput.value = confirmedName;
+  state.session.transport?.updateMember?.(confirmedName);
+  logEvent("user", `Nombre actualizado: ${confirmedName}`);
+  setIdentityEditing(false);
+}
+
 export function renderMembers(members) {
   const nextMembers = new Map([[state.session.clientId, getDisplayName()]]);
   const activeIds = new Set([state.session.clientId]);
@@ -20,7 +52,9 @@ export function renderMembers(members) {
 
 export function rememberParticipant(participantId, participantName) {
   if (!participantId) return;
-  if (state.session.knownMembers.has(participantId) || state.session.knownParticipants.has(participantId)) {
+  // Solo actualiza el nombre si el participante ya está registrado.
+  // Los nuevos participantes se agregan via renderMembers → onMembers.
+  if (state.session.knownMembers.has(participantId)) {
     state.session.knownMembers.set(
       participantId,
       participantName || state.session.knownMembers.get(participantId) || makeParticipantLabel(participantId),
@@ -30,6 +64,8 @@ export function rememberParticipant(participantId, participantName) {
 
 export function renderPresence() {
   if (!dom.participantCount || !dom.presencePill) return;
+
+  renderDisplayName();
 
   const members = Array.from(state.session.knownMembers.entries())
     .filter(([id]) => state.session.knownParticipants.has(id))
@@ -75,13 +111,32 @@ export function updateDisplayName(value, sourceInput) {
   if (sourceInput !== dom.lobbyNameInput) dom.lobbyNameInput.value = nextName;
   localStorage.setItem("cine-juntos-name", nextName.trim() || makeGuestName(state.session.clientId));
   state.session.knownMembers.set(state.session.clientId, getDisplayName());
+  renderDisplayName();
   renderPresence();
 }
 
 export function wireIdentityEvents() {
-  dom.nameInput.addEventListener("input", () => {
-    updateDisplayName(dom.nameInput.value, dom.nameInput);
-    state.session.transport?.updateMember?.(getDisplayName());
-    logEvent("user", `Nombre actualizado: ${getDisplayName()}`);
+  renderDisplayName();
+  dom.nameInput.value = getDisplayName();
+
+  dom.editNameButton?.addEventListener("click", () => {
+    setIdentityEditing(true);
+  });
+
+  dom.confirmNameButton?.addEventListener("click", () => {
+    commitDisplayNameChange();
+  });
+
+  dom.nameInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      commitDisplayNameChange();
+      return;
+    }
+
+    if (event.key === "Escape") {
+      event.preventDefault();
+      setIdentityEditing(false);
+    }
   });
 }

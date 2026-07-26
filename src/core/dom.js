@@ -60,6 +60,7 @@ export const dom = {
   overlayEmojiButton: document.querySelector("#overlayEmojiButton"),
   editNameButton: document.querySelector("#editNameButton"),
   confirmNameButton: document.querySelector("#confirmNameButton"),
+  chatNameEditor: document.querySelector(".chat-name-editor"),
   emojiPopover: document.querySelector("#emojiPopover"),
   insideChatUnread: document.querySelector("#insideChatUnread"),
   tooltipLayer: document.querySelector("#tooltipLayer"),

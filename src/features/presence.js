@@ -2,6 +2,63 @@ import { dom } from "../core/dom.js";
 import { state, getDisplayName, logEvent } from "../core/state.js";
 import { makeGuestName, makeParticipantLabel } from "../core/utils.js";
 
+let nameInputMeasureCanvas = null;
+let nameInputBaseWidth = 0;
+
+function getNameInputMeasureContext() {
+  if (!nameInputMeasureCanvas) {
+    nameInputMeasureCanvas = document.createElement("canvas");
+  }
+  return nameInputMeasureCanvas.getContext("2d");
+}
+
+function buildCanvasFont(computedStyle) {
+  const fontStyle = computedStyle.fontStyle || "normal";
+  const fontVariant = computedStyle.fontVariant || "normal";
+  const fontWeight = computedStyle.fontWeight || "400";
+  const fontSize = computedStyle.fontSize || "16px";
+  const lineHeight = computedStyle.lineHeight && computedStyle.lineHeight !== "normal"
+    ? `/${computedStyle.lineHeight}`
+    : "";
+  const fontFamily = computedStyle.fontFamily || "sans-serif";
+  return `${fontStyle} ${fontVariant} ${fontWeight} ${fontSize}${lineHeight} ${fontFamily}`;
+}
+
+function syncNameInputWidth() {
+  if (!dom.nameInput || !dom.chatNameField) return;
+
+  const input = dom.nameInput;
+  const display = dom.nameDisplay;
+  const computed = window.getComputedStyle(display || input);
+  const context = getNameInputMeasureContext();
+
+  if (context) {
+    context.font = buildCanvasFont(computed);
+    context.fontKerning = "normal";
+  }
+
+  const text = input.value || getDisplayName() || "";
+  const measuredWidth = context ? Math.ceil(context.measureText(text || " ").width) : 24;
+  const textWidth = Math.max(24, measuredWidth);
+  const fieldWidth = Math.floor(dom.chatNameField.getBoundingClientRect().width);
+  const buttonWidth = dom.confirmNameButton ? Math.ceil(dom.confirmNameButton.getBoundingClientRect().width) : 0;
+  const gapValue = dom.chatNameEditor ? window.getComputedStyle(dom.chatNameEditor).columnGap : "0px";
+  const rowGap = Number.parseFloat(gapValue);
+  const safeRowGap = Number.isFinite(rowGap) ? rowGap : 0;
+  const maxWidth = Math.max(24, fieldWidth - buttonWidth - safeRowGap);
+  const minWidth = Math.max(24, nameInputBaseWidth || 0);
+  const targetWidth = Math.max(minWidth, Math.min(textWidth, maxWidth));
+
+  input.style.width = `${targetWidth}px`;
+  input.style.maxWidth = `${maxWidth}px`;
+
+  if (textWidth > maxWidth) {
+    input.scrollLeft = input.scrollWidth;
+  } else {
+    input.scrollLeft = 0;
+  }
+}
+
 function renderDisplayName(name = getDisplayName()) {
   if (dom.nameDisplay) {
     dom.nameDisplay.textContent = name || makeGuestName(state.session.clientId);
@@ -13,12 +70,15 @@ function setIdentityEditing(isEditing) {
   dom.chatNameField.dataset.editing = isEditing ? "true" : "false";
 
   if (!isEditing) {
+    nameInputBaseWidth = 0;
     dom.nameInput.value = getDisplayName();
     return;
   }
 
   dom.nameInput.value = getDisplayName();
   window.requestAnimationFrame(() => {
+    nameInputBaseWidth = Math.ceil(dom.nameDisplay?.getBoundingClientRect().width || dom.nameInput.getBoundingClientRect().width || 24);
+    syncNameInputWidth();
     dom.nameInput.focus();
     dom.nameInput.select();
   });
@@ -28,6 +88,7 @@ function commitDisplayNameChange() {
   updateDisplayName(dom.nameInput.value, dom.nameInput);
   const confirmedName = getDisplayName();
   dom.nameInput.value = confirmedName;
+  syncNameInputWidth();
   if (dom.lobbyNameInput) dom.lobbyNameInput.value = confirmedName;
   state.session.transport?.updateMember?.(confirmedName);
   logEvent("user", `Nombre actualizado: ${confirmedName}`);
@@ -109,6 +170,7 @@ export function updateDisplayName(value, sourceInput) {
   const nextName = String(value || "").slice(0, 28);
   if (sourceInput !== dom.nameInput) dom.nameInput.value = nextName;
   if (sourceInput !== dom.lobbyNameInput) dom.lobbyNameInput.value = nextName;
+  if (sourceInput === dom.nameInput) syncNameInputWidth();
   localStorage.setItem("cine-juntos-name", nextName.trim() || makeGuestName(state.session.clientId));
   state.session.knownMembers.set(state.session.clientId, getDisplayName());
   renderDisplayName();
@@ -118,6 +180,8 @@ export function updateDisplayName(value, sourceInput) {
 export function wireIdentityEvents() {
   renderDisplayName();
   dom.nameInput.value = getDisplayName();
+  nameInputBaseWidth = Math.ceil(dom.nameDisplay?.getBoundingClientRect().width || dom.nameInput.getBoundingClientRect().width || 24);
+  syncNameInputWidth();
 
   dom.editNameButton?.addEventListener("click", () => {
     setIdentityEditing(true);
@@ -137,6 +201,16 @@ export function wireIdentityEvents() {
     if (event.key === "Escape") {
       event.preventDefault();
       setIdentityEditing(false);
+    }
+  });
+
+  dom.nameInput.addEventListener("input", () => {
+    syncNameInputWidth();
+  });
+
+  window.addEventListener("resize", () => {
+    if (dom.chatNameField?.dataset.editing === "true") {
+      syncNameInputWidth();
     }
   });
 }

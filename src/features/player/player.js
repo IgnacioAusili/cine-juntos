@@ -15,6 +15,8 @@ import {
 // no durante la carga del modulo, y player-sync-logic.js a su vez importa
 // setVideoSource y waitForVideoMetadata desde aqui.
 import {
+  attemptPlaybackRecovery,
+  clearPlaybackRecoveryTracking,
   pauseRoomForPlaybackIssue,
   publishState,
 } from "./player-sync-logic.js";
@@ -92,6 +94,9 @@ export function wirePlayerCoreEvents() {
     setVideoStatus("loaded", "En vivo");
     logEvent("video", `Play local en ${formatSeconds(dom.videoPlayer.currentTime)}.`);
     syncPlayerControls();
+    if (state.player.playbackRecoveryPending || state.player.playbackRecoveryAttempting) {
+      clearPlaybackRecoveryTracking();
+    }
     if (!state.player.suppressVideoEvents) publishState("play");
   });
 
@@ -99,6 +104,7 @@ export function wirePlayerCoreEvents() {
     if (dom.videoPlayer.ended) return;
     setVideoStatus("loaded", "Incorporado");
     logEvent("video", `Pausa local en ${formatSeconds(dom.videoPlayer.currentTime)}.`);
+    state.player.lastManualPauseAt = Date.now();
     syncPlayerControls();
     if (!state.player.suppressVideoEvents) publishState("pause");
   });
@@ -111,6 +117,7 @@ export function wirePlayerCoreEvents() {
 
   dom.videoPlayer.addEventListener("seeked", () => {
     logEvent("video", `Seek local a ${formatSeconds(dom.videoPlayer.currentTime)}.`);
+    state.player.lastManualSeekAt = Date.now();
     syncPlayerControls(true);
     if (!state.player.suppressVideoEvents) publishState("seek");
   });
@@ -125,6 +132,19 @@ export function wirePlayerCoreEvents() {
     dom.emptyPlayer.classList.add("hidden");
     setVideoStatus("loaded", "Incorporado");
     syncPlayerControls(true);
+    attemptPlaybackRecovery("loadedmetadata");
+  });
+
+  dom.videoPlayer.addEventListener("loadeddata", () => {
+    attemptPlaybackRecovery("loadeddata");
+  });
+
+  dom.videoPlayer.addEventListener("canplay", () => {
+    attemptPlaybackRecovery("canplay");
+  });
+
+  dom.videoPlayer.addEventListener("playing", () => {
+    attemptPlaybackRecovery("playing");
   });
 
   dom.videoPlayer.addEventListener("durationchange", () => {

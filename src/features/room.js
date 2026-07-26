@@ -209,6 +209,12 @@ export async function joinRoom(rawRoomCode) {
     state.player.lastActionAuthor = "";
     state.player.lastPlaybackIssueAt = 0;
     state.player.lastPlaybackIssueReason = "";
+    if (state.player.playbackRecoveryTimeoutId) {
+      window.clearTimeout(state.player.playbackRecoveryTimeoutId);
+    }
+    state.player.playbackRecoveryPending = false;
+    state.player.playbackRecoveryAttempting = false;
+    state.player.playbackRecoveryTimeoutId = null;
     state.player.remoteStateActive = false;
     state.player.suppressVideoEvents = false;
     updateUrlRoom(roomCode);

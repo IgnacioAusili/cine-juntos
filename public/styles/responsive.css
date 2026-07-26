@@ -121,10 +121,6 @@
     max-height: 62%;
   }
 
-  body.fullscreen-mode .app-shell {
-    padding: var(--app-shell-gutter);
-  }
-
   body.fullscreen-mode .player-chat {
     right: 18px;
     left: auto;

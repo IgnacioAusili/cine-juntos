@@ -51,8 +51,8 @@ body.is-lobby {
   overflow: hidden;
 }
 
-/* Grano de film sutil sobre todo (textura cinematografica) */
-body::before {
+/* Grano de film sutil solo en el lobby (textura cinematografica) */
+body.is-lobby::before {
   position: fixed;
   inset: 0;
   z-index: -1;
@@ -63,7 +63,7 @@ body::before {
 }
 
 /* Grano SVG muy sutil: da profundidad sin distraer */
-body::after {
+body.is-lobby::after {
   position: fixed;
   inset: 0;
   z-index: -1;

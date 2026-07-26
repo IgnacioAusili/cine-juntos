@@ -79,3 +79,30 @@
   padding: 2px 0;
   text-align: center;
 }
+
+.overlay-messages .message.system .message-system-bubble {
+  --system-line-reserve: 24px;
+  --system-line-gap: 7px;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--system-line-gap);
+  width: fit-content;
+  max-width: min(100%, 420px);
+}
+
+.overlay-messages .message.system .message-system-bubble::before,
+.overlay-messages .message.system .message-system-bubble::after {
+  content: "";
+  flex: 0 0 var(--system-line-reserve);
+  width: var(--system-line-reserve);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.26), transparent);
+}
+
+.overlay-messages .message.system .message-system-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}

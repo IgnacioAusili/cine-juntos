@@ -80,21 +80,29 @@ function appendMessageTo(container, message) {
         // Obtenemos el nombre exacto con el que se envió
         const nameKey = message.name || "Invitado";
         if (displayText.startsWith(nameKey)) {
-          // Reemplazar nombre por "Tú" y conjugar verbos comunes
+          // Quitar el nombre propio y conjugar el mensaje en segunda persona.
           let sub = displayText.substring(nameKey.length).trim();
-          
-          // Mapeo de verbos en tercera persona a segunda persona
+
+          // Mapeo de verbos en tercera persona a segunda persona.
           const verbReplacements = [
             { from: /^inició el video/, to: "iniciaste el video" },
             { from: /^reprodujo el video en/, to: "reprodujiste el video en" },
-            { from: /^pauso el video en/, to: "pausaste el video en" },
-            { from: /^salto a/, to: "saltaste a" },
-            { from: /^cambio la velocidad a/, to: "cambiaste la velocidad a" },
-            { from: /^cargo un video nuevo/, to: "cargaste un video nuevo" },
-            { from: /^quedó en espera/, to: "quedaste en espera" },
-            { from: /^tiene el video pausado/, to: "tienes el video pausado" },
-            { from: /^tuvo un error/, to: "tuviste un error" },
-            { from: /^tiene inconvenientes/, to: "tienes inconvenientes" }
+            { from: /^pausó el video en/, to: "pausaste el video en" },
+            { from: /^saltó a/, to: "saltaste a" },
+            { from: /^cambió la velocidad a/, to: "cambiaste la velocidad a" },
+            { from: /^cargó un video nuevo/, to: "cargaste un video nuevo" },
+            { from: /^qued(?:ó|aste) en espera(?:\s*\(.*?\))?/, to: "tienes inconvenientes en el video" },
+            { from: /^tiene problemas de buffer/, to: "tienes inconvenientes en el video" },
+            { from: /^tiene problemas de conexión/, to: "tienes inconvenientes en el video" },
+            { from: /^tiene problemas de carga/, to: "tienes inconvenientes en el video" },
+            { from: /^tiene inconvenientes en el video/, to: "tienes inconvenientes en el video" },
+            { from: /^está cargando el video/, to: "tienes inconvenientes en el video" },
+            { from: /^tiene el video pausado/, to: "tienes inconvenientes en el video" },
+            { from: /^tiene el video trabado/, to: "tienes inconvenientes en el video" },
+            { from: /^tuvo un error/, to: "tienes inconvenientes en el video" },
+            { from: /^tiene un error en el video/, to: "tienes inconvenientes en el video" },
+            { from: /^tiene un problema con el video/, to: "tienes inconvenientes en el video" },
+            { from: /^tiene inconvenientes/, to: "tienes inconvenientes en el video" }
           ];
 
           for (const rep of verbReplacements) {
@@ -103,10 +111,14 @@ function appendMessageTo(container, message) {
               break;
             }
           }
-          displayText = `Tú ${sub}`;
+          displayText = sub;
         }
       }
-      appendMessageContent(bubble, `--- ${displayText} ---`);
+      bubble.classList.add("message-system-bubble");
+      const systemText = document.createElement("span");
+      systemText.className = "message-system-text";
+      systemText.textContent = capitalizeMessage(displayText);
+      bubble.append(systemText);
     } else {
       appendMessageContent(bubble, message.text);
     }
@@ -175,4 +187,10 @@ function trimRenderedMessages(container) {
   while (container.children.length > MAX_RENDERED_MESSAGES) {
     container.firstElementChild?.remove();
   }
+}
+
+function capitalizeMessage(text) {
+  const value = String(text || "").trim();
+  if (!value) return "";
+  return value.charAt(0).toLocaleUpperCase("es-ES") + value.slice(1);
 }

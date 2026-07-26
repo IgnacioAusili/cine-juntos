@@ -49,18 +49,15 @@ function describeVideoEvent(action, currentState) {
     }
     return `${name} reprodujo el video en ${time}`;
   }
-  if (action === "pause") return `${name} pauso el video en ${time}`;
-  if (action === "seek") return `${name} salto a ${time}`;
+  if (action === "pause") return `${name} pausó el video en ${time}`;
+  if (action === "seek") return `${name} saltó a ${time}`;
   if (action === "rate")
-    return `${name} cambio la velocidad a ${currentState.rate}x`;
-  if (action === "video") return `${name} cargo un video nuevo`;
+    return `${name} cambió la velocidad a ${currentState.rate}x`;
+  if (action === "video") return `${name} cargó un video nuevo`;
   if (action === "hold") return `${name} ${describePlaybackIssue(currentState.issueReason)} en ${time}`;
   return "";
 }
 
 function describePlaybackIssue(reason) {
-  if (reason === "waiting") return "quedó en espera (cargando buffer)";
-  if (reason === "stalled") return "tiene el video pausado por problemas de conexión";
-  if (reason === "error") return "tuvo un error al cargar el video";
-  return "tiene inconvenientes para reproducir el video";
+  return "tiene inconvenientes en el video";
 }

@@ -23,6 +23,11 @@ export const playerState = {
   lastActionAuthor: "",
   lastPlaybackIssueAt: 0,
   lastPlaybackIssueReason: "",
+  lastManualPauseAt: 0,
+  lastManualSeekAt: 0,
+  playbackRecoveryPending: false,
+  playbackRecoveryAttempting: false,
+  playbackRecoveryTimeoutId: null,
   remoteStateActive: false,
   syncStatusTimer: null,
 };

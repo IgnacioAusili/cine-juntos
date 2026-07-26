@@ -25,14 +25,24 @@
         <div class="topbar-actions">
           <div class="room-chip" id="roomChip">
             <div class="room-chip-heading">
-              <span class="room-chip-label">Sala de video</span>
+              <span class="room-chip-label-row">
+                <span class="room-chip-label">Sala de video</span>
+                <button
+                  class="help-button"
+                  type="button"
+                  aria-label="Ayuda sobre la sala"
+                  data-tooltip="Esta es la sala a la que perteneces. Si deseas compartirla, envía este código a otras personas para que puedan unirse."
+                >
+                  <span data-lucide="circle-help"></span>
+                </button>
+              </span>
               <h1 class="room-chip-title">
                 SALA <span class="room-chip-code room-glow" id="roomBadge">Sin sala</span>
               </h1>
             </div>
             <div class="room-chip-actions">
-              <span class="app-status" id="connectionStatus" data-state="starting">
-                <span class="app-status-dot" aria-hidden="true" data-tooltip="Funcionando"></span>
+              <span class="app-status" id="connectionStatus" data-state="starting" data-tooltip="Conectando con la sala.">
+                <span class="app-status-dot" aria-hidden="true"></span>
                 <span class="app-status-label">Iniciando</span>
               </span>
               <button
@@ -192,8 +202,18 @@
             <section class="session-toolbar" aria-label="Controles de sala">
               <div class="session-toolbar-body">
                 <div class="session-toolbar-field">
-                  <span class="session-toolbar-label">
-                    Enlace del video
+                  <span class="session-toolbar-label-row">
+                    <span class="session-toolbar-label">Enlace de video</span>
+                    <button
+                      class="help-button"
+                      type="button"
+                      aria-label="Ayuda sobre el enlace del video"
+                    >
+                      <span
+                        data-lucide="circle-help"
+                        data-tooltip="Pegue un enlace directo al archivo de video. Debe terminar en .mp4, .webm u otro formato compatible; no use páginas intermedias ni enlaces de vista previa."
+                      ></span>
+                    </button>
                   </span>
                   <input
                     id="videoUrlInput"
@@ -474,7 +494,6 @@
                       data-bwignore="true"
                       data-lpignore="true"
                       maxlength="20"
-                      title="Nombre visible en chat y sincronizacion"
                     />
                     <button
                       class="chat-name-confirm-button"

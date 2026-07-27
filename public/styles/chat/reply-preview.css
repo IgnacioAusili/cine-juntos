@@ -1,20 +1,29 @@
 .reply-preview {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 9px;
   min-width: 0;
   max-width: 100%;
   box-sizing: border-box;
   border-left: 2px solid var(--accent-2);
   border-radius: 5px;
   background: rgba(47, 184, 164, 0.07);
-  padding: 6px 8px;
+  padding: 8px 10px;
+  min-height: 42px;
   overflow: hidden;
   opacity: 0;
   transform: translateY(6px);
+  height: 0;
+  margin: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  pointer-events: none;
+  will-change: height, opacity, transform, padding, margin;
   transition:
     opacity 0.22s ease,
-    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    height 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    padding 0.22s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .reply-preview[hidden] {
@@ -24,6 +33,10 @@
 .reply-preview--visible {
   opacity: 1;
   transform: translateY(0);
+  height: var(--reply-preview-height, 64px);
+  padding-top: 8px;
+  padding-bottom: 8px;
+  pointer-events: auto;
 }
 
 .reply-preview-icon {
@@ -43,7 +56,7 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 2px;
   border: 0;
   background: transparent;
   text-align: left;
@@ -57,16 +70,18 @@
 }
 
 .reply-preview-name {
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   font-weight: 700;
   color: var(--reply-participant-accent, var(--accent-2));
+  line-height: 1.1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .reply-preview-body {
-  font-size: 0.72rem;
+  font-size: 0.74rem;
+  line-height: 1.2;
   color: var(--muted);
   white-space: nowrap;
   overflow: hidden;
@@ -79,8 +94,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 22px;
-  min-height: 22px;
+  width: 24px;
+  min-height: 24px;
   border: 0;
   border-radius: 999px;
   background: transparent;
@@ -96,6 +111,6 @@
 }
 
 .reply-preview-close svg {
-  width: 12px;
-  height: 12px;
+  width: 13px;
+  height: 13px;
 }

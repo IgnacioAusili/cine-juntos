@@ -9,12 +9,7 @@
   pointer-events: auto;
   border: 0;
   background: transparent;
-  padding: 14px 13px 16px 0;
-}
-
-.overlay-messages::before {
-  content: "";
-  margin-top: auto;
+  padding: 14px 13px 8px 0;
 }
 
 .overlay-messages .message {
@@ -61,12 +56,9 @@
   margin: 0;
   pointer-events: none;
   user-select: none;
-  background: linear-gradient(
-    to left,
-    var(--message-time-fade-bg, rgba(9, 12, 14, 0.9)) 70%,
-    transparent 100%
-  );
-  padding-left: 8px;
+  background: none;
+  padding-left: 0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
 }
 
 .overlay-messages .message-bubble {
@@ -78,7 +70,7 @@
   background: rgba(9, 12, 14, 0.45);
   font-size: 0.76rem;
   line-height: 1.25;
-  padding: 6px 50px 7px 6px;
+  padding: 6px 6px 7px;
 }
 
 .overlay-messages .message-content {

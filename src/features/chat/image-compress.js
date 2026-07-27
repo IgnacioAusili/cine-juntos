@@ -1,5 +1,9 @@
 import { dom } from "../../core/dom.js";
 import { state } from "../../core/state.js";
+import {
+  isPinnedToBottom,
+  queuePinnedChatScrollSync,
+} from "./chat-scroll-sync.js";
 
 export function compressImageBase64(base64Str, maxWidth, maxHeight, quality, callback) {
   const img = new Image();
@@ -32,12 +36,15 @@ export function compressImageBase64(base64Str, maxWidth, maxHeight, quality, cal
 export function renderImagePreview(isOverlay) {
   const container = isOverlay ? dom.overlayImagePreview : dom.imagePreview;
   const images = isOverlay ? state.chat.pendingOverlayImage : state.chat.pendingImage;
+  const messagesContainer = isOverlay ? dom.overlayMessages : dom.messages;
+  const wasPinnedToBottom = isPinnedToBottom(messagesContainer);
 
   if (!container) return;
 
   if (!Array.isArray(images) || !images.length) {
     container.hidden = true;
     container.innerHTML = "";
+    queuePinnedChatScrollSync(messagesContainer, isOverlay, wasPinnedToBottom);
     return;
   }
 
@@ -64,6 +71,8 @@ export function renderImagePreview(isOverlay) {
       removePendingImage(isOverlay, Number.parseInt(button.dataset.index || "0", 10));
     });
   });
+
+  queuePinnedChatScrollSync(messagesContainer, isOverlay, wasPinnedToBottom);
 }
 
 export function clearPendingImage(isOverlay) {

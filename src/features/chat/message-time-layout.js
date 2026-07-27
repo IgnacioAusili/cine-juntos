@@ -44,7 +44,6 @@ export function adjustMessageTimes() {
 
 function resetMessageTimeLayout(bubble, time) {
   bubble.classList.remove("message-bubble--single-line");
-  bubble.style.removeProperty("--message-time-fade-bg");
 
   time.classList.remove("message-time--inline");
   time.style.removeProperty("position");
@@ -52,7 +51,6 @@ function resetMessageTimeLayout(bubble, time) {
   time.style.removeProperty("bottom");
   time.style.removeProperty("margin-left");
   time.style.removeProperty("padding-left");
-  time.style.removeProperty("background");
   time.style.removeProperty("transform");
 }
 
@@ -62,8 +60,5 @@ function applySingleLineMessageTimeLayout(bubble, time) {
 }
 
 function applyMultiLineMessageTimeLayout(bubble, time) {
-  const bubbleBg = window.getComputedStyle(bubble).backgroundColor;
-  bubble.style.setProperty("--message-time-fade-bg", bubbleBg);
-  time.style.background = `linear-gradient(to left, ${bubbleBg} 70%, transparent 100%)`;
-  time.style.paddingLeft = "8px";
+  return;
 }

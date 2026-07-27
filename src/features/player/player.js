@@ -24,8 +24,10 @@ import {
 import { showErrorDialog, showLoadReplaceDialog } from "../session-ui.js";
 
 const SKIP_LOAD_REPLACE_DIALOG_KEY = "cine-juntos-skip-load-replace-dialog";
+let isDurationShowingRemaining = false;
 
 export function initializePlayer() {
+  isDurationShowingRemaining = false;
   setVideoStatus("empty", "Sin contenido");
   syncPlayerControls(true);
 }
@@ -45,6 +47,14 @@ export function wirePlayerCoreEvents() {
 
   dom.playerSeekInput?.addEventListener("change", () => {
     commitSeekPosition();
+  });
+
+  dom.playerDuration?.addEventListener("click", () => {
+    const duration = getFiniteDuration();
+    const hasMedia = hasLoadedMediaSource();
+    if (!hasMedia || duration <= 0) return;
+    isDurationShowingRemaining = !isDurationShowingRemaining;
+    syncPlayerControls();
   });
 
   dom.playerRateSelect?.addEventListener("change", () => {
@@ -129,6 +139,7 @@ export function wirePlayerCoreEvents() {
   });
 
   dom.videoPlayer.addEventListener("loadedmetadata", () => {
+    isDurationShowingRemaining = false;
     dom.emptyPlayer.classList.add("hidden");
     setVideoStatus("loaded", "Incorporado");
     syncPlayerControls(true);
@@ -184,6 +195,7 @@ export function wirePlayerCoreEvents() {
   });
 
   dom.videoPlayer.addEventListener("emptied", () => {
+    isDurationShowingRemaining = false;
     syncPlayerControls(true);
   });
 }
@@ -223,6 +235,7 @@ async function handleManualLoadRequest() {
 }
 
 export function setVideoSource(source, shouldAnnounce) {
+  isDurationShowingRemaining = false;
   dom.videoPlayer.src = source;
   setVideoStatus("loading", "Cargando");
   dom.videoPlayer.load();
@@ -285,13 +298,17 @@ function syncPlayerControls(forceSliderSync = false) {
     : Number.isFinite(dom.videoPlayer.currentTime) ? Math.max(0, dom.videoPlayer.currentTime) : 0;
   const hasMedia = hasLoadedMediaSource();
   const isSeekingElementFocused = document.activeElement === dom.playerSeekInput;
+  const remainingTime = Math.max(0, duration - currentTime);
+  const showRemainingDuration = isDurationShowingRemaining && hasMedia && duration > 0;
 
   if (dom.playerCurrentTime) {
     dom.playerCurrentTime.textContent = formatSeconds(currentTime);
   }
 
   if (dom.playerDuration) {
-    dom.playerDuration.textContent = formatSeconds(duration);
+    dom.playerDuration.textContent = showRemainingDuration
+      ? `-${formatSeconds(remainingTime)}`
+      : formatSeconds(duration);
   }
 
   const isTimeDisabled = !hasMedia || duration <= 0;
@@ -300,6 +317,17 @@ function syncPlayerControls(forceSliderSync = false) {
   }
   if (dom.playerDuration) {
     dom.playerDuration.dataset.disabled = isTimeDisabled ? "true" : "false";
+    dom.playerDuration.dataset.mode = showRemainingDuration ? "remaining" : "total";
+    dom.playerDuration.disabled = isTimeDisabled;
+    const durationTooltip = isTimeDisabled
+      ? "Duración no disponible"
+      : showRemainingDuration
+        ? "Mostrar duración total"
+        : "Mostrar tiempo restante";
+    dom.playerDuration.dataset.tooltip = durationTooltip;
+    dom.playerDuration.removeAttribute("title");
+    dom.playerDuration.setAttribute("aria-label", durationTooltip);
+    dom.playerDuration.setAttribute("aria-pressed", showRemainingDuration ? "true" : "false");
   }
 
   if (dom.playerSeekInput) {

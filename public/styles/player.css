@@ -209,19 +209,39 @@ video::-webkit-media-controls-fullscreen-button {
 
 .player-time {
   min-width: 32px;
-  color: rgba(255, 255, 255, 0.84);
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: rgba(255, 255, 255, 0.78);
   font-size: 0.68rem;
   font-variant-numeric: tabular-nums;
+  font-family: inherit;
+  font-weight: 700;
   text-align: center;
 }
 
 .player-time[data-disabled="true"] {
-  color: rgba(255, 255, 255, 0.58);
-  opacity: 0.82;
+  color: rgba(255, 255, 255, 0.42);
+  opacity: 0.7;
 }
 
 .player-time-total {
-  color: rgba(255, 255, 255, 0.58);
+  color: rgba(255, 255, 255, 0.78);
+  cursor: pointer;
+  transition: color 180ms ease, opacity 180ms ease;
+}
+
+.player-time-total:hover,
+.player-time-total:focus-visible {
+  color: #ffffff;
+}
+
+.player-time-total:disabled {
+  cursor: not-allowed;
+}
+
+.player-time-total[data-mode="remaining"] {
+  color: rgba(255, 255, 255, 0.78);
 }
 
 .player-seek-input {

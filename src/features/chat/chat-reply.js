@@ -1,6 +1,7 @@
 import { dom } from "../../core/dom.js";
 import { state } from "../../core/state.js";
 import { truncateText } from "./chat-content-parser.js";
+import { getParticipantAccent } from "./chat-participant-color.js";
 
 /**
  * Establece el mensaje al que se está respondiendo y actualiza la vista previa.
@@ -9,6 +10,7 @@ import { truncateText } from "./chat-content-parser.js";
 export function setReplyTarget(message) {
   state.chat.replyTarget = {
     id: message.id,
+    from: message.from || null,
     name: message.name || "Invitado",
     text: message.text || "",
   };
@@ -31,6 +33,7 @@ export function renderReplyPreview() {
   [dom.replyPreview, dom.overlayReplyPreview].forEach((container) => {
     if (!container) return;
     if (!state.chat.replyTarget) {
+      container.style.removeProperty("--reply-participant-accent");
       container.classList.remove("reply-preview--visible");
       const onTransitionEnd = (event) => {
         if (event.propertyName !== "opacity") return;
@@ -45,6 +48,10 @@ export function renderReplyPreview() {
     }
 
     container.innerHTML = "";
+    container.style.setProperty(
+      "--reply-participant-accent",
+      getParticipantAccent(state.chat.replyTarget.from || state.chat.replyTarget.id || state.chat.replyTarget.name),
+    );
     const replyIcon = document.createElement("span");
     replyIcon.className = "reply-preview-icon";
     replyIcon.innerHTML =

@@ -37,14 +37,15 @@ export const chatState = {
   unreadInsideCount: 0,
   unreadExternalCount: 0,
   replyTarget: null,
-  pendingImage: "",
-  pendingOverlayImage: "",
+  pendingImage: [],
+  pendingOverlayImage: [],
   menuMessage: null,
   messageMenuOpenedAt: 0,
   longPressTimer: null,
   longPressStart: null,
   mainScrollUnread: 0,
   overlayScrollUnread: 0,
+  nameChangeUsed: localStorage.getItem("cine-juntos-name-change-used") === "1",
 };
 
 export const uiState = {

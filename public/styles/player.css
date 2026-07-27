@@ -215,6 +215,11 @@ video::-webkit-media-controls-fullscreen-button {
   text-align: center;
 }
 
+.player-time[data-disabled="true"] {
+  color: rgba(255, 255, 255, 0.58);
+  opacity: 0.82;
+}
+
 .player-time-total {
   color: rgba(255, 255, 255, 0.58);
 }

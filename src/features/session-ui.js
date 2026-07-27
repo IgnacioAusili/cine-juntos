@@ -56,10 +56,10 @@ export function setConnection(mode, label) {
     error: "Sin conexión",
   };
   const tooltipByMode = {
-    online: "La sala está funcionando.",
-    local: "La sala está funcionando.",
-    starting: "Conectando con la sala.",
-    error: label && label !== "Sin conexión" ? label : "La sala no pudo conectarse.",
+    online: "La sala está funcionando",
+    local: "La sala está funcionando",
+    starting: "Conectando con la sala",
+    error: label && label !== "Sin conexión" ? label : "La sala no pudo conectarse",
   };
   const nextLabel = labelByMode[nextMode];
   const nextTooltip = tooltipByMode[mode === "firebase" ? "online" : nextMode];

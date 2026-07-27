@@ -2,6 +2,7 @@
   --reply-swipe-reserve: 64px;
   display: inline-block;
   position: relative;
+  width: fit-content;
   max-width: calc(100% - var(--reply-swipe-reserve));
   isolation: isolate;
 }

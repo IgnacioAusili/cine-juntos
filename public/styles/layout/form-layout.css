@@ -10,23 +10,33 @@
   position: relative;
   z-index: 1;
   display: grid;
-  align-items: end;
+  align-items: center;
   gap: 8px;
-  grid-template-columns: auto minmax(0, 1fr) 36px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   width: 100%;
 }
 
 .chat-name-field {
   display: grid;
   min-width: 0;
+  width: fit-content;
+  justify-self: center;
 }
 
 .chat-name-field .label-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: -4px;
   color: var(--text-faint);
   font-size: 0.64rem;
   font-weight: 700;
   letter-spacing: 0;
   text-transform: uppercase;
+}
+
+.chat-name-field .label-row .help-button {
+  transform: translateY(-1px);
 }
 
 .chat-name-editor {
@@ -113,6 +123,7 @@
 }
 
 .presence-pill {
+  justify-self: start;
   align-self: center;
 }
 
@@ -300,7 +311,7 @@
   background: #d4762a;
   color: #0d0904;
   font-size: 0.74rem;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);

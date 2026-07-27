@@ -11,14 +11,27 @@
 .message-form .input-wrapper {
   position: relative;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   width: 100%;
   min-width: 0;
   border: 1px solid var(--line);
-  border-radius: 6px;
+  border-radius: 18px;
   background: #111518;
-  padding: 0 0 0 4px;
+  padding: 0 0 0 6px;
+  overflow: hidden;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.message-form .textarea-shell {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  align-self: stretch;
+  display: flex;
+}
+
+.message-form .input-wrapper[data-expanded="true"] {
+  border-radius: 17px;
 }
 
 .message-form .input-wrapper:focus-within {
@@ -27,16 +40,52 @@
 
 .message-form .input-wrapper textarea {
   flex: 1 1 auto;
-  width: 0;
+  width: 100%;
   min-width: 0;
-  min-height: 38px;
+  min-height: 36px;
+  box-sizing: border-box;
   border: 0 !important;
   background: transparent !important;
   box-shadow: none !important;
-  padding: 9px 8px;
+  padding-top: 9px;
+  padding-bottom: 7px;
+  padding-inline: 10px;
   outline: none;
   resize: none;
   color: var(--text);
+  line-height: 1.28;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.message-form .input-wrapper textarea::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.message-form .composer-scrollbar {
+  position: absolute;
+  top: 4px;
+  right: 3px;
+  bottom: 4px;
+  width: 3px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+
+.message-form .textarea-shell[data-scrollbar-visible="true"] .composer-scrollbar {
+  opacity: 1;
+}
+
+.message-form .composer-scrollbar-thumb {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  min-height: 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
 }
 
 .chat-area .input-wrapper .emoji-trigger,
@@ -53,7 +102,7 @@
   border: 0;
   background: transparent;
   padding: 0;
-  margin-bottom: 3px;
+  margin-bottom: 0;
   color: var(--muted);
   cursor: pointer;
   transition: color 0.2s ease;

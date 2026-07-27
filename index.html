@@ -14,7 +14,7 @@
     />
     <link rel="preconnect" href="https://unpkg.com" />
     <link rel="preconnect" href="https://www.gstatic.com" />
-    <link rel="stylesheet" href="./public/styles.css?v=20260719-02" />
+    <link rel="stylesheet" href="./public/styles.css?v=20260726-03" />
   </head>
   <body class="is-lobby">
     <div class="app-shell">
@@ -41,7 +41,7 @@
               </h1>
             </div>
             <div class="room-chip-actions">
-              <span class="app-status" id="connectionStatus" data-state="starting" data-tooltip="Conectando con la sala.">
+              <span class="app-status" id="connectionStatus" data-state="starting" data-tooltip="Conectando con la sala">
                 <span class="app-status-dot" aria-hidden="true"></span>
                 <span class="app-status-label">Iniciando</span>
               </span>
@@ -49,11 +49,19 @@
                 class="room-chip-copy"
                 id="copyInviteButton"
                 type="button"
-                aria-label="Compartir invitacion"
+                aria-label="Invitar"
                 data-tooltip="Compartir invitacion"
               >
-                <span data-lucide="share-2"></span>
-                <span class="room-chip-copy-label">Compartir</span>
+                <span class="room-chip-copy-main" aria-hidden="true">
+                  <span class="room-chip-copy-default">
+                    <span data-lucide="share-2"></span>
+                    <span>Invitar</span>
+                  </span>
+                  <span class="room-chip-copy-copied">
+                    <span data-lucide="check"></span>
+                    <span>Copiado</span>
+                  </span>
+                </span>
               </button>
             </div>
           </div>
@@ -126,8 +134,9 @@
                       class="help-button"
                       type="button"
                       aria-label="Ayuda sobre nombre"
+                      data-tooltip="Este nombre sera el que veran los demas usuarios en la sala"
                     >
-                      <span data-lucide="circle-help" data-tooltip="Este nombre sera el que veran los demas usuarios en la sala"></span>
+                      <span data-lucide="circle-help"></span>
                     </button>
                   </span>
                   <input
@@ -150,8 +159,9 @@
                       class="help-button"
                       type="button"
                       aria-label="Ayuda sobre salas"
+                      data-tooltip="Crea una sala y comparte el codigo o el enlace para mirar juntos."
                     >
-                      <span data-lucide="circle-help" data-tooltip="Crea una sala y comparte el codigo o el enlace para mirar juntos."></span>
+                      <span data-lucide="circle-help"></span>
                     </button>
                   </span>
                   <input
@@ -414,18 +424,23 @@
                 <div class="reply-preview" id="overlayReplyPreview" hidden></div>
                 <div class="image-preview-container" id="overlayImagePreview" hidden></div>
                 <div class="input-wrapper">
-                  <textarea
-                    id="overlayMessageInput"
-                    autocomplete="off"
-                    autocapitalize="off"
-                    spellcheck="false"
-                    data-bwignore="true"
-                    data-lpignore="true"
-                    maxlength="600"
-                    placeholder="Mensaje"
-                    rows="1"
-                    title="Escribir al chat de la sala"
-                  ></textarea>
+                  <div class="textarea-shell">
+                    <textarea
+                      id="overlayMessageInput"
+                      autocomplete="off"
+                      autocapitalize="off"
+                      spellcheck="false"
+                      data-bwignore="true"
+                      data-lpignore="true"
+                      maxlength="600"
+                      placeholder="Mensaje"
+                      rows="1"
+                      title="Escribir al chat de la sala"
+                    ></textarea>
+                    <div class="composer-scrollbar" aria-hidden="true">
+                      <div class="composer-scrollbar-thumb"></div>
+                    </div>
+                  </div>
                     <button
                       class="icon-button ghost emoji-trigger"
                       id="overlayEmojiButton"
@@ -461,13 +476,14 @@
               </button>
               <div class="chat-name-field">
                 <span class="label-row">
-                  Nombre
+                  Usuario
                   <button
                     class="help-button"
                     type="button"
                     aria-label="Ayuda sobre nombre"
+                    data-tooltip="Este nombre sera el que veran los demas usuarios en la sala"
                   >
-                    <span data-lucide="circle-help" data-tooltip="Este nombre sera el que veran los demas usuarios en la sala"></span>
+                    <span data-lucide="circle-help"></span>
                   </button>
                 </span>
                 <div class="chat-name-editor" id="chatNameField" data-editing="false">
@@ -531,18 +547,23 @@
               <div class="reply-preview" id="replyPreview" hidden></div>
               <div class="image-preview-container" id="imagePreview" hidden></div>
               <div class="input-wrapper">
-                <textarea
-                  id="messageInput"
-                  autocomplete="off"
-                  autocapitalize="off"
-                  spellcheck="false"
-                  data-bwignore="true"
-                  data-lpignore="true"
-                  maxlength="600"
-                  placeholder="Mensaje"
-                  rows="1"
-                  title="Escribir al chat de la sala"
-                ></textarea>
+                <div class="textarea-shell">
+                  <textarea
+                    id="messageInput"
+                    autocomplete="off"
+                    autocapitalize="off"
+                    spellcheck="false"
+                    data-bwignore="true"
+                    data-lpignore="true"
+                    maxlength="600"
+                    placeholder="Mensaje"
+                    rows="1"
+                    title="Escribir al chat de la sala"
+                  ></textarea>
+                  <div class="composer-scrollbar" aria-hidden="true">
+                    <div class="composer-scrollbar-thumb"></div>
+                  </div>
+                </div>
                 <button
                   class="icon-button ghost emoji-trigger"
                   id="messageEmojiButton"

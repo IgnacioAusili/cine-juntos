@@ -30,18 +30,31 @@
   transform: translateY(-1px);
 }
 
+.button:disabled:hover,
+.icon-button:disabled:hover {
+  border-color: var(--line);
+  background: var(--panel-2);
+  transform: none;
+}
+
 .button:disabled,
 .icon-button:disabled {
   cursor: not-allowed;
   opacity: 0.42;
   filter: saturate(0.65);
   box-shadow: none;
+  pointer-events: none;
 }
 
-.button.primary:disabled {
-  border-color: rgba(240, 140, 58, 0.18);
-  background: rgba(240, 140, 58, 0.42);
-  color: rgba(23, 18, 14, 0.72);
+.button.primary:disabled,
+.button.primary:disabled:hover,
+.button.primary:disabled:active {
+  border-color: rgba(170, 140, 108, 0.34);
+  background: linear-gradient(180deg, rgba(178, 145, 112, 0.92), rgba(150, 124, 98, 0.92));
+  color: rgba(32, 25, 18, 0.88);
+  text-shadow: none;
+  box-shadow: none;
+  filter: saturate(0.42) brightness(0.92);
 }
 
 .button:not(:disabled):hover,

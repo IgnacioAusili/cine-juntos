@@ -5,6 +5,11 @@ import { makeGuestName, makeParticipantLabel } from "../core/utils.js";
 let nameInputMeasureCanvas = null;
 let nameInputBaseWidth = 0;
 
+function syncEditNameButtonState() {
+  if (!dom.editNameButton) return;
+  dom.editNameButton.disabled = Boolean(state.chat.nameChangeUsed);
+}
+
 function getNameInputMeasureContext() {
   if (!nameInputMeasureCanvas) {
     nameInputMeasureCanvas = document.createElement("canvas");
@@ -67,6 +72,7 @@ function renderDisplayName(name = getDisplayName()) {
 
 function setIdentityEditing(isEditing) {
   if (!dom.chatNameField) return;
+  if (isEditing && state.chat.nameChangeUsed) return;
   dom.chatNameField.dataset.editing = isEditing ? "true" : "false";
 
   if (!isEditing) {
@@ -85,13 +91,21 @@ function setIdentityEditing(isEditing) {
 }
 
 function commitDisplayNameChange() {
+  if (state.chat.nameChangeUsed) {
+    setIdentityEditing(false);
+    return;
+  }
+
   updateDisplayName(dom.nameInput.value, dom.nameInput);
   const confirmedName = getDisplayName();
   dom.nameInput.value = confirmedName;
   syncNameInputWidth();
   if (dom.lobbyNameInput) dom.lobbyNameInput.value = confirmedName;
   state.session.transport?.updateMember?.(confirmedName);
+  state.chat.nameChangeUsed = true;
+  localStorage.setItem("cine-juntos-name-change-used", "1");
   logEvent("user", `Nombre actualizado: ${confirmedName}`);
+  syncEditNameButtonState();
   setIdentityEditing(false);
 }
 
@@ -132,13 +146,16 @@ export function renderPresence() {
     .filter(([id]) => state.session.knownParticipants.has(id))
     .map(([id, name]) =>
       id === state.session.clientId
-        ? `${name || makeGuestName(state.session.clientId)} (vos)`
+        ? `(Vos) ${name || makeGuestName(state.session.clientId)}`
         : name || makeParticipantLabel(id),
     );
 
-  const uniqueMembers = members.length ? members : [`${getDisplayName()} (vos)`];
-  const isSoloSelf = uniqueMembers.length === 1 && uniqueMembers[0]?.endsWith("(vos)");
-  const tooltip = `${isSoloSelf ? "Conectado" : "Conectados"}: ${uniqueMembers.join(", ")}`;
+  const uniqueMembers = members.length ? members : [`(Vos) ${getDisplayName()}`];
+  const selfMember = uniqueMembers.find((member) => member.startsWith("(Vos) "));
+  const otherMembers = uniqueMembers.filter((member) => member !== selfMember);
+  const orderedMembers = selfMember ? [selfMember, ...otherMembers] : uniqueMembers;
+  const isSoloSelf = orderedMembers.length === 1 && Boolean(selfMember);
+  const tooltip = `${isSoloSelf ? "Conectado" : "Conectados"}:\n${orderedMembers.join(", ")}`;
   const label = uniqueMembers.length === 1 ? "1 usuario conectado" : `${uniqueMembers.length} usuarios conectados`;
   const nextState = isSoloSelf ? "solo" : "online";
   const selfLabelText = isSoloSelf ? "(vos)" : "";
@@ -168,6 +185,17 @@ export function renderPresence() {
 
 export function updateDisplayName(value, sourceInput) {
   const nextName = String(value || "").slice(0, 28);
+  const lockedName = localStorage.getItem("cine-juntos-name") || makeGuestName(state.session.clientId);
+
+  if (state.chat.nameChangeUsed) {
+    if (dom.nameInput) dom.nameInput.value = lockedName;
+    if (dom.lobbyNameInput) dom.lobbyNameInput.value = lockedName;
+    state.session.knownMembers.set(state.session.clientId, lockedName);
+    renderDisplayName(lockedName);
+    renderPresence();
+    return;
+  }
+
   if (sourceInput !== dom.nameInput) dom.nameInput.value = nextName;
   if (sourceInput !== dom.lobbyNameInput) dom.lobbyNameInput.value = nextName;
   if (sourceInput === dom.nameInput) syncNameInputWidth();
@@ -182,8 +210,10 @@ export function wireIdentityEvents() {
   dom.nameInput.value = getDisplayName();
   nameInputBaseWidth = Math.ceil(dom.nameDisplay?.getBoundingClientRect().width || dom.nameInput.getBoundingClientRect().width || 24);
   syncNameInputWidth();
+  syncEditNameButtonState();
 
   dom.editNameButton?.addEventListener("click", () => {
+    if (state.chat.nameChangeUsed) return;
     setIdentityEditing(true);
   });
 

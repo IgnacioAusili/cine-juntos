@@ -71,6 +71,10 @@
   opacity: 1;
 }
 
+.session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-icon-anchor {
+  transform: translateX(-4px);
+}
+
 .session-view[data-chat-dock="bottom"] .chat-collapse-handle {
   left: 50%;
   bottom: 0;

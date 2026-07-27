@@ -59,7 +59,7 @@
 .reply-preview-name {
   font-size: 0.7rem;
   font-weight: 700;
-  color: var(--accent-2);
+  color: var(--reply-participant-accent, var(--accent-2));
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

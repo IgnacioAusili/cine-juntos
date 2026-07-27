@@ -12,8 +12,8 @@
   align-items: center;
   margin-bottom: 0;
   color: var(--text-faint);
-  font-size: 0.66rem;
-  font-weight: 600;
+  font-size: 0.64rem;
+  font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   line-height: 1;
@@ -29,7 +29,7 @@
 .room-chip-label-row {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   margin-bottom: 4px;
   min-width: 0;
 }
@@ -83,10 +83,10 @@
   min-height: 38px;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 0;
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 8px;
-  background: rgba(18, 22, 26, 0.92);
+  background: #13171a;
   color: #ffffff;
   padding: 0 14px;
   box-shadow:
@@ -103,7 +103,7 @@
 .room-chip-copy:hover,
 .room-chip-copy:focus-visible {
   border-color: rgba(255, 255, 255, 0.2);
-  background: rgba(24, 29, 34, 0.96);
+  background: #181d22;
   color: #ffffff;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.05),
@@ -114,22 +114,78 @@
 .room-chip-copy svg {
   width: 15px;
   height: 15px;
+  flex: 0 0 auto;
 }
 
-.room-chip-copy-label {
+.room-chip-copy-main {
+  display: inline-grid;
+  align-items: center;
+  justify-content: center;
+  justify-items: center;
+  gap: 0;
+  white-space: nowrap;
+}
+
+.room-chip-copy-default,
+.room-chip-copy-copied {
+  grid-area: 1 / 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+  transition: opacity 120ms ease;
+}
+
+.room-chip-copy-default {
+  opacity: 1;
+}
+
+.room-chip-copy-copied {
+  opacity: 0;
+}
+
+.room-chip-copy[data-copied="true"] .room-chip-copy-default {
+  opacity: 0;
+}
+
+.room-chip-copy[data-copied="true"] .room-chip-copy-copied {
+  opacity: 1;
+}
+
+.room-chip-copy-default svg,
+.room-chip-copy-copied svg {
+  flex: 0 0 auto;
+}
+
+.room-chip-copy-default {
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.01em;
 }
 
+.room-chip-copy-copied {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.room-chip-copy-copied svg {
+  width: 14px;
+  height: 14px;
+  color: #7ef0ab;
+}
+
 .room-chip .app-status {
-  min-height: 38px;
-  gap: 10px;
+  min-height: 32px;
+  min-width: 86px;
+  justify-content: center;
+  gap: 8px;
   border: 1px solid var(--glass-border-strong);
   border-radius: 999px;
-  background: rgba(18, 22, 26, 0.9);
+  background: rgba(19, 23, 26, 0.5);
   color: var(--text-soft);
-  padding: 0 14px 0 12px;
+  padding: 0 7px 0 7px;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.04),
     var(--shadow-sm);
@@ -138,16 +194,16 @@
 .room-chip .app-status-label {
   display: inline-flex;
   align-items: center;
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.01em;
   line-height: 1;
 }
 
 .room-chip .app-status-dot {
-  width: 6px;
-  height: 6px;
-  flex: 0 0 6px;
+  width: 5px;
+  height: 5px;
+  flex: 0 0 5px;
 }
 
 body.is-lobby .room-chip,

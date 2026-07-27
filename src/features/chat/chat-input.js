@@ -42,10 +42,12 @@ export function sendMessage(text, attachedImage) {
     from: state.session.clientId,
     name: getDisplayName(),
     text: text || "",
-    image: attachedImage || null,
+    image: Array.isArray(attachedImage) && attachedImage.length ? attachedImage[0] : attachedImage || null,
+    images: Array.isArray(attachedImage) ? attachedImage.slice(0, 2) : attachedImage ? [attachedImage] : [],
     replyTo: state.chat.replyTarget
       ? {
           id: state.chat.replyTarget.id,
+          from: state.chat.replyTarget.from || null,
           name: state.chat.replyTarget.name,
           text: state.chat.replyTarget.text,
         }
@@ -73,8 +75,9 @@ export function submitMessageFrom(input) {
   const isOverlay = input === dom.overlayMessageInput;
   const text = input.value.trim();
   const img = isOverlay ? state.chat.pendingOverlayImage : state.chat.pendingImage;
+  const hasImages = Array.isArray(img) ? img.length > 0 : Boolean(img);
 
-  if (!text && !img) return;
+  if (!text && !hasImages) return;
 
   if (input.value.length > MAX_CHARS) {
     const counter = isOverlay ? dom.overlayCharCounter : dom.mainCharCounter;
@@ -102,6 +105,14 @@ export function submitMessageFrom(input) {
 export function handlePasteEvent(event, isOverlay) {
   const items = event.clipboardData?.items;
   if (!items) return;
+  const pending = isOverlay ? state.chat.pendingOverlayImage : state.chat.pendingImage;
+
+  if (Array.isArray(pending) && pending.length >= 2) {
+    if (Array.from(items).some((item) => item.type.indexOf("image") !== -1)) {
+      event.preventDefault();
+    }
+    return;
+  }
 
   for (const item of items) {
     if (item.type.indexOf("image") !== -1) {
@@ -113,10 +124,13 @@ export function handlePasteEvent(event, isOverlay) {
       reader.onload = (loadEvent) => {
         const rawBase64 = loadEvent.target.result;
         compressImageBase64(rawBase64, 800, 800, 0.7, (compressedBase64) => {
+          const nextImages = (isOverlay ? state.chat.pendingOverlayImage : state.chat.pendingImage).slice(0, 2);
+          if (nextImages.length >= 2) return;
+          nextImages.push(compressedBase64);
           if (isOverlay) {
-            state.chat.pendingOverlayImage = compressedBase64;
+            state.chat.pendingOverlayImage = nextImages;
           } else {
-            state.chat.pendingImage = compressedBase64;
+            state.chat.pendingImage = nextImages;
           }
           renderImagePreview(isOverlay);
         });
@@ -129,8 +143,15 @@ export function handlePasteEvent(event, isOverlay) {
 
 export function autoResizeMessageInput(input) {
   input.style.height = "auto";
-  input.style.height = `${Math.min(input.scrollHeight, input === dom.overlayMessageInput ? 86 : 118)}px`;
+  const maxHeight = input === dom.overlayMessageInput ? 86 : 118;
+  const minHeight = input === dom.overlayMessageInput ? 28 : 36;
+  input.style.height = `${Math.min(input.scrollHeight, maxHeight)}px`;
+  const wrapper = input.closest(".input-wrapper");
+  if (wrapper) {
+    wrapper.dataset.expanded = String(input.scrollHeight > minHeight + 4);
+  }
   input.scrollTop = input.scrollHeight;
+  syncComposerScrollbar(input);
 }
 
 export function buildEmojiPicker() {
@@ -195,4 +216,40 @@ export function updateCharCounter(input, isOverlay) {
     sendBtn.disabled = isOver;
     sendBtn.setAttribute("aria-disabled", String(isOver));
   }
+}
+
+export function wireComposerScrollbar(input) {
+  if (!input || input.dataset.composerScrollbarBound === "true") return;
+  input.dataset.composerScrollbarBound = "true";
+
+  const update = () => syncComposerScrollbar(input);
+  input.addEventListener("scroll", update, { passive: true });
+  window.addEventListener("resize", update, { passive: true });
+  update();
+}
+
+function syncComposerScrollbar(input) {
+  const shell = input?.closest(".textarea-shell");
+  const thumb = shell?.querySelector(".composer-scrollbar-thumb");
+  if (!shell || !thumb) return;
+
+  const overflow = input.scrollHeight - input.clientHeight;
+  if (overflow <= 1) {
+    shell.removeAttribute("data-scrollbar-visible");
+    thumb.style.height = "";
+    thumb.style.transform = "";
+    return;
+  }
+
+  const track = shell.querySelector(".composer-scrollbar");
+  const trackHeight = Math.max(0, track?.clientHeight || 0);
+  const ratio = input.clientHeight / input.scrollHeight;
+  const thumbHeight = Math.max(12, Math.min(trackHeight, Math.round(trackHeight * ratio)));
+  const maxOffset = Math.max(0, trackHeight - thumbHeight);
+  const scrollRatio = input.scrollTop / overflow;
+  const top = Math.round(maxOffset * scrollRatio);
+
+  thumb.style.height = `${thumbHeight}px`;
+  thumb.style.transform = `translateY(${top}px)`;
+  shell.setAttribute("data-scrollbar-visible", "true");
 }

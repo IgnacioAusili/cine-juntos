@@ -13,10 +13,12 @@
   position: relative;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  max-width: 100%;
+  align-items: flex-start;
   gap: 3px;
   margin-bottom: 8px;
   overflow: visible;
-  width: 100%;
 }
 
 .message:last-child {
@@ -24,6 +26,7 @@
 }
 
 .message.mine {
+  align-self: flex-end;
   align-items: flex-end;
 }
 
@@ -38,6 +41,8 @@
 
 .message-meta-name {
   display: block;
+  font-size: 0.6rem;
+  color: var(--participant-accent, var(--muted-2));
 }
 
 .message-video-ts {
@@ -68,24 +73,31 @@
 }
 
 .message-time {
-  display: block;
-  width: 100%;
+  display: inline-block;
+  width: fit-content;
   color: var(--muted-2);
   font-size: 0.58rem;
   line-height: 1;
   letter-spacing: 0.01em;
-  order: 2;
+  margin: 0;
   text-align: right;
-  margin-top: 3px;
+  pointer-events: none;
+  vertical-align: baseline;
+}
+
+.message-time--standalone {
+  display: block;
+  width: 100%;
+  margin-top: 2px;
 }
 
 .message-bubble {
   position: relative;
-  display: inline-block;
+  display: block;
   width: fit-content;
   max-width: 100%;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 14px;
   background: var(--panel-2);
   color: var(--text);
   font-size: 0.86rem;
@@ -93,8 +105,77 @@
   overflow-wrap: break-word;
   word-break: normal;
   white-space: normal;
-  padding: 7px 9px;
+  padding: 5px 7px 6px 7px;
   order: 1;
+}
+
+.message-content {
+  display: block;
+  max-width: 100%;
+}
+
+.message:not(.mine) .message-bubble {
+  border-bottom-left-radius: 4px;
+}
+
+.message.mine .message-bubble {
+  border-bottom-right-radius: 4px;
+}
+
+.message-flow {
+  display: block;
+  max-width: 100%;
+}
+
+.message-flow-line {
+  display: block;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.message-flow-line--tail {
+  display: inline-grid;
+  grid-template-columns: auto auto;
+  align-items: end;
+  gap: 0.7ch;
+  width: auto;
+  white-space: normal;
+}
+
+.message-flow-line--tail-reply {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  width: 100%;
+}
+
+.message-flow-text {
+  display: inline-block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.message-flow-line--tail .message-time {
+  justify-self: end;
+  align-self: end;
+  transform: translateY(2px);
+}
+
+.message-reply-name {
+  color: var(--reply-participant-accent, var(--participant-accent, var(--accent-2)));
+}
+
+.message-media-strip {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.message-media-strip .message-media-link {
+  flex: 1 1 0;
+  max-width: calc(50% - 3px);
 }
 
 .message.mine .message-bubble {

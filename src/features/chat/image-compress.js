@@ -31,39 +31,61 @@ export function compressImageBase64(base64Str, maxWidth, maxHeight, quality, cal
 
 export function renderImagePreview(isOverlay) {
   const container = isOverlay ? dom.overlayImagePreview : dom.imagePreview;
-  const base64 = isOverlay ? state.chat.pendingOverlayImage : state.chat.pendingImage;
+  const images = isOverlay ? state.chat.pendingOverlayImage : state.chat.pendingImage;
 
   if (!container) return;
 
-  if (!base64) {
+  if (!Array.isArray(images) || !images.length) {
     container.hidden = true;
     container.innerHTML = "";
     return;
   }
 
   container.hidden = false;
-  container.innerHTML = `
-    <div class="preview-box">
-      <img src="${base64}" alt="Miniatura de imagen pegada" />
-      <button type="button" class="preview-remove-btn" aria-label="Quitar imagen">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
-    </div>
-  `;
+  container.innerHTML = images
+    .slice(0, 2)
+    .map(
+      (image, index) => `
+        <div class="preview-box">
+          <img src="${image}" alt="Miniatura de imagen pegada ${index + 1}" />
+          <button type="button" class="preview-remove-btn" data-index="${index}" aria-label="Quitar imagen ${index + 1}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+      `,
+    )
+    .join("");
 
-  container.querySelector(".preview-remove-btn").addEventListener("click", () => {
-    clearPendingImage(isOverlay);
+  container.querySelectorAll(".preview-remove-btn").forEach((button) => {
+    button.addEventListener("click", () => {
+      removePendingImage(isOverlay, Number.parseInt(button.dataset.index || "0", 10));
+    });
   });
 }
 
 export function clearPendingImage(isOverlay) {
   if (isOverlay) {
-    state.chat.pendingOverlayImage = "";
+    state.chat.pendingOverlayImage = [];
   } else {
-    state.chat.pendingImage = "";
+    state.chat.pendingImage = [];
   }
+  renderImagePreview(isOverlay);
+}
+
+function removePendingImage(isOverlay, index) {
+  const nextImages = (isOverlay ? state.chat.pendingOverlayImage : state.chat.pendingImage).slice();
+  if (index >= 0 && index < nextImages.length) {
+    nextImages.splice(index, 1);
+  }
+
+  if (isOverlay) {
+    state.chat.pendingOverlayImage = nextImages;
+  } else {
+    state.chat.pendingImage = nextImages;
+  }
+
   renderImagePreview(isOverlay);
 }

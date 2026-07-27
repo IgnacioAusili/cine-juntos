@@ -37,6 +37,7 @@ import {
 const ACTIVE_TAB_KEY = "cine-juntos-active-tab";
 const ACTIVE_TAB_TTL_MS = 30000;
 const MAX_OPEN_TABS = 1;
+let inviteCopyFeedbackTimer = 0;
 
 function getTabId() {
   const stored = sessionStorage.getItem("cine-juntos-tab-id");
@@ -256,8 +257,25 @@ export async function copyInvite() {
   }
   const invite = new URL(window.location.href);
   invite.searchParams.set("room", state.session.activeRoom);
-  await navigator.clipboard.writeText(invite.toString()).catch(() => {});
+  try {
+    await navigator.clipboard.writeText(invite.toString());
+  } catch {
+    return;
+  }
+  setInviteCopyFeedback(true);
   setSyncStatus("Invitacion copiada.");
+}
+
+function setInviteCopyFeedback(active) {
+  if (!dom.copyInviteButton) return;
+  window.clearTimeout(inviteCopyFeedbackTimer);
+  dom.copyInviteButton.dataset.copied = active ? "true" : "false";
+  if (!active) return;
+  inviteCopyFeedbackTimer = window.setTimeout(() => {
+    if (dom.copyInviteButton) {
+      dom.copyInviteButton.dataset.copied = "false";
+    }
+  }, 1600);
 }
 
 function updateUrlRoom(roomCode) {

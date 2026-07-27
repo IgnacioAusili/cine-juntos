@@ -90,6 +90,8 @@ export function updateCollapseButton() {
   dom.collapseChatButton.setAttribute("aria-label", label);
   if (iconAnchor) {
     iconAnchor.dataset.tooltip = label;
+  } else {
+    dom.collapseChatButton.dataset.tooltip = label;
   }
   if (icon) {
     icon.setAttribute("data-lucide", iconName);

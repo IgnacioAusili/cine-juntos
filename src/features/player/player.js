@@ -294,6 +294,14 @@ function syncPlayerControls(forceSliderSync = false) {
     dom.playerDuration.textContent = formatSeconds(duration);
   }
 
+  const isTimeDisabled = !hasMedia || duration <= 0;
+  if (dom.playerCurrentTime) {
+    dom.playerCurrentTime.dataset.disabled = isTimeDisabled ? "true" : "false";
+  }
+  if (dom.playerDuration) {
+    dom.playerDuration.dataset.disabled = isTimeDisabled ? "true" : "false";
+  }
+
   if (dom.playerSeekInput) {
     dom.playerSeekInput.max = String(duration || 0);
     dom.playerSeekInput.disabled = !hasMedia || duration <= 0;

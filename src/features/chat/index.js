@@ -9,6 +9,7 @@ import {
   submitMessageFrom,
   toggleEmojiPicker,
   updateCharCounter,
+  wireComposerScrollbar,
 } from "./chat-input.js";
 import { setReplyTarget } from "./chat-reply.js";
 import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js";
@@ -125,6 +126,7 @@ export function wireChatEvents() {
 
   [dom.messageInput, dom.overlayMessageInput].forEach((input) => {
     const isOverlay = input === dom.overlayMessageInput;
+    wireComposerScrollbar(input);
     input.addEventListener("input", () => {
       autoResizeMessageInput(input);
       updateCharCounter(input, isOverlay);

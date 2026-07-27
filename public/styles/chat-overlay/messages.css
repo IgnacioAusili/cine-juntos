@@ -51,19 +51,16 @@
 }
 
 .overlay-messages .message-time {
-  display: inline-block;
-  width: fit-content;
+  position: absolute;
+  right: 6px;
+  bottom: 5px;
+  display: block;
+  width: auto;
   font-size: 0.54rem;
   text-align: right;
   margin: 0;
   pointer-events: none;
-  vertical-align: baseline;
-}
-
-.overlay-messages .message-time--standalone {
-  display: block;
-  width: 100%;
-  margin-top: 2px;
+  user-select: none;
 }
 
 .overlay-messages .message-bubble {
@@ -74,7 +71,7 @@
   background: rgba(9, 12, 14, 0.45);
   font-size: 0.76rem;
   line-height: 1.25;
-  padding: 6px 6px 7px 6px;
+  padding: 6px 50px 7px 6px;
 }
 
 .overlay-messages .message:not(.mine) .message-bubble {
@@ -88,46 +85,6 @@
 .overlay-messages .message-content {
   display: block;
   max-width: 100%;
-}
-
-.overlay-messages .message-flow {
-  display: block;
-  max-width: 100%;
-}
-
-.overlay-messages .message-flow-line {
-  display: block;
-  max-width: 100%;
-  white-space: normal;
-  overflow-wrap: anywhere;
-}
-
-.overlay-messages .message-flow-line--tail {
-  display: inline-grid;
-  grid-template-columns: auto auto;
-  align-items: end;
-  gap: 0.7ch;
-  width: auto;
-  white-space: normal;
-}
-
-.overlay-messages .message-flow-line--tail-reply {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  width: 100%;
-}
-
-.overlay-messages .message-flow-text {
-  display: inline-block;
-  min-width: 0;
-  overflow-wrap: anywhere;
-  white-space: normal;
-}
-
-.overlay-messages .message-flow-line--tail .message-time {
-  justify-self: end;
-  align-self: end;
-  transform: translateY(2px);
 }
 
 .overlay-messages .message-reply-name {

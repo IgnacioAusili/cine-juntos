@@ -101,6 +101,7 @@ export function wirePlayerCoreEvents() {
   });
 
   dom.videoPlayer.addEventListener("play", () => {
+    rememberPlaybackPosition();
     setVideoStatus("loaded", "En vivo");
     logEvent("video", `Play local en ${formatSeconds(dom.videoPlayer.currentTime)}.`);
     syncPlayerControls();
@@ -112,6 +113,7 @@ export function wirePlayerCoreEvents() {
 
   dom.videoPlayer.addEventListener("pause", () => {
     if (dom.videoPlayer.ended) return;
+    rememberPlaybackPosition();
     setVideoStatus("loaded", "Incorporado");
     logEvent("video", `Pausa local en ${formatSeconds(dom.videoPlayer.currentTime)}.`);
     state.player.lastManualPauseAt = Date.now();
@@ -126,6 +128,7 @@ export function wirePlayerCoreEvents() {
   });
 
   dom.videoPlayer.addEventListener("seeked", () => {
+    rememberPlaybackPosition();
     logEvent("video", `Seek local a ${formatSeconds(dom.videoPlayer.currentTime)}.`);
     state.player.lastManualSeekAt = Date.now();
     syncPlayerControls(true);
@@ -163,6 +166,7 @@ export function wirePlayerCoreEvents() {
   });
 
   dom.videoPlayer.addEventListener("timeupdate", () => {
+    rememberPlaybackPosition();
     syncPlayerControls();
   });
 
@@ -286,7 +290,9 @@ function commitSeekPosition() {
   if (!dom.playerSeekInput) return;
   const nextTime = Number(dom.playerSeekInput.value);
   if (!Number.isFinite(nextTime)) return;
-  dom.videoPlayer.currentTime = Math.max(0, nextTime);
+  const safeTime = Math.max(0, nextTime);
+  state.player.lastKnownTime = safeTime;
+  dom.videoPlayer.currentTime = safeTime;
   syncPlayerControls(true);
 }
 
@@ -402,6 +408,13 @@ function updateSeekVisuals(currentTime, duration, forceEnd = false) {
 
 function getFiniteDuration() {
   return Number.isFinite(dom.videoPlayer.duration) ? Math.max(0, dom.videoPlayer.duration) : 0;
+}
+
+function rememberPlaybackPosition() {
+  const currentTime = Number(dom.videoPlayer.currentTime);
+  if (Number.isFinite(currentTime)) {
+    state.player.lastKnownTime = Math.max(0, currentTime);
+  }
 }
 
 function hasLoadedMediaSource() {

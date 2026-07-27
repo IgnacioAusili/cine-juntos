@@ -66,6 +66,10 @@ async function applyRemoteState(statePayload, force = false) {
       }
     }
 
+    state.player.lastKnownTime = Math.max(
+      0,
+      Number.isFinite(targetTime) ? Number(targetTime) : Number(dom.videoPlayer.currentTime) || 0,
+    );
     setSyncStatus(getRemoteStatusText(statePayload));
     logEvent("sync:apply", `Aplicado ${statePayload.action || "evento"} a ${formatSeconds(dom.videoPlayer.currentTime)}.`);
   } catch (error) {
@@ -128,10 +132,11 @@ export function pauseRoomForPlaybackIssue(reason) {
   state.player.lastPlaybackIssueAt = localNow;
   state.player.lastPlaybackIssueReason = reason;
   logEvent("sync:issue", `Incidencia local: ${describePlaybackIssue(reason)} en ${formatSeconds(dom.videoPlayer.currentTime)}.`);
+  const issueTime = getPlaybackSnapshotTime();
 
   // Mostrar aviso en el chat local siempre, independientemente de si hay sala activa.
   const displayName = state.session.displayName || "Vos";
-  const issueText = `${displayName} ${describePlaybackIssueChat(reason)} en ${formatSeconds(dom.videoPlayer.currentTime)}`;
+  const issueText = `${displayName} ${describePlaybackIssueChat(reason)} en ${formatSeconds(issueTime)}`;
   renderMessage({
     id: `issue-${localNow}-${reason}`,
     from: state.session.clientId,
@@ -160,6 +165,7 @@ export function pauseRoomForPlaybackIssue(reason) {
   publishState("hold", {
     paused: true,
     issueReason: reason,
+    time: issueTime,
   });
 }
 
@@ -283,12 +289,15 @@ export function publishState(action, overrides = {}) {
   state.player.lastStateSentAt = localNow;
 
   const syncNow = getTransportNow();
+  const payloadTime = Number.isFinite(Number(overrides.time))
+    ? Math.max(0, Number(overrides.time))
+    : getPlaybackSnapshotTime();
   const payload = {
     action,
     from: state.session.clientId,
     name: getDisplayName(),
     src: dom.videoPlayer.currentSrc || dom.videoPlayer.src || dom.videoUrlInput.value.trim(),
-    time: Number(dom.videoPlayer.currentTime || 0),
+    time: payloadTime,
     paused: dom.videoPlayer.paused,
     rate: Number(dom.videoPlayer.playbackRate || 1),
     sentAt: syncNow,
@@ -302,4 +311,11 @@ export function publishState(action, overrides = {}) {
   });
   sendVideoEventMessage(action, payload);
   logEvent("sync:send", `${action} en ${formatSeconds(payload.time)} (${payload.paused ? "pausado" : "play"}).`);
+}
+
+function getPlaybackSnapshotTime() {
+  const currentTime = Number(dom.videoPlayer.currentTime);
+  const lastKnownTime = Number(state.player.lastKnownTime || 0);
+  const safeCurrentTime = Number.isFinite(currentTime) ? Math.max(0, currentTime) : 0;
+  return Math.max(safeCurrentTime, lastKnownTime);
 }

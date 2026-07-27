@@ -17,6 +17,7 @@ export const sessionState = {
 
 export const playerState = {
   lastRemoteState: null,
+  lastKnownTime: 0,
   suppressVideoEvents: false,
   lastStateSentAt: 0,
   lastActionAt: 0,

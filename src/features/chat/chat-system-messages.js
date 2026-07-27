@@ -9,7 +9,7 @@ import { renderMessage } from "./chat-render.js";
 
 /**
  * Genera y envía un mensaje de sistema al chat describiendo un evento de video.
- * @param {string} action - El tipo de evento ('play', 'pause', 'seek', 'rate', 'video', 'hold').
+ * @param {string} action - El tipo de evento ('play', 'pause', 'seek', 'rate', 'video', 'video-ready', 'hold').
  * @param {Object} currentState - El estado actual del reproductor.
  */
 export function sendVideoEventMessage(action, currentState) {
@@ -54,6 +54,7 @@ function describeVideoEvent(action, currentState) {
   if (action === "rate")
     return `${name} cambió la velocidad a ${currentState.rate}x`;
   if (action === "video") return `${name} cargó un video nuevo`;
+  if (action === "video-ready") return `A ${name} le ha terminado de cargar el video`;
   if (action === "hold") return `${name} ${describePlaybackIssue(currentState.issueReason)} en ${time}`;
   return "";
 }

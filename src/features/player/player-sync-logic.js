@@ -259,6 +259,10 @@ export function publishState(action, overrides = {}) {
     logEvent("antilag", `Acción '${action}' bloqueada temporalmente (cooldown de otro usuario activo).`);
     setSyncStatus("Espera 2s para interactuar (cooldown).");
 
+    if (action === "seek") {
+      return;
+    }
+
     if (state.player.lastRemoteState && !state.player.suppressVideoEvents) {
       state.player.suppressVideoEvents = true;
       try {

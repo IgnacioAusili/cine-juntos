@@ -3,6 +3,7 @@ import {
 } from "../../core/dom.js";
 import {
   state,
+  getDisplayName,
   logEvent,
 } from "../../core/state.js";
 import {
@@ -11,6 +12,7 @@ import {
 import {
   hydrateIcons,
 } from "../icons-tooltips.js";
+import { sendVideoEventMessage } from "../chat/index.js";
 // Import circular intencional y seguro: estas funciones se invocan en runtime,
 // no durante la carga del modulo, y player-sync-logic.js a su vez importa
 // setVideoSource y waitForVideoMetadata desde aqui.
@@ -25,9 +27,11 @@ import { showErrorDialog, showLoadReplaceDialog } from "../session-ui.js";
 
 const SKIP_LOAD_REPLACE_DIALOG_KEY = "cine-juntos-skip-load-replace-dialog";
 let isDurationShowingRemaining = false;
+let pendingLoadCompletionAnnouncement = false;
 
 export function initializePlayer() {
   isDurationShowingRemaining = false;
+  pendingLoadCompletionAnnouncement = false;
   setVideoStatus("empty", "Sin contenido");
   syncPlayerControls(true);
 }
@@ -145,6 +149,7 @@ export function wirePlayerCoreEvents() {
     isDurationShowingRemaining = false;
     dom.emptyPlayer.classList.add("hidden");
     setVideoStatus("loaded", "Incorporado");
+    announceVideoLoadCompletion();
     syncPlayerControls(true);
     attemptPlaybackRecovery("loadedmetadata");
   });
@@ -207,6 +212,7 @@ export function wirePlayerCoreEvents() {
 export function loadVideoFromUrl(source, origin) {
   if (!source) {
     setVideoStatus("empty", "Sin contenido");
+    pendingLoadCompletionAnnouncement = false;
     logEvent("video", "No se cargo video: falta URL.");
     return;
   }
@@ -240,6 +246,7 @@ async function handleManualLoadRequest() {
 
 export function setVideoSource(source, shouldAnnounce) {
   isDurationShowingRemaining = false;
+  pendingLoadCompletionAnnouncement = Boolean(shouldAnnounce);
   dom.videoPlayer.src = source;
   setVideoStatus("loading", "Cargando");
   dom.videoPlayer.load();
@@ -247,6 +254,19 @@ export function setVideoSource(source, shouldAnnounce) {
   dom.videoUrlInput.value = source;
   syncPlayerControls(true);
   if (shouldAnnounce) logEvent("video", "Carga de video iniciada.");
+}
+
+function announceVideoLoadCompletion() {
+  if (!pendingLoadCompletionAnnouncement) return;
+  pendingLoadCompletionAnnouncement = false;
+  if (!state.session.activeRoom || !state.session.transport) return;
+
+  sendVideoEventMessage("video-ready", {
+    from: state.session.clientId,
+    name: getDisplayName(),
+    time: Number(dom.videoPlayer.currentTime) || 0,
+    rate: Number(dom.videoPlayer.playbackRate || 1),
+  });
 }
 
 export function setVideoStatus(videoState, text) {

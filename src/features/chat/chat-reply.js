@@ -4,6 +4,9 @@ import { truncateText } from "./chat-content-parser.js";
 import { getParticipantAccent } from "./chat-participant-color.js";
 import { isPinnedToBottom, queuePinnedChatScrollSync } from "./chat-scroll-sync.js";
 
+let pendingReplyLayoutSync = null;
+let pendingReplyPreviewHide = null;
+
 /**
  * Establece el mensaje al que se está respondiendo y actualiza la vista previa.
  * @param {Object} message - El objeto del mensaje original.
@@ -22,6 +25,7 @@ export function setReplyTarget(message) {
   dom.messageInput.focus();
   queuePinnedChatScrollSync(dom.messages, false, wasPinnedMain);
   queuePinnedChatScrollSync(dom.overlayMessages, true, wasPinnedOverlay);
+  scheduleReplyLayoutSync(wasPinnedMain, wasPinnedOverlay);
 }
 
 /**
@@ -35,30 +39,34 @@ export function clearReplyTarget() {
   renderReplyPreview();
   queuePinnedChatScrollSync(dom.messages, false, wasPinnedMain);
   queuePinnedChatScrollSync(dom.overlayMessages, true, wasPinnedOverlay);
+  scheduleReplyLayoutSync(wasPinnedMain, wasPinnedOverlay);
 }
 
 /**
  * Renderiza la vista previa de la respuesta en los inputs (normal y overlay).
  */
 export function renderReplyPreview() {
-  const getExpandedReplyHeight = (container) => Math.max(container.scrollHeight + 16, 46);
+  const getExpandedReplyHeight = (container) => Math.max(container.scrollHeight + 12, 42);
 
   [dom.replyPreview, dom.overlayReplyPreview].forEach((container) => {
     if (!container) return;
+    if (pendingReplyPreviewHide) {
+      window.clearTimeout(pendingReplyPreviewHide);
+      pendingReplyPreviewHide = null;
+    }
     if (!state.chat.replyTarget) {
       container.style.removeProperty("--reply-participant-accent");
-      container.style.setProperty("--reply-preview-height", `${container.offsetHeight}px`);
+      container.style.setProperty("--reply-preview-max-height", `${container.offsetHeight}px`);
       container.getBoundingClientRect(); // Force reflow before collapsing.
       container.classList.remove("reply-preview--visible");
-      const onTransitionEnd = (event) => {
-        if (event.propertyName !== "height") return;
+      pendingReplyPreviewHide = window.setTimeout(() => {
         if (!state.chat.replyTarget) {
           container.hidden = true;
           container.innerHTML = "";
-          container.style.removeProperty("--reply-preview-height");
+          container.style.removeProperty("--reply-preview-max-height");
         }
-      };
-      container.addEventListener("transitionend", onTransitionEnd, { once: true });
+        pendingReplyPreviewHide = null;
+      }, 240);
       return;
     }
 
@@ -90,9 +98,9 @@ export function renderReplyPreview() {
 
     container.append(replyIcon, textBtn, close);
     container.hidden = false;
-    container.style.setProperty("--reply-preview-height", "0px");
+    container.style.setProperty("--reply-preview-max-height", "0px");
     container.getBoundingClientRect(); // Force reflow
-    container.style.setProperty("--reply-preview-height", `${getExpandedReplyHeight(container)}px`);
+    container.style.setProperty("--reply-preview-max-height", `${getExpandedReplyHeight(container)}px`);
     container.classList.add("reply-preview--visible");
   });
 }
@@ -124,6 +132,18 @@ export function scrollToMessage(messageId) {
       return;
     }
   }
+}
+
+function scheduleReplyLayoutSync(wasPinnedMain, wasPinnedOverlay) {
+  if (pendingReplyLayoutSync) {
+    window.clearTimeout(pendingReplyLayoutSync);
+  }
+
+  pendingReplyLayoutSync = window.setTimeout(() => {
+    pendingReplyLayoutSync = null;
+    queuePinnedChatScrollSync(dom.messages, false, wasPinnedMain);
+    queuePinnedChatScrollSync(dom.overlayMessages, true, wasPinnedOverlay);
+  }, 240);
 }
 
 /**

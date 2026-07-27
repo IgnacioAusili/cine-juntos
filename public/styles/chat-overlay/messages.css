@@ -35,11 +35,17 @@
   color: rgba(255, 255, 255, 0.74);
   font-size: 0.58rem;
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.72);
+  padding-inline-start: 12px;
+}
+
+.overlay-messages .message.mine .message-meta {
+  padding-inline-start: 0;
+  padding-inline-end: 12px;
 }
 
 .overlay-messages .message-meta-name {
   display: block;
-  padding-inline-start: 10px;
+  padding-inline-start: 0;
   font-size: 0.54rem;
   color: var(--participant-accent, rgba(255, 255, 255, 0.74));
 }

@@ -37,6 +37,12 @@
   display: flex;
   align-items: center;
   gap: 6px;
+  padding-inline-start: 12px;
+}
+
+.message.mine .message-meta {
+  padding-inline-start: 0;
+  padding-inline-end: 12px;
 }
 
 .message-meta-name {

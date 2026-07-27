@@ -16,6 +16,14 @@
   width: 100%;
 }
 
+.chat-tools-actions {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
 .chat-name-field {
   display: grid;
   min-width: 0;

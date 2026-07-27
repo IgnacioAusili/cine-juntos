@@ -29,14 +29,10 @@ export function appendMessageContent(container, text) {
   const videoUrl = firstUrl && isRemoteVideoUrl(firstUrl) ? firstUrl : "";
 
   if (!firstUrl) {
-    if (container.childElementCount) {
-      const textNode = document.createElement("div");
-      textNode.className = "message-text";
-      textNode.textContent = trimmedText;
-      container.append(textNode);
-    } else {
-      container.textContent = trimmedText;
-    }
+    const textNode = document.createElement("div");
+    textNode.className = "message-text";
+    textNode.textContent = trimmedText;
+    container.append(textNode);
     return;
   }
 

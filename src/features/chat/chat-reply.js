@@ -2,12 +2,19 @@ import { dom } from "../../core/dom.js";
 import { state } from "../../core/state.js";
 import { truncateText } from "./chat-content-parser.js";
 import { getParticipantAccent } from "./chat-participant-color.js";
+import { checkScrollPosition } from "./unread-counters.js";
+
+const pendingReplyScrollSync = new WeakMap();
+const SCROLL_PIN_THRESHOLD = 10;
 
 /**
  * Establece el mensaje al que se está respondiendo y actualiza la vista previa.
  * @param {Object} message - El objeto del mensaje original.
  */
 export function setReplyTarget(message) {
+  const wasPinnedMain = isPinnedToBottom(dom.messages);
+  const wasPinnedOverlay = isPinnedToBottom(dom.overlayMessages);
+
   state.chat.replyTarget = {
     id: message.id,
     from: message.from || null,
@@ -16,14 +23,21 @@ export function setReplyTarget(message) {
   };
   renderReplyPreview();
   dom.messageInput.focus();
+  queuePinnedChatScrollSync(dom.messages, wasPinnedMain, false);
+  queuePinnedChatScrollSync(dom.overlayMessages, wasPinnedOverlay, true);
 }
 
 /**
  * Limpia el objetivo de respuesta y oculta la vista previa.
  */
 export function clearReplyTarget() {
+  const wasPinnedMain = isPinnedToBottom(dom.messages);
+  const wasPinnedOverlay = isPinnedToBottom(dom.overlayMessages);
+
   state.chat.replyTarget = null;
   renderReplyPreview();
+  queuePinnedChatScrollSync(dom.messages, wasPinnedMain, false);
+  queuePinnedChatScrollSync(dom.overlayMessages, wasPinnedOverlay, true);
 }
 
 /**
@@ -119,4 +133,27 @@ function highlightMessage(element) {
   window.setTimeout(() => {
     element.classList.remove("message-highlight");
   }, 2600);
+}
+
+function isPinnedToBottom(container) {
+  if (!container) return false;
+  const distanceFromBottom = container.scrollHeight - container.scrollTop - container.clientHeight;
+  return distanceFromBottom <= SCROLL_PIN_THRESHOLD;
+}
+
+function queuePinnedChatScrollSync(container, shouldSync, isOverlay) {
+  if (!shouldSync || !container) return;
+
+  const previousFrameId = pendingReplyScrollSync.get(container);
+  if (previousFrameId != null) {
+    window.cancelAnimationFrame(previousFrameId);
+  }
+
+  const frameId = window.requestAnimationFrame(() => {
+    pendingReplyScrollSync.delete(container);
+    container.scrollTop = container.scrollHeight;
+    checkScrollPosition(isOverlay);
+  });
+
+  pendingReplyScrollSync.set(container, frameId);
 }

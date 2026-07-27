@@ -2,9 +2,17 @@
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 6px;
   padding-right: 14px;
+}
+
+.player-chat-header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  min-width: 0;
 }
 
 .player-chat-header .bare-icon-button {

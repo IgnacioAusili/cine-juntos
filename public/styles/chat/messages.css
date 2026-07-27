@@ -92,13 +92,19 @@
   text-align: right;
   pointer-events: none;
   user-select: none;
+  background: linear-gradient(
+    to left,
+    var(--message-time-fade-bg, rgba(19, 23, 26, 0.96)) 70%,
+    transparent 100%
+  );
+  padding-left: 8px;
 }
 
 .message-bubble {
   position: relative;
   display: block;
-  width: fit-content;
-  max-width: 100%;
+  width: 100%;
+  max-width: 78%;
   border: 1px solid var(--line);
   border-radius: 14px;
   background: var(--panel-2);
@@ -114,8 +120,43 @@
 
 .message-content {
   display: block;
-  max-width: 100%;
+  min-width: 0;
+}
+
+.message-text {
+  display: block;
+  min-width: 0;
+  white-space: pre-wrap;
   overflow-wrap: anywhere;
+}
+
+.message-bubble.message-bubble--single-line {
+  display: inline-flex;
+  align-items: flex-end;
+  width: fit-content;
+  padding-right: 7px;
+}
+
+.message-bubble.message-bubble--single-line .message-content {
+  flex: 1 1 auto;
+}
+
+.message-bubble.message-bubble--single-line .message-time {
+  position: relative;
+  right: auto;
+  bottom: auto;
+  margin-left: 8px;
+  padding-left: 0;
+  background: none;
+  transform: translateY(3px);
+}
+
+.message.mine .message-bubble {
+  margin-left: auto;
+}
+
+.message:not(.mine) .message-bubble {
+  margin-right: auto;
 }
 
 .message:not(.mine) .message-bubble {
@@ -161,7 +202,9 @@
 }
 
 .message.system .message-bubble {
-  max-width: 100%;
+  width: fit-content;
+  max-width: min(100%, 560px);
+  margin-inline: auto;
   border: 0;
   background: transparent;
   color: var(--muted);

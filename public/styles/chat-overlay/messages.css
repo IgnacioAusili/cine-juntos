@@ -61,11 +61,18 @@
   margin: 0;
   pointer-events: none;
   user-select: none;
+  background: linear-gradient(
+    to left,
+    var(--message-time-fade-bg, rgba(9, 12, 14, 0.9)) 70%,
+    transparent 100%
+  );
+  padding-left: 8px;
 }
 
 .overlay-messages .message-bubble {
   display: block;
-  width: fit-content;
+  width: 100%;
+  max-width: 82%;
   border-radius: 14px;
   border-color: rgba(255, 255, 255, 0.12);
   background: rgba(9, 12, 14, 0.45);
@@ -74,17 +81,45 @@
   padding: 6px 50px 7px 6px;
 }
 
+.overlay-messages .message-content {
+  display: block;
+  min-width: 0;
+}
+
+.overlay-messages .message-text {
+  display: block;
+  min-width: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.overlay-messages .message-bubble.message-bubble--single-line {
+  display: inline-flex;
+  align-items: flex-end;
+  width: fit-content;
+  padding-right: 6px;
+}
+
+.overlay-messages .message-bubble.message-bubble--single-line .message-content {
+  flex: 1 1 auto;
+}
+
+.overlay-messages .message-bubble.message-bubble--single-line .message-time {
+  position: relative;
+  right: auto;
+  bottom: auto;
+  margin-left: 8px;
+  padding-left: 0;
+  background: none;
+  transform: translateY(3px);
+}
+
 .overlay-messages .message:not(.mine) .message-bubble {
   border-bottom-left-radius: 4px;
 }
 
 .overlay-messages .message.mine .message-bubble {
   border-bottom-right-radius: 4px;
-}
-
-.overlay-messages .message-content {
-  display: block;
-  max-width: 100%;
 }
 
 .overlay-messages .message-reply-name {
@@ -110,6 +145,11 @@
 
 .overlay-messages .message.mine .message-bubble {
   background: rgba(47, 184, 164, 0.28);
+  margin-left: auto;
+}
+
+.overlay-messages .message:not(.mine) .message-bubble {
+  margin-right: auto;
 }
 
 .overlay-messages .message.system {
@@ -120,6 +160,9 @@
 }
 
 .overlay-messages .message.system .message-bubble {
+  width: fit-content;
+  max-width: min(100%, 420px);
+  margin-inline: auto;
   border: 0;
   background: transparent;
   color: rgba(255, 255, 255, 0.72);

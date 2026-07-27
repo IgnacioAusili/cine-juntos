@@ -1,0 +1,90 @@
+.chat-auto-switch {
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--muted);
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  padding: 0 8px 0 6px;
+  text-transform: uppercase;
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    color 160ms ease,
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.chat-auto-switch:hover,
+.chat-auto-switch:focus-visible {
+  border-color: rgba(255, 255, 255, 0.24);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.chat-auto-switch:focus-visible {
+  outline: 2px solid rgba(47, 184, 164, 0.45);
+  outline-offset: 2px;
+}
+
+.chat-auto-switch:active {
+  transform: translateY(1px);
+}
+
+.chat-auto-switch-track {
+  position: relative;
+  width: 24px;
+  height: 14px;
+  flex: 0 0 24px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  transition:
+    background 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.chat-auto-switch-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #ffffff, #d7dde2);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  transform: translateX(0);
+  transition:
+    transform 160ms ease,
+    background 160ms ease;
+}
+
+.chat-auto-switch[aria-checked="true"] {
+  border-color: rgba(47, 184, 164, 0.5);
+  background: rgba(47, 184, 164, 0.16);
+  color: #b7fff3;
+  box-shadow: 0 0 0 1px rgba(47, 184, 164, 0.18);
+}
+
+.chat-auto-switch[aria-checked="true"] .chat-auto-switch-track {
+  background: rgba(47, 184, 164, 0.34);
+  box-shadow: inset 0 0 0 1px rgba(47, 184, 164, 0.22);
+}
+
+.chat-auto-switch[aria-checked="true"] .chat-auto-switch-thumb {
+  transform: translateX(10px);
+  background: #effffc;
+}
+
+.chat-auto-switch-label {
+  display: inline-block;
+  min-width: 0;
+  white-space: nowrap;
+}

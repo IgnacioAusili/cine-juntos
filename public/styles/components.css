@@ -3,6 +3,7 @@
 @import url("./components/host-badge.css");
 @import url("./components/buttons.css");
 @import url("./components/chat-collapse-handle.css");
+@import url("./components/chat-auto-switch.css");
 @import url("./components/presence.css");
 @import url("./components/icon-fallbacks.css");
 @import url("./components/unread-badges.css");

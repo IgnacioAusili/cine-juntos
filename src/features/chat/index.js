@@ -21,9 +21,13 @@ import {
 import {
   setChatDock,
   setExternalChatCollapsed,
+  setExternalChatAutoExpandEnabled,
+  setInsideChatAutoExpandEnabled,
   setInsideChatStyle,
   setInsideChatVisible,
+  syncChatAutoExpandControls,
 } from "./chat-layout.js";
+import { scheduleMessageTimeAdjustment } from "./message-time-layout.js";
 
 export {
   buildEmojiPicker,
@@ -50,13 +54,26 @@ export {
 } from "./message-menu.js";
 export {
   setChatDock,
+  setExternalChatAutoExpandEnabled,
   setExternalChatCollapsed,
+  setInsideChatAutoExpandEnabled,
   setInsideChatStyle,
   setInsideChatVisible,
+  syncChatAutoExpandControls,
   updateCollapseButton,
 } from "./chat-layout.js";
 
 export function wireChatEvents() {
+  syncChatAutoExpandControls();
+
+  dom.insideChatAutoExpandSwitch.addEventListener("click", () => {
+    setInsideChatAutoExpandEnabled(!state.chat.autoExpandInsideEnabled);
+  });
+
+  dom.externalChatAutoExpandSwitch.addEventListener("click", () => {
+    setExternalChatAutoExpandEnabled(!state.chat.autoExpandExternalEnabled);
+  });
+
   dom.chatStyleToggle.addEventListener("click", (event) => {
     const button = event.target.closest("[data-chat-style]");
     if (!button) return;
@@ -191,5 +208,9 @@ export function wireChatEvents() {
   window.addEventListener("resize", syncUnreadBadgesWithVisibility, {
     passive: true,
   });
+  window.addEventListener("resize", scheduleMessageTimeAdjustment, {
+    passive: true,
+  });
+  window.addEventListener("load", scheduleMessageTimeAdjustment, { once: true });
   document.addEventListener("visibilitychange", syncUnreadBadgesWithVisibility);
 }

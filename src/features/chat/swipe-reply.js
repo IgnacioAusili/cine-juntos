@@ -1,10 +1,11 @@
 // Motor de gesto swipe-to-reply: factory que encapsula estado y animacion.
 // Recibe elementos (bubble, hint) y un callback onReply. No toca estado global.
-export function createSwipeReply(bubble, hint, { onReply }) {
+export function createSwipeReply(bubble, hint, { onReply, isMine = false }) {
   // El rail reservado por el layout permite deslizar sin que la burbuja toque el borde.
   const THRESHOLD = 34, MAX_DRAG = 64, LOCK_DIST = 10, V_BIAS = 6;
   const RESTORE_MS = 340, EPS = 2;
   const EASING = "cubic-bezier(0.22, 1, 0.36, 1)", OPACITY = "opacity 160ms ease";
+  const swipeDirection = isMine ? -1 : 1;
 
   let state = "idle", pointerId = null, pointerType = "", tracking = false, directionLocked = false;
   let startX = 0, startY = 0, currentX = 0, currentY = 0, currentDx = 0, currentDy = 0;
@@ -36,8 +37,8 @@ export function createSwipeReply(bubble, hint, { onReply }) {
       const hintOpacity = offset <= EPS ? 0 : Math.min(1, 0.14 + progress * 0.86);
       const hintScale = 0.72 + progress * 0.28;
       // La burbuja deja un hueco a la derecha; la flecha se centra siempre en ese hueco.
-      const hintX = 13 - offset / 2;
-      bubble.style.transform = offset > 0 ? `translateX(${-offset}px)` : "";
+      const hintX = swipeDirection > 0 ? -13 + offset / 2 : 13 - offset / 2;
+      bubble.style.transform = offset > 0 ? `translateX(${offset * swipeDirection}px)` : "";
       hint.style.opacity = hintOpacity > 0 ? String(hintOpacity) : "0";
       hint.style.transform = `translate(${hintX}px, -50%) scale(${hintScale})`;
       hintVisible = offset > EPS;
@@ -49,7 +50,7 @@ export function createSwipeReply(bubble, hint, { onReply }) {
     bubble.style.transition = bubble.style.transform = "";
     hint.style.transition = "";
     hint.style.opacity = "0";
-    hint.style.transform = "translate(14px, -50%) scale(0.72)";
+    hint.style.transform = `translate(${swipeDirection > 0 ? -14 : 14}px, -50%) scale(0.72)`;
     bubble.classList.remove("swipe-dragging", "swipe-settling", "swipe-ready", "swipe-confirmed");
     hintVisible = thresholdReached = false;
   }
@@ -135,13 +136,13 @@ export function createSwipeReply(bubble, hint, { onReply }) {
       const absDx = Math.abs(currentDx), absDy = Math.abs(currentDy);
       if (absDx < LOCK_DIST && absDy < LOCK_DIST) return;
       if (absDy > absDx + V_BIAS) { cancelSwipe(offset > 0); return; }
-      if (currentDx >= 0) { cancelSwipe(false); return; }
+      if (currentDx * swipeDirection <= 0) { cancelSwipe(false); return; }
       directionLocked = true;
       blockClick = true;
       setState("dragging");
     }
     setTransitions("");
-    offset = Math.max(0, Math.min(-currentDx, MAX_DRAG));
+    offset = Math.max(0, Math.min(currentDx * swipeDirection, MAX_DRAG));
     queueRender();
   }
   function endSwipe() {

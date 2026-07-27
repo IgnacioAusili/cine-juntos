@@ -71,9 +71,16 @@
 }
 
 .swipe-reply-hint svg {
+  display: block;
   width: 13px;
   height: 13px;
   stroke-width: 2.2;
+}
+
+/* En mensajes recibidos, la flecha se espeja para apuntar hacia la derecha sin voltear la cola. */
+.message:not(.mine) .swipe-reply-hint svg {
+  transform: scaleX(-1);
+  transform-origin: center;
 }
 
 .message-bubble.swipe-ready + .swipe-reply-hint-wrapper .swipe-reply-hint {

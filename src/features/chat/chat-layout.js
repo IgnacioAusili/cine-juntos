@@ -1,12 +1,69 @@
 // Layout del chat externo e interno: visibilidad, estilo, dock y collapse.
 import { dom } from "../../core/dom.js";
-import { logEvent } from "../../core/state.js";
+import { state, logEvent } from "../../core/state.js";
 import { CHAT_DOCKS, CHAT_DOCK_META } from "../../core/utils.js";
 import { hydrateIcons, refreshTooltipForTarget } from "../icons-tooltips.js";
 import { focusFullscreenWorkspace } from "../session-ui.js";
-import { syncUnreadBadgesWithVisibility } from "./unread-counters.js";
+import {
+  isExternalChatVisibleToUser,
+  isInsideChatVisibleToUser,
+  syncUnreadBadgesWithVisibility,
+} from "./unread-counters.js";
+import { scheduleMessageTimeAdjustment } from "./message-time-layout.js";
+
+const AUTO_COLLAPSE_DELAY_MS = 3200;
+const AUTO_EXPAND_INSIDE_KEY = "cine-juntos-chat-auto-expand-inside";
+const AUTO_EXPAND_EXTERNAL_KEY = "cine-juntos-chat-auto-expand-external";
+
+function getAutoExpandTooltip(label, enabled) {
+  return enabled
+    ? `Autoexpandir ${label}: activado. Se abre solo con mensajes y se oculta al enviar.`
+    : `Autoexpandir ${label}: desactivado.`;
+}
+
+function updateAutoExpandSwitch(button, enabled, label) {
+  if (!button) return;
+  const tooltip = getAutoExpandTooltip(label, enabled);
+  button.classList.toggle("active", enabled);
+  button.setAttribute("aria-checked", String(enabled));
+  button.setAttribute("aria-label", `Autoexpandir ${label}`);
+  button.dataset.tooltip = tooltip;
+  button.removeAttribute("title");
+  refreshTooltipForTarget(button);
+}
+
+function clearAutoCollapseTimer(isOverlay) {
+  const timerKey = isOverlay ? "autoCollapseInsideTimer" : "autoCollapseExternalTimer";
+  const timerId = state.chat[timerKey];
+  if (timerId) {
+    window.clearTimeout(timerId);
+    state.chat[timerKey] = null;
+  }
+}
+
+function scheduleAutoCollapse(isOverlay) {
+  const enabled = isOverlay
+    ? state.chat.autoExpandInsideEnabled
+    : state.chat.autoExpandExternalEnabled;
+  const isVisible = isOverlay ? isInsideChatVisibleToUser() : isExternalChatVisibleToUser();
+  if (!enabled || !isVisible) return;
+
+  clearAutoCollapseTimer(isOverlay);
+  const timerKey = isOverlay ? "autoCollapseInsideTimer" : "autoCollapseExternalTimer";
+  state.chat[timerKey] = window.setTimeout(() => {
+    state.chat[timerKey] = null;
+    if (isOverlay) {
+      if (!isInsideChatVisibleToUser()) return;
+      setInsideChatVisible(false);
+    } else {
+      if (!isExternalChatVisibleToUser()) return;
+      setExternalChatCollapsed(true);
+    }
+  }, AUTO_COLLAPSE_DELAY_MS);
+}
 
 export function setInsideChatVisible(visible) {
+  clearAutoCollapseTimer(true);
   dom.playerFrame.classList.toggle("chat-inside-open", visible);
   dom.playerChatToggleButton.classList.toggle("active", visible);
   dom.playerChatToggleButton.setAttribute("aria-pressed", String(visible));
@@ -20,6 +77,7 @@ export function setInsideChatVisible(visible) {
     dom.overlayMessages.scrollTop = dom.overlayMessages.scrollHeight;
   }
   syncUnreadBadgesWithVisibility();
+  scheduleMessageTimeAdjustment();
   logEvent("ui", visible ? "Chat interno visible." : "Chat interno oculto.");
 }
 
@@ -29,6 +87,7 @@ export function setInsideChatStyle(style) {
   dom.chatStyleToggle.querySelectorAll("[data-chat-style]").forEach((button) => {
     button.classList.toggle("active", button.dataset.chatStyle === nextStyle);
   });
+  scheduleMessageTimeAdjustment();
   logEvent("ui", `Estilo de chat interno: ${nextStyle}.`);
 }
 
@@ -59,15 +118,53 @@ export function setChatDock(dock) {
 }
 
 export function setExternalChatCollapsed(collapsed) {
+  clearAutoCollapseTimer(false);
   dom.sessionView.classList.toggle("chat-collapsed", collapsed);
+  if (!collapsed && dom.messages) {
+    dom.messages.scrollTop = dom.messages.scrollHeight;
+  }
   updateCollapseButton();
   syncUnreadBadgesWithVisibility();
+  scheduleMessageTimeAdjustment();
   logEvent("ui", collapsed ? "Chat externo contraido." : "Chat externo expandido.");
 
   const isFullscreen = document.body.classList.contains("fullscreen-mode") || Boolean(document.fullscreenElement);
   if (isFullscreen) {
     focusFullscreenWorkspace();
   }
+}
+
+export function setInsideChatAutoExpandEnabled(enabled) {
+  state.chat.autoExpandInsideEnabled = Boolean(enabled);
+  if (!state.chat.autoExpandInsideEnabled) {
+    clearAutoCollapseTimer(true);
+  }
+  localStorage.setItem(AUTO_EXPAND_INSIDE_KEY, enabled ? "1" : "0");
+  updateAutoExpandSwitch(dom.insideChatAutoExpandSwitch, state.chat.autoExpandInsideEnabled, "chat interno");
+  logEvent("ui", `Autoexpandir chat interno: ${state.chat.autoExpandInsideEnabled ? "activado" : "desactivado"}.`);
+}
+
+export function setExternalChatAutoExpandEnabled(enabled) {
+  state.chat.autoExpandExternalEnabled = Boolean(enabled);
+  if (!state.chat.autoExpandExternalEnabled) {
+    clearAutoCollapseTimer(false);
+  }
+  localStorage.setItem(AUTO_EXPAND_EXTERNAL_KEY, enabled ? "1" : "0");
+  updateAutoExpandSwitch(dom.externalChatAutoExpandSwitch, state.chat.autoExpandExternalEnabled, "chat externo");
+  logEvent("ui", `Autoexpandir chat externo: ${state.chat.autoExpandExternalEnabled ? "activado" : "desactivado"}.`);
+}
+
+export function scheduleInsideChatAutoCollapse() {
+  scheduleAutoCollapse(true);
+}
+
+export function scheduleExternalChatAutoCollapse() {
+  scheduleAutoCollapse(false);
+}
+
+export function syncChatAutoExpandControls() {
+  updateAutoExpandSwitch(dom.insideChatAutoExpandSwitch, state.chat.autoExpandInsideEnabled, "chat interno");
+  updateAutoExpandSwitch(dom.externalChatAutoExpandSwitch, state.chat.autoExpandExternalEnabled, "chat externo");
 }
 
 export function updateCollapseButton() {

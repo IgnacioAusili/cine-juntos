@@ -28,6 +28,7 @@ import {
   setInsideChatStyle,
   setInsideChatVisible,
   setChatDock,
+  syncChatAutoExpandControls,
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
@@ -53,6 +54,7 @@ initializePlayer();
 setInsideChatStyle("float");
 setInsideChatVisible(false);
 setChatDock(localStorage.getItem("cine-juntos-chat-dock") || "right");
+syncChatAutoExpandControls();
 updateCollapseButton();
 updateCharCounter(dom.messageInput, false);
 updateCharCounter(dom.overlayMessageInput, true);

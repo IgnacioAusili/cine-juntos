@@ -377,30 +377,31 @@
                     <span class="presence-self-label" id="overlayPresenceSelfLabel" hidden></span>
                     <span id="overlayParticipantCount">1</span>
                   </button>
-                  <div
-                    class="chat-style-toggle"
-                    id="chatStyleToggle"
-                    role="group"
-                    aria-label="Estilo del chat dentro del video"
-                  >
-                    <button
-                      type="button"
-                      data-chat-style="float"
-                      class="active"
-                      aria-label="Panel translucido"
-                      title="Panel translucido"
+                  <div class="player-chat-header-actions">
+                    <div
+                      class="chat-style-toggle"
+                      id="chatStyleToggle"
+                      role="group"
+                      aria-label="Estilo del chat dentro del video"
                     >
-                      <span data-lucide="square"></span>
-                    </button>
-                    <button
-                      type="button"
-                      data-chat-style="panel"
-                      aria-label="Panel opaco"
-                      title="Panel opaco"
-                    >
-                      <span data-lucide="square"></span>
-                    </button>
-                  </div>
+                      <button
+                        type="button"
+                        data-chat-style="float"
+                        class="active"
+                        aria-label="Panel translucido"
+                        title="Panel translucido"
+                      >
+                        <span data-lucide="square"></span>
+                      </button>
+                      <button
+                        type="button"
+                        data-chat-style="panel"
+                        aria-label="Panel opaco"
+                        title="Panel opaco"
+                      >
+                        <span data-lucide="square"></span>
+                      </button>
+                    </div>
                     <button
                       class="bare-icon-button"
                       id="closeInsideChatButton"
@@ -411,7 +412,23 @@
                     >
                       <span data-lucide="x"></span>
                     </button>
-                  <span class="unread-badge player-chat-unread-badge" id="insideChatUnread" hidden>0</span>
+                    <span class="unread-badge player-chat-unread-badge" id="insideChatUnread" hidden>0</span>
+                    <button
+                      class="chat-auto-switch"
+                      id="insideChatAutoExpandSwitch"
+                      type="button"
+                      role="switch"
+                      aria-checked="false"
+                      aria-label="Autoexpandir chat interno"
+                      title="Autoexpandir chat interno"
+                      data-tooltip="Se abre solo con mensajes y se oculta de nuevo al enviar."
+                    >
+                      <span class="chat-auto-switch-track" aria-hidden="true">
+                        <span class="chat-auto-switch-thumb"></span>
+                      </span>
+                      <span class="chat-auto-switch-label">Auto</span>
+                    </button>
+                  </div>
                 </div>
                 <div class="messages-wrap">
                   <div class="overlay-messages" id="overlayMessages" aria-live="polite"></div>
@@ -524,15 +541,32 @@
                   </div>
                 </div>
               </div>
-              <button
-                class="icon-button dock-button"
-                id="dockChatButton"
-                type="button"
-                aria-label="Mover chat"
-                data-tooltip="Mover chat abajo"
-              >
-                <span data-lucide="panel-right"></span>
-              </button>
+              <div class="chat-tools-actions">
+                <button
+                  class="chat-auto-switch"
+                  id="externalChatAutoExpandSwitch"
+                  type="button"
+                  role="switch"
+                  aria-checked="false"
+                  aria-label="Autoexpandir chat externo"
+                  title="Autoexpandir chat externo"
+                  data-tooltip="Se abre solo con mensajes y se oculta de nuevo al enviar."
+                >
+                  <span class="chat-auto-switch-track" aria-hidden="true">
+                    <span class="chat-auto-switch-thumb"></span>
+                  </span>
+                  <span class="chat-auto-switch-label">Auto</span>
+                </button>
+                <button
+                  class="icon-button dock-button"
+                  id="dockChatButton"
+                  type="button"
+                  aria-label="Mover chat"
+                  data-tooltip="Mover chat abajo"
+                >
+                  <span data-lucide="panel-right"></span>
+                </button>
+              </div>
             </div>
 
             <div class="messages-wrap">

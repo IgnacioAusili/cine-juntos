@@ -8,6 +8,7 @@ const LONG_PRESS_DELAY = 560;
 
 export function wireMessageInteractions(bubble, message, hint, { setReplyTarget }) {
   const swipe = createSwipeReply(bubble, hint, {
+    isMine: message.from === state.session.clientId,
     onReply: () => setReplyTarget?.(message),
   });
 

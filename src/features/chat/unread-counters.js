@@ -1,5 +1,9 @@
 import { dom } from "../../core/dom.js";
 import { state } from "../../core/state.js";
+import {
+  setExternalChatCollapsed,
+  setInsideChatVisible,
+} from "./chat-layout.js";
 
 function isElementVisibleInViewport(element) {
   if (!element || document.hidden) return false;
@@ -58,20 +62,32 @@ export function resetExternalUnread() {
 }
 
 export function syncUnreadBadgesWithVisibility() {
-  if (!isAnyChatVisibleToUser()) return;
-  resetInsideUnread();
-  resetExternalUnread();
+  if (isInsideChatVisibleToUser()) {
+    resetInsideUnread();
+  }
+  if (isExternalChatVisibleToUser()) {
+    resetExternalUnread();
+  }
 }
 
 export function handleIncomingUnread() {
-  if (isAnyChatVisibleToUser()) {
+  if (isInsideChatVisibleToUser()) {
     resetInsideUnread();
-    resetExternalUnread();
-    return;
+  } else {
+    incrementInsideUnread();
+    if (state.chat.autoExpandInsideEnabled) {
+      setInsideChatVisible(true);
+    }
   }
 
-  incrementInsideUnread();
-  incrementExternalUnread();
+  if (isExternalChatVisibleToUser()) {
+    resetExternalUnread();
+  } else {
+    incrementExternalUnread();
+    if (state.chat.autoExpandExternalEnabled) {
+      setExternalChatCollapsed(false);
+    }
+  }
 }
 
 export function incrementScrollIndicator(isOverlay) {

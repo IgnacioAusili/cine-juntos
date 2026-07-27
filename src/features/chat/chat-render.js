@@ -5,6 +5,7 @@ import { rememberParticipant } from "../presence.js";
 import { wireMessageInteractions } from "./chat-message-interactions.js";
 import { appendMessageContent, truncateText } from "./chat-content-parser.js";
 import { getParticipantAccent } from "./chat-participant-color.js";
+import { scheduleMessageTimeAdjustment } from "./message-time-layout.js";
 import {
   handleIncomingUnread,
   incrementScrollIndicator,
@@ -161,6 +162,7 @@ function appendMessageTo(container, message) {
     bubble.append(time);
   }
   container.append(item);
+  scheduleMessageTimeAdjustment();
   trimRenderedMessages(container);
 
   const isOverlay = container === dom.overlayMessages;

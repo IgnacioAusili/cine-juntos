@@ -17,10 +17,17 @@ import {
 import { clearReplyTarget } from "./chat-reply.js";
 import { renderMessage } from "./chat-render.js";
 import {
+  scheduleExternalChatAutoCollapse,
+  scheduleInsideChatAutoCollapse,
+} from "./chat-layout.js";
+import { checkScrollPosition } from "./unread-counters.js";
+import {
   compressImageBase64,
   renderImagePreview,
   clearPendingImage,
 } from "./image-compress.js";
+
+const pendingComposerScrollSync = new WeakMap();
 
 export function sendMessage(text, attachedImage) {
   if (!state.session.activeRoom || !state.session.transport) {
@@ -100,6 +107,11 @@ export function submitMessageFrom(input) {
     clearPendingImage(false);
   }
   autoResizeMessageInput(input);
+  if (isOverlay) {
+    scheduleInsideChatAutoCollapse();
+  } else {
+    scheduleExternalChatAutoCollapse();
+  }
 }
 
 export function handlePasteEvent(event, isOverlay) {
@@ -142,9 +154,13 @@ export function handlePasteEvent(event, isOverlay) {
 }
 
 export function autoResizeMessageInput(input) {
+  const isOverlay = input === dom.overlayMessageInput;
+  const messagesContainer = isOverlay ? dom.overlayMessages : dom.messages;
+  const wasPinnedToBottom = isPinnedToBottom(messagesContainer);
+
   input.style.height = "auto";
-  const maxHeight = input === dom.overlayMessageInput ? 86 : 118;
-  const minHeight = input === dom.overlayMessageInput ? 28 : 36;
+  const maxHeight = isOverlay ? 86 : 118;
+  const minHeight = isOverlay ? 28 : 36;
   input.style.height = `${Math.min(input.scrollHeight, maxHeight)}px`;
   const wrapper = input.closest(".input-wrapper");
   if (wrapper) {
@@ -152,6 +168,7 @@ export function autoResizeMessageInput(input) {
   }
   input.scrollTop = input.scrollHeight;
   syncComposerScrollbar(input);
+  queuePinnedChatScrollSync(input, isOverlay, wasPinnedToBottom);
 }
 
 export function buildEmojiPicker() {
@@ -252,4 +269,31 @@ function syncComposerScrollbar(input) {
   thumb.style.height = `${thumbHeight}px`;
   thumb.style.transform = `translateY(${top}px)`;
   shell.setAttribute("data-scrollbar-visible", "true");
+}
+
+function isPinnedToBottom(container) {
+  if (!container) return false;
+  const threshold = 10;
+  const distanceFromBottom = container.scrollHeight - container.scrollTop - container.clientHeight;
+  return distanceFromBottom <= threshold;
+}
+
+function queuePinnedChatScrollSync(input, isOverlay, shouldSync) {
+  if (!shouldSync) return;
+
+  const previousFrameId = pendingComposerScrollSync.get(input);
+  if (previousFrameId != null) {
+    window.cancelAnimationFrame(previousFrameId);
+  }
+
+  const frameId = window.requestAnimationFrame(() => {
+    pendingComposerScrollSync.delete(input);
+    const messagesContainer = isOverlay ? dom.overlayMessages : dom.messages;
+    if (!messagesContainer) return;
+
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    checkScrollPosition(isOverlay);
+  });
+
+  pendingComposerScrollSync.set(input, frameId);
 }

@@ -154,7 +154,7 @@ export function showSlowLoadDialog(message) {
 }
 
 export function showResumeVideoDialog(message) {
-  if (!dom.resumeVideoDialog) {
+  if (!dom.resumeVideoPopup) {
     return Promise.resolve(false);
   }
 
@@ -164,17 +164,20 @@ export function showResumeVideoDialog(message) {
     pendingResumeVideoDialogResolver(false);
     pendingResumeVideoDialogResolver = null;
   }
-  if (dom.resumeVideoDialog.open) {
-    dom.resumeVideoDialog.close();
+  if (dom.resumeVideoPopup.hidden === false) {
+    dismissResumeVideoDialog();
   }
 
-  if (dom.resumeVideoDialogMessage && message) {
-    dom.resumeVideoDialogMessage.textContent = message;
+  if (dom.resumeVideoPopupMessage && message) {
+    dom.resumeVideoPopupMessage.textContent = message;
   }
 
   return new Promise((resolve) => {
     pendingResumeVideoDialogResolver = resolve;
-    dom.resumeVideoDialog.showModal();
+    dom.resumeVideoPopup.hidden = false;
+    window.setTimeout(() => {
+      dom.cancelResumeVideoDialogButton?.focus();
+    }, 0);
   });
 }
 
@@ -238,7 +241,7 @@ function resolveSlowLoadDialog(confirmed) {
 }
 
 function initializeResumeVideoDialog() {
-  if (resumeVideoDialogInitialized || !dom.resumeVideoDialog) return;
+  if (resumeVideoDialogInitialized || !dom.resumeVideoPopup) return;
 
   dom.confirmResumeVideoDialogButton?.addEventListener("click", () => {
     resolveResumeVideoDialog(true);
@@ -252,10 +255,13 @@ function initializeResumeVideoDialog() {
     resolveResumeVideoDialog(false);
   });
 
-  dom.resumeVideoDialog.addEventListener("cancel", (event) => {
-    event.preventDefault();
-    resolveResumeVideoDialog(false);
+  dom.resumeVideoPopup.addEventListener("click", (event) => {
+    if (event.target === dom.resumeVideoPopup) {
+      resolveResumeVideoDialog(false);
+    }
   });
+
+  window.addEventListener("keydown", handleResumePopupKeydown);
 
   resumeVideoDialogInitialized = true;
 }
@@ -274,7 +280,13 @@ function dismissSlowLoadDialog() {
 }
 
 function dismissResumeVideoDialog() {
-  if (dom.resumeVideoDialog?.open) {
-    dom.resumeVideoDialog.close();
+  if (dom.resumeVideoPopup) {
+    dom.resumeVideoPopup.hidden = true;
   }
+}
+
+function handleResumePopupKeydown(event) {
+  if (event.key !== "Escape") return;
+  if (!dom.resumeVideoPopup || dom.resumeVideoPopup.hidden) return;
+  resolveResumeVideoDialog(false);
 }

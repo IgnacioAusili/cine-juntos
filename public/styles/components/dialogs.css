@@ -37,6 +37,19 @@
   justify-content: center;
 }
 
+.player-inline-dialog {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.36);
+  backdrop-filter: blur(8px);
+  z-index: 18;
+  box-sizing: border-box;
+}
+
 .app-dialog::backdrop {
   background: rgba(4, 5, 6, 0.72);
   backdrop-filter: blur(8px);
@@ -73,7 +86,8 @@
   transform: none;
 }
 
-.player-dialog-card {
+.player-dialog-card,
+.player-inline-dialog-card {
   position: relative;
   width: 420px;
   max-width: calc(100vw - 32px);

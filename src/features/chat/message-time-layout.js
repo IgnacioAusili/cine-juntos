@@ -28,7 +28,6 @@ export function adjustMessageTimes() {
 
       const style = window.getComputedStyle(content);
       const lineHeight = Number.parseFloat(style.lineHeight);
-      const contentHeight = content.offsetHeight;
       const hasRichContent = Boolean(
         content.querySelector(".message-media, .message-video, .message-media-link, .message-reply"),
       );
@@ -37,7 +36,12 @@ export function adjustMessageTimes() {
         applySingleLineMessageTimeLayout(bubble, time);
 
         const singleLineHeight = content.offsetHeight;
-        if (singleLineHeight <= lineHeight + TIME_LAYOUT_TOLERANCE_PX) {
+        const singleLineWidthOverflow = bubble.scrollWidth > bubble.clientWidth + TIME_LAYOUT_TOLERANCE_PX;
+
+        if (
+          singleLineHeight <= lineHeight + TIME_LAYOUT_TOLERANCE_PX &&
+          !singleLineWidthOverflow
+        ) {
           return;
         }
       }
@@ -65,5 +69,12 @@ function applySingleLineMessageTimeLayout(bubble, time) {
 }
 
 function applyMultiLineMessageTimeLayout(bubble, time) {
-  return;
+  bubble.classList.remove("message-bubble--single-line");
+  time.classList.remove("message-time--inline");
+  time.style.removeProperty("position");
+  time.style.removeProperty("right");
+  time.style.removeProperty("bottom");
+  time.style.removeProperty("margin-left");
+  time.style.removeProperty("padding-left");
+  time.style.removeProperty("transform");
 }

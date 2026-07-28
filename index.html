@@ -364,6 +364,32 @@
                 </div>
               </div>
 
+              <div
+                id="resumeVideoPopup"
+                class="player-inline-dialog"
+                hidden
+                aria-modal="true"
+                aria-labelledby="resumeVideoPopupTitle"
+                aria-describedby="resumeVideoPopupMessage"
+              >
+                <div class="player-inline-dialog-card" role="document">
+                  <button id="closeResumeVideoDialogButton" type="button" class="dialog-close" aria-label="Cerrar diálogo">
+                    <span data-lucide="x" aria-hidden="true"></span>
+                  </button>
+                  <div class="player-dialog-header">
+                    <span class="dialog-title-icon" aria-hidden="true" data-lucide="triangle-alert"></span>
+                    <h2 id="resumeVideoPopupTitle">Retomar reproducción</h2>
+                  </div>
+                  <p id="resumeVideoPopupMessage" class="player-dialog-message">
+                    Este video ya lo habías dejado en 0:00. ¿Quieres saltar a ese tiempo anterior?
+                  </p>
+                  <div class="player-dialog-actions">
+                    <button id="cancelResumeVideoDialogButton" type="button" class="button">Cancelar</button>
+                    <button id="confirmResumeVideoDialogButton" type="button" class="button warning">Saltar al tiempo guardado</button>
+                  </div>
+                </div>
+              </div>
+
               <aside class="player-chat" id="playerChat" aria-label="Chat dentro del video">
                 <div class="player-chat-header">
                   <button
@@ -665,26 +691,6 @@
         <div class="player-dialog-actions">
           <button id="cancelSlowLoadDialogButton" type="button" class="button" autofocus>Cancelar</button>
           <button id="confirmSlowLoadDialogButton" type="button" class="button warning">Recargar video</button>
-        </div>
-      </div>
-    </dialog>
-
-    <dialog
-      id="resumeVideoDialog"
-      class="app-dialog player-dialog"
-      aria-modal="true"
-      aria-labelledby="resumeVideoDialogTitle"
-      aria-describedby="resumeVideoDialogMessage"
-    >
-      <div class="dialog-shell">
-        <button id="closeResumeVideoDialogButton" type="button" class="dialog-close" aria-label="Cerrar diálogo">×</button>
-        <div class="dialog-content dialog-content-left">
-          <h2 id="resumeVideoDialogTitle">Retomar reproducción</h2>
-          <p id="resumeVideoDialogMessage">Este video ya lo habías dejado en 0:00. ¿Quieres saltar a ese tiempo anterior?</p>
-          <div class="dialog-actions">
-            <button id="cancelResumeVideoDialogButton" type="button" class="button">Cancelar</button>
-            <button id="confirmResumeVideoDialogButton" type="button" class="button primary">Saltar al tiempo guardado</button>
-          </div>
         </div>
       </div>
     </dialog>

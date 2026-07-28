@@ -8,6 +8,7 @@ import {
 } from "../../core/state.js";
 import {
   formatSeconds,
+  formatClockTime,
 } from "../../core/utils.js";
 import {
   hydrateIcons,
@@ -23,15 +24,24 @@ import {
   publishState,
 } from "./player-sync-logic.js";
 
-import { showErrorDialog, showLoadReplaceDialog } from "../session-ui.js";
+import {
+  showErrorDialog,
+  showLoadReplaceDialog,
+  showResumeVideoDialog,
+  showSlowLoadDialog,
+} from "../session-ui.js";
 
 const SKIP_LOAD_REPLACE_DIALOG_KEY = "cine-juntos-skip-load-replace-dialog";
+const VIDEO_RESUME_STORAGE_KEY = "cine-juntos-video-resume-times";
+const SLOW_LOAD_DIALOG_DELAY_MS = 5 * 60 * 1000;
+const MIN_RESUME_PROMPT_SECONDS = 5;
 let isDurationShowingRemaining = false;
 let pendingLoadCompletionAnnouncement = false;
 
 export function initializePlayer() {
   isDurationShowingRemaining = false;
   pendingLoadCompletionAnnouncement = false;
+  clearSlowLoadPromptTracking();
   setVideoStatus("empty", "Sin contenido");
   syncPlayerControls(true);
 }
@@ -106,6 +116,7 @@ export function wirePlayerCoreEvents() {
 
   dom.videoPlayer.addEventListener("play", () => {
     rememberPlaybackPosition();
+    persistPlaybackPosition();
     setVideoStatus("loaded", "En vivo");
     logEvent("video", `Play local en ${formatSeconds(dom.videoPlayer.currentTime)}.`);
     syncPlayerControls();
@@ -118,6 +129,7 @@ export function wirePlayerCoreEvents() {
   dom.videoPlayer.addEventListener("pause", () => {
     if (dom.videoPlayer.ended) return;
     rememberPlaybackPosition();
+    persistPlaybackPosition(true);
     setVideoStatus("loaded", "Incorporado");
     logEvent("video", `Pausa local en ${formatSeconds(dom.videoPlayer.currentTime)}.`);
     state.player.lastManualPauseAt = Date.now();
@@ -128,11 +140,13 @@ export function wirePlayerCoreEvents() {
   dom.videoPlayer.addEventListener("ended", () => {
     setVideoStatus("loaded", "Incorporado");
     logEvent("video", "Video terminado.");
+    persistPlaybackPosition(true);
     syncPlayerControls(true);
   });
 
   dom.videoPlayer.addEventListener("seeked", () => {
     rememberPlaybackPosition();
+    persistPlaybackPosition(true);
     logEvent("video", `Seek local a ${formatSeconds(dom.videoPlayer.currentTime)}.`);
     state.player.lastManualSeekAt = Date.now();
     syncPlayerControls(true);
@@ -149,8 +163,10 @@ export function wirePlayerCoreEvents() {
     isDurationShowingRemaining = false;
     dom.emptyPlayer.classList.add("hidden");
     setVideoStatus("loaded", "Incorporado");
+    clearSlowLoadPromptTracking();
     announceVideoLoadCompletion();
     syncPlayerControls(true);
+    void maybePromptResumePlayback();
     attemptPlaybackRecovery("loadedmetadata");
   });
 
@@ -172,6 +188,7 @@ export function wirePlayerCoreEvents() {
 
   dom.videoPlayer.addEventListener("timeupdate", () => {
     rememberPlaybackPosition();
+    persistPlaybackPosition();
     syncPlayerControls();
   });
 
@@ -188,6 +205,7 @@ export function wirePlayerCoreEvents() {
   dom.videoPlayer.addEventListener("error", () => {
     setVideoStatus("error", "Error");
     logEvent("error", "El navegador no pudo cargar el video.");
+    clearSlowLoadPromptTracking();
     syncPlayerControls(true);
     pauseRoomForPlaybackIssue("error");
     
@@ -205,6 +223,7 @@ export function wirePlayerCoreEvents() {
 
   dom.videoPlayer.addEventListener("emptied", () => {
     isDurationShowingRemaining = false;
+    clearSlowLoadPromptTracking();
     syncPlayerControls(true);
   });
 }
@@ -213,6 +232,8 @@ export function loadVideoFromUrl(source, origin) {
   if (!source) {
     setVideoStatus("empty", "Sin contenido");
     pendingLoadCompletionAnnouncement = false;
+    state.player.resumePromptSource = "";
+    clearSlowLoadPromptTracking();
     logEvent("video", "No se cargo video: falta URL.");
     return;
   }
@@ -247,12 +268,15 @@ async function handleManualLoadRequest() {
 export function setVideoSource(source, shouldAnnounce) {
   isDurationShowingRemaining = false;
   pendingLoadCompletionAnnouncement = Boolean(shouldAnnounce);
+  state.player.resumePromptSource = shouldAnnounce ? getVideoSourceKey(source) : "";
+  clearSlowLoadPromptTracking();
   dom.videoPlayer.src = source;
   setVideoStatus("loading", "Cargando");
   dom.videoPlayer.load();
   dom.emptyPlayer.classList.add("hidden");
   dom.videoUrlInput.value = source;
   syncPlayerControls(true);
+  armSlowLoadPrompt(source);
   if (shouldAnnounce) logEvent("video", "Carga de video iniciada.");
 }
 
@@ -312,6 +336,10 @@ function commitSeekPosition() {
   if (!Number.isFinite(nextTime)) return;
   const safeTime = Math.max(0, nextTime);
   state.player.lastKnownTime = safeTime;
+  logEvent(
+    "debug",
+    `Seek local solicitado: input=${formatSeconds(nextTime)} safe=${formatSeconds(safeTime)} lastKnown=${formatSeconds(state.player.lastKnownTime)}.`,
+  );
   dom.videoPlayer.currentTime = safeTime;
   syncPlayerControls(true);
 }
@@ -447,4 +475,160 @@ function shouldConfirmLoadReplacement() {
 
 function isVideoCurrentlyPlaying() {
   return hasLoadedMediaSource() && !dom.videoPlayer.paused && !dom.videoPlayer.ended;
+}
+
+function clearSlowLoadPromptTracking() {
+  if (state.player.slowLoadPromptTimeoutId) {
+    window.clearTimeout(state.player.slowLoadPromptTimeoutId);
+  }
+  state.player.slowLoadPromptTimeoutId = null;
+  state.player.slowLoadPromptSource = "";
+}
+
+function armSlowLoadPrompt(source) {
+  const sourceKey = getVideoSourceKey(source);
+  if (!sourceKey) return;
+
+  state.player.slowLoadPromptSource = sourceKey;
+  state.player.slowLoadPromptTimeoutId = window.setTimeout(async () => {
+    const activeSource = getCurrentVideoSourceKey();
+    const stillLoading = !dom.videoPlayer.error && !dom.videoPlayer.ended && (
+      dom.videoPlayer.networkState === HTMLMediaElement.NETWORK_LOADING ||
+      dom.videoPlayer.readyState < HTMLMediaElement.HAVE_FUTURE_DATA
+    );
+
+    if (!activeSource || activeSource !== sourceKey || !stillLoading) {
+      return;
+    }
+
+    clearSlowLoadPromptTracking();
+    const confirmed = await showSlowLoadDialog(
+      "Vaya, parece que esta tardando en cargar. ¿Quieres intentar recargar el video solo para ti?",
+    );
+    if (confirmed && getCurrentVideoSourceKey() === sourceKey) {
+      reloadVideoLocally();
+    }
+  }, SLOW_LOAD_DIALOG_DELAY_MS);
+}
+
+function reloadVideoLocally() {
+  const source = getCurrentVideoSourceKey();
+  if (!source) return;
+
+  clearSlowLoadPromptTracking();
+  setVideoStatus("loading", "Cargando");
+  dom.videoPlayer.load();
+  syncPlayerControls(true);
+  logEvent("video", "Recarga local del video solicitada.");
+  armSlowLoadPrompt(source);
+}
+
+async function maybePromptResumePlayback() {
+  const sourceKey = getCurrentVideoSourceKey();
+  if (!sourceKey || state.player.resumePromptSource !== sourceKey) {
+    state.player.resumePromptSource = "";
+    return;
+  }
+
+  const resumeTime = getStoredResumeTime(sourceKey);
+  state.player.resumePromptSource = "";
+  if (!Number.isFinite(resumeTime) || resumeTime < MIN_RESUME_PROMPT_SECONDS) {
+    return;
+  }
+
+  const confirmed = await showResumeVideoDialog(
+    `Este video ya lo habías dejado en ${formatClockTime(resumeTime)}. ¿Quieres saltar a ese tiempo anterior?`,
+  );
+  if (!confirmed || getCurrentVideoSourceKey() !== sourceKey) return;
+
+  jumpToResumeTime(resumeTime);
+}
+
+function jumpToResumeTime(resumeTime) {
+  const safeTime = Math.max(0, Number(resumeTime) || 0);
+  const previousSuppress = state.player.suppressVideoEvents;
+  state.player.suppressVideoEvents = true;
+  const restoreSuppression = () => {
+    if (!state.player.remoteStateActive) {
+      state.player.suppressVideoEvents = previousSuppress;
+    }
+  };
+  dom.videoPlayer.addEventListener("seeked", restoreSuppression, { once: true });
+  try {
+    dom.videoPlayer.currentTime = safeTime;
+    state.player.lastKnownTime = safeTime;
+    syncPlayerControls(true);
+    logEvent("video", `Reanudación local en ${formatSeconds(safeTime)}.`);
+  } finally {
+    window.setTimeout(() => {
+      restoreSuppression();
+    }, 280);
+  }
+}
+
+function persistPlaybackPosition(force = false) {
+  const sourceKey = getCurrentVideoSourceKey();
+  if (!sourceKey) return;
+
+  const currentTime = Number(dom.videoPlayer.currentTime);
+  if (!Number.isFinite(currentTime)) return;
+
+  const safeTime = Math.max(0, currentTime);
+  if (!force && safeTime < MIN_RESUME_PROMPT_SECONDS) return;
+  if (!force && Date.now() - state.player.lastResumePersistAt < 5000) return;
+
+  state.player.lastResumePersistAt = Date.now();
+  setStoredResumeTime(sourceKey, safeTime);
+}
+
+function getStoredResumeTime(sourceKey) {
+  const store = readResumeStore();
+  const time = Number(store[sourceKey]);
+  return Number.isFinite(time) ? Math.max(0, time) : 0;
+}
+
+function setStoredResumeTime(sourceKey, time) {
+  const store = readResumeStore();
+  const safeTime = Math.max(0, Number(time) || 0);
+  if (!safeTime) {
+    delete store[sourceKey];
+  } else {
+    store[sourceKey] = safeTime;
+  }
+
+  try {
+    localStorage.setItem(VIDEO_RESUME_STORAGE_KEY, JSON.stringify(store));
+  } catch (error) {
+    console.warn("No se pudo guardar el tiempo de reanudación del video:", error);
+  }
+}
+
+function readResumeStore() {
+  try {
+    const raw = localStorage.getItem(VIDEO_RESUME_STORAGE_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function getCurrentVideoSourceKey() {
+  return getVideoSourceKey(
+    dom.videoPlayer.currentSrc ||
+    dom.videoPlayer.getAttribute("src") ||
+    dom.videoUrlInput.value.trim(),
+  );
+}
+
+function getVideoSourceKey(source) {
+  const normalized = String(source || "").trim();
+  if (!normalized) return "";
+
+  try {
+    return new URL(normalized, window.location.href).href;
+  } catch {
+    return normalized;
+  }
 }

@@ -27,7 +27,10 @@ export function handleRemoteState(statePayload) {
   if (!statePayload || statePayload.from === state.session.clientId) return;
   rememberParticipant(statePayload.from, statePayload.name);
   state.player.lastRemoteState = statePayload;
-  logEvent("sync:recv", `${statePayload.action || "evento"} de ${statePayload.name || "otro usuario"} en ${formatSeconds(statePayload.time)}.`);
+  logEvent(
+    "sync:recv",
+    `${statePayload.action || "evento"} de ${statePayload.name || "otro usuario"} en ${formatSeconds(statePayload.time)} (paused=${String(Boolean(statePayload.paused))}, sentAt=${String(statePayload.sentAt || 0)}).`,
+  );
 
   state.player.lastActionAt = Date.now();
   state.player.lastActionAuthor = statePayload.from;
@@ -47,6 +50,10 @@ async function applyRemoteState(statePayload, force = false) {
     }
 
     const targetTime = getRemoteTargetTime(statePayload);
+    logEvent(
+      "debug",
+      `Aplicar remoto: action=${statePayload.action || "evento"} base=${formatSeconds(statePayload.time)} target=${formatSeconds(targetTime)} current=${formatSeconds(dom.videoPlayer.currentTime)} paused=${String(Boolean(statePayload.paused))}.`,
+    );
     if (Number.isFinite(targetTime) && (force || Math.abs(dom.videoPlayer.currentTime - targetTime) > MAX_DRIFT_SECONDS)) {
       dom.videoPlayer.currentTime = Math.max(0, targetTime);
     }
@@ -258,6 +265,10 @@ export function publishState(action, overrides = {}) {
   ) {
     logEvent("antilag", `Acción '${action}' bloqueada temporalmente (cooldown de otro usuario activo).`);
     setSyncStatus("Espera 2s para interactuar (cooldown).");
+    logEvent(
+      "debug",
+      `Anti-lag activo para action=${action} lastAuthor=${state.player.lastActionAuthor.slice(-6)} delta=${localNow - state.player.lastActionAt}ms lastRemote=${state.player.lastRemoteState ? formatSeconds(state.player.lastRemoteState.time) : "none"}.`,
+    );
 
     if (action === "seek") {
       return;
@@ -296,6 +307,10 @@ export function publishState(action, overrides = {}) {
   const payloadTime = Number.isFinite(Number(overrides.time))
     ? Math.max(0, Number(overrides.time))
     : getPlaybackSnapshotTime();
+  logEvent(
+    "debug",
+    `Publicar ${action}: payloadTime=${formatSeconds(payloadTime)} current=${formatSeconds(dom.videoPlayer.currentTime)} lastKnown=${formatSeconds(state.player.lastKnownTime)} paused=${String(dom.videoPlayer.paused)} overrides=${JSON.stringify(overrides)}.`,
+  );
   const payload = {
     action,
     from: state.session.clientId,

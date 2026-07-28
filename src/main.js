@@ -38,8 +38,15 @@ import {
   wirePlayerEvents,
 } from "./features/player/index.js";
 import { joinRoom, wireRoomEvents } from "./features/room.js";
+import {
+  showSlowLoadDialog,
+} from "./features/session-ui.js";
+import {
+  EXAMPLE_VIDEO_URL,
+} from "./core/utils.js";
 
 const requestedRoom = normalizeRoomCode(new URLSearchParams(window.location.search).get("room") || "");
+const isSlowLoadDialogTest = new URLSearchParams(window.location.search).get("slowLoadDialogTest") === "1";
 
 document.body.classList.remove("app-ready");
 applyInitialDefaults();
@@ -89,6 +96,19 @@ if (requestedRoom) {
     "load",
     () => {
       void joinRoom(requestedRoom);
+    },
+    { once: true },
+  );
+}
+
+if (isSlowLoadDialogTest) {
+  window.addEventListener(
+    "load",
+    () => {
+      dom.videoUrlInput.value = EXAMPLE_VIDEO_URL;
+      void showSlowLoadDialog(
+        "Escenario de prueba: el video parece estar tardando en cargar. ¿Quieres intentar recargarlo solo para ti?",
+      );
     },
     { once: true },
   );

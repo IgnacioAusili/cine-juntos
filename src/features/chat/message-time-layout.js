@@ -33,11 +33,16 @@ export function adjustMessageTimes() {
         content.querySelector(".message-media, .message-video, .message-media-link, .message-reply"),
       );
 
-      if (!hasRichContent && Number.isFinite(lineHeight) && contentHeight <= lineHeight + TIME_LAYOUT_TOLERANCE_PX) {
+      if (!hasRichContent && Number.isFinite(lineHeight)) {
         applySingleLineMessageTimeLayout(bubble, time);
-      } else {
-        applyMultiLineMessageTimeLayout(bubble, time);
+
+        const singleLineHeight = content.offsetHeight;
+        if (singleLineHeight <= lineHeight + TIME_LAYOUT_TOLERANCE_PX) {
+          return;
+        }
       }
+
+      applyMultiLineMessageTimeLayout(bubble, time);
     });
   }
 }

@@ -104,6 +104,15 @@ function syncJoinRoomButtonState() {
   dom.joinRoomButton.disabled = !sanitizeRoomInput(dom.roomInput.value);
 }
 
+function shouldEnforceSingleActiveTabLimit() {
+  const hostname = window.location.hostname;
+  if (window.location.protocol === "file:") return false;
+  if (hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1" || hostname === "0.0.0.0") {
+    return false;
+  }
+  return true;
+}
+
 export function wireRoomEvents() {
   syncJoinRoomButtonState();
 
@@ -153,7 +162,11 @@ export async function joinRoom(rawRoomCode) {
   const activeTabs = readActiveTabs();
   const isCurrentTabAlreadyActive = activeTabs.some((record) => record.tabId === getTabId());
   const otherActiveTabs = activeTabs.filter((record) => record.tabId !== getTabId());
-  if (!isCurrentTabAlreadyActive && otherActiveTabs.length >= MAX_OPEN_TABS) {
+  if (
+    shouldEnforceSingleActiveTabLimit() &&
+    !isCurrentTabAlreadyActive &&
+    otherActiveTabs.length >= MAX_OPEN_TABS
+  ) {
     setSyncStatus("Límite de 1 sala activa alcanzado. Cerrá la otra pestaña o sala activa.");
     logEvent("room", `Bloqueado: ya hay ${otherActiveTabs.length} pestaña(s) activas en esta sesión.`);
     return;

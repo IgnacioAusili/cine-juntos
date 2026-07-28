@@ -9,7 +9,7 @@
   pointer-events: auto;
   border: 0;
   background: transparent;
-  padding: 14px 13px 8px 0;
+  padding: 0px 8px 8px 8px;
 }
 
 .overlay-messages .message {
@@ -24,6 +24,13 @@
 .overlay-messages .message.mine {
   align-self: flex-end;
   align-items: flex-end;
+}
+
+.overlay-messages .message.mine .message-bubble-row {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  max-width: calc(100% - var(--reply-swipe-reserve));
 }
 
 .overlay-messages .message-meta {
@@ -89,11 +96,16 @@
   display: inline-flex;
   align-items: flex-end;
   width: fit-content;
-  padding-right: 6px;
+  padding-right: 11px;
 }
 
 .overlay-messages .message-bubble.message-bubble--single-line .message-content {
-  flex: 1 1 auto;
+  flex: 0 0 auto;
+}
+
+.overlay-messages .message-bubble.message-bubble--single-line .message-text {
+  white-space: nowrap;
+  overflow-wrap: normal;
 }
 
 .overlay-messages .message-bubble.message-bubble--single-line .message-time {

@@ -26,10 +26,14 @@ export const playerState = {
   lastPlaybackIssueReason: "",
   lastManualPauseAt: 0,
   lastManualSeekAt: 0,
+  lastResumePersistAt: 0,
   playbackRecoveryPending: false,
   playbackRecoveryAttempting: false,
   playbackRecoveryTimeoutId: null,
   remoteStateActive: false,
+  slowLoadPromptTimeoutId: null,
+  slowLoadPromptSource: "",
+  resumePromptSource: "",
   syncStatusTimer: null,
 };
 

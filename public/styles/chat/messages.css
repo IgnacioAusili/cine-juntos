@@ -131,11 +131,16 @@
   display: inline-flex;
   align-items: flex-end;
   width: fit-content;
-  padding-right: 7px;
+  padding-right: 12px;
 }
 
 .message-bubble.message-bubble--single-line .message-content {
-  flex: 1 1 auto;
+  flex: 0 0 auto;
+}
+
+.message-bubble.message-bubble--single-line .message-text {
+  white-space: nowrap;
+  overflow-wrap: normal;
 }
 
 .message-bubble.message-bubble--single-line .message-time {

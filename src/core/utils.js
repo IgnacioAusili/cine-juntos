@@ -1,5 +1,5 @@
 export const FIREBASE_VERSION = "10.12.5";
-export const EXAMPLE_VIDEO_URL = "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4";
+export const EXAMPLE_VIDEO_URL = "https://cdn.truefilesize.com/mp4/sample-200mb.mp4";
 export const EMOJIS = ["😀", "😂", "😍", "🥰", "😎", "😮", "😢", "😡", "👍", "👏", "🔥", "✨", "❤️", "💜", "🍿", "🎬", "🌙", "⭐"];
 export const REMOTE_IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".gif", ".webp", ".avif", ".bmp", ".svg"];
 export const REMOTE_VIDEO_EXTENSIONS = [".mp4", ".webm", ".ogg", ".mov", ".m4v"];

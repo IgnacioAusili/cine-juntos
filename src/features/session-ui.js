@@ -77,7 +77,11 @@ export function setConnection(mode, label) {
 
 let errorDialogInitialized = false;
 let confirmLoadDialogInitialized = false;
+let slowLoadDialogInitialized = false;
+let resumeVideoDialogInitialized = false;
 let pendingLoadDialogResolver = null;
+let pendingSlowLoadDialogResolver = null;
+let pendingResumeVideoDialogResolver = null;
 
 export function showErrorDialog(message) {
   if (!dom.errorDialog) return;
@@ -124,6 +128,56 @@ export function showLoadReplaceDialog(message) {
   });
 }
 
+export function showSlowLoadDialog(message) {
+  if (!dom.slowLoadDialog) {
+    return Promise.resolve(false);
+  }
+
+  initializeSlowLoadDialog();
+  dismissResumeVideoDialog();
+  if (pendingSlowLoadDialogResolver) {
+    pendingSlowLoadDialogResolver(false);
+    pendingSlowLoadDialogResolver = null;
+  }
+  if (dom.slowLoadDialog.open) {
+    dom.slowLoadDialog.close();
+  }
+
+  if (dom.slowLoadDialogMessage && message) {
+    dom.slowLoadDialogMessage.textContent = message;
+  }
+
+  return new Promise((resolve) => {
+    pendingSlowLoadDialogResolver = resolve;
+    dom.slowLoadDialog.showModal();
+  });
+}
+
+export function showResumeVideoDialog(message) {
+  if (!dom.resumeVideoDialog) {
+    return Promise.resolve(false);
+  }
+
+  initializeResumeVideoDialog();
+  dismissSlowLoadDialog();
+  if (pendingResumeVideoDialogResolver) {
+    pendingResumeVideoDialogResolver(false);
+    pendingResumeVideoDialogResolver = null;
+  }
+  if (dom.resumeVideoDialog.open) {
+    dom.resumeVideoDialog.close();
+  }
+
+  if (dom.resumeVideoDialogMessage && message) {
+    dom.resumeVideoDialogMessage.textContent = message;
+  }
+
+  return new Promise((resolve) => {
+    pendingResumeVideoDialogResolver = resolve;
+    dom.resumeVideoDialog.showModal();
+  });
+}
+
 function initializeConfirmLoadDialog() {
   if (confirmLoadDialogInitialized || !dom.confirmLoadDialog) return;
 
@@ -151,4 +205,76 @@ function resolveLoadReplaceDialog(confirmed) {
   const resolver = pendingLoadDialogResolver;
   pendingLoadDialogResolver = null;
   resolver?.({ confirmed, skipFutureWarnings });
+}
+
+function initializeSlowLoadDialog() {
+  if (slowLoadDialogInitialized || !dom.slowLoadDialog) return;
+
+  dom.confirmSlowLoadDialogButton?.addEventListener("click", () => {
+    resolveSlowLoadDialog(true);
+  });
+
+  dom.cancelSlowLoadDialogButton?.addEventListener("click", () => {
+    resolveSlowLoadDialog(false);
+  });
+
+  dom.closeSlowLoadDialogButton?.addEventListener("click", () => {
+    resolveSlowLoadDialog(false);
+  });
+
+  dom.slowLoadDialog.addEventListener("cancel", (event) => {
+    event.preventDefault();
+    resolveSlowLoadDialog(false);
+  });
+
+  slowLoadDialogInitialized = true;
+}
+
+function resolveSlowLoadDialog(confirmed) {
+  dismissSlowLoadDialog();
+  const resolver = pendingSlowLoadDialogResolver;
+  pendingSlowLoadDialogResolver = null;
+  resolver?.(confirmed);
+}
+
+function initializeResumeVideoDialog() {
+  if (resumeVideoDialogInitialized || !dom.resumeVideoDialog) return;
+
+  dom.confirmResumeVideoDialogButton?.addEventListener("click", () => {
+    resolveResumeVideoDialog(true);
+  });
+
+  dom.cancelResumeVideoDialogButton?.addEventListener("click", () => {
+    resolveResumeVideoDialog(false);
+  });
+
+  dom.closeResumeVideoDialogButton?.addEventListener("click", () => {
+    resolveResumeVideoDialog(false);
+  });
+
+  dom.resumeVideoDialog.addEventListener("cancel", (event) => {
+    event.preventDefault();
+    resolveResumeVideoDialog(false);
+  });
+
+  resumeVideoDialogInitialized = true;
+}
+
+function resolveResumeVideoDialog(confirmed) {
+  dismissResumeVideoDialog();
+  const resolver = pendingResumeVideoDialogResolver;
+  pendingResumeVideoDialogResolver = null;
+  resolver?.(confirmed);
+}
+
+function dismissSlowLoadDialog() {
+  if (dom.slowLoadDialog?.open) {
+    dom.slowLoadDialog.close();
+  }
+}
+
+function dismissResumeVideoDialog() {
+  if (dom.resumeVideoDialog?.open) {
+    dom.resumeVideoDialog.close();
+  }
 }

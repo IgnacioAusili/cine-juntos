@@ -1,7 +1,7 @@
 // Layout del chat externo e interno: visibilidad, estilo, dock y collapse.
 import { dom } from "../../core/dom.js";
 import { state, logEvent } from "../../core/state.js";
-import { CHAT_DOCKS, CHAT_DOCK_META } from "../../core/utils.js";
+import { CHAT_DOCKS, CHAT_DOCK_META, withShortcutHint } from "../../core/utils.js";
 import { hydrateIcons, refreshTooltipForTarget } from "../icons-tooltips.js";
 import { focusFullscreenWorkspace } from "../session-ui.js";
 import {
@@ -15,15 +15,13 @@ const AUTO_COLLAPSE_DELAY_MS = 3200;
 const AUTO_EXPAND_INSIDE_KEY = "cine-juntos-chat-auto-expand-inside";
 const AUTO_EXPAND_EXTERNAL_KEY = "cine-juntos-chat-auto-expand-external";
 
-function getAutoExpandTooltip(label, enabled) {
-  return enabled
-    ? `Autoexpandir ${label}: activado. Se abre solo con mensajes y se oculta al enviar.`
-    : `Autoexpandir ${label}: desactivado.`;
+function getAutoExpandTooltip() {
+  return "Se abre al recibir mensajes y se oculta al responder";
 }
 
 function updateAutoExpandSwitch(button, enabled, label) {
   if (!button) return;
-  const tooltip = getAutoExpandTooltip(label, enabled);
+  const tooltip = getAutoExpandTooltip();
   button.classList.toggle("active", enabled);
   button.setAttribute("aria-checked", String(enabled));
   button.setAttribute("aria-label", `Autoexpandir ${label}`);
@@ -67,18 +65,48 @@ export function setInsideChatVisible(visible) {
   dom.playerFrame.classList.toggle("chat-inside-open", visible);
   dom.playerChatToggleButton.classList.toggle("active", visible);
   dom.playerChatToggleButton.setAttribute("aria-pressed", String(visible));
-  const tooltipLabel = visible ? "Ocultar chat" : "Mostrar chat";
-  dom.playerChatToggleButton.dataset.tooltip = tooltipLabel;
-  dom.playerChatToggleButton.setAttribute("aria-label", tooltipLabel);
+  const shortcutTooltip = withShortcutHint(visible ? "Ocultar chat" : "Mostrar chat", "Tab");
+  dom.playerChatToggleButton.dataset.tooltip = shortcutTooltip;
+  dom.playerChatToggleButton.setAttribute("aria-label", shortcutTooltip);
   dom.playerChatToggleButton.removeAttribute("title");
-  refreshTooltipForTarget(dom.playerChatToggleButton);
 
   if (visible) {
     dom.overlayMessages.scrollTop = dom.overlayMessages.scrollHeight;
   }
+  syncInsideChatPanelOffset();
+  if (visible) {
+    window.requestAnimationFrame(() => {
+      dom.overlayMessageInput?.focus({ preventScroll: true });
+    });
+  } else if (document.activeElement && dom.playerFrame.contains(document.activeElement)) {
+    window.requestAnimationFrame(() => {
+      if (dom.videoPlayer) {
+        dom.videoPlayer.tabIndex = -1;
+        dom.videoPlayer.focus({ preventScroll: true });
+      } else {
+        dom.playerFrame?.focus?.({ preventScroll: true });
+      }
+    });
+  }
+  refreshTooltipForTarget(dom.playerChatToggleButton);
   syncUnreadBadgesWithVisibility();
   scheduleMessageTimeAdjustment();
   logEvent("ui", visible ? "Chat interno visible." : "Chat interno oculto.");
+}
+
+export function syncInsideChatPanelOffset() {
+  if (!dom.playerFrame) return;
+
+  const isFullscreen = document.body.classList.contains("fullscreen-mode") || Boolean(document.fullscreenElement);
+  if (!isFullscreen || !dom.playerActions) {
+    dom.playerFrame.style.removeProperty("--inside-chat-top-offset");
+    return;
+  }
+
+  const frameRect = dom.playerFrame.getBoundingClientRect();
+  const actionsRect = dom.playerActions.getBoundingClientRect();
+  const offset = Math.max(48, Math.round(actionsRect.bottom - frameRect.top + 10));
+  dom.playerFrame.style.setProperty("--inside-chat-top-offset", `${offset}px`);
 }
 
 export function setInsideChatStyle(style) {

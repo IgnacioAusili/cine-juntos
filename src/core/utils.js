@@ -1,8 +1,38 @@
 export const FIREBASE_VERSION = "10.12.5";
 export const EXAMPLE_VIDEO_URL = "https://cdn.truefilesize.com/mp4/sample-200mb.mp4";
-export const EMOJIS = ["😀", "😂", "😍", "🥰", "😎", "😮", "😢", "😡", "👍", "👏", "🔥", "✨", "❤️", "💜", "🍿", "🎬", "🌙", "⭐"];
+export const EMOJIS = [
+  "😳",
+  "🙈",
+  "🫣",
+  "😏",
+  "😉",
+  "🥺",
+  "🥹",
+  "😔",
+  "😥",
+  "😭",
+  "💔",
+  "😮‍💨",
+  "🤔",
+  "🤫",
+  "🤨",
+  "😕",
+  "😒",
+  "🤯",
+  "😡",
+  "❌",
+  "👎",
+  "✅",
+  "👍",
+  "🥰",
+  "🤤",
+  "🤮",
+  "🥳",
+  "🙂‍↕️",
+];
 export const REMOTE_IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".gif", ".webp", ".avif", ".bmp", ".svg"];
 export const REMOTE_VIDEO_EXTENSIONS = [".mp4", ".webm", ".ogg", ".mov", ".m4v"];
+export const CHAT_VIDEO_PREVIEW_MAX_SECONDS = 5 * 60;
 export const MAX_RENDERED_MESSAGES = 100;
 export const MAX_ROOM_PARTICIPANTS = 8;
 export const CHAT_DOCKS = ["right", "bottom", "top"];
@@ -16,7 +46,7 @@ export const FULLSCREEN_SNAP_THRESHOLD = 52;
 export const FULLSCREEN_END_GAP = 28;
 export const MAX_DRIFT_SECONDS = 0.45;
 export const SEND_THROTTLE_MS = 650;
-export const MAX_CHARS = 600;
+export const MAX_CHARS = 300;
 
 export function hasFirebaseConfig(config) {
   return Boolean(config.apiKey && config.authDomain && config.databaseURL && config.projectId && config.appId);
@@ -68,6 +98,12 @@ export function formatClockTime(value) {
     return `${hours}:${String(minutes).padStart(2, "0")}:${seconds}`;
   }
   return `${minutes}:${seconds}`;
+}
+
+export function withShortcutHint(label, shortcut) {
+  if (!label) return "";
+  if (!shortcut) return label;
+  return `${label} (${shortcut})`;
 }
 
 export function normalizeRoomCode(value) {

@@ -10,10 +10,13 @@ import {
 import {
   EMOJIS,
   MAX_CHARS,
+  withShortcutHint,
 } from "../../core/utils.js";
 import {
   setSyncStatus,
 } from "../session-ui.js";
+import { refreshTooltipForTarget } from "../icons-tooltips.js";
+import { markParticipantActive } from "../presence.js";
 import { clearReplyTarget } from "./chat-reply.js";
 import { renderMessage } from "./chat-render.js";
 import {
@@ -26,6 +29,8 @@ import {
   renderImagePreview,
   clearPendingImage,
 } from "./image-compress.js";
+
+const floatingComposerObservers = new WeakMap();
 
 export function sendMessage(text, attachedImage) {
   if (!state.session.activeRoom || !state.session.transport) {
@@ -64,6 +69,7 @@ export function sendMessage(text, attachedImage) {
     message.videoTimestamp = videoEl.currentTime;
   }
 
+  markParticipantActive(state.session.clientId, message.name);
   state.session.transport.sendMessage(message).catch((error) => {
     console.error(error);
     logEvent("error", `No se pudo enviar mensaje: ${error.message || error}`);
@@ -84,7 +90,7 @@ export function submitMessageFrom(input) {
 
   if (!text && !hasImages) return;
 
-  if (input.value.length > MAX_CHARS) {
+  if (input.value.length >= MAX_CHARS) {
     const counter = isOverlay ? dom.overlayCharCounter : dom.mainCharCounter;
     if (counter) {
       counter.classList.add("char-counter--shake");
@@ -175,6 +181,8 @@ export function buildEmojiPicker() {
     const button = document.createElement("button");
     button.className = "emoji-option";
     button.type = "button";
+    button.setAttribute("aria-label", `Insertar ${emoji}`);
+    button.title = emoji;
     button.textContent = emoji;
     button.addEventListener("click", () => {
       insertEmoji(emoji);
@@ -220,16 +228,47 @@ export function updateCharCounter(input, isOverlay) {
   const form = isOverlay ? dom.overlayMessageForm : dom.messageForm;
   const sendBtn = isOverlay ? dom.overlayMessageSend : dom.mainMessageSend;
   const len = input.value.length;
+  const remaining = Math.max(0, MAX_CHARS - len);
+  const progress = Math.min(1, len / MAX_CHARS);
+  const isOver = len >= MAX_CHARS;
+  const isNearLimit = !isOver && remaining <= 20;
+  const progressColor = isOver
+    ? "rgba(233, 68, 68, 1)"
+    : isNearLimit
+      ? "rgba(255, 145, 72, 1)"
+      : "rgba(47, 184, 164, 1)";
+  const progressTrack = isOver
+    ? "rgba(233, 68, 68, 0.16)"
+    : isNearLimit
+      ? "rgba(255, 145, 72, 0.22)"
+      : "rgba(255, 255, 255, 0.12)";
+  const progressVisible = len > 0 ? 1 : 0;
 
   if (counter) {
     counter.textContent = `${len} / ${MAX_CHARS}`;
+    counter.setAttribute("aria-hidden", "true");
   }
 
-  const isOver = len > MAX_CHARS;
   form.classList.toggle("over-limit", isOver);
   if (sendBtn) {
     sendBtn.disabled = isOver;
     sendBtn.setAttribute("aria-disabled", String(isOver));
+    if (isOver) {
+      sendBtn.dataset.tooltip = "Borra texto para poder enviar el mensaje";
+      sendBtn.setAttribute("aria-label", "Borra texto para poder enviar");
+    } else {
+      const tooltip = withShortcutHint("Enviar mensaje", "Enter");
+      sendBtn.dataset.tooltip = tooltip;
+      sendBtn.setAttribute("aria-label", tooltip);
+    }
+    sendBtn.style.setProperty("--composer-progress", String(progress));
+    sendBtn.style.setProperty("--composer-progress-length", String(progress * 100));
+    sendBtn.style.setProperty("--composer-progress-color", progressColor);
+    sendBtn.style.setProperty("--composer-progress-track", progressTrack);
+    sendBtn.style.setProperty("--composer-progress-visible", String(progressVisible));
+    sendBtn.dataset.nearLimit = String(isNearLimit);
+    sendBtn.dataset.overLimit = String(isOver);
+    refreshTooltipForTarget(sendBtn);
   }
 }
 
@@ -241,6 +280,32 @@ export function wireComposerScrollbar(input) {
   input.addEventListener("scroll", update, { passive: true });
   window.addEventListener("resize", update, { passive: true });
   update();
+}
+
+export function wireFloatingComposerLayout() {
+  [dom.messageForm, dom.overlayMessageForm].forEach((form) => {
+    if (!form || floatingComposerObservers.has(form)) return;
+
+    const container = form.closest(".chat-area, .player-chat");
+    if (!container) return;
+
+    const updateReserve = () => {
+      const reserve = Math.ceil(form.getBoundingClientRect().height);
+      const computedStyle = window.getComputedStyle(form);
+      const bottomGap = Math.max(0, Math.round(Number.parseFloat(computedStyle.bottom) || 0));
+      const messageReserve = reserve + bottomGap + 2;
+      container.style.setProperty("--chat-composer-reserve", `${reserve}px`);
+      container.style.setProperty("--chat-message-bottom-reserve", `${messageReserve}px`);
+    };
+
+    const observer = new ResizeObserver(() => {
+      updateReserve();
+    });
+
+    floatingComposerObservers.set(form, observer);
+    observer.observe(form);
+    updateReserve();
+  });
 }
 
 function syncComposerScrollbar(input) {

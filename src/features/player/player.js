@@ -9,11 +9,12 @@ import {
 import {
   formatSeconds,
   formatClockTime,
+  withShortcutHint,
 } from "../../core/utils.js";
 import {
   hydrateIcons,
 } from "../icons-tooltips.js";
-import { sendVideoEventMessage } from "../chat/index.js";
+import { sendVideoEventMessage, setInsideChatVisible } from "../chat/index.js";
 // Import circular intencional y seguro: estas funciones se invocan en runtime,
 // no durante la carga del modulo, y player-sync-logic.js a su vez importa
 // setVideoSource y waitForVideoMetadata desde aqui.
@@ -30,11 +31,14 @@ import {
   showResumeVideoDialog,
   showSlowLoadDialog,
 } from "../session-ui.js";
+import { togglePageFullscreen } from "./fullscreen.js";
 
 const SKIP_LOAD_REPLACE_DIALOG_KEY = "cine-juntos-skip-load-replace-dialog";
 const VIDEO_RESUME_STORAGE_KEY = "cine-juntos-video-resume-times";
 const SLOW_LOAD_DIALOG_DELAY_MS = 5 * 60 * 1000;
 const MIN_RESUME_PROMPT_SECONDS = 5;
+const KEYBOARD_SEEK_STEP_SECONDS = 10;
+const KEYBOARD_VOLUME_STEP = 0.05;
 let isDurationShowingRemaining = false;
 let pendingLoadCompletionAnnouncement = false;
 
@@ -47,6 +51,8 @@ export function initializePlayer() {
 }
 
 export function wirePlayerCoreEvents() {
+  document.addEventListener("keydown", handleGlobalPlayerKeydown, true);
+
   dom.loadVideoButton.addEventListener("click", async () => {
     await handleManualLoadRequest();
   });
@@ -270,6 +276,7 @@ export function setVideoSource(source, shouldAnnounce) {
   pendingLoadCompletionAnnouncement = Boolean(shouldAnnounce);
   state.player.resumePromptSource = shouldAnnounce ? getVideoSourceKey(source) : "";
   clearSlowLoadPromptTracking();
+  clearPlaybackRecoveryTracking();
   dom.videoPlayer.src = source;
   setVideoStatus("loading", "Cargando");
   dom.videoPlayer.load();
@@ -319,6 +326,98 @@ function togglePlaybackFromControls() {
   }
 
   dom.videoPlayer.pause();
+}
+
+function handleGlobalPlayerKeydown(event) {
+  if (event.defaultPrevented) return;
+  if (event.repeat) return;
+  if (event.altKey || event.ctrlKey || event.metaKey) return;
+
+  const key = event.key;
+  if (key === "Tab") {
+    event.preventDefault();
+    setInsideChatVisible(!dom.playerFrame.classList.contains("chat-inside-open"));
+    return;
+  }
+
+  if (document.querySelector("dialog[open]")) return;
+  if (dom.resumeVideoPopup && dom.resumeVideoPopup.hidden === false) return;
+  if (isEditableTarget(event.target) || isEditableTarget(document.activeElement)) return;
+
+  if (key === "f" || key === "F") {
+    event.preventDefault();
+    void togglePageFullscreen();
+    return;
+  }
+
+  if (!hasLoadedMediaSource()) return;
+
+  if (key === " " || key === "Spacebar") {
+    event.preventDefault();
+    togglePlaybackFromControls();
+    return;
+  }
+
+  if (key === "m" || key === "M") {
+    event.preventDefault();
+    dom.videoPlayer.muted = !dom.videoPlayer.muted;
+    syncPlayerControls();
+    return;
+  }
+
+  if (key === "ArrowLeft") {
+    event.preventDefault();
+    seekVideoBy(-KEYBOARD_SEEK_STEP_SECONDS);
+    return;
+  }
+
+  if (key === "ArrowRight") {
+    event.preventDefault();
+    seekVideoBy(KEYBOARD_SEEK_STEP_SECONDS);
+    return;
+  }
+
+  if (key === "ArrowUp") {
+    event.preventDefault();
+    adjustVolumeBy(KEYBOARD_VOLUME_STEP);
+    return;
+  }
+
+  if (key === "ArrowDown") {
+    event.preventDefault();
+    adjustVolumeBy(-KEYBOARD_VOLUME_STEP);
+  }
+}
+
+function isEditableTarget(element) {
+  if (!(element instanceof HTMLElement)) return false;
+  return Boolean(
+    element.closest("input, textarea, select, [contenteditable='true']"),
+  );
+}
+
+function seekVideoBy(deltaSeconds) {
+  const duration = getFiniteDuration();
+  const currentTime = Number.isFinite(dom.videoPlayer.currentTime)
+    ? Math.max(0, dom.videoPlayer.currentTime)
+    : 0;
+  const nextTime = duration > 0
+    ? Math.min(duration, Math.max(0, currentTime + deltaSeconds))
+    : Math.max(0, currentTime + deltaSeconds);
+
+  if (nextTime === currentTime) return;
+
+  dom.videoPlayer.currentTime = nextTime;
+  syncPlayerControls(true);
+}
+
+function adjustVolumeBy(delta) {
+  const nextVolume = Math.min(1, Math.max(0, Number(dom.videoPlayer.volume || 0) + delta));
+  dom.videoPlayer.volume = nextVolume;
+  if (nextVolume > 0 && dom.videoPlayer.muted) {
+    dom.videoPlayer.muted = false;
+  }
+  syncPlayerControls();
 }
 
 function previewSeekPosition() {
@@ -374,11 +473,15 @@ function syncPlayerControls(forceSliderSync = false) {
     dom.playerDuration.dataset.mode = showRemainingDuration ? "remaining" : "total";
     dom.playerDuration.disabled = isTimeDisabled;
     const durationTooltip = isTimeDisabled
-      ? "Duración no disponible"
+      ? ""
       : showRemainingDuration
         ? "Mostrar duración total"
         : "Mostrar tiempo restante";
-    dom.playerDuration.dataset.tooltip = durationTooltip;
+    if (durationTooltip) {
+      dom.playerDuration.dataset.tooltip = durationTooltip;
+    } else {
+      dom.playerDuration.removeAttribute("data-tooltip");
+    }
     dom.playerDuration.removeAttribute("title");
     dom.playerDuration.setAttribute("aria-label", durationTooltip);
     dom.playerDuration.setAttribute("aria-pressed", showRemainingDuration ? "true" : "false");
@@ -399,7 +502,7 @@ function syncPlayerControls(forceSliderSync = false) {
     dom.playerPlayButton.disabled = !hasMedia;
     const icon = dom.playerPlayButton.querySelector("[data-lucide]");
     const isPaused = dom.videoPlayer.paused || dom.videoPlayer.ended;
-    const tooltip = isPaused ? "Reproducir video" : "Pausar video";
+    const tooltip = withShortcutHint(isPaused ? "Reproducir video" : "Pausar video", "Espacio");
     dom.playerPlayButton.dataset.tooltip = tooltip;
     dom.playerPlayButton.setAttribute("aria-label", tooltip);
     dom.playerPlayButton.removeAttribute("title");
@@ -431,9 +534,10 @@ function syncPlayerControls(forceSliderSync = false) {
       icon.innerHTML = "";
       hydrateIcons();
     }
-    const tooltip = isMuted ? "Activar sonido" : "Silenciar";
+    const tooltip = withShortcutHint(isMuted ? "Activar sonido" : "Silenciar", "M");
     dom.playerMuteButton.dataset.tooltip = tooltip;
     dom.playerMuteButton.setAttribute("aria-label", tooltip);
+    dom.playerMuteButton.removeAttribute("title");
   }
 
   if (dom.playerVolumeInput) {

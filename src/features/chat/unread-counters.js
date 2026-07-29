@@ -62,28 +62,22 @@ export function resetExternalUnread() {
 }
 
 export function syncUnreadBadgesWithVisibility() {
-  if (isInsideChatVisibleToUser()) {
+  if (isAnyChatVisibleToUser()) {
     resetInsideUnread();
-  }
-  if (isExternalChatVisibleToUser()) {
     resetExternalUnread();
   }
 }
 
 export function handleIncomingUnread() {
-  if (isInsideChatVisibleToUser()) {
+  if (isAnyChatVisibleToUser()) {
     resetInsideUnread();
+    resetExternalUnread();
   } else {
     incrementInsideUnread();
+    incrementExternalUnread();
     if (state.chat.autoExpandInsideEnabled) {
       setInsideChatVisible(true);
     }
-  }
-
-  if (isExternalChatVisibleToUser()) {
-    resetExternalUnread();
-  } else {
-    incrementExternalUnread();
     if (state.chat.autoExpandExternalEnabled) {
       setExternalChatCollapsed(false);
     }

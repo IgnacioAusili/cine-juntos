@@ -1,6 +1,6 @@
 .scroll-bottom-btn {
   position: absolute;
-  bottom: 10px;
+  bottom: calc(var(--chat-message-bottom-reserve, 132px) - 2px);
   left: 50%;
   z-index: 20;
   display: inline-flex;

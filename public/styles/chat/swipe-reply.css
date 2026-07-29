@@ -1,13 +1,15 @@
 .message-bubble-row {
   --reply-swipe-reserve: 64px;
-  display: inline-block;
+  display: flex;
   position: relative;
-  width: fit-content;
+  width: 100%;
   max-width: calc(100% - var(--reply-swipe-reserve));
+  align-items: stretch;
   isolation: isolate;
 }
 
 .message-bubble-row > .message-bubble {
+  flex: 0 1 auto;
   max-width: 100%;
   min-width: 0;
   touch-action: pan-y;

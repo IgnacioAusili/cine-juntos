@@ -95,8 +95,50 @@ function removeActiveTabRecord() {
   localStorage.removeItem(getActiveTabRecordKey());
 }
 
+function looksLikeRoomInviteUrl(value) {
+  const trimmed = String(value || "").trim();
+  return Boolean(
+    trimmed &&
+      (trimmed.includes("://") ||
+        trimmed.startsWith("www.") ||
+        trimmed.startsWith("/") ||
+        trimmed.startsWith("?") ||
+        trimmed.includes("room="))
+  );
+}
+
+function extractRoomCodeFromValue(value) {
+  const trimmed = String(value || "").trim();
+  if (!trimmed) return "";
+
+  if (looksLikeRoomInviteUrl(trimmed)) {
+    try {
+      const inviteUrl = new URL(trimmed.startsWith("www.") ? `https://${trimmed}` : trimmed, window.location.href);
+      const roomFromQuery = normalizeRoomCode(inviteUrl.searchParams.get("room")).slice(0, 5);
+      if (roomFromQuery) return roomFromQuery;
+
+      if (inviteUrl.hash) {
+        const hashValue = inviteUrl.hash.startsWith("#") ? inviteUrl.hash.slice(1) : inviteUrl.hash;
+        const hashParams = new URLSearchParams(hashValue);
+        const roomFromHash = normalizeRoomCode(hashParams.get("room")).slice(0, 5);
+        if (roomFromHash) return roomFromHash;
+      }
+
+      const pathMatch = inviteUrl.pathname.match(/\/([A-Z0-9]{4,12})\/?$/i);
+      if (pathMatch) {
+        const roomFromPath = normalizeRoomCode(pathMatch[1]).slice(0, 5);
+        if (roomFromPath) return roomFromPath;
+      }
+    } catch {
+      // Si no se puede interpretar como URL, cae al saneado normal de texto.
+    }
+  }
+
+  return normalizeRoomCode(trimmed).slice(0, 5);
+}
+
 function sanitizeRoomInput(value) {
-  return normalizeRoomCode(value).slice(0, 5);
+  return extractRoomCodeFromValue(value);
 }
 
 function syncJoinRoomButtonState() {
@@ -124,6 +166,17 @@ export function wireRoomEvents() {
       dom.roomInput.setSelectionRange(cursor, cursor);
     }
     syncJoinRoomButtonState();
+  });
+
+  dom.roomInput.addEventListener("paste", (event) => {
+    const pastedText = event.clipboardData?.getData("text") || "";
+    if (!looksLikeRoomInviteUrl(pastedText)) return;
+
+    event.preventDefault();
+    const roomCode = sanitizeRoomInput(pastedText);
+    dom.roomInput.value = roomCode;
+    syncJoinRoomButtonState();
+    void joinRoom(pastedText);
   });
 
   dom.createRoomButton.addEventListener("click", () => {
@@ -223,6 +276,8 @@ export async function joinRoom(rawRoomCode) {
     state.player.lastActionAuthor = "";
     state.player.lastPlaybackIssueAt = 0;
     state.player.lastPlaybackIssueReason = "";
+    state.player.lastPlaybackIssueAnnouncementAt = 0;
+    state.player.lastPlaybackIssueAnnouncementKey = "";
     if (state.player.playbackRecoveryTimeoutId) {
       window.clearTimeout(state.player.playbackRecoveryTimeoutId);
     }

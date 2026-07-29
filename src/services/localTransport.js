@@ -24,8 +24,13 @@ export function createLocalTransport(roomCode, firebaseError = null) {
 
   const receive = (packet) => {
     if (!packet || packet.from === state.session.clientId) return;
+
     if (packet.kind === "state") handlers.onState?.(packet.payload);
-    if (packet.kind === "message") handlers.onMessage?.(packet.payload);
+
+    if (packet.kind === "message") {
+      handlers.onMessage?.(packet.payload);
+    }
+
     if (packet.kind === "member") {
       rememberLocalMember(roomCode, packet.payload);
       if (packet.payload?.id) {
@@ -36,6 +41,7 @@ export function createLocalTransport(roomCode, firebaseError = null) {
         publishLocalMember(false);
       }
     }
+
     if (packet.kind === "member-left") {
       removeLocalMember(roomCode, packet.payload?.id);
       delete localMembers[packet.payload?.id];

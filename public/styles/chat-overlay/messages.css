@@ -6,10 +6,17 @@
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
+  scroll-padding-bottom: var(--chat-message-bottom-reserve, 132px);
   pointer-events: auto;
   border: 0;
   background: transparent;
   padding: 0px 8px 8px 8px;
+}
+
+.overlay-messages::after {
+  content: "";
+  flex: 0 0 max(0px, calc(var(--chat-message-bottom-reserve, 132px) - 8px));
+  width: 100%;
 }
 
 .overlay-messages .message {
@@ -53,11 +60,59 @@
   color: var(--participant-accent, rgba(255, 255, 255, 0.74));
 }
 
-.overlay-messages .message-time {
-  position: absolute;
-  right: 6px;
-  bottom: 5px;
+.overlay-messages .message-time-anchor {
+  float: right;
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+  margin-left: 8px;
+  shape-outside: inset(calc(100% - 19px) 0 0);
+}
+
+.overlay-messages .message-bubble.message-bubble--single-line {
+  display: inline-flex;
+  align-items: flex-start;
+  width: fit-content;
+  gap: 4px;
+  padding-inline: 8px;
+}
+
+.overlay-messages .message-bubble.message-bubble--single-line .message-content {
+  flex: 0 0 auto;
   display: block;
+  align-self: flex-start;
+  margin-left: 4px;
+  transform: translateY(-2px);
+}
+
+.overlay-messages .message-bubble.message-bubble--single-line .message-text {
+  white-space: nowrap;
+  overflow-wrap: normal;
+}
+
+.overlay-messages .message-bubble.message-bubble--single-line .message-time-anchor {
+  float: none;
+  height: auto;
+  margin-left: 0;
+  shape-outside: none;
+  order: 2;
+  align-self: flex-end;
+}
+
+.overlay-messages .message-bubble.message-bubble--single-line .message-time {
+  line-height: 1;
+  align-self: flex-end;
+}
+
+.overlay-messages .message-bubble.message-bubble--multi-line {
+  padding-inline-start: 10px;
+  padding-inline-end: 6px;
+}
+
+.overlay-messages .message-time {
+  display: flex;
+  align-items: center;
+  gap: 2px;
   width: auto;
   font-size: 0.54rem;
   text-align: right;
@@ -71,48 +126,26 @@
 
 .overlay-messages .message-bubble {
   display: block;
-  width: 100%;
+  width: fit-content;
   max-width: 82%;
   border-radius: 14px;
   border-color: rgba(255, 255, 255, 0.12);
   background: rgba(9, 12, 14, 0.45);
   font-size: 0.76rem;
   line-height: 1.25;
-  padding: 6px 6px 7px;
+  padding: 6px 6px 5px;
 }
 
 .overlay-messages .message-content {
-  display: block;
+  display: inline;
   min-width: 0;
 }
 
 .overlay-messages .message-text {
-  display: block;
+  display: inline;
   min-width: 0;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
-}
-
-.overlay-messages .message-bubble.message-bubble--single-line {
-  display: inline-flex;
-  align-items: flex-end;
-  width: fit-content;
-  padding-right: 6px;
-}
-
-.overlay-messages .message-bubble.message-bubble--single-line .message-content,
-.overlay-messages .message-bubble.message-bubble--single-line .message-text {
-  display: inline;
-  width: auto;
-}
-
-.overlay-messages .message-bubble.message-bubble--single-line .message-time {
-  position: relative;
-  right: auto;
-  bottom: auto;
-  padding-left: 0;
-  background: none;
-  transform: translateY(5px);
 }
 
 .overlay-messages .message:not(.mine) .message-bubble {

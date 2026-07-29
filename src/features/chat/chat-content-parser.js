@@ -1,4 +1,5 @@
 import {
+  CHAT_VIDEO_PREVIEW_MAX_SECONDS,
   REMOTE_IMAGE_EXTENSIONS,
   REMOTE_VIDEO_EXTENSIONS,
 } from "../../core/utils.js";
@@ -30,27 +31,32 @@ export function appendMessageContent(container, text) {
 
   if (!firstUrl) {
     const textNode = document.createElement("div");
-    textNode.className = "message-text";
+    const isEmojiOnly = isEmojiOnlyText(trimmedText);
+    textNode.className = `message-text${isEmojiOnly ? " message-text--emoji" : ""}`;
     textNode.textContent = trimmedText;
     container.append(textNode);
+    if (isEmojiOnly) {
+      container.classList.add("message-content--emoji");
+      container.parentElement?.classList.add("message-bubble--emoji");
+    }
     return;
   }
 
   const textWithoutUrl = trimmedText.replace(firstUrl, "").trim();
   if (textWithoutUrl) {
     const textNode = document.createElement("div");
-    textNode.className = "message-text";
+    const isEmojiOnly = isEmojiOnlyText(textWithoutUrl);
+    textNode.className = `message-text${isEmojiOnly ? " message-text--emoji" : ""}`;
     textNode.textContent = textWithoutUrl;
     container.append(textNode);
+    if (isEmojiOnly && container.childElementCount === 1) {
+      container.classList.add("message-content--emoji");
+      container.parentElement?.classList.add("message-bubble--emoji");
+    }
   }
 
   if (videoUrl) {
-    const video = document.createElement("video");
-    video.className = "message-video";
-    video.src = videoUrl;
-    video.controls = true;
-    video.playsInline = true;
-    container.append(video);
+    appendVideoPreview(container, videoUrl, firstUrl);
     return;
   }
 
@@ -117,6 +123,60 @@ function parseExplicitImageUrl(text) {
   } catch {
     return "";
   }
+}
+
+function isEmojiOnlyText(text) {
+  const value = String(text || "").trim();
+  if (!value) return false;
+  return /^[\p{Extended_Pictographic}\p{Emoji_Presentation}\p{Regional_Indicator}\u200D\uFE0F\s]+$/u.test(value);
+}
+
+function appendVideoPreview(container, videoUrl, fallbackUrl) {
+  const link = document.createElement("a");
+  link.className = "message-link";
+  link.href = fallbackUrl || videoUrl;
+  link.target = "_blank";
+  link.rel = "noreferrer";
+  link.textContent = fallbackUrl || videoUrl;
+  container.append(link);
+
+  const probe = document.createElement("video");
+  let settled = false;
+  probe.preload = "metadata";
+  probe.src = videoUrl;
+
+  const cleanupProbe = () => {
+    if (settled) return;
+    settled = true;
+    probe.removeAttribute("src");
+    probe.load?.();
+  };
+
+  const renderVideo = () => {
+    if (settled || !link.isConnected) return;
+    if (!Number.isFinite(probe.duration) || probe.duration <= 0) {
+      cleanupProbe();
+      return;
+    }
+    if (probe.duration > CHAT_VIDEO_PREVIEW_MAX_SECONDS) {
+      cleanupProbe();
+      return;
+    }
+
+    const video = document.createElement("video");
+    video.className = "message-video";
+    video.src = videoUrl;
+    video.controls = true;
+    video.playsInline = true;
+    video.preload = "metadata";
+    link.replaceWith(video);
+    cleanupProbe();
+  };
+
+  probe.addEventListener("loadedmetadata", renderVideo, { once: true });
+  probe.addEventListener("error", cleanupProbe, { once: true });
+  window.setTimeout(cleanupProbe, 4000);
+  probe.load();
 }
 
 function isRemoteImageUrl(value) {

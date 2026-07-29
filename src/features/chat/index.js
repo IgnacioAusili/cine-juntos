@@ -9,6 +9,7 @@ import {
   submitMessageFrom,
   toggleEmojiPicker,
   updateCharCounter,
+  wireFloatingComposerLayout,
   wireComposerScrollbar,
 } from "./chat-input.js";
 import { setReplyTarget } from "./chat-reply.js";
@@ -65,6 +66,7 @@ export {
 
 export function wireChatEvents() {
   syncChatAutoExpandControls();
+  wireFloatingComposerLayout();
 
   dom.insideChatAutoExpandSwitch.addEventListener("click", () => {
     setInsideChatAutoExpandEnabled(!state.chat.autoExpandInsideEnabled);

@@ -17,6 +17,7 @@ export const dom = {
   videoArea: document.querySelector(".video-area"),
   chatArea: document.querySelector(".chat-area"),
   playerFrame: document.querySelector("#playerFrame"),
+  playerActions: document.querySelector(".player-actions"),
   videoPlayer: document.querySelector("#videoPlayer"),
   emptyPlayer: document.querySelector("#emptyPlayer"),
   playerChatToggleButton: document.querySelector("#playerChatToggleButton"),

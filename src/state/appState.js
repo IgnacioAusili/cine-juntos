@@ -24,6 +24,8 @@ export const playerState = {
   lastActionAuthor: "",
   lastPlaybackIssueAt: 0,
   lastPlaybackIssueReason: "",
+  lastPlaybackIssueAnnouncementAt: 0,
+  lastPlaybackIssueAnnouncementKey: "",
   lastManualPauseAt: 0,
   lastManualSeekAt: 0,
   lastResumePersistAt: 0,
@@ -74,6 +76,13 @@ state.session.knownParticipants = new Set([state.session.clientId]);
 const initialDisplayName =
   localStorage.getItem("cine-juntos-name") || makeGuestName(state.session.clientId);
 state.session.knownMembers = new Map([[state.session.clientId, initialDisplayName]]);
+state.session.knownMemberRecords = new Map([[
+  state.session.clientId,
+  {
+    name: initialDisplayName,
+    lastSeenAt: getTransportNow(),
+  },
+]]);
 
 export function applyInitialDefaults() {
   const name = localStorage.getItem("cine-juntos-name") || initialDisplayName;

@@ -13,6 +13,8 @@ import { focusFullscreenWorkspace, setSyncStatus } from "../session-ui.js";
 import {
   logEvent,
 } from "../../core/state.js";
+import { syncInsideChatPanelOffset } from "../chat/chat-layout.js";
+import { withShortcutHint } from "../../core/utils.js";
 
 const PLAYER_OVERLAY_IDLE_MS = 1600;
 
@@ -42,6 +44,8 @@ export function wireFullscreenEvents() {
       snapFullscreenScroll();
     }, FULLSCREEN_SNAP_DELAY_MS);
   }, { passive: true });
+
+  window.addEventListener("resize", syncInsideChatPanelOffset, { passive: true });
 }
 
 let hideTimer = null;
@@ -199,18 +203,23 @@ export function handleFullscreenChange() {
 
   const isFullscreen = Boolean(document.fullscreenElement) || document.body.classList.contains("fullscreen-mode");
   const icon = dom.pageFullscreenButton.querySelector("[data-lucide]");
+  const tooltip = withShortcutHint(
+    isFullscreen ? "Salir de pantalla completa" : "Pantalla completa",
+    "F",
+  );
 
   document.documentElement.classList.toggle("fullscreen-mode", isFullscreen);
   document.body.classList.toggle("fullscreen-mode", isFullscreen);
   dom.pageFullscreenButton.classList.toggle("active", isFullscreen);
-  dom.pageFullscreenButton.dataset.tooltip = isFullscreen ? "Salir de pantalla completa" : "Pantalla completa";
+  dom.pageFullscreenButton.dataset.tooltip = tooltip;
   dom.pageFullscreenButton.removeAttribute("title");
-  dom.pageFullscreenButton.setAttribute("aria-label", dom.pageFullscreenButton.dataset.tooltip);
+  dom.pageFullscreenButton.setAttribute("aria-label", tooltip);
   if (icon) {
     icon.setAttribute("data-lucide", isFullscreen ? "minimize" : "maximize");
     icon.innerHTML = "";
   }
   hydrateIcons();
   if (isFullscreen) focusFullscreenWorkspace();
+  syncInsideChatPanelOffset();
   logEvent("ui", isFullscreen ? "Pantalla completa de pagina activada." : "Pantalla completa desactivada.");
 }

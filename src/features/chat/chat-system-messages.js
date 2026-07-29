@@ -54,7 +54,7 @@ function describeVideoEvent(action, currentState) {
   if (action === "rate")
     return `${name} cambió la velocidad a ${currentState.rate}x`;
   if (action === "video") return `${name} cargó un video nuevo`;
-  if (action === "video-ready") return `A ${name} le ha terminado de cargar el video`;
+  if (action === "video-ready") return `${name} terminó de cargar el video`;
   if (action === "hold") return `${name} ${describePlaybackIssue(currentState.issueReason)} en ${time}`;
   return "";
 }

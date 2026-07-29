@@ -1,22 +1,38 @@
 .overlay-message-form {
-  position: relative;
-  width: 100%;
-  padding: 0px 6px 0px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 4;
+  width: auto;
+  padding: 0 12px 10px;
   box-sizing: border-box;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
 }
 
 .overlay-message-form .input-wrapper {
   position: relative;
   display: flex;
   align-items: center;
-  width: calc(100% - 8px);
+  width: calc(100% - 4px);
   margin: 0 auto;
   box-sizing: border-box;
   border-radius: 18px;
-  background: rgba(12, 15, 17, 0.65);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01)),
+    rgba(12, 15, 17, 0.26);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   overflow: hidden;
-  backdrop-filter: blur(10px);
-  transition: background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  backdrop-filter: blur(18px) saturate(1.08);
+  -webkit-backdrop-filter: blur(18px) saturate(1.08);
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+  box-shadow:
+    0 16px 24px rgba(0, 0, 0, 0.26);
 }
 
 .overlay-message-form .textarea-shell {
@@ -47,7 +63,9 @@
 }
 
 .overlay-message-form .input-wrapper:focus-within {
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12) inset;
+  box-shadow:
+    0 18px 28px rgba(0, 0, 0, 0.28),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
 .player-frame[data-chat-style="panel"] .overlay-message-form .input-wrapper:focus-within {
@@ -132,10 +150,74 @@
 }
 
 .overlay-message-form .input-wrapper .send {
+  position: relative;
+  flex: 0 0 28px;
+  width: 28px;
+  min-height: 28px;
+  height: 28px;
+  margin: 0;
+  margin-right: 6px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
   color: #7ff5e5;
   opacity: 0.68;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+  isolation: isolate;
+}
+
+.overlay-message-form .input-wrapper .send > svg.composer-progress-ring {
+  position: absolute;
+  left: calc(50% + 2px);
+  top: calc(50% - 2px);
+  width: 42px;
+  height: 42px;
+  opacity: var(--composer-progress-visible, 0);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+.overlay-message-form .input-wrapper .composer-progress-track,
+.overlay-message-form .input-wrapper .composer-progress-value {
+  fill: none;
+  stroke-width: 2;
+}
+
+.overlay-message-form .input-wrapper .composer-progress-track {
+  stroke: var(--composer-progress-track, rgba(255, 255, 255, 0.12));
+}
+
+.overlay-message-form .input-wrapper .composer-progress-value {
+  stroke: var(--composer-progress-color, rgba(47, 184, 164, 1));
+  stroke-linecap: round;
+  stroke-dasharray: var(--composer-progress-length, 0) 100;
+  stroke-dashoffset: 0;
+  transform: rotate(-90deg);
+  transform-box: fill-box;
+  transform-origin: center;
 }
 
 .overlay-message-form .input-wrapper .send:hover {
+  opacity: 0.9;
+}
+
+.overlay-message-form .input-wrapper .send > * {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+.overlay-message-form .input-wrapper .send > svg:not(.composer-progress-ring) {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+.overlay-message-form .input-wrapper .send:disabled {
   opacity: 0.9;
 }

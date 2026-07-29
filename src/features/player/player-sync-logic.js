@@ -11,7 +11,7 @@ import {
   SEND_THROTTLE_MS,
   formatSeconds,
 } from "../../core/utils.js";
-import { rememberParticipant } from "../presence.js";
+import { markParticipantActive, rememberParticipant } from "../presence.js";
 import { setSyncStatus } from "../session-ui.js";
 import { sendVideoEventMessage, renderMessage } from "../chat/index.js";
 // Import circular intencional y seguro: estas funciones se invocan en runtime,
@@ -26,6 +26,7 @@ const PLAYBACK_RECOVERY_TIMEOUT_MS = 5 * 60 * 1000;
 export function handleRemoteState(statePayload) {
   if (!statePayload || statePayload.from === state.session.clientId) return;
   rememberParticipant(statePayload.from, statePayload.name);
+  markParticipantActive(statePayload.from, statePayload.name);
   state.player.lastRemoteState = statePayload;
   logEvent(
     "sync:recv",
@@ -140,18 +141,21 @@ export function pauseRoomForPlaybackIssue(reason) {
   state.player.lastPlaybackIssueReason = reason;
   logEvent("sync:issue", `Incidencia local: ${describePlaybackIssue(reason)} en ${formatSeconds(dom.videoPlayer.currentTime)}.`);
   const issueTime = getPlaybackSnapshotTime();
+  const shouldAnnounceIssue = shouldAnnouncePlaybackIssue(reason);
 
   // Mostrar aviso en el chat local siempre, independientemente de si hay sala activa.
-  const displayName = state.session.displayName || "Vos";
-  const issueText = `${displayName} ${describePlaybackIssueChat(reason)} en ${formatSeconds(issueTime)}`;
-  renderMessage({
-    id: `issue-${localNow}-${reason}`,
-    from: state.session.clientId,
-    name: displayName,
-    text: issueText,
-    system: true,
-    createdAt: localNow,
-  });
+  if (shouldAnnounceIssue) {
+    const displayName = getDisplayName();
+    const issueText = `${displayName} ${describePlaybackIssueChat(reason)} en ${formatSeconds(issueTime)}`;
+    renderMessage({
+      id: `issue-${localNow}-${reason}`,
+      from: state.session.clientId,
+      name: displayName,
+      text: issueText,
+      system: true,
+      createdAt: localNow,
+    });
+  }
 
   if (!state.session.activeRoom || !state.session.transport) return;
   beginPlaybackRecoveryWindow(reason);
@@ -173,6 +177,7 @@ export function pauseRoomForPlaybackIssue(reason) {
     paused: true,
     issueReason: reason,
     time: issueTime,
+    suppressActivityMessage: !shouldAnnounceIssue,
   });
 }
 
@@ -187,6 +192,7 @@ export function clearPlaybackRecoveryTracking() {
   state.player.playbackRecoveryPending = false;
   state.player.playbackRecoveryAttempting = false;
   state.player.playbackRecoveryTimeoutId = null;
+  clearPlaybackIssueAnnouncementTracking();
 }
 
 export function attemptPlaybackRecovery(trigger) {
@@ -255,6 +261,8 @@ export function publishState(action, overrides = {}) {
 
   if (state.player.remoteStateActive) return;
 
+  const { suppressActivityMessage = false, ...transportOverrides } = overrides;
+
   const localNow = Date.now();
 
   if (
@@ -302,6 +310,7 @@ export function publishState(action, overrides = {}) {
   state.player.lastActionAt = localNow;
   state.player.lastActionAuthor = state.session.clientId;
   state.player.lastStateSentAt = localNow;
+  markParticipantActive(state.session.clientId, getDisplayName());
 
   const syncNow = getTransportNow();
   const payloadTime = Number.isFinite(Number(overrides.time))
@@ -309,7 +318,7 @@ export function publishState(action, overrides = {}) {
     : getPlaybackSnapshotTime();
   logEvent(
     "debug",
-    `Publicar ${action}: payloadTime=${formatSeconds(payloadTime)} current=${formatSeconds(dom.videoPlayer.currentTime)} lastKnown=${formatSeconds(state.player.lastKnownTime)} paused=${String(dom.videoPlayer.paused)} overrides=${JSON.stringify(overrides)}.`,
+    `Publicar ${action}: payloadTime=${formatSeconds(payloadTime)} current=${formatSeconds(dom.videoPlayer.currentTime)} lastKnown=${formatSeconds(state.player.lastKnownTime)} paused=${String(dom.videoPlayer.paused)} overrides=${JSON.stringify(transportOverrides)}.`,
   );
   const payload = {
     action,
@@ -320,7 +329,7 @@ export function publishState(action, overrides = {}) {
     paused: dom.videoPlayer.paused,
     rate: Number(dom.videoPlayer.playbackRate || 1),
     sentAt: syncNow,
-    ...overrides,
+    ...transportOverrides,
   };
 
   state.session.transport.sendState(payload).catch((error) => {
@@ -328,8 +337,55 @@ export function publishState(action, overrides = {}) {
     logEvent("error", `No se pudo enviar sincronizacion: ${error.message || error}`);
     setSyncStatus("No se pudo enviar la sincronizacion.");
   });
-  sendVideoEventMessage(action, payload);
+  if (!suppressActivityMessage) {
+    sendVideoEventMessage(action, payload);
+  }
   logEvent("sync:send", `${action} en ${formatSeconds(payload.time)} (${payload.paused ? "pausado" : "play"}).`);
+}
+
+function shouldAnnouncePlaybackIssue(reason) {
+  const localNow = Date.now();
+  const announcementKey = getPlaybackIssueAnnouncementKey(reason);
+
+  if (
+    state.player.playbackRecoveryPending &&
+    state.player.lastPlaybackIssueAnnouncementKey === announcementKey
+  ) {
+    return false;
+  }
+
+  if (
+    state.player.lastPlaybackIssueAnnouncementKey === announcementKey &&
+    (localNow - state.player.lastPlaybackIssueAnnouncementAt < PLAYBACK_ISSUE_SYNC_COOLDOWN_MS)
+  ) {
+    return false;
+  }
+
+  state.player.lastPlaybackIssueAnnouncementKey = announcementKey;
+  state.player.lastPlaybackIssueAnnouncementAt = localNow;
+  return true;
+}
+
+function clearPlaybackIssueAnnouncementTracking() {
+  state.player.lastPlaybackIssueAnnouncementAt = 0;
+  state.player.lastPlaybackIssueAnnouncementKey = "";
+}
+
+function getPlaybackIssueAnnouncementKey(reason) {
+  return [
+    state.session.clientId,
+    getCurrentVideoSourceKey(),
+    reason,
+  ].join(":");
+}
+
+function getCurrentVideoSourceKey() {
+  return String(
+    dom.videoPlayer.currentSrc ||
+    dom.videoPlayer.getAttribute("src") ||
+    dom.videoUrlInput.value.trim() ||
+    "",
+  );
 }
 
 function getPlaybackSnapshotTime() {

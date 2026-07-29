@@ -1,32 +1,28 @@
 .char-counter {
-  display: block;
-  min-height: 0;
-  padding: 0 2px;
-  font-size: 0.58rem;
-  line-height: 1;
-  color: var(--muted-2);
-  text-align: right;
-  transition: color 0.2s ease;
-  pointer-events: none;
-  user-select: none;
+  display: none;
 }
 
 .message-form.over-limit .char-counter,
 .overlay-message-form.over-limit .char-counter {
-  color: var(--danger);
-  font-weight: 700;
+  display: none;
 }
 
 .message-form.over-limit .input-wrapper,
 .overlay-message-form.over-limit .input-wrapper {
   border-color: rgba(233, 68, 68, 0.65);
-  box-shadow: 0 0 0 3px rgba(233, 68, 68, 0.12);
+  box-shadow: none;
 }
 
 .message-form.over-limit .send,
 .overlay-message-form.over-limit .send {
-  opacity: 0.35;
-  pointer-events: none;
+  opacity: 0.9;
+  cursor: not-allowed;
+  pointer-events: auto;
+}
+
+.message-form.over-limit .send:hover,
+.overlay-message-form.over-limit .send:hover {
+  transform: none;
 }
 
 @keyframes counterShake {

@@ -122,7 +122,7 @@ body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="right"] .chat-
 }
 
 body.fullscreen-mode .player-chat {
-  top: 14px;
+  top: var(--inside-chat-top-offset, 56px);
   right: 24px;
   bottom: 14px;
   max-height: min(58vh, 380px);

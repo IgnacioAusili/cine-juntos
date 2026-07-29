@@ -19,6 +19,7 @@ export async function createFirebaseTransport(roomCode, config) {
   const roomRef = dbModule.ref(db, roomPath);
   const serverTimeOffsetRef = dbModule.ref(db, ".info/serverTimeOffset");
   const unsubscribers = [];
+  let heartbeat = null;
   let serverTimeOffset = 0;
 
   return {
@@ -99,6 +100,10 @@ export async function createFirebaseTransport(roomCode, config) {
           handlers.onMessage?.({ id: snapshot.key, ...snapshot.val() });
         }),
       );
+
+      heartbeat = window.setInterval(() => {
+        dbModule.set(memberRef, makeMemberPayload()).catch(() => {});
+      }, 10000);
     },
     async sendState(payload) {
       await dbModule.set(stateRef, {
@@ -121,6 +126,7 @@ export async function createFirebaseTransport(roomCode, config) {
       await dbModule.set(memberRef, makeMemberPayload());
     },
     close() {
+      if (heartbeat) window.clearInterval(heartbeat);
       unsubscribers.forEach((unsubscribe) => unsubscribe());
       dbModule.remove(memberRef).then(async () => {
         try {

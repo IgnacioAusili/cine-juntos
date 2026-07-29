@@ -154,12 +154,12 @@
                 </label>
                 <label class="field field-room">
                   <span class="label-row">
-                    Codigo
+                    Sala/Codigo
                     <button
                       class="help-button"
                       type="button"
                       aria-label="Ayuda sobre salas"
-                      data-tooltip="Crea una sala y comparte el codigo o el enlace para mirar juntos."
+                      data-tooltip="Crea una sala y comparte el codigo o el enlace para mirar juntos. Tambien puedes pegar el enlace completo aqui para entrar directo."
                     >
                       <span data-lucide="circle-help"></span>
                     </button>
@@ -174,7 +174,7 @@
                     data-bwignore="true"
                     data-lpignore="true"
                     maxlength="5"
-                    placeholder="AB12C"
+                    placeholder="AB12C o enlace"
                   />
                 </label>
                 <div class="lobby-actions">
@@ -192,8 +192,8 @@
                     class="button"
                     id="joinRoomButton"
                     type="button"
-                    title="Entrar con el codigo escrito"
-                    data-tooltip="Entrar con el codigo escrito"
+                    title="Entrar con el codigo o enlace escrito"
+                    data-tooltip="Entrar con el codigo o enlace escrito (Enter)"
                   >
                     <span data-lucide="log-in"></span>
                     Entrar
@@ -277,9 +277,10 @@
                     type="button"
                     aria-label="Mostrar chat"
                     title="Mostrar chat"
-                    data-tooltip="Mostrar chat"
+                    data-tooltip="Mostrar chat (Tab)"
                   >
-                  <span data-lucide="message-square"></span>
+                    <span data-lucide="message-square"></span>
+                    <span class="unread-badge player-chat-unread-badge" id="insideChatUnread" hidden>0</span>
                 </button>
               </div>
 
@@ -291,7 +292,7 @@
                     type="button"
                     aria-label="Reproducir video"
                     title="Reproducir video"
-                    data-tooltip="Reproducir video"
+                    data-tooltip="Reproducir video (Espacio)"
                   >
                     <span data-lucide="play"></span>
                   </button>
@@ -315,10 +316,10 @@
                     <button
                       class="video-control-button"
                       id="playerMuteButton"
-                      type="button"
-                      aria-label="Silenciar"
-                      title="Silenciar"
-                      data-tooltip="Silenciar"
+                    type="button"
+                    aria-label="Silenciar"
+                    title="Silenciar"
+                    data-tooltip="Silenciar (M)"
                     >
                       <span data-lucide="volume-2"></span>
                     </button>
@@ -357,7 +358,7 @@
                     type="button"
                     aria-label="Pantalla completa de pagina"
                     title="Pantalla completa de pagina"
-                    data-tooltip="Pantalla completa"
+                    data-tooltip="Pantalla completa (F)"
                   >
                     <span data-lucide="maximize"></span>
                   </button>
@@ -373,7 +374,7 @@
                 aria-describedby="resumeVideoPopupMessage"
               >
                 <div class="player-inline-dialog-card" role="document">
-                  <button id="closeResumeVideoDialogButton" type="button" class="dialog-close" aria-label="Cerrar diálogo">
+                  <button id="closeResumeVideoDialogButton" type="button" class="dialog-close" aria-label="Cerrar diálogo" data-tooltip="Cerrar diálogo (Esc)">
                     <span data-lucide="x" aria-hidden="true"></span>
                   </button>
                   <div class="player-dialog-header">
@@ -415,7 +416,7 @@
                         data-chat-style="float"
                         class="active"
                         aria-label="Panel translucido"
-                        title="Panel translucido"
+                        data-tooltip="Panel translucido"
                       >
                         <span data-lucide="square"></span>
                       </button>
@@ -423,7 +424,7 @@
                         type="button"
                         data-chat-style="panel"
                         aria-label="Panel opaco"
-                        title="Panel opaco"
+                        data-tooltip="Panel opaco"
                       >
                         <span data-lucide="square"></span>
                       </button>
@@ -438,7 +439,6 @@
                     >
                       <span data-lucide="x"></span>
                     </button>
-                    <span class="unread-badge player-chat-unread-badge" id="insideChatUnread" hidden>0</span>
                     <button
                       class="chat-auto-switch"
                       id="insideChatAutoExpandSwitch"
@@ -447,12 +447,11 @@
                       aria-checked="false"
                       aria-label="Autoexpandir chat interno"
                       title="Autoexpandir chat interno"
-                      data-tooltip="Se abre solo con mensajes y se oculta de nuevo al enviar."
+                      data-tooltip="Se abre al recibir mensajes y se oculta al responder"
                     >
                       <span class="chat-auto-switch-track" aria-hidden="true">
                         <span class="chat-auto-switch-thumb"></span>
                       </span>
-                      <span class="chat-auto-switch-label">Auto</span>
                     </button>
                   </div>
                 </div>
@@ -475,7 +474,6 @@
                       spellcheck="false"
                       data-bwignore="true"
                       data-lpignore="true"
-                      maxlength="600"
                       placeholder="Mensaje"
                       rows="1"
                       title="Escribir al chat de la sala"
@@ -494,11 +492,15 @@
                     >
                       <span data-lucide="smile-plus"></span>
                     </button>
-                    <button class="icon-button send" id="overlayMessageSend" type="submit" aria-label="Enviar mensaje">
+                    <button class="icon-button send" id="overlayMessageSend" type="submit" aria-label="Enviar mensaje" data-tooltip="Enviar mensaje (Enter)">
+                      <svg class="composer-progress-ring" viewBox="0 0 44 44" aria-hidden="true" focusable="false">
+                        <circle class="composer-progress-track" cx="22" cy="22" r="18.5" pathLength="100"></circle>
+                        <circle class="composer-progress-value" cx="22" cy="22" r="18.5" pathLength="100"></circle>
+                      </svg>
                       <span data-lucide="send"></span>
                     </button>
                   </div>
-                  <div class="char-counter" id="overlayCharCounter">0 / 600</div>
+                  <div class="char-counter" id="overlayCharCounter">0 / 300</div>
                 </form>
               </aside>
             </div>
@@ -560,7 +562,7 @@
                       type="button"
                       aria-label="Aceptar nombre"
                       title="Aceptar nombre"
-                      data-tooltip="Aceptar nombre"
+                      data-tooltip="Aceptar nombre (Enter)"
                     >
                       <span data-lucide="check"></span>
                     </button>
@@ -576,12 +578,11 @@
                   aria-checked="false"
                   aria-label="Autoexpandir chat externo"
                   title="Autoexpandir chat externo"
-                  data-tooltip="Se abre solo con mensajes y se oculta de nuevo al enviar."
+                  data-tooltip="Se abre al recibir mensajes y se oculta al responder"
                 >
                   <span class="chat-auto-switch-track" aria-hidden="true">
                     <span class="chat-auto-switch-thumb"></span>
                   </span>
-                  <span class="chat-auto-switch-label">Auto</span>
                 </button>
                 <button
                   class="icon-button dock-button"
@@ -615,8 +616,7 @@
                     spellcheck="false"
                     data-bwignore="true"
                     data-lpignore="true"
-                    maxlength="600"
-                    placeholder="Mensaje"
+                      placeholder="Mensaje"
                     rows="1"
                     title="Escribir al chat de la sala"
                   ></textarea>
@@ -634,11 +634,15 @@
                 >
                   <span data-lucide="smile-plus"></span>
                 </button>
-                <button class="icon-button send" id="mainMessageSend" type="submit" aria-label="Enviar mensaje">
+                <button class="icon-button send" id="mainMessageSend" type="submit" aria-label="Enviar mensaje" data-tooltip="Enviar mensaje (Enter)">
+                  <svg class="composer-progress-ring" viewBox="0 0 44 44" aria-hidden="true" focusable="false">
+                    <circle class="composer-progress-track" cx="22" cy="22" r="18.5" pathLength="100"></circle>
+                    <circle class="composer-progress-value" cx="22" cy="22" r="18.5" pathLength="100"></circle>
+                  </svg>
                   <span data-lucide="send"></span>
                 </button>
               </div>
-              <div class="char-counter" id="mainCharCounter">0 / 600</div>
+              <div class="char-counter" id="mainCharCounter">0 / 300</div>
             </form>
           </aside>
           <button
@@ -680,7 +684,7 @@
       aria-describedby="slowLoadDialogMessage"
     >
       <div class="player-dialog-card">
-        <button id="closeSlowLoadDialogButton" type="button" class="dialog-close" aria-label="Cerrar diálogo">
+        <button id="closeSlowLoadDialogButton" type="button" class="dialog-close" aria-label="Cerrar diálogo" data-tooltip="Cerrar diálogo (Esc)">
           <span data-lucide="x" aria-hidden="true"></span>
         </button>
         <div class="player-dialog-header">

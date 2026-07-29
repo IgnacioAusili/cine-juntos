@@ -1,9 +1,13 @@
 import { dom } from "../core/dom.js";
-import { state, getDisplayName, logEvent } from "../core/state.js";
+import { state, getDisplayName, getTransportNow, logEvent } from "../core/state.js";
 import { makeGuestName, makeParticipantLabel } from "../core/utils.js";
+
+const RECENT_ACTIVITY_WINDOW_MS = 12000;
 
 let nameInputMeasureCanvas = null;
 let nameInputBaseWidth = 0;
+let activityRefreshTimer = null;
+const recentActivityByParticipantId = new Map();
 
 function syncEditNameButtonState() {
   if (!dom.editNameButton) return;
@@ -70,6 +74,85 @@ function renderDisplayName(name = getDisplayName()) {
   }
 }
 
+function getParticipantRecord(participantId) {
+  return state.session.knownMemberRecords?.get(participantId) || null;
+}
+
+function upsertParticipantRecord(participantId, nextValues = {}) {
+  if (!participantId) return null;
+
+  if (!state.session.knownMemberRecords) {
+    state.session.knownMemberRecords = new Map();
+  }
+
+  const current = state.session.knownMemberRecords.get(participantId) || {};
+  const nextName =
+    nextValues.name ||
+    current.name ||
+    state.session.knownMembers?.get(participantId) ||
+    makeParticipantLabel(participantId);
+  const nextLastSeenAt = Number.isFinite(Number(nextValues.lastSeenAt))
+    ? Number(nextValues.lastSeenAt)
+    : Number(current.lastSeenAt) || 0;
+  const record = {
+    name: nextName,
+    lastSeenAt: nextLastSeenAt,
+  };
+
+  state.session.knownMemberRecords.set(participantId, record);
+  if (state.session.knownMembers?.has(participantId)) {
+    state.session.knownMembers.set(participantId, nextName);
+  }
+
+  return record;
+}
+
+function getParticipantActivityAt(participantId) {
+  const record = getParticipantRecord(participantId);
+  const recentActivityAt = recentActivityByParticipantId.get(participantId) || 0;
+  return Math.max(Number(record?.lastSeenAt) || 0, recentActivityAt);
+}
+
+function isParticipantRecentlyActive(participantId) {
+  const lastActivityAt = getParticipantActivityAt(participantId);
+  return lastActivityAt > 0 && Date.now() - lastActivityAt <= RECENT_ACTIVITY_WINDOW_MS;
+}
+
+function scheduleActivityRefresh() {
+  window.clearTimeout(activityRefreshTimer);
+
+  let nextRefreshIn = Number.POSITIVE_INFINITY;
+  const now = Date.now();
+
+  for (const participantId of state.session.knownParticipants || []) {
+    const lastActivityAt = getParticipantActivityAt(participantId);
+    if (!lastActivityAt) continue;
+    const remaining = RECENT_ACTIVITY_WINDOW_MS - (now - lastActivityAt);
+    if (remaining > 0 && remaining < nextRefreshIn) {
+      nextRefreshIn = remaining;
+    }
+  }
+
+  if (!Number.isFinite(nextRefreshIn)) return;
+
+  activityRefreshTimer = window.setTimeout(() => {
+    renderPresence();
+  }, Math.max(250, nextRefreshIn + 25));
+}
+
+export function markParticipantActive(participantId, participantName = "") {
+  if (!participantId) return;
+
+  recentActivityByParticipantId.set(participantId, Date.now());
+  if (participantName) {
+    upsertParticipantRecord(participantId, { name: participantName });
+  } else if (state.session.knownMembers?.has(participantId)) {
+    upsertParticipantRecord(participantId);
+  }
+
+  renderPresence();
+}
+
 function setIdentityEditing(isEditing) {
   if (!dom.chatNameField) return;
   if (isEditing && state.chat.nameChangeUsed) return;
@@ -111,16 +194,33 @@ function commitDisplayNameChange() {
 
 export function renderMembers(members) {
   const nextMembers = new Map([[state.session.clientId, getDisplayName()]]);
+  const nextMemberRecords = new Map([[
+    state.session.clientId,
+    {
+      name: getDisplayName(),
+      lastSeenAt: getTransportNow(),
+    },
+  ]]);
   const activeIds = new Set([state.session.clientId]);
 
   Object.entries(members || {}).forEach(([id, member]) => {
     const memberId = member?.id || id;
     if (!memberId) return;
-    nextMembers.set(memberId, member?.name || makeParticipantLabel(memberId));
+    const memberName = member?.name || makeParticipantLabel(memberId);
+    const previousRecord = state.session.knownMemberRecords?.get(memberId) || {};
+    const lastSeenAt = Number.isFinite(Number(member?.lastSeenAt))
+      ? Number(member.lastSeenAt)
+      : Number(previousRecord.lastSeenAt) || 0;
+    nextMembers.set(memberId, memberName);
+    nextMemberRecords.set(memberId, {
+      name: memberName,
+      lastSeenAt,
+    });
     activeIds.add(memberId);
   });
 
   state.session.knownMembers = nextMembers;
+  state.session.knownMemberRecords = nextMemberRecords;
   state.session.knownParticipants = activeIds;
   renderPresence();
 }
@@ -134,6 +234,7 @@ export function rememberParticipant(participantId, participantName) {
       participantId,
       participantName || state.session.knownMembers.get(participantId) || makeParticipantLabel(participantId),
     );
+    upsertParticipantRecord(participantId, { name: participantName });
   }
 }
 
@@ -144,18 +245,20 @@ export function renderPresence() {
 
   const members = Array.from(state.session.knownMembers.entries())
     .filter(([id]) => state.session.knownParticipants.has(id))
-    .map(([id, name]) =>
-      id === state.session.clientId
+    .map(([id, name]) => {
+      const displayName = id === state.session.clientId
         ? `(Vos) ${name || makeGuestName(state.session.clientId)}`
-        : name || makeParticipantLabel(id),
-    );
+        : name || makeParticipantLabel(id);
+      return displayName;
+    });
 
-  const uniqueMembers = members.length ? members : [`(Vos) ${getDisplayName()}`];
+  const fallbackSelf = `(Vos) ${getDisplayName()}`;
+  const uniqueMembers = members.length ? members : [fallbackSelf];
   const selfMember = uniqueMembers.find((member) => member.startsWith("(Vos) "));
   const otherMembers = uniqueMembers.filter((member) => member !== selfMember);
   const orderedMembers = selfMember ? [selfMember, ...otherMembers] : uniqueMembers;
   const isSoloSelf = orderedMembers.length === 1 && Boolean(selfMember);
-  const tooltip = `${isSoloSelf ? "Conectado" : "Conectados"}:\n${orderedMembers.join(", ")}`;
+  const tooltip = `${isSoloSelf ? "Conectado" : "Conectados"}:\n${orderedMembers.join("\n")}`;
   const label = uniqueMembers.length === 1 ? "1 usuario conectado" : `${uniqueMembers.length} usuarios conectados`;
   const nextState = isSoloSelf ? "solo" : "online";
   const selfLabelText = isSoloSelf ? "(vos)" : "";
@@ -181,6 +284,8 @@ export function renderPresence() {
       dom.overlayPresenceSelfLabel.hidden = !isSoloSelf;
     }
   }
+
+  scheduleActivityRefresh();
 }
 
 export function updateDisplayName(value, sourceInput) {
@@ -191,6 +296,7 @@ export function updateDisplayName(value, sourceInput) {
     if (dom.nameInput) dom.nameInput.value = lockedName;
     if (dom.lobbyNameInput) dom.lobbyNameInput.value = lockedName;
     state.session.knownMembers.set(state.session.clientId, lockedName);
+    upsertParticipantRecord(state.session.clientId, { name: lockedName });
     renderDisplayName(lockedName);
     renderPresence();
     return;
@@ -201,6 +307,7 @@ export function updateDisplayName(value, sourceInput) {
   if (sourceInput === dom.nameInput) syncNameInputWidth();
   localStorage.setItem("cine-juntos-name", nextName.trim() || makeGuestName(state.session.clientId));
   state.session.knownMembers.set(state.session.clientId, getDisplayName());
+  upsertParticipantRecord(state.session.clientId, { name: getDisplayName() });
   renderDisplayName();
   renderPresence();
 }

@@ -1,13 +1,13 @@
 .player-chat {
   position: absolute;
   z-index: 6;
-  top: 48px;
+  top: var(--inside-chat-top-offset, 48px);
   right: 24px;
   bottom: 8px;
   display: grid;
   width: min(260px, calc(100% - 10px));
   max-height: min(62%, 330px);
-  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-rows: auto minmax(0, 1fr);
   gap: 6px;
   opacity: 0;
   pointer-events: none;
@@ -15,6 +15,7 @@
   transition:
     opacity 160ms ease,
     transform 160ms ease;
+  --chat-composer-reserve: 92px;
 }
 
 .player-frame.chat-inside-open .player-chat {

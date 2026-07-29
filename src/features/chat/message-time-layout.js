@@ -18,63 +18,83 @@ export function adjustMessageTimes() {
 
     const bubbles = container.querySelectorAll(".message-bubble");
     bubbles.forEach((bubble) => {
-      if (bubble.closest(".message.system")) return;
-
-      const content = bubble.querySelector(".message-content");
+      const timeAnchor = bubble.querySelector(".message-time-anchor");
       const time = bubble.querySelector(".message-time");
-      if (!content || !time) return;
+      const content = bubble.querySelector(".message-content");
+      if (!timeAnchor || !time || !content) return;
 
-      resetMessageTimeLayout(bubble, time);
+      resetMessageTimeLayout(bubble, timeAnchor, time);
 
-      const style = window.getComputedStyle(content);
-      const lineHeight = Number.parseFloat(style.lineHeight);
+      const computedStyle = window.getComputedStyle(bubble);
+      const lineHeight = Number.parseFloat(computedStyle.lineHeight);
       const hasRichContent = Boolean(
         content.querySelector(".message-media, .message-video, .message-media-link, .message-reply"),
       );
+      const contentHeight = measureContentHeightWithoutTime(content, timeAnchor);
 
-      if (!hasRichContent && Number.isFinite(lineHeight)) {
-        applySingleLineMessageTimeLayout(bubble, time);
+      if (!hasRichContent && Number.isFinite(lineHeight) && lineHeight > 0) {
+        applySingleLineMessageTimeLayout(bubble, timeAnchor, time);
 
-        const singleLineHeight = content.offsetHeight;
-        const singleLineWidthOverflow = bubble.scrollWidth > bubble.clientWidth + TIME_LAYOUT_TOLERANCE_PX;
-
-        if (
-          singleLineHeight <= lineHeight + TIME_LAYOUT_TOLERANCE_PX &&
-          !singleLineWidthOverflow
-        ) {
+        if (contentHeight <= lineHeight + TIME_LAYOUT_TOLERANCE_PX) {
           return;
         }
       }
 
-      applyMultiLineMessageTimeLayout(bubble, time);
+      applyMultiLineMessageTimeLayout(bubble, timeAnchor, time, contentHeight, lineHeight);
     });
   }
 }
 
-function resetMessageTimeLayout(bubble, time) {
+function resetMessageTimeLayout(bubble, timeAnchor, time) {
   bubble.classList.remove("message-bubble--single-line");
-
+  bubble.classList.remove("message-bubble--multi-line");
+  timeAnchor.classList.remove("message-time-anchor--inline");
   time.classList.remove("message-time--inline");
-  time.style.removeProperty("position");
-  time.style.removeProperty("right");
-  time.style.removeProperty("bottom");
-  time.style.removeProperty("margin-left");
-  time.style.removeProperty("padding-left");
+
+  timeAnchor.style.removeProperty("float");
+  timeAnchor.style.removeProperty("height");
+  timeAnchor.style.removeProperty("margin-left");
+  timeAnchor.style.removeProperty("shape-outside");
+  timeAnchor.style.removeProperty("order");
   time.style.removeProperty("transform");
 }
 
-function applySingleLineMessageTimeLayout(bubble, time) {
+function measureContentHeightWithoutTime(content, timeAnchor) {
+  const previousVisibility = timeAnchor.style.visibility;
+
+  timeAnchor.style.visibility = "hidden";
+  const height = content.getBoundingClientRect().height || 0;
+  timeAnchor.style.visibility = previousVisibility;
+
+  return height;
+}
+
+function applySingleLineMessageTimeLayout(bubble, timeAnchor, time) {
   bubble.classList.add("message-bubble--single-line");
+  bubble.classList.remove("message-bubble--multi-line");
+  timeAnchor.classList.add("message-time-anchor--inline");
   time.classList.add("message-time--inline");
+  timeAnchor.style.float = "none";
+  timeAnchor.style.height = "auto";
+  timeAnchor.style.marginLeft = "8px";
+  timeAnchor.style.shapeOutside = "none";
+  timeAnchor.style.order = "2";
 }
 
-function applyMultiLineMessageTimeLayout(bubble, time) {
+function applyMultiLineMessageTimeLayout(bubble, timeAnchor, time, contentHeight, lineHeight) {
   bubble.classList.remove("message-bubble--single-line");
+  bubble.classList.add("message-bubble--multi-line");
+  timeAnchor.classList.remove("message-time-anchor--inline");
   time.classList.remove("message-time--inline");
-  time.style.removeProperty("position");
-  time.style.removeProperty("right");
-  time.style.removeProperty("bottom");
-  time.style.removeProperty("margin-left");
-  time.style.removeProperty("padding-left");
-  time.style.removeProperty("transform");
+
+  const timeHeight = time.getBoundingClientRect().height || lineHeight;
+  const anchorHeight = Math.max(Math.ceil(contentHeight - lineHeight + timeHeight), Math.ceil(lineHeight));
+  timeAnchor.style.float = "right";
+  timeAnchor.style.height = `${anchorHeight}px`;
+  timeAnchor.style.marginLeft = "8px";
+  timeAnchor.style.shapeOutside = `inset(calc(100% - ${lineHeight}px) 0 0)`;
+  timeAnchor.style.order = "";
+
+  const timeLift = Math.max(2, Math.round((lineHeight - timeHeight) * 0.6));
+  time.style.transform = `translateY(-${timeLift}px)`;
 }

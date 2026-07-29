@@ -1,7 +1,7 @@
 import { dom } from "../../core/dom.js";
 import { state, logEvent } from "../../core/state.js";
 import { MAX_RENDERED_MESSAGES, formatTime, formatClockTime } from "../../core/utils.js";
-import { rememberParticipant } from "../presence.js";
+import { markParticipantActive, rememberParticipant } from "../presence.js";
 import { wireMessageInteractions } from "./chat-message-interactions.js";
 import { appendMessageContent, truncateText } from "./chat-content-parser.js";
 import { getParticipantAccent } from "./chat-participant-color.js";
@@ -24,6 +24,7 @@ export function renderMessage(message) {
     return;
   state.chat.lastMessageIds.add(message.id);
   rememberParticipant(message.from, message.name);
+  markParticipantActive(message.from, message.name);
 
   appendMessageTo(dom.messages, message);
   appendMessageTo(dom.overlayMessages, message);
@@ -38,16 +39,22 @@ export function renderMessage(message) {
  * Crea y añade el elemento DOM del mensaje al contenedor.
  */
 function appendMessageTo(container, message) {
+  const isMine = message.from === state.session.clientId;
   const item = document.createElement("article");
-  item.className = `message${message.from === state.session.clientId ? " mine" : ""}${message.system ? " system" : ""}`;
+  item.className = `message${isMine ? " mine" : ""}${message.system ? " system" : ""}`;
   item.dataset.messageId = message.id;
   item.style.setProperty("--participant-accent", getParticipantAccent(message.from || message.name));
 
   const meta = document.createElement("div");
   meta.className = "message-meta";
 
+  const metaName = document.createElement("span");
+  metaName.className = "message-meta-name";
+  metaName.textContent = message.name || "Invitado";
+
+  let tsBtn = null;
   if (message.videoTimestamp != null && !message.system) {
-    const tsBtn = document.createElement("button");
+    tsBtn = document.createElement("button");
     tsBtn.type = "button";
     tsBtn.className = "message-video-ts";
     tsBtn.title = `Ir al minuto ${formatClockTime(message.videoTimestamp)} del video`;
@@ -58,23 +65,20 @@ function appendMessageTo(container, message) {
         dom.videoPlayer.currentTime = message.videoTimestamp;
       }
     });
-    meta.append(tsBtn);
   }
 
-  const metaName = document.createElement("span");
-  metaName.className = "message-meta-name";
-  metaName.textContent = message.name || "Invitado";
-  meta.append(metaName);
-
-  const time = document.createElement("div");
-  time.className = "message-time";
-  time.textContent = formatTime(message.createdAt);
+  if (isMine) {
+    if (tsBtn) meta.append(tsBtn);
+    meta.append(metaName);
+  } else {
+    meta.append(metaName);
+    if (tsBtn) meta.append(tsBtn);
+  }
 
   const bubble = document.createElement("div");
   bubble.className = "message-bubble";
   const content = document.createElement("div");
   content.className = "message-content";
-  bubble.append(content);
   if (message.replyTo?.text) {
     const reply = document.createElement("button");
     reply.type = "button";
@@ -85,54 +89,34 @@ function appendMessageTo(container, message) {
     );
     reply.innerHTML = `<span class="message-reply-name">${message.replyTo.name || "Invitado"}</span><span class="message-reply-body">${truncateText(message.replyTo.text, 90)}</span>`;
     reply.addEventListener("click", () => scrollToMessage(message.replyTo.id));
-    content.append(reply);
+      content.append(reply);
   }
 
   if (message.text) {
     if (message.system) {
-      let displayText = message.text;
-      if (message.from === state.session.clientId) {
-        // Obtenemos el nombre exacto con el que se envió
-        const nameKey = message.name || "Invitado";
-        if (displayText.startsWith(nameKey)) {
-          // Quitar el nombre propio y conjugar el mensaje en segunda persona.
-          let sub = displayText.substring(nameKey.length).trim();
-
-          // Mapeo de verbos en tercera persona a segunda persona.
-          const verbReplacements = [
-            { from: /^inició el video/, to: "iniciaste el video" },
-            { from: /^reprodujo el video en/, to: "reprodujiste el video en" },
-            { from: /^pausó el video en/, to: "pausaste el video en" },
-            { from: /^saltó a/, to: "saltaste a" },
-            { from: /^cambió la velocidad a/, to: "cambiaste la velocidad a" },
-            { from: /^cargó un video nuevo/, to: "cargaste un video nuevo" },
-            { from: /^qued(?:ó|aste) en espera(?:\s*\(.*?\))?/, to: "tienes inconvenientes en el video" },
-            { from: /^tiene problemas de buffer/, to: "tienes inconvenientes en el video" },
-            { from: /^tiene problemas de conexión/, to: "tienes inconvenientes en el video" },
-            { from: /^tiene problemas de carga/, to: "tienes inconvenientes en el video" },
-            { from: /^tiene inconvenientes en el video/, to: "tienes inconvenientes en el video" },
-            { from: /^está cargando el video/, to: "tienes inconvenientes en el video" },
-            { from: /^tiene el video pausado/, to: "tienes inconvenientes en el video" },
-            { from: /^tiene el video trabado/, to: "tienes inconvenientes en el video" },
-            { from: /^tuvo un error/, to: "tienes inconvenientes en el video" },
-            { from: /^tiene un error en el video/, to: "tienes inconvenientes en el video" },
-            { from: /^tiene un problema con el video/, to: "tienes inconvenientes en el video" },
-            { from: /^tiene inconvenientes/, to: "tienes inconvenientes en el video" }
-          ];
-
-          for (const rep of verbReplacements) {
-            if (rep.from.test(sub)) {
-              sub = sub.replace(rep.from, rep.to);
-              break;
-            }
-          }
-          displayText = sub;
-        }
-      }
       bubble.classList.add("message-system-bubble");
       const systemText = document.createElement("span");
       systemText.className = "message-system-text";
-      systemText.textContent = capitalizeMessage(displayText);
+
+      const exactName = String(message.name || "Invitado").trim();
+      const rawText = String(message.text || "").trim();
+      if (exactName && rawText.startsWith(exactName)) {
+        const systemName = document.createElement("span");
+        systemName.className = "message-system-name";
+        systemName.textContent = exactName;
+        systemText.append(systemName);
+
+        const bodyText = rawText.slice(exactName.length).trimStart();
+        if (bodyText) {
+          const body = document.createElement("span");
+          body.className = "message-system-body";
+          body.textContent = ` ${bodyText}`;
+          systemText.append(body);
+        }
+      } else {
+        systemText.textContent = rawText;
+      }
+
       content.append(systemText);
     } else {
       appendMessageContent(content, message.text);
@@ -140,10 +124,21 @@ function appendMessageTo(container, message) {
   }
 
   appendMessageMedia(content, message);
+  bubble.append(content);
 
   if (message.system) {
     item.append(meta, bubble);
   } else {
+    const timeAnchor = document.createElement("div");
+    timeAnchor.className = "message-time-anchor";
+
+    const time = document.createElement("div");
+    time.className = "message-time";
+    time.textContent = formatTime(message.createdAt);
+    timeAnchor.append(time);
+
+    bubble.insertBefore(timeAnchor, content);
+
     const bubbleRow = document.createElement("div");
     bubbleRow.className = "message-bubble-row";
 
@@ -159,7 +154,6 @@ function appendMessageTo(container, message) {
     item.append(meta, bubbleRow);
 
     wireMessageInteractions(bubble, message, hint, { setReplyTarget });
-    bubble.append(time);
   }
   container.append(item);
   scheduleMessageTimeAdjustment();
@@ -186,12 +180,6 @@ function trimRenderedMessages(container) {
   while (container.children.length > MAX_RENDERED_MESSAGES) {
     container.firstElementChild?.remove();
   }
-}
-
-function capitalizeMessage(text) {
-  const value = String(text || "").trim();
-  if (!value) return "";
-  return value.charAt(0).toLocaleUpperCase("es-ES") + value.slice(1);
 }
 
 function appendMessageMedia(container, message) {

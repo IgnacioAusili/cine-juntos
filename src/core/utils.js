@@ -1,35 +1,50 @@
 export const FIREBASE_VERSION = "10.12.5";
 export const EXAMPLE_VIDEO_URL = "https://cdn.truefilesize.com/mp4/sample-200mb.mp4";
-export const EMOJIS = [
-  "😳",
-  "🙈",
-  "🫣",
-  "😏",
-  "😉",
-  "🥺",
-  "🥹",
-  "😔",
-  "😥",
-  "😭",
-  "💔",
-  "😮‍💨",
-  "🤔",
-  "🤫",
-  "🤨",
-  "😕",
-  "😒",
-  "🤯",
-  "😡",
-  "❌",
-  "👎",
-  "✅",
-  "👍",
-  "🥰",
-  "🤤",
-  "🤮",
-  "🥳",
-  "🙂‍↕️",
+export const EMOJI_PICKER_ITEMS = [
+  { emoji: "😊", tags: ["sonrisa"] },
+  { emoji: "😄", tags: ["risa"] },
+  { emoji: "😉", tags: ["guiño"] },
+  { emoji: "🥰", tags: ["amor"] },
+  { emoji: "😏", tags: ["coqueto"] },
+  { emoji: "🤤", tags: ["antojo"] },
+  { emoji: "😳", tags: ["vergüenza"] },
+  { emoji: "🙈", tags: ["esconderse"] },
+  { emoji: "🫣", tags: ["mirar"] },
+  { emoji: "🤫", tags: ["silencio"] },
+  { emoji: "🤔", tags: ["duda"] },
+  { emoji: "🤨", tags: ["sospecha"] },
+  { emoji: "😕", tags: ["confundido"] },
+  { emoji: "😒", tags: ["fastidio"] },
+  { emoji: "🥺", tags: ["tierno"] },
+  { emoji: "🥹", tags: ["emocion"] },
+  { emoji: "😔", tags: ["triste"] },
+  { emoji: "😥", tags: ["desanimado"] },
+  { emoji: "😭", tags: ["llanto"] },
+  { emoji: "💔", tags: ["corazonroto"] },
+  { emoji: "😮‍💨", tags: ["alivio"] },
+  { emoji: "🤯", tags: ["explota"] },
+  { emoji: "😡", tags: ["enojo"] },
+  { emoji: "🤮", tags: ["asco"] },
+  { emoji: "❌", tags: ["no"] },
+  { emoji: "👎", tags: ["mal"] },
+  { emoji: "✅", tags: ["ok"] },
+  { emoji: "👍", tags: ["bien"] },
+  { emoji: "🥳", tags: ["fiesta"] },
+  { emoji: "🙂‍↕️", tags: ["asentir"] },
 ];
+export const EMOJIS = EMOJI_PICKER_ITEMS.map((item) => item.emoji);
+
+const EMOJI_SHORTCUT_MAP = new Map(
+  EMOJI_PICKER_ITEMS.flatMap((item) => item.tags.map((tag) => [tag.toLowerCase(), item.emoji])),
+);
+
+const EMOJI_SHORTCUT_PATTERN = new RegExp(
+  `:(${Array.from(EMOJI_SHORTCUT_MAP.keys())
+    .sort((a, b) => b.length - a.length)
+    .map(escapeRegExp)
+    .join("|")}):`,
+  "gi",
+);
 export const REMOTE_IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".gif", ".webp", ".avif", ".bmp", ".svg"];
 export const REMOTE_VIDEO_EXTENSIONS = [".mp4", ".webm", ".ogg", ".mov", ".m4v"];
 export const CHAT_VIDEO_PREVIEW_MAX_SECONDS = 5 * 60;
@@ -106,6 +121,16 @@ export function withShortcutHint(label, shortcut) {
   return `${label} (${shortcut})`;
 }
 
+export function replaceEmojiShortcodes(value) {
+  const text = String(value || "");
+  if (!text || EMOJI_SHORTCUT_MAP.size === 0) return text;
+
+  return text.replace(EMOJI_SHORTCUT_PATTERN, (match, rawTag) => {
+    const emoji = EMOJI_SHORTCUT_MAP.get(String(rawTag || "").toLowerCase());
+    return emoji || match;
+  });
+}
+
 export function normalizeRoomCode(value) {
   return String(value || "")
     .trim()
@@ -121,4 +146,8 @@ export function generateRoomCode() {
     .join("")
     .slice(0, 5)
     .toUpperCase();
+}
+
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }

@@ -14,6 +14,7 @@ import { scheduleMessageTimeAdjustment } from "./message-time-layout.js";
 const AUTO_COLLAPSE_DELAY_MS = 3200;
 const AUTO_EXPAND_INSIDE_KEY = "cine-juntos-chat-auto-expand-inside";
 const AUTO_EXPAND_EXTERNAL_KEY = "cine-juntos-chat-auto-expand-external";
+const COLLAPSE_HANDLE_HIDE_MS = 260;
 
 function getAutoExpandTooltip() {
   return "Se abre al recibir mensajes y se oculta al responder";
@@ -37,6 +38,23 @@ function clearAutoCollapseTimer(isOverlay) {
     window.clearTimeout(timerId);
     state.chat[timerKey] = null;
   }
+}
+
+function setCollapseHandleTransitioning(isTransitioning) {
+  if (!dom.collapseChatButton) return;
+
+  if (state.chat.collapseHandleTransitionTimer) {
+    window.clearTimeout(state.chat.collapseHandleTransitionTimer);
+    state.chat.collapseHandleTransitionTimer = null;
+  }
+
+  dom.collapseChatButton.classList.toggle("is-transitioning", isTransitioning);
+  if (!isTransitioning) return;
+
+  state.chat.collapseHandleTransitionTimer = window.setTimeout(() => {
+    dom.collapseChatButton.classList.remove("is-transitioning");
+    state.chat.collapseHandleTransitionTimer = null;
+  }, COLLAPSE_HANDLE_HIDE_MS);
 }
 
 function scheduleAutoCollapse(isOverlay) {
@@ -147,7 +165,17 @@ export function setChatDock(dock) {
 
 export function setExternalChatCollapsed(collapsed) {
   clearAutoCollapseTimer(false);
+  setCollapseHandleTransitioning(true);
   dom.sessionView.classList.toggle("chat-collapsed", collapsed);
+
+  if (dom.chatArea) {
+    dom.chatArea.setAttribute("aria-hidden", String(collapsed));
+    if (collapsed) {
+      dom.chatArea.setAttribute("inert", "");
+    } else {
+      dom.chatArea.removeAttribute("inert");
+    }
+  }
   if (!collapsed && dom.messages) {
     dom.messages.scrollTop = dom.messages.scrollHeight;
   }

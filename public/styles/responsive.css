@@ -30,12 +30,19 @@
   }
 
   .session-view.chat-collapsed[data-chat-dock] .workspace {
-    grid-template-rows: minmax(360px, 58vh);
-    grid-template-areas: "video";
+    row-gap: 0;
+    grid-template-rows: minmax(360px, 58vh) 0px;
+    grid-template-areas:
+      "video"
+      "chat";
   }
 
   .session-view.chat-collapsed[data-chat-dock="top"] .workspace {
-    grid-template-areas: "video";
+    row-gap: 0;
+    grid-template-rows: 0px minmax(360px, 58vh);
+    grid-template-areas:
+      "chat"
+      "video";
   }
 }
 

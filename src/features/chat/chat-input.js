@@ -8,8 +8,9 @@ import {
   logEvent,
 } from "../../core/state.js";
 import {
-  EMOJIS,
+  EMOJI_PICKER_ITEMS,
   MAX_CHARS,
+  replaceEmojiShortcodes,
   withShortcutHint,
 } from "../../core/utils.js";
 import {
@@ -51,7 +52,7 @@ export function sendMessage(text, attachedImage) {
     id: crypto.randomUUID(),
     from: state.session.clientId,
     name: getDisplayName(),
-    text: text || "",
+    text: replaceEmojiShortcodes(text || ""),
     image: Array.isArray(attachedImage) && attachedImage.length ? attachedImage[0] : attachedImage || null,
     images: Array.isArray(attachedImage) ? attachedImage.slice(0, 2) : attachedImage ? [attachedImage] : [],
     replyTo: state.chat.replyTarget
@@ -84,6 +85,7 @@ export function sendMessage(text, attachedImage) {
 
 export function submitMessageFrom(input) {
   const isOverlay = input === dom.overlayMessageInput;
+  normalizeEmojiShortcodesInput(input);
   const text = input.value.trim();
   const img = isOverlay ? state.chat.pendingOverlayImage : state.chat.pendingImage;
   const hasImages = Array.isArray(img) ? img.length > 0 : Boolean(img);
@@ -177,13 +179,19 @@ export function autoResizeMessageInput(input) {
 
 export function buildEmojiPicker() {
   dom.emojiPopover.innerHTML = "";
-  EMOJIS.forEach((emoji) => {
+  EMOJI_PICKER_ITEMS.forEach(({ emoji, tags }) => {
     const button = document.createElement("button");
     button.className = "emoji-option";
     button.type = "button";
+    const tooltip = tags?.length ? `:${tags[0]}:` : "";
     button.setAttribute("aria-label", `Insertar ${emoji}`);
-    button.title = emoji;
+    if (tooltip) {
+      button.title = tooltip;
+    }
     button.textContent = emoji;
+    button.addEventListener("mousedown", (event) => {
+      event.preventDefault();
+    });
     button.addEventListener("click", () => {
       insertEmoji(emoji);
     });
@@ -198,6 +206,8 @@ export function toggleEmojiPicker(input, anchor) {
     return;
   }
 
+  const selectionStart = input?.selectionStart ?? input?.value.length ?? 0;
+  const selectionEnd = input?.selectionEnd ?? input?.value.length ?? 0;
   const rect = anchor.getBoundingClientRect();
   dom.emojiPopover.hidden = false;
   dom.emojiPopover.dataset.anchor = anchor.id;
@@ -205,11 +215,40 @@ export function toggleEmojiPicker(input, anchor) {
   const left = Math.min(window.innerWidth - dom.emojiPopover.offsetWidth - 8, Math.max(8, rect.left));
   dom.emojiPopover.style.top = `${top}px`;
   dom.emojiPopover.style.left = `${left}px`;
+
+  window.requestAnimationFrame(() => {
+    input?.focus({ preventScroll: true });
+    if (typeof input?.setSelectionRange === "function") {
+      input.setSelectionRange(selectionStart, selectionEnd);
+    }
+  });
 }
 
 export function hideEmojiPicker() {
   dom.emojiPopover.hidden = true;
   dom.emojiPopover.dataset.anchor = "";
+}
+
+export function normalizeEmojiShortcodesInput(input) {
+  if (!input) return false;
+
+  const originalValue = input.value;
+  if (!originalValue.includes(":")) return false;
+
+  const selectionStart = input.selectionStart ?? originalValue.length;
+  const selectionEnd = input.selectionEnd ?? originalValue.length;
+  const nextValue = replaceEmojiShortcodes(originalValue);
+  if (nextValue === originalValue) return false;
+
+  input.value = nextValue;
+
+  if (typeof input.setSelectionRange === "function") {
+    const nextStart = replaceEmojiShortcodes(originalValue.slice(0, selectionStart)).length;
+    const nextEnd = replaceEmojiShortcodes(originalValue.slice(0, selectionEnd)).length;
+    input.setSelectionRange(nextStart, nextEnd);
+  }
+
+  return true;
 }
 
 function insertEmoji(emoji) {
@@ -288,14 +327,19 @@ export function wireFloatingComposerLayout() {
 
     const container = form.closest(".chat-area, .player-chat");
     if (!container) return;
+    const messagesContainer = form === dom.overlayMessageForm ? dom.overlayMessages : dom.messages;
 
     const updateReserve = () => {
+      const wasPinnedToBottom = isPinnedToBottom(messagesContainer);
       const reserve = Math.ceil(form.getBoundingClientRect().height);
       const computedStyle = window.getComputedStyle(form);
       const bottomGap = Math.max(0, Math.round(Number.parseFloat(computedStyle.bottom) || 0));
       const messageReserve = reserve + bottomGap + 2;
       container.style.setProperty("--chat-composer-reserve", `${reserve}px`);
       container.style.setProperty("--chat-message-bottom-reserve", `${messageReserve}px`);
+      if (wasPinnedToBottom) {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      }
     };
 
     const observer = new ResizeObserver(() => {

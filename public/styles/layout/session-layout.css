@@ -24,6 +24,9 @@
   margin-top: 68px;
   gap: var(--workspace-gap);
   align-items: stretch;
+  transition:
+    grid-template-columns 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    grid-template-rows 260ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .session-view[data-chat-dock="right"] .workspace {
@@ -50,18 +53,24 @@
 
 .session-view.chat-collapsed[data-chat-dock="right"] .workspace {
   column-gap: 0;
-  grid-template-columns: minmax(0, 1fr);
-  grid-template-areas: "video";
+  grid-template-columns: minmax(0, 1fr) 0px 0px;
+  grid-template-areas: "video handle chat";
 }
 
 .session-view.chat-collapsed[data-chat-dock="bottom"] .workspace {
   height: calc(100vh - (var(--app-shell-gutter) * 2));
-  grid-template-rows: minmax(0, 1fr);
-  grid-template-areas: "video";
+  row-gap: 0;
+  grid-template-rows: minmax(0, 1fr) 0px;
+  grid-template-areas:
+    "video"
+    "chat";
 }
 
 .session-view.chat-collapsed[data-chat-dock="top"] .workspace {
   height: calc(100vh - (var(--app-shell-gutter) * 2));
-  grid-template-rows: minmax(0, 1fr);
-  grid-template-areas: "video";
+  row-gap: 0;
+  grid-template-rows: 0px minmax(0, 1fr);
+  grid-template-areas:
+    "chat"
+    "video";
 }

@@ -14,6 +14,7 @@
 
 .overlay-message-form .input-wrapper {
   position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   width: calc(100% - 4px);
@@ -32,7 +33,23 @@
     box-shadow 0.2s ease,
     border-color 0.2s ease;
   box-shadow:
-    0 16px 24px rgba(0, 0, 0, 0.26);
+    0 14px 24px -12px rgba(0, 0, 0, 0.42),
+    0 6px 12px -8px rgba(0, 0, 0, 0.22);
+}
+
+.overlay-message-form::after {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 8px;
+  z-index: 0;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.66);
+  border-radius: 999px;
+  box-shadow: 0 0 20px 8px rgba(0, 0, 0, 0.2);
+  filter: blur(6px);
+  content: "";
+  pointer-events: none;
 }
 
 .overlay-message-form .textarea-shell {
@@ -59,12 +76,15 @@
   backdrop-filter: blur(2px);
   background-clip: padding-box;
   overflow: hidden;
-  box-shadow: none;
+  box-shadow:
+    0 14px 24px -12px rgba(0, 0, 0, 0.4),
+    0 6px 12px -8px rgba(0, 0, 0, 0.2);
 }
 
 .overlay-message-form .input-wrapper:focus-within {
   box-shadow:
-    0 18px 28px rgba(0, 0, 0, 0.28),
+    0 16px 26px -12px rgba(0, 0, 0, 0.46),
+    0 7px 14px -8px rgba(0, 0, 0, 0.22),
     0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
@@ -90,6 +110,7 @@
   outline: none;
   resize: none;
   color: var(--text);
+  overscroll-behavior: contain;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
@@ -170,10 +191,10 @@
 
 .overlay-message-form .input-wrapper .send > svg.composer-progress-ring {
   position: absolute;
-  left: calc(50% + 2px);
-  top: calc(50% - 2px);
-  width: 42px;
-  height: 42px;
+  left: calc(50% + 1px);
+  top: calc(50% - 1px);
+  width: 30px;
+  height: 30px;
   opacity: var(--composer-progress-visible, 0);
   transform: translate(-50%, -50%);
   pointer-events: none;

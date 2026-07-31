@@ -79,7 +79,10 @@ function appendMessageTo(container, message) {
   bubble.className = "message-bubble";
   const content = document.createElement("div");
   content.className = "message-content";
-  if (message.replyTo?.text) {
+  const hasReply = Boolean(message.replyTo?.text);
+  const replyTextRow = hasReply && !message.system ? document.createElement("div") : null;
+  if (hasReply) {
+    bubble.classList.add("message-bubble--with-reply");
     const reply = document.createElement("button");
     reply.type = "button";
     reply.className = "message-reply";
@@ -89,7 +92,7 @@ function appendMessageTo(container, message) {
     );
     reply.innerHTML = `<span class="message-reply-name">${message.replyTo.name || "Invitado"}</span><span class="message-reply-body">${truncateText(message.replyTo.text, 90)}</span>`;
     reply.addEventListener("click", () => scrollToMessage(message.replyTo.id));
-      content.append(reply);
+    content.append(reply);
   }
 
   if (message.text) {
@@ -119,8 +122,13 @@ function appendMessageTo(container, message) {
 
       content.append(systemText);
     } else {
-      appendMessageContent(content, message.text);
+      appendMessageContent(replyTextRow || content, message.text);
     }
+  }
+
+  if (replyTextRow) {
+    replyTextRow.className = "message-reply-text-row";
+    content.append(replyTextRow);
   }
 
   appendMessageMedia(content, message);
@@ -137,7 +145,11 @@ function appendMessageTo(container, message) {
     time.textContent = formatTime(message.createdAt);
     timeAnchor.append(time);
 
-    bubble.insertBefore(timeAnchor, content);
+    if (replyTextRow) {
+      replyTextRow.prepend(timeAnchor);
+    } else {
+      bubble.insertBefore(timeAnchor, content);
+    }
 
     const bubbleRow = document.createElement("div");
     bubbleRow.className = "message-bubble-row";

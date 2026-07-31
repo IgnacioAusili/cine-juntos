@@ -11,7 +11,7 @@
   z-index: 1;
   display: grid;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   grid-template-columns: auto minmax(0, 1fr) auto;
   width: 100%;
 }
@@ -21,7 +21,7 @@
   min-width: 0;
   align-items: center;
   justify-content: flex-end;
-  gap: 8px;
+  gap: 6px;
 }
 
 .chat-name-field {
@@ -62,7 +62,7 @@
   width: fit-content;
   max-width: 100%;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   transition:
     opacity 180ms ease,
     transform 180ms ease;

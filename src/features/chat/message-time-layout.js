@@ -1,6 +1,7 @@
 import { dom } from "../../core/dom.js";
 
-const TIME_LAYOUT_TOLERANCE_PX = 2;
+const TIME_GAP_PX = 8;
+const LINE_TOLERANCE_PX = 1;
 
 let scheduledFrame = 0;
 
@@ -16,85 +17,201 @@ export function adjustMessageTimes() {
   for (const container of [dom.messages, dom.overlayMessages]) {
     if (!container) continue;
 
-    const bubbles = container.querySelectorAll(".message-bubble");
-    bubbles.forEach((bubble) => {
+    container.querySelectorAll(".message-bubble").forEach((bubble) => {
       const timeAnchor = bubble.querySelector(".message-time-anchor");
-      const time = bubble.querySelector(".message-time");
+      if (!timeAnchor) return;
+
+      resetMessageTimeLayout(timeAnchor);
+
+      const text = bubble.querySelector(".message-text");
+      restoreOriginalText(text);
+
+      const lineHeight = getBubbleLineHeight(bubble);
+      if (!Number.isFinite(lineHeight) || lineHeight <= 0) return;
+
       const content = bubble.querySelector(".message-content");
-      if (!timeAnchor || !time || !content) return;
-
-      resetMessageTimeLayout(bubble, timeAnchor, time);
-
-      const computedStyle = window.getComputedStyle(bubble);
-      const lineHeight = Number.parseFloat(computedStyle.lineHeight);
-      const hasRichContent = Boolean(
-        content.querySelector(".message-media, .message-video, .message-media-link, .message-reply"),
+      const hasReply = Boolean(content?.querySelector(".message-reply"));
+      const textRow = bubble.querySelector(".message-reply-text-row");
+      const hasMediaContent = Boolean(
+        content?.querySelector(".message-media, .message-video, .message-media-link"),
       );
-      const contentHeight = measureContentHeightWithoutTime(content, timeAnchor);
-
-      if (!hasRichContent && Number.isFinite(lineHeight) && lineHeight > 0) {
-        applySingleLineMessageTimeLayout(bubble, timeAnchor, time);
-
-        if (contentHeight <= lineHeight + TIME_LAYOUT_TOLERANCE_PX) {
-          return;
-        }
+      if (hasReply && textRow) {
+        stabilizeReplyTextLayout(textRow, timeAnchor, lineHeight);
+      } else if (text && !hasMediaContent) {
+        stabilizeShapeOutsideLayout(text, timeAnchor, lineHeight);
+      } else {
+        applyShapeOutsideLayout(timeAnchor, lineHeight);
       }
 
-      applyMultiLineMessageTimeLayout(bubble, timeAnchor, time, contentHeight, lineHeight);
+      if (!text || hasMediaContent) return;
+      if (timeFitsLastTextLine(text, timeAnchor)) {
+        return;
+      }
+
+      addMinimalLastLineBreak(text, timeAnchor, lineHeight);
+      stabilizeShapeOutsideLayout(text, timeAnchor, lineHeight);
     });
   }
 }
 
-function resetMessageTimeLayout(bubble, timeAnchor, time) {
-  bubble.classList.remove("message-bubble--single-line");
-  bubble.classList.remove("message-bubble--multi-line");
-  timeAnchor.classList.remove("message-time-anchor--inline");
-  time.classList.remove("message-time--inline");
-
+function resetMessageTimeLayout(timeAnchor) {
   timeAnchor.style.removeProperty("float");
   timeAnchor.style.removeProperty("height");
   timeAnchor.style.removeProperty("margin-left");
   timeAnchor.style.removeProperty("shape-outside");
   timeAnchor.style.removeProperty("order");
-  time.style.removeProperty("transform");
+  timeAnchor.style.removeProperty("display");
+  timeAnchor.style.removeProperty("visibility");
+  timeAnchor.style.removeProperty("transform");
+  timeAnchor.querySelector(".message-time")?.style.removeProperty("transform");
 }
 
-function measureContentHeightWithoutTime(content, timeAnchor) {
-  const previousVisibility = timeAnchor.style.visibility;
+function getBubbleLineHeight(bubble) {
+  const computedStyle = window.getComputedStyle(bubble);
+  const lineHeight = Number.parseFloat(computedStyle.lineHeight);
+  if (Number.isFinite(lineHeight)) return lineHeight;
 
-  timeAnchor.style.visibility = "hidden";
-  const height = content.getBoundingClientRect().height || 0;
-  timeAnchor.style.visibility = previousVisibility;
+  const fontSize = Number.parseFloat(computedStyle.fontSize);
+  return Number.isFinite(fontSize) ? fontSize * 1.2 : 0;
+}
 
+function applyShapeOutsideLayout(timeAnchor, lineHeight) {
+  timeAnchor.style.float = "right";
+  timeAnchor.style.height = "100%";
+  timeAnchor.style.marginLeft = `${TIME_GAP_PX}px`;
+  timeAnchor.style.shapeOutside = `inset(calc(100% - ${lineHeight}px) 0 0)`;
+}
+
+function measureTextHeight(text, timeAnchor) {
+  timeAnchor.style.display = "none";
+  const height = text.getBoundingClientRect().height;
+  timeAnchor.style.removeProperty("display");
   return height;
 }
 
-function applySingleLineMessageTimeLayout(bubble, timeAnchor, time) {
-  bubble.classList.add("message-bubble--single-line");
-  bubble.classList.remove("message-bubble--multi-line");
-  timeAnchor.classList.add("message-time-anchor--inline");
-  time.classList.add("message-time--inline");
-  timeAnchor.style.float = "none";
-  timeAnchor.style.height = "auto";
-  timeAnchor.style.marginLeft = "8px";
-  timeAnchor.style.shapeOutside = "none";
-  timeAnchor.style.order = "2";
+function stabilizeShapeOutsideLayout(text, timeAnchor, lineHeight) {
+  let textHeight = Math.max(lineHeight, measureTextHeight(text, timeAnchor));
+
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    applyMeasuredShapeOutsideLayout(timeAnchor, lineHeight, textHeight);
+    const laidOutHeight = text.getBoundingClientRect().height;
+    if (Math.abs(laidOutHeight - textHeight) <= LINE_TOLERANCE_PX) return;
+    // Keep the measured height monotonic so cyclic float reflow cannot leave
+    // the anchor shorter than the final text layout.
+    textHeight = Math.max(textHeight, laidOutHeight);
+  }
 }
 
-function applyMultiLineMessageTimeLayout(bubble, timeAnchor, time, contentHeight, lineHeight) {
-  bubble.classList.remove("message-bubble--single-line");
-  bubble.classList.add("message-bubble--multi-line");
-  timeAnchor.classList.remove("message-time-anchor--inline");
-  time.classList.remove("message-time--inline");
-
-  const timeHeight = time.getBoundingClientRect().height || lineHeight;
-  const anchorHeight = Math.max(Math.ceil(contentHeight - lineHeight + timeHeight), Math.ceil(lineHeight));
+function applyMeasuredShapeOutsideLayout(timeAnchor, lineHeight, textHeight) {
   timeAnchor.style.float = "right";
-  timeAnchor.style.height = `${anchorHeight}px`;
-  timeAnchor.style.marginLeft = "8px";
+  timeAnchor.style.height = `${textHeight}px`;
+  timeAnchor.style.marginLeft = `${TIME_GAP_PX}px`;
   timeAnchor.style.shapeOutside = `inset(calc(100% - ${lineHeight}px) 0 0)`;
-  timeAnchor.style.order = "";
+}
 
-  const timeLift = Math.max(2, Math.round((lineHeight - timeHeight) * 0.6));
-  time.style.transform = `translateY(-${timeLift}px)`;
+function measureReplyTextHeight(textRow, timeAnchor) {
+  timeAnchor.style.display = "none";
+  const height = textRow.getBoundingClientRect().height;
+  timeAnchor.style.removeProperty("display");
+  return height;
+}
+
+function stabilizeReplyTextLayout(textRow, timeAnchor, lineHeight) {
+  let textHeight = Math.max(lineHeight, measureReplyTextHeight(textRow, timeAnchor));
+
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    applyReplyTextLayout(timeAnchor, lineHeight, textHeight);
+    const laidOutHeight = textRow.getBoundingClientRect().height;
+    if (laidOutHeight <= textHeight + LINE_TOLERANCE_PX) return;
+    textHeight = laidOutHeight;
+  }
+}
+
+function applyReplyTextLayout(timeAnchor, lineHeight, textHeight) {
+  timeAnchor.style.float = "right";
+  timeAnchor.style.height = `${textHeight}px`;
+  timeAnchor.style.marginLeft = `${TIME_GAP_PX}px`;
+  timeAnchor.style.shapeOutside = `inset(calc(100% - ${lineHeight}px) 0 0)`;
+}
+
+function timeFitsLastTextLine(text, timeAnchor) {
+  const lineRects = getTextLineRects(text);
+  const time = timeAnchor.querySelector(".message-time")?.getBoundingClientRect();
+  const lastLine = lineRects.at(-1);
+  if (!lastLine || !time) return true;
+
+  const sharesLine =
+    time.top >= lastLine.top - LINE_TOLERANCE_PX &&
+    time.top <= lastLine.bottom + LINE_TOLERANCE_PX;
+  return sharesLine && lastLine.right <= time.left + LINE_TOLERANCE_PX;
+}
+
+function getTextLineRects(text) {
+  const range = document.createRange();
+  range.selectNodeContents(text);
+
+  const rows = [];
+  for (const rect of range.getClientRects()) {
+    if (rect.width <= 0 || rect.height <= 0) continue;
+
+    const row = rows.find((candidate) => Math.abs(candidate.top - rect.top) <= LINE_TOLERANCE_PX);
+    if (row) {
+      row.left = Math.min(row.left, rect.left);
+      row.right = Math.max(row.right, rect.right);
+      row.bottom = Math.max(row.bottom, rect.bottom);
+    } else {
+      rows.push({ left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom });
+    }
+  }
+
+  return rows.sort((a, b) => a.top - b.top);
+}
+
+function addMinimalLastLineBreak(text, timeAnchor, lineHeight) {
+  const originalText = text.dataset.messageTimeText ?? text.textContent ?? "";
+  if (!originalText.trim()) return;
+  text.dataset.messageTimeText = originalText;
+
+  const wordStarts = [...originalText.matchAll(/\S+/g)]
+    .map((match) => match.index)
+    .filter((index) => index > 0)
+    .reverse();
+  const recentCharacterStarts = getRecentCharacterStarts(originalText);
+  const breakPositions = [...new Set([...wordStarts, ...recentCharacterStarts])];
+
+  for (const start of breakPositions) {
+    const prefix = originalText.slice(0, start).trimEnd();
+    const suffix = originalText.slice(start).trimStart();
+    if (!prefix || !suffix) continue;
+
+    text.replaceChildren(
+      document.createTextNode(prefix),
+      document.createElement("br"),
+      document.createTextNode(suffix),
+    );
+
+    if (timeFitsLastTextLine(text, timeAnchor)) return;
+  }
+
+  text.replaceChildren(document.createTextNode(originalText));
+}
+
+function getRecentCharacterStarts(value) {
+  const starts = [];
+  const minimumIndex = Math.max(1, value.length - 160);
+  let index = 0;
+
+  for (const character of Array.from(value)) {
+    if (index >= minimumIndex && index > 0 && !/\s/u.test(character)) {
+      starts.push(index);
+    }
+    index += character.length;
+  }
+
+  return starts.reverse();
+}
+
+function restoreOriginalText(text) {
+  if (!text || !Object.hasOwn(text.dataset, "messageTimeText")) return;
+  text.replaceChildren(document.createTextNode(text.dataset.messageTimeText));
 }

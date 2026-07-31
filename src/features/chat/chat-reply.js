@@ -2,19 +2,16 @@ import { dom } from "../../core/dom.js";
 import { state } from "../../core/state.js";
 import { truncateText } from "./chat-content-parser.js";
 import { getParticipantAccent } from "./chat-participant-color.js";
-import { isPinnedToBottom, queuePinnedChatScrollSync } from "./chat-scroll-sync.js";
 
-let pendingReplyLayoutSync = null;
-let pendingReplyPreviewHide = null;
+const pendingReplyPreviewHides = new WeakMap();
+const pendingReplyPreviewShow = new WeakMap();
+const pendingReplyPreviewAnimations = new WeakMap();
 
 /**
  * Establece el mensaje al que se está respondiendo y actualiza la vista previa.
  * @param {Object} message - El objeto del mensaje original.
  */
 export function setReplyTarget(message) {
-  const wasPinnedMain = isPinnedToBottom(dom.messages);
-  const wasPinnedOverlay = isPinnedToBottom(dom.overlayMessages);
-
   state.chat.replyTarget = {
     id: message.id,
     from: message.from || null,
@@ -22,51 +19,75 @@ export function setReplyTarget(message) {
     text: message.text || "",
   };
   renderReplyPreview();
-  dom.messageInput.focus();
-  queuePinnedChatScrollSync(dom.messages, false, wasPinnedMain);
-  queuePinnedChatScrollSync(dom.overlayMessages, true, wasPinnedOverlay);
-  scheduleReplyLayoutSync(wasPinnedMain, wasPinnedOverlay);
+  dom.messageInput.focus({ preventScroll: true });
 }
 
 /**
  * Limpia el objetivo de respuesta y oculta la vista previa.
  */
 export function clearReplyTarget() {
-  const wasPinnedMain = isPinnedToBottom(dom.messages);
-  const wasPinnedOverlay = isPinnedToBottom(dom.overlayMessages);
-
   state.chat.replyTarget = null;
   renderReplyPreview();
-  queuePinnedChatScrollSync(dom.messages, false, wasPinnedMain);
-  queuePinnedChatScrollSync(dom.overlayMessages, true, wasPinnedOverlay);
-  scheduleReplyLayoutSync(wasPinnedMain, wasPinnedOverlay);
 }
 
 /**
  * Renderiza la vista previa de la respuesta en los inputs (normal y overlay).
  */
 export function renderReplyPreview() {
-  const getExpandedReplyHeight = (container) => Math.max(container.scrollHeight + 12, 42);
+  const getExpandedReplyHeight = (container) => Math.max(container.scrollHeight, 42);
+  const cancelPreviewAnimation = (container) => {
+    const animation = pendingReplyPreviewAnimations.get(container);
+    if (animation) {
+      animation.cancel();
+      pendingReplyPreviewAnimations.delete(container);
+    }
+  };
 
   [dom.replyPreview, dom.overlayReplyPreview].forEach((container) => {
     if (!container) return;
-    if (pendingReplyPreviewHide) {
-      window.clearTimeout(pendingReplyPreviewHide);
-      pendingReplyPreviewHide = null;
+    const previousHideTimer = pendingReplyPreviewHides.get(container);
+    if (previousHideTimer != null) {
+      window.clearTimeout(previousHideTimer);
+      pendingReplyPreviewHides.delete(container);
+    }
+    cancelPreviewAnimation(container);
+    const previousShowFrame = pendingReplyPreviewShow.get(container);
+    if (previousShowFrame != null) {
+      window.cancelAnimationFrame(previousShowFrame);
+      pendingReplyPreviewShow.delete(container);
     }
     if (!state.chat.replyTarget) {
       container.style.removeProperty("--reply-participant-accent");
-      container.style.setProperty("--reply-preview-max-height", `${container.offsetHeight}px`);
-      container.getBoundingClientRect(); // Force reflow before collapsing.
+      const startHeight = container.getBoundingClientRect().height;
+      container.style.height = `${startHeight}px`;
       container.classList.remove("reply-preview--visible");
-      pendingReplyPreviewHide = window.setTimeout(() => {
+      const animation = container.animate(
+        [{ height: `${startHeight}px` }, { height: "0px" }],
+        {
+          duration: 240,
+          easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+          fill: "forwards",
+        },
+      );
+      pendingReplyPreviewAnimations.set(container, animation);
+      animation.onfinish = () => {
+        if (pendingReplyPreviewAnimations.get(container) !== animation) return;
+        pendingReplyPreviewAnimations.delete(container);
+        container.style.height = "0px";
+      };
+      animation.oncancel = () => {
+        if (pendingReplyPreviewAnimations.get(container) !== animation) return;
+        pendingReplyPreviewAnimations.delete(container);
+      };
+      const hideTimer = window.setTimeout(() => {
         if (!state.chat.replyTarget) {
           container.hidden = true;
           container.innerHTML = "";
-          container.style.removeProperty("--reply-preview-max-height");
+          container.style.removeProperty("height");
         }
-        pendingReplyPreviewHide = null;
+        pendingReplyPreviewHides.delete(container);
       }, 240);
+      pendingReplyPreviewHides.set(container, hideTimer);
       return;
     }
 
@@ -98,10 +119,31 @@ export function renderReplyPreview() {
 
     container.append(replyIcon, textBtn, close);
     container.hidden = false;
-    container.style.setProperty("--reply-preview-max-height", "0px");
-    container.getBoundingClientRect(); // Force reflow
-    container.style.setProperty("--reply-preview-max-height", `${getExpandedReplyHeight(container)}px`);
-    container.classList.add("reply-preview--visible");
+    container.style.height = "0px";
+    const targetHeight = getExpandedReplyHeight(container);
+    const showFrame = window.requestAnimationFrame(() => {
+      pendingReplyPreviewShow.delete(container);
+      container.classList.add("reply-preview--visible");
+      const animation = container.animate(
+        [{ height: "0px" }, { height: `${targetHeight}px` }],
+        {
+          duration: 320,
+          easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+          fill: "forwards",
+        },
+      );
+      pendingReplyPreviewAnimations.set(container, animation);
+      animation.onfinish = () => {
+        if (pendingReplyPreviewAnimations.get(container) !== animation) return;
+        pendingReplyPreviewAnimations.delete(container);
+        container.style.height = `${targetHeight}px`;
+      };
+      animation.oncancel = () => {
+        if (pendingReplyPreviewAnimations.get(container) !== animation) return;
+        pendingReplyPreviewAnimations.delete(container);
+      };
+    });
+    pendingReplyPreviewShow.set(container, showFrame);
   });
 }
 
@@ -132,18 +174,6 @@ export function scrollToMessage(messageId) {
       return;
     }
   }
-}
-
-function scheduleReplyLayoutSync(wasPinnedMain, wasPinnedOverlay) {
-  if (pendingReplyLayoutSync) {
-    window.clearTimeout(pendingReplyLayoutSync);
-  }
-
-  pendingReplyLayoutSync = window.setTimeout(() => {
-    pendingReplyLayoutSync = null;
-    queuePinnedChatScrollSync(dom.messages, false, wasPinnedMain);
-    queuePinnedChatScrollSync(dom.overlayMessages, true, wasPinnedOverlay);
-  }, 240);
 }
 
 /**

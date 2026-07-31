@@ -6,6 +6,7 @@ import {
   autoResizeMessageInput,
   handlePasteEvent,
   hideEmojiPicker,
+  normalizeEmojiShortcodesInput,
   submitMessageFrom,
   toggleEmojiPicker,
   updateCharCounter,
@@ -29,6 +30,82 @@ import {
   syncChatAutoExpandControls,
 } from "./chat-layout.js";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js";
+
+const CHAT_SCROLL_WHEEL_MULTIPLIER = 0.55;
+const DOM_DELTA_PIXEL = 0;
+const DOM_DELTA_LINE = 1;
+const DOM_DELTA_PAGE = 2;
+
+function getWheelScrollDelta(event, container) {
+  const rawDeltaY = event.deltaY;
+  if (!rawDeltaY) return 0;
+
+  if (event.deltaMode === DOM_DELTA_PAGE) {
+    return rawDeltaY * container.clientHeight * CHAT_SCROLL_WHEEL_MULTIPLIER;
+  }
+
+  if (event.deltaMode === DOM_DELTA_LINE) {
+    return rawDeltaY * 16 * CHAT_SCROLL_WHEEL_MULTIPLIER;
+  }
+
+  return rawDeltaY * CHAT_SCROLL_WHEEL_MULTIPLIER;
+}
+
+function applyDampenedWheelScroll(container, event) {
+  if (!container || event.ctrlKey) return false;
+
+  const deltaY = getWheelScrollDelta(event, container);
+  if (!deltaY) return false;
+
+  const maxScrollTop = container.scrollHeight - container.clientHeight;
+  if (maxScrollTop <= 0) return false;
+
+  const nextScrollTop = Math.min(maxScrollTop, Math.max(0, container.scrollTop + deltaY));
+  if (nextScrollTop === container.scrollTop) return false;
+
+  container.scrollTop = nextScrollTop;
+  return true;
+}
+
+function shouldBlockWheelForContainer(container, event) {
+  if (!container || event.ctrlKey) return false;
+
+  const deltaY = event.deltaY;
+  if (!deltaY) return false;
+
+  const maxScrollTop = container.scrollHeight - container.clientHeight;
+  if (maxScrollTop <= 0) return true;
+
+  if (deltaY > 0) {
+    return container.scrollTop >= maxScrollTop;
+  }
+
+  if (deltaY < 0) {
+    return container.scrollTop <= 0;
+  }
+
+  return false;
+}
+
+function shouldBlockWheelForTextarea(textarea, event) {
+  if (!textarea || event.ctrlKey) return false;
+
+  const deltaY = event.deltaY;
+  if (!deltaY) return false;
+
+  const maxScrollTop = textarea.scrollHeight - textarea.clientHeight;
+  if (maxScrollTop <= 0) return true;
+
+  if (deltaY > 0) {
+    return textarea.scrollTop >= maxScrollTop;
+  }
+
+  if (deltaY < 0) {
+    return textarea.scrollTop <= 0;
+  }
+
+  return false;
+}
 
 export {
   buildEmojiPicker,
@@ -111,6 +188,54 @@ export function wireChatEvents() {
     toggleEmojiPicker(dom.overlayMessageInput, dom.overlayEmojiButton);
   });
 
+  [dom.emojiPopover].forEach((popover) => {
+    popover?.addEventListener(
+      "wheel",
+      (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+      },
+      { passive: false },
+    );
+
+    popover?.addEventListener(
+      "touchmove",
+      (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+      },
+      { passive: false },
+    );
+  });
+
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (dom.emojiPopover.hidden) return;
+      hideEmojiPicker();
+    },
+    { passive: true },
+  );
+
+  document.addEventListener(
+    "pointerdown",
+    (event) => {
+      if (dom.emojiPopover.hidden) return;
+      if (dom.emojiPopover.contains(event.target)) return;
+      if (event.target.closest(".emoji-trigger")) return;
+
+      const activeEmojiInput = state.ui.activeEmojiInput;
+      hideEmojiPicker();
+      if (activeEmojiInput) {
+        window.requestAnimationFrame(() => {
+          activeEmojiInput.focus({ preventScroll: true });
+        });
+      }
+      event.preventDefault();
+    },
+    true,
+  );
+
   document.addEventListener("click", (event) => {
     if (dom.emojiPopover.hidden) return;
     if (dom.emojiPopover.contains(event.target)) return;
@@ -147,11 +272,13 @@ export function wireChatEvents() {
     const isOverlay = input === dom.overlayMessageInput;
     wireComposerScrollbar(input);
     input.addEventListener("input", () => {
+      normalizeEmojiShortcodesInput(input);
       autoResizeMessageInput(input);
       updateCharCounter(input, isOverlay);
     });
     input.addEventListener("paste", () =>
       window.setTimeout(() => {
+        normalizeEmojiShortcodesInput(input);
         autoResizeMessageInput(input);
         updateCharCounter(input, isOverlay);
       }, 0),
@@ -199,10 +326,71 @@ export function wireChatEvents() {
     "wheel",
     (event) => {
       if (!dom.playerFrame.classList.contains("chat-inside-open")) return;
+      if (applyDampenedWheelScroll(dom.overlayMessages, event)) {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
+      if (!shouldBlockWheelForContainer(dom.overlayMessages, event)) return;
+      event.preventDefault();
       event.stopPropagation();
     },
-    { passive: true },
+    { passive: false },
   );
+
+  dom.messages.addEventListener(
+    "wheel",
+    (event) => {
+      if (applyDampenedWheelScroll(dom.messages, event)) {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
+      if (!shouldBlockWheelForContainer(dom.messages, event)) return;
+      event.preventDefault();
+      event.stopPropagation();
+    },
+    { passive: false },
+  );
+
+  [dom.replyPreview, dom.overlayReplyPreview].forEach((preview) => {
+    preview?.addEventListener(
+      "wheel",
+      (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+      },
+      { passive: false },
+    );
+  });
+
+  [dom.messageInput, dom.overlayMessageInput].forEach((input) => {
+    input?.addEventListener(
+      "wheel",
+      (event) => {
+        if (!shouldBlockWheelForTextarea(input, event)) return;
+        event.preventDefault();
+        event.stopPropagation();
+      },
+      { passive: false },
+    );
+  });
+
+  [
+    dom.messageEmojiButton,
+    dom.overlayEmojiButton,
+    dom.mainMessageSend,
+    dom.overlayMessageSend,
+  ].forEach((button) => {
+    button?.addEventListener(
+      "wheel",
+      (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+      },
+      { passive: false },
+    );
+  });
 
   window.addEventListener("scroll", syncUnreadBadgesWithVisibility, {
     passive: true,

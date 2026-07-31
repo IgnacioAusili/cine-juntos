@@ -27,6 +27,15 @@
   transition: transform 0.2s ease, color 0.2s ease;
 }
 
+.chat-collapse-handle.is-transitioning .chat-collapse-icon-anchor {
+  opacity: 0;
+  transform: scale(0.7);
+}
+
+.chat-collapse-handle.is-transitioning svg {
+  transition: none;
+}
+
 .chat-collapse-handle:hover,
 .chat-collapse-handle:focus-visible {
   color: #fff;

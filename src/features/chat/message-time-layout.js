@@ -13,45 +13,57 @@ export function scheduleMessageTimeAdjustment() {
   });
 }
 
+export function scheduleMessageTimeAdjustmentForBubble(bubble) {
+  if (!bubble) return;
+  window.requestAnimationFrame(() => {
+    adjustMessageTimeForBubble(bubble);
+  });
+}
+
 export function adjustMessageTimes() {
   for (const container of [dom.messages, dom.overlayMessages]) {
     if (!container) continue;
 
     container.querySelectorAll(".message-bubble").forEach((bubble) => {
-      const timeAnchor = bubble.querySelector(".message-time-anchor");
-      if (!timeAnchor) return;
-
-      resetMessageTimeLayout(timeAnchor);
-
-      const text = bubble.querySelector(".message-text");
-      restoreOriginalText(text);
-
-      const lineHeight = getBubbleLineHeight(bubble);
-      if (!Number.isFinite(lineHeight) || lineHeight <= 0) return;
-
-      const content = bubble.querySelector(".message-content");
-      const hasReply = Boolean(content?.querySelector(".message-reply"));
-      const textRow = bubble.querySelector(".message-reply-text-row");
-      const hasMediaContent = Boolean(
-        content?.querySelector(".message-media, .message-video, .message-media-link"),
-      );
-      if (hasReply && textRow) {
-        stabilizeReplyTextLayout(textRow, timeAnchor, lineHeight);
-      } else if (text && !hasMediaContent) {
-        stabilizeShapeOutsideLayout(text, timeAnchor, lineHeight);
-      } else {
-        applyShapeOutsideLayout(timeAnchor, lineHeight);
-      }
-
-      if (!text || hasMediaContent) return;
-      if (timeFitsLastTextLine(text, timeAnchor)) {
-        return;
-      }
-
-      addMinimalLastLineBreak(text, timeAnchor, lineHeight);
-      stabilizeShapeOutsideLayout(text, timeAnchor, lineHeight);
+      adjustMessageTimeForBubble(bubble);
     });
   }
+}
+
+export function adjustMessageTimeForBubble(bubble) {
+  if (!bubble) return;
+  const timeAnchor = bubble.querySelector(".message-time-anchor");
+  if (!timeAnchor) return;
+
+  resetMessageTimeLayout(timeAnchor);
+
+  const text = bubble.querySelector(".message-text");
+  restoreOriginalText(text);
+
+  const lineHeight = getBubbleLineHeight(bubble);
+  if (!Number.isFinite(lineHeight) || lineHeight <= 0) return;
+
+  const content = bubble.querySelector(".message-content");
+  const hasReply = Boolean(content?.querySelector(".message-reply"));
+  const textRow = bubble.querySelector(".message-reply-text-row");
+  const hasMediaContent = Boolean(
+    content?.querySelector(".message-media, .message-video, .message-media-link"),
+  );
+  if (hasReply && textRow) {
+    stabilizeReplyTextLayout(textRow, timeAnchor, lineHeight);
+  } else if (text && !hasMediaContent) {
+    stabilizeShapeOutsideLayout(text, timeAnchor, lineHeight);
+  } else {
+    applyShapeOutsideLayout(timeAnchor, lineHeight);
+  }
+
+  if (!text || hasMediaContent) return;
+  if (timeFitsLastTextLine(text, timeAnchor)) {
+    return;
+  }
+
+  addMinimalLastLineBreak(text, timeAnchor, lineHeight);
+  stabilizeShapeOutsideLayout(text, timeAnchor, lineHeight);
 }
 
 function resetMessageTimeLayout(timeAnchor) {

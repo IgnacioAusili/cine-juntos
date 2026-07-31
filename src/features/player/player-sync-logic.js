@@ -8,6 +8,7 @@ import {
 } from "../../core/state.js";
 import {
   MAX_DRIFT_SECONDS,
+  HARD_DRIFT_SECONDS,
   SEND_THROTTLE_MS,
   formatSeconds,
 } from "../../core/utils.js";
@@ -21,6 +22,7 @@ import { setVideoSource, waitForVideoMetadata } from "./player.js";
 const PLAYBACK_ISSUE_SYNC_COOLDOWN_MS = 2200;
 const PAUSE_TO_ISSUE_GRACE_MS = 900;
 const SEEK_TO_ISSUE_GRACE_MS = 1400;
+const REMOTE_HOLD_ISSUE_SUPPRESSION_MS = 2200;
 const PLAYBACK_RECOVERY_TIMEOUT_MS = 5 * 60 * 1000;
 
 export function handleRemoteState(statePayload) {
@@ -44,6 +46,9 @@ async function applyRemoteState(statePayload, force = false) {
 
   state.player.suppressVideoEvents = true;
   state.player.remoteStateActive = true;
+  if (statePayload.action === "hold") {
+    state.player.remotePlaybackIssueCooldownUntil = Date.now() + REMOTE_HOLD_ISSUE_SUPPRESSION_MS;
+  }
   try {
     if (statePayload.src && statePayload.src !== dom.videoPlayer.currentSrc && statePayload.src !== dom.videoPlayer.src) {
       setVideoSource(statePayload.src, false);
@@ -51,11 +56,14 @@ async function applyRemoteState(statePayload, force = false) {
     }
 
     const targetTime = getRemoteTargetTime(statePayload);
+    const currentTime = Number(dom.videoPlayer.currentTime) || 0;
+    const drift = Number.isFinite(targetTime) ? Math.abs(currentTime - targetTime) : 0;
+    const shouldSeek = force ? drift > MAX_DRIFT_SECONDS : drift > HARD_DRIFT_SECONDS;
     logEvent(
       "debug",
-      `Aplicar remoto: action=${statePayload.action || "evento"} base=${formatSeconds(statePayload.time)} target=${formatSeconds(targetTime)} current=${formatSeconds(dom.videoPlayer.currentTime)} paused=${String(Boolean(statePayload.paused))}.`,
+      `Aplicar remoto: action=${statePayload.action || "evento"} base=${formatSeconds(statePayload.time)} target=${formatSeconds(targetTime)} current=${formatSeconds(currentTime)} drift=${drift.toFixed(2)} paused=${String(Boolean(statePayload.paused))}.`,
     );
-    if (Number.isFinite(targetTime) && (force || Math.abs(dom.videoPlayer.currentTime - targetTime) > MAX_DRIFT_SECONDS)) {
+    if (Number.isFinite(targetTime) && shouldSeek) {
       dom.videoPlayer.currentTime = Math.max(0, targetTime);
     }
 
@@ -120,6 +128,16 @@ export function pauseRoomForPlaybackIssue(reason) {
   if (!dom.videoPlayer.currentSrc && !dom.videoPlayer.src && !dom.videoUrlInput.value.trim()) return;
   if (dom.videoPlayer.ended) return;
   if (reason !== "error" && dom.videoPlayer.paused) return;
+  if (
+    (reason === "waiting" || reason === "stalled") &&
+    Date.now() < Number(state.player.remotePlaybackIssueCooldownUntil || 0)
+  ) {
+    logEvent(
+      "sync:issue",
+      `Incidencia local ignorada por una pausa remota reciente (${reason}).`,
+    );
+    return;
+  }
   if (reason === "waiting" || reason === "stalled") {
     const lastPauseAt = Number(state.player.lastManualPauseAt || 0);
     if (lastPauseAt && Date.now() - lastPauseAt < PAUSE_TO_ISSUE_GRACE_MS) return;

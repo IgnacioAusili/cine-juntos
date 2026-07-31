@@ -10,6 +10,7 @@ import {
   formatSeconds,
   formatClockTime,
   withShortcutHint,
+  PLAYBACK_ERROR_CONFIRMATION_MS,
 } from "../../core/utils.js";
 import {
   hydrateIcons,
@@ -169,6 +170,7 @@ export function wirePlayerCoreEvents() {
     isDurationShowingRemaining = false;
     dom.emptyPlayer.classList.add("hidden");
     setVideoStatus("loaded", "Incorporado");
+    clearPlaybackErrorTracking();
     clearSlowLoadPromptTracking();
     announceVideoLoadCompletion();
     syncPlayerControls(true);
@@ -177,14 +179,17 @@ export function wirePlayerCoreEvents() {
   });
 
   dom.videoPlayer.addEventListener("loadeddata", () => {
+    clearPlaybackErrorTracking();
     attemptPlaybackRecovery("loadeddata");
   });
 
   dom.videoPlayer.addEventListener("canplay", () => {
+    clearPlaybackErrorTracking();
     attemptPlaybackRecovery("canplay");
   });
 
   dom.videoPlayer.addEventListener("playing", () => {
+    clearPlaybackErrorTracking();
     attemptPlaybackRecovery("playing");
   });
 
@@ -209,26 +214,12 @@ export function wirePlayerCoreEvents() {
   });
 
   dom.videoPlayer.addEventListener("error", () => {
-    setVideoStatus("error", "Error");
-    logEvent("error", "El navegador no pudo cargar el video.");
-    clearSlowLoadPromptTracking();
-    syncPlayerControls(true);
-    pauseRoomForPlaybackIssue("error");
-    
-    // Mostrar diálogo de error al usuario
-    const error = dom.videoPlayer.error;
-    let details = "No se pudo cargar el video seleccionado. Por favor, verifica el formato o que el enlace sea accesible.";
-    if (error) {
-      if (error.code === 1) details = "La carga del video fue abortada.";
-      else if (error.code === 2) details = "Error de red al intentar descargar el video.";
-      else if (error.code === 3) details = "El video está corrupto o tiene un formato no soportado por tu navegador.";
-      else if (error.code === 4) details = "No se pudo encontrar el video o el formato no es compatible.";
-    }
-    showErrorDialog(details);
+    schedulePlaybackErrorConfirmation();
   });
 
   dom.videoPlayer.addEventListener("emptied", () => {
     isDurationShowingRemaining = false;
+    clearPlaybackErrorTracking();
     clearSlowLoadPromptTracking();
     syncPlayerControls(true);
   });
@@ -275,6 +266,7 @@ export function setVideoSource(source, shouldAnnounce) {
   isDurationShowingRemaining = false;
   pendingLoadCompletionAnnouncement = Boolean(shouldAnnounce);
   state.player.resumePromptSource = shouldAnnounce ? getVideoSourceKey(source) : "";
+  clearPlaybackErrorTracking();
   clearSlowLoadPromptTracking();
   clearPlaybackRecoveryTracking();
   dom.videoPlayer.src = source;
@@ -620,6 +612,7 @@ function reloadVideoLocally() {
   if (!source) return;
 
   clearSlowLoadPromptTracking();
+  clearPlaybackErrorTracking();
   setVideoStatus("loading", "Cargando");
   dom.videoPlayer.load();
   syncPlayerControls(true);
@@ -668,6 +661,76 @@ function jumpToResumeTime(resumeTime) {
       restoreSuppression();
     }, 280);
   }
+}
+
+function schedulePlaybackErrorConfirmation() {
+  const snapshot = capturePlaybackErrorSnapshot();
+  if (!snapshot) return;
+
+  clearPlaybackErrorTracking();
+  state.player.playbackErrorSnapshot = snapshot;
+  state.player.playbackErrorTimeoutId = window.setTimeout(() => {
+    const currentSnapshot = state.player.playbackErrorSnapshot;
+    if (!currentSnapshot || !isConfirmedPlaybackError(currentSnapshot)) {
+      return;
+    }
+
+    clearPlaybackErrorTracking();
+    const error = dom.videoPlayer.error;
+    const errorCode = error?.code || currentSnapshot.errorCode;
+    const details = describePlaybackError(errorCode);
+    setVideoStatus("error", "Error");
+    logEvent("error", `Error de video confirmado (${details}).`);
+    clearSlowLoadPromptTracking();
+    syncPlayerControls(true);
+    pauseRoomForPlaybackIssue("error");
+    showErrorDialog(details);
+  }, PLAYBACK_ERROR_CONFIRMATION_MS);
+}
+
+function capturePlaybackErrorSnapshot() {
+  const error = dom.videoPlayer.error;
+  if (!error) return null;
+
+  return {
+    sourceKey: getCurrentVideoSourceKey(),
+    currentSrc: dom.videoPlayer.currentSrc || dom.videoPlayer.src || "",
+    errorCode: error.code,
+    readyState: dom.videoPlayer.readyState,
+    networkState: dom.videoPlayer.networkState,
+    at: Date.now(),
+  };
+}
+
+function isConfirmedPlaybackError(snapshot) {
+  const error = dom.videoPlayer.error;
+  if (!error) return false;
+  if (snapshot.sourceKey !== getCurrentVideoSourceKey()) return false;
+  if (snapshot.currentSrc !== (dom.videoPlayer.currentSrc || dom.videoPlayer.src || "")) return false;
+  if (error.code !== snapshot.errorCode) return false;
+
+  const recoveredEnough =
+    dom.videoPlayer.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA ||
+    dom.videoPlayer.networkState === HTMLMediaElement.NETWORK_IDLE;
+
+  if (recoveredEnough) return false;
+  return true;
+}
+
+function describePlaybackError(code) {
+  if (code === 1) return "La carga del video fue abortada.";
+  if (code === 2) return "Error de red al intentar descargar el video.";
+  if (code === 3) return "El video está corrupto o tiene un formato no soportado por tu navegador.";
+  if (code === 4) return "No se pudo encontrar el video o el formato no es compatible.";
+  return "No se pudo cargar el video seleccionado. Por favor, verifica el formato o que el enlace sea accesible.";
+}
+
+function clearPlaybackErrorTracking() {
+  if (state.player.playbackErrorTimeoutId) {
+    window.clearTimeout(state.player.playbackErrorTimeoutId);
+  }
+  state.player.playbackErrorTimeoutId = null;
+  state.player.playbackErrorSnapshot = null;
 }
 
 function persistPlaybackPosition(force = false) {

@@ -60,6 +60,9 @@ export const FULLSCREEN_SNAP_DELAY_MS = 90;
 export const FULLSCREEN_SNAP_THRESHOLD = 52;
 export const FULLSCREEN_END_GAP = 28;
 export const MAX_DRIFT_SECONDS = 0.45;
+export const SOFT_DRIFT_SECONDS = 0.9;
+export const HARD_DRIFT_SECONDS = 1.8;
+export const PLAYBACK_ERROR_CONFIRMATION_MS = 900;
 export const SEND_THROTTLE_MS = 650;
 export const MAX_CHARS = 300;
 

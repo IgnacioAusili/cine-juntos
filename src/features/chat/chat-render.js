@@ -5,7 +5,7 @@ import { markParticipantActive, rememberParticipant } from "../presence.js";
 import { wireMessageInteractions } from "./chat-message-interactions.js";
 import { appendMessageContent, truncateText } from "./chat-content-parser.js";
 import { getParticipantAccent } from "./chat-participant-color.js";
-import { scheduleMessageTimeAdjustment } from "./message-time-layout.js";
+import { scheduleMessageTimeAdjustmentForBubble } from "./message-time-layout.js";
 import {
   handleIncomingUnread,
   incrementScrollIndicator,
@@ -26,12 +26,14 @@ export function renderMessage(message) {
   rememberParticipant(message.from, message.name);
   markParticipantActive(message.from, message.name);
 
-  appendMessageTo(dom.messages, message);
-  appendMessageTo(dom.overlayMessages, message);
+  const mainItem = appendMessageTo(dom.messages, message);
+  const overlayItem = appendMessageTo(dom.overlayMessages, message);
 
   if (message.from !== state.session.clientId) {
     handleIncomingUnread();
   }
+  scheduleMessageTimeAdjustmentForBubble(mainItem);
+  scheduleMessageTimeAdjustmentForBubble(overlayItem);
   logEvent("chat:recv", `Mensaje recibido de ${message.name || "Invitado"}.`);
 }
 
@@ -168,7 +170,6 @@ function appendMessageTo(container, message) {
     wireMessageInteractions(bubble, message, hint, { setReplyTarget });
   }
   container.append(item);
-  scheduleMessageTimeAdjustment();
   trimRenderedMessages(container);
 
   const isOverlay = container === dom.overlayMessages;
@@ -183,6 +184,8 @@ function appendMessageTo(container, message) {
   } else if (message.from !== state.session.clientId) {
     incrementScrollIndicator(isOverlay);
   }
+
+  return item;
 }
 
 /**

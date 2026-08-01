@@ -11,35 +11,48 @@ body.fullscreen-mode::-webkit-scrollbar {
 
 body.fullscreen-mode {
   overflow-y: auto;
-  background: #050607;
+  background: transparent;
 }
 
 body.fullscreen-mode .app-shell {
   width: 100%;
-  min-height: 100vh;
+  min-height: 100dvh;
+  height: auto;
   margin: 0;
-  padding: 0;
+  padding: var(--app-shell-gutter) 0 0;
+}
+
+body.fullscreen-mode .topbar {
+  margin-inline: var(--app-shell-gutter);
 }
 
 body.fullscreen-mode .session-view {
   display: flex;
   height: auto;
-  min-height: 100vh;
+  min-height: 100dvh;
   flex-direction: column;
   gap: var(--workspace-gap);
   padding: 0;
 }
 
-body.fullscreen-mode .workspace {
+body.fullscreen-mode .session-view[data-chat-dock="bottom"] {
+  padding-bottom: 0;
+}
+
+body.fullscreen-mode .workspace,
+body.fullscreen-mode .session-view[data-chat-dock] .workspace {
   display: grid;
+  width: 100%;
   height: auto;
-  min-height: 100vh;
+  min-height: 100dvh;
+  margin-top: 68px;
   gap: 0;
+  padding: 0;
 }
 
 body.fullscreen-mode .session-view[data-chat-dock] .workspace {
   grid-template-columns: 1fr;
-  grid-template-rows: 100vh minmax(620px, 68vh);
+  grid-template-rows: 100dvh 100dvh;
   grid-template-areas:
     "video"
     "chat";
@@ -47,27 +60,29 @@ body.fullscreen-mode .session-view[data-chat-dock] .workspace {
 
 body.fullscreen-mode .session-view[data-chat-dock="right"] .workspace {
   column-gap: 0;
+  height: 100dvh;
+  min-height: 0;
   grid-template-columns: minmax(0, 1fr) var(--chat-handle-gap) var(--chat-panel-width);
+  grid-template-rows: 100dvh;
   grid-template-areas: "video handle chat";
 }
 
 body.fullscreen-mode .session-view[data-chat-dock="top"] .workspace {
   grid-template-columns: 1fr;
-  grid-template-rows: minmax(620px, 68vh) 100vh;
+  grid-template-rows: 100dvh 100dvh;
   grid-template-areas:
     "chat"
     "video";
 }
 
 body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="right"] .workspace {
+  column-gap: 0;
   grid-template-columns: minmax(0, 1fr) 0px 0px;
   grid-template-areas: "video handle chat";
-  width: 100%;
-  margin-right: 0;
 }
 
 body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="top"] .workspace {
-  grid-template-rows: 0px 100vh;
+  grid-template-rows: 0px 100dvh;
   grid-template-areas:
     "chat"
     "video";
@@ -78,16 +93,23 @@ body.fullscreen-mode .video-area {
   min-height: 0;
   border: 0;
   border-radius: 0;
-  background: #050607;
+  background: transparent;
 }
 
 body.fullscreen-mode .player-frame {
+  position: relative;
+  width: 100%;
   height: 100%;
+  border: 0;
   border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
 }
 
 body.fullscreen-mode .session-toolbar {
-  width: min(710px, 100%);
+  left: var(--app-shell-gutter);
+  width: min(710px, calc(100% - (var(--app-shell-gutter) * 2)));
   margin: 0;
 }
 
@@ -97,13 +119,19 @@ body.fullscreen-mode .chat-area {
 }
 
 body.fullscreen-mode .session-view[data-chat-dock="bottom"] .workspace {
-  height: auto;
-  grid-template-rows: 100vh minmax(620px, 68vh);
+  padding-top: 0;
+  row-gap: var(--chat-bottom-dock-gap);
+  grid-template-rows:
+    100dvh
+    minmax(0, 100dvh);
 }
 
 body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="bottom"] .workspace {
-  height: auto;
-  grid-template-rows: 100vh 0px;
+  height: 100dvh;
+  min-height: 0;
+  padding-top: 0;
+  row-gap: 0;
+  grid-template-rows: minmax(0, 1fr) 0px;
 }
 
 body.fullscreen-mode .player-actions {
@@ -113,8 +141,26 @@ body.fullscreen-mode .player-actions {
   align-items: flex-end;
 }
 
-body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-handle {
-  right: 8px;
+body.fullscreen-mode .session-view[data-chat-dock="right"] .chat-collapse-hover-zone {
+  position: absolute;
+  grid-area: auto;
+  top: 0;
+  right: auto;
+  bottom: auto;
+  left: calc(100% - var(--chat-panel-width) - var(--chat-handle-gap));
+  width: var(--chat-handle-gap);
+  height: 100dvh;
+  min-width: 0;
+  transform: none;
+}
+
+body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-hover-zone {
+  top: 0;
+  right: 0;
+  bottom: auto;
+  left: auto;
+  width: var(--chat-handle-gap-collapsed);
+  height: 100dvh;
 }
 
 body.fullscreen-mode .player-chat {

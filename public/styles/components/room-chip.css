@@ -42,7 +42,7 @@
 .room-chip-title {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
+  align-items: center;
   gap: 10px;
   margin: 0;
   color: var(--text);
@@ -50,6 +50,13 @@
   line-height: 1;
   font-weight: 700;
   letter-spacing: -0.03em;
+}
+
+.room-chip-title-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: 2px;
 }
 
 .room-chip-code {
@@ -76,6 +83,44 @@
   align-items: center;
   justify-content: flex-end;
   gap: 12px;
+}
+
+.room-chip-back-button {
+  display: inline-flex;
+  width: 40px;
+  min-height: 38px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  background: #13171a;
+  color: var(--text-soft);
+  padding: 0;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 6px 18px rgba(0, 0, 0, 0.22);
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    color 160ms ease,
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.room-chip-back-button:hover,
+.room-chip-back-button:focus-visible {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: #181d22;
+  color: #ffffff;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 8px 20px rgba(0, 0, 0, 0.26);
+  transform: none;
+}
+
+.room-chip-back-button svg {
+  width: 18px;
+  height: 18px;
 }
 
 .room-chip-copy {

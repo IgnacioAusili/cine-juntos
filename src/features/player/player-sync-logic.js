@@ -50,8 +50,15 @@ async function applyRemoteState(statePayload, force = false) {
     state.player.remotePlaybackIssueCooldownUntil = Date.now() + REMOTE_HOLD_ISSUE_SUPPRESSION_MS;
   }
   try {
-    if (statePayload.src && statePayload.src !== dom.videoPlayer.currentSrc && statePayload.src !== dom.videoPlayer.src) {
-      setVideoSource(statePayload.src, false);
+    const sourceIsDifferent =
+      statePayload.src &&
+      statePayload.src !== dom.videoPlayer.currentSrc &&
+      statePayload.src !== dom.videoPlayer.src;
+    const isNewVideoEvent = statePayload.action === "video";
+    if (statePayload.src && (sourceIsDifferent || isNewVideoEvent)) {
+      setVideoSource(statePayload.src, false, {
+        announceLoadCompletion: isNewVideoEvent,
+      });
       await waitForVideoMetadata().catch(() => {});
     }
 

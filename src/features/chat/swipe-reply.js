@@ -1,11 +1,13 @@
 // Motor de gesto swipe-to-reply: factory que encapsula estado y animacion.
 // Recibe elementos (bubble, hint) y un callback onReply. No toca estado global.
-export function createSwipeReply(bubble, hint, { onReply, isMine = false }) {
+export function createSwipeReply(bubble, hint, { onReply }) {
   // El rail reservado por el layout permite deslizar sin que la burbuja toque el borde.
   const THRESHOLD = 34, MAX_DRAG = 64, LOCK_DIST = 10, V_BIAS = 6;
   const RESTORE_MS = 340, EPS = 2;
   const EASING = "cubic-bezier(0.22, 1, 0.36, 1)", OPACITY = "opacity 160ms ease";
-  const swipeDirection = isMine ? -1 : 1;
+  // El reply se activa deslizando de derecha a izquierda en ambos tipos de
+  // mensaje. Para los mensajes del invitado esto invierte el gesto anterior.
+  const swipeDirection = -1;
 
   let state = "idle", pointerId = null, pointerType = "", tracking = false, directionLocked = false;
   let startX = 0, startY = 0, currentX = 0, currentY = 0, currentDx = 0, currentDy = 0;

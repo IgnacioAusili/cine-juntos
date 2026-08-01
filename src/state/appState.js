@@ -54,12 +54,13 @@ export const chatState = {
   pendingImage: [],
   pendingOverlayImage: [],
   menuMessage: null,
+  menuReplyInput: null,
   messageMenuOpenedAt: 0,
   longPressTimer: null,
   longPressStart: null,
   mainScrollUnread: 0,
   overlayScrollUnread: 0,
-  nameChangeUsed: localStorage.getItem("cine-juntos-name-change-used") === "1",
+  nameChangeUsed: sessionStorage.getItem("cine-juntos-name-change-used") === "1",
 };
 
 export const uiState = {

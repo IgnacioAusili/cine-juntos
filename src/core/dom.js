@@ -11,6 +11,7 @@ export const dom = {
   createRoomButton: document.querySelector("#createRoomButton"),
   joinRoomButton: document.querySelector("#joinRoomButton"),
   copyInviteButton: document.querySelector("#copyInviteButton"),
+  backToLobbyButton: document.querySelector("#backToLobbyButton"),
   videoUrlInput: document.querySelector("#videoUrlInput"),
   loadVideoButton: document.querySelector("#loadVideoButton"),
   workspace: document.querySelector(".workspace"),

@@ -6,10 +6,9 @@ import { showMessageMenu } from "./message-menu.js";
 
 const LONG_PRESS_DELAY = 560;
 
-export function wireMessageInteractions(bubble, message, hint, { setReplyTarget }) {
+export function wireMessageInteractions(bubble, message, hint, { setReplyTarget, replyInput }) {
   const swipe = createSwipeReply(bubble, hint, {
-    isMine: message.from === state.session.clientId,
-    onReply: () => setReplyTarget?.(message),
+    onReply: () => setReplyTarget?.(message, replyInput),
   });
 
   function clearLongPress() {
@@ -23,7 +22,7 @@ export function wireMessageInteractions(bubble, message, hint, { setReplyTarget 
     window.clearTimeout(state.chat.longPressTimer);
     state.chat.longPressTimer = window.setTimeout(() => {
       if (!swipe.directionLocked && swipe.tracking) {
-        showMessageMenu(message, event.clientX, event.clientY);
+        showMessageMenu(message, event.clientX, event.clientY, replyInput);
       }
     }, LONG_PRESS_DELAY);
   }
@@ -32,7 +31,7 @@ export function wireMessageInteractions(bubble, message, hint, { setReplyTarget 
 
   bubble.addEventListener("contextmenu", (event) => {
     event.preventDefault();
-    showMessageMenu(message, event.clientX, event.clientY);
+    showMessageMenu(message, event.clientX, event.clientY, replyInput);
   });
 
   bubble.addEventListener("dragstart", (event) => {

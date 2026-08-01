@@ -12,6 +12,15 @@
   box-shadow: none;
 }
 
+.overlay-message-form .reply-preview {
+  background: rgba(18, 24, 27, 0.48);
+  border-top-color: rgba(47, 184, 164, 0.12);
+  border-right-color: rgba(47, 184, 164, 0.12);
+  border-bottom-color: rgba(47, 184, 164, 0.12);
+  backdrop-filter: blur(10px) saturate(1.04);
+  -webkit-backdrop-filter: blur(10px) saturate(1.04);
+}
+
 .overlay-message-form .input-wrapper {
   position: relative;
   z-index: 1;

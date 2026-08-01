@@ -9,12 +9,19 @@ import {
   isInsideChatVisibleToUser,
   syncUnreadBadgesWithVisibility,
 } from "./unread-counters.js";
-import { scheduleMessageTimeAdjustment } from "./message-time-layout.js";
+import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260731-03";
 
 const AUTO_COLLAPSE_DELAY_MS = 3200;
 const AUTO_EXPAND_INSIDE_KEY = "cine-juntos-chat-auto-expand-inside";
 const AUTO_EXPAND_EXTERNAL_KEY = "cine-juntos-chat-auto-expand-external";
-const COLLAPSE_HANDLE_HIDE_MS = 260;
+const CHAT_LAYOUT_SETTLE_MS = 320;
+const COLLAPSE_HANDLE_HIDE_MS = CHAT_LAYOUT_SETTLE_MS + 40;
+const CHAT_SCROLL_SNAP_LOCK_MS = 700;
+
+let layoutAdjustmentTimer = 0;
+let expandScrollTimer = 0;
+let collapseHandleOffsetTimer = 0;
+let chatScrollSnapLockTimer = 0;
 
 function getAutoExpandTooltip() {
   return "Se abre al recibir mensajes y se oculta al responder";
@@ -38,6 +45,17 @@ function clearAutoCollapseTimer(isOverlay) {
     window.clearTimeout(timerId);
     state.chat[timerKey] = null;
   }
+}
+
+function scheduleMessageTimeAdjustmentAfterLayout() {
+  scheduleMessageTimeAdjustment();
+  if (layoutAdjustmentTimer) {
+    window.clearTimeout(layoutAdjustmentTimer);
+  }
+  layoutAdjustmentTimer = window.setTimeout(() => {
+    layoutAdjustmentTimer = 0;
+    scheduleMessageTimeAdjustment();
+  }, CHAT_LAYOUT_SETTLE_MS);
 }
 
 function setCollapseHandleTransitioning(isTransitioning) {
@@ -108,7 +126,7 @@ export function setInsideChatVisible(visible) {
   }
   refreshTooltipForTarget(dom.playerChatToggleButton);
   syncUnreadBadgesWithVisibility();
-  scheduleMessageTimeAdjustment();
+  scheduleMessageTimeAdjustmentAfterLayout();
   logEvent("ui", visible ? "Chat interno visible." : "Chat interno oculto.");
 }
 
@@ -127,13 +145,71 @@ export function syncInsideChatPanelOffset() {
   dom.playerFrame.style.setProperty("--inside-chat-top-offset", `${offset}px`);
 }
 
+export function syncExternalChatCollapseHandleOffset() {
+  if (!dom.sessionView || !dom.workspace || !dom.chatArea) return;
+
+  if ((dom.sessionView.dataset.chatDock || "right") !== "bottom") {
+    dom.sessionView.style.removeProperty("--chat-bottom-dock-handle-top");
+    dom.sessionView.style.removeProperty("--chat-bottom-dock-collapsed-handle-top");
+    return;
+  }
+
+  const workspaceRect = dom.workspace.getBoundingClientRect();
+  const chatRect = dom.chatArea.getBoundingClientRect();
+  const dockGap = Number.parseFloat(
+    getComputedStyle(dom.sessionView).getPropertyValue("--chat-bottom-dock-gap"),
+  ) || 24;
+  const handleTop = Math.max(
+    0,
+    Math.round(chatRect.top - workspaceRect.top - dockGap / 2),
+  );
+  const playerControlBar = dom.playerFrame?.querySelector(".player-controls-bar");
+  const playerControlBarRect = playerControlBar?.getBoundingClientRect();
+  const playerFrameRect = dom.playerFrame?.getBoundingClientRect();
+  const collapsedHandleTop = playerControlBarRect
+    ? Math.round(playerControlBarRect.top - workspaceRect.top - 17)
+    : playerFrameRect
+      ? Math.round(playerFrameRect.bottom - workspaceRect.top - 80)
+      : 0;
+  dom.sessionView.style.setProperty("--chat-bottom-dock-handle-top", `${handleTop}px`);
+  dom.sessionView.style.setProperty(
+    "--chat-bottom-dock-collapsed-handle-top",
+    `${collapsedHandleTop}px`,
+  );
+}
+
+function scheduleExternalChatCollapseHandleOffset() {
+  syncExternalChatCollapseHandleOffset();
+  window.requestAnimationFrame(syncExternalChatCollapseHandleOffset);
+  if (collapseHandleOffsetTimer) {
+    window.clearTimeout(collapseHandleOffsetTimer);
+  }
+  collapseHandleOffsetTimer = window.setTimeout(() => {
+    collapseHandleOffsetTimer = 0;
+    syncExternalChatCollapseHandleOffset();
+  }, CHAT_LAYOUT_SETTLE_MS);
+}
+
+function lockChatScrollSnapDuringProgrammaticScroll() {
+  if (!dom.sessionView) return;
+
+  dom.sessionView.classList.add("chat-scroll-snap-locked");
+  if (chatScrollSnapLockTimer) {
+    window.clearTimeout(chatScrollSnapLockTimer);
+  }
+  chatScrollSnapLockTimer = window.setTimeout(() => {
+    chatScrollSnapLockTimer = 0;
+    dom.sessionView.classList.remove("chat-scroll-snap-locked");
+  }, CHAT_SCROLL_SNAP_LOCK_MS);
+}
+
 export function setInsideChatStyle(style) {
   const nextStyle = ["float", "panel"].includes(style) ? style : "float";
   dom.playerFrame.dataset.chatStyle = nextStyle;
   dom.chatStyleToggle.querySelectorAll("[data-chat-style]").forEach((button) => {
     button.classList.toggle("active", button.dataset.chatStyle === nextStyle);
   });
-  scheduleMessageTimeAdjustment();
+  scheduleMessageTimeAdjustmentAfterLayout();
   logEvent("ui", `Estilo de chat interno: ${nextStyle}.`);
 }
 
@@ -155,6 +231,7 @@ export function setChatDock(dock) {
   hydrateIcons();
   updateCollapseButton();
   syncUnreadBadgesWithVisibility();
+  scheduleExternalChatCollapseHandleOffset();
   logEvent("ui", `Chat lateral en posicion: ${meta.label}.`);
 
   const isFullscreen = document.body.classList.contains("fullscreen-mode") || Boolean(document.fullscreenElement);
@@ -165,6 +242,15 @@ export function setChatDock(dock) {
 
 export function setExternalChatCollapsed(collapsed) {
   clearAutoCollapseTimer(false);
+  if (chatScrollSnapLockTimer) {
+    window.clearTimeout(chatScrollSnapLockTimer);
+    chatScrollSnapLockTimer = 0;
+  }
+  dom.sessionView.classList.remove("chat-scroll-snap-locked");
+  if (expandScrollTimer) {
+    window.clearTimeout(expandScrollTimer);
+    expandScrollTimer = 0;
+  }
   setCollapseHandleTransitioning(true);
   dom.sessionView.classList.toggle("chat-collapsed", collapsed);
 
@@ -181,8 +267,24 @@ export function setExternalChatCollapsed(collapsed) {
   }
   updateCollapseButton();
   syncUnreadBadgesWithVisibility();
-  scheduleMessageTimeAdjustment();
+  scheduleMessageTimeAdjustmentAfterLayout();
+  scheduleExternalChatCollapseHandleOffset();
   logEvent("ui", collapsed ? "Chat externo contraido." : "Chat externo expandido.");
+
+  if (!collapsed) {
+    expandScrollTimer = window.setTimeout(() => {
+      expandScrollTimer = 0;
+      lockChatScrollSnapDuringProgrammaticScroll();
+      window.requestAnimationFrame(() => {
+        dom.chatArea?.scrollIntoView({
+          block: "start",
+          inline: "nearest",
+          behavior: "smooth",
+        });
+      });
+    }, CHAT_LAYOUT_SETTLE_MS + 40);
+    return;
+  }
 
   const isFullscreen = document.body.classList.contains("fullscreen-mode") || Boolean(document.fullscreenElement);
   if (isFullscreen) {
@@ -234,9 +336,13 @@ export function updateCollapseButton() {
       ? collapsed
         ? "chevron-left"
         : "chevron-right"
-      : collapsed
-        ? "chevron-up"
-        : "chevron-down";
+      : dock === "bottom"
+        ? collapsed
+          ? "chevron-down"
+          : "chevron-up"
+        : collapsed
+          ? "chevron-up"
+          : "chevron-down";
   const label = collapsed ? "Expandir chat" : "Contraer chat";
 
   dom.collapseChatButton.removeAttribute("title");

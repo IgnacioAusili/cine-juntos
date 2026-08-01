@@ -17,6 +17,7 @@ import { syncInsideChatPanelOffset } from "../chat/chat-layout.js";
 import { withShortcutHint } from "../../core/utils.js";
 
 const PLAYER_OVERLAY_IDLE_MS = 1600;
+let fallbackFullscreenActive = false;
 
 export function wireFullscreenEvents() {
   dom.pageFullscreenButton.addEventListener("click", () => {
@@ -25,6 +26,12 @@ export function wireFullscreenEvents() {
 
   wirePlayerOverlayControls();
   document.addEventListener("fullscreenchange", handleFullscreenChange);
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape" || !fallbackFullscreenActive) return;
+    event.preventDefault();
+    fallbackFullscreenActive = false;
+    handleFullscreenChange();
+  });
 
   dom.videoPlayer.addEventListener("dblclick", (event) => {
     event.preventDefault();
@@ -37,10 +44,12 @@ export function wireFullscreenEvents() {
 
   let scrollSnapTimer = null;
   window.addEventListener("scroll", () => {
-    if (!document.body.classList.contains("fullscreen-mode") && !document.fullscreenElement) return;
+    const isBottomDock = dom.sessionView?.dataset.chatDock === "bottom";
+    if (isPageFullscreenActive() || !isBottomDock) return;
 
     if (scrollSnapTimer) window.clearTimeout(scrollSnapTimer);
     scrollSnapTimer = window.setTimeout(() => {
+      if (dom.sessionView?.classList.contains("chat-scroll-snap-locked")) return;
       snapFullscreenScroll();
     }, FULLSCREEN_SNAP_DELAY_MS);
   }, { passive: true });
@@ -115,16 +124,24 @@ function getDocumentTop(element) {
 }
 
 function getFullscreenSnapPoints() {
-  if (!isPageFullscreenActive() || !dom.workspace) return [];
+  const isBottomDock = dom.sessionView?.dataset.chatDock === "bottom";
+  if (!isBottomDock || isPageFullscreenActive() || !dom.workspace) return [];
 
   const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
   const collapsed = dom.sessionView.classList.contains("chat-collapsed");
   const dock = dom.sessionView.dataset.chatDock || "right";
+  const gutter = Number.parseFloat(
+    getComputedStyle(dom.sessionView).getPropertyValue("--app-shell-gutter"),
+  ) || 0;
   const points = [getDocumentTop(dom.workspace)];
+
+  if (dock === "bottom" && dom.videoArea) {
+    points.push(getDocumentTop(dom.videoArea) - gutter);
+  }
 
   if (!collapsed) {
     if (dock === "bottom" && dom.chatArea) {
-      points.push(getDocumentTop(dom.chatArea));
+      points.push(getDocumentTop(dom.chatArea) - gutter);
     }
     if (dock === "top" && dom.videoArea) {
       points.push(getDocumentTop(dom.videoArea));
@@ -170,38 +187,29 @@ export async function togglePageFullscreen() {
       return;
     }
 
-    if (document.body.classList.contains("fullscreen-mode")) {
-      document.body.classList.remove("fullscreen-mode");
+    if (fallbackFullscreenActive) {
+      fallbackFullscreenActive = false;
       handleFullscreenChange();
       return;
     }
 
-    if (document.fullscreenEnabled && document.documentElement.requestFullscreen) {
+    if (document.fullscreenEnabled && typeof document.documentElement?.requestFullscreen === "function") {
       await document.documentElement.requestFullscreen();
     } else {
-      document.body.classList.toggle("fullscreen-mode");
+      fallbackFullscreenActive = true;
       handleFullscreenChange();
     }
   } catch (error) {
     console.error(error);
     logEvent("error", `No se pudo activar pantalla completa: ${error.message || error}`);
-    document.body.classList.add("fullscreen-mode");
+    fallbackFullscreenActive = true;
     handleFullscreenChange();
     setSyncStatus("Modo pantalla activado sin fullscreen del navegador.");
   }
 }
 
 export function handleFullscreenChange() {
-  if (document.fullscreenElement === dom.videoPlayer) {
-    document.exitFullscreen().catch(() => {});
-    document.body.classList.add("fullscreen-mode");
-  }
-
-  if (!document.fullscreenElement) {
-    document.body.classList.remove("fullscreen-mode");
-  }
-
-  const isFullscreen = Boolean(document.fullscreenElement) || document.body.classList.contains("fullscreen-mode");
+  const isFullscreen = Boolean(document.fullscreenElement) || fallbackFullscreenActive;
   const icon = dom.pageFullscreenButton.querySelector("[data-lucide]");
   const tooltip = withShortcutHint(
     isFullscreen ? "Salir de pantalla completa" : "Pantalla completa",

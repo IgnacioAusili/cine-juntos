@@ -27,9 +27,10 @@ import {
   setInsideChatAutoExpandEnabled,
   setInsideChatStyle,
   setInsideChatVisible,
+  syncExternalChatCollapseHandleOffset,
   syncChatAutoExpandControls,
 } from "./chat-layout.js";
-import { scheduleMessageTimeAdjustment } from "./message-time-layout.js";
+import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260731-03";
 
 const CHAT_SCROLL_WHEEL_MULTIPLIER = 0.55;
 const DOM_DELTA_PIXEL = 0;
@@ -74,7 +75,9 @@ function shouldBlockWheelForContainer(container, event) {
   if (!deltaY) return false;
 
   const maxScrollTop = container.scrollHeight - container.clientHeight;
-  if (maxScrollTop <= 0) return true;
+  // Si el chat no tiene contenido desplazable, dejamos que la rueda llegue a
+  // la página en lugar de bloquearla dentro de un contenedor estático.
+  if (maxScrollTop <= 0) return false;
 
   if (deltaY > 0) {
     return container.scrollTop >= maxScrollTop;
@@ -145,6 +148,14 @@ export function wireChatEvents() {
   syncChatAutoExpandControls();
   wireFloatingComposerLayout();
 
+  if ("ResizeObserver" in window && dom.workspace) {
+    const chatHandleResizeObserver = new ResizeObserver(() => {
+      syncExternalChatCollapseHandleOffset();
+    });
+    chatHandleResizeObserver.observe(dom.workspace);
+  }
+  window.requestAnimationFrame(syncExternalChatCollapseHandleOffset);
+
   dom.insideChatAutoExpandSwitch.addEventListener("click", () => {
     setInsideChatAutoExpandEnabled(!state.chat.autoExpandInsideEnabled);
   });
@@ -174,10 +185,19 @@ export function wireChatEvents() {
     setChatDock(CHAT_DOCK_META[currentDock]?.next || "right");
   });
 
+  dom.collapseChatButton.addEventListener("pointerdown", (event) => {
+    event.preventDefault();
+  });
+
+  dom.collapseChatButton.addEventListener("focus", () => {
+    dom.collapseChatButton.blur();
+  });
+
   dom.collapseChatButton.addEventListener("click", () => {
     setExternalChatCollapsed(
       !dom.sessionView.classList.contains("chat-collapsed"),
     );
+    dom.collapseChatButton.blur();
   });
 
   dom.messageEmojiButton.addEventListener("click", () => {
@@ -254,7 +274,7 @@ export function wireChatEvents() {
     const action = event.target.closest("button")?.dataset.action;
     if (!action || !state.chat.menuMessage) return;
     if (action === "copy") copyMessageText(state.chat.menuMessage);
-    if (action === "reply") setReplyTarget(state.chat.menuMessage);
+    if (action === "reply") setReplyTarget(state.chat.menuMessage, state.chat.menuReplyInput);
     hideMessageMenu();
   });
 
@@ -396,6 +416,9 @@ export function wireChatEvents() {
     passive: true,
   });
   window.addEventListener("resize", syncUnreadBadgesWithVisibility, {
+    passive: true,
+  });
+  window.addEventListener("resize", syncExternalChatCollapseHandleOffset, {
     passive: true,
   });
   window.addEventListener("resize", scheduleMessageTimeAdjustment, {

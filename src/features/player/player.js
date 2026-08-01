@@ -262,9 +262,11 @@ async function handleManualLoadRequest() {
   loadVideoFromUrl(source, "manual");
 }
 
-export function setVideoSource(source, shouldAnnounce) {
+export function setVideoSource(source, shouldAnnounce, options = {}) {
   isDurationShowingRemaining = false;
-  pendingLoadCompletionAnnouncement = Boolean(shouldAnnounce);
+  pendingLoadCompletionAnnouncement = Boolean(
+    options.announceLoadCompletion ?? shouldAnnounce,
+  );
   state.player.resumePromptSource = shouldAnnounce ? getVideoSourceKey(source) : "";
   clearPlaybackErrorTracking();
   clearSlowLoadPromptTracking();

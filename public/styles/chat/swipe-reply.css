@@ -33,6 +33,8 @@
 /* Los mensajes recibidos se alinean al borde izquierdo sin margen adicional. */
 .message:not(.mine) .message-bubble-row {
   align-self: flex-start;
+  width: fit-content;
+  max-width: calc(100% - var(--reply-swipe-reserve));
 }
 
 .swipe-reply-hint-wrapper {
@@ -79,9 +81,10 @@
   stroke-width: 2.2;
 }
 
-/* En mensajes recibidos, la flecha se espeja para apuntar hacia la derecha sin voltear la cola. */
+/* El mensaje recibido también se desliza hacia la izquierda: la flecha apunta
+   en esa dirección y permanece en el rail derecho. */
 .message:not(.mine) .swipe-reply-hint svg {
-  transform: scaleX(-1);
+  transform: none;
   transform-origin: center;
 }
 

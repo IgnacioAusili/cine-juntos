@@ -1,11 +1,12 @@
 .overlay-messages {
+  position: relative;
   display: flex;
   min-height: 0;
   flex-direction: column;
   justify-content: flex-start;
   overflow-x: hidden;
   overflow-y: auto;
-  overscroll-behavior: contain;
+  overscroll-behavior: auto;
   scroll-padding-bottom: var(--chat-message-bottom-reserve, 132px);
   pointer-events: auto;
   border: 0;
@@ -26,6 +27,14 @@
   max-width: 82%;
   align-items: flex-start;
   margin-bottom: 6px;
+}
+
+.overlay-messages .message-highlight--overlay {
+  position: absolute;
+  pointer-events: none;
+  z-index: 2;
+  left: 0;
+  right: 0;
 }
 
 .overlay-messages .message.mine {
@@ -93,11 +102,36 @@
   overflow-wrap: break-word;
   word-break: normal;
   white-space: normal;
-  padding: 0 6px 2px;
+  padding: 4px 10px 5px;
 }
 
 .overlay-messages .message-content {
   display: contents;
+}
+
+/* En mensajes simples, la hora ocupa siempre una franja inferior estable.
+   Esto evita que el float cambie la forma de la burbuja al entrar otro mensaje. */
+.overlay-messages .message-bubble:not(.message-bubble--with-reply) {
+  min-width: 58px;
+  padding-bottom: 14px;
+}
+
+.overlay-messages .message-bubble:not(.message-bubble--with-reply) .message-content {
+  display: block;
+  width: auto;
+}
+
+.overlay-messages .message-bubble:not(.message-bubble--with-reply) .message-time-anchor {
+  position: absolute;
+  right: 10px;
+  bottom: 3px;
+  display: flex;
+  align-items: center;
+  width: auto;
+  height: auto;
+  margin: 0;
+  float: none;
+  shape-outside: none;
 }
 
 .overlay-messages .message-bubble.message-bubble--with-reply {
@@ -216,4 +250,9 @@
   text-align: center;
   white-space: normal;
   overflow-wrap: anywhere;
+}
+
+.overlay-messages .message.system .message-system-name {
+  color: var(--participant-accent, rgba(255, 255, 255, 0.84));
+  font-weight: 700;
 }

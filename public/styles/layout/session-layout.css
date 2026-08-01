@@ -6,6 +6,11 @@
   gap: 0;
 }
 
+.session-view[data-chat-dock="bottom"] {
+  --chat-bottom-dock-gap: 24px;
+  padding-bottom: 0;
+}
+
 .session-toolbar {
   position: absolute;
   z-index: 10;
@@ -37,7 +42,11 @@
 
 .session-view[data-chat-dock="bottom"] .workspace {
   height: auto;
-  grid-template-rows: minmax(560px, calc(100vh - (var(--app-shell-gutter) * 2))) minmax(500px, 50vh);
+  padding-top: var(--app-shell-gutter);
+  row-gap: var(--chat-bottom-dock-gap);
+  grid-template-rows:
+    calc(100dvh - (var(--app-shell-gutter) * 2))
+    minmax(0, calc(100dvh - var(--chat-bottom-dock-gap) - var(--app-shell-gutter)));
   grid-template-areas:
     "video"
     "chat";
@@ -45,7 +54,7 @@
 
 .session-view[data-chat-dock="top"] .workspace {
   height: auto;
-  grid-template-rows: minmax(500px, 50vh) minmax(560px, calc(100vh - (var(--app-shell-gutter) * 2)));
+  grid-template-rows: 100dvh 100dvh;
   grid-template-areas:
     "chat"
     "video";
@@ -58,7 +67,9 @@
 }
 
 .session-view.chat-collapsed[data-chat-dock="bottom"] .workspace {
-  height: calc(100vh - (var(--app-shell-gutter) * 2));
+  height: calc(100dvh - var(--app-shell-gutter));
+  min-height: 0;
+  padding-top: var(--app-shell-gutter);
   row-gap: 0;
   grid-template-rows: minmax(0, 1fr) 0px;
   grid-template-areas:
@@ -69,7 +80,7 @@
 .session-view.chat-collapsed[data-chat-dock="top"] .workspace {
   height: calc(100vh - (var(--app-shell-gutter) * 2));
   row-gap: 0;
-  grid-template-rows: 0px minmax(0, 1fr);
+  grid-template-rows: 0px 100dvh;
   grid-template-areas:
     "chat"
     "video";

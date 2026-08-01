@@ -6,20 +6,24 @@ import { getParticipantAccent } from "./chat-participant-color.js";
 const pendingReplyPreviewHides = new WeakMap();
 const pendingReplyPreviewShow = new WeakMap();
 const pendingReplyPreviewAnimations = new WeakMap();
+const pendingOverlayHighlights = new WeakMap();
+const pendingOverlayHighlightTimers = new WeakMap();
 
 /**
  * Establece el mensaje al que se está respondiendo y actualiza la vista previa.
  * @param {Object} message - El objeto del mensaje original.
+ * @param {HTMLElement} [focusInput] - Input que debe recuperar el foco.
  */
-export function setReplyTarget(message) {
+export function setReplyTarget(message, focusInput = dom.messageInput) {
+  const isSameReplyTarget = state.chat.replyTarget?.id === message.id;
   state.chat.replyTarget = {
     id: message.id,
     from: message.from || null,
     name: message.name || "Invitado",
     text: message.text || "",
   };
-  renderReplyPreview();
-  dom.messageInput.focus({ preventScroll: true });
+  renderReplyPreview({ animate: !isSameReplyTarget });
+  focusInput?.focus({ preventScroll: true });
 }
 
 /**
@@ -33,7 +37,7 @@ export function clearReplyTarget() {
 /**
  * Renderiza la vista previa de la respuesta en los inputs (normal y overlay).
  */
-export function renderReplyPreview() {
+export function renderReplyPreview({ animate = true } = {}) {
   const getExpandedReplyHeight = (container) => Math.max(container.scrollHeight, 42);
   const cancelPreviewAnimation = (container) => {
     const animation = pendingReplyPreviewAnimations.get(container);
@@ -105,8 +109,9 @@ export function renderReplyPreview() {
     textBtn.type = "button";
     textBtn.className = "reply-preview-text";
     textBtn.innerHTML = `<span class="reply-preview-name">${state.chat.replyTarget.name}</span><span class="reply-preview-body">${truncateText(state.chat.replyTarget.text || "", 58)}</span>`;
+    const preferredScrollContainer = container === dom.overlayReplyPreview ? dom.overlayMessages : dom.messages;
     textBtn.addEventListener("click", () =>
-      scrollToMessage(state.chat.replyTarget.id),
+      scrollToMessage(state.chat.replyTarget.id, preferredScrollContainer),
     );
 
     const close = document.createElement("button");
@@ -119,6 +124,16 @@ export function renderReplyPreview() {
 
     container.append(replyIcon, textBtn, close);
     container.hidden = false;
+
+    if (!animate) {
+      container.style.setProperty("transition", "none");
+      container.classList.add("reply-preview--visible");
+      container.style.removeProperty("height");
+      void container.offsetHeight;
+      container.style.removeProperty("transition");
+      return;
+    }
+
     container.style.height = "0px";
     const targetHeight = getExpandedReplyHeight(container);
     const showFrame = window.requestAnimationFrame(() => {
@@ -150,10 +165,13 @@ export function renderReplyPreview() {
 /**
  * Desplaza la vista hasta un mensaje específico y lo resalta.
  * @param {string} messageId - El ID del mensaje al que desplazarse.
+ * @param {HTMLElement|null} [preferredContainer] - Contenedor a priorizar.
  */
-export function scrollToMessage(messageId) {
+export function scrollToMessage(messageId, preferredContainer = null) {
   if (!messageId) return;
-  const containers = [dom.messages, dom.overlayMessages];
+  const containers = [preferredContainer, dom.overlayMessages, dom.messages].filter(
+    (container, index, all) => container && all.indexOf(container) === index,
+  );
   for (const container of containers) {
     const target = container.querySelector(
       `article[data-message-id="${messageId}"]`,
@@ -180,10 +198,46 @@ export function scrollToMessage(messageId) {
  * Aplica un efecto visual de resaltado temporal a un elemento de mensaje.
  */
 function highlightMessage(element) {
+  const overlayContainer = element.closest(".overlay-messages");
+  if (overlayContainer) {
+    highlightOverlayMessage(overlayContainer, element);
+    return;
+  }
+
   element.classList.remove("message-highlight");
   void element.offsetWidth; // Force reflow
   element.classList.add("message-highlight");
   window.setTimeout(() => {
     element.classList.remove("message-highlight");
   }, 2600);
+}
+
+function highlightOverlayMessage(container, element) {
+  const previousHighlight = pendingOverlayHighlights.get(container);
+  if (previousHighlight) {
+    previousHighlight.remove();
+    pendingOverlayHighlights.delete(container);
+  }
+  const previousTimer = pendingOverlayHighlightTimers.get(container);
+  if (previousTimer) {
+    window.clearTimeout(previousTimer);
+    pendingOverlayHighlightTimers.delete(container);
+  }
+
+  const highlight = document.createElement("div");
+  highlight.className = "message-highlight message-highlight--overlay";
+  highlight.style.top = `${Math.max(0, element.offsetTop - 2)}px`;
+  highlight.style.height = `${element.offsetHeight + 4}px`;
+  container.append(highlight);
+  pendingOverlayHighlights.set(container, highlight);
+
+  void highlight.offsetWidth; // Force reflow for the pulse animation
+
+  const timer = window.setTimeout(() => {
+    if (pendingOverlayHighlights.get(container) !== highlight) return;
+    highlight.remove();
+    pendingOverlayHighlights.delete(container);
+    pendingOverlayHighlightTimers.delete(container);
+  }, 2600);
+  pendingOverlayHighlightTimers.set(container, timer);
 }

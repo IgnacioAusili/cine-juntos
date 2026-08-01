@@ -23,6 +23,7 @@ import {
   focusMainWorkspace,
   setHostBadge,
   setSyncStatus,
+  showLobby,
   showSession,
 } from "./session-ui.js";
 import { handleRemoteState } from "./player/index.js";
@@ -194,6 +195,10 @@ export function wireRoomEvents() {
 
   dom.copyInviteButton.addEventListener("click", copyInvite);
 
+  dom.backToLobbyButton?.addEventListener("click", () => {
+    void leaveRoom();
+  });
+
   dom.roomInput.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
       void joinRoom(dom.roomInput.value);
@@ -230,9 +235,12 @@ export async function joinRoom(rawRoomCode) {
   if (dom.joinRoomButton) {
     dom.joinRoomButton.disabled = true;
     dom.joinRoomButton.dataset.loading = "true";
+    dom.joinRoomButton.setAttribute("aria-busy", "true");
   }
   if (dom.createRoomButton) {
     dom.createRoomButton.disabled = true;
+    dom.createRoomButton.dataset.loading = "true";
+    dom.createRoomButton.setAttribute("aria-busy", "true");
   }
 
   logEvent("room", `Entrando a sala ${roomCode}.`);
@@ -317,9 +325,12 @@ export async function joinRoom(rawRoomCode) {
     if (dom.joinRoomButton) {
       syncJoinRoomButtonState();
       delete dom.joinRoomButton.dataset.loading;
+      dom.joinRoomButton.removeAttribute("aria-busy");
     }
     if (dom.createRoomButton) {
       dom.createRoomButton.disabled = false;
+      delete dom.createRoomButton.dataset.loading;
+      dom.createRoomButton.removeAttribute("aria-busy");
     }
   }
 }
@@ -340,6 +351,45 @@ export async function copyInvite() {
   setSyncStatus("Invitacion copiada.");
 }
 
+export async function leaveRoom() {
+  const activeTransport = state.session.transport;
+  const activeRoom = state.session.activeRoom;
+
+  state.session.transport = null;
+  state.session.activeRoom = "";
+  removeActiveTabRecord();
+
+  try {
+    await activeTransport?.close?.();
+  } catch (error) {
+    logEvent("error", `No se pudo cerrar la sala ${activeRoom || "activa"}: ${error.message || error}`);
+  }
+
+  state.session.knownParticipants = new Set([state.session.clientId]);
+  state.session.knownMembers = new Map([[state.session.clientId, getDisplayName()]]);
+  state.chat.lastMessageIds = new Set();
+  state.chat.replyTarget = null;
+  state.player.lastRemoteState = null;
+  state.player.remoteStateActive = false;
+
+  dom.roomBadge.textContent = "Sin sala";
+  dom.roomInput.value = "";
+  syncJoinRoomButtonState();
+  dom.messages.innerHTML = "";
+  dom.overlayMessages.innerHTML = "";
+  renderPresence();
+  setHostBadge(false);
+  setInsideChatVisible(false);
+  resetInsideUnread();
+  resetExternalUnread();
+  renderReplyPreview();
+  clearUrlRoom();
+  setConnection("local", "Modo local");
+  setSyncStatus("Listo");
+  showLobby();
+  logEvent("room", `Se volvió a la entrada desde ${activeRoom || "la sala"}.`);
+}
+
 function setInviteCopyFeedback(active) {
   if (!dom.copyInviteButton) return;
   window.clearTimeout(inviteCopyFeedbackTimer);
@@ -355,6 +405,12 @@ function setInviteCopyFeedback(active) {
 function updateUrlRoom(roomCode) {
   const url = new URL(window.location.href);
   url.searchParams.set("room", roomCode);
+  window.history.replaceState({}, "", url);
+}
+
+function clearUrlRoom() {
+  const url = new URL(window.location.href);
+  url.searchParams.delete("room");
   window.history.replaceState({}, "", url);
 }
 

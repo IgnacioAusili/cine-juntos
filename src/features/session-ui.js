@@ -27,8 +27,7 @@ export function focusMainWorkspace() {
 
 export function focusFullscreenWorkspace() {
   window.requestAnimationFrame(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-    dom.workspace?.scrollIntoView({ block: "start", inline: "nearest" });
+    dom.videoArea?.scrollIntoView({ block: "start", inline: "nearest" });
   });
 }
 

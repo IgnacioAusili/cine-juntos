@@ -5,7 +5,7 @@ import { markParticipantActive, rememberParticipant } from "../presence.js";
 import { wireMessageInteractions } from "./chat-message-interactions.js";
 import { appendMessageContent, truncateText } from "./chat-content-parser.js";
 import { getParticipantAccent } from "./chat-participant-color.js";
-import { scheduleMessageTimeAdjustmentForBubble } from "./message-time-layout.js";
+import { scheduleMessageTimeAdjustmentForBubble } from "./message-time-layout.js?v=20260731-03";
 import {
   handleIncomingUnread,
   incrementScrollIndicator,
@@ -32,8 +32,8 @@ export function renderMessage(message) {
   if (message.from !== state.session.clientId) {
     handleIncomingUnread();
   }
-  scheduleMessageTimeAdjustmentForBubble(mainItem);
-  scheduleMessageTimeAdjustmentForBubble(overlayItem);
+  scheduleMessageTimeAdjustmentForBubble(mainItem?.querySelector(".message-bubble"));
+  scheduleMessageTimeAdjustmentForBubble(overlayItem?.querySelector(".message-bubble"));
   logEvent("chat:recv", `Mensaje recibido de ${message.name || "Invitado"}.`);
 }
 
@@ -93,7 +93,7 @@ function appendMessageTo(container, message) {
       getParticipantAccent(message.replyTo.from || message.replyTo.id || message.replyTo.name),
     );
     reply.innerHTML = `<span class="message-reply-name">${message.replyTo.name || "Invitado"}</span><span class="message-reply-body">${truncateText(message.replyTo.text, 90)}</span>`;
-    reply.addEventListener("click", () => scrollToMessage(message.replyTo.id));
+    reply.addEventListener("click", () => scrollToMessage(message.replyTo.id, container));
     content.append(reply);
   }
 
@@ -106,17 +106,27 @@ function appendMessageTo(container, message) {
       const exactName = String(message.name || "Invitado").trim();
       const rawText = String(message.text || "").trim();
       if (exactName && rawText.startsWith(exactName)) {
-        const systemName = document.createElement("span");
-        systemName.className = "message-system-name";
-        systemName.textContent = exactName;
-        systemText.append(systemName);
-
         const bodyText = rawText.slice(exactName.length).trimStart();
-        if (bodyText) {
+        const isOwnPlaybackIssue =
+          isMine && /^tiene inconvenientes en el video\b/i.test(bodyText);
+
+        if (isOwnPlaybackIssue) {
           const body = document.createElement("span");
           body.className = "message-system-body";
-          body.textContent = ` ${bodyText}`;
+          body.textContent = bodyText.replace(/^tiene\b/i, "Tienes");
           systemText.append(body);
+        } else {
+          const systemName = document.createElement("span");
+          systemName.className = "message-system-name";
+          systemName.textContent = isMine ? "Tu" : exactName;
+          systemText.append(systemName);
+
+          if (bodyText) {
+            const body = document.createElement("span");
+            body.className = "message-system-body";
+            body.textContent = ` ${bodyText}`;
+            systemText.append(body);
+          }
         }
       } else {
         systemText.textContent = rawText;
@@ -167,7 +177,8 @@ function appendMessageTo(container, message) {
     bubbleRow.append(bubble, hintWrapper);
     item.append(meta, bubbleRow);
 
-    wireMessageInteractions(bubble, message, hint, { setReplyTarget });
+    const replyInput = container === dom.overlayMessages ? dom.overlayMessageInput : dom.messageInput;
+    wireMessageInteractions(bubble, message, hint, { setReplyTarget, replyInput });
   }
   container.append(item);
   trimRenderedMessages(container);

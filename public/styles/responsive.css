@@ -23,6 +23,18 @@
       "chat";
   }
 
+  .session-view[data-chat-dock="bottom"] .workspace,
+  .session-view[data-chat-dock="top"] .workspace {
+    grid-template-rows: 100dvh 100dvh;
+  }
+
+  .session-view[data-chat-dock="bottom"] .workspace {
+    row-gap: var(--chat-bottom-dock-gap);
+    grid-template-rows:
+      calc(100dvh - (var(--app-shell-gutter) * 2))
+      minmax(0, calc(100dvh - var(--chat-bottom-dock-gap) - var(--app-shell-gutter)));
+  }
+
   .session-view[data-chat-dock="top"] .workspace {
     grid-template-areas:
       "chat"
@@ -37,9 +49,18 @@
       "chat";
   }
 
+  .session-view.chat-collapsed[data-chat-dock="bottom"] .workspace,
+  .session-view.chat-collapsed[data-chat-dock="top"] .workspace {
+    grid-template-rows: 100dvh 0px;
+  }
+
+  .session-view.chat-collapsed[data-chat-dock="bottom"] .workspace {
+    grid-template-rows: minmax(0, 1fr) 0px;
+  }
+
   .session-view.chat-collapsed[data-chat-dock="top"] .workspace {
     row-gap: 0;
-    grid-template-rows: 0px minmax(360px, 58vh);
+    grid-template-rows: 0px 100dvh;
     grid-template-areas:
       "chat"
       "video";
@@ -73,6 +94,10 @@
   .room-chip-title {
     gap: 8px;
     font-size: clamp(1.55rem, 8vw, 2rem);
+  }
+
+  .room-chip-title-actions {
+    gap: 8px;
   }
 
   .room-chip-actions {

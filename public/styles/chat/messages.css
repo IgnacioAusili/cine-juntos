@@ -249,3 +249,8 @@
   white-space: normal;
   overflow-wrap: anywhere;
 }
+
+.message.system .message-system-name {
+  color: var(--participant-accent, var(--muted));
+  font-weight: 700;
+}

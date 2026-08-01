@@ -179,15 +179,21 @@ function commitDisplayNameChange() {
     return;
   }
 
+  const previousName = getDisplayName();
   updateDisplayName(dom.nameInput.value, dom.nameInput);
   const confirmedName = getDisplayName();
   dom.nameInput.value = confirmedName;
   syncNameInputWidth();
   if (dom.lobbyNameInput) dom.lobbyNameInput.value = confirmedName;
   state.session.transport?.updateMember?.(confirmedName);
-  state.chat.nameChangeUsed = true;
-  localStorage.setItem("cine-juntos-name-change-used", "1");
-  logEvent("user", `Nombre actualizado: ${confirmedName}`);
+  const nameChanged = confirmedName !== previousName;
+  if (nameChanged) {
+    state.chat.nameChangeUsed = true;
+    sessionStorage.setItem("cine-juntos-name-change-used", "1");
+    logEvent("user", `Nombre actualizado: ${confirmedName}`);
+  } else {
+    logEvent("user", "Edición de nombre cancelada: no hubo cambios.");
+  }
   syncEditNameButtonState();
   setIdentityEditing(false);
 }

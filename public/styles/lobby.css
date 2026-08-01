@@ -368,6 +368,10 @@
   margin-top: 0;
 }
 
+#createRoomButton {
+  gap: 4px;
+}
+
 /* Perforacion del ticket: muesca semicircular a la izquierda */
 .lobby-ticket-perforation {
   position: absolute;

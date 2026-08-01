@@ -14,7 +14,7 @@
     />
     <link rel="preconnect" href="https://unpkg.com" />
     <link rel="preconnect" href="https://www.gstatic.com" />
-    <link rel="stylesheet" href="./public/styles.css?v=20260730-01" />
+    <link rel="stylesheet" href="./public/styles.css?v=20260801-08" />
   </head>
   <body class="is-lobby">
     <div class="app-shell">
@@ -38,30 +38,41 @@
               </span>
               <h1 class="room-chip-title">
                 SALA <span class="room-chip-code room-glow" id="roomBadge">Sin sala</span>
+                <span class="room-chip-title-actions">
+                  <span class="app-status" id="connectionStatus" data-state="starting" data-tooltip="Conectando con la sala">
+                    <span class="app-status-dot" aria-hidden="true"></span>
+                    <span class="app-status-label">Iniciando</span>
+                  </span>
+                  <button
+                    class="room-chip-copy"
+                    id="copyInviteButton"
+                    type="button"
+                    aria-label="Invitar"
+                    data-tooltip="Compartir invitacion"
+                  >
+                    <span class="room-chip-copy-main" aria-hidden="true">
+                      <span class="room-chip-copy-default">
+                        <span data-lucide="share-2"></span>
+                        <span>Invitar</span>
+                      </span>
+                      <span class="room-chip-copy-copied">
+                        <span data-lucide="check"></span>
+                        <span>Copiado</span>
+                      </span>
+                    </span>
+                  </button>
+                </span>
               </h1>
             </div>
             <div class="room-chip-actions">
-              <span class="app-status" id="connectionStatus" data-state="starting" data-tooltip="Conectando con la sala">
-                <span class="app-status-dot" aria-hidden="true"></span>
-                <span class="app-status-label">Iniciando</span>
-              </span>
               <button
-                class="room-chip-copy"
-                id="copyInviteButton"
+                class="room-chip-back-button"
+                id="backToLobbyButton"
                 type="button"
-                aria-label="Invitar"
-                data-tooltip="Compartir invitacion"
+                aria-label="Volver a la entrada"
+                data-tooltip="Volver a la entrada"
               >
-                <span class="room-chip-copy-main" aria-hidden="true">
-                  <span class="room-chip-copy-default">
-                    <span data-lucide="share-2"></span>
-                    <span>Invitar</span>
-                  </span>
-                  <span class="room-chip-copy-copied">
-                    <span data-lucide="check"></span>
-                    <span>Copiado</span>
-                  </span>
-                </span>
+                <span data-lucide="arrow-left" aria-hidden="true"></span>
               </button>
             </div>
           </div>
@@ -356,8 +367,8 @@
                     class="video-control-button"
                     id="pageFullscreenButton"
                     type="button"
-                    aria-label="Pantalla completa de pagina"
-                    title="Pantalla completa de pagina"
+                    aria-label="Pantalla completa"
+                    title="Pantalla completa"
                     data-tooltip="Pantalla completa (F)"
                   >
                     <span data-lucide="maximize"></span>
@@ -645,18 +656,21 @@
               <div class="char-counter" id="mainCharCounter">0 / 300</div>
             </form>
           </aside>
-          <button
-            class="chat-collapse-handle"
-            id="collapseChatButton"
-            type="button"
-            aria-label="Contraer chat"
-            title="Contraer chat"
-          >
-            <span class="chat-collapse-icon-anchor">
-              <span data-lucide="chevron-right"></span>
-            </span>
-            <span class="unread-badge chat-unread-badge" id="externalChatUnread" hidden>0</span>
-          </button>
+          <div class="chat-collapse-hover-zone">
+            <button
+              class="chat-collapse-handle"
+              id="collapseChatButton"
+              type="button"
+              aria-label="Contraer chat"
+              title="Contraer chat"
+              tabindex="-1"
+            >
+              <span class="chat-collapse-icon-anchor">
+                <span data-lucide="chevron-right"></span>
+              </span>
+              <span class="unread-badge chat-unread-badge" id="externalChatUnread" hidden>0</span>
+            </button>
+          </div>
         </section>
       </main>
 
@@ -723,6 +737,6 @@
     <script src="./public/dev-runtime.js?v=20260715-02"></script>
     <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script src="./public/firebase-config.js"></script>
-    <script type="module" src="./src/main.js?v=20260730-01"></script>
+    <script type="module" src="./src/main.js?v=20260801-02"></script>
   </body>
 </html>

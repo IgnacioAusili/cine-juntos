@@ -2,8 +2,9 @@
 import { dom } from "../../core/dom.js";
 import { state, logEvent } from "../../core/state.js";
 
-export function showMessageMenu(message, x, y) {
+export function showMessageMenu(message, x, y, replyInput = null) {
   state.chat.menuMessage = message;
+  state.chat.menuReplyInput = replyInput;
   state.chat.messageMenuOpenedAt = Date.now();
   dom.messageMenu.hidden = false;
   const rect = dom.messageMenu.getBoundingClientRect();
@@ -15,6 +16,7 @@ export function showMessageMenu(message, x, y) {
 
 export function hideMessageMenu() {
   state.chat.menuMessage = null;
+  state.chat.menuReplyInput = null;
   dom.messageMenu.hidden = true;
 }
 

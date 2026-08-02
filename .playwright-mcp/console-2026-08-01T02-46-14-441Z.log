@@ -1,0 +1,26 @@
+[     366ms] [INFO] [11:46:14 p. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:128
+[     368ms] [INFO] [11:46:14 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:128
+[     378ms] [INFO] [11:46:14 p. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:128
+[     385ms] [INFO] [11:46:14 p. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:128
+[     397ms] [INFO] [11:46:14 p. m.] [connection] Iniciando @ http://127.0.0.1:8080/src/state/appState.js:128
+[     398ms] [INFO] [11:46:14 p. m.] [room] Entrando a sala 291S0. @ http://127.0.0.1:8080/src/state/appState.js:128
+[    1844ms] [INFO] [11:46:16 p. m.] [connection] Activa @ http://127.0.0.1:8080/src/state/appState.js:128
+[    1846ms] [INFO] [11:46:16 p. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:128
+[    1849ms] [INFO] [11:46:16 p. m.] [firebase] Offset de tiempo: -92 ms. @ http://127.0.0.1:8080/src/state/appState.js:128
+[    1870ms] [INFO] [11:46:16 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:128
+[    1874ms] [INFO] [11:46:16 p. m.] [room] Sala 291S0 activa. @ http://127.0.0.1:8080/src/state/appState.js:128
+[    9589ms] [INFO] [11:46:24 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:128
+[    9594ms] [INFO] [11:46:24 p. m.] [connection] Activa @ http://127.0.0.1:8080/src/state/appState.js:128
+[    9598ms] [INFO] [11:46:24 p. m.] [room] Se volvió a la entrada desde 291S0. @ http://127.0.0.1:8080/src/state/appState.js:128
+[    9930ms] [INFO] [11:46:24 p. m.] [firebase] Limpiando sala vacia al salir. @ http://127.0.0.1:8080/src/state/appState.js:128
+[   39987ms] [INFO] [11:46:54 p. m.] [connection] Iniciando @ http://127.0.0.1:8080/src/state/appState.js:128
+[   39995ms] [INFO] [11:46:54 p. m.] [room] Entrando a sala 0P6O3. @ http://127.0.0.1:8080/src/state/appState.js:128
+[   40579ms] [INFO] [11:46:55 p. m.] [connection] Activa @ http://127.0.0.1:8080/src/state/appState.js:128
+[   40581ms] [INFO] [11:46:55 p. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:128
+[   40584ms] [INFO] [11:46:55 p. m.] [firebase] Offset de tiempo: -92 ms. @ http://127.0.0.1:8080/src/state/appState.js:128
+[   40613ms] [INFO] [11:46:55 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:128
+[   40617ms] [INFO] [11:46:55 p. m.] [room] Sala 0P6O3 activa. @ http://127.0.0.1:8080/src/state/appState.js:128
+[   85803ms] [INFO] [11:47:40 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:128
+[   85809ms] [INFO] [11:47:40 p. m.] [connection] Activa @ http://127.0.0.1:8080/src/state/appState.js:128
+[   85811ms] [INFO] [11:47:40 p. m.] [room] Se volvió a la entrada desde 0P6O3. @ http://127.0.0.1:8080/src/state/appState.js:128
+[   86148ms] [INFO] [11:47:40 p. m.] [firebase] Limpiando sala vacia al salir. @ http://127.0.0.1:8080/src/state/appState.js:128

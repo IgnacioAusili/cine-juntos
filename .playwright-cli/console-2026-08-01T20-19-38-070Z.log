@@ -1,0 +1,357 @@
+[     244ms] [ERROR] Loading the stylesheet 'https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap' violates the following Content Security Policy directive: "style-src 'self' 'unsafe-inline'". Note that 'style-src-elem' was not explicitly set, so 'style-src' is used as a fallback. The action has been blocked. @ http://127.0.0.1:8080/?room=4W2F2:0
+[    1176ms] [INFO] [05:19:39 p. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    1181ms] [INFO] [05:19:39 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    1197ms] [INFO] [05:19:39 p. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    1207ms] [INFO] [05:19:39 p. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    1224ms] [INFO] [05:19:39 p. m.] [connection] Iniciando @ http://127.0.0.1:8080/src/state/appState.js:127
+[    1226ms] [INFO] [05:19:39 p. m.] [room] Entrando a sala 4W2F2. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    1624ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:8080/favicon.ico:0
+[    4011ms] [INFO] [05:19:42 p. m.] [firebase] Sala huerfana detectada al entrar. Limpiando datos residuales. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    4432ms] [INFO] [05:19:42 p. m.] [connection] Conectado @ http://127.0.0.1:8080/src/state/appState.js:127
+[    4435ms] [INFO] [05:19:42 p. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    4439ms] [INFO] [05:19:42 p. m.] [firebase] Offset de tiempo: 3318 ms. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    4585ms] [INFO] [05:19:42 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    4590ms] [INFO] [05:19:42 p. m.] [room] Sala 4W2F2 activa. @ http://127.0.0.1:8080/src/state/appState.js:127
+[   29364ms] [INFO] [05:20:07 p. m.] [chat:recv] Mensaje recibido de Prueba. @ http://127.0.0.1:8080/src/state/appState.js:127
+[   72204ms] [INFO] [05:20:50 p. m.] [chat:recv] Mensaje recibido de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:127
+[   72206ms] [INFO] [05:20:50 p. m.] [chat:send] Mensaje de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:127
+[   72367ms] [INFO] [05:20:50 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[   77201ms] [INFO] [05:20:55 p. m.] [chat:recv] Mensaje recibido de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:127
+[   77204ms] [INFO] [05:20:55 p. m.] [chat:send] Mensaje de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:127
+[   77359ms] [INFO] [05:20:55 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[   84242ms] [INFO] [05:21:02 p. m.] [chat:recv] Mensaje recibido de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:127
+[   84245ms] [INFO] [05:21:02 p. m.] [chat:send] Mensaje de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:127
+[   84402ms] [INFO] [05:21:02 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  512749ms] [ERROR] Loading the stylesheet 'https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap' violates the following Content Security Policy directive: "style-src 'self' 'unsafe-inline'". Note that 'style-src-elem' was not explicitly set, so 'style-src' is used as a fallback. The action has been blocked. @ http://127.0.0.1:8080/?room=4W2F2:270
+[  513252ms] [INFO] [05:28:11 p. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  513261ms] [INFO] [05:28:11 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  513270ms] [INFO] [05:28:11 p. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  513277ms] [INFO] [05:28:11 p. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  513295ms] [INFO] [05:28:11 p. m.] [connection] Iniciando @ http://127.0.0.1:8080/src/state/appState.js:127
+[  513296ms] [INFO] [05:28:11 p. m.] [room] Entrando a sala 4W2F2. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  514653ms] [INFO] [05:28:12 p. m.] [firebase] Sala huerfana detectada al entrar. Limpiando datos residuales. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  515037ms] [INFO] [05:28:13 p. m.] [connection] Conectado @ http://127.0.0.1:8080/src/state/appState.js:127
+[  515040ms] [INFO] [05:28:13 p. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  515044ms] [INFO] [05:28:13 p. m.] [firebase] Offset de tiempo: 3328 ms. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  515080ms] [INFO] [05:28:13 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  515086ms] [INFO] [05:28:13 p. m.] [room] Sala 4W2F2 activa. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  532988ms] [INFO] [05:28:31 p. m.] [ui] Chat externo contraido. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1630338ms] [INFO] [05:46:48 p. m.] [video] Carga de video iniciada. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1630395ms] [INFO] [05:46:48 p. m.] [video] Video manual cargado: https://cdn.truefilesize.com/mp4/sample-200mb.mp4 @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1630402ms] [INFO] [05:46:48 p. m.] [debug] Publicar video: payloadTime=0:00 current=0:00 lastKnown=0:00 paused=true overrides={}. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1630560ms] [INFO] [05:46:48 p. m.] [chat:recv] Mensaje recibido de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1630562ms] [INFO] [05:46:48 p. m.] [sync:send] video en 0:00 (pausado). @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1630704ms] [INFO] [05:46:48 p. m.] [firebase] Estado enviado: video. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1630713ms] [INFO] [05:46:48 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1631115ms] [INFO] [05:46:49 p. m.] [chat:recv] Mensaje recibido de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1631272ms] [INFO] [05:46:49 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1634187ms] [INFO] [05:46:52 p. m.] [video] Play local en 0:00. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1634214ms] [INFO] [05:46:52 p. m.] [debug] Publicar play: payloadTime=0:00 current=0:00 lastKnown=0:00 paused=false overrides={}. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1634311ms] [INFO] [05:46:52 p. m.] [chat:recv] Mensaje recibido de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1634315ms] [INFO] [05:46:52 p. m.] [sync:send] play en 0:00 (play). @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1634352ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:8080/favicon.ico:0
+[ 1634429ms] [INFO] [05:46:52 p. m.] [firebase] Estado enviado: play. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1634438ms] [INFO] [05:46:52 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1640726ms] [INFO] [05:46:58 p. m.] [debug] Seek local solicitado: input=2:17 safe=2:17 lastKnown=2:17. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1640738ms] [INFO] [05:46:58 p. m.] [video] Buffering local en 2:17. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1641049ms] [INFO] [05:46:59 p. m.] [video] Seek local a 2:17. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1641054ms] [INFO] [05:46:59 p. m.] [debug] Publicar seek: payloadTime=2:17 current=2:17 lastKnown=2:17 paused=false overrides={}. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1641092ms] [INFO] [05:46:59 p. m.] [chat:recv] Mensaje recibido de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1641094ms] [INFO] [05:46:59 p. m.] [sync:send] seek en 2:17 (play). @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1641252ms] [INFO] [05:46:59 p. m.] [firebase] Estado enviado: seek. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1641255ms] [INFO] [05:46:59 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1641974ms] [INFO] [05:47:00 p. m.] [debug] Seek local solicitado: input=2:30 safe=2:30 lastKnown=2:30. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1641981ms] [INFO] [05:47:00 p. m.] [video] Buffering local en 2:30. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1642467ms] [INFO] [05:47:00 p. m.] [video] Seek local a 2:30. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1642472ms] [INFO] [05:47:00 p. m.] [debug] Publicar seek: payloadTime=2:30 current=2:30 lastKnown=2:30 paused=false overrides={}. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1642494ms] [INFO] [05:47:00 p. m.] [chat:recv] Mensaje recibido de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1642497ms] [INFO] [05:47:00 p. m.] [sync:send] seek en 2:30 (play). @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1642540ms] [INFO] [05:47:00 p. m.] [video] Video terminado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1642670ms] [INFO] [05:47:00 p. m.] [firebase] Estado enviado: seek. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1642674ms] [INFO] [05:47:00 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1643255ms] [INFO] [05:47:01 p. m.] [debug] Seek local solicitado: input=2:22 safe=2:22 lastKnown=2:22. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1643310ms] [INFO] [05:47:01 p. m.] [video] Seek local a 2:22. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1643314ms] [INFO] [05:47:01 p. m.] [debug] Publicar seek: payloadTime=2:22 current=2:22 lastKnown=2:22 paused=true overrides={}. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1643327ms] [INFO] [05:47:01 p. m.] [chat:recv] Mensaje recibido de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1643333ms] [INFO] [05:47:01 p. m.] [sync:send] seek en 2:22 (pausado). @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1643509ms] [INFO] [05:47:01 p. m.] [firebase] Estado enviado: seek. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1643513ms] [INFO] [05:47:01 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1643957ms] [INFO] [05:47:02 p. m.] [debug] Seek local solicitado: input=2:30 safe=2:30 lastKnown=2:30. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1645022ms] [INFO] [05:47:03 p. m.] [video] Play local en 2:30. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1645031ms] [INFO] [05:47:03 p. m.] [debug] Publicar play: payloadTime=2:30 current=2:30 lastKnown=2:30 paused=false overrides={}. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1645058ms] [INFO] [05:47:03 p. m.] [chat:recv] Mensaje recibido de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1645060ms] [INFO] [05:47:03 p. m.] [sync:send] play en 2:30 (play). @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1645063ms] [INFO] [05:47:03 p. m.] [video] Buffering local en 2:30. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1645225ms] [INFO] [05:47:03 p. m.] [firebase] Estado enviado: play. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1645232ms] [INFO] [05:47:03 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1645460ms] [INFO] [05:47:03 p. m.] [video] Seek local a 2:30. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1645543ms] [INFO] [05:47:03 p. m.] [video] Video terminado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1645934ms] [INFO] [05:47:04 p. m.] [debug] Seek local solicitado: input=2:21 safe=2:21 lastKnown=2:21. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1645952ms] [INFO] [05:47:04 p. m.] [video] Seek local a 2:21. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1645956ms] [INFO] [05:47:04 p. m.] [debug] Publicar seek: payloadTime=2:21 current=2:21 lastKnown=2:21 paused=true overrides={}. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1645967ms] [INFO] [05:47:04 p. m.] [chat:recv] Mensaje recibido de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1645969ms] [INFO] [05:47:04 p. m.] [sync:send] seek en 2:21 (pausado). @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1646151ms] [INFO] [05:47:04 p. m.] [firebase] Estado enviado: seek. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1646154ms] [INFO] [05:47:04 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1646926ms] [INFO] [05:47:04 p. m.] [debug] Seek local solicitado: input=2:28 safe=2:28 lastKnown=2:28. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1647288ms] [INFO] [05:47:05 p. m.] [video] Seek local a 2:28. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1647293ms] [INFO] [05:47:05 p. m.] [debug] Publicar seek: payloadTime=2:28 current=2:28 lastKnown=2:28 paused=true overrides={}. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1647315ms] [INFO] [05:47:05 p. m.] [chat:recv] Mensaje recibido de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1647319ms] [INFO] [05:47:05 p. m.] [sync:send] seek en 2:28 (pausado). @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1647493ms] [INFO] [05:47:05 p. m.] [firebase] Estado enviado: seek. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1647496ms] [INFO] [05:47:05 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1647824ms] [INFO] [05:47:05 p. m.] [video] Play local en 2:28. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1649405ms] [INFO] [05:47:07 p. m.] [video] Video terminado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1652782ms] [INFO] [05:47:10 p. m.] [ui] Chat interno visible. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1656176ms] [INFO] [05:47:14 p. m.] [ui] Estilo de chat interno: panel. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1661673ms] [ERROR] Loading the stylesheet 'https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap' violates the following Content Security Policy directive: "style-src 'self' 'unsafe-inline'". Note that 'style-src-elem' was not explicitly set, so 'style-src' is used as a fallback. The action has been blocked. @ http://127.0.0.1:8080/?room=4W2F2:266
+[ 1662458ms] [INFO] [05:47:20 p. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1662463ms] [INFO] [05:47:20 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1662476ms] [INFO] [05:47:20 p. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1662484ms] [INFO] [05:47:20 p. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1662506ms] [INFO] [05:47:20 p. m.] [connection] Iniciando @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1662509ms] [INFO] [05:47:20 p. m.] [room] Entrando a sala 4W2F2. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1664025ms] [INFO] [05:47:22 p. m.] [firebase] Sala huerfana detectada al entrar. Limpiando datos residuales. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1664424ms] [INFO] [05:47:22 p. m.] [connection] Conectado @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1664426ms] [INFO] [05:47:22 p. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1664429ms] [INFO] [05:47:22 p. m.] [firebase] Offset de tiempo: 3325 ms. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1664471ms] [INFO] [05:47:22 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1664480ms] [INFO] [05:47:22 p. m.] [room] Sala 4W2F2 activa. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1666275ms] [INFO] [05:47:24 p. m.] [ui] Chat interno visible. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1667440ms] [INFO] [05:47:25 p. m.] [video] Carga de video iniciada. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1667442ms] [INFO] [05:47:25 p. m.] [video] Video manual cargado: https://cdn.truefilesize.com/mp4/sample-200mb.mp4 @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1667444ms] [INFO] [05:47:25 p. m.] [debug] Publicar video: payloadTime=0:00 current=0:00 lastKnown=0:00 paused=true overrides={}. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1667461ms] [INFO] [05:47:25 p. m.] [chat:recv] Mensaje recibido de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1667463ms] [INFO] [05:47:25 p. m.] [sync:send] video en 0:00 (pausado). @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1667708ms] [INFO] [05:47:25 p. m.] [firebase] Estado enviado: video. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1667712ms] [INFO] [05:47:25 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1667729ms] [INFO] [05:47:25 p. m.] [chat:recv] Mensaje recibido de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1667930ms] [INFO] [05:47:25 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1670375ms] [INFO] [05:47:28 p. m.] [video] Reanudación local en 2:30. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1671004ms] [INFO] [05:47:29 p. m.] [video] Carga de video iniciada. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1671008ms] [INFO] [05:47:29 p. m.] [video] Video manual cargado: https://cdn.truefilesize.com/mp4/sample-200mb.mp4 @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1671011ms] [INFO] [05:47:29 p. m.] [debug] Publicar video: payloadTime=2:30 current=0:00 lastKnown=2:30 paused=true overrides={}. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1671024ms] [INFO] [05:47:29 p. m.] [chat:recv] Mensaje recibido de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1671026ms] [INFO] [05:47:29 p. m.] [sync:send] video en 2:30 (pausado). @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1671054ms] [INFO] [05:47:29 p. m.] [chat:recv] Mensaje recibido de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1671212ms] [INFO] [05:47:29 p. m.] [firebase] Estado enviado: video. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1671217ms] [INFO] [05:47:29 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1671240ms] [INFO] [05:47:29 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1679684ms] [INFO] [05:47:37 p. m.] [video] Carga de video iniciada. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1679686ms] [INFO] [05:47:37 p. m.] [video] Video manual cargado: https://cdn.truefilesize.com/mp4/sample-200mb.mp4 @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1679689ms] [INFO] [05:47:37 p. m.] [debug] Publicar video: payloadTime=2:30 current=0:00 lastKnown=2:30 paused=true overrides={}. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1679699ms] [INFO] [05:47:37 p. m.] [chat:recv] Mensaje recibido de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1679702ms] [INFO] [05:47:37 p. m.] [sync:send] video en 2:30 (pausado). @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1679734ms] [INFO] [05:47:37 p. m.] [chat:recv] Mensaje recibido de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1679886ms] [INFO] [05:47:37 p. m.] [firebase] Estado enviado: video. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1679897ms] [INFO] [05:47:37 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1679921ms] [INFO] [05:47:37 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1702180ms] [ERROR] Loading the stylesheet 'https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap' violates the following Content Security Policy directive: "style-src 'self' 'unsafe-inline'". Note that 'style-src-elem' was not explicitly set, so 'style-src' is used as a fallback. The action has been blocked. @ http://127.0.0.1:8080/?room=4W2F2:18
+[ 1702313ms] [INFO] [05:48:00 p. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1702316ms] [INFO] [05:48:00 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1702326ms] [INFO] [05:48:00 p. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1702334ms] [INFO] [05:48:00 p. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1702346ms] [INFO] [05:48:00 p. m.] [connection] Iniciando @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1702348ms] [INFO] [05:48:00 p. m.] [room] Entrando a sala 4W2F2. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1703647ms] [INFO] [05:48:01 p. m.] [firebase] Sala huerfana detectada al entrar. Limpiando datos residuales. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1704093ms] [INFO] [05:48:02 p. m.] [connection] Conectado @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1704095ms] [INFO] [05:48:02 p. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1704098ms] [INFO] [05:48:02 p. m.] [firebase] Offset de tiempo: 3320 ms. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1704128ms] [INFO] [05:48:02 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1704131ms] [INFO] [05:48:02 p. m.] [room] Sala 4W2F2 activa. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1708519ms] [ERROR] Loading the stylesheet 'https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap' violates the following Content Security Policy directive: "style-src 'self' 'unsafe-inline'". Note that 'style-src-elem' was not explicitly set, so 'style-src' is used as a fallback. The action has been blocked. @ http://127.0.0.1:8080/?room=4W2F2:0
+[ 1709418ms] [INFO] [05:48:07 p. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1709421ms] [INFO] [05:48:07 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1709434ms] [INFO] [05:48:07 p. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1709441ms] [INFO] [05:48:07 p. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1709453ms] [INFO] [05:48:07 p. m.] [connection] Iniciando @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1709455ms] [INFO] [05:48:07 p. m.] [room] Entrando a sala 4W2F2. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1710926ms] [INFO] [05:48:08 p. m.] [connection] Conectado @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1710929ms] [INFO] [05:48:08 p. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1710931ms] [INFO] [05:48:09 p. m.] [firebase] Offset de tiempo: 3311 ms. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1710962ms] [INFO] [05:48:09 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1710967ms] [INFO] [05:48:09 p. m.] [room] Sala 4W2F2 activa. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1804188ms] [ERROR] Loading the stylesheet 'https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap' violates the following Content Security Policy directive: "style-src 'self' 'unsafe-inline'". Note that 'style-src-elem' was not explicitly set, so 'style-src' is used as a fallback. The action has been blocked. @ http://127.0.0.1:8080/?room=4W2F2:0
+[ 1805254ms] [INFO] [05:49:43 p. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1805257ms] [INFO] [05:49:43 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1805269ms] [INFO] [05:49:43 p. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1805276ms] [INFO] [05:49:43 p. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1805287ms] [INFO] [05:49:43 p. m.] [connection] Iniciando @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1805289ms] [INFO] [05:49:43 p. m.] [room] Entrando a sala 4W2F2. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1806833ms] [INFO] [05:49:44 p. m.] [connection] Conectado @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1806835ms] [INFO] [05:49:44 p. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1806838ms] [INFO] [05:49:44 p. m.] [firebase] Offset de tiempo: 3319 ms. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1806864ms] [INFO] [05:49:44 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1806868ms] [INFO] [05:49:44 p. m.] [room] Sala 4W2F2 activa. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1885249ms] [INFO] [05:51:03 p. m.] [ui] Chat interno visible. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1887274ms] [INFO] [05:51:05 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1887674ms] [INFO] [05:51:05 p. m.] [ui] Chat interno visible. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1888020ms] [INFO] [05:51:06 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1888297ms] [INFO] [05:51:06 p. m.] [ui] Chat interno visible. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1888559ms] [INFO] [05:51:06 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1888800ms] [INFO] [05:51:06 p. m.] [ui] Chat interno visible. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1888981ms] [INFO] [05:51:07 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1889175ms] [INFO] [05:51:07 p. m.] [ui] Chat interno visible. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1889362ms] [INFO] [05:51:07 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1889562ms] [INFO] [05:51:07 p. m.] [ui] Chat interno visible. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1889749ms] [INFO] [05:51:07 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1889925ms] [INFO] [05:51:07 p. m.] [ui] Chat interno visible. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1890118ms] [INFO] [05:51:08 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1890298ms] [INFO] [05:51:08 p. m.] [ui] Chat interno visible. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1890479ms] [INFO] [05:51:08 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1890664ms] [INFO] [05:51:08 p. m.] [ui] Chat interno visible. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1890838ms] [INFO] [05:51:08 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1891018ms] [INFO] [05:51:09 p. m.] [ui] Chat interno visible. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1892416ms] [INFO] [05:51:10 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1892830ms] [INFO] [05:51:10 p. m.] [ui] Chat interno visible. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1893074ms] [INFO] [05:51:11 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1894994ms] [INFO] [05:51:13 p. m.] [user] Edición de nombre cancelada: no hubo cambios. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1897443ms] [INFO] [05:51:15 p. m.] [ui] Chat interno visible. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1903346ms] [INFO] [05:51:21 p. m.] [user] Edición de nombre cancelada: no hubo cambios. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1915640ms] [INFO] [05:51:33 p. m.] [user] Edición de nombre cancelada: no hubo cambios. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1925873ms] [INFO] [05:51:43 p. m.] [user] Edición de nombre cancelada: no hubo cambios. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 3662495ms] [INFO] [06:20:40 p. m.] [ui] Estilo de chat interno: panel. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 3663719ms] [INFO] [06:20:41 p. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 3666499ms] [INFO] [06:20:44 p. m.] [chat:recv] Mensaje recibido de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 3666511ms] [INFO] [06:20:44 p. m.] [chat:send] Mensaje de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 3666597ms] [INFO] [06:20:44 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 3667465ms] [INFO] [06:20:45 p. m.] [chat:recv] Mensaje recibido de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 3667469ms] [INFO] [06:20:45 p. m.] [chat:send] Mensaje de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 3667667ms] [INFO] [06:20:45 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 3822689ms] [ERROR] Loading the stylesheet 'https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap' violates the following Content Security Policy directive: "style-src 'self' 'unsafe-inline'". Note that 'style-src-elem' was not explicitly set, so 'style-src' is used as a fallback. The action has been blocked. @ http://127.0.0.1:8080/?room=4W2F2:266
+[ 3823459ms] [INFO] [06:23:21 p. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:130
+[ 3823464ms] [INFO] [06:23:21 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:130
+[ 3823482ms] [INFO] [06:23:21 p. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:130
+[ 3823492ms] [INFO] [06:23:21 p. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:130
+[ 3823515ms] [INFO] [06:23:21 p. m.] [connection] Iniciando @ http://127.0.0.1:8080/src/state/appState.js:130
+[ 3823517ms] [INFO] [06:23:21 p. m.] [room] Entrando a sala 4W2F2. @ http://127.0.0.1:8080/src/state/appState.js:130
+[ 3825399ms] [INFO] [06:23:23 p. m.] [firebase] Sala huerfana detectada al entrar. Limpiando datos residuales. @ http://127.0.0.1:8080/src/state/appState.js:130
+[ 3825827ms] [INFO] [06:23:23 p. m.] [connection] Conectado @ http://127.0.0.1:8080/src/state/appState.js:130
+[ 3825830ms] [INFO] [06:23:23 p. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:130
+[ 3825834ms] [INFO] [06:23:23 p. m.] [firebase] Offset de tiempo: 3335 ms. @ http://127.0.0.1:8080/src/state/appState.js:130
+[ 3825872ms] [INFO] [06:23:23 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:130
+[ 3825880ms] [INFO] [06:23:23 p. m.] [room] Sala 4W2F2 activa. @ http://127.0.0.1:8080/src/state/appState.js:130
+[ 3827119ms] [INFO] [06:23:25 p. m.] [ui] Chat interno visible. @ http://127.0.0.1:8080/src/state/appState.js:130
+[ 3828781ms] [INFO] [06:23:26 p. m.] [chat:recv] Mensaje recibido de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:130
+[ 3828785ms] [INFO] [06:23:26 p. m.] [chat:send] Mensaje de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:130
+[ 3828965ms] [INFO] [06:23:27 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:130
+[ 3840616ms] [INFO] [06:23:38 p. m.] [chat:recv] Mensaje recibido de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:130
+[ 3840622ms] [INFO] [06:23:38 p. m.] [chat:send] Mensaje de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:130
+[ 3840783ms] [INFO] [06:23:38 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:130
+[ 4129441ms] [ERROR] Loading the stylesheet 'https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap' violates the following Content Security Policy directive: "style-src 'self' 'unsafe-inline'". Note that 'style-src-elem' was not explicitly set, so 'style-src' is used as a fallback. The action has been blocked. @ http://127.0.0.1:8080/?room=4W2F2:0
+[ 4130233ms] [INFO] [06:28:28 p. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:130
+[ 4130236ms] [INFO] [06:28:28 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:130
+[ 4130249ms] [INFO] [06:28:28 p. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:130
+[ 4130256ms] [INFO] [06:28:28 p. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:130
+[ 4130270ms] [INFO] [06:28:28 p. m.] [connection] Iniciando @ http://127.0.0.1:8080/src/state/appState.js:130
+[ 4130272ms] [INFO] [06:28:28 p. m.] [room] Entrando a sala 4W2F2. @ http://127.0.0.1:8080/src/state/appState.js:130
+[ 4131718ms] [INFO] [06:28:29 p. m.] [firebase] Sala huerfana detectada al entrar. Limpiando datos residuales. @ http://127.0.0.1:8080/src/state/appState.js:130
+[ 4132106ms] [INFO] [06:28:30 p. m.] [connection] Conectado @ http://127.0.0.1:8080/src/state/appState.js:130
+[ 4132108ms] [INFO] [06:28:30 p. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:130
+[ 4132112ms] [INFO] [06:28:30 p. m.] [firebase] Offset de tiempo: 3336 ms. @ http://127.0.0.1:8080/src/state/appState.js:130
+[ 4132142ms] [INFO] [06:28:30 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:130
+[ 4132150ms] [INFO] [06:28:30 p. m.] [room] Sala 4W2F2 activa. @ http://127.0.0.1:8080/src/state/appState.js:130
+[ 4133456ms] [INFO] [06:28:31 p. m.] [ui] Chat externo contraido. @ http://127.0.0.1:8080/src/state/appState.js:130
+[ 4134923ms] [INFO] [06:28:32 p. m.] [ui] Chat externo expandido. @ http://127.0.0.1:8080/src/state/appState.js:130
+[ 5258100ms] [INFO] [06:47:16 p. m.] [firebase] Sala vacia detectada. Limpiando datos residuales. @ http://127.0.0.1:8080/src/state/appState.js:130
+[ 5258141ms] [ERROR] WebSocket connection to 'wss://s-gke-usc1-nssi2-38.firebaseio.com/.ws?v=5&ls=pLfgMiSjpf6Kn1PCLEgQL5qu1gPlPzBQ&p=1:611794809410:web:36589cd37ca953d6d2f3db&ns=cinecompartidopagina-default-rtdb' failed: Error in connection establishment: net::ERR_NETWORK_IO_SUSPENDED @ https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js:0
+[ 5258143ms] [ERROR] Failed to load resource: net::ERR_NETWORK_IO_SUSPENDED @ http://127.0.0.1:8080/__client-log:0
+[22157205ms] [INFO] [11:28:55 p. m.] [firebase] Offset de tiempo: 3097 ms. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22157237ms] [ERROR] Framing 'https://s-gke-usc1-nssi2-38.firebaseio.com/' violates the following Content Security Policy directive: "default-src 'self'". The request has been blocked. Note that 'frame-src' was not explicitly set, so 'default-src' is used as a fallback.
+ @ https://www.gstatic.com/:0
+[22157239ms] [ERROR] Framing 'https://s-gke-usc1-nssi2-38.firebaseio.com/' violates the following Content Security Policy directive: "default-src 'self'". The request has been blocked. Note that 'frame-src' was not explicitly set, so 'default-src' is used as a fallback.
+ @ https://www.gstatic.com/:0
+[22157484ms] [ERROR] Failed to load resource: net::ERR_NETWORK_CHANGED @ https://s-gke-usc1-nssi2-38.firebaseio.com/.lp?id=508070&pw=YwKP6e0ZPm&ser=11395023&ns=cinecompartidopagina-default-rtdb&seg0=0&ts0=1&d0=eyJ0IjoiZCIsImQiOnsiciI6MTI1LCJhIjoiYXV0aCIsImIiOnsiY3JlZCI6ImV5SmhiR2NpT2lKU1V6STFOaUlzSW10cFpDSTZJakl3WTJGa09EWmtOelk1Wm1Ga1pUVmlPRGt4Tm1RNVkyVTFNRGMwWXpneU1HWXdOamRrTlRJaUxDSjBlWEFpT2lKS1YxUWlmUS5leUp3Y205MmFXUmxjbDlwWkNJNkltRnViMjU1Ylc5MWN5SXNJbWx6Y3lJNkltaDBkSEJ6T2k4dmMyVmpkWEpsZEc5clpXNHVaMjl2WjJ4bExtTnZiUzlqYVc1bFkyOXRjR0Z5ZEdsa2IzQmhaMmx1WVNJc0ltRjFaQ0k2SW1OcGJtVmpiMjF3WVhKMGFXUnZjR0ZuYVc1aElpd2lZWFYwYUY5MGFXMWxJam94TnpnMU5qRTFOVGcwTENKMWMyVnlYMmxrSWpvaWIxSlZjMHQxV0RWSGVXTmFSRTFoYzNNNGNEbE1jSEJHUW5saU1pSXNJbk4xWWlJNkltOVNWWE5MZFZnMVIzbGpXa1JOWVhOek9IQTVUSEJ3UmtKNVlqSWlMQ0pwWVhRaU9qRTNPRFUyTXpjM016VXNJbVY0Y0NJNk1UYzROVFkwTVRNek5Td2labWx5WldKaGMyVWlPbnNpYVdSbGJuUnBkR2xsY3lJNmUzMHNJbk5wWjI1ZmFXNWZjSEp2ZG1sa1pYSWlPaUpoYm05dWVXMXZkWE1pZlgwLnBBdUJYNUIzTFcwcTk2cV9aR2pZcmc3V2dkdWl0OVFjdGlzR3VFR1NscmRsZEVfQ0lQbUZoZFAzYXhaMmtZUjFHLTJUMzU2QzVwdHExMFpXM2l3dXhhNkQxNGh2c1lkSXNxYUJ1elpvNWEzZHdvSDVBVV8xQnRPekREOVNfU1VwbHlMTVdNRzBDZ2wxY3VQdlQwbUZESmRBRXdrbm8zcTNrLXY2bXBGZUV3WFFIcW5oLUxWdEdGZWJvODZRaGtiemd1RjJjZjRuekhoaGhQVVJXQ1RSME93WTRmSk1UZHlEcFd2WXF5QVN1c080VVdpQ2NYMWo0LW0zVEp1WUpyTWZ3RUpiRWJYX2NZNWZUTW83ZUpJbW1OajhDaURjSmpraWtxQi1oeTA4WTJYNjk2V21FOXpvalNkbmZwRDM3ZUtodkxvZnZTTk1pbUo3blNXR0FPRGV3ZyJ9fX0.:0
+[22157489ms] [WARNING] WebSocket connection to 'wss://s-gke-usc1-nssi2-38.firebaseio.com/.ws?v=5&s=FVFoCV1yjZQvy6APYQSdM7xMsEKgovU1&p=1:611794809410:web:36589cd37ca953d6d2f3db&ns=cinecompartidopagina-default-rtdb' failed: WebSocket is closed before the connection is established. @ https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js:0
+[22158052ms] [INFO] [11:28:56 p. m.] [firebase] Offset de tiempo: 3160 ms. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22158068ms] [ERROR] Framing 'https://s-gke-usc1-nssi2-38.firebaseio.com/' violates the following Content Security Policy directive: "default-src 'self'". The request has been blocked. Note that 'frame-src' was not explicitly set, so 'default-src' is used as a fallback.
+ @ https://www.gstatic.com/:0
+[22158068ms] [ERROR] Framing 'https://s-gke-usc1-nssi2-38.firebaseio.com/' violates the following Content Security Policy directive: "default-src 'self'". The request has been blocked. Note that 'frame-src' was not explicitly set, so 'default-src' is used as a fallback.
+ @ https://www.gstatic.com/:0
+[22502644ms] [INFO] [11:34:40 p. m.] [chat:recv] Mensaje recibido de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22502706ms] [INFO] [11:34:40 p. m.] [chat:send] Mensaje de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22502766ms] [INFO] [11:34:40 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22504312ms] [INFO] [11:34:42 p. m.] [chat:recv] Mensaje recibido de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22504315ms] [INFO] [11:34:42 p. m.] [chat:send] Mensaje de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22504517ms] [INFO] [11:34:42 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22511110ms] [INFO] [11:34:49 p. m.] [chat:recv] Mensaje recibido de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22511113ms] [INFO] [11:34:49 p. m.] [chat:send] Mensaje de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22511315ms] [INFO] [11:34:49 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22513021ms] [INFO] [11:34:51 p. m.] [chat:recv] Mensaje recibido de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22513024ms] [INFO] [11:34:51 p. m.] [chat:send] Mensaje de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22513226ms] [INFO] [11:34:51 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22514886ms] [INFO] [11:34:52 p. m.] [chat:recv] Mensaje recibido de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22514889ms] [INFO] [11:34:52 p. m.] [chat:send] Mensaje de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22515091ms] [INFO] [11:34:53 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22517871ms] [INFO] [11:34:55 p. m.] [chat:recv] Mensaje recibido de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22517874ms] [INFO] [11:34:55 p. m.] [chat:send] Mensaje de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22518076ms] [INFO] [11:34:56 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22520615ms] [INFO] [11:34:58 p. m.] [chat:recv] Mensaje recibido de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22520618ms] [INFO] [11:34:58 p. m.] [chat:send] Mensaje de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22520819ms] [INFO] [11:34:58 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22523655ms] [INFO] [11:35:01 p. m.] [chat:recv] Mensaje recibido de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22523657ms] [INFO] [11:35:01 p. m.] [chat:send] Mensaje de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22523859ms] [INFO] [11:35:01 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22621991ms] [INFO] [11:36:40 p. m.] [chat:recv] Mensaje recibido de Nachaaaaaaaaaaaaaao. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22625126ms] [INFO] [11:36:43 p. m.] [chat:recv] Mensaje recibido de Nachaaaaaaaaaaaaaao. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22632930ms] [INFO] [11:36:50 p. m.] [ui] Chat interno visible. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22662736ms] [INFO] [11:37:20 p. m.] [ui] Chat externo contraido. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22663996ms] [INFO] [11:37:22 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22669616ms] [INFO] [11:37:27 p. m.] [chat:recv] Mensaje recibido de Nachaaaaaaaaaaaaaao. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22670576ms] [INFO] [11:37:28 p. m.] [chat:recv] Mensaje recibido de Nachaaaaaaaaaaaaaao. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22671712ms] [INFO] [11:37:29 p. m.] [chat:recv] Mensaje recibido de Nachaaaaaaaaaaaaaao. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22673567ms] [INFO] [11:37:31 p. m.] [chat:recv] Mensaje recibido de Nachaaaaaaaaaaaaaao. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22674659ms] [INFO] [11:37:32 p. m.] [chat:recv] Mensaje recibido de Nachaaaaaaaaaaaaaao. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22675095ms] [INFO] [11:37:33 p. m.] [chat:recv] Mensaje recibido de Nachaaaaaaaaaaaaaao. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22675412ms] [INFO] [11:37:33 p. m.] [chat:recv] Mensaje recibido de Nachaaaaaaaaaaaaaao. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22675660ms] [INFO] [11:37:33 p. m.] [chat:recv] Mensaje recibido de Nachaaaaaaaaaaaaaao. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22675900ms] [INFO] [11:37:33 p. m.] [chat:recv] Mensaje recibido de Nachaaaaaaaaaaaaaao. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22685668ms] [INFO] [11:37:43 p. m.] [ui] Chat externo expandido. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22687851ms] [INFO] [11:37:45 p. m.] [ui] Chat externo contraido. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22688801ms] [INFO] [11:37:46 p. m.] [ui] Chat externo expandido. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22692831ms] [INFO] [11:37:50 p. m.] [ui] Chat interno visible. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22693460ms] [INFO] [11:37:51 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22694411ms] [INFO] [11:37:52 p. m.] [ui] Chat externo contraido. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22695515ms] [INFO] [11:37:53 p. m.] [ui] Chat interno visible. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22696139ms] [INFO] [11:37:54 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22783321ms] [INFO] [11:39:21 p. m.] [chat:recv] Mensaje recibido de Nachaaaaaaaaaaaaaao. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22785494ms] [INFO] [11:39:23 p. m.] [chat:recv] Mensaje recibido de Nachaaaaaaaaaaaaaao. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22787097ms] [INFO] [11:39:25 p. m.] [ui] Chat interno visible. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22787798ms] [INFO] [11:39:25 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22788374ms] [INFO] [11:39:26 p. m.] [ui] Chat interno visible. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22790110ms] [INFO] [11:39:28 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22791324ms] [INFO] [11:39:29 p. m.] [ui] Chat externo expandido. @ http://127.0.0.1:8080/src/state/appState.js:130
+[22794047ms] [INFO] [11:39:32 p. m.] [ui] Chat externo contraido. @ http://127.0.0.1:8080/src/state/appState.js:130
+[23448281ms] [ERROR] Loading the stylesheet 'https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap' violates the following Content Security Policy directive: "style-src 'self' 'unsafe-inline'". Note that 'style-src-elem' was not explicitly set, so 'style-src' is used as a fallback. The action has been blocked. @ http://127.0.0.1:8080/?room=4W2F2:267
+[23449118ms] [INFO] [11:50:27 p. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:132
+[23449137ms] [INFO] [11:50:27 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:132
+[23449154ms] [INFO] [11:50:27 p. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:132
+[23449163ms] [INFO] [11:50:27 p. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:132
+[23449193ms] [INFO] [11:50:27 p. m.] [connection] Iniciando @ http://127.0.0.1:8080/src/state/appState.js:132
+[23449195ms] [INFO] [11:50:27 p. m.] [room] Entrando a sala 4W2F2. @ http://127.0.0.1:8080/src/state/appState.js:132
+[23451915ms] [INFO] [11:50:29 p. m.] [connection] Conectado @ http://127.0.0.1:8080/src/state/appState.js:132
+[23451917ms] [INFO] [11:50:29 p. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:132
+[23451921ms] [INFO] [11:50:29 p. m.] [firebase] Offset de tiempo: 2422 ms. @ http://127.0.0.1:8080/src/state/appState.js:132
+[23452008ms] [INFO] [11:50:30 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:132
+[23452026ms] [INFO] [11:50:30 p. m.] [room] Sala 4W2F2 activa. @ http://127.0.0.1:8080/src/state/appState.js:132
+[23452213ms] [INFO] [11:50:30 p. m.] [chat:recv] Mensaje recibido de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:132
+[23452227ms] [INFO] [11:50:30 p. m.] [chat:recv] Mensaje recibido de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:132
+[23452242ms] [INFO] [11:50:30 p. m.] [chat:recv] Mensaje recibido de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:132
+[23452268ms] [INFO] [11:50:30 p. m.] [chat:recv] Mensaje recibido de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:132
+[23452286ms] [INFO] [11:50:30 p. m.] [chat:recv] Mensaje recibido de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:132
+[23452300ms] [INFO] [11:50:30 p. m.] [chat:recv] Mensaje recibido de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:132
+[23452315ms] [INFO] [11:50:30 p. m.] [chat:recv] Mensaje recibido de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:132
+[23452331ms] [INFO] [11:50:30 p. m.] [chat:recv] Mensaje recibido de Usuario DCAA. @ http://127.0.0.1:8080/src/state/appState.js:132
+[23452350ms] [INFO] [11:50:30 p. m.] [chat:recv] Mensaje recibido de Nachaaaaaaaaaaaaaao. @ http://127.0.0.1:8080/src/state/appState.js:132
+[23452370ms] [INFO] [11:50:30 p. m.] [chat:recv] Mensaje recibido de Nachaaaaaaaaaaaaaao. @ http://127.0.0.1:8080/src/state/appState.js:132
+[23452390ms] [INFO] [11:50:30 p. m.] [chat:recv] Mensaje recibido de Nachaaaaaaaaaaaaaao. @ http://127.0.0.1:8080/src/state/appState.js:132
+[23452409ms] [INFO] [11:50:30 p. m.] [chat:recv] Mensaje recibido de Nachaaaaaaaaaaaaaao. @ http://127.0.0.1:8080/src/state/appState.js:132
+[23452429ms] [INFO] [11:50:30 p. m.] [chat:recv] Mensaje recibido de Nachaaaaaaaaaaaaaao. @ http://127.0.0.1:8080/src/state/appState.js:132
+[23452447ms] [INFO] [11:50:30 p. m.] [chat:recv] Mensaje recibido de Nachaaaaaaaaaaaaaao. @ http://127.0.0.1:8080/src/state/appState.js:132
+[23452462ms] [INFO] [11:50:30 p. m.] [chat:recv] Mensaje recibido de Nachaaaaaaaaaaaaaao. @ http://127.0.0.1:8080/src/state/appState.js:132
+[23452478ms] [INFO] [11:50:30 p. m.] [chat:recv] Mensaje recibido de Nachaaaaaaaaaaaaaao. @ http://127.0.0.1:8080/src/state/appState.js:132
+[23452494ms] [INFO] [11:50:30 p. m.] [chat:recv] Mensaje recibido de Nachaaaaaaaaaaaaaao. @ http://127.0.0.1:8080/src/state/appState.js:132
+[23452511ms] [INFO] [11:50:30 p. m.] [chat:recv] Mensaje recibido de Nachaaaaaaaaaaaaaao. @ http://127.0.0.1:8080/src/state/appState.js:132
+[23452529ms] [INFO] [11:50:30 p. m.] [chat:recv] Mensaje recibido de Nachaaaaaaaaaaaaaao. @ http://127.0.0.1:8080/src/state/appState.js:132
+[23452545ms] [INFO] [11:50:30 p. m.] [chat:recv] Mensaje recibido de Nachaaaaaaaaaaaaaao. @ http://127.0.0.1:8080/src/state/appState.js:132
+[23452563ms] [INFO] [11:50:30 p. m.] [chat:recv] Mensaje recibido de Nachaaaaaaaaaaaaaao. @ http://127.0.0.1:8080/src/state/appState.js:132

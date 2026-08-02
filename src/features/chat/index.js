@@ -30,7 +30,7 @@ import {
   syncExternalChatCollapseHandleOffset,
   syncChatAutoExpandControls,
 } from "./chat-layout.js";
-import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260731-03";
+import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260802-02";
 
 const CHAT_SCROLL_WHEEL_MULTIPLIER = 0.55;
 const DOM_DELTA_PIXEL = 0;

@@ -5,7 +5,7 @@ import { markParticipantActive, rememberParticipant } from "../presence.js";
 import { wireMessageInteractions } from "./chat-message-interactions.js";
 import { appendMessageContent, truncateText } from "./chat-content-parser.js?v=20260801-01";
 import { getParticipantAccent } from "./chat-participant-color.js";
-import { scheduleMessageTimeAdjustmentForBubble } from "./message-time-layout.js?v=20260801-04";
+import { scheduleMessageTimeAdjustmentForBubble } from "./message-time-layout.js?v=20260802-02";
 import {
   handleIncomingUnread,
   handleIncomingPageUnread,

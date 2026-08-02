@@ -54,6 +54,27 @@
   align-self: stretch;
 }
 
+.overlay-messages .message:not(.mine) .message-bubble-row {
+  width: 100%;
+  max-width: 100%;
+  align-self: stretch;
+}
+
+/* Conserva el ancho natural del overlay, pero ancla la flecha a la burbuja
+   en lugar de al extremo de la fila. */
+.overlay-messages .message-bubble-row .swipe-reply-hint-wrapper {
+  position: relative;
+  top: auto;
+  right: auto;
+  left: auto;
+  flex: 0 0 0;
+  align-self: center;
+}
+
+.overlay-messages .message:not(.mine) .message-bubble-row > .message-bubble {
+  margin-right: 0;
+}
+
 .overlay-messages .message-meta {
   color: rgba(255, 255, 255, 0.74);
   font-size: 0.58rem;
@@ -102,36 +123,11 @@
   overflow-wrap: break-word;
   word-break: normal;
   white-space: normal;
-  padding: 4px 10px 5px;
+  padding: 4px 10px 3px;
 }
 
 .overlay-messages .message-content {
   display: contents;
-}
-
-/* En mensajes simples, la hora ocupa siempre una franja inferior estable.
-   Esto evita que el float cambie la forma de la burbuja al entrar otro mensaje. */
-.overlay-messages .message-bubble:not(.message-bubble--with-reply) {
-  min-width: 58px;
-  padding-bottom: 14px;
-}
-
-.overlay-messages .message-bubble:not(.message-bubble--with-reply) .message-content {
-  display: block;
-  width: auto;
-}
-
-.overlay-messages .message-bubble:not(.message-bubble--with-reply) .message-time-anchor {
-  position: absolute;
-  right: 10px;
-  bottom: 3px;
-  display: flex;
-  align-items: center;
-  width: auto;
-  height: auto;
-  margin: 0;
-  float: none;
-  shape-outside: none;
 }
 
 .overlay-messages .message-bubble.message-bubble--with-reply {

@@ -1,0 +1,177 @@
+[     661ms] [INFO] [09:23:10 p. m.] [ui] Estilo de chat interno: float. @ http://localhost:8080/src/state/appState.js:115
+[     665ms] [INFO] [09:23:10 p. m.] [ui] Chat interno oculto. @ http://localhost:8080/src/state/appState.js:115
+[     679ms] [INFO] [09:23:10 p. m.] [ui] Chat lateral en posicion: lateral. @ http://localhost:8080/src/state/appState.js:115
+[     687ms] [INFO] [09:23:10 p. m.] [connection] Activa @ http://localhost:8080/src/state/appState.js:115
+[     689ms] [INFO] [09:23:10 p. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://localhost:8080/src/state/appState.js:115
+[     781ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8080/favicon.ico:0
+[    5342ms] [INFO] [09:23:15 p. m.] [connection] Iniciando @ http://localhost:8080/src/state/appState.js:115
+[    5345ms] [INFO] [09:23:15 p. m.] [room] Entrando a sala 3R5X0. @ http://localhost:8080/src/state/appState.js:115
+[    7344ms] [INFO] [09:23:17 p. m.] [connection] Activa @ http://localhost:8080/src/state/appState.js:115
+[    7346ms] [INFO] [09:23:17 p. m.] [firebase] Sesion anonima conectada. @ http://localhost:8080/src/state/appState.js:115
+[    7351ms] [INFO] [09:23:17 p. m.] [firebase] Offset de tiempo: 3911 ms. @ http://localhost:8080/src/state/appState.js:115
+[    7432ms] [INFO] [09:23:17 p. m.] [ui] Chat interno oculto. @ http://localhost:8080/src/state/appState.js:115
+[    7438ms] [INFO] [09:23:17 p. m.] [room] Sala 3R5X0 activa. @ http://localhost:8080/src/state/appState.js:115
+[    8519ms] [INFO] [09:23:18 p. m.] [ui] Chat interno visible. @ http://localhost:8080/src/state/appState.js:115
+[   11067ms] [INFO] [09:23:21 p. m.] [chat:recv] Mensaje recibido de Usuario 2008. @ http://localhost:8080/src/state/appState.js:115
+[   11070ms] [INFO] [09:23:21 p. m.] [chat:send] Mensaje de Usuario 2008. @ http://localhost:8080/src/state/appState.js:115
+[   11224ms] [INFO] [09:23:21 p. m.] [firebase] Mensaje enviado. @ http://localhost:8080/src/state/appState.js:115
+[   78386ms] [INFO] [09:24:28 p. m.] [ui] Chat externo contraido. @ http://localhost:8080/src/state/appState.js:115
+[   84442ms] [INFO] [09:24:34 p. m.] [ui] Chat externo expandido. @ http://localhost:8080/src/state/appState.js:115
+[   85753ms] [INFO] [09:24:35 p. m.] [ui] Chat interno oculto. @ http://localhost:8080/src/state/appState.js:115
+[   86408ms] [INFO] [09:24:36 p. m.] [ui] Chat interno visible. @ http://localhost:8080/src/state/appState.js:115
+[   86864ms] [INFO] [09:24:36 p. m.] [ui] Chat interno oculto. @ http://localhost:8080/src/state/appState.js:115
+[  164347ms] [INFO] [09:25:54 p. m.] [ui] Chat interno visible. @ http://localhost:8080/src/state/appState.js:115
+[  334723ms] [INFO] [09:28:44 p. m.] [ui] Estilo de chat interno: float. @ http://localhost:8080/src/state/appState.js:115
+[  334726ms] [INFO] [09:28:44 p. m.] [ui] Chat interno oculto. @ http://localhost:8080/src/state/appState.js:115
+[  334737ms] [INFO] [09:28:44 p. m.] [ui] Chat lateral en posicion: lateral. @ http://localhost:8080/src/state/appState.js:115
+[  334744ms] [INFO] [09:28:44 p. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://localhost:8080/src/state/appState.js:115
+[  334757ms] [INFO] [09:28:44 p. m.] [connection] Iniciando @ http://localhost:8080/src/state/appState.js:115
+[  334759ms] [INFO] [09:28:44 p. m.] [room] Entrando a sala 3R5X0. @ http://localhost:8080/src/state/appState.js:115
+[  335942ms] [INFO] [09:28:46 p. m.] [firebase] Sala huerfana detectada al entrar. Limpiando datos residuales. @ http://localhost:8080/src/state/appState.js:115
+[  336297ms] [INFO] [09:28:46 p. m.] [connection] Activa @ http://localhost:8080/src/state/appState.js:115
+[  336299ms] [INFO] [09:28:46 p. m.] [firebase] Sesion anonima conectada. @ http://localhost:8080/src/state/appState.js:115
+[  336302ms] [INFO] [09:28:46 p. m.] [firebase] Offset de tiempo: 3914 ms. @ http://localhost:8080/src/state/appState.js:115
+[  336334ms] [INFO] [09:28:46 p. m.] [ui] Chat interno oculto. @ http://localhost:8080/src/state/appState.js:115
+[  336339ms] [INFO] [09:28:46 p. m.] [room] Sala 3R5X0 activa. @ http://localhost:8080/src/state/appState.js:115
+[  337535ms] [INFO] [09:28:47 p. m.] [ui] Chat interno visible. @ http://localhost:8080/src/state/appState.js:115
+[  339141ms] [INFO] [09:28:49 p. m.] [chat:recv] Mensaje recibido de Usuario 2008. @ http://localhost:8080/src/state/appState.js:115
+[  339143ms] [INFO] [09:28:49 p. m.] [chat:send] Mensaje de Usuario 2008. @ http://localhost:8080/src/state/appState.js:115
+[  339307ms] [INFO] [09:28:49 p. m.] [firebase] Mensaje enviado. @ http://localhost:8080/src/state/appState.js:115
+[  348869ms] [INFO] [09:28:58 p. m.] [ui] Estilo de chat interno: panel. @ http://localhost:8080/src/state/appState.js:115
+[  405952ms] [ERROR] Connecting to 'https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js.map' violates the following Content Security Policy directive: "connect-src 'self' http://localhost:* http://127.0.0.1:* https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com". The request has been blocked.
+ @ :0
+[  405958ms] [ERROR] Connecting to 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js.map' violates the following Content Security Policy directive: "connect-src 'self' http://localhost:* http://127.0.0.1:* https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com". The request has been blocked.
+ @ :0
+[  405958ms] [ERROR] Connecting to 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js.map' violates the following Content Security Policy directive: "connect-src 'self' http://localhost:* http://127.0.0.1:* https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com". The request has been blocked.
+ @ :0
+[  405959ms] [ERROR] Connecting to 'https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js.map' violates the following Content Security Policy directive: "connect-src 'self' http://localhost:* http://127.0.0.1:* https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com". The request has been blocked.
+ @ :0
+[  500653ms] [INFO] [09:31:30 p. m.] [ui] Estilo de chat interno: float. @ http://localhost:8080/src/state/appState.js:115
+[  500656ms] [INFO] [09:31:30 p. m.] [ui] Chat interno oculto. @ http://localhost:8080/src/state/appState.js:115
+[  500668ms] [INFO] [09:31:30 p. m.] [ui] Chat lateral en posicion: lateral. @ http://localhost:8080/src/state/appState.js:115
+[  500677ms] [INFO] [09:31:30 p. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://localhost:8080/src/state/appState.js:115
+[  500690ms] [INFO] [09:31:30 p. m.] [connection] Iniciando @ http://localhost:8080/src/state/appState.js:115
+[  500692ms] [INFO] [09:31:30 p. m.] [room] Entrando a sala 3R5X0. @ http://localhost:8080/src/state/appState.js:115
+[  501986ms] [INFO] [09:31:32 p. m.] [firebase] Sala huerfana detectada al entrar. Limpiando datos residuales. @ http://localhost:8080/src/state/appState.js:115
+[  502353ms] [INFO] [09:31:32 p. m.] [connection] Activa @ http://localhost:8080/src/state/appState.js:115
+[  502355ms] [INFO] [09:31:32 p. m.] [firebase] Sesion anonima conectada. @ http://localhost:8080/src/state/appState.js:115
+[  502359ms] [INFO] [09:31:32 p. m.] [firebase] Offset de tiempo: 3910 ms. @ http://localhost:8080/src/state/appState.js:115
+[  502391ms] [INFO] [09:31:32 p. m.] [ui] Chat interno oculto. @ http://localhost:8080/src/state/appState.js:115
+[  502396ms] [INFO] [09:31:32 p. m.] [room] Sala 3R5X0 activa. @ http://localhost:8080/src/state/appState.js:115
+[  503757ms] [INFO] [09:31:33 p. m.] [ui] Chat interno visible. @ http://localhost:8080/src/state/appState.js:115
+[  505599ms] [INFO] [09:31:35 p. m.] [chat:recv] Mensaje recibido de Usuario 2008. @ http://localhost:8080/src/state/appState.js:115
+[  505602ms] [INFO] [09:31:35 p. m.] [chat:send] Mensaje de Usuario 2008. @ http://localhost:8080/src/state/appState.js:115
+[  505766ms] [INFO] [09:31:35 p. m.] [firebase] Mensaje enviado. @ http://localhost:8080/src/state/appState.js:115
+[  508745ms] [INFO] [09:31:38 p. m.] [ui] Estilo de chat interno: panel. @ http://localhost:8080/src/state/appState.js:115
+[  511720ms] [ERROR] Connecting to 'https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js.map' violates the following Content Security Policy directive: "connect-src 'self' http://localhost:* http://127.0.0.1:* https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com". The request has been blocked.
+ @ :0
+[  511788ms] [ERROR] Connecting to 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js.map' violates the following Content Security Policy directive: "connect-src 'self' http://localhost:* http://127.0.0.1:* https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com". The request has been blocked.
+ @ :0
+[  511788ms] [ERROR] Connecting to 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js.map' violates the following Content Security Policy directive: "connect-src 'self' http://localhost:* http://127.0.0.1:* https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com". The request has been blocked.
+ @ :0
+[  511788ms] [ERROR] Connecting to 'https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js.map' violates the following Content Security Policy directive: "connect-src 'self' http://localhost:* http://127.0.0.1:* https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com". The request has been blocked.
+ @ :0
+[  535952ms] [INFO] [09:32:06 p. m.] [chat:recv] Mensaje recibido de Usuario 2008. @ http://localhost:8080/src/state/appState.js:115
+[  535956ms] [INFO] [09:32:06 p. m.] [chat:send] Mensaje de Usuario 2008. @ http://localhost:8080/src/state/appState.js:115
+[  536123ms] [INFO] [09:32:06 p. m.] [firebase] Mensaje enviado. @ http://localhost:8080/src/state/appState.js:115
+[  536806ms] [INFO] [09:32:06 p. m.] [chat:recv] Mensaje recibido de Usuario 2008. @ http://localhost:8080/src/state/appState.js:115
+[  536808ms] [INFO] [09:32:06 p. m.] [chat:send] Mensaje de Usuario 2008. @ http://localhost:8080/src/state/appState.js:115
+[  536979ms] [INFO] [09:32:07 p. m.] [firebase] Mensaje enviado. @ http://localhost:8080/src/state/appState.js:115
+[  538506ms] [INFO] [09:32:08 p. m.] [chat:recv] Mensaje recibido de Usuario 2008. @ http://localhost:8080/src/state/appState.js:115
+[  538510ms] [INFO] [09:32:08 p. m.] [chat:send] Mensaje de Usuario 2008. @ http://localhost:8080/src/state/appState.js:115
+[  538678ms] [INFO] [09:32:08 p. m.] [firebase] Mensaje enviado. @ http://localhost:8080/src/state/appState.js:115
+[  539946ms] [INFO] [09:32:10 p. m.] [chat:recv] Mensaje recibido de Usuario 2008. @ http://localhost:8080/src/state/appState.js:115
+[  539949ms] [INFO] [09:32:10 p. m.] [chat:send] Mensaje de Usuario 2008. @ http://localhost:8080/src/state/appState.js:115
+[  540116ms] [INFO] [09:32:10 p. m.] [firebase] Mensaje enviado. @ http://localhost:8080/src/state/appState.js:115
+[  586124ms] [ERROR] Connecting to 'https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js.map' violates the following Content Security Policy directive: "connect-src 'self' http://localhost:* http://127.0.0.1:* https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com". The request has been blocked.
+ @ :0
+[  587034ms] [INFO] [09:32:57 p. m.] [ui] Estilo de chat interno: float. @ http://localhost:8080/src/state/appState.js:115
+[  587038ms] [INFO] [09:32:57 p. m.] [ui] Chat interno oculto. @ http://localhost:8080/src/state/appState.js:115
+[  587052ms] [INFO] [09:32:57 p. m.] [ui] Chat lateral en posicion: lateral. @ http://localhost:8080/src/state/appState.js:115
+[  587062ms] [INFO] [09:32:57 p. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://localhost:8080/src/state/appState.js:115
+[  587077ms] [INFO] [09:32:57 p. m.] [connection] Iniciando @ http://localhost:8080/src/state/appState.js:115
+[  587080ms] [INFO] [09:32:57 p. m.] [room] Entrando a sala 3R5X0. @ http://localhost:8080/src/state/appState.js:115
+[  587359ms] [ERROR] Connecting to 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js.map' violates the following Content Security Policy directive: "connect-src 'self' http://localhost:* http://127.0.0.1:* https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com". The request has been blocked.
+ @ :0
+[  587360ms] [ERROR] Connecting to 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js.map' violates the following Content Security Policy directive: "connect-src 'self' http://localhost:* http://127.0.0.1:* https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com". The request has been blocked.
+ @ :0
+[  587522ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8080/favicon.ico:0
+[  587650ms] [ERROR] Connecting to 'https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js.map' violates the following Content Security Policy directive: "connect-src 'self' http://localhost:* http://127.0.0.1:* https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com". The request has been blocked.
+ @ :0
+[  588541ms] [INFO] [09:32:58 p. m.] [firebase] Sala huerfana detectada al entrar. Limpiando datos residuales. @ http://localhost:8080/src/state/appState.js:115
+[  588948ms] [INFO] [09:32:59 p. m.] [connection] Activa @ http://localhost:8080/src/state/appState.js:115
+[  588951ms] [INFO] [09:32:59 p. m.] [firebase] Sesion anonima conectada. @ http://localhost:8080/src/state/appState.js:115
+[  588955ms] [INFO] [09:32:59 p. m.] [firebase] Offset de tiempo: 3890 ms. @ http://localhost:8080/src/state/appState.js:115
+[  588985ms] [INFO] [09:32:59 p. m.] [ui] Chat interno oculto. @ http://localhost:8080/src/state/appState.js:115
+[  588989ms] [INFO] [09:32:59 p. m.] [room] Sala 3R5X0 activa. @ http://localhost:8080/src/state/appState.js:115
+[  593282ms] [INFO] [09:33:03 p. m.] [ui] Chat interno visible. @ http://localhost:8080/src/state/appState.js:115
+[  595802ms] [INFO] [09:33:05 p. m.] [chat:recv] Mensaje recibido de Usuario 2008. @ http://localhost:8080/src/state/appState.js:115
+[  595806ms] [INFO] [09:33:05 p. m.] [chat:send] Mensaje de Usuario 2008. @ http://localhost:8080/src/state/appState.js:115
+[  595970ms] [INFO] [09:33:06 p. m.] [firebase] Mensaje enviado. @ http://localhost:8080/src/state/appState.js:115
+[  809819ms] [ERROR] Connecting to 'https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js.map' violates the following Content Security Policy directive: "connect-src 'self' http://localhost:* http://127.0.0.1:* https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com". The request has been blocked.
+ @ :0
+[  810645ms] [INFO] [09:36:40 p. m.] [ui] Estilo de chat interno: float. @ http://localhost:8080/src/state/appState.js:115
+[  810656ms] [INFO] [09:36:40 p. m.] [ui] Chat interno oculto. @ http://localhost:8080/src/state/appState.js:115
+[  810672ms] [INFO] [09:36:40 p. m.] [ui] Chat lateral en posicion: lateral. @ http://localhost:8080/src/state/appState.js:115
+[  810680ms] [INFO] [09:36:40 p. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://localhost:8080/src/state/appState.js:115
+[  810699ms] [INFO] [09:36:40 p. m.] [connection] Iniciando @ http://localhost:8080/src/state/appState.js:115
+[  810703ms] [INFO] [09:36:40 p. m.] [room] Entrando a sala 3R5X0. @ http://localhost:8080/src/state/appState.js:115
+[  810864ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8080/favicon.ico:0
+[  810907ms] [ERROR] Connecting to 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js.map' violates the following Content Security Policy directive: "connect-src 'self' http://localhost:* http://127.0.0.1:* https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com". The request has been blocked.
+ @ :0
+[  810908ms] [ERROR] Connecting to 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js.map' violates the following Content Security Policy directive: "connect-src 'self' http://localhost:* http://127.0.0.1:* https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com". The request has been blocked.
+ @ :0
+[  811005ms] [ERROR] Connecting to 'https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js.map' violates the following Content Security Policy directive: "connect-src 'self' http://localhost:* http://127.0.0.1:* https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com". The request has been blocked.
+ @ :0
+[  812214ms] [INFO] [09:36:42 p. m.] [firebase] Sala huerfana detectada al entrar. Limpiando datos residuales. @ http://localhost:8080/src/state/appState.js:115
+[  812613ms] [INFO] [09:36:42 p. m.] [connection] Activa @ http://localhost:8080/src/state/appState.js:115
+[  812615ms] [INFO] [09:36:42 p. m.] [firebase] Sesion anonima conectada. @ http://localhost:8080/src/state/appState.js:115
+[  812619ms] [INFO] [09:36:42 p. m.] [firebase] Offset de tiempo: 3893 ms. @ http://localhost:8080/src/state/appState.js:115
+[  812665ms] [INFO] [09:36:42 p. m.] [ui] Chat interno oculto. @ http://localhost:8080/src/state/appState.js:115
+[  812670ms] [INFO] [09:36:42 p. m.] [room] Sala 3R5X0 activa. @ http://localhost:8080/src/state/appState.js:115
+[  814736ms] [INFO] [09:36:44 p. m.] [ui] Chat interno visible. @ http://localhost:8080/src/state/appState.js:115
+[  816859ms] [INFO] [09:36:46 p. m.] [chat:recv] Mensaje recibido de Usuario 2008. @ http://localhost:8080/src/state/appState.js:115
+[  816862ms] [INFO] [09:36:46 p. m.] [chat:send] Mensaje de Usuario 2008. @ http://localhost:8080/src/state/appState.js:115
+[  817040ms] [INFO] [09:36:47 p. m.] [firebase] Mensaje enviado. @ http://localhost:8080/src/state/appState.js:115
+[ 1211407ms] [ERROR] Connecting to 'https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js.map' violates the following Content Security Policy directive: "connect-src 'self' http://localhost:* http://127.0.0.1:* https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com". The request has been blocked.
+ @ :0
+[ 1211495ms] [INFO] [09:43:21 p. m.] [ui] Estilo de chat interno: float. @ http://localhost:8080/src/state/appState.js:115
+[ 1211505ms] [INFO] [09:43:21 p. m.] [ui] Chat interno oculto. @ http://localhost:8080/src/state/appState.js:115
+[ 1211519ms] [INFO] [09:43:21 p. m.] [ui] Chat lateral en posicion: lateral. @ http://localhost:8080/src/state/appState.js:115
+[ 1211528ms] [INFO] [09:43:21 p. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://localhost:8080/src/state/appState.js:115
+[ 1211546ms] [INFO] [09:43:21 p. m.] [connection] Iniciando @ http://localhost:8080/src/state/appState.js:115
+[ 1211548ms] [INFO] [09:43:21 p. m.] [room] Entrando a sala 3R5X0. @ http://localhost:8080/src/state/appState.js:115
+[ 1211634ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8080/favicon.ico:0
+[ 1211744ms] [ERROR] Connecting to 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js.map' violates the following Content Security Policy directive: "connect-src 'self' http://localhost:* http://127.0.0.1:* https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com". The request has been blocked.
+ @ :0
+[ 1211744ms] [ERROR] Connecting to 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js.map' violates the following Content Security Policy directive: "connect-src 'self' http://localhost:* http://127.0.0.1:* https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com". The request has been blocked.
+ @ :0
+[ 1211768ms] [ERROR] Connecting to 'https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js.map' violates the following Content Security Policy directive: "connect-src 'self' http://localhost:* http://127.0.0.1:* https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com". The request has been blocked.
+ @ :0
+[ 1213017ms] [INFO] [09:43:23 p. m.] [firebase] Sala huerfana detectada al entrar. Limpiando datos residuales. @ http://localhost:8080/src/state/appState.js:115
+[ 1213390ms] [INFO] [09:43:23 p. m.] [connection] Activa @ http://localhost:8080/src/state/appState.js:115
+[ 1213391ms] [INFO] [09:43:23 p. m.] [firebase] Sesion anonima conectada. @ http://localhost:8080/src/state/appState.js:115
+[ 1213394ms] [INFO] [09:43:23 p. m.] [firebase] Offset de tiempo: 3882 ms. @ http://localhost:8080/src/state/appState.js:115
+[ 1213423ms] [INFO] [09:43:23 p. m.] [ui] Chat interno oculto. @ http://localhost:8080/src/state/appState.js:115
+[ 1213426ms] [INFO] [09:43:23 p. m.] [room] Sala 3R5X0 activa. @ http://localhost:8080/src/state/appState.js:115
+[ 1214729ms] [INFO] [09:43:24 p. m.] [ui] Chat interno visible. @ http://localhost:8080/src/state/appState.js:115
+[ 1216249ms] [INFO] [09:43:26 p. m.] [chat:recv] Mensaje recibido de Usuario 2008. @ http://localhost:8080/src/state/appState.js:115
+[ 1216250ms] [INFO] [09:43:26 p. m.] [chat:send] Mensaje de Usuario 2008. @ http://localhost:8080/src/state/appState.js:115
+[ 1216418ms] [INFO] [09:43:26 p. m.] [firebase] Mensaje enviado. @ http://localhost:8080/src/state/appState.js:115
+[ 1221569ms] [ERROR] Connecting to 'https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js.map' violates the following Content Security Policy directive: "connect-src 'self' http://localhost:* http://127.0.0.1:* https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com". The request has been blocked.
+ @ :0
+[ 1221570ms] [ERROR] Connecting to 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js.map' violates the following Content Security Policy directive: "connect-src 'self' http://localhost:* http://127.0.0.1:* https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com". The request has been blocked.
+ @ :0
+[ 1221570ms] [ERROR] Connecting to 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js.map' violates the following Content Security Policy directive: "connect-src 'self' http://localhost:* http://127.0.0.1:* https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com". The request has been blocked.
+ @ :0
+[ 1221570ms] [ERROR] Connecting to 'https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js.map' violates the following Content Security Policy directive: "connect-src 'self' http://localhost:* http://127.0.0.1:* https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com". The request has been blocked.
+ @ :0
+[ 1238393ms] [INFO] [09:43:48 p. m.] [chat:recv] Mensaje recibido de Usuario 2008. @ http://localhost:8080/src/state/appState.js:115
+[ 1238395ms] [INFO] [09:43:48 p. m.] [chat:send] Mensaje de Usuario 2008. @ http://localhost:8080/src/state/appState.js:115
+[ 1238579ms] [INFO] [09:43:48 p. m.] [firebase] Mensaje enviado. @ http://localhost:8080/src/state/appState.js:115
+[ 1241201ms] [INFO] [09:43:51 p. m.] [chat:recv] Mensaje recibido de Usuario 2008. @ http://localhost:8080/src/state/appState.js:115
+[ 1241203ms] [INFO] [09:43:51 p. m.] [chat:send] Mensaje de Usuario 2008. @ http://localhost:8080/src/state/appState.js:115
+[ 1241375ms] [INFO] [09:43:51 p. m.] [firebase] Mensaje enviado. @ http://localhost:8080/src/state/appState.js:115
+[ 1243635ms] [INFO] [09:43:53 p. m.] [chat:recv] Mensaje recibido de Usuario 2008. @ http://localhost:8080/src/state/appState.js:115
+[ 1243637ms] [INFO] [09:43:53 p. m.] [chat:send] Mensaje de Usuario 2008. @ http://localhost:8080/src/state/appState.js:115
+[ 1243822ms] [INFO] [09:43:53 p. m.] [firebase] Mensaje enviado. @ http://localhost:8080/src/state/appState.js:115

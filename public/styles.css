@@ -6,6 +6,6 @@
 @import url("./styles/lobby.css");
 @import url("./styles/player.css");
 @import url("./styles/chat.css");
-@import url("./styles/chat-overlay.css");
+@import url("./styles/chat-overlay.css?v=20260802-04");
 @import url("./styles/states.css");
 @import url("./styles/responsive.css");

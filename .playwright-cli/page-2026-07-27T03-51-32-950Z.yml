@@ -1,0 +1,104 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - generic [ref=e81]:
+      - generic [ref=e82]:
+        - generic [ref=e83]:
+          - generic [ref=e84]: Sala de video
+          - button "Ayuda sobre la sala" [ref=e85] [cursor=pointer]
+        - heading "SALA 0G0S0" [level=1] [ref=e89]:
+          - text: SALA
+          - generic [ref=e90]: 0G0S0
+      - generic [ref=e91]:
+        - 'generic "Estado de la aplicación: Activa. La sala está funcionando" [ref=e92]': Activa
+        - button "Invitar" [ref=e95] [cursor=pointer]:
+          - generic [ref=e96]:
+            - generic [ref=e97]: Invitar
+            - generic [ref=e105]: Copiado
+  - main [ref=e109]:
+    - generic [ref=e110]:
+      - region "Reproductor sincronizado" [ref=e111]:
+        - region "Controles de sala" [ref=e112]:
+          - generic [ref=e113]:
+            - generic [ref=e114]:
+              - generic [ref=e115]:
+                - generic [ref=e116]: Enlace de video
+                - button "Ayuda sobre el enlace del video" [ref=e117] [cursor=pointer]
+              - textbox "Pega un link directo a MP4, WebM u otro video compatible" [ref=e121]:
+                - /placeholder: https://servidor.com/video.mp4
+                - text: https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4
+            - button "Cargar" [ref=e122] [cursor=pointer]
+        - generic [ref=e126]:
+          - paragraph:
+            - generic: Sin contenido
+          - generic "Controles de reproductor" [ref=e128]:
+            - button "Ocultar chat" [active] [pressed] [ref=e183] [cursor=pointer]
+          - generic "Controles inferiores del reproductor" [ref=e184]:
+            - generic [ref=e185]:
+              - button "Reproducir video" [disabled] [ref=e186]
+              - generic [ref=e189]:
+                - generic [ref=e190]: 0:00
+                - slider "Avance del video" [disabled] [ref=e191]: "0"
+                - button "Duración no disponible" [disabled] [ref=e192]: 0:00
+              - generic [ref=e193]:
+                - button "Silenciar" [ref=e194] [cursor=pointer]
+                - slider "Volumen" [ref=e199] [cursor=pointer]: "1"
+              - combobox "Velocidad de reproduccion" [disabled] [ref=e201]:
+                - option "0.5x"
+                - option "0.75x"
+                - option "1x" [selected]
+                - option "1.25x"
+                - option "1.5x"
+                - option "2x"
+              - button "Pantalla completa de pagina" [ref=e202] [cursor=pointer]
+          - complementary "Chat dentro del video" [ref=e208]:
+            - generic [ref=e209]:
+              - button "2 usuarios conectados" [ref=e210] [cursor=pointer]:
+                - generic [ref=e212]: "2"
+              - generic [ref=e213]:
+                - group "Estilo del chat dentro del video" [ref=e214]:
+                  - button "Panel translucido" [ref=e215] [cursor=pointer]
+                  - button "Panel opaco" [ref=e218] [cursor=pointer]
+                - generic [ref=e221]: "1"
+                - switch "Autoexpandir chat interno" [ref=e222] [cursor=pointer]:
+                  - generic [ref=e225]: Auto
+            - article [ref=e228]:
+              - generic [ref=e229]: Nacho
+              - generic [ref=e232]:
+                - generic [ref=e233]: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+                - generic: 12:44a.m.
+            - generic [ref=e235]:
+              - generic [ref=e236]:
+                - textbox "Escribir al chat de la sala" [ref=e238]:
+                  - /placeholder: Mensaje
+                - button "Abrir emojis" [ref=e239] [cursor=pointer]
+                - button "Enviar mensaje" [ref=e243] [cursor=pointer]
+              - generic: 0 / 600
+      - complementary "Chat de la sala" [ref=e132]:
+        - generic [ref=e133]:
+          - button "2 usuarios conectados" [ref=e134] [cursor=pointer]:
+            - generic [ref=e136]: "2"
+          - generic [ref=e137]:
+            - generic [ref=e138]:
+              - text: Usuario
+              - button "Ayuda sobre nombre" [ref=e139] [cursor=pointer]
+            - generic [ref=e144]:
+              - generic [ref=e145]: Usuario A0B0
+              - button "Editar nombre" [ref=e146] [cursor=pointer]
+          - generic [ref=e150]:
+            - switch "Autoexpandir chat externo" [ref=e151] [cursor=pointer]:
+              - generic [ref=e154]: Auto
+            - button "Chat lateral. Mover chat abajo" [ref=e155] [cursor=pointer]
+        - article [ref=e160]:
+          - generic [ref=e161]: Nacho
+          - generic [ref=e164]:
+            - generic [ref=e165]: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+            - generic: 12:44a.m.
+        - generic [ref=e167]:
+          - generic [ref=e168]:
+            - textbox "Escribir al chat de la sala" [ref=e170]:
+              - /placeholder: Mensaje
+            - button "Abrir emojis" [ref=e171] [cursor=pointer]
+            - button "Enviar mensaje" [ref=e175] [cursor=pointer]
+          - generic: 0 / 600
+      - button "Contraer chat" [ref=e179] [cursor=pointer]
+  - generic: Ocultar chat

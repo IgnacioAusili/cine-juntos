@@ -1,0 +1,15 @@
+[     945ms] [INFO] [12:05:32 p. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:127
+[     950ms] [INFO] [12:05:32 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[     965ms] [INFO] [12:05:32 p. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:127
+[     976ms] [INFO] [12:05:32 p. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[     993ms] [INFO] [12:05:32 p. m.] [connection] Iniciando @ http://127.0.0.1:8080/src/state/appState.js:127
+[     995ms] [INFO] [12:05:32 p. m.] [room] Entrando a sala 4B3E1. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    1051ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:8080/favicon.ico:0
+[    4617ms] [INFO] [12:05:35 p. m.] [connection] Activa @ http://127.0.0.1:8080/src/state/appState.js:127
+[    4621ms] [INFO] [12:05:35 p. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    4629ms] [INFO] [12:05:35 p. m.] [firebase] Offset de tiempo: 3280 ms. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    4746ms] [INFO] [12:05:36 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    4754ms] [INFO] [12:05:36 p. m.] [room] Sala 4B3E1 activa. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    4868ms] [INFO] [12:05:36 p. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    4884ms] [INFO] [12:05:36 p. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    4901ms] [INFO] [12:05:36 p. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127

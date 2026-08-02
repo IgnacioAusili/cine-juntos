@@ -1,0 +1,13 @@
+[     498ms] [INFO] [02:11:42 a. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:111
+[     503ms] [INFO] [02:11:42 a. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:111
+[     515ms] [INFO] [02:11:42 a. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:111
+[     522ms] [INFO] [02:11:42 a. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:111
+[     536ms] [INFO] [02:11:42 a. m.] [connection] Iniciando @ http://127.0.0.1:8080/src/state/appState.js:111
+[     537ms] [INFO] [02:11:42 a. m.] [room] Entrando a sala 1O426. @ http://127.0.0.1:8080/src/state/appState.js:111
+[    2224ms] [INFO] [02:11:44 a. m.] [connection] Activa @ http://127.0.0.1:8080/src/state/appState.js:111
+[    2257ms] [INFO] [02:11:44 a. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:111
+[    2276ms] [INFO] [02:11:44 a. m.] [firebase] Offset de tiempo: 3208 ms. @ http://127.0.0.1:8080/src/state/appState.js:111
+[    2384ms] [INFO] [02:11:44 a. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:111
+[    2390ms] [INFO] [02:11:44 a. m.] [room] Sala 1O426 activa. @ http://127.0.0.1:8080/src/state/appState.js:111
+[    2551ms] [INFO] [02:11:44 a. m.] [chat:recv] Mensaje recibido de Usuario 2D8E. @ http://127.0.0.1:8080/src/state/appState.js:111
+[    2568ms] [INFO] [02:11:44 a. m.] [chat:recv] Mensaje recibido de Usuario 2D8E. @ http://127.0.0.1:8080/src/state/appState.js:111

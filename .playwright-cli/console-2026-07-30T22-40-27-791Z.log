@@ -1,0 +1,243 @@
+[    1199ms] [INFO] [07:40:28 p. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:124
+[    1206ms] [INFO] [07:40:28 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:124
+[    1226ms] [INFO] [07:40:29 p. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:124
+[    1237ms] [INFO] [07:40:29 p. m.] [connection] Activa @ http://127.0.0.1:8080/src/state/appState.js:124
+[    1240ms] [INFO] [07:40:29 p. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[    1283ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:8080/favicon.ico:0
+[   48622ms] [INFO] [07:41:16 p. m.] [connection] Iniciando @ http://127.0.0.1:8080/src/state/appState.js:124
+[   48635ms] [INFO] [07:41:16 p. m.] [room] Entrando a sala 5X2Y0. @ http://127.0.0.1:8080/src/state/appState.js:124
+[   51712ms] [INFO] [07:41:19 p. m.] [connection] Activa @ http://127.0.0.1:8080/src/state/appState.js:124
+[   51714ms] [INFO] [07:41:19 p. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:124
+[   51718ms] [INFO] [07:41:19 p. m.] [firebase] Offset de tiempo: 2072 ms. @ http://127.0.0.1:8080/src/state/appState.js:124
+[   51819ms] [INFO] [07:41:19 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:124
+[   51826ms] [INFO] [07:41:19 p. m.] [room] Sala 5X2Y0 activa. @ http://127.0.0.1:8080/src/state/appState.js:124
+[   59126ms] [INFO] [07:41:26 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[   59130ms] [INFO] [07:41:26 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[   59280ms] [INFO] [07:41:27 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[   64139ms] [INFO] [07:41:31 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[   64144ms] [INFO] [07:41:31 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[   64314ms] [INFO] [07:41:32 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[   65419ms] [INFO] [07:41:33 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[   65422ms] [INFO] [07:41:33 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[   65615ms] [INFO] [07:41:33 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[   66529ms] [INFO] [07:41:34 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[   66532ms] [INFO] [07:41:34 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[   66698ms] [INFO] [07:41:34 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[   67762ms] [INFO] [07:41:35 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[   67765ms] [INFO] [07:41:35 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[   67928ms] [INFO] [07:41:35 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[   68696ms] [INFO] [07:41:36 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[   68699ms] [INFO] [07:41:36 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[   68865ms] [INFO] [07:41:36 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[   69681ms] [INFO] [07:41:37 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[   69684ms] [INFO] [07:41:37 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[   69864ms] [INFO] [07:41:37 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[   70722ms] [INFO] [07:41:38 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[   70727ms] [INFO] [07:41:38 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[   70892ms] [INFO] [07:41:38 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[   71802ms] [INFO] [07:41:39 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[   71805ms] [INFO] [07:41:39 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[   71982ms] [INFO] [07:41:39 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[   72938ms] [INFO] [07:41:40 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[   72943ms] [INFO] [07:41:40 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[   73104ms] [INFO] [07:41:40 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  664603ms] [INFO] [07:51:32 p. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  664607ms] [INFO] [07:51:32 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  664624ms] [INFO] [07:51:32 p. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  664637ms] [INFO] [07:51:32 p. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  664661ms] [INFO] [07:51:32 p. m.] [connection] Iniciando @ http://127.0.0.1:8080/src/state/appState.js:124
+[  664673ms] [INFO] [07:51:32 p. m.] [room] Entrando a sala 5X2Y0. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  666285ms] [INFO] [07:51:34 p. m.] [firebase] Sala huerfana detectada al entrar. Limpiando datos residuales. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  667539ms] [INFO] [07:51:35 p. m.] [connection] Activa @ http://127.0.0.1:8080/src/state/appState.js:124
+[  667558ms] [INFO] [07:51:35 p. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  667570ms] [INFO] [07:51:35 p. m.] [firebase] Offset de tiempo: 2088 ms. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  667632ms] [INFO] [07:51:35 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  667645ms] [INFO] [07:51:35 p. m.] [room] Sala 5X2Y0 activa. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  731884ms] [INFO] [07:52:39 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  731886ms] [INFO] [07:52:39 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  731949ms] [INFO] [07:52:39 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  731952ms] [INFO] [07:52:39 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  732024ms] [INFO] [07:52:39 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  732028ms] [INFO] [07:52:39 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  732092ms] [INFO] [07:52:39 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  732096ms] [INFO] [07:52:39 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  732162ms] [INFO] [07:52:39 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  732166ms] [INFO] [07:52:39 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  732196ms] [INFO] [07:52:39 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  732263ms] [INFO] [07:52:40 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  848801ms] [INFO] [07:54:36 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  848805ms] [INFO] [07:54:36 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  848876ms] [INFO] [07:54:36 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  848879ms] [INFO] [07:54:36 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  848935ms] [INFO] [07:54:36 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  848943ms] [INFO] [07:54:36 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  849009ms] [INFO] [07:54:36 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  849023ms] [INFO] [07:54:36 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  849026ms] [INFO] [07:54:36 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  849085ms] [INFO] [07:54:36 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  849090ms] [INFO] [07:54:36 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  849152ms] [INFO] [07:54:36 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  849159ms] [INFO] [07:54:36 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  849219ms] [INFO] [07:54:37 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  849225ms] [INFO] [07:54:37 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  849286ms] [INFO] [07:54:37 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  849291ms] [INFO] [07:54:37 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  849351ms] [INFO] [07:54:37 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  849356ms] [INFO] [07:54:37 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  849499ms] [INFO] [07:54:37 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  849505ms] [INFO] [07:54:37 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  849513ms] [INFO] [07:54:37 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  849534ms] [INFO] [07:54:37 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  849544ms] [INFO] [07:54:37 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  849550ms] [INFO] [07:54:37 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  849559ms] [INFO] [07:54:37 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  849574ms] [INFO] [07:54:37 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  849635ms] [INFO] [07:54:37 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  849648ms] [INFO] [07:54:37 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  849727ms] [INFO] [07:54:37 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  849730ms] [INFO] [07:54:37 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  849805ms] [INFO] [07:54:37 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  849808ms] [INFO] [07:54:37 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  849882ms] [INFO] [07:54:37 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  849886ms] [INFO] [07:54:37 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  849961ms] [INFO] [07:54:37 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  849966ms] [INFO] [07:54:37 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  849984ms] [INFO] [07:54:37 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  850019ms] [INFO] [07:54:37 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  850031ms] [INFO] [07:54:37 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  850102ms] [INFO] [07:54:37 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  850123ms] [INFO] [07:54:37 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  850125ms] [INFO] [07:54:37 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  850323ms] [INFO] [07:54:38 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  850348ms] [INFO] [07:54:38 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  850949ms] [INFO] [07:54:38 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  850953ms] [INFO] [07:54:38 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  851176ms] [INFO] [07:54:38 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  851209ms] [INFO] [07:54:38 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  851216ms] [INFO] [07:54:39 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  851384ms] [INFO] [07:54:39 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  852225ms] [INFO] [07:54:40 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  852240ms] [INFO] [07:54:40 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  852383ms] [INFO] [07:54:40 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  852415ms] [INFO] [07:54:40 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  852418ms] [INFO] [07:54:40 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  852795ms] [INFO] [07:54:40 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  852861ms] [INFO] [07:54:40 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  852872ms] [INFO] [07:54:40 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  853011ms] [INFO] [07:54:40 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  853019ms] [INFO] [07:54:40 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  853101ms] [INFO] [07:54:40 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  853134ms] [INFO] [07:54:40 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  853143ms] [INFO] [07:54:40 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  853219ms] [INFO] [07:54:41 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  853257ms] [INFO] [07:54:41 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  853261ms] [INFO] [07:54:41 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  853333ms] [INFO] [07:54:41 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  853376ms] [INFO] [07:54:41 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  853464ms] [INFO] [07:54:41 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  855725ms] [INFO] [07:54:43 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[  855732ms] [INFO] [07:54:43 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 1242558ms] [INFO] [08:01:10 p. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 1242561ms] [INFO] [08:01:10 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 1242573ms] [INFO] [08:01:10 p. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 1242580ms] [INFO] [08:01:10 p. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 1242592ms] [INFO] [08:01:10 p. m.] [connection] Iniciando @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 1242593ms] [INFO] [08:01:10 p. m.] [room] Entrando a sala 5X2Y0. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 1243979ms] [INFO] [08:01:11 p. m.] [firebase] Sala huerfana detectada al entrar. Limpiando datos residuales. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 1244461ms] [INFO] [08:01:12 p. m.] [connection] Activa @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 1244464ms] [INFO] [08:01:12 p. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 1244482ms] [INFO] [08:01:12 p. m.] [firebase] Offset de tiempo: 2092 ms. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 1244533ms] [INFO] [08:01:12 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 1244547ms] [INFO] [08:01:12 p. m.] [room] Sala 5X2Y0 activa. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 1271031ms] [INFO] [08:01:38 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 1271233ms] [INFO] [08:01:39 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 1272068ms] [INFO] [08:01:39 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 1894745ms] [INFO] [08:12:02 p. m.] [ui] Chat interno visible. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 1895498ms] [INFO] [08:12:03 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 1895835ms] [INFO] [08:12:03 p. m.] [ui] Chat interno visible. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 1914271ms] [INFO] [08:12:22 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 1914274ms] [INFO] [08:12:22 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 1914400ms] [INFO] [08:12:22 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 1917418ms] [INFO] [08:12:25 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 1917422ms] [INFO] [08:12:25 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 1917589ms] [INFO] [08:12:25 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 1932208ms] [INFO] [08:12:39 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 1932211ms] [INFO] [08:12:40 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 1932372ms] [INFO] [08:12:40 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 2264711ms] [INFO] [08:18:12 p. m.] [chat:recv] Mensaje recibido de Prueba. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 2265341ms] [INFO] [08:18:13 p. m.] [chat:recv] Mensaje recibido de Prueba. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 2358267ms] [INFO] [08:19:46 p. m.] [chat:recv] Mensaje recibido de Prueba. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 2427987ms] [INFO] [08:20:55 p. m.] [chat:recv] Mensaje recibido de Prueba. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 2437809ms] [INFO] [08:21:05 p. m.] [chat:recv] Mensaje recibido de Prueba. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 3161488ms] [INFO] [08:33:09 p. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 3161491ms] [INFO] [08:33:09 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 3161504ms] [INFO] [08:33:09 p. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 3161515ms] [INFO] [08:33:09 p. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 3161533ms] [INFO] [08:33:09 p. m.] [connection] Iniciando @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 3161535ms] [INFO] [08:33:09 p. m.] [room] Entrando a sala 5X2Y0. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 3163516ms] [INFO] [08:33:11 p. m.] [firebase] Sala huerfana detectada al entrar. Limpiando datos residuales. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 3164268ms] [INFO] [08:33:12 p. m.] [connection] Activa @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 3164271ms] [INFO] [08:33:12 p. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 3164275ms] [INFO] [08:33:12 p. m.] [firebase] Offset de tiempo: 2089 ms. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 3164323ms] [INFO] [08:33:12 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 3164329ms] [INFO] [08:33:12 p. m.] [room] Sala 5X2Y0 activa. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 3167047ms] [INFO] [08:33:14 p. m.] [ui] Chat interno visible. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 3170446ms] [INFO] [08:33:18 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 3170449ms] [INFO] [08:33:18 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 3170615ms] [INFO] [08:33:18 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 3183549ms] [INFO] [08:33:31 p. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 3183552ms] [INFO] [08:33:31 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 3183565ms] [INFO] [08:33:31 p. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 3183572ms] [INFO] [08:33:31 p. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 3183587ms] [INFO] [08:33:31 p. m.] [connection] Iniciando @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 3183589ms] [INFO] [08:33:31 p. m.] [room] Entrando a sala 033K4. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 3184948ms] [INFO] [08:33:32 p. m.] [connection] Activa @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 3184951ms] [INFO] [08:33:32 p. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 3184954ms] [INFO] [08:33:32 p. m.] [firebase] Offset de tiempo: 2072 ms. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 3184985ms] [INFO] [08:33:32 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 3184988ms] [INFO] [08:33:32 p. m.] [room] Sala 033K4 activa. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 3185160ms] [INFO] [08:33:32 p. m.] [chat:recv] Mensaje recibido de Nacho. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 3185170ms] [INFO] [08:33:32 p. m.] [chat:recv] Mensaje recibido de Nacho. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 3185181ms] [INFO] [08:33:32 p. m.] [chat:recv] Mensaje recibido de Nacho. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 3185196ms] [INFO] [08:33:32 p. m.] [chat:recv] Mensaje recibido de Nacho. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 3186691ms] [INFO] [08:33:34 p. m.] [ui] Chat interno visible. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 4806641ms] [INFO] [09:00:34 p. m.] [chat:recv] Mensaje recibido de Nacho. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 4810977ms] [INFO] [09:00:38 p. m.] [chat:recv] Mensaje recibido de Nacho. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 4827412ms] [INFO] [09:00:55 p. m.] [chat:recv] Mensaje recibido de Nacho. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 4912723ms] [INFO] [09:02:20 p. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 4912726ms] [INFO] [09:02:20 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 4912738ms] [INFO] [09:02:20 p. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 4912744ms] [INFO] [09:02:20 p. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 4912759ms] [INFO] [09:02:20 p. m.] [connection] Iniciando @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 4912761ms] [INFO] [09:02:20 p. m.] [room] Entrando a sala 033K4. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 4914396ms] [INFO] [09:02:22 p. m.] [connection] Activa @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 4914399ms] [INFO] [09:02:22 p. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 4914403ms] [INFO] [09:02:22 p. m.] [firebase] Offset de tiempo: 2085 ms. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 4914439ms] [INFO] [09:02:22 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 4914448ms] [INFO] [09:02:22 p. m.] [room] Sala 033K4 activa. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 4914592ms] [INFO] [09:02:22 p. m.] [chat:recv] Mensaje recibido de Nacho. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 4914607ms] [INFO] [09:02:22 p. m.] [chat:recv] Mensaje recibido de Nacho. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 4914620ms] [INFO] [09:02:22 p. m.] [chat:recv] Mensaje recibido de Nacho. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 4914632ms] [INFO] [09:02:22 p. m.] [chat:recv] Mensaje recibido de Nacho. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 4914644ms] [INFO] [09:02:22 p. m.] [chat:recv] Mensaje recibido de Nacho. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 4914657ms] [INFO] [09:02:22 p. m.] [chat:recv] Mensaje recibido de Nacho. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 4914672ms] [INFO] [09:02:22 p. m.] [chat:recv] Mensaje recibido de Nacho. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 4915570ms] [INFO] [09:02:23 p. m.] [ui] Chat interno visible. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 5085784ms] [INFO] [09:05:13 p. m.] [ui] Autoexpandir chat interno: activado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 5086686ms] [INFO] [09:05:14 p. m.] [ui] Autoexpandir chat interno: desactivado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 5089558ms] [INFO] [09:05:17 p. m.] [ui] Estilo de chat interno: panel. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 5090598ms] [INFO] [09:05:18 p. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 5092230ms] [INFO] [09:05:20 p. m.] [ui] Estilo de chat interno: panel. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 5440060ms] [INFO] [09:11:07 p. m.] [chat:recv] Mensaje recibido de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 5440065ms] [INFO] [09:11:07 p. m.] [chat:send] Mensaje de Usuario D3DE. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 5440387ms] [INFO] [09:11:08 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 5475126ms] [INFO] [09:11:42 p. m.] [chat:recv] Mensaje recibido de Nacho. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 5527942ms] [INFO] [09:12:35 p. m.] [chat:recv] Mensaje recibido de Nacho. @ http://127.0.0.1:8080/src/state/appState.js:124
+[ 5775108ms] [ERROR] WebSocket connection to 'wss://s-gke-usc1-nssi2-38.firebaseio.com/.ws?v=5&ls=9plnKnLzOeTWangRUlh9YE4REtR2wNS2&p=1:611794809410:web:36589cd37ca953d6d2f3db&ns=cinecompartidopagina-default-rtdb' failed: Error in connection establishment: net::ERR_NETWORK_IO_SUSPENDED @ https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js:0
+[10370104ms] [ERROR] Failed to load resource: net::ERR_NAME_NOT_RESOLVED @ https://securetoken.googleapis.com/v1/token?key=AIzaSyBb7lg0hQxt8lX62QUFAG3aFuVQt4o11jM:0
+[10370149ms] [ERROR] Failed to load resource: net::ERR_NAME_NOT_RESOLVED @ https://securetoken.googleapis.com/v1/token?key=AIzaSyBb7lg0hQxt8lX62QUFAG3aFuVQt4o11jM:0
+[10371562ms] [INFO] [10:33:19 p. m.] [firebase] Offset de tiempo: 2224 ms. @ http://127.0.0.1:8080/src/state/appState.js:124
+[10371620ms] [ERROR] Framing 'https://s-gke-usc1-nssi2-38.firebaseio.com/' violates the following Content Security Policy directive: "default-src 'self'". The request has been blocked. Note that 'frame-src' was not explicitly set, so 'default-src' is used as a fallback.
+ @ https://www.gstatic.com/:0
+[10371630ms] [ERROR] Framing 'https://s-gke-usc1-nssi2-38.firebaseio.com/' violates the following Content Security Policy directive: "default-src 'self'". The request has been blocked. Note that 'frame-src' was not explicitly set, so 'default-src' is used as a fallback.
+ @ https://www.gstatic.com/:0

@@ -1,0 +1,468 @@
+[    1502ms] [INFO] [11:12:57 a. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    1515ms] [INFO] [11:12:57 a. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    1546ms] [INFO] [11:12:57 a. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    1564ms] [INFO] [11:12:57 a. m.] [connection] Activa @ http://127.0.0.1:8080/src/state/appState.js:127
+[    1572ms] [INFO] [11:12:57 a. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    1668ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:8080/favicon.ico:0
+[    5620ms] [INFO] [11:13:01 a. m.] [connection] Iniciando @ http://127.0.0.1:8080/src/state/appState.js:127
+[    5631ms] [INFO] [11:13:01 a. m.] [room] Entrando a sala 4B3E1. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    8475ms] [INFO] [11:13:04 a. m.] [connection] Activa @ http://127.0.0.1:8080/src/state/appState.js:127
+[    8478ms] [INFO] [11:13:04 a. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    8483ms] [INFO] [11:13:04 a. m.] [firebase] Offset de tiempo: 3295 ms. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    8566ms] [INFO] [11:13:04 a. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    8572ms] [INFO] [11:13:04 a. m.] [room] Sala 4B3E1 activa. @ http://127.0.0.1:8080/src/state/appState.js:127
+[   17383ms] [INFO] [11:13:13 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[   17387ms] [INFO] [11:13:13 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[   17553ms] [INFO] [11:13:13 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[   19409ms] [INFO] [11:13:15 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[   19412ms] [INFO] [11:13:15 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[   19632ms] [INFO] [11:13:15 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  217471ms] [INFO] [11:16:33 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  217475ms] [INFO] [11:16:33 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  217678ms] [INFO] [11:16:33 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  314269ms] [INFO] [11:18:10 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  314274ms] [INFO] [11:18:10 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  314550ms] [INFO] [11:18:10 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  548025ms] [INFO] [11:22:03 a. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  548029ms] [INFO] [11:22:03 a. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  548048ms] [INFO] [11:22:03 a. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  548061ms] [INFO] [11:22:03 a. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  548082ms] [INFO] [11:22:03 a. m.] [connection] Iniciando @ http://127.0.0.1:8080/src/state/appState.js:127
+[  548090ms] [INFO] [11:22:04 a. m.] [room] Entrando a sala 4B3E1. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  549726ms] [INFO] [11:22:05 a. m.] [firebase] Sala huerfana detectada al entrar. Limpiando datos residuales. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  550277ms] [INFO] [11:22:06 a. m.] [connection] Activa @ http://127.0.0.1:8080/src/state/appState.js:127
+[  550289ms] [INFO] [11:22:06 a. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  550714ms] [INFO] [11:22:06 a. m.] [firebase] Offset de tiempo: 3301 ms. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  552099ms] [INFO] [11:22:08 a. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  552110ms] [INFO] [11:22:08 a. m.] [room] Sala 4B3E1 activa. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  592670ms] [INFO] [11:22:48 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  592673ms] [INFO] [11:22:48 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  592874ms] [INFO] [11:22:48 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  603921ms] [INFO] [11:22:59 a. m.] [ui] Chat interno visible. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  618662ms] [INFO] [11:23:14 a. m.] [ui] Chat externo contraido. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  626341ms] [INFO] [11:23:22 a. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  626995ms] [INFO] [11:23:22 a. m.] [ui] Chat interno visible. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  628669ms] [INFO] [11:23:24 a. m.] [ui] Chat externo expandido. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  818323ms] [INFO] [11:26:34 a. m.] [ui] Chat externo contraido. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  820394ms] [INFO] [11:26:36 a. m.] [ui] Chat externo expandido. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  821866ms] [INFO] [11:26:37 a. m.] [ui] Chat externo contraido. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  823339ms] [INFO] [11:26:39 a. m.] [ui] Chat externo expandido. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  833294ms] [INFO] [11:26:49 a. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  833298ms] [INFO] [11:26:49 a. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  833310ms] [INFO] [11:26:49 a. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  833317ms] [INFO] [11:26:49 a. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  833330ms] [INFO] [11:26:49 a. m.] [connection] Iniciando @ http://127.0.0.1:8080/src/state/appState.js:127
+[  833332ms] [INFO] [11:26:49 a. m.] [room] Entrando a sala 4B3E1. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  834644ms] [INFO] [11:26:50 a. m.] [firebase] Sala huerfana detectada al entrar. Limpiando datos residuales. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  835056ms] [INFO] [11:26:50 a. m.] [connection] Activa @ http://127.0.0.1:8080/src/state/appState.js:127
+[  835059ms] [INFO] [11:26:50 a. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  835064ms] [INFO] [11:26:50 a. m.] [firebase] Offset de tiempo: 3293 ms. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  835092ms] [INFO] [11:26:51 a. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  835100ms] [INFO] [11:26:51 a. m.] [room] Sala 4B3E1 activa. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  915465ms] [INFO] [11:28:11 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  915471ms] [INFO] [11:28:11 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  915748ms] [INFO] [11:28:11 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  937046ms] [INFO] [11:28:32 a. m.] [ui] Chat externo contraido. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  938768ms] [INFO] [11:28:34 a. m.] [ui] Chat externo expandido. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  942735ms] [INFO] [11:28:38 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  942738ms] [INFO] [11:28:38 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  942926ms] [INFO] [11:28:38 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  957466ms] [INFO] [11:28:53 a. m.] [chat] Mensaje copiado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[  969612ms] [INFO] [11:29:05 a. m.] [ui] Chat externo contraido. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1005511ms] [INFO] [11:29:41 a. m.] [ui] Chat externo expandido. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1034667ms] [INFO] [11:30:10 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1034670ms] [INFO] [11:30:10 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1034941ms] [INFO] [11:30:10 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1090056ms] [INFO] [11:31:05 a. m.] [ui] Chat externo contraido. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1091454ms] [INFO] [11:31:07 a. m.] [ui] Chat externo expandido. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1093185ms] [INFO] [11:31:09 a. m.] [ui] Chat externo contraido. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1094558ms] [INFO] [11:31:10 a. m.] [ui] Chat externo expandido. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1096153ms] [INFO] [11:31:12 a. m.] [ui] Chat externo contraido. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1097575ms] [INFO] [11:31:13 a. m.] [ui] Chat externo expandido. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1104832ms] [INFO] [11:31:20 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1104835ms] [INFO] [11:31:20 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1105392ms] [INFO] [11:31:21 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1107062ms] [INFO] [11:31:22 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1107065ms] [INFO] [11:31:22 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1107338ms] [INFO] [11:31:23 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1109127ms] [INFO] [11:31:25 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1109130ms] [INFO] [11:31:25 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1109385ms] [INFO] [11:31:25 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1110570ms] [INFO] [11:31:26 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1110573ms] [INFO] [11:31:26 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1110741ms] [INFO] [11:31:26 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1111730ms] [INFO] [11:31:27 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1111733ms] [INFO] [11:31:27 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1111946ms] [INFO] [11:31:27 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1112777ms] [INFO] [11:31:28 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1112782ms] [INFO] [11:31:28 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1112969ms] [INFO] [11:31:28 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1113846ms] [INFO] [11:31:29 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1113850ms] [INFO] [11:31:29 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1114095ms] [INFO] [11:31:30 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1114784ms] [INFO] [11:31:30 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1114787ms] [INFO] [11:31:30 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1114952ms] [INFO] [11:31:30 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1116596ms] [INFO] [11:31:32 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1116599ms] [INFO] [11:31:32 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1116861ms] [INFO] [11:31:32 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1117681ms] [INFO] [11:31:33 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1117686ms] [INFO] [11:31:33 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1117895ms] [INFO] [11:31:33 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1118609ms] [INFO] [11:31:34 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1118612ms] [INFO] [11:31:34 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1118805ms] [INFO] [11:31:34 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1119525ms] [INFO] [11:31:35 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1119529ms] [INFO] [11:31:35 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1120445ms] [INFO] [11:31:36 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1120497ms] [INFO] [11:31:36 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1120500ms] [INFO] [11:31:36 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1120762ms] [INFO] [11:31:36 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1125626ms] [INFO] [11:31:41 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1125629ms] [INFO] [11:31:41 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1125871ms] [INFO] [11:31:41 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1127075ms] [INFO] [11:31:42 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1127080ms] [INFO] [11:31:42 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1127304ms] [INFO] [11:31:43 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1128283ms] [INFO] [11:31:44 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1128286ms] [INFO] [11:31:44 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1128534ms] [INFO] [11:31:44 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1129797ms] [INFO] [11:31:45 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1129800ms] [INFO] [11:31:45 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1129977ms] [INFO] [11:31:45 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1131308ms] [INFO] [11:31:47 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1131311ms] [INFO] [11:31:47 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1131510ms] [INFO] [11:31:47 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1133173ms] [INFO] [11:31:49 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1133176ms] [INFO] [11:31:49 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1133346ms] [INFO] [11:31:49 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1136519ms] [INFO] [11:31:52 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1136524ms] [INFO] [11:31:52 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1137135ms] [INFO] [11:31:53 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1138780ms] [INFO] [11:31:54 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1138783ms] [INFO] [11:31:54 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1138978ms] [INFO] [11:31:54 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1141260ms] [INFO] [11:31:57 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1141263ms] [INFO] [11:31:57 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1141435ms] [INFO] [11:31:57 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1146043ms] [INFO] [11:32:01 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1146047ms] [INFO] [11:32:01 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1146250ms] [INFO] [11:32:02 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1148300ms] [INFO] [11:32:04 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1148303ms] [INFO] [11:32:04 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1148503ms] [INFO] [11:32:04 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1150124ms] [INFO] [11:32:06 a. m.] [ui] Chat externo contraido. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1151364ms] [INFO] [11:32:07 a. m.] [ui] Chat externo expandido. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1249369ms] [INFO] [11:33:45 a. m.] [chat] Mensaje copiado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1279865ms] [INFO] [11:34:15 a. m.] [chat] Mensaje copiado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1312946ms] [INFO] [11:34:48 a. m.] [chat] Mensaje copiado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1456677ms] [INFO] [11:37:12 a. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1456682ms] [INFO] [11:37:12 a. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1456700ms] [INFO] [11:37:12 a. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1456713ms] [INFO] [11:37:12 a. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1456731ms] [INFO] [11:37:12 a. m.] [connection] Iniciando @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1456734ms] [INFO] [11:37:12 a. m.] [room] Entrando a sala 4B3E1. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1458268ms] [INFO] [11:37:14 a. m.] [firebase] Sala huerfana detectada al entrar. Limpiando datos residuales. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1458677ms] [INFO] [11:37:14 a. m.] [connection] Activa @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1458680ms] [INFO] [11:37:14 a. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1458684ms] [INFO] [11:37:14 a. m.] [firebase] Offset de tiempo: 3280 ms. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1458714ms] [INFO] [11:37:14 a. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1458719ms] [INFO] [11:37:14 a. m.] [room] Sala 4B3E1 activa. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1479737ms] [INFO] [11:37:35 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1479742ms] [INFO] [11:37:35 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1479920ms] [INFO] [11:37:35 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1513528ms] [INFO] [11:38:09 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1513531ms] [INFO] [11:38:09 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1513548ms] [INFO] [11:38:09 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1513552ms] [INFO] [11:38:09 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1513574ms] [INFO] [11:38:09 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1513578ms] [INFO] [11:38:09 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1513601ms] [INFO] [11:38:09 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1513604ms] [INFO] [11:38:09 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1513624ms] [INFO] [11:38:09 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1513627ms] [INFO] [11:38:09 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1513645ms] [INFO] [11:38:09 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1513648ms] [INFO] [11:38:09 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1513669ms] [INFO] [11:38:09 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1513674ms] [INFO] [11:38:09 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1513696ms] [INFO] [11:38:09 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1513699ms] [INFO] [11:38:09 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1513724ms] [INFO] [11:38:09 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1513728ms] [INFO] [11:38:09 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1513752ms] [INFO] [11:38:09 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1513759ms] [INFO] [11:38:09 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1513783ms] [INFO] [11:38:09 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1513786ms] [INFO] [11:38:09 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1513812ms] [INFO] [11:38:09 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1513815ms] [INFO] [11:38:09 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1513836ms] [INFO] [11:38:09 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1513841ms] [INFO] [11:38:09 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1513864ms] [INFO] [11:38:09 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1513868ms] [INFO] [11:38:09 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1513897ms] [INFO] [11:38:09 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1513901ms] [INFO] [11:38:09 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1513940ms] [INFO] [11:38:09 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1513945ms] [INFO] [11:38:09 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1513973ms] [INFO] [11:38:09 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1513979ms] [INFO] [11:38:09 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514010ms] [INFO] [11:38:09 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514015ms] [INFO] [11:38:09 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514045ms] [INFO] [11:38:09 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514049ms] [INFO] [11:38:09 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514078ms] [INFO] [11:38:09 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514082ms] [INFO] [11:38:09 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514111ms] [INFO] [11:38:10 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514115ms] [INFO] [11:38:10 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514142ms] [INFO] [11:38:10 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514146ms] [INFO] [11:38:10 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514172ms] [INFO] [11:38:10 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514177ms] [INFO] [11:38:10 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514206ms] [INFO] [11:38:10 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514209ms] [INFO] [11:38:10 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514259ms] [INFO] [11:38:10 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514263ms] [INFO] [11:38:10 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514291ms] [INFO] [11:38:10 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514294ms] [INFO] [11:38:10 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514325ms] [INFO] [11:38:10 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514328ms] [INFO] [11:38:10 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514358ms] [INFO] [11:38:10 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514361ms] [INFO] [11:38:10 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514392ms] [INFO] [11:38:10 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514395ms] [INFO] [11:38:10 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514425ms] [INFO] [11:38:10 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514428ms] [INFO] [11:38:10 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514769ms] [INFO] [11:38:10 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514778ms] [INFO] [11:38:10 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514782ms] [INFO] [11:38:10 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514786ms] [INFO] [11:38:10 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514791ms] [INFO] [11:38:10 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514794ms] [INFO] [11:38:10 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514797ms] [INFO] [11:38:10 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514801ms] [INFO] [11:38:10 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514804ms] [INFO] [11:38:10 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514810ms] [INFO] [11:38:10 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514814ms] [INFO] [11:38:10 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514817ms] [INFO] [11:38:10 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514820ms] [INFO] [11:38:10 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514824ms] [INFO] [11:38:10 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514827ms] [INFO] [11:38:10 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514830ms] [INFO] [11:38:10 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514833ms] [INFO] [11:38:10 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514836ms] [INFO] [11:38:10 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514841ms] [INFO] [11:38:10 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514844ms] [INFO] [11:38:10 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514847ms] [INFO] [11:38:10 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514851ms] [INFO] [11:38:10 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514857ms] [INFO] [11:38:10 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514861ms] [INFO] [11:38:10 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514864ms] [INFO] [11:38:10 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514870ms] [INFO] [11:38:10 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514875ms] [INFO] [11:38:10 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514878ms] [INFO] [11:38:10 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514882ms] [INFO] [11:38:10 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1514885ms] [INFO] [11:38:10 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1779113ms] [INFO] [11:42:35 a. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1779116ms] [INFO] [11:42:35 a. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1779131ms] [INFO] [11:42:35 a. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1779140ms] [INFO] [11:42:35 a. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1779155ms] [INFO] [11:42:35 a. m.] [connection] Iniciando @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1779158ms] [INFO] [11:42:35 a. m.] [room] Entrando a sala 4B3E1. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1780932ms] [INFO] [11:42:36 a. m.] [firebase] Sala huerfana detectada al entrar. Limpiando datos residuales. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1781347ms] [INFO] [11:42:37 a. m.] [connection] Activa @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1781349ms] [INFO] [11:42:37 a. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1781354ms] [INFO] [11:42:37 a. m.] [firebase] Offset de tiempo: 3249 ms. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1781393ms] [INFO] [11:42:37 a. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1781399ms] [INFO] [11:42:37 a. m.] [room] Sala 4B3E1 activa. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1803275ms] [INFO] [11:42:59 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1803280ms] [INFO] [11:42:59 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1803299ms] [INFO] [11:42:59 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1803302ms] [INFO] [11:42:59 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1803320ms] [INFO] [11:42:59 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1803324ms] [INFO] [11:42:59 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1803446ms] [INFO] [11:42:59 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1803464ms] [INFO] [11:42:59 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1803487ms] [INFO] [11:42:59 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1962163ms] [INFO] [11:45:38 a. m.] [chat] Mensaje copiado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1969738ms] [INFO] [11:45:45 a. m.] [ui] Chat interno visible. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1985023ms] [INFO] [11:46:00 a. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1985025ms] [INFO] [11:46:00 a. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1985036ms] [INFO] [11:46:00 a. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1985042ms] [INFO] [11:46:00 a. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1985054ms] [INFO] [11:46:00 a. m.] [connection] Iniciando @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1985056ms] [INFO] [11:46:00 a. m.] [room] Entrando a sala 4B3E1. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1986537ms] [INFO] [11:46:02 a. m.] [firebase] Sala huerfana detectada al entrar. Limpiando datos residuales. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1986962ms] [INFO] [11:46:02 a. m.] [connection] Activa @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1986964ms] [INFO] [11:46:02 a. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1986967ms] [INFO] [11:46:02 a. m.] [firebase] Offset de tiempo: 3299 ms. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1986992ms] [INFO] [11:46:02 a. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1986995ms] [INFO] [11:46:02 a. m.] [room] Sala 4B3E1 activa. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1995265ms] [INFO] [11:46:11 a. m.] [ui] Chat interno visible. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 1995971ms] [INFO] [11:46:11 a. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2007460ms] [INFO] [11:46:23 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2007476ms] [INFO] [11:46:23 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2007529ms] [INFO] [11:46:23 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2007552ms] [INFO] [11:46:23 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2007623ms] [INFO] [11:46:23 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2007678ms] [INFO] [11:46:23 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2007737ms] [INFO] [11:46:23 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2007768ms] [INFO] [11:46:23 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2007784ms] [INFO] [11:46:23 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2173132ms] [INFO] [11:49:09 a. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2173135ms] [INFO] [11:49:09 a. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2173148ms] [INFO] [11:49:09 a. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2173154ms] [INFO] [11:49:09 a. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2173168ms] [INFO] [11:49:09 a. m.] [connection] Iniciando @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2173170ms] [INFO] [11:49:09 a. m.] [room] Entrando a sala 4B3E1. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2174975ms] [INFO] [11:49:10 a. m.] [firebase] Sala huerfana detectada al entrar. Limpiando datos residuales. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2175902ms] [INFO] [11:49:11 a. m.] [connection] Activa @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2176414ms] [INFO] [11:49:11 a. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2177069ms] [INFO] [11:49:12 a. m.] [firebase] Offset de tiempo: 3196 ms. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2177179ms] [INFO] [11:49:13 a. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2177200ms] [INFO] [11:49:13 a. m.] [room] Sala 4B3E1 activa. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2197875ms] [INFO] [11:49:33 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2197963ms] [INFO] [11:49:33 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2198143ms] [INFO] [11:49:34 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2198301ms] [INFO] [11:49:34 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2198536ms] [INFO] [11:49:34 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2198552ms] [INFO] [11:49:34 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2199784ms] [INFO] [11:49:35 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2199830ms] [INFO] [11:49:35 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2199851ms] [INFO] [11:49:35 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2235085ms] [INFO] [11:50:11 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2235105ms] [INFO] [11:50:11 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2235317ms] [INFO] [11:50:11 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2235509ms] [INFO] [11:50:11 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2235561ms] [INFO] [11:50:11 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2235719ms] [INFO] [11:50:11 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2235752ms] [INFO] [11:50:11 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2235783ms] [INFO] [11:50:11 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2236007ms] [INFO] [11:50:11 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2237059ms] [INFO] [11:50:12 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2237175ms] [INFO] [11:50:13 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2237180ms] [INFO] [11:50:13 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2237202ms] [INFO] [11:50:13 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2237210ms] [INFO] [11:50:13 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2237228ms] [INFO] [11:50:13 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2237231ms] [INFO] [11:50:13 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2237251ms] [INFO] [11:50:13 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2237256ms] [INFO] [11:50:13 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2237276ms] [INFO] [11:50:13 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2237279ms] [INFO] [11:50:13 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2237298ms] [INFO] [11:50:13 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2237301ms] [INFO] [11:50:13 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2237318ms] [INFO] [11:50:13 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2237324ms] [INFO] [11:50:13 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2237340ms] [INFO] [11:50:13 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2237343ms] [INFO] [11:50:13 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2237372ms] [INFO] [11:50:13 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2237379ms] [INFO] [11:50:13 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2237431ms] [INFO] [11:50:13 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2237444ms] [INFO] [11:50:13 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2237476ms] [INFO] [11:50:13 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2237480ms] [INFO] [11:50:13 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2237519ms] [INFO] [11:50:13 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2237527ms] [INFO] [11:50:13 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2237702ms] [INFO] [11:50:13 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2237714ms] [INFO] [11:50:13 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2237750ms] [INFO] [11:50:13 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2237764ms] [INFO] [11:50:13 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2237844ms] [INFO] [11:50:13 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2237849ms] [INFO] [11:50:13 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2237905ms] [INFO] [11:50:13 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2237914ms] [INFO] [11:50:13 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2237951ms] [INFO] [11:50:13 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2237958ms] [INFO] [11:50:13 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2238001ms] [INFO] [11:50:13 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2238028ms] [INFO] [11:50:13 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2238124ms] [INFO] [11:50:14 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2238132ms] [INFO] [11:50:14 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2238194ms] [INFO] [11:50:14 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2238212ms] [INFO] [11:50:14 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2238388ms] [INFO] [11:50:14 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2238493ms] [INFO] [11:50:14 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2239568ms] [INFO] [11:50:15 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2239580ms] [INFO] [11:50:15 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2239642ms] [INFO] [11:50:15 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2239650ms] [INFO] [11:50:15 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2239797ms] [INFO] [11:50:15 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2239833ms] [INFO] [11:50:15 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2240239ms] [INFO] [11:50:16 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2240262ms] [INFO] [11:50:16 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2246442ms] [INFO] [11:50:22 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2246457ms] [INFO] [11:50:22 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2246464ms] [INFO] [11:50:22 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2246475ms] [INFO] [11:50:22 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2246550ms] [INFO] [11:50:22 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2246651ms] [INFO] [11:50:22 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2246674ms] [INFO] [11:50:22 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2246696ms] [INFO] [11:50:22 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2246913ms] [INFO] [11:50:22 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2247131ms] [INFO] [11:50:23 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2247165ms] [INFO] [11:50:23 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2247341ms] [INFO] [11:50:23 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2247366ms] [INFO] [11:50:23 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2247448ms] [INFO] [11:50:23 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2248455ms] [INFO] [11:50:24 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2248464ms] [INFO] [11:50:24 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2248482ms] [INFO] [11:50:24 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2248493ms] [INFO] [11:50:24 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2248511ms] [INFO] [11:50:24 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2248525ms] [INFO] [11:50:24 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2248553ms] [INFO] [11:50:24 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2248569ms] [INFO] [11:50:24 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2248578ms] [INFO] [11:50:24 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2248596ms] [INFO] [11:50:24 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2248604ms] [INFO] [11:50:24 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2248610ms] [INFO] [11:50:24 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2248616ms] [INFO] [11:50:24 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2248624ms] [INFO] [11:50:24 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2248633ms] [INFO] [11:50:24 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2248643ms] [INFO] [11:50:24 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2544068ms] [INFO] [11:55:19 a. m.] [chat] Mensaje copiado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2546551ms] [INFO] [11:55:22 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2546555ms] [INFO] [11:55:22 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2546772ms] [INFO] [11:55:22 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2667540ms] [INFO] [11:57:23 a. m.] [ui] Chat interno visible. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2761699ms] [INFO] [11:58:57 a. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2761702ms] [INFO] [11:58:57 a. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2761717ms] [INFO] [11:58:57 a. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2761724ms] [INFO] [11:58:57 a. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2761740ms] [INFO] [11:58:57 a. m.] [connection] Iniciando @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2761742ms] [INFO] [11:58:57 a. m.] [room] Entrando a sala 4B3E1. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2763435ms] [INFO] [11:58:59 a. m.] [firebase] Sala huerfana detectada al entrar. Limpiando datos residuales. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2763890ms] [INFO] [11:58:59 a. m.] [connection] Activa @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2763893ms] [INFO] [11:58:59 a. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2763901ms] [INFO] [11:58:59 a. m.] [firebase] Offset de tiempo: 3286 ms. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2763933ms] [INFO] [11:58:59 a. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2763938ms] [INFO] [11:58:59 a. m.] [room] Sala 4B3E1 activa. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2787278ms] [INFO] [11:59:23 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2787282ms] [INFO] [11:59:23 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2787298ms] [INFO] [11:59:23 a. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2787301ms] [INFO] [11:59:23 a. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2787463ms] [INFO] [11:59:23 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 2787487ms] [INFO] [11:59:23 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 3116609ms] [INFO] [12:04:52 p. m.] [ui] Chat interno visible. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 3122582ms] [INFO] [12:04:58 p. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 3122585ms] [INFO] [12:04:58 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 3122598ms] [INFO] [12:04:58 p. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 3122604ms] [INFO] [12:04:58 p. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 3122616ms] [INFO] [12:04:58 p. m.] [connection] Iniciando @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 3122618ms] [INFO] [12:04:58 p. m.] [room] Entrando a sala 4B3E1. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 3124126ms] [INFO] [12:05:00 p. m.] [firebase] Sala huerfana detectada al entrar. Limpiando datos residuales. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 3124539ms] [INFO] [12:05:00 p. m.] [connection] Activa @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 3124542ms] [INFO] [12:05:00 p. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 3124546ms] [INFO] [12:05:00 p. m.] [firebase] Offset de tiempo: 3277 ms. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 3124586ms] [INFO] [12:05:00 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 3124593ms] [INFO] [12:05:00 p. m.] [room] Sala 4B3E1 activa. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 3125647ms] [INFO] [12:05:01 p. m.] [ui] Chat interno visible. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 3128386ms] [INFO] [12:05:04 p. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 3128389ms] [INFO] [12:05:04 p. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 3128631ms] [INFO] [12:05:04 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 3130718ms] [INFO] [12:05:06 p. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 3130721ms] [INFO] [12:05:06 p. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 3130986ms] [INFO] [12:05:06 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 3133867ms] [INFO] [12:05:09 p. m.] [chat:recv] Mensaje recibido de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 3133870ms] [INFO] [12:05:09 p. m.] [chat:send] Mensaje de Usuario 8C16. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 3134057ms] [INFO] [12:05:09 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 3395516ms] [INFO] [12:09:31 p. m.] [chat:recv] Mensaje recibido de Usuario 7177. @ http://127.0.0.1:8080/src/state/appState.js:127
+[ 3546647ms] [INFO] [12:12:02 p. m.] [chat:recv] Mensaje recibido de Usuario 7177. @ http://127.0.0.1:8080/src/state/appState.js:127

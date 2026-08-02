@@ -1,0 +1,11 @@
+[    1143ms] [INFO] [08:21:19 p. m.] [ui] Estilo de chat interno: float. @ http://localhost:8080/src/state/appState.js:106
+[    1159ms] [INFO] [08:21:19 p. m.] [ui] Chat interno oculto. @ http://localhost:8080/src/state/appState.js:106
+[    1173ms] [INFO] [08:21:19 p. m.] [ui] Chat lateral en posicion: lateral. @ http://localhost:8080/src/state/appState.js:106
+[    1181ms] [INFO] [08:21:19 p. m.] [connection] Activa @ http://localhost:8080/src/state/appState.js:106
+[    1183ms] [INFO] [08:21:19 p. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://localhost:8080/src/state/appState.js:106
+[    1701ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8080/favicon.ico:0
+[  197239ms] [INFO] [08:24:35 p. m.] [ui] Estilo de chat interno: float. @ http://localhost:8080/src/state/appState.js:106
+[  197242ms] [INFO] [08:24:35 p. m.] [ui] Chat interno oculto. @ http://localhost:8080/src/state/appState.js:106
+[  197254ms] [INFO] [08:24:35 p. m.] [ui] Chat lateral en posicion: lateral. @ http://localhost:8080/src/state/appState.js:106
+[  197261ms] [INFO] [08:24:35 p. m.] [connection] Activa @ http://localhost:8080/src/state/appState.js:106
+[  197263ms] [INFO] [08:24:35 p. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://localhost:8080/src/state/appState.js:106

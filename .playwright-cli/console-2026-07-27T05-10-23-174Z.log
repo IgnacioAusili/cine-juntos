@@ -1,0 +1,23 @@
+[     786ms] [INFO] [02:10:23 a. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:111
+[     790ms] [INFO] [02:10:23 a. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:111
+[     803ms] [INFO] [02:10:23 a. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:111
+[     811ms] [INFO] [02:10:23 a. m.] [connection] Activa @ http://127.0.0.1:8080/src/state/appState.js:111
+[     813ms] [INFO] [02:10:23 a. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:111
+[     850ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:8080/favicon.ico:0
+[   12641ms] [INFO] [02:10:35 a. m.] [connection] Iniciando @ http://127.0.0.1:8080/src/state/appState.js:111
+[   12650ms] [INFO] [02:10:35 a. m.] [room] Entrando a sala 1O426. @ http://127.0.0.1:8080/src/state/appState.js:111
+[   15450ms] [INFO] [02:10:38 a. m.] [connection] Activa @ http://127.0.0.1:8080/src/state/appState.js:111
+[   15453ms] [INFO] [02:10:38 a. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:111
+[   15457ms] [INFO] [02:10:38 a. m.] [firebase] Offset de tiempo: 3207 ms. @ http://127.0.0.1:8080/src/state/appState.js:111
+[   15554ms] [INFO] [02:10:38 a. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:111
+[   15558ms] [INFO] [02:10:38 a. m.] [room] Sala 1O426 activa. @ http://127.0.0.1:8080/src/state/appState.js:111
+[   18532ms] [INFO] [02:10:41 a. m.] [video] Carga de video iniciada. @ http://127.0.0.1:8080/src/state/appState.js:111
+[   18537ms] [INFO] [02:10:41 a. m.] [video] Video manual cargado: https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4 @ http://127.0.0.1:8080/src/state/appState.js:111
+[   18545ms] [INFO] [02:10:41 a. m.] [debug] Publicar video: payloadTime=0:00 current=0:00 lastKnown=0:00 paused=true overrides={}. @ http://127.0.0.1:8080/src/state/appState.js:111
+[   18571ms] [INFO] [02:10:41 a. m.] [chat:recv] Mensaje recibido de Usuario 2D8E. @ http://127.0.0.1:8080/src/state/appState.js:111
+[   18573ms] [INFO] [02:10:41 a. m.] [sync:send] video en 0:00 (pausado). @ http://127.0.0.1:8080/src/state/appState.js:111
+[   18741ms] [INFO] [02:10:41 a. m.] [firebase] Estado enviado: video. @ http://127.0.0.1:8080/src/state/appState.js:111
+[   18747ms] [INFO] [02:10:41 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:111
+[   18925ms] [INFO] [02:10:42 a. m.] [chat:recv] Mensaje recibido de Usuario 2D8E. @ http://127.0.0.1:8080/src/state/appState.js:111
+[   19102ms] [INFO] [02:10:42 a. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  143419ms] [INFO] [02:12:46 a. m.] [firebase] Limpiando sala vacia al salir. @ http://127.0.0.1:8080/src/state/appState.js:111

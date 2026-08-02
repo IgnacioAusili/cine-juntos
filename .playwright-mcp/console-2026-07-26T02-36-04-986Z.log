@@ -1,0 +1,13 @@
+[     527ms] [INFO] [11:36:05 p. m.] [ui] Estilo de chat interno: float. @ http://localhost:8080/src/state/appState.js:105
+[     531ms] [INFO] [11:36:05 p. m.] [ui] Chat interno oculto. @ http://localhost:8080/src/state/appState.js:105
+[     546ms] [INFO] [11:36:05 p. m.] [ui] Chat lateral en posicion: lateral. @ http://localhost:8080/src/state/appState.js:105
+[     553ms] [INFO] [11:36:05 p. m.] [connection] Funcionando @ http://localhost:8080/src/state/appState.js:105
+[     558ms] [INFO] [11:36:05 p. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://localhost:8080/src/state/appState.js:105
+[     649ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8080/favicon.ico:0
+[    8857ms] [INFO] [11:36:13 p. m.] [connection] Conectando... @ http://localhost:8080/src/state/appState.js:105
+[    8861ms] [INFO] [11:36:13 p. m.] [room] Entrando a sala 0V616. @ http://localhost:8080/src/state/appState.js:105
+[   11244ms] [INFO] [11:36:16 p. m.] [connection] Funcionando @ http://localhost:8080/src/state/appState.js:105
+[   11247ms] [INFO] [11:36:16 p. m.] [firebase] Sesion anonima conectada. @ http://localhost:8080/src/state/appState.js:105
+[   11251ms] [INFO] [11:36:16 p. m.] [firebase] Offset de tiempo: 4833 ms. @ http://localhost:8080/src/state/appState.js:105
+[   11325ms] [INFO] [11:36:16 p. m.] [ui] Chat interno oculto. @ http://localhost:8080/src/state/appState.js:105
+[   11328ms] [INFO] [11:36:16 p. m.] [room] Sala 0V616 activa. @ http://localhost:8080/src/state/appState.js:105

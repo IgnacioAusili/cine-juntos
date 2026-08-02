@@ -1,0 +1,16 @@
+[      43ms] [ERROR] Loading the stylesheet 'https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap' violates the following Content Security Policy directive: "style-src 'self' 'unsafe-inline'". Note that 'style-src-elem' was not explicitly set, so 'style-src' is used as a fallback. The action has been blocked. @ http://localhost:8080/?room=3G3X5:0
+[     909ms] [INFO] [03:48:15 p. m.] [ui] Estilo de chat interno: float. @ http://localhost:8080/src/state/appState.js:133
+[     918ms] [INFO] [03:48:15 p. m.] [ui] Chat interno oculto. @ http://localhost:8080/src/state/appState.js:133
+[     942ms] [INFO] [03:48:15 p. m.] [ui] Chat lateral en posicion: lateral. @ http://localhost:8080/src/state/appState.js:133
+[     959ms] [INFO] [03:48:15 p. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://localhost:8080/src/state/appState.js:133
+[    1001ms] [INFO] [03:48:15 p. m.] [connection] Iniciando @ http://localhost:8080/src/state/appState.js:133
+[    1004ms] [INFO] [03:48:15 p. m.] [room] Entrando a sala 3G3X5. @ http://localhost:8080/src/state/appState.js:133
+[    3737ms] [INFO] [03:48:17 p. m.] [connection] Conectado @ http://localhost:8080/src/state/appState.js:133
+[    3765ms] [INFO] [03:48:17 p. m.] [firebase] Sesion anonima conectada. @ http://localhost:8080/src/state/appState.js:133
+[    3798ms] [INFO] [03:48:17 p. m.] [firebase] Offset de tiempo: 2330 ms. @ http://localhost:8080/src/state/appState.js:133
+[    3845ms] [INFO] [03:48:17 p. m.] [ui] Chat interno oculto. @ http://localhost:8080/src/state/appState.js:133
+[    4127ms] [INFO] [03:48:18 p. m.] [room] Sala 3G3X5 activa. @ http://localhost:8080/src/state/appState.js:133
+[    4426ms] [INFO] [03:48:18 p. m.] [chat:recv] Mensaje recibido de Medicion. @ http://localhost:8080/src/state/appState.js:133
+[   27019ms] [INFO] [03:48:41 p. m.] [chat:recv] Mensaje recibido de Usuario UT-2. @ http://localhost:8080/src/state/appState.js:133
+[   27024ms] [INFO] [03:48:41 p. m.] [chat:send] Mensaje de Usuario UT-2. @ http://localhost:8080/src/state/appState.js:133
+[   27280ms] [INFO] [03:48:41 p. m.] [firebase] Mensaje enviado. @ http://localhost:8080/src/state/appState.js:133

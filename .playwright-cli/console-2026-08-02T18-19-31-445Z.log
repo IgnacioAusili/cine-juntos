@@ -1,0 +1,6 @@
+[     294ms] [ERROR] Loading the stylesheet 'https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap' violates the following Content Security Policy directive: "style-src 'self' 'unsafe-inline'". Note that 'style-src-elem' was not explicitly set, so 'style-src' is used as a fallback. The action has been blocked. @ http://localhost:8080/:0
+[    2130ms] [INFO] [03:19:33 p. m.] [ui] Estilo de chat interno: float. @ http://localhost:8080/src/state/appState.js:133
+[    2141ms] [INFO] [03:19:33 p. m.] [ui] Chat interno oculto. @ http://localhost:8080/src/state/appState.js:133
+[    2159ms] [INFO] [03:19:33 p. m.] [ui] Chat lateral en posicion: lateral. @ http://localhost:8080/src/state/appState.js:133
+[    2168ms] [INFO] [03:19:33 p. m.] [connection] Conectado @ http://localhost:8080/src/state/appState.js:133
+[    2170ms] [INFO] [03:19:33 p. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://localhost:8080/src/state/appState.js:133

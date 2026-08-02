@@ -63,10 +63,7 @@
   justify-content: center;
   width: 26px;
   height: 26px;
-  border-radius: 999px;
-  background: var(--panel-2);
   color: var(--accent-2);
-  border: 1px solid rgba(47, 184, 164, 0.35);
   opacity: 0;
   transform: translate(13px, -50%) scale(0.72);
   transform-origin: center;
@@ -90,21 +87,8 @@
 
 .message-bubble.swipe-ready + .swipe-reply-hint-wrapper .swipe-reply-hint {
   color: var(--accent-2);
-  background: rgba(47, 184, 164, 0.18);
 }
 
 .message-bubble.swipe-confirmed + .swipe-reply-hint-wrapper .swipe-reply-hint {
-  animation: replySwipeConfirmPulse 180ms ease-out;
-  background: rgba(47, 184, 164, 0.24);
-  border-color: rgba(47, 184, 164, 0.5);
-}
-
-@keyframes replySwipeConfirmPulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(47, 184, 164, 0.28);
-  }
-
-  100% {
-    box-shadow: 0 0 0 12px rgba(47, 184, 164, 0);
-  }
+  color: var(--accent-2);
 }

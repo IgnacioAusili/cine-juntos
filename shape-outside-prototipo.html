@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prototipo Chat con Input (Comentado)</title>
+<style>
+  body {
+    background-color: #dbd9d5;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .app-window {
+    width: 100%;
+    max-width: 500px;
+    height: 95vh;
+    background-color: #efeae2;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .chat-container {
+    flex-grow: 1;
+    background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-025c1e0a1809.png');
+    background-color: #e5ddd5;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* =========================================================
+     1. ESTRUCTURA BASE Y FLEXBOX
+     ========================================================= */
+  .msg-row {
+    display: flex; /* CLAVE #1: Flexbox permite que el hijo (.bubble) tenga una altura definida,
+                       lo que habilita el uso de porcentajes de altura (height: 100%) en los nietos. */
+    margin-bottom: 8px;
+    width: 100%;
+  }
+  .msg-row.sent { justify-content: flex-end; }
+  .msg-row.received { justify-content: flex-start; }
+
+  .bubble {
+    position: relative;
+    max-width: 75%;
+    padding: 6px 10px 6px 10px;
+    border-radius: 8px;
+    font-size: 14.2px;
+    line-height: 19px; /* CLAVE #2: La altura de línea debe ser fija y conocida para el cálculo de exclusión. */
+    box-shadow: 0 1px 0.5px rgba(0,0,0,0.13);
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  /* Colas de las burbujas (Solo estético) */
+  .sent .bubble { background-color: #d9fdd3; border-top-right-radius: 0; }
+  .sent .bubble::after {
+    content: ""; position: absolute; top: 0; right: -8px; width: 0; height: 0;
+    border: 8px solid transparent; border-top-color: #d9fdd3; border-right: 0; border-bottom: 0;
+  }
+  .received .bubble { background-color: #ffffff; border-top-left-radius: 0; }
+  .received .bubble::after {
+    content: ""; position: absolute; top: 0; left: -8px; width: 0; height: 0;
+    border: 8px solid transparent; border-top-color: #ffffff; border-left: 0; border-bottom: 0;
+  }
+
+  /* =========================================================
+     2. EL TRUCO DEL LAYOUT: SHAPE-OUTSIDE
+     ========================================================= */
+  .time-anchor {
+    float: right;          /* CLAVE #3: Debe estar flotado para que el texto fluya a su alrededor. */
+    height: 100%;          /* CLAVE #4: Ocupa TODA la altura de la burbuja. Posible gracias al Flexbox del abuelo. */
+    display: flex;
+    align-items: flex-end; /* CLAVE #5: Empuja la hora visualmente hacia el fondo de la burbuja. */
+    margin-left: 8px;
+    
+    /* CLAVE #6: LA MAGIA DE LA EXCLUSIÓN.
+       inset(arriba derecha abajo izquierda).
+       Le dice al navegador: "Crea una barrera invisible que empieza a (100% - 19px) desde arriba".
+       O sea, las primeras líneas no ven la barrera (usan el 100% del ancho).
+       Solo la última línea (los últimos 19px) choca con la barrera y deja espacio para la hora. */
+    shape-outside: inset(calc(100% - 19px) 0 0);
+  }
+
+  .time {
+    font-size: 11px;
+    color: #667781;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .checkmarks { color: #53bdeb; font-size: 12px; }
+
+  /* CLAVE #7: El texto DEBE ser inline para poder fluir alrededor del float (.time-anchor) */
+  .text {
+    display: inline;
+  }
+
+  /* =========================================================
+     3. ÁREA DE INPUT (Sin lógica especial)
+     ========================================================= */
+  .input-area {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-top: 1px solid #ddd;
+  }
+  .input-wrapper {
+    flex-grow: 1; background-color: #ffffff; border-radius: 20px; padding: 10px 15px;
+    display: flex; align-items: center; margin-right: 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  }
+  #messageInput {
+    flex-grow: 1; border: none; outline: none; font-size: 14.2px; font-family: inherit;
+    background: transparent; resize: none; max-height: 100px; line-height: 19px;
+  }
+  #sendBtn {
+    background-color: #00a884; color: white; border: none; border-radius: 50%; width: 45px; height: 45px;
+    display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 20px;
+    transition: background-color 0.2s; flex-shrink: 0;
+  }
+  #sendBtn:hover { background-color: #008f72; }
+
+  .chat-container::-webkit-scrollbar { width: 6px; }
+  .chat-container::-webkit-scrollbar-thumb { background-color: rgba(0,0,0,0.2); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<div class="app-window">
+  
+  <div class="chat-container" id="chat">
+    <!-- Notar el orden: Primero el .time-anchor (float) y luego el .text (inline) -->
+    <div class="msg-row received">
+      <div class="bubble">
+        <div class="time-anchor">
+          <span class="time">12:34</span>
+        </div>
+        <span class="text">¡Hola! Probá escribir un mensaje en el cuadro de abajo y enviálo para ver cómo se acomoda la hora.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="input-area">
+    <div class="input-wrapper">
+      <textarea id="messageInput" rows="1" placeholder="Escribe un mensaje aquí..."></textarea>
+    </div>
+    <button id="sendBtn">➤</button>
+  </div>
+
+</div>
+
+<script>
+  const chatContainer = document.getElementById('chat');
+  const messageInput = document.getElementById('messageInput');
+  const sendBtn = document.getElementById('sendBtn');
+
+  function getCurrentTime() {
+    const now = new Date();
+    let hours = now.getHours();
+    let minutes = now.getMinutes();
+    hours = hours < 10 ? '0' + hours : hours;
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    return `${hours}:${minutes}`;
+  }
+
+  /* =========================================================
+     ROBUSTEZ CON JAVASCRIPT
+     ========================================================= */
+  // Esta función asegura que la exclusión sea exacta,
+  // incluso si el navegador zoomuea o cambia las métricas de fuente.
+  function ajustarLayout(bubble) {
+    // 1. Obtenemos el line-height computado en píxeles reales
+    const computedLineHeight = window.getComputedStyle(bubble).lineHeight;
+    const lh = parseFloat(computedLineHeight);
+    
+    const anchor = bubble.querySelector('.time-anchor');
+    if (anchor && !isNaN(lh)) {
+      // 2. Inyectamos el valor exacto reemplazando el '19px' hardcodeado en el CSS
+      anchor.style.shapeOutside = `inset(calc(100% - ${lh}px) 0 0)`;
+    }
+  }
+
+  function addMessage(text, type) {
+    const msgRow = document.createElement('div');
+    msgRow.className = `msg-row ${type}`;
+
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+
+    const timeAnchor = document.createElement('div');
+    timeAnchor.className = 'time-anchor';
+
+    const timeSpan = document.createElement('span');
+    timeSpan.className = 'time';
+    
+    if (type === 'sent') {
+      timeSpan.innerHTML = `${getCurrentTime()} <span class="checkmarks">✓✓</span>`;
+    } else {
+      timeSpan.textContent = getCurrentTime();
+    }
+
+    const textSpan = document.createElement('span');
+    textSpan.className = 'text';
+    textSpan.textContent = text;
+
+    // ORDEN DEL DOM: El anchor va PRIMERO para que el float right actúe correctamente.
+    timeAnchor.appendChild(timeSpan);
+    bubble.appendChild(timeAnchor);
+    bubble.appendChild(textSpan);
+    msgRow.appendChild(bubble);
+
+    chatContainer.appendChild(msgRow);
+
+    // 3. Aplicamos el cálculo dinámico a la burbuja recién creada
+    ajustarLayout(bubble);
+
+    // Auto-scroll
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  }
+
+  function sendMessage() {
+    const text = messageInput.value.trim();
+    if (text === '') return;
+
+    addMessage(text, 'sent');
+    messageInput.value = '';
+    messageInput.style.height = 'auto';
+
+    // Simulación de respuesta para probar el layout en tiempo real
+    setTimeout(() => {
+      const respuestas = [
+        "Entendido.",
+        "Ok, la técnica de shape-outside funciona perfectamente.",
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.",
+        "¡Genial!"
+      ];
+      const randomResp = respuestas[Math.floor(Math.random() * respuestas.length)];
+      addMessage(randomResp, 'received');
+    }, 1000 + Math.random() * 1000);
+  }
+
+  sendBtn.addEventListener('click', sendMessage);
+
+  messageInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+
+  messageInput.addEventListener('input', () => {
+    messageInput.style.height = 'auto';
+    messageInput.style.height = messageInput.scrollHeight + 'px';
+  });
+
+  // Asegurar que todas las burbujas se ajusten al cargar y al redimensionar la ventana
+  window.addEventListener('load', () => {
+    document.querySelectorAll('.bubble').forEach(ajustarLayout);
+  });
+  window.addEventListener('resize', () => {
+    document.querySelectorAll('.bubble').forEach(ajustarLayout);
+  });
+</script>
+
+</body>
+</html>

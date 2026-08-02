@@ -1,0 +1,138 @@
+[    1708ms] [INFO] [02:40:27 p. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:111
+[    1723ms] [INFO] [02:40:28 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:111
+[    1749ms] [INFO] [02:40:28 p. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:111
+[    1768ms] [INFO] [02:40:28 p. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:111
+[    1794ms] [INFO] [02:40:28 p. m.] [connection] Iniciando @ http://127.0.0.1:8080/src/state/appState.js:111
+[    1798ms] [INFO] [02:40:28 p. m.] [room] Entrando a sala 1O426. @ http://127.0.0.1:8080/src/state/appState.js:111
+[    1961ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:8080/favicon.ico:0
+[    4813ms] [INFO] [02:40:31 p. m.] [connection] Activa @ http://127.0.0.1:8080/src/state/appState.js:111
+[    4815ms] [INFO] [02:40:31 p. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:111
+[    4823ms] [INFO] [02:40:31 p. m.] [firebase] Offset de tiempo: 4202 ms. @ http://127.0.0.1:8080/src/state/appState.js:111
+[    4919ms] [INFO] [02:40:31 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:111
+[    4924ms] [INFO] [02:40:31 p. m.] [room] Sala 1O426 activa. @ http://127.0.0.1:8080/src/state/appState.js:111
+[   44258ms] [INFO] [02:41:10 p. m.] [video] Carga de video iniciada. @ http://127.0.0.1:8080/src/state/appState.js:111
+[   44261ms] [INFO] [02:41:10 p. m.] [video] Video manual cargado: https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4 @ http://127.0.0.1:8080/src/state/appState.js:111
+[   44267ms] [INFO] [02:41:10 p. m.] [debug] Publicar video: payloadTime=0:00 current=0:00 lastKnown=0:00 paused=true overrides={}. @ http://127.0.0.1:8080/src/state/appState.js:111
+[   44314ms] [INFO] [02:41:10 p. m.] [chat:recv] Mensaje recibido de Usuario B22B. @ http://127.0.0.1:8080/src/state/appState.js:111
+[   44320ms] [INFO] [02:41:10 p. m.] [sync:send] video en 0:00 (pausado). @ http://127.0.0.1:8080/src/state/appState.js:111
+[   44458ms] [INFO] [02:41:10 p. m.] [firebase] Estado enviado: video. @ http://127.0.0.1:8080/src/state/appState.js:111
+[   44475ms] [INFO] [02:41:10 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:111
+[   44776ms] [INFO] [02:41:11 p. m.] [chat:recv] Mensaje recibido de Usuario B22B. @ http://127.0.0.1:8080/src/state/appState.js:111
+[   44941ms] [INFO] [02:41:11 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  117434ms] [INFO] [02:42:23 p. m.] [video] Play local en 0:00. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  117441ms] [INFO] [02:42:23 p. m.] [debug] Publicar play: payloadTime=0:00 current=0:00 lastKnown=0:00 paused=false overrides={}. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  117455ms] [INFO] [02:42:23 p. m.] [chat:recv] Mensaje recibido de Usuario B22B. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  117460ms] [INFO] [02:42:23 p. m.] [sync:send] play en 0:00 (play). @ http://127.0.0.1:8080/src/state/appState.js:111
+[  117483ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:8080/favicon.ico:0
+[  117674ms] [INFO] [02:42:24 p. m.] [firebase] Estado enviado: play. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  117684ms] [INFO] [02:42:24 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  130902ms] [INFO] [02:42:37 p. m.] [video] Video terminado. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  177861ms] [INFO] [02:43:24 p. m.] [debug] Seek local solicitado: input=0:03 safe=0:03 lastKnown=0:03. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  178244ms] [INFO] [02:43:24 p. m.] [video] Seek local a 0:03. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  178248ms] [INFO] [02:43:24 p. m.] [debug] Publicar seek: payloadTime=0:03 current=0:03 lastKnown=0:03 paused=true overrides={}. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  178265ms] [INFO] [02:43:24 p. m.] [chat:recv] Mensaje recibido de Usuario B22B. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  178267ms] [INFO] [02:43:24 p. m.] [sync:send] seek en 0:03 (pausado). @ http://127.0.0.1:8080/src/state/appState.js:111
+[  178496ms] [INFO] [02:43:24 p. m.] [firebase] Estado enviado: seek. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  178499ms] [INFO] [02:43:24 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  260605ms] [INFO] [02:44:46 p. m.] [sync:recv] seek de Usuario 0831 en 0:04 (paused=true, sentAt=1785174291018). @ http://127.0.0.1:8080/src/state/appState.js:111
+[  260614ms] [INFO] [02:44:46 p. m.] [debug] Aplicar remoto: action=seek base=0:04 target=0:04 current=0:03 paused=true. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  260630ms] [INFO] [02:44:46 p. m.] [sync:apply] Aplicado seek a 0:04. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  260675ms] [INFO] [02:44:47 p. m.] [chat:recv] Mensaje recibido de Usuario 0831. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  260691ms] [INFO] [02:44:47 p. m.] [video] Seek local a 0:04. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  375822ms] [INFO] [02:46:42 p. m.] [sync:recv] seek de Usuario 0831 en 0:02 (paused=true, sentAt=1785174406152). @ http://127.0.0.1:8080/src/state/appState.js:111
+[  375824ms] [INFO] [02:46:42 p. m.] [debug] Aplicar remoto: action=seek base=0:02 target=0:02 current=0:04 paused=true. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  375828ms] [INFO] [02:46:42 p. m.] [sync:apply] Aplicado seek a 0:02. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  375839ms] [INFO] [02:46:42 p. m.] [chat:recv] Mensaje recibido de Usuario 0831. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  375941ms] [INFO] [02:46:42 p. m.] [video] Seek local a 0:02. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  376635ms] [INFO] [02:46:42 p. m.] [sync:recv] seek de Usuario 0831 en 0:03 (paused=true, sentAt=1785174407021). @ http://127.0.0.1:8080/src/state/appState.js:111
+[  376640ms] [INFO] [02:46:42 p. m.] [debug] Aplicar remoto: action=seek base=0:03 target=0:03 current=0:02 paused=true. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  376643ms] [INFO] [02:46:42 p. m.] [sync:apply] Aplicado seek a 0:03. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  376656ms] [INFO] [02:46:43 p. m.] [chat:recv] Mensaje recibido de Usuario 0831. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  376676ms] [INFO] [02:46:43 p. m.] [video] Seek local a 0:03. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  377359ms] [INFO] [02:46:43 p. m.] [sync:recv] seek de Usuario 0831 en 0:04 (paused=true, sentAt=1785174407692). @ http://127.0.0.1:8080/src/state/appState.js:111
+[  377362ms] [INFO] [02:46:43 p. m.] [debug] Aplicar remoto: action=seek base=0:04 target=0:04 current=0:03 paused=true. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  377366ms] [INFO] [02:46:43 p. m.] [sync:apply] Aplicado seek a 0:04. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  377379ms] [INFO] [02:46:43 p. m.] [chat:recv] Mensaje recibido de Usuario 0831. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  377428ms] [INFO] [02:46:43 p. m.] [video] Seek local a 0:04. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  378997ms] [INFO] [02:46:45 p. m.] [sync:recv] seek de Usuario 0831 en 0:03 (paused=true, sentAt=1785174409368). @ http://127.0.0.1:8080/src/state/appState.js:111
+[  378999ms] [INFO] [02:46:45 p. m.] [debug] Aplicar remoto: action=seek base=0:03 target=0:03 current=0:04 paused=true. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  379002ms] [INFO] [02:46:45 p. m.] [sync:apply] Aplicado seek a 0:03. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  379012ms] [INFO] [02:46:45 p. m.] [chat:recv] Mensaje recibido de Usuario 0831. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  379024ms] [INFO] [02:46:45 p. m.] [video] Seek local a 0:03. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  379898ms] [INFO] [02:46:46 p. m.] [sync:recv] seek de Usuario 0831 en 0:02 (paused=true, sentAt=1785174410325). @ http://127.0.0.1:8080/src/state/appState.js:111
+[  379901ms] [INFO] [02:46:46 p. m.] [debug] Aplicar remoto: action=seek base=0:02 target=0:02 current=0:03 paused=true. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  379904ms] [INFO] [02:46:46 p. m.] [sync:apply] Aplicado seek a 0:02. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  379913ms] [INFO] [02:46:46 p. m.] [chat:recv] Mensaje recibido de Usuario 0831. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  379975ms] [INFO] [02:46:46 p. m.] [video] Seek local a 0:02. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  384112ms] [INFO] [02:46:50 p. m.] [debug] Seek local solicitado: input=0:01 safe=0:01 lastKnown=0:01. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  384178ms] [INFO] [02:46:50 p. m.] [video] Seek local a 0:01. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  384182ms] [INFO] [02:46:50 p. m.] [debug] Publicar seek: payloadTime=0:01 current=0:01 lastKnown=0:01 paused=true overrides={}. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  384195ms] [INFO] [02:46:50 p. m.] [chat:recv] Mensaje recibido de Usuario B22B. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  384197ms] [INFO] [02:46:50 p. m.] [sync:send] seek en 0:01 (pausado). @ http://127.0.0.1:8080/src/state/appState.js:111
+[  384424ms] [INFO] [02:46:50 p. m.] [firebase] Estado enviado: seek. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  384428ms] [INFO] [02:46:50 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  384904ms] [INFO] [02:46:51 p. m.] [debug] Seek local solicitado: input=0:01 safe=0:01 lastKnown=0:01. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  384955ms] [INFO] [02:46:51 p. m.] [video] Seek local a 0:01. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  384958ms] [INFO] [02:46:51 p. m.] [debug] Publicar seek: payloadTime=0:01 current=0:01 lastKnown=0:01 paused=true overrides={}. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  384970ms] [INFO] [02:46:51 p. m.] [chat:recv] Mensaje recibido de Usuario B22B. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  384972ms] [INFO] [02:46:51 p. m.] [sync:send] seek en 0:01 (pausado). @ http://127.0.0.1:8080/src/state/appState.js:111
+[  385137ms] [INFO] [02:46:51 p. m.] [firebase] Estado enviado: seek. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  385140ms] [INFO] [02:46:51 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  386496ms] [INFO] [02:46:52 p. m.] [debug] Seek local solicitado: input=0:01 safe=0:01 lastKnown=0:01. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  386558ms] [INFO] [02:46:52 p. m.] [video] Seek local a 0:01. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  386562ms] [INFO] [02:46:52 p. m.] [debug] Publicar seek: payloadTime=0:01 current=0:01 lastKnown=0:01 paused=true overrides={}. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  386574ms] [INFO] [02:46:52 p. m.] [chat:recv] Mensaje recibido de Usuario B22B. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  386576ms] [INFO] [02:46:52 p. m.] [sync:send] seek en 0:01 (pausado). @ http://127.0.0.1:8080/src/state/appState.js:111
+[  386745ms] [INFO] [02:46:53 p. m.] [firebase] Estado enviado: seek. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  386748ms] [INFO] [02:46:53 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  389688ms] [INFO] [02:46:56 p. m.] [debug] Seek local solicitado: input=0:03 safe=0:03 lastKnown=0:03. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  389727ms] [INFO] [02:46:56 p. m.] [video] Seek local a 0:03. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  389731ms] [INFO] [02:46:56 p. m.] [debug] Publicar seek: payloadTime=0:03 current=0:03 lastKnown=0:03 paused=true overrides={}. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  389742ms] [INFO] [02:46:56 p. m.] [chat:recv] Mensaje recibido de Usuario B22B. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  389744ms] [INFO] [02:46:56 p. m.] [sync:send] seek en 0:03 (pausado). @ http://127.0.0.1:8080/src/state/appState.js:111
+[  389954ms] [INFO] [02:46:56 p. m.] [firebase] Estado enviado: seek. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  389957ms] [INFO] [02:46:56 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  392968ms] [INFO] [02:46:59 p. m.] [debug] Seek local solicitado: input=0:03 safe=0:03 lastKnown=0:03. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  393002ms] [INFO] [02:46:59 p. m.] [video] Seek local a 0:03. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  393005ms] [INFO] [02:46:59 p. m.] [debug] Publicar seek: payloadTime=0:03 current=0:03 lastKnown=0:03 paused=true overrides={}. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  393016ms] [INFO] [02:46:59 p. m.] [chat:recv] Mensaje recibido de Usuario B22B. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  393019ms] [INFO] [02:46:59 p. m.] [sync:send] seek en 0:03 (pausado). @ http://127.0.0.1:8080/src/state/appState.js:111
+[  393244ms] [INFO] [02:46:59 p. m.] [firebase] Estado enviado: seek. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  393248ms] [INFO] [02:46:59 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  448053ms] [INFO] [02:47:54 p. m.] [sync:recv] video de Usuario 0831 en 0:03 (paused=true, sentAt=1785174478458). @ http://127.0.0.1:8080/src/state/appState.js:111
+[  448056ms] [INFO] [02:47:54 p. m.] [debug] Aplicar remoto: action=video base=0:03 target=0:03 current=0:03 paused=true. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  448061ms] [INFO] [02:47:54 p. m.] [sync:apply] Aplicado video a 0:03. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  448078ms] [INFO] [02:47:54 p. m.] [chat:recv] Mensaje recibido de Usuario 0831. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  453002ms] [INFO] [02:47:59 p. m.] [chat:recv] Mensaje recibido de Usuario 0831. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  459192ms] [INFO] [02:48:05 p. m.] [sync:recv] play de Usuario 0831 en 0:00 (paused=false, sentAt=1785174489607). @ http://127.0.0.1:8080/src/state/appState.js:111
+[  459268ms] [INFO] [02:48:05 p. m.] [chat:recv] Mensaje recibido de Usuario 0831. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  459758ms] [INFO] [02:48:06 p. m.] [debug] Aplicar remoto: action=play base=0:00 target=0:00 current=0:00 paused=false. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  459769ms] [INFO] [02:48:06 p. m.] [video] Play local en 0:00. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  459779ms] [INFO] [02:48:06 p. m.] [video] Buffering local en 0:00. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  460037ms] [INFO] [02:48:06 p. m.] [video] Seek local a 0:00. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  460046ms] [INFO] [02:48:06 p. m.] [sync:apply] Aplicado play a 0:00. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  463489ms] [INFO] [02:48:09 p. m.] [sync:recv] seek de Usuario 0831 en 0:43 (paused=false, sentAt=1785174493899). @ http://127.0.0.1:8080/src/state/appState.js:111
+[  463492ms] [INFO] [02:48:09 p. m.] [debug] Aplicar remoto: action=seek base=0:43 target=0:43 current=0:04 paused=false. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  463500ms] [INFO] [02:48:09 p. m.] [video] Buffering local en 0:43. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  463517ms] [INFO] [02:48:09 p. m.] [chat:recv] Mensaje recibido de Usuario 0831. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  463794ms] [INFO] [02:48:10 p. m.] [video] Seek local a 0:43. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  463804ms] [INFO] [02:48:10 p. m.] [sync:apply] Aplicado seek a 0:43. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  469916ms] [INFO] [02:48:16 p. m.] [debug] Seek local solicitado: input=1:18 safe=1:18 lastKnown=1:18. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  469925ms] [INFO] [02:48:16 p. m.] [video] Buffering local en 1:18. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  470233ms] [INFO] [02:48:16 p. m.] [video] Seek local a 1:18. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  470237ms] [INFO] [02:48:16 p. m.] [debug] Publicar seek: payloadTime=1:18 current=1:18 lastKnown=1:18 paused=false overrides={}. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  470259ms] [INFO] [02:48:16 p. m.] [chat:recv] Mensaje recibido de Usuario B22B. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  470269ms] [INFO] [02:48:16 p. m.] [sync:send] seek en 1:18 (play). @ http://127.0.0.1:8080/src/state/appState.js:111
+[  470466ms] [INFO] [02:48:16 p. m.] [firebase] Estado enviado: seek. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  470471ms] [INFO] [02:48:16 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  476988ms] [INFO] [02:48:23 p. m.] [video] Pausa local en 1:24. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  476991ms] [INFO] [02:48:23 p. m.] [debug] Publicar pause: payloadTime=1:24 current=1:24 lastKnown=1:24 paused=true overrides={}. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  477006ms] [INFO] [02:48:23 p. m.] [chat:recv] Mensaje recibido de Usuario B22B. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  477008ms] [INFO] [02:48:23 p. m.] [sync:send] pause en 1:24 (pausado). @ http://127.0.0.1:8080/src/state/appState.js:111
+[  477200ms] [INFO] [02:48:23 p. m.] [firebase] Estado enviado: pause. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  477204ms] [INFO] [02:48:23 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  524675ms] [INFO] [02:49:11 p. m.] [sync:recv] seek de Usuario 0831 en 1:49 (paused=true, sentAt=1785174555097). @ http://127.0.0.1:8080/src/state/appState.js:111
+[  524677ms] [INFO] [02:49:11 p. m.] [debug] Aplicar remoto: action=seek base=1:49 target=1:49 current=1:24 paused=true. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  524680ms] [INFO] [02:49:11 p. m.] [sync:apply] Aplicado seek a 1:49. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  524698ms] [INFO] [02:49:11 p. m.] [chat:recv] Mensaje recibido de Usuario 0831. @ http://127.0.0.1:8080/src/state/appState.js:111
+[  524964ms] [INFO] [02:49:11 p. m.] [video] Seek local a 1:49. @ http://127.0.0.1:8080/src/state/appState.js:111

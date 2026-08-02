@@ -1,0 +1,60 @@
+[     730ms] [INFO] [11:47:43 p. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:128
+[     732ms] [INFO] [11:47:43 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:128
+[     744ms] [INFO] [11:47:43 p. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:128
+[     751ms] [INFO] [11:47:43 p. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:128
+[     762ms] [INFO] [11:47:43 p. m.] [connection] Iniciando @ http://127.0.0.1:8080/src/state/appState.js:128
+[     764ms] [INFO] [11:47:43 p. m.] [room] Entrando a sala 291S0. @ http://127.0.0.1:8080/src/state/appState.js:128
+[    2086ms] [INFO] [11:47:45 p. m.] [connection] Activa @ http://127.0.0.1:8080/src/state/appState.js:128
+[    2089ms] [INFO] [11:47:45 p. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:128
+[    2093ms] [INFO] [11:47:45 p. m.] [firebase] Offset de tiempo: -94 ms. @ http://127.0.0.1:8080/src/state/appState.js:128
+[    2118ms] [INFO] [11:47:45 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:128
+[    2123ms] [INFO] [11:47:45 p. m.] [room] Sala 291S0 activa. @ http://127.0.0.1:8080/src/state/appState.js:128
+[  103496ms] [INFO] [11:49:26 p. m.] [ui] Pantalla completa de pagina activada. @ http://127.0.0.1:8080/src/state/appState.js:128
+[  108992ms] [INFO] [11:49:32 p. m.] [ui] Pantalla completa desactivada. @ http://127.0.0.1:8080/src/state/appState.js:128
+[  972120ms] [INFO] [12:03:55 a. m.] [ui] Pantalla completa de pagina activada. @ http://127.0.0.1:8080/src/state/appState.js:128
+[  975379ms] [INFO] [12:03:58 a. m.] [ui] Pantalla completa desactivada. @ http://127.0.0.1:8080/src/state/appState.js:128
+[  979633ms] [INFO] [12:04:02 a. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:128
+[  979638ms] [INFO] [12:04:02 a. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:128
+[  979651ms] [INFO] [12:04:02 a. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:128
+[  979661ms] [INFO] [12:04:02 a. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:128
+[  979681ms] [INFO] [12:04:02 a. m.] [connection] Iniciando @ http://127.0.0.1:8080/src/state/appState.js:128
+[  979683ms] [INFO] [12:04:02 a. m.] [room] Entrando a sala 291S0. @ http://127.0.0.1:8080/src/state/appState.js:128
+[  979762ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:8080/favicon.ico:0
+[  981756ms] [INFO] [12:04:04 a. m.] [connection] Activa @ http://127.0.0.1:8080/src/state/appState.js:128
+[  981758ms] [INFO] [12:04:04 a. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:128
+[  981763ms] [INFO] [12:04:04 a. m.] [firebase] Offset de tiempo: -116 ms. @ http://127.0.0.1:8080/src/state/appState.js:128
+[  981792ms] [INFO] [12:04:04 a. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:128
+[  981804ms] [INFO] [12:04:04 a. m.] [room] Sala 291S0 activa. @ http://127.0.0.1:8080/src/state/appState.js:128
+[  983075ms] [INFO] [12:04:06 a. m.] [ui] Pantalla completa de pagina activada. @ http://127.0.0.1:8080/src/state/appState.js:128
+[  983482ms] [INFO] [12:04:06 a. m.] [ui] Pantalla completa desactivada. @ http://127.0.0.1:8080/src/state/appState.js:128
+[  984455ms] [INFO] [12:04:07 a. m.] [ui] Pantalla completa de pagina activada. @ http://127.0.0.1:8080/src/state/appState.js:128
+[  985297ms] [INFO] [12:04:08 a. m.] [ui] Pantalla completa desactivada. @ http://127.0.0.1:8080/src/state/appState.js:128
+[  986236ms] [INFO] [12:04:09 a. m.] [ui] Pantalla completa de pagina activada. @ http://127.0.0.1:8080/src/state/appState.js:128
+[  986746ms] [INFO] [12:04:09 a. m.] [ui] Pantalla completa desactivada. @ http://127.0.0.1:8080/src/state/appState.js:128
+[ 1375904ms] [INFO] [12:10:39 a. m.] [ui] Pantalla completa de pagina activada. @ http://127.0.0.1:8080/src/state/appState.js:128
+[ 1380478ms] [INFO] [12:10:43 a. m.] [ui] Pantalla completa desactivada. @ http://127.0.0.1:8080/src/state/appState.js:128
+[ 1383759ms] [INFO] [12:10:46 a. m.] [ui] Chat externo contraido. @ http://127.0.0.1:8080/src/state/appState.js:128
+[ 1385090ms] [INFO] [12:10:48 a. m.] [ui] Chat externo expandido. @ http://127.0.0.1:8080/src/state/appState.js:128
+[ 1386256ms] [INFO] [12:10:49 a. m.] [ui] Chat externo contraido. @ http://127.0.0.1:8080/src/state/appState.js:128
+[ 1464691ms] [INFO] [12:12:07 a. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:128
+[ 1464693ms] [INFO] [12:12:07 a. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:128
+[ 1464704ms] [INFO] [12:12:07 a. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:128
+[ 1464709ms] [INFO] [12:12:07 a. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:128
+[ 1464716ms] [INFO] [12:12:07 a. m.] [connection] Iniciando @ http://127.0.0.1:8080/src/state/appState.js:128
+[ 1464718ms] [INFO] [12:12:07 a. m.] [room] Entrando a sala 291S0. @ http://127.0.0.1:8080/src/state/appState.js:128
+[ 1464747ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:8080/favicon.ico:0
+[ 1466170ms] [INFO] [12:12:09 a. m.] [connection] Activa @ http://127.0.0.1:8080/src/state/appState.js:128
+[ 1466172ms] [INFO] [12:12:09 a. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:128
+[ 1466176ms] [INFO] [12:12:09 a. m.] [firebase] Offset de tiempo: -107 ms. @ http://127.0.0.1:8080/src/state/appState.js:128
+[ 1466196ms] [INFO] [12:12:09 a. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:128
+[ 1466200ms] [INFO] [12:12:09 a. m.] [room] Sala 291S0 activa. @ http://127.0.0.1:8080/src/state/appState.js:128
+[ 1467564ms] [INFO] [12:12:10 a. m.] [ui] Pantalla completa de pagina activada. @ http://127.0.0.1:8080/src/state/appState.js:128
+[ 1469889ms] [INFO] [12:12:13 a. m.] [ui] Pantalla completa desactivada. @ http://127.0.0.1:8080/src/state/appState.js:128
+[ 1471893ms] [INFO] [12:12:15 a. m.] [ui] Pantalla completa de pagina activada. @ http://127.0.0.1:8080/src/state/appState.js:128
+[ 1473622ms] [INFO] [12:12:16 a. m.] [ui] Pantalla completa desactivada. @ http://127.0.0.1:8080/src/state/appState.js:128
+[ 1476333ms] [INFO] [12:12:19 a. m.] [ui] Pantalla completa de pagina activada. @ http://127.0.0.1:8080/src/state/appState.js:128
+[ 1477634ms] [INFO] [12:12:20 a. m.] [ui] Pantalla completa desactivada. @ http://127.0.0.1:8080/src/state/appState.js:128
+[ 2845865ms] [INFO] [12:35:09 a. m.] [ui] Pantalla completa de pagina activada. @ http://127.0.0.1:8080/src/state/appState.js:128
+[ 3091706ms] [INFO] [12:39:14 a. m.] [ui] Pantalla completa desactivada. @ http://127.0.0.1:8080/src/state/appState.js:128
+[ 4709805ms] [INFO] [01:06:12 a. m.] [ui] Chat externo contraido. @ http://127.0.0.1:8080/src/state/appState.js:128
+[ 4713223ms] [INFO] [01:06:16 a. m.] [ui] Chat externo expandido. @ http://127.0.0.1:8080/src/state/appState.js:128

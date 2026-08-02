@@ -1,0 +1,54 @@
+[    1458ms] [INFO] [12:50:44 a. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:110
+[    1468ms] [INFO] [12:50:44 a. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:110
+[    1489ms] [INFO] [12:50:44 a. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:110
+[    1500ms] [INFO] [12:50:44 a. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:110
+[    1522ms] [INFO] [12:50:44 a. m.] [connection] Iniciando @ http://127.0.0.1:8080/src/state/appState.js:110
+[    1525ms] [INFO] [12:50:44 a. m.] [room] Entrando a sala 0G0S0. @ http://127.0.0.1:8080/src/state/appState.js:110
+[    1804ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:8080/favicon.ico:0
+[    4349ms] [INFO] [12:50:47 a. m.] [connection] Activa @ http://127.0.0.1:8080/src/state/appState.js:110
+[    4352ms] [INFO] [12:50:47 a. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:110
+[    4361ms] [INFO] [12:50:47 a. m.] [firebase] Offset de tiempo: 3197 ms. @ http://127.0.0.1:8080/src/state/appState.js:110
+[    4455ms] [INFO] [12:50:47 a. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:110
+[    4459ms] [INFO] [12:50:47 a. m.] [room] Sala 0G0S0 activa. @ http://127.0.0.1:8080/src/state/appState.js:110
+[    4589ms] [INFO] [12:50:47 a. m.] [chat:recv] Mensaje recibido de Nacho. @ http://127.0.0.1:8080/src/state/appState.js:110
+[   48833ms] [INFO] [12:51:31 a. m.] [ui] Chat interno visible. @ http://127.0.0.1:8080/src/state/appState.js:110
+[   61350ms] [INFO] [12:51:44 a. m.] [chat:recv] Mensaje recibido de Nacho. @ http://127.0.0.1:8080/src/state/appState.js:110
+[   63422ms] [INFO] [12:51:46 a. m.] [chat:recv] Mensaje recibido de Nacho. @ http://127.0.0.1:8080/src/state/appState.js:110
+[   64943ms] [INFO] [12:51:47 a. m.] [chat:recv] Mensaje recibido de Nacho. @ http://127.0.0.1:8080/src/state/appState.js:110
+[   66330ms] [INFO] [12:51:49 a. m.] [chat:recv] Mensaje recibido de Nacho. @ http://127.0.0.1:8080/src/state/appState.js:110
+[  308420ms] [INFO] [12:55:51 a. m.] [chat:recv] Mensaje recibido de Nacho. @ http://127.0.0.1:8080/src/state/appState.js:110
+[  350429ms] [INFO] [12:56:33 a. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:110
+[  350432ms] [INFO] [12:56:33 a. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:110
+[  350444ms] [INFO] [12:56:33 a. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:110
+[  350450ms] [INFO] [12:56:33 a. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:110
+[  350469ms] [INFO] [12:56:33 a. m.] [connection] Iniciando @ http://127.0.0.1:8080/src/state/appState.js:110
+[  350472ms] [INFO] [12:56:33 a. m.] [room] Entrando a sala 0G0S0. @ http://127.0.0.1:8080/src/state/appState.js:110
+[  352110ms] [INFO] [12:56:35 a. m.] [connection] Activa @ http://127.0.0.1:8080/src/state/appState.js:110
+[  352113ms] [INFO] [12:56:35 a. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:110
+[  352118ms] [INFO] [12:56:35 a. m.] [firebase] Offset de tiempo: 3211 ms. @ http://127.0.0.1:8080/src/state/appState.js:110
+[  352161ms] [INFO] [12:56:35 a. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:110
+[  352165ms] [INFO] [12:56:35 a. m.] [room] Sala 0G0S0 activa. @ http://127.0.0.1:8080/src/state/appState.js:110
+[  352312ms] [INFO] [12:56:35 a. m.] [chat:recv] Mensaje recibido de Nacho. @ http://127.0.0.1:8080/src/state/appState.js:110
+[  352321ms] [INFO] [12:56:35 a. m.] [chat:recv] Mensaje recibido de Nacho. @ http://127.0.0.1:8080/src/state/appState.js:110
+[  352330ms] [INFO] [12:56:35 a. m.] [chat:recv] Mensaje recibido de Nacho. @ http://127.0.0.1:8080/src/state/appState.js:110
+[  352340ms] [INFO] [12:56:35 a. m.] [chat:recv] Mensaje recibido de Nacho. @ http://127.0.0.1:8080/src/state/appState.js:110
+[  352348ms] [INFO] [12:56:35 a. m.] [chat:recv] Mensaje recibido de Nacho. @ http://127.0.0.1:8080/src/state/appState.js:110
+[  352358ms] [INFO] [12:56:35 a. m.] [chat:recv] Mensaje recibido de Nacho. @ http://127.0.0.1:8080/src/state/appState.js:110
+[  382010ms] [INFO] [12:57:05 a. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:110
+[  382013ms] [INFO] [12:57:05 a. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:110
+[  382028ms] [INFO] [12:57:05 a. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:110
+[  382039ms] [INFO] [12:57:05 a. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:110
+[  382049ms] [INFO] [12:57:05 a. m.] [connection] Iniciando @ http://127.0.0.1:8080/src/state/appState.js:110
+[  382052ms] [INFO] [12:57:05 a. m.] [room] Entrando a sala 0G0S0. @ http://127.0.0.1:8080/src/state/appState.js:110
+[  383357ms] [INFO] [12:57:06 a. m.] [connection] Activa @ http://127.0.0.1:8080/src/state/appState.js:110
+[  383360ms] [INFO] [12:57:06 a. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:110
+[  383363ms] [INFO] [12:57:06 a. m.] [firebase] Offset de tiempo: 3215 ms. @ http://127.0.0.1:8080/src/state/appState.js:110
+[  383394ms] [INFO] [12:57:06 a. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:110
+[  383398ms] [INFO] [12:57:06 a. m.] [room] Sala 0G0S0 activa. @ http://127.0.0.1:8080/src/state/appState.js:110
+[  383555ms] [INFO] [12:57:06 a. m.] [chat:recv] Mensaje recibido de Nacho. @ http://127.0.0.1:8080/src/state/appState.js:110
+[  383563ms] [INFO] [12:57:06 a. m.] [chat:recv] Mensaje recibido de Nacho. @ http://127.0.0.1:8080/src/state/appState.js:110
+[  383572ms] [INFO] [12:57:06 a. m.] [chat:recv] Mensaje recibido de Nacho. @ http://127.0.0.1:8080/src/state/appState.js:110
+[  383579ms] [INFO] [12:57:06 a. m.] [chat:recv] Mensaje recibido de Nacho. @ http://127.0.0.1:8080/src/state/appState.js:110
+[  383591ms] [INFO] [12:57:06 a. m.] [chat:recv] Mensaje recibido de Nacho. @ http://127.0.0.1:8080/src/state/appState.js:110
+[  383599ms] [INFO] [12:57:06 a. m.] [chat:recv] Mensaje recibido de Nacho. @ http://127.0.0.1:8080/src/state/appState.js:110
+[  548095ms] [INFO] [12:59:51 a. m.] [chat:recv] Mensaje recibido de Nacho. @ http://127.0.0.1:8080/src/state/appState.js:110

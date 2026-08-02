@@ -1,0 +1,93 @@
+- generic [ref=f7e2]:
+  - banner [ref=f7e3]:
+    - generic [ref=f7e81]:
+      - generic [ref=f7e82]:
+        - generic [ref=f7e83]:
+          - generic [ref=f7e84]: Sala de video
+          - button "Ayuda sobre la sala" [ref=f7e85] [cursor=pointer]
+        - heading [level=1] [ref=f7e89]:
+          - 'generic "Estado de la aplicación: Conectado. La sala está funcionando" [ref=f7e90]'
+          - text: SALA
+          - button "Copiar enlace de invitación" [ref=f7e93] [cursor=pointer]:
+            - generic [ref=f7e94]: 5J5F1
+      - button "Volver a la entrada" [ref=f7e99] [cursor=pointer]
+  - main [ref=f7e102]:
+    - generic [ref=f7e103]:
+      - region "Reproductor sincronizado" [ref=f7e104]:
+        - region "Controles de sala" [ref=f7e105]:
+          - generic [ref=f7e106]:
+            - generic [ref=f7e107]:
+              - generic [ref=f7e108]:
+                - generic [ref=f7e109]: Enlace de video
+                - button "Ayuda sobre el enlace del video" [ref=f7e110] [cursor=pointer]
+              - textbox "Pega un link directo a MP4, WebM u otro video compatible" [ref=f7e114]:
+                - /placeholder: https://servidor.com/video.mp4
+                - text: https://cdn.truefilesize.com/mp4/sample-200mb.mp4
+            - button "Cargar" [ref=f7e115] [cursor=pointer]
+        - generic [ref=f7e119]:
+          - paragraph:
+            - generic: Sin contenido
+          - generic "Controles de reproductor" [ref=f7e121]:
+            - button "Ocultar chat (Tab)" [pressed] [ref=f7e169] [cursor=pointer]
+          - generic "Controles inferiores del reproductor" [ref=f7e170]:
+            - generic [ref=f7e171]:
+              - button "Reproducir video (Espacio)" [disabled] [ref=f7e172]
+              - generic [ref=f7e175]:
+                - generic [ref=f7e176]: 0:00
+                - slider "Avance del video" [disabled] [ref=f7e177]: "0"
+                - button "0:00" [disabled] [ref=f7e178]
+              - generic [ref=f7e179]:
+                - button "Silenciar (M)" [ref=f7e180] [cursor=pointer]
+                - slider "Volumen" [ref=f7e185] [cursor=pointer]: "1"
+              - combobox "Velocidad de reproduccion" [disabled] [ref=f7e187]:
+                - option "0.5x"
+                - option "0.75x"
+                - option "1x" [selected]
+                - option "1.25x"
+                - option "1.5x"
+                - option "2x"
+              - button "Pantalla completa" [ref=f7e188] [cursor=pointer]
+          - complementary "Chat dentro del video" [ref=f7e194]:
+            - generic [ref=f7e195]:
+              - button "1 usuario conectado" [ref=f7e196] [cursor=pointer]:
+                - generic [ref=f7e198]: "1"
+              - generic [ref=f7e199]:
+                - group "Estilo del chat dentro del video" [ref=f7e200]:
+                  - button "Panel translucido" [ref=f7e201] [cursor=pointer]
+                  - button "Panel opaco" [ref=f7e204] [cursor=pointer]
+                - switch "Autoexpandir chat interno" [ref=f7e207] [cursor=pointer]
+            - article [ref=f7e224]:
+              - generic [ref=f7e225]: Usuario ADC6
+              - generic [ref=f7e228]:
+                - generic [ref=f7e229]: 02:04a.m.
+                - generic [ref=f7e230]: "Comparación de ancho: este mensaje deliberadamente largo debe aprovechar exactamente el mismo máximo visible tanto para la persona invitada como para el usuario propio."
+            - generic [ref=f7e213]:
+              - textbox "Escribir al chat de la sala" [active] [ref=f7e215]:
+                - /placeholder: Mensaje
+              - button "Abrir emojis" [ref=f7e216] [cursor=pointer]
+              - button "Enviar mensaje (Enter)" [ref=f7e220] [cursor=pointer]
+      - complementary "Chat de la sala" [ref=f7e125]:
+        - generic [ref=f7e126]:
+          - button "1 usuario conectado" [ref=f7e127] [cursor=pointer]:
+            - generic [ref=f7e129]: "1"
+          - generic [ref=f7e130]:
+            - generic [ref=f7e131]:
+              - text: Usuario
+              - button "Ayuda sobre nombre" [ref=f7e132] [cursor=pointer]
+            - generic [ref=f7e137]:
+              - generic [ref=f7e138]: Usuario ADC6
+              - button "Editar nombre" [ref=f7e139] [cursor=pointer]
+          - generic [ref=f7e143]:
+            - switch "Autoexpandir chat externo" [ref=f7e144] [cursor=pointer]
+            - button "Chat lateral. Mover chat abajo" [ref=f7e147] [cursor=pointer]
+        - article [ref=f7e232]:
+          - generic [ref=f7e233]: Usuario ADC6
+          - generic [ref=f7e236]:
+            - generic [ref=f7e237]: 02:04a.m.
+            - generic [ref=f7e238]: "Comparación de ancho: este mensaje deliberadamente largo debe aprovechar exactamente el mismo máximo visible tanto para la persona invitada como para el usuario propio."
+        - generic [ref=f7e153]:
+          - textbox "Escribir al chat de la sala" [ref=f7e155]:
+            - /placeholder: Mensaje
+          - button "Abrir emojis" [ref=f7e156] [cursor=pointer]
+          - button "Enviar mensaje (Enter)" [ref=f7e160] [cursor=pointer]
+      - button "Contraer chat" [ref=f7e165] [cursor=pointer]

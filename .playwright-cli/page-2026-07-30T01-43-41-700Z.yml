@@ -1,0 +1,103 @@
+- generic [ref=f5e2]:
+  - banner [ref=f5e3]:
+    - generic [ref=f5e81]:
+      - generic [ref=f5e82]:
+        - generic [ref=f5e83]:
+          - generic [ref=f5e84]: Sala de video
+          - button "Ayuda sobre la sala" [ref=f5e85] [cursor=pointer]
+        - heading "SALA 0P3X6" [level=1] [ref=f5e89]:
+          - text: SALA
+          - generic [ref=f5e90]: 0P3X6
+      - generic [ref=f5e91]:
+        - 'generic "Estado de la aplicación: Activa. La sala está funcionando" [ref=f5e92]': Activa
+        - button "Invitar" [ref=f5e95] [cursor=pointer]:
+          - generic [ref=f5e96]:
+            - generic [ref=f5e97]: Invitar
+            - generic [ref=f5e105]: Copiado
+  - main [ref=f5e109]:
+    - generic [ref=f5e110]:
+      - region "Reproductor sincronizado" [ref=f5e111]:
+        - region "Controles de sala" [ref=f5e112]:
+          - generic [ref=f5e113]:
+            - generic [ref=f5e114]:
+              - generic [ref=f5e115]:
+                - generic [ref=f5e116]: Enlace de video
+                - button "Ayuda sobre el enlace del video" [ref=f5e117] [cursor=pointer]
+              - textbox "Pega un link directo a MP4, WebM u otro video compatible" [ref=f5e121]:
+                - /placeholder: https://servidor.com/video.mp4
+                - text: https://cdn.truefilesize.com/mp4/sample-200mb.mp4
+            - button "Cargar" [ref=f5e122] [cursor=pointer]
+        - generic [ref=f5e126]:
+          - paragraph:
+            - generic: Sin contenido
+          - generic "Controles de reproductor" [ref=f5e128]:
+            - button "Mostrar chat (Tab)" [ref=f5e129] [cursor=pointer]
+          - generic "Controles inferiores del reproductor":
+            - generic:
+              - button "Reproducir video (Espacio)" [disabled]
+              - generic:
+                - generic: 0:00
+                - slider "Avance del video" [disabled]: "0"
+                - button "0:00" [disabled]
+              - generic:
+                - button "Silenciar (M)"
+                - generic:
+                  - slider "Volumen": "1"
+              - generic:
+                - combobox "Velocidad de reproduccion" [disabled]:
+                  - option "0.5x"
+                  - option "0.75x"
+                  - option "1x" [selected]
+                  - option "1.25x"
+                  - option "1.5x"
+                  - option "2x"
+              - button "Pantalla completa de pagina"
+          - complementary "Chat dentro del video":
+            - generic:
+              - button "1 usuario conectado":
+                - generic: "1"
+              - generic:
+                - group "Estilo del chat dentro del video":
+                  - button "Panel translucido"
+                  - button "Panel opaco"
+                - switch "Autoexpandir chat interno"
+            - generic:
+              - generic:
+                - article:
+                  - generic: Usuario 80F4
+                  - generic:
+                    - generic:
+                      - generic: 10:43p.m.
+                      - generic: Hola
+            - generic:
+              - generic:
+                - generic:
+                  - textbox "Escribir al chat de la sala":
+                    - /placeholder: Mensaje
+                - button "Abrir emojis"
+                - button "Enviar mensaje (Enter)"
+      - complementary "Chat de la sala" [ref=f5e132]:
+        - generic [ref=f5e133]:
+          - button "1 usuario conectado" [ref=f5e134] [cursor=pointer]:
+            - generic [ref=f5e136]: "1"
+          - generic [ref=f5e137]:
+            - generic [ref=f5e138]:
+              - text: Usuario
+              - button "Ayuda sobre nombre" [ref=f5e139] [cursor=pointer]
+            - generic [ref=f5e144]:
+              - generic [ref=f5e145]: Usuario 80F4
+              - button "Editar nombre" [ref=f5e146] [cursor=pointer]
+          - generic [ref=f5e150]:
+            - switch "Autoexpandir chat externo" [ref=f5e151] [cursor=pointer]
+            - button "Chat lateral. Mover chat abajo" [ref=f5e154] [cursor=pointer]
+        - article [ref=f5e175]:
+          - generic [ref=f5e176]: Usuario 80F4
+          - generic [ref=f5e179]:
+            - generic [ref=f5e180]: 10:43p.m.
+            - generic [ref=f5e181]: Hola
+        - generic [ref=f5e160]:
+          - textbox "Escribir al chat de la sala" [active] [ref=f5e162]:
+            - /placeholder: Mensaje
+          - button "Abrir emojis" [ref=f5e163] [cursor=pointer]
+          - button "Enviar mensaje (Enter)" [ref=f5e167] [cursor=pointer]
+      - button "Contraer chat" [ref=f5e171] [cursor=pointer]

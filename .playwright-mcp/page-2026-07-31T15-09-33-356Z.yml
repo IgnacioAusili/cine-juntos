@@ -1,0 +1,137 @@
+- generic [ref=f1e2]:
+  - banner [ref=f1e3]:
+    - generic [ref=f1e81]:
+      - generic [ref=f1e82]:
+        - generic [ref=f1e83]:
+          - generic [ref=f1e84]: Sala de video
+          - button "Ayuda sobre la sala" [ref=f1e85] [cursor=pointer]
+        - heading "SALA 4B3E1" [level=1] [ref=f1e89]:
+          - text: SALA
+          - generic [ref=f1e90]: 4B3E1
+      - generic [ref=f1e91]:
+        - 'generic "Estado de la aplicación: Activa. La sala está funcionando" [ref=f1e92]': Activa
+        - button "Invitar" [ref=f1e95] [cursor=pointer]:
+          - generic [ref=f1e96]:
+            - generic [ref=f1e97]: Invitar
+            - generic [ref=f1e105]: Copiado
+  - main [ref=f1e109]:
+    - generic [ref=f1e110]:
+      - region "Reproductor sincronizado" [ref=f1e111]:
+        - region "Controles de sala" [ref=f1e112]:
+          - generic [ref=f1e113]:
+            - generic [ref=f1e114]:
+              - generic [ref=f1e115]:
+                - generic [ref=f1e116]: Enlace de video
+                - button "Ayuda sobre el enlace del video" [ref=f1e117] [cursor=pointer]
+              - textbox "Pega un link directo a MP4, WebM u otro video compatible" [ref=f1e121]:
+                - /placeholder: https://servidor.com/video.mp4
+                - text: https://cdn.truefilesize.com/mp4/sample-200mb.mp4
+            - button "Cargar" [ref=f1e122] [cursor=pointer]
+        - generic [ref=f1e126]:
+          - paragraph:
+            - generic: Sin contenido
+          - generic "Controles de reproductor" [ref=f1e128]:
+            - button "Mostrar chat (Tab)" [ref=f1e129] [cursor=pointer]
+          - generic "Controles inferiores del reproductor":
+            - generic:
+              - button "Reproducir video (Espacio)" [disabled]
+              - generic:
+                - generic: 0:00
+                - slider "Avance del video" [disabled]: "0"
+                - button "0:00" [disabled]
+              - generic:
+                - button "Silenciar (M)"
+                - generic:
+                  - slider "Volumen": "1"
+              - generic:
+                - combobox "Velocidad de reproduccion" [disabled]:
+                  - option "0.5x"
+                  - option "0.75x"
+                  - option "1x" [selected]
+                  - option "1.25x"
+                  - option "1.5x"
+                  - option "2x"
+              - button "Pantalla completa de pagina"
+          - complementary "Chat dentro del video":
+            - generic:
+              - button "2 usuarios conectados":
+                - generic: "2"
+              - generic:
+                - group "Estilo del chat dentro del video":
+                  - button "Panel translucido"
+                  - button "Panel opaco"
+                - switch "Autoexpandir chat interno"
+            - generic:
+              - generic:
+                - article:
+                  - generic: Usuario 8C16
+                  - generic:
+                    - generic:
+                      - generic: 12:05p.m.
+                      - generic: sssssssssssssssssssssssssssssssssssssss
+                - article:
+                  - generic: Usuario 8C16
+                  - generic:
+                    - generic:
+                      - generic: 12:05p.m.
+                      - generic: ssssssssssssss
+                - article:
+                  - generic: Usuario 8C16
+                  - generic:
+                    - generic:
+                      - generic: 12:05p.m.
+                      - generic: ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+                - article:
+                  - generic: Usuario 7177
+                  - generic:
+                    - generic:
+                      - generic: 12:09p.m.
+                      - generic: ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
+            - generic:
+              - generic:
+                - generic:
+                  - textbox "Escribir al chat de la sala":
+                    - /placeholder: Mensaje
+                - button "Abrir emojis"
+                - button "Enviar mensaje (Enter)"
+      - complementary "Chat de la sala" [ref=f1e132]:
+        - generic [ref=f1e133]:
+          - button "2 usuarios conectados" [ref=f1e134] [cursor=pointer]:
+            - generic [ref=f1e136]: "2"
+          - generic [ref=f1e137]:
+            - generic [ref=f1e138]:
+              - text: Usuario
+              - button "Ayuda sobre nombre" [ref=f1e139] [cursor=pointer]
+            - generic [ref=f1e144]:
+              - generic [ref=f1e145]: Usuario 7177
+              - button "Editar nombre" [ref=f1e146] [cursor=pointer]
+          - generic [ref=f1e150]:
+            - switch "Autoexpandir chat externo" [ref=f1e151] [cursor=pointer]
+            - button "Chat lateral. Mover chat abajo" [ref=f1e154] [cursor=pointer]
+        - generic [ref=f1e158]:
+          - article [ref=f1e159]:
+            - generic [ref=f1e160]: Usuario 8C16
+            - generic [ref=f1e163]:
+              - generic [ref=f1e164]: 12:05p.m.
+              - generic [ref=f1e165]: sssssssssssssssssssssssssssssssssssssss
+          - article [ref=f1e166]:
+            - generic [ref=f1e167]: Usuario 8C16
+            - generic [ref=f1e170]:
+              - generic [ref=f1e171]: 12:05p.m.
+              - generic [ref=f1e172]: ssssssssssssss
+          - article [ref=f1e173]:
+            - generic [ref=f1e174]: Usuario 8C16
+            - generic [ref=f1e177]:
+              - generic [ref=f1e178]: 12:05p.m.
+              - generic [ref=f1e179]: ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+          - article [ref=f1e196]:
+            - generic [ref=f1e197]: Usuario 7177
+            - generic [ref=f1e200]:
+              - generic [ref=f1e201]: 12:09p.m.
+              - generic [ref=f1e202]: ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
+        - generic [ref=f1e181]:
+          - textbox "Escribir al chat de la sala" [active] [ref=f1e183]:
+            - /placeholder: Mensaje
+          - button "Abrir emojis" [ref=f1e184] [cursor=pointer]
+          - button "Enviar mensaje (Enter)" [ref=f1e188] [cursor=pointer]
+      - button "Contraer chat" [ref=f1e192] [cursor=pointer]

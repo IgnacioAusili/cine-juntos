@@ -1,5 +1,5 @@
 @import url("./chat-overlay/shell.css");
 @import url("./chat-overlay/header.css");
-@import url("./chat-overlay/messages.css");
+@import url("./chat-overlay/messages.css?v=20260802-04");
 @import url("./chat-overlay/composer.css");
 @import url("./chat-overlay/sync-status.css");

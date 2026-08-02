@@ -1,0 +1,21 @@
+[     161ms] [ERROR] Loading the stylesheet 'https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap' violates the following Content Security Policy directive: "style-src 'self' 'unsafe-inline'". Note that 'style-src-elem' was not explicitly set, so 'style-src' is used as a fallback. The action has been blocked. @ http://127.0.0.1:8080/?room=4W2F2:0
+[    1364ms] [INFO] [05:15:18 p. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    1369ms] [INFO] [05:15:18 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    1384ms] [INFO] [05:15:18 p. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    1395ms] [INFO] [05:15:18 p. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    1413ms] [INFO] [05:15:18 p. m.] [connection] Iniciando @ http://127.0.0.1:8080/src/state/appState.js:127
+[    1415ms] [INFO] [05:15:18 p. m.] [room] Entrando a sala 4W2F2. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    1466ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:8080/favicon.ico:0
+[    3988ms] [INFO] [05:15:21 p. m.] [connection] Conectado @ http://127.0.0.1:8080/src/state/appState.js:127
+[    3991ms] [INFO] [05:15:21 p. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    3995ms] [INFO] [05:15:21 p. m.] [firebase] Offset de tiempo: 3329 ms. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    4133ms] [INFO] [05:15:21 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    4138ms] [INFO] [05:15:21 p. m.] [room] Sala 4W2F2 activa. @ http://127.0.0.1:8080/src/state/appState.js:127
+[   14970ms] [INFO] [05:15:32 p. m.] [chat:recv] Mensaje recibido de Usuario 2E4C. @ http://127.0.0.1:8080/src/state/appState.js:127
+[   14973ms] [INFO] [05:15:32 p. m.] [chat:send] Mensaje de Usuario 2E4C. @ http://127.0.0.1:8080/src/state/appState.js:127
+[   15078ms] [INFO] [05:15:32 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[   23541ms] [INFO] [05:15:40 p. m.] [chat:recv] Mensaje recibido de Usuario 2E4C. @ http://127.0.0.1:8080/src/state/appState.js:127
+[   23544ms] [INFO] [05:15:40 p. m.] [chat:send] Mensaje de Usuario 2E4C. @ http://127.0.0.1:8080/src/state/appState.js:127
+[   23701ms] [INFO] [05:15:40 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[   34498ms] [INFO] [05:15:51 p. m.] [chat:recv] Mensaje recibido de Prueba. @ http://127.0.0.1:8080/src/state/appState.js:127
+[   34509ms] [INFO] [05:15:51 p. m.] [chat:recv] Mensaje recibido de Prueba. @ http://127.0.0.1:8080/src/state/appState.js:127

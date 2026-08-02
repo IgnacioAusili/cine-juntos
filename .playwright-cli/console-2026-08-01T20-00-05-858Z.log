@@ -1,0 +1,16 @@
+[     335ms] [ERROR] Loading the stylesheet 'https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap' violates the following Content Security Policy directive: "style-src 'self' 'unsafe-inline'". Note that 'style-src-elem' was not explicitly set, so 'style-src' is used as a fallback. The action has been blocked. @ http://127.0.0.1:8080/?room=4W2F2:270
+[    1231ms] [INFO] [05:00:07 p. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    1248ms] [INFO] [05:00:07 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    1263ms] [INFO] [05:00:07 p. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    1275ms] [INFO] [05:00:07 p. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    1307ms] [INFO] [05:00:07 p. m.] [connection] Iniciando @ http://127.0.0.1:8080/src/state/appState.js:127
+[    1308ms] [INFO] [05:00:07 p. m.] [room] Entrando a sala 4W2F2. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    1738ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:8080/favicon.ico:0
+[    4500ms] [INFO] [05:00:10 p. m.] [connection] Conectado @ http://127.0.0.1:8080/src/state/appState.js:127
+[    4502ms] [INFO] [05:00:10 p. m.] [firebase] Sesion anonima conectada. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    4507ms] [INFO] [05:00:10 p. m.] [firebase] Offset de tiempo: 3314 ms. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    4699ms] [INFO] [05:00:10 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:127
+[    4708ms] [INFO] [05:00:10 p. m.] [room] Sala 4W2F2 activa. @ http://127.0.0.1:8080/src/state/appState.js:127
+[   12862ms] [INFO] [05:00:18 p. m.] [chat:recv] Mensaje recibido de Usuario FEB5. @ http://127.0.0.1:8080/src/state/appState.js:127
+[   12865ms] [INFO] [05:00:18 p. m.] [chat:send] Mensaje de Usuario FEB5. @ http://127.0.0.1:8080/src/state/appState.js:127
+[   12951ms] [INFO] [05:00:18 p. m.] [firebase] Mensaje enviado. @ http://127.0.0.1:8080/src/state/appState.js:127

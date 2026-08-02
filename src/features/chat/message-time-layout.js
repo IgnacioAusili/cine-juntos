@@ -1,8 +1,8 @@
 import { dom } from "../../core/dom.js";
 
 const TIME_GAP_PX = 8;
+const STANDALONE_TIME_GAP_PX = 3;
 const LINE_TOLERANCE_PX = 1;
-const STANDALONE_TIME_TOKEN_MIN_LENGTH = 18;
 
 let scheduledFrame = 0;
 const observerRecords = new WeakMap();
@@ -121,22 +121,11 @@ export function adjustMessageTimeForBubble(bubble) {
   const hasMediaContent = Boolean(
     content?.querySelector(".message-media, .message-video, .message-media-link"),
   );
-  const isOverlay = Boolean(messageBubble.closest(".overlay-messages"));
   const isEmojiOnly = messageBubble.classList.contains("message-bubble--emoji-only");
 
   // Los emojis tienen la hora en una tarjeta independiente debajo del glyph.
   // No deben recibir el layout de floats usado por mensajes de texto.
   if (isEmojiOnly) {
-    resetStandaloneTimeLayout(messageBubble, content, timeAnchor);
-    resetMessageTimeLayout(timeAnchor);
-    restoreOriginalText(text);
-    return;
-  }
-
-  // Los mensajes simples del overlay usan una franja inferior fija para la
-  // hora. No deben entrar en el cálculo de floats, que puede alterar su ancho
-  // y altura cada vez que se agrega otro mensaje.
-  if (isOverlay && !hasReply && !hasMediaContent) {
     resetStandaloneTimeLayout(messageBubble, content, timeAnchor);
     resetMessageTimeLayout(timeAnchor);
     restoreOriginalText(text);
@@ -153,15 +142,15 @@ export function adjustMessageTimeForBubble(bubble) {
   const lineHeight = getBubbleLineHeight(messageBubble);
   if (!Number.isFinite(lineHeight) || lineHeight <= 0) return;
 
-  if (isLongUnbrokenText(text) && !hasReply && !hasMediaContent) {
-    applyStandaloneTimeLayout(messageBubble, content, timeAnchor);
-  } else if (hasReply && textRow) {
+  if (hasReply && textRow) {
     stabilizeFloatLayout(textRow, timeAnchor, lineHeight);
   } else if (text && !hasMediaContent) {
     stabilizeFloatLayout(text, timeAnchor, lineHeight);
     if (!timeFitsLastTextLine(text, timeAnchor)) {
-      addMinimalLastLineBreak(text, timeAnchor);
-      stabilizeFloatLayout(text, timeAnchor, lineHeight);
+      // No forzar un <br> para hacer lugar a la hora: eso deja huecos al
+      // final de la línea anterior. Se conserva el wrapping natural y solo
+      // la hora pasa a su propia franja inferior.
+      applyStandaloneTimeLayout(messageBubble, content, timeAnchor);
     }
   } else {
     applyFloatLayout(timeAnchor, lineHeight, "100%");
@@ -184,11 +173,6 @@ function getMessageTimeLayoutKey(bubble, timeAnchor, text) {
     style.fontSize,
     style.lineHeight,
   ].join("|");
-}
-
-function isLongUnbrokenText(text) {
-  const value = text?.textContent.trim() ?? "";
-  return value.length >= STANDALONE_TIME_TOKEN_MIN_LENGTH && !/\s/u.test(value);
 }
 
 function resetStandaloneTimeLayout(bubble, content, timeAnchor) {
@@ -214,6 +198,7 @@ function applyStandaloneTimeLayout(bubble, content, timeAnchor) {
   timeAnchor.style.width = "100%";
   timeAnchor.style.height = "auto";
   timeAnchor.style.marginLeft = "0";
+  timeAnchor.style.marginTop = `${STANDALONE_TIME_GAP_PX}px`;
   timeAnchor.style.shapeOutside = "none";
   timeAnchor.style.justifyContent = "flex-end";
   timeAnchor.style.alignItems = "flex-start";
@@ -223,6 +208,7 @@ function resetMessageTimeLayout(timeAnchor) {
   timeAnchor.style.removeProperty("float");
   timeAnchor.style.removeProperty("height");
   timeAnchor.style.removeProperty("margin-left");
+  timeAnchor.style.removeProperty("margin-top");
   timeAnchor.style.removeProperty("width");
   timeAnchor.style.removeProperty("shape-outside");
   timeAnchor.style.removeProperty("order");
@@ -293,61 +279,6 @@ function getTextLineRects(text) {
   }
 
   return rows.sort((a, b) => a.top - b.top);
-}
-
-function addMinimalLastLineBreak(text, timeAnchor) {
-  const originalText = text.dataset.messageTimeText ?? text.textContent ?? "";
-  if (!originalText.trim()) return;
-  text.dataset.messageTimeText = originalText;
-
-  // Only break at whitespace. Long unbroken tokens should wrap naturally and
-  // let the timestamp occupy its own final line instead of splitting a word.
-  const breakPositions = [...originalText.matchAll(/\s+/g)]
-    .map((match) => match.index + match[0].length)
-    .filter((index) => index > 0 && index < originalText.length)
-    .sort((a, b) => a - b);
-
-  let firstFittingIndex = -1;
-  let low = 0;
-  let high = breakPositions.length - 1;
-  while (low <= high) {
-    const middle = Math.floor((low + high) / 2);
-    const start = breakPositions[middle];
-    const prefix = originalText.slice(0, start).trimEnd();
-    const suffix = originalText.slice(start).trimStart();
-    if (!prefix || !suffix) {
-      low = middle + 1;
-      continue;
-    }
-
-    applyTextBreak(text, prefix, suffix);
-    if (timeFitsLastTextLine(text, timeAnchor)) {
-      firstFittingIndex = middle;
-      high = middle - 1;
-    } else {
-      low = middle + 1;
-    }
-  }
-
-  if (firstFittingIndex < 0) {
-    text.replaceChildren(document.createTextNode(originalText));
-    return;
-  }
-
-  const start = breakPositions[firstFittingIndex];
-  applyTextBreak(
-    text,
-    originalText.slice(0, start).trimEnd(),
-    originalText.slice(start).trimStart(),
-  );
-}
-
-function applyTextBreak(text, prefix, suffix) {
-  text.replaceChildren(
-    document.createTextNode(prefix),
-    document.createElement("br"),
-    document.createTextNode(suffix),
-  );
 }
 
 function restoreOriginalText(text) {

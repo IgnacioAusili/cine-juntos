@@ -1,0 +1,63 @@
+- generic [ref=f12e2]:
+  - banner [ref=f12e3]
+  - region "Entrada a sala" [ref=f12e5]:
+    - generic [ref=f12e7]:
+      - generic [ref=f12e8]: En vivo
+      - generic [ref=f12e9]: Salas privadas
+      - generic [ref=f12e10]: Video compartido
+      - generic [ref=f12e11]: Chat integrado
+      - generic [ref=f12e12]: En vivo
+      - generic [ref=f12e13]: Salas privadas
+      - generic [ref=f12e14]: Video compartido
+      - generic [ref=f12e15]: Chat integrado
+      - generic [ref=f12e16]: En vivo
+      - generic [ref=f12e17]: Salas privadas
+      - generic [ref=f12e18]: Video compartido
+      - generic [ref=f12e19]: Chat integrado
+      - generic [ref=f12e20]: En vivo
+      - generic [ref=f12e21]: Salas privadas
+      - generic [ref=f12e22]: Video compartido
+      - generic [ref=f12e23]: Chat integrado
+    - generic [ref=f12e24]:
+      - generic [ref=f12e25]:
+        - heading "Cine Juntos" [level=1] [ref=f12e26]:
+          - generic [ref=f12e27]: Cine
+          - generic [ref=f12e28]: Juntos
+        - paragraph [ref=f12e29]: Salas privadas con reproducción sincronizada entre todos los participantes. Controles compartidos, chat en vivo y una experiencia que se siente como compartir el mismo sillón.
+        - list [ref=f12e30]:
+          - listitem [ref=f12e31]:
+            - generic [ref=f12e37]:
+              - strong [ref=f12e38]: Sincronizado
+              - generic [ref=f12e39]: Play, pausa y seek compartidos
+          - listitem [ref=f12e40]:
+            - generic [ref=f12e43]:
+              - strong [ref=f12e44]: Chat en vivo
+              - generic [ref=f12e45]: Mensajes, imágenes y replies
+          - listitem [ref=f12e46]:
+            - generic [ref=f12e49]:
+              - strong [ref=f12e50]: Tu video
+              - generic [ref=f12e51]: Cualquier enlace MP4 directo
+      - complementary "Ingresar a una sala" [ref=f12e52]:
+        - generic [ref=f12e53]:
+          - generic [ref=f12e54]: N°
+          - generic [ref=f12e55]: SALA
+        - generic [ref=f12e56]:
+          - generic [ref=f12e58]:
+            - generic [ref=f12e59]: Boleto de entrada
+            - generic [ref=f12e60]: Unirte
+          - generic [ref=f12e64]:
+            - generic [ref=f12e65]:
+              - generic [ref=f12e66]:
+                - text: Nombre
+                - button "Ayuda sobre nombre" [ref=f12e67] [cursor=pointer]
+              - textbox "Nombre visible en chat y sincronizacion" [ref=f12e71]:
+                - /placeholder: Tu nombre
+                - text: Usuario 1Fa1C
+            - generic [ref=f12e72]:
+              - generic [ref=f12e73]:
+                - text: Codigo
+                - button "Ayuda sobre salas" [ref=f12e74] [cursor=pointer]
+              - textbox "AB12C" [ref=f12e78]: "61093"
+            - generic [ref=f12e79]:
+              - button "Crear sala" [disabled]
+              - button "Entrar" [disabled]

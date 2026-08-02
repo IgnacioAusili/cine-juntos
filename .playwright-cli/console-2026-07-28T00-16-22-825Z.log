@@ -1,5 +1,0 @@
-[    1222ms] [INFO] [09:16:23 p. m.] [ui] Estilo de chat interno: float. @ http://127.0.0.1:8080/src/state/appState.js:115
-[    1286ms] [INFO] [09:16:24 p. m.] [ui] Chat interno oculto. @ http://127.0.0.1:8080/src/state/appState.js:115
-[    1301ms] [INFO] [09:16:24 p. m.] [ui] Chat lateral en posicion: lateral. @ http://127.0.0.1:8080/src/state/appState.js:115
-[    1309ms] [INFO] [09:16:24 p. m.] [connection] Activa @ http://127.0.0.1:8080/src/state/appState.js:115
-[    1311ms] [INFO] [09:16:24 p. m.] [app] Interfaz lista. Video de ejemplo precargado. @ http://127.0.0.1:8080/src/state/appState.js:115

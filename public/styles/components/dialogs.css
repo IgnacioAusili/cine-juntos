@@ -121,6 +121,21 @@
   color: rgba(255, 255, 255, 0.65);
 }
 
+.resume-time-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.08rem 0.45rem;
+  margin: 0 0.12rem;
+  border-radius: 6px;
+  background: rgba(56, 161, 105, 0.18);
+  border: 1px solid rgba(56, 161, 105, 0.42);
+  color: #7ee0a0;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  vertical-align: baseline;
+}
+
 .dialog-title-icon {
   display: inline-flex;
   align-items: center;

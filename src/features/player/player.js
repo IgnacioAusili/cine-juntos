@@ -37,6 +37,7 @@ import { togglePageFullscreen } from "./fullscreen.js";
 const SKIP_LOAD_REPLACE_DIALOG_KEY = "cine-juntos-skip-load-replace-dialog";
 const VIDEO_RESUME_STORAGE_KEY = "cine-juntos-video-resume-times";
 const SLOW_LOAD_DIALOG_DELAY_MS = 5 * 60 * 1000;
+const VIDEO_LOAD_COOLDOWN_MS = 3500;
 const MIN_RESUME_PROMPT_SECONDS = 5;
 const KEYBOARD_SEEK_STEP_SECONDS = 10;
 const KEYBOARD_VOLUME_STEP = 0.05;
@@ -235,8 +236,11 @@ export function loadVideoFromUrl(source, origin) {
     return;
   }
 
-  setVideoSource(source, true);
-  logEvent("video", `Video ${origin} cargado: ${source}`);
+  const currentSourceKey = getCurrentVideoSourceKey();
+  const nextSourceKey = getVideoSourceKey(source);
+  const isReload = Boolean(currentSourceKey && currentSourceKey === nextSourceKey);
+  setVideoSource(source, true, { isReload });
+  logEvent("video", `Video ${isReload ? "recargado" : `${origin} cargado`}: ${source}`);
   if (state.session.activeRoom && state.session.transport) {
     publishState("video");
   }
@@ -246,6 +250,10 @@ async function handleManualLoadRequest() {
   const source = dom.videoUrlInput.value.trim();
   if (!source) {
     loadVideoFromUrl(source, "manual");
+    return;
+  }
+
+  if (isVideoLoadCoolingDown()) {
     return;
   }
 
@@ -267,12 +275,21 @@ export function setVideoSource(source, shouldAnnounce, options = {}) {
   pendingLoadCompletionAnnouncement = Boolean(
     options.announceLoadCompletion ?? shouldAnnounce,
   );
+  const isReload = Boolean(options.isReload);
+  state.player.lastVideoLoadWasReload = isReload;
   state.player.resumePromptSource = shouldAnnounce ? getVideoSourceKey(source) : "";
+  window.clearTimeout(state.player.videoLoadCooldownTimeoutId);
+  state.player.videoLoadCooldownUntil = Date.now() + VIDEO_LOAD_COOLDOWN_MS;
+  state.player.videoLoadCooldownTimeoutId = window.setTimeout(() => {
+    state.player.videoLoadCooldownUntil = 0;
+    state.player.videoLoadCooldownTimeoutId = null;
+    updateLoadButtonState();
+  }, VIDEO_LOAD_COOLDOWN_MS);
   clearPlaybackErrorTracking();
   clearSlowLoadPromptTracking();
   clearPlaybackRecoveryTracking();
   dom.videoPlayer.src = source;
-  setVideoStatus("loading", "Cargando");
+  setVideoStatus("loading", isReload ? "Recargando video" : "Cargando video");
   dom.videoPlayer.load();
   dom.emptyPlayer.classList.add("hidden");
   dom.videoUrlInput.value = source;
@@ -289,6 +306,7 @@ function announceVideoLoadCompletion() {
   sendVideoEventMessage("video-ready", {
     from: state.session.clientId,
     name: getDisplayName(),
+    isReload: Boolean(state.player.lastVideoLoadWasReload),
     time: Number(dom.videoPlayer.currentTime) || 0,
     rate: Number(dom.videoPlayer.playbackRate || 1),
   });
@@ -561,6 +579,21 @@ function rememberPlaybackPosition() {
   if (Number.isFinite(currentTime)) {
     state.player.lastKnownTime = Math.max(0, currentTime);
   }
+
+  updateLoadButtonState();
+}
+
+function updateLoadButtonState() {
+  if (!dom.loadVideoButton) return;
+  const coolingDown = isVideoLoadCoolingDown();
+  dom.loadVideoButton.disabled = coolingDown;
+  dom.loadVideoButton.dataset.loading = coolingDown ? "true" : "false";
+  if (!coolingDown) {
+    delete dom.loadVideoButton.dataset.loading;
+    dom.loadVideoButton.removeAttribute("aria-busy");
+    return;
+  }
+  dom.loadVideoButton.setAttribute("aria-busy", "true");
 }
 
 function hasLoadedMediaSource() {
@@ -581,6 +614,10 @@ function clearSlowLoadPromptTracking() {
   }
   state.player.slowLoadPromptTimeoutId = null;
   state.player.slowLoadPromptSource = "";
+}
+
+function isVideoLoadCoolingDown() {
+  return Date.now() < Number(state.player.videoLoadCooldownUntil || 0);
 }
 
 function armSlowLoadPrompt(source) {
@@ -636,7 +673,7 @@ async function maybePromptResumePlayback() {
   }
 
   const confirmed = await showResumeVideoDialog(
-    `Este video ya lo habías dejado en ${formatClockTime(resumeTime)}. ¿Quieres saltar a ese tiempo anterior?`,
+    `Este video ya lo has reproducido antes en <span class="resume-time-tag">${formatClockTime(resumeTime)}</span> ¿Quieres retomar desde ahí?`,
   );
   if (!confirmed || getCurrentVideoSourceKey() !== sourceKey) return;
 

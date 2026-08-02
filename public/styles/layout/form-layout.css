@@ -130,6 +130,20 @@
   transform: none;
 }
 
+.chat-name-edit-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.42;
+  color: color-mix(in srgb, var(--muted-2) 70%, var(--text-faint) 30%);
+  filter: saturate(0.55);
+}
+
+.chat-name-edit-button:disabled:hover,
+.chat-name-edit-button:disabled:focus-visible {
+  color: color-mix(in srgb, var(--muted-2) 70%, var(--text-faint) 30%);
+  opacity: 0.42;
+  transform: none;
+}
+
 .presence-pill {
   justify-self: start;
   align-self: center;

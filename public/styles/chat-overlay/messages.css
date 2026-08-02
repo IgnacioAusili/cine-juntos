@@ -165,6 +165,77 @@
   overflow-wrap: anywhere;
 }
 
+.overlay-messages .message-bubble:not(.message-bubble--emoji-only) .message-emoji {
+  font-family: var(--emoji-font-family);
+  font-size: 1.12em;
+  line-height: 1;
+  vertical-align: -0.08em;
+}
+
+.overlay-messages .message-bubble--emoji-only {
+  display: flex;
+  max-width: 100%;
+  flex-direction: column;
+  border: 0;
+  background: transparent;
+  padding: 0;
+}
+
+.overlay-messages .message-bubble--emoji-only .message-content {
+  display: block;
+  width: 100%;
+  order: 1;
+  text-align: left;
+}
+
+.overlay-messages .message-bubble--emoji-only .message-text {
+  display: inline;
+  font-family: var(--emoji-font-family);
+  font-size: 1.4rem;
+  line-height: 1.12;
+}
+
+.overlay-messages .message-bubble--emoji-only-compact .message-text {
+  font-size: 1.25rem;
+}
+
+.overlay-messages .message.mine .message-bubble--emoji-only .message-content {
+  text-align: right;
+}
+
+.overlay-messages .message-bubble--emoji-only .message-time-anchor {
+  order: 2;
+  position: static;
+  right: auto;
+  bottom: auto;
+  float: none;
+  display: flex;
+  flex: 0 0 auto;
+  height: auto;
+  min-height: 0;
+  margin: 0;
+  shape-outside: none;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 6px 2px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  background: rgba(9, 12, 14, 0.12);
+}
+
+.overlay-messages .message-bubble--emoji-only .message-time {
+  line-height: 1;
+  text-align: center;
+}
+
+.overlay-messages .message:not(.mine) .message-bubble--emoji-only .message-time-anchor {
+  align-self: flex-start;
+}
+
+.overlay-messages .message.mine .message-bubble--emoji-only .message-time-anchor {
+  align-self: flex-end;
+}
+
 .overlay-messages .message:not(.mine) .message-bubble {
   border-bottom-left-radius: 4px;
 }
@@ -255,4 +326,36 @@
 .overlay-messages .message.system .message-system-name {
   color: var(--participant-accent, rgba(255, 255, 255, 0.84));
   font-weight: 700;
+}
+
+/* En el overlay, los mensajes solo con emojis tampoco llevan burbuja. */
+.player-frame[data-chat-style="float"] .overlay-messages .message-bubble--emoji-only,
+.overlay-messages .message.mine .message-bubble--emoji-only,
+.overlay-messages .message:not(.mine) .message-bubble--emoji-only {
+  display: flex;
+  max-width: 100%;
+  flex-direction: column;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+}
+
+.overlay-messages .message.mine .message-bubble--emoji-only .message-time-anchor {
+  border-color: rgba(47, 184, 164, 0.2);
+  background: rgba(47, 184, 164, 0.12);
+  border-bottom-right-radius: 4px;
+}
+
+.overlay-messages .message:not(.mine) .message-bubble--emoji-only .message-time-anchor {
+  border-color: rgba(240, 140, 58, 0.16);
+  background: rgba(240, 140, 58, 0.08);
+  border-bottom-left-radius: 4px;
+}
+
+/* La regla de mensajes simples usa position:absolute; los emojis necesitan flujo normal. */
+.overlay-messages .message-bubble.message-bubble--emoji-only .message-time-anchor {
+  position: static;
+  right: auto;
+  bottom: auto;
 }

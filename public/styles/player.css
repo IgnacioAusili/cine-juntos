@@ -25,7 +25,9 @@ video {
 video:focus,
 video:focus-visible {
   outline: none;
+  border: 0;
   box-shadow: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 video::-webkit-media-controls-fullscreen-button {
@@ -160,6 +162,30 @@ video::-webkit-media-controls-fullscreen-button {
 #playerChatToggleButton {
   position: relative;
   margin-top: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  background: #13171a;
+  color: var(--text-soft);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 6px 18px rgba(0, 0, 0, 0.22);
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    color 160ms ease,
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+#playerChatToggleButton:hover,
+#playerChatToggleButton:focus-visible {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: #181d22;
+  color: #ffffff;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 8px 20px rgba(0, 0, 0, 0.26);
+  transform: none;
 }
 
 .player-bottom-actions {

@@ -4,6 +4,7 @@ import { state, logEvent } from "../../core/state.js";
 import { CHAT_DOCKS, CHAT_DOCK_META, withShortcutHint } from "../../core/utils.js";
 import { hydrateIcons, refreshTooltipForTarget } from "../icons-tooltips.js";
 import { focusFullscreenWorkspace } from "../session-ui.js";
+import { cancelIdentityEditing } from "../presence.js";
 import {
   isExternalChatVisibleToUser,
   isInsideChatVisibleToUser,
@@ -98,6 +99,7 @@ function scheduleAutoCollapse(isOverlay) {
 
 export function setInsideChatVisible(visible) {
   clearAutoCollapseTimer(true);
+  if (!visible) cancelIdentityEditing();
   dom.playerFrame.classList.toggle("chat-inside-open", visible);
   dom.playerChatToggleButton.classList.toggle("active", visible);
   dom.playerChatToggleButton.setAttribute("aria-pressed", String(visible));
@@ -116,12 +118,13 @@ export function setInsideChatVisible(visible) {
     });
   } else if (document.activeElement && dom.playerFrame.contains(document.activeElement)) {
     window.requestAnimationFrame(() => {
-      if (dom.videoPlayer) {
-        dom.videoPlayer.tabIndex = -1;
-        dom.videoPlayer.focus({ preventScroll: true });
-      } else {
-        dom.playerFrame?.focus?.({ preventScroll: true });
-      }
+      dom.playerFrame.dataset.suppressOverlayFocus = "1";
+      window.setTimeout(() => {
+        if (dom.playerFrame?.dataset.suppressOverlayFocus === "1") {
+          delete dom.playerFrame.dataset.suppressOverlayFocus;
+        }
+      }, 400);
+      dom.videoPlayer?.focus({ preventScroll: true });
     });
   }
   refreshTooltipForTarget(dom.playerChatToggleButton);
@@ -218,6 +221,7 @@ export function setChatDock(dock) {
   const meta = CHAT_DOCK_META[nextDock];
   const icon = dom.dockChatButton.querySelector("[data-lucide]");
 
+  cancelIdentityEditing();
   dom.sessionView.dataset.chatDock = nextDock;
   dom.dockChatButton.dataset.tooltip = meta.tooltip;
   dom.dockChatButton.removeAttribute("title");
@@ -242,6 +246,7 @@ export function setChatDock(dock) {
 
 export function setExternalChatCollapsed(collapsed) {
   clearAutoCollapseTimer(false);
+  if (collapsed) cancelIdentityEditing();
   if (chatScrollSnapLockTimer) {
     window.clearTimeout(chatScrollSnapLockTimer);
     chatScrollSnapLockTimer = 0;

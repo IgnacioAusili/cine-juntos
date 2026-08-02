@@ -6,9 +6,15 @@ import { showMessageMenu } from "./message-menu.js";
 
 const LONG_PRESS_DELAY = 560;
 
-export function wireMessageInteractions(bubble, message, hint, { setReplyTarget, replyInput }) {
+export function wireMessageInteractions(
+  bubble,
+  message,
+  hint,
+  { setReplyTarget, replyInput, companions = [] },
+) {
   const swipe = createSwipeReply(bubble, hint, {
     onReply: () => setReplyTarget?.(message, replyInput),
+    companions,
   });
 
   function clearLongPress() {

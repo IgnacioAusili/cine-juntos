@@ -45,6 +45,7 @@
 
 .scroll-bottom-badge {
   display: inline-grid;
+  box-sizing: border-box;
   min-width: 18px;
   height: 18px;
   place-items: center;
@@ -53,5 +54,8 @@
   color: #fff;
   font-size: 0.6rem;
   font-weight: 800;
+  line-height: 1;
   padding: 0 4px;
+  text-align: center;
+  white-space: nowrap;
 }

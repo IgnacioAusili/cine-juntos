@@ -50,31 +50,36 @@ export function resetInsideUnread() {
   dom.insideChatUnread.hidden = true;
 }
 
-export function incrementExternalUnread() {
-  state.chat.unreadExternalCount += 1;
-  dom.externalChatUnread.textContent = String(Math.min(state.chat.unreadExternalCount, 99));
-  dom.externalChatUnread.hidden = false;
+function updatePageTitle() {
+  const unreadCount = state.chat.pageUnreadCount;
+  const baseTitle = state.chat.pageTitleBase || document.title;
+  document.title = unreadCount > 0 ? `(${unreadCount}) ${baseTitle}` : baseTitle;
 }
 
-export function resetExternalUnread() {
-  state.chat.unreadExternalCount = 0;
-  dom.externalChatUnread.hidden = true;
+export function incrementPageUnread() {
+  state.chat.pageUnreadCount += 1;
+  updatePageTitle();
+}
+
+export function resetPageUnread() {
+  state.chat.pageUnreadCount = 0;
+  updatePageTitle();
 }
 
 export function syncUnreadBadgesWithVisibility() {
   if (isAnyChatVisibleToUser()) {
     resetInsideUnread();
-    resetExternalUnread();
+  }
+  if (!document.hidden) {
+    resetPageUnread();
   }
 }
 
 export function handleIncomingUnread() {
   if (isAnyChatVisibleToUser()) {
     resetInsideUnread();
-    resetExternalUnread();
   } else {
     incrementInsideUnread();
-    incrementExternalUnread();
     if (state.chat.autoExpandInsideEnabled) {
       setInsideChatVisible(true);
     }
@@ -82,6 +87,11 @@ export function handleIncomingUnread() {
       setExternalChatCollapsed(false);
     }
   }
+}
+
+export function handleIncomingPageUnread() {
+  if (!document.hidden) return;
+  incrementPageUnread();
 }
 
 export function incrementScrollIndicator(isOverlay) {

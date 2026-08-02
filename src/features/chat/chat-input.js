@@ -19,7 +19,7 @@ import {
 import { refreshTooltipForTarget } from "../icons-tooltips.js";
 import { markParticipantActive } from "../presence.js";
 import { clearReplyTarget } from "./chat-reply.js";
-import { renderMessage } from "./chat-render.js";
+import { renderMessage } from "./chat-render.js?v=20260801-05";
 import {
   scheduleExternalChatAutoCollapse,
   scheduleInsideChatAutoCollapse,
@@ -32,6 +32,127 @@ import {
 } from "./image-compress.js";
 
 const floatingComposerObservers = new WeakMap();
+const sendButtonMarkup = new WeakMap();
+const SAME_MESSAGE_LIMIT = 4;
+const SAME_MESSAGE_WINDOW_MS = 2500;
+const RAPID_MESSAGE_LIMIT = 5;
+const RAPID_MESSAGE_WINDOW_MS = 1000;
+const SPAM_COOLDOWN_MS = 15000;
+const PROGRESS_APPEAR_THRESHOLD = 150;
+
+let lastMessageSpamKey = "";
+let sameMessageCount = 0;
+let lastMessageSentAt = 0;
+let recentMessageSentAt = [];
+let spamCooldownUntil = 0;
+let spamCooldownTimer = 0;
+
+function getSendButtons() {
+  return [dom.mainMessageSend, dom.overlayMessageSend].filter(Boolean);
+}
+
+function getSpamCooldownRemaining() {
+  return Math.max(0, spamCooldownUntil - Date.now());
+}
+
+function getSpamKey(text, attachedImage) {
+  const normalizedText = String(text || "")
+    .trim()
+    .replace(/\s+/g, " ")
+    .toLocaleLowerCase();
+  const imageCount = Array.isArray(attachedImage)
+    ? attachedImage.length
+    : attachedImage
+      ? 1
+      : 0;
+  return `${normalizedText}|images:${imageCount}`;
+}
+
+function restoreSendButton(button) {
+  if (!button?.dataset.spamCooldown) return;
+  const original = sendButtonMarkup.get(button);
+  if (original) button.innerHTML = original;
+  sendButtonMarkup.delete(button);
+  delete button.dataset.spamCooldown;
+}
+
+function showSendCooldown(button, seconds) {
+  if (!button) return;
+  if (!button.dataset.spamCooldown) {
+    sendButtonMarkup.set(button, button.innerHTML);
+    button.innerHTML = "<span class='send-cooldown' aria-hidden='true'></span>";
+    button.dataset.spamCooldown = "true";
+  }
+
+  const counter = button.querySelector(".send-cooldown");
+  if (counter) counter.textContent = String(seconds);
+  button.disabled = true;
+  button.setAttribute("aria-disabled", "true");
+  button.setAttribute("aria-label", `Debés esperar ${seconds} segundos para volver a enviar`);
+  button.dataset.tooltip = `Debés esperar ${seconds} segundos para volver a enviar`;
+  refreshTooltipForTarget(button);
+}
+
+function finishSpamCooldown() {
+  spamCooldownUntil = 0;
+  spamCooldownTimer = 0;
+  getSendButtons().forEach(restoreSendButton);
+  if (dom.messageInput) updateCharCounter(dom.messageInput, false);
+  if (dom.overlayMessageInput) updateCharCounter(dom.overlayMessageInput, true);
+}
+
+function updateSpamCooldownButtons() {
+  const remaining = getSpamCooldownRemaining();
+  if (!remaining) {
+    finishSpamCooldown();
+    return;
+  }
+
+  const seconds = Math.ceil(remaining / 1000);
+  getSendButtons().forEach((button) => showSendCooldown(button, seconds));
+  spamCooldownTimer = window.setTimeout(updateSpamCooldownButtons, 250);
+}
+
+function startSpamCooldown() {
+  lastMessageSpamKey = "";
+  sameMessageCount = 0;
+  lastMessageSentAt = 0;
+  recentMessageSentAt = [];
+  spamCooldownUntil = Date.now() + SPAM_COOLDOWN_MS;
+  window.clearTimeout(spamCooldownTimer);
+  updateSpamCooldownButtons();
+  logEvent("chat", "Envío pausado temporalmente por mensajes repetidos.");
+}
+
+function registerMessageForSpamCheck(text, attachedImage) {
+  const now = Date.now();
+  recentMessageSentAt = recentMessageSentAt.filter(
+    (sentAt) => now - sentAt < RAPID_MESSAGE_WINDOW_MS,
+  );
+  if (recentMessageSentAt.length >= RAPID_MESSAGE_LIMIT) {
+    startSpamCooldown();
+    return false;
+  }
+
+  const spamKey = getSpamKey(text, attachedImage);
+  if (
+    spamKey === lastMessageSpamKey &&
+    now - lastMessageSentAt <= SAME_MESSAGE_WINDOW_MS
+  ) {
+    sameMessageCount += 1;
+  } else {
+    lastMessageSpamKey = spamKey;
+    sameMessageCount = 1;
+  }
+  lastMessageSentAt = now;
+  recentMessageSentAt.push(now);
+
+  if (sameMessageCount > SAME_MESSAGE_LIMIT) {
+    startSpamCooldown();
+    return false;
+  }
+  return true;
+}
 
 export function sendMessage(text, attachedImage) {
   if (!state.session.activeRoom || !state.session.transport) {
@@ -101,6 +222,21 @@ export function submitMessageFrom(input) {
     return;
   }
 
+  if (getSpamCooldownRemaining()) {
+    updateSpamCooldownButtons();
+    input.focus({ preventScroll: true });
+    return;
+  }
+
+  if (
+    state.session.activeRoom &&
+    state.session.transport &&
+    !registerMessageForSpamCheck(text, img)
+  ) {
+    input.focus({ preventScroll: true });
+    return;
+  }
+
   const wasQueued = sendMessage(text, img);
   if (!wasQueued) return;
 
@@ -108,11 +244,11 @@ export function submitMessageFrom(input) {
   updateCharCounter(input, isOverlay);
   if (isOverlay) {
     clearPendingImage(true);
-    dom.overlayMessageInput.focus();
   } else {
     clearPendingImage(false);
   }
   autoResizeMessageInput(input);
+  input.focus({ preventScroll: true });
   if (isOverlay) {
     scheduleInsideChatAutoCollapse();
   } else {
@@ -281,7 +417,7 @@ export function updateCharCounter(input, isOverlay) {
     : isNearLimit
       ? "rgba(255, 145, 72, 0.22)"
       : "rgba(255, 255, 255, 0.12)";
-  const progressVisible = len > 0 ? 1 : 0;
+  const progressVisible = len >= PROGRESS_APPEAR_THRESHOLD ? 1 : 0;
 
   if (counter) {
     counter.textContent = `${len} / ${MAX_CHARS}`;
@@ -290,21 +426,28 @@ export function updateCharCounter(input, isOverlay) {
 
   form.classList.toggle("over-limit", isOver);
   if (sendBtn) {
-    sendBtn.disabled = isOver;
-    sendBtn.setAttribute("aria-disabled", String(isOver));
-    if (isOver) {
-      sendBtn.dataset.tooltip = "Borra texto para poder enviar el mensaje";
-      sendBtn.setAttribute("aria-label", "Borra texto para poder enviar");
+    const cooldownRemaining = getSpamCooldownRemaining();
+    if (cooldownRemaining) {
+      showSendCooldown(sendBtn, Math.ceil(cooldownRemaining / 1000));
     } else {
-      const tooltip = withShortcutHint("Enviar mensaje", "Enter");
-      sendBtn.dataset.tooltip = tooltip;
-      sendBtn.setAttribute("aria-label", tooltip);
+      restoreSendButton(sendBtn);
+      sendBtn.disabled = isOver;
+      sendBtn.setAttribute("aria-disabled", String(isOver));
+      if (isOver) {
+        sendBtn.dataset.tooltip = "Borra texto para poder enviar el mensaje";
+        sendBtn.setAttribute("aria-label", "Borra texto para poder enviar");
+      } else {
+        const tooltip = withShortcutHint("Enviar mensaje", "Enter");
+        sendBtn.dataset.tooltip = tooltip;
+        sendBtn.setAttribute("aria-label", tooltip);
+      }
     }
     sendBtn.style.setProperty("--composer-progress", String(progress));
     sendBtn.style.setProperty("--composer-progress-length", String(progress * 100));
     sendBtn.style.setProperty("--composer-progress-color", progressColor);
     sendBtn.style.setProperty("--composer-progress-track", progressTrack);
     sendBtn.style.setProperty("--composer-progress-visible", String(progressVisible));
+    sendBtn.style.setProperty("--composer-progress-scale", progressVisible ? "1" : "0.78");
     sendBtn.dataset.nearLimit = String(isNearLimit);
     sendBtn.dataset.overLimit = String(isOver);
     refreshTooltipForTarget(sendBtn);

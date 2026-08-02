@@ -48,29 +48,21 @@ export function setConnection(mode, label) {
       : ["online", "local", "starting", "error"].includes(mode)
         ? mode
         : "online";
-  const labelByMode = {
-    online: "Activa",
-    local: "Activa",
-    starting: "Iniciando",
-    error: "Sin conexión",
-  };
   const tooltipByMode = {
     online: "La sala está funcionando",
     local: "La sala está funcionando",
     starting: "Conectando con la sala",
     error: label && label !== "Sin conexión" ? label : "La sala no pudo conectarse",
   };
-  const nextLabel = labelByMode[nextMode];
+  const nextLabel = nextMode === "starting" ? "Iniciando" : nextMode === "error" ? "Sin conexión" : "Conectado";
   const nextTooltip = tooltipByMode[mode === "firebase" ? "online" : nextMode];
 
   dom.connectionStatus.dataset.state = nextMode;
   dom.connectionStatus.dataset.tooltip = nextTooltip;
-  if (dom.connectionStatusLabel) {
-    dom.connectionStatusLabel.textContent = nextLabel;
-  } else {
-    dom.connectionStatus.textContent = nextLabel;
-  }
-  dom.connectionStatus.setAttribute("aria-label", `Estado de la aplicación: ${nextLabel}. ${nextTooltip}`);
+  dom.connectionStatus.setAttribute(
+    "aria-label",
+    `Estado de la aplicación: ${nextLabel}. ${nextTooltip}`,
+  );
   logEvent("connection", nextLabel);
 }
 
@@ -168,7 +160,7 @@ export function showResumeVideoDialog(message) {
   }
 
   if (dom.resumeVideoPopupMessage && message) {
-    dom.resumeVideoPopupMessage.textContent = message;
+    dom.resumeVideoPopupMessage.innerHTML = message;
   }
 
   return new Promise((resolve) => {

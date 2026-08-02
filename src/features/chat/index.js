@@ -115,7 +115,7 @@ export {
   updateCharCounter,
   sendMessage,
 } from "./chat-input.js";
-export { renderMessage } from "./chat-render.js";
+export { renderMessage } from "./chat-render.js?v=20260801-05";
 export {
   clearReplyTarget,
   renderReplyPreview,
@@ -125,8 +125,8 @@ export {
 export { sendVideoEventMessage } from "./chat-system-messages.js";
 export {
   checkScrollPosition,
-  resetExternalUnread,
   resetInsideUnread,
+  resetPageUnread,
 } from "./unread-counters.js";
 export {
   copyMessageText,
@@ -410,6 +410,10 @@ export function wireChatEvents() {
       },
       { passive: false },
     );
+  });
+
+  [dom.mainMessageSend, dom.overlayMessageSend].forEach((button) => {
+    button?.addEventListener("mousedown", (event) => event.preventDefault());
   });
 
   window.addEventListener("scroll", syncUnreadBadgesWithVisibility, {

@@ -31,7 +31,7 @@ import {
   renderMessage,
   setInsideChatVisible,
   resetInsideUnread,
-  resetExternalUnread,
+  resetPageUnread,
   renderReplyPreview,
 } from "./chat/index.js";
 
@@ -186,11 +186,11 @@ export function wireRoomEvents() {
     syncJoinRoomButtonState();
     state.session.hostRoomCode = roomCode;
     sessionStorage.setItem("cine-juntos-host-room", roomCode);
-    void joinRoom(roomCode);
+    void joinRoom(roomCode, "create");
   });
 
   dom.joinRoomButton.addEventListener("click", () => {
-    void joinRoom(dom.roomInput.value);
+    void joinRoom(dom.roomInput.value, "join");
   });
 
   dom.copyInviteButton.addEventListener("click", copyInvite);
@@ -210,7 +210,7 @@ export function wireRoomEvents() {
   });
 }
 
-export async function joinRoom(rawRoomCode) {
+export async function joinRoom(rawRoomCode, sourceButton = "join") {
   const roomCode = sanitizeRoomInput(rawRoomCode);
   if (!roomCode) {
     setSyncStatus("Codigo invalido.");
@@ -232,15 +232,17 @@ export async function joinRoom(rawRoomCode) {
 
   setConnection("starting", "Conectando...");
   setSyncStatus(`Ingresando a ${roomCode}...`);
-  if (dom.joinRoomButton) {
-    dom.joinRoomButton.disabled = true;
-    dom.joinRoomButton.dataset.loading = "true";
-    dom.joinRoomButton.setAttribute("aria-busy", "true");
+  const loadingButton = sourceButton === "create" ? dom.createRoomButton : dom.joinRoomButton;
+  const inactiveButton = sourceButton === "create" ? dom.joinRoomButton : dom.createRoomButton;
+  if (loadingButton) {
+    loadingButton.disabled = true;
+    loadingButton.dataset.loading = "true";
+    loadingButton.setAttribute("aria-busy", "true");
   }
-  if (dom.createRoomButton) {
-    dom.createRoomButton.disabled = true;
-    dom.createRoomButton.dataset.loading = "true";
-    dom.createRoomButton.setAttribute("aria-busy", "true");
+  if (inactiveButton) {
+    inactiveButton.disabled = true;
+    delete inactiveButton.dataset.loading;
+    inactiveButton.removeAttribute("aria-busy");
   }
 
   logEvent("room", `Entrando a sala ${roomCode}.`);
@@ -273,9 +275,11 @@ export async function joinRoom(rawRoomCode) {
     dom.roomInput.value = roomCode;
     syncJoinRoomButtonState();
     dom.roomBadge.textContent = roomCode;
+    setInviteCopyFeedback(false);
     dom.messages.innerHTML = "";
     dom.overlayMessages.innerHTML = "";
     state.chat.lastMessageIds = new Set();
+    resetPageUnread();
     state.chat.replyTarget = null;
     renderPresence();
     state.player.lastRemoteState = null;
@@ -306,7 +310,6 @@ export async function joinRoom(rawRoomCode) {
     setHostBadge(state.session.hostRoomCode === roomCode);
     setInsideChatVisible(false);
     resetInsideUnread();
-    resetExternalUnread();
     renderReplyPreview();
     focusMainWorkspace();
     setSyncStatus("Sala activa.");
@@ -368,11 +371,13 @@ export async function leaveRoom() {
   state.session.knownParticipants = new Set([state.session.clientId]);
   state.session.knownMembers = new Map([[state.session.clientId, getDisplayName()]]);
   state.chat.lastMessageIds = new Set();
+  resetPageUnread();
   state.chat.replyTarget = null;
   state.player.lastRemoteState = null;
   state.player.remoteStateActive = false;
 
   dom.roomBadge.textContent = "Sin sala";
+  setInviteCopyFeedback(false);
   dom.roomInput.value = "";
   syncJoinRoomButtonState();
   dom.messages.innerHTML = "";
@@ -381,7 +386,6 @@ export async function leaveRoom() {
   setHostBadge(false);
   setInsideChatVisible(false);
   resetInsideUnread();
-  resetExternalUnread();
   renderReplyPreview();
   clearUrlRoom();
   setConnection("local", "Modo local");
@@ -399,7 +403,7 @@ function setInviteCopyFeedback(active) {
     if (dom.copyInviteButton) {
       dom.copyInviteButton.dataset.copied = "false";
     }
-  }, 1600);
+  }, 2400);
 }
 
 function updateUrlRoom(roomCode) {

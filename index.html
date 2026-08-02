@@ -10,11 +10,14 @@
     />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' https://unpkg.com https://www.gstatic.com https://cinecompartidopagina-default-rtdb.firebaseio.com https://*.firebaseio.com https://*.firebasedatabase.app; script-src-elem 'self' https://unpkg.com https://www.gstatic.com https://cinecompartidopagina-default-rtdb.firebaseio.com https://*.firebaseio.com https://*.firebasedatabase.app; style-src 'self' 'unsafe-inline'; img-src 'self' http: https: data: blob:; media-src 'self' http: https: blob: data:; connect-src 'self' https://unpkg.com http://localhost:* http://127.0.0.1:* https://www.gstatic.com https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; object-src 'none'; base-uri 'self'; form-action 'self'"
+      content="default-src 'self'; script-src 'self' https://unpkg.com https://www.gstatic.com https://cinecompartidopagina-default-rtdb.firebaseio.com https://*.firebaseio.com https://*.firebasedatabase.app; script-src-elem 'self' https://unpkg.com https://www.gstatic.com https://cinecompartidopagina-default-rtdb.firebaseio.com https://*.firebaseio.com https://*.firebasedatabase.app; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' http: https: data: blob:; media-src 'self' http: https: blob: data:; connect-src 'self' https://unpkg.com http://localhost:* http://127.0.0.1:* https://www.gstatic.com https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; object-src 'none'; base-uri 'self'; form-action 'self'"
     />
     <link rel="preconnect" href="https://unpkg.com" />
     <link rel="preconnect" href="https://www.gstatic.com" />
-    <link rel="stylesheet" href="./public/styles.css?v=20260801-08" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="icon" href="./public/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./public/styles.css?v=20260801-15" />
   </head>
   <body class="is-lobby">
     <div class="app-shell">
@@ -37,27 +40,22 @@
                 </button>
               </span>
               <h1 class="room-chip-title">
-                SALA <span class="room-chip-code room-glow" id="roomBadge">Sin sala</span>
+                <span class="app-status room-chip-status-inline" id="connectionStatus" data-state="starting" data-tooltip="Conectando con la sala" aria-label="Estado de la aplicación: Iniciando. Conectando con la sala">
+                  <span class="app-status-dot" aria-hidden="true"></span>
+                </span>
+                SALA
                 <span class="room-chip-title-actions">
-                  <span class="app-status" id="connectionStatus" data-state="starting" data-tooltip="Conectando con la sala">
-                    <span class="app-status-dot" aria-hidden="true"></span>
-                    <span class="app-status-label">Iniciando</span>
-                  </span>
                   <button
-                    class="room-chip-copy"
+                    class="room-chip-code room-chip-copy room-chip-code-button"
                     id="copyInviteButton"
                     type="button"
-                    aria-label="Invitar"
-                    data-tooltip="Compartir invitacion"
+                    aria-label="Copiar enlace de invitación"
+                    data-tooltip="Click para copiar la invitación"
                   >
-                    <span class="room-chip-copy-main" aria-hidden="true">
-                      <span class="room-chip-copy-default">
-                        <span data-lucide="share-2"></span>
-                        <span>Invitar</span>
-                      </span>
-                      <span class="room-chip-copy-copied">
+                    <span class="room-chip-copy-main">
+                      <span class="room-chip-code-text" id="roomBadge">Sin sala</span>
+                      <span class="room-chip-copy-confirm" aria-hidden="true">
                         <span data-lucide="check"></span>
-                        <span>Copiado</span>
                       </span>
                     </span>
                   </button>
@@ -393,11 +391,11 @@
                     <h2 id="resumeVideoPopupTitle">Retomar reproducción</h2>
                   </div>
                   <p id="resumeVideoPopupMessage" class="player-dialog-message">
-                    Este video ya lo habías dejado en 0:00. ¿Quieres saltar a ese tiempo anterior?
+                    Este video ya lo has reproducido antes en <span class="resume-time-tag">0:00</span> ¿Quieres retomar desde ahí?
                   </p>
                   <div class="player-dialog-actions">
                     <button id="cancelResumeVideoDialogButton" type="button" class="button">Cancelar</button>
-                    <button id="confirmResumeVideoDialogButton" type="button" class="button warning">Saltar al tiempo guardado</button>
+                    <button id="confirmResumeVideoDialogButton" type="button" class="button warning">Saltar</button>
                   </div>
                 </div>
               </div>
@@ -668,7 +666,6 @@
               <span class="chat-collapse-icon-anchor">
                 <span data-lucide="chevron-right"></span>
               </span>
-              <span class="unread-badge chat-unread-badge" id="externalChatUnread" hidden>0</span>
             </button>
           </div>
         </section>
@@ -737,6 +734,6 @@
     <script src="./public/dev-runtime.js?v=20260715-02"></script>
     <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script src="./public/firebase-config.js"></script>
-    <script type="module" src="./src/main.js?v=20260801-02"></script>
+    <script type="module" src="./src/main.js?v=20260801-05"></script>
   </body>
 </html>

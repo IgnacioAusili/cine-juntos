@@ -80,7 +80,11 @@ function wirePlayerOverlayControls() {
     }, delay);
   };
 
-  const revealOverlay = () => {
+  const revealOverlay = (event) => {
+    if (event?.type === "focusin" && dom.playerFrame.dataset.suppressOverlayFocus === "1") {
+      delete dom.playerFrame.dataset.suppressOverlayFocus;
+      return;
+    }
     setOverlayVisible(true);
     scheduleHide();
   };
@@ -94,9 +98,15 @@ function wirePlayerOverlayControls() {
   dom.playerFrame.addEventListener("focusin", revealOverlay);
 
   dom.playerFrame.addEventListener("mouseleave", () => {
-    // Quitar foco de cualquier control antes de esconder, para que no trabe el timer
-    if (document.activeElement && dom.playerFrame.contains(document.activeElement)) {
-      document.activeElement.blur();
+    // El input del chat puede seguir enfocado aunque el cursor salga del video.
+    // Solo quitamos el foco de controles del reproductor para no interrumpir la escritura.
+    const activeElement = document.activeElement;
+    if (
+      activeElement &&
+      dom.playerFrame.contains(activeElement) &&
+      !dom.playerChat?.contains(activeElement)
+    ) {
+      activeElement.blur();
     }
     scheduleHide(400);
   });

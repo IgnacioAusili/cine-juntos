@@ -12,6 +12,15 @@ const recentActivityByParticipantId = new Map();
 function syncEditNameButtonState() {
   if (!dom.editNameButton) return;
   dom.editNameButton.disabled = Boolean(state.chat.nameChangeUsed);
+  if (state.chat.nameChangeUsed) {
+    dom.editNameButton.dataset.tooltip = "Ya superaste los cambios permitidos para tu nombre";
+    dom.editNameButton.setAttribute("aria-label", "Editar nombre deshabilitado. Ya superaste los cambios permitidos para tu nombre");
+    dom.editNameButton.removeAttribute("title");
+  } else {
+    dom.editNameButton.dataset.tooltip = "Editar nombre";
+    dom.editNameButton.setAttribute("aria-label", "Editar nombre");
+    dom.editNameButton.removeAttribute("title");
+  }
 }
 
 function getNameInputMeasureContext() {
@@ -173,6 +182,11 @@ function setIdentityEditing(isEditing) {
   });
 }
 
+function cancelIdentityEditing() {
+  if (dom.chatNameField?.dataset.editing !== "true") return;
+  setIdentityEditing(false);
+}
+
 function commitDisplayNameChange() {
   if (state.chat.nameChangeUsed) {
     setIdentityEditing(false);
@@ -296,7 +310,7 @@ export function renderPresence() {
 
 export function updateDisplayName(value, sourceInput) {
   const nextName = String(value || "").slice(0, 28);
-  const lockedName = localStorage.getItem("cine-juntos-name") || makeGuestName(state.session.clientId);
+  const lockedName = sessionStorage.getItem("cine-juntos-name") || makeGuestName(state.session.clientId);
 
   if (state.chat.nameChangeUsed) {
     if (dom.nameInput) dom.nameInput.value = lockedName;
@@ -311,7 +325,7 @@ export function updateDisplayName(value, sourceInput) {
   if (sourceInput !== dom.nameInput) dom.nameInput.value = nextName;
   if (sourceInput !== dom.lobbyNameInput) dom.lobbyNameInput.value = nextName;
   if (sourceInput === dom.nameInput) syncNameInputWidth();
-  localStorage.setItem("cine-juntos-name", nextName.trim() || makeGuestName(state.session.clientId));
+  sessionStorage.setItem("cine-juntos-name", nextName.trim() || makeGuestName(state.session.clientId));
   state.session.knownMembers.set(state.session.clientId, getDisplayName());
   upsertParticipantRecord(state.session.clientId, { name: getDisplayName() });
   renderDisplayName();
@@ -334,6 +348,10 @@ export function wireIdentityEvents() {
     commitDisplayNameChange();
   });
 
+  dom.confirmNameButton?.addEventListener("pointerdown", () => {
+    dom.nameInput.dataset.commitOnBlur = "1";
+  });
+
   dom.nameInput.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
       event.preventDefault();
@@ -343,8 +361,28 @@ export function wireIdentityEvents() {
 
     if (event.key === "Escape") {
       event.preventDefault();
-      setIdentityEditing(false);
+      cancelIdentityEditing();
     }
+  });
+
+  dom.nameInput.addEventListener("blur", (event) => {
+    if (dom.nameInput.dataset.commitOnBlur === "1") {
+      delete dom.nameInput.dataset.commitOnBlur;
+      return;
+    }
+
+    if (event.relatedTarget instanceof HTMLElement && dom.chatNameField?.contains(event.relatedTarget)) {
+      return;
+    }
+
+    cancelIdentityEditing();
+  });
+
+  document.addEventListener("pointerdown", (event) => {
+    if (dom.chatNameField?.dataset.editing !== "true") return;
+    if (!(event.target instanceof HTMLElement)) return;
+    if (dom.chatNameField.contains(event.target)) return;
+    dom.nameInput.blur();
   });
 
   dom.nameInput.addEventListener("input", () => {
@@ -357,3 +395,5 @@ export function wireIdentityEvents() {
     }
   });
 }
+
+export { cancelIdentityEditing };

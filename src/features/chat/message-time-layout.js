@@ -122,6 +122,16 @@ export function adjustMessageTimeForBubble(bubble) {
     content?.querySelector(".message-media, .message-video, .message-media-link"),
   );
   const isOverlay = Boolean(messageBubble.closest(".overlay-messages"));
+  const isEmojiOnly = messageBubble.classList.contains("message-bubble--emoji-only");
+
+  // Los emojis tienen la hora en una tarjeta independiente debajo del glyph.
+  // No deben recibir el layout de floats usado por mensajes de texto.
+  if (isEmojiOnly) {
+    resetStandaloneTimeLayout(messageBubble, content, timeAnchor);
+    resetMessageTimeLayout(timeAnchor);
+    restoreOriginalText(text);
+    return;
+  }
 
   // Los mensajes simples del overlay usan una franja inferior fija para la
   // hora. No deben entrar en el cálculo de floats, que puede alterar su ancho

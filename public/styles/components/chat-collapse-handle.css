@@ -65,7 +65,7 @@
   height: 100%;
   min-width: 0;
   transform: none;
-  opacity: 0;
+  opacity: 1;
 }
 
 .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone:hover .chat-collapse-handle {

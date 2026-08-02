@@ -2,6 +2,7 @@ import { dom } from "../core/dom.js";
 import { EXAMPLE_VIDEO_URL, getOrCreateClientId, makeGuestName } from "../core/utils.js";
 
 export const firebaseConfig = window.CINE_JUNTOS_FIREBASE_CONFIG || {};
+const SESSION_NAME_KEY = "cine-juntos-name";
 
 export const sessionState = {
   clientId: getOrCreateClientId(),
@@ -30,6 +31,9 @@ export const playerState = {
   lastManualPauseAt: 0,
   lastManualSeekAt: 0,
   lastResumePersistAt: 0,
+  videoLoadCooldownUntil: 0,
+  videoLoadCooldownTimeoutId: null,
+  lastVideoLoadWasReload: false,
   playbackRecoveryPending: false,
   playbackRecoveryAttempting: false,
   playbackRecoveryTimeoutId: null,
@@ -45,7 +49,8 @@ export const playerState = {
 export const chatState = {
   lastMessageIds: new Set(),
   unreadInsideCount: 0,
-  unreadExternalCount: 0,
+  pageUnreadCount: 0,
+  pageTitleBase: document.title,
   autoExpandInsideEnabled: localStorage.getItem("cine-juntos-chat-auto-expand-inside") === "1",
   autoExpandExternalEnabled: localStorage.getItem("cine-juntos-chat-auto-expand-external") === "1",
   autoCollapseInsideTimer: null,
@@ -78,7 +83,7 @@ export const state = {
 
 state.session.knownParticipants = new Set([state.session.clientId]);
 const initialDisplayName =
-  localStorage.getItem("cine-juntos-name") || makeGuestName(state.session.clientId);
+  sessionStorage.getItem(SESSION_NAME_KEY) || makeGuestName(state.session.clientId);
 state.session.knownMembers = new Map([[state.session.clientId, initialDisplayName]]);
 state.session.knownMemberRecords = new Map([[
   state.session.clientId,
@@ -89,18 +94,18 @@ state.session.knownMemberRecords = new Map([[
 ]]);
 
 export function applyInitialDefaults() {
-  const name = localStorage.getItem("cine-juntos-name") || initialDisplayName;
+  const name = sessionStorage.getItem(SESSION_NAME_KEY) || initialDisplayName;
   if (dom.nameInput) dom.nameInput.value = name;
   if (dom.lobbyNameInput) dom.lobbyNameInput.value = name;
   dom.videoUrlInput.value = EXAMPLE_VIDEO_URL;
 }
 
 export function getDisplayName() {
-  const saved = localStorage.getItem("cine-juntos-name");
+  const saved = sessionStorage.getItem(SESSION_NAME_KEY);
   const inputVal = ((dom.lobbyNameInput && dom.lobbyNameInput.value) || "").trim();
   if (inputVal) {
     if (saved !== inputVal) {
-      localStorage.setItem("cine-juntos-name", inputVal);
+      sessionStorage.setItem(SESSION_NAME_KEY, inputVal);
     }
     return inputVal.slice(0, 20);
   }

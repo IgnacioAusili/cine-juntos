@@ -43,7 +43,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
   margin: 0;
   color: var(--text);
   font-size: clamp(1.75rem, 3vw, 2.35rem);
@@ -52,11 +52,16 @@
   letter-spacing: -0.03em;
 }
 
+.room-chip-status-inline {
+  margin-right: 14px;
+  transform: translateX(10px);
+}
+
 .room-chip-title-actions {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  margin-left: 2px;
+  margin-left: 6px;
 }
 
 .room-chip-code {
@@ -71,6 +76,46 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+.room-chip-code-button {
+  appearance: none;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #ffffff;
+  cursor: pointer;
+  gap: 6px;
+  margin-left: 2px;
+  min-height: 0;
+  padding: 0;
+  box-shadow: none;
+  transition:
+    transform 160ms ease,
+    filter 160ms ease,
+    text-shadow 160ms ease,
+    opacity 160ms ease;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.room-chip-code-button:hover,
+.room-chip-code-button:focus-visible {
+  filter: brightness(1.15) saturate(1.05);
+  text-shadow:
+    0 0 6px rgba(255, 255, 255, 0.22),
+    0 0 14px rgba(255, 188, 120, 0.24),
+    0 0 24px rgba(240, 140, 58, 0.16);
+  transform: translateY(-1px);
+}
+
+.room-chip-code-button:focus-visible {
+  outline: none;
+}
+
+.room-chip-code-text {
+  display: inline-flex;
+  align-items: center;
 }
 
 .room-glow {
@@ -125,35 +170,17 @@
 
 .room-chip-copy {
   display: inline-flex;
-  min-height: 38px;
-  align-items: center;
-  justify-content: center;
-  gap: 0;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 8px;
-  background: #13171a;
-  color: #ffffff;
-  padding: 0 14px;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.04),
-    0 6px 18px rgba(0, 0, 0, 0.22);
-  transition:
-    border-color 160ms ease,
-    background 160ms ease,
-    color 160ms ease,
-    transform 160ms ease,
-    box-shadow 160ms ease;
+  position: relative;
+  justify-content: flex-start;
+  overflow: hidden;
 }
 
-.room-chip-copy:hover,
-.room-chip-copy:focus-visible {
-  border-color: rgba(255, 255, 255, 0.2);
-  background: #181d22;
-  color: #ffffff;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    0 8px 20px rgba(0, 0, 0, 0.26);
-  transform: none;
+.room-chip-copy-main {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  transition: transform 160ms ease;
 }
 
 .room-chip-copy svg {
@@ -162,93 +189,62 @@
   flex: 0 0 auto;
 }
 
-.room-chip-copy-main {
-  display: inline-grid;
-  align-items: center;
-  justify-content: center;
-  justify-items: center;
-  gap: 0;
-  white-space: nowrap;
-}
-
-.room-chip-copy-default,
-.room-chip-copy-copied {
-  grid-area: 1 / 1;
+.room-chip-copy-confirm {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  white-space: nowrap;
-  transition: opacity 120ms ease;
-}
-
-.room-chip-copy-default {
-  opacity: 1;
-}
-
-.room-chip-copy-copied {
   opacity: 0;
+  transform: scale(0.85);
+  width: 0;
+  overflow: hidden;
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease,
+    width 160ms ease;
 }
 
-.room-chip-copy[data-copied="true"] .room-chip-copy-default {
-  opacity: 0;
-}
-
-.room-chip-copy[data-copied="true"] .room-chip-copy-copied {
+.room-chip-copy[data-copied="true"] .room-chip-copy-confirm {
   opacity: 1;
+  transform: scale(1);
+  width: 18px;
 }
 
-.room-chip-copy-default svg,
-.room-chip-copy-copied svg {
-  flex: 0 0 auto;
-}
-
-.room-chip-copy-default {
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.01em;
-}
-
-.room-chip-copy-copied {
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.01em;
-}
-
-.room-chip-copy-copied svg {
+.room-chip-copy-confirm svg {
   width: 14px;
   height: 14px;
   color: #7ef0ab;
 }
 
-.room-chip .app-status {
-  min-height: 32px;
-  min-width: 86px;
-  justify-content: center;
-  gap: 8px;
-  border: 1px solid var(--glass-border-strong);
-  border-radius: 999px;
-  background: rgba(19, 23, 26, 0.5);
-  color: var(--text-soft);
-  padding: 0 7px 0 7px;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.04),
-    var(--shadow-sm);
+.room-chip-code-text {
+  font-size: 0.95em;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: #ffffff;
+  background: linear-gradient(180deg, #ffffff 0%, #ffc896 45%, #f08c3a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 0 rgba(0, 0, 0, 0);
 }
 
-.room-chip .app-status-label {
-  display: inline-flex;
-  align-items: center;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.01em;
-  line-height: 1;
+.room-chip .app-status {
+  min-height: 36px;
+  min-width: 0;
+  justify-content: center;
+  gap: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--text-soft);
+  font-size: 1.05em;
+  padding: 0;
+  box-shadow: none;
 }
 
 .room-chip .app-status-dot {
-  width: 5px;
-  height: 5px;
-  flex: 0 0 5px;
+  width: 6px;
+  height: 6px;
+  flex: 0 0 6px;
 }
 
 body.is-lobby .room-chip,

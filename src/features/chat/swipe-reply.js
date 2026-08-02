@@ -1,6 +1,7 @@
 // Motor de gesto swipe-to-reply: factory que encapsula estado y animacion.
-// Recibe elementos (bubble, hint) y un callback onReply. No toca estado global.
-export function createSwipeReply(bubble, hint, { onReply }) {
+// Recibe bubble, hint, companions opcionales y un callback onReply. No toca estado global.
+export function createSwipeReply(bubble, hint, { onReply, companions = [] }) {
+  const swipeTargets = [bubble, ...companions].filter(Boolean);
   // El rail reservado por el layout permite deslizar sin que la burbuja toque el borde.
   const THRESHOLD = 34, MAX_DRAG = 64, LOCK_DIST = 10, V_BIAS = 6;
   const RESTORE_MS = 340, EPS = 2;
@@ -13,8 +14,11 @@ export function createSwipeReply(bubble, hint, { onReply }) {
   let startX = 0, startY = 0, currentX = 0, currentY = 0, currentDx = 0, currentDy = 0;
   let offset = 0, progress = 0, renderFrameId = 0, animationCleanup = null;
   let blockClick = false, confirmPulseTimer = null, hintVisible = false, thresholdReached = false;
+  function setSwipeTransform(value) {
+    for (const target of swipeTargets) target.style.transform = value;
+  }
   function setTransitions(value) {
-    bubble.style.transition = value;
+    for (const target of swipeTargets) target.style.transition = value;
     hint.style.transition = value ? `${value}, ${OPACITY}` : "none";
   }
   function setState(next) {
@@ -40,7 +44,7 @@ export function createSwipeReply(bubble, hint, { onReply }) {
       const hintScale = 0.72 + progress * 0.28;
       // La burbuja deja un hueco a la derecha; la flecha se centra siempre en ese hueco.
       const hintX = swipeDirection > 0 ? -13 + offset / 2 : 13 - offset / 2;
-      bubble.style.transform = offset > 0 ? `translateX(${offset * swipeDirection}px)` : "";
+      setSwipeTransform(offset > 0 ? `translateX(${offset * swipeDirection}px)` : "");
       hint.style.opacity = hintOpacity > 0 ? String(hintOpacity) : "0";
       hint.style.transform = `translate(${hintX}px, -50%) scale(${hintScale})`;
       hintVisible = offset > EPS;
@@ -49,7 +53,7 @@ export function createSwipeReply(bubble, hint, { onReply }) {
   }
   function resetVisuals() {
     if (renderFrameId) { window.cancelAnimationFrame(renderFrameId); renderFrameId = 0; }
-    bubble.style.transition = bubble.style.transform = "";
+    for (const target of swipeTargets) target.style.transition = target.style.transform = "";
     hint.style.transition = "";
     hint.style.opacity = "0";
     hint.style.transform = `translate(${swipeDirection > 0 ? -14 : 14}px, -50%) scale(0.72)`;

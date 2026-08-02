@@ -31,7 +31,7 @@
 .player-frame[data-chat-style="panel"] .player-chat {
   border: 0;
   border-radius: var(--radius-md) 0 0 var(--radius-md);
-  background: rgba(7, 10, 12, 0.2);
+  background: rgba(7, 10, 12, 0.34);
   box-shadow: none;
 }
 

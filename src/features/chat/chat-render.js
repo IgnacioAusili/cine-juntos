@@ -3,14 +3,18 @@ import { state, logEvent } from "../../core/state.js";
 import { MAX_RENDERED_MESSAGES, formatTime, formatClockTime } from "../../core/utils.js";
 import { markParticipantActive, rememberParticipant } from "../presence.js";
 import { wireMessageInteractions } from "./chat-message-interactions.js";
-import { appendMessageContent, truncateText } from "./chat-content-parser.js";
+import { appendMessageContent, truncateText } from "./chat-content-parser.js?v=20260801-01";
 import { getParticipantAccent } from "./chat-participant-color.js";
-import { scheduleMessageTimeAdjustmentForBubble } from "./message-time-layout.js?v=20260731-03";
+import { scheduleMessageTimeAdjustmentForBubble } from "./message-time-layout.js?v=20260801-04";
 import {
   handleIncomingUnread,
+  handleIncomingPageUnread,
   incrementScrollIndicator,
 } from "./unread-counters.js";
 import { setReplyTarget, scrollToMessage } from "./chat-reply.js";
+
+const EMOJI_ONLY_PATTERN = /^(?:[\s\p{Extended_Pictographic}\p{Emoji_Presentation}\p{Emoji_Modifier}\uFE0F\u200D\u20E3]|[0-9#*]\uFE0F?\u20E3)+$/u;
+const EMOJI_GLYPH_PATTERN = /[\p{Extended_Pictographic}\p{Emoji_Presentation}]|[0-9#*]\uFE0F?\u20E3/u;
 
 /**
  * Renderiza un mensaje en los contenedores de chat.
@@ -31,6 +35,7 @@ export function renderMessage(message) {
 
   if (message.from !== state.session.clientId) {
     handleIncomingUnread();
+    handleIncomingPageUnread();
   }
   scheduleMessageTimeAdjustmentForBubble(mainItem?.querySelector(".message-bubble"));
   scheduleMessageTimeAdjustmentForBubble(overlayItem?.querySelector(".message-bubble"));
@@ -42,6 +47,7 @@ export function renderMessage(message) {
  */
 function appendMessageTo(container, message) {
   const isMine = message.from === state.session.clientId;
+  const messageImages = Array.isArray(message?.images) ? message.images : [];
   const item = document.createElement("article");
   item.className = `message${isMine ? " mine" : ""}${message.system ? " system" : ""}`;
   item.dataset.messageId = message.id;
@@ -82,6 +88,17 @@ function appendMessageTo(container, message) {
   const content = document.createElement("div");
   content.className = "message-content";
   const hasReply = Boolean(message.replyTo?.text);
+  const emojiOnlyCount = countEmojiGlyphs(message.text);
+  const isEmojiOnly =
+    !message.system &&
+    !hasReply &&
+    !message.image &&
+    !messageImages.length &&
+    isEmojiOnlyText(message.text);
+  if (isEmojiOnly) {
+    bubble.classList.add("message-bubble--emoji-only");
+    if (emojiOnlyCount > 4) bubble.classList.add("message-bubble--emoji-only-compact");
+  }
   const replyTextRow = hasReply && !message.system ? document.createElement("div") : null;
   if (hasReply) {
     bubble.classList.add("message-bubble--with-reply");
@@ -107,13 +124,12 @@ function appendMessageTo(container, message) {
       const rawText = String(message.text || "").trim();
       if (exactName && rawText.startsWith(exactName)) {
         const bodyText = rawText.slice(exactName.length).trimStart();
-        const isOwnPlaybackIssue =
-          isMine && /^tiene inconvenientes en el video\b/i.test(bodyText);
+        const ownBodyText = isMine ? normalizeOwnSystemBody(bodyText) : "";
 
-        if (isOwnPlaybackIssue) {
+        if (ownBodyText) {
           const body = document.createElement("span");
           body.className = "message-system-body";
-          body.textContent = bodyText.replace(/^tiene\b/i, "Tienes");
+          body.textContent = ownBodyText;
           systemText.append(body);
         } else {
           const systemName = document.createElement("span");
@@ -178,7 +194,11 @@ function appendMessageTo(container, message) {
     item.append(meta, bubbleRow);
 
     const replyInput = container === dom.overlayMessages ? dom.overlayMessageInput : dom.messageInput;
-    wireMessageInteractions(bubble, message, hint, { setReplyTarget, replyInput });
+    wireMessageInteractions(bubble, message, hint, {
+      setReplyTarget,
+      replyInput,
+      companions: [meta],
+    });
   }
   container.append(item);
   trimRenderedMessages(container);
@@ -197,6 +217,45 @@ function appendMessageTo(container, message) {
   }
 
   return item;
+}
+
+function normalizeOwnSystemBody(bodyText) {
+  if (/^tiene inconvenientes en el video\b/i.test(bodyText)) {
+    return bodyText.replace(/^tiene\b/i, "Tienes");
+  }
+
+  const rules = [
+    [/^inició el video$/i, "Iniciaste el video"],
+    [/^reprodujo el video en (.+)$/i, "Reprodujiste el video en $1"],
+    [/^pausó el video en (.+)$/i, "Pausaste el video en $1"],
+    [/^saltó a (.+)$/i, "Saltaste a $1"],
+    [/^cambió la velocidad a (.+)$/i, "Cambiaste la velocidad a $1"],
+  ];
+
+  for (const [pattern, replacement] of rules) {
+    if (pattern.test(bodyText)) {
+      return bodyText.replace(pattern, replacement);
+    }
+  }
+
+  return "";
+}
+
+function isEmojiOnlyText(text) {
+  const value = String(text || "").trim();
+  return Boolean(value) && EMOJI_GLYPH_PATTERN.test(value) && EMOJI_ONLY_PATTERN.test(value);
+}
+
+function countEmojiGlyphs(text) {
+  const value = String(text || "").trim();
+  if (!value) return 0;
+
+  if (typeof Intl.Segmenter === "function") {
+    const segmenter = new Intl.Segmenter(undefined, { granularity: "grapheme" });
+    return [...segmenter.segment(value)].filter(({ segment }) => EMOJI_GLYPH_PATTERN.test(segment)).length;
+  }
+
+  return [...value].filter((character) => EMOJI_GLYPH_PATTERN.test(character)).length;
 }
 
 /**

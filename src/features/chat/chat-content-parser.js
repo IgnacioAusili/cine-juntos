@@ -33,7 +33,7 @@ export function appendMessageContent(container, text) {
     const textNode = document.createElement("div");
     const isEmojiOnly = isEmojiOnlyText(trimmedText);
     textNode.className = `message-text${isEmojiOnly ? " message-text--emoji" : ""}`;
-    textNode.textContent = trimmedText;
+    appendEmojiAwareText(textNode, trimmedText);
     container.append(textNode);
     if (isEmojiOnly) {
       container.classList.add("message-content--emoji");
@@ -47,7 +47,7 @@ export function appendMessageContent(container, text) {
     const textNode = document.createElement("div");
     const isEmojiOnly = isEmojiOnlyText(textWithoutUrl);
     textNode.className = `message-text${isEmojiOnly ? " message-text--emoji" : ""}`;
-    textNode.textContent = textWithoutUrl;
+    appendEmojiAwareText(textNode, textWithoutUrl);
     container.append(textNode);
     if (isEmojiOnly && container.childElementCount === 1) {
       container.classList.add("message-content--emoji");
@@ -129,6 +129,33 @@ function isEmojiOnlyText(text) {
   const value = String(text || "").trim();
   if (!value) return false;
   return /^[\p{Extended_Pictographic}\p{Emoji_Presentation}\p{Regional_Indicator}\u200D\uFE0F\s]+$/u.test(value);
+}
+
+function appendEmojiAwareText(container, text) {
+  const value = String(text || "");
+  if (typeof Intl.Segmenter !== "function") {
+    container.textContent = value;
+    return;
+  }
+
+  const segmenter = new Intl.Segmenter(undefined, { granularity: "grapheme" });
+  for (const { segment } of segmenter.segment(value)) {
+    if (!isEmojiSegment(segment)) {
+      container.append(document.createTextNode(segment));
+      continue;
+    }
+
+    const emoji = document.createElement("span");
+    emoji.className = "message-emoji";
+    emoji.textContent = segment;
+    container.append(emoji);
+  }
+}
+
+function isEmojiSegment(segment) {
+  return /[\p{Extended_Pictographic}\p{Emoji_Presentation}\p{Regional_Indicator}]|[0-9#*]\uFE0F?\u20E3/u.test(
+    segment,
+  );
 }
 
 function appendVideoPreview(container, videoUrl, fallbackUrl) {

@@ -4,9 +4,11 @@
   overflow-x: hidden;
   overflow-y: auto;
   scroll-padding-bottom: var(--chat-message-bottom-reserve, 132px);
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: #13171a;
+  border: 0;
+  border-radius: 12px 12px 0 0;
+  background:
+    linear-gradient(180deg, rgba(8, 11, 13, 0.2), rgba(8, 11, 13, 0.08)),
+    rgba(10, 13, 15, 0.34);
   padding: 8px 8px var(--chat-message-bottom-reserve, 132px);
 }
 
@@ -185,10 +187,12 @@
 }
 
 .message-bubble--emoji-only .message-text {
-  display: inline;
+  display: inline-block;
   font-family: var(--emoji-font-family);
   font-size: 1.5rem;
-  line-height: 1.12;
+  /* Segoe UI Emoji necesita un poco más de alto que el texto común para no
+     recortar los extremos del glifo. */
+  line-height: 1.25;
 }
 
 .message-bubble--emoji-only-compact .message-text {

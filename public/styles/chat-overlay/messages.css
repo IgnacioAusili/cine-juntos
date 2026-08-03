@@ -185,10 +185,11 @@
 }
 
 .overlay-messages .message-bubble--emoji-only .message-text {
-  display: inline;
+  display: inline-block;
   font-family: var(--emoji-font-family);
   font-size: 1.4rem;
-  line-height: 1.12;
+  /* Evita que los extremos de los emojis queden fuera de su line box. */
+  line-height: 1.25;
 }
 
 .overlay-messages .message-bubble--emoji-only-compact .message-text {
@@ -209,7 +210,8 @@
   flex: 0 0 auto;
   height: auto;
   min-height: 0;
-  margin: 0;
+  /* Mantiene la misma separación vertical que la tarjeta de hora del chat lateral. */
+  margin: 3px 0 0;
   shape-outside: none;
   align-items: center;
   justify-content: center;

@@ -38,7 +38,8 @@
     background 0.2s ease;
   box-shadow:
     0 14px 24px -12px rgba(0, 0, 0, 0.42),
-    0 6px 12px -8px rgba(0, 0, 0, 0.22);
+    0 6px 12px -8px rgba(0, 0, 0, 0.22),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset;
 }
 
 .message-form::after {
@@ -73,7 +74,8 @@
   box-shadow:
     0 16px 26px -12px rgba(0, 0, 0, 0.48),
     0 7px 14px -8px rgba(0, 0, 0, 0.24),
-    0 0 0 1px rgba(255, 255, 255, 0.1);
+    0 0 0 1px rgba(255, 255, 255, 0.1),
+    0 0 0 1px rgba(47, 184, 164, 0.12) inset;
 }
 
 .message-form .input-wrapper textarea {

@@ -7,7 +7,7 @@
   grid-area: chat;
   grid-template-rows: auto minmax(0, 1fr);
   gap: 8px;
-  padding: 8px;
+  padding: 8px 0 0;
   border: 1px solid var(--glass-border-strong);
   border-radius: var(--radius-md);
   background: var(--glass-bg);

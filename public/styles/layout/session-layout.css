@@ -36,8 +36,8 @@
 
 .session-view[data-chat-dock="right"] .workspace {
   column-gap: 0;
-  grid-template-columns: minmax(0, 1fr) var(--chat-handle-gap) var(--chat-panel-width);
-  grid-template-areas: "video handle chat";
+  grid-template-columns: minmax(0, 1fr) var(--chat-panel-width);
+  grid-template-areas: "video chat";
 }
 
 .session-view[data-chat-dock="bottom"] .workspace {
@@ -62,8 +62,8 @@
 
 .session-view.chat-collapsed[data-chat-dock="right"] .workspace {
   column-gap: 0;
-  grid-template-columns: minmax(0, 1fr) 0px 0px;
-  grid-template-areas: "video handle chat";
+  grid-template-columns: minmax(0, 1fr) 0px;
+  grid-template-areas: "video chat";
 }
 
 .session-view.chat-collapsed[data-chat-dock="bottom"] .workspace {

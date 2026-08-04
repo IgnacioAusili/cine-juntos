@@ -62,16 +62,20 @@ function scheduleMessageTimeAdjustmentAfterLayout() {
 function setCollapseHandleTransitioning(isTransitioning) {
   if (!dom.collapseChatButton) return;
 
+  const collapseHandleZone = dom.collapseChatButton.closest(".chat-collapse-hover-zone");
+
   if (state.chat.collapseHandleTransitionTimer) {
     window.clearTimeout(state.chat.collapseHandleTransitionTimer);
     state.chat.collapseHandleTransitionTimer = null;
   }
 
   dom.collapseChatButton.classList.toggle("is-transitioning", isTransitioning);
+  collapseHandleZone?.classList.toggle("is-transitioning", isTransitioning);
   if (!isTransitioning) return;
 
   state.chat.collapseHandleTransitionTimer = window.setTimeout(() => {
     dom.collapseChatButton.classList.remove("is-transitioning");
+    collapseHandleZone?.classList.remove("is-transitioning");
     state.chat.collapseHandleTransitionTimer = null;
   }, COLLAPSE_HANDLE_HIDE_MS);
 }

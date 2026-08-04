@@ -19,6 +19,8 @@ import { withShortcutHint } from "../../core/utils.js";
 const PLAYER_OVERLAY_IDLE_MS = 1600;
 let fallbackFullscreenActive = false;
 
+const USE_NATIVE_FULLSCREEN = true;
+
 export function wireFullscreenEvents() {
   dom.pageFullscreenButton.addEventListener("click", () => {
     togglePageFullscreen();
@@ -203,8 +205,14 @@ export async function togglePageFullscreen() {
       return;
     }
 
-    if (document.fullscreenEnabled && typeof document.documentElement?.requestFullscreen === "function") {
-      await document.documentElement.requestFullscreen();
+    const fullscreenTarget = dom.sessionView?.closest(".app-shell")
+      || dom.sessionView
+      || document.documentElement;
+    if (USE_NATIVE_FULLSCREEN && document.fullscreenEnabled && typeof fullscreenTarget?.requestFullscreen === "function") {
+      // La app completa conserva la cabecera de la sala dentro del fullscreen,
+      // pero el contenedor se ajusta por inset en lugar de heredar el alto
+      // previo del <html> durante la transicion de Chrome.
+      await fullscreenTarget.requestFullscreen({ navigationUI: "hide" });
     } else {
       fallbackFullscreenActive = true;
       handleFullscreenChange();

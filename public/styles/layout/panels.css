@@ -8,8 +8,10 @@
   grid-template-rows: auto minmax(0, 1fr);
   gap: 8px;
   padding: 8px 0 0;
+  padding-inline: 2px;
   border: 1px solid var(--glass-border-strong);
-  border-radius: var(--radius-md);
+  border-left: 0;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
   background: var(--glass-bg);
   box-shadow: var(--shadow-lg);
   backdrop-filter: blur(16px);

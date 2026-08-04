@@ -162,30 +162,30 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 8px;
-  background: #13171a;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
   color: var(--text-soft);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.04),
-    0 6px 18px rgba(0, 0, 0, 0.22);
+  box-shadow: none;
+  padding: 0;
   transition:
-    border-color 160ms ease,
     background 160ms ease,
     color 160ms ease,
-    transform 160ms ease,
-    box-shadow 160ms ease;
+    transform 160ms ease;
 }
 
 .dock-button:hover,
 .dock-button:focus-visible {
-  border-color: rgba(255, 255, 255, 0.2);
-  background: #181d22;
+  background: rgba(255, 255, 255, 0.08);
   color: #ffffff;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    0 8px 20px rgba(0, 0, 0, 0.26);
+  box-shadow: none;
   transform: none;
+}
+
+.dock-button svg {
+  width: 24px !important;
+  height: 24px !important;
+  stroke-width: 2.5;
 }
 
 @keyframes buttonSpin {

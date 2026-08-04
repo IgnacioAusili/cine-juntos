@@ -26,7 +26,7 @@
   position: relative;
   z-index: 1;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   width: calc(100% - 4px);
   margin: 0 auto;
   box-sizing: border-box;
@@ -169,7 +169,7 @@
   border: 0;
   background: transparent;
   padding: 0;
-  margin-bottom: 0;
+  margin-bottom: 2px;
   color: var(--muted);
   opacity: 0.62;
   cursor: pointer;
@@ -187,8 +187,7 @@
   width: 28px;
   min-height: 28px;
   height: 28px;
-  margin: 0;
-  margin-right: 6px;
+  margin: 0 6px 2px 0;
   padding: 0;
   border: 0;
   border-radius: 50%;

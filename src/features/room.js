@@ -5,6 +5,7 @@ import {
 import {
   state,
   getDisplayName,
+  LAST_ROOM_KEY,
   logEvent,
 } from "../core/state.js";
 import {
@@ -142,6 +143,13 @@ function sanitizeRoomInput(value) {
   return extractRoomCodeFromValue(value);
 }
 
+function rememberLastRoom(roomCode) {
+  const normalizedRoom = sanitizeRoomInput(roomCode);
+  if (normalizedRoom) {
+    localStorage.setItem(LAST_ROOM_KEY, normalizedRoom);
+  }
+}
+
 function syncJoinRoomButtonState() {
   if (!dom.joinRoomButton) return;
   dom.joinRoomButton.disabled = !sanitizeRoomInput(dom.roomInput.value);
@@ -166,6 +174,7 @@ export function wireRoomEvents() {
       dom.roomInput.value = nextValue;
       dom.roomInput.setSelectionRange(cursor, cursor);
     }
+    rememberLastRoom(nextValue);
     syncJoinRoomButtonState();
   });
 
@@ -176,13 +185,15 @@ export function wireRoomEvents() {
     event.preventDefault();
     const roomCode = sanitizeRoomInput(pastedText);
     dom.roomInput.value = roomCode;
+    rememberLastRoom(roomCode);
     syncJoinRoomButtonState();
     void joinRoom(pastedText);
   });
 
   dom.createRoomButton.addEventListener("click", () => {
-    const roomCode = generateRoomCode();
+    const roomCode = sanitizeRoomInput(dom.roomInput.value) || generateRoomCode();
     dom.roomInput.value = roomCode;
+    rememberLastRoom(roomCode);
     syncJoinRoomButtonState();
     state.session.hostRoomCode = roomCode;
     sessionStorage.setItem("cine-juntos-host-room", roomCode);
@@ -216,6 +227,7 @@ export async function joinRoom(rawRoomCode, sourceButton = "join") {
     setSyncStatus("Codigo invalido.");
     return;
   }
+  rememberLastRoom(roomCode);
 
   const activeTabs = readActiveTabs();
   const isCurrentTabAlreadyActive = activeTabs.some((record) => record.tabId === getTabId());
@@ -272,6 +284,7 @@ export async function joinRoom(rawRoomCode, sourceButton = "join") {
     writeActiveTabRecord(roomCode);
 
     state.session.activeRoom = roomCode;
+    rememberLastRoom(roomCode);
     dom.roomInput.value = roomCode;
     syncJoinRoomButtonState();
     dom.roomBadge.textContent = roomCode;
@@ -378,7 +391,7 @@ export async function leaveRoom() {
 
   dom.roomBadge.textContent = "Sin sala";
   setInviteCopyFeedback(false);
-  dom.roomInput.value = "";
+  dom.roomInput.value = localStorage.getItem(LAST_ROOM_KEY) || "";
   syncJoinRoomButtonState();
   dom.messages.innerHTML = "";
   dom.overlayMessages.innerHTML = "";

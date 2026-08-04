@@ -3,6 +3,32 @@ import { EXAMPLE_VIDEO_URL, getOrCreateClientId, makeGuestName } from "../core/u
 
 export const firebaseConfig = window.CINE_JUNTOS_FIREBASE_CONFIG || {};
 const SESSION_NAME_KEY = "cine-juntos-name";
+export const LAST_ROOM_KEY = "cine-juntos-last-room";
+
+function isLegacyAutomaticName(value) {
+  return /^Usuario [A-Z0-9]{4}$/i.test(String(value || "").trim());
+}
+
+function readPersistedName() {
+  const savedName = localStorage.getItem(SESSION_NAME_KEY);
+  if (savedName && !isLegacyAutomaticName(savedName)) return savedName;
+
+  // Migrar el nombre que ya existía antes de hacerlo persistente entre sesiones.
+  const legacyName = sessionStorage.getItem(SESSION_NAME_KEY);
+  if (legacyName && !isLegacyAutomaticName(legacyName)) {
+    localStorage.setItem(SESSION_NAME_KEY, legacyName);
+    return legacyName;
+  }
+
+  if (savedName && isLegacyAutomaticName(savedName)) {
+    localStorage.removeItem(SESSION_NAME_KEY);
+  }
+  if (legacyName && isLegacyAutomaticName(legacyName)) {
+    sessionStorage.removeItem(SESSION_NAME_KEY);
+  }
+
+  return "";
+}
 
 export const sessionState = {
   clientId: getOrCreateClientId(),
@@ -82,8 +108,9 @@ export const state = {
 };
 
 state.session.knownParticipants = new Set([state.session.clientId]);
-const initialDisplayName =
-  sessionStorage.getItem(SESSION_NAME_KEY) || makeGuestName(state.session.clientId);
+const persistedName = readPersistedName();
+const initialDisplayName = persistedName || makeGuestName(state.session.clientId);
+if (!persistedName) localStorage.setItem(SESSION_NAME_KEY, initialDisplayName);
 state.session.knownMembers = new Map([[state.session.clientId, initialDisplayName]]);
 state.session.knownMemberRecords = new Map([[
   state.session.clientId,
@@ -94,18 +121,19 @@ state.session.knownMemberRecords = new Map([[
 ]]);
 
 export function applyInitialDefaults() {
-  const name = sessionStorage.getItem(SESSION_NAME_KEY) || initialDisplayName;
+  const name = localStorage.getItem(SESSION_NAME_KEY) || initialDisplayName;
   if (dom.nameInput) dom.nameInput.value = name;
   if (dom.lobbyNameInput) dom.lobbyNameInput.value = name;
+  if (dom.roomInput) dom.roomInput.value = localStorage.getItem(LAST_ROOM_KEY) || "";
   dom.videoUrlInput.value = EXAMPLE_VIDEO_URL;
 }
 
 export function getDisplayName() {
-  const saved = sessionStorage.getItem(SESSION_NAME_KEY);
+  const saved = localStorage.getItem(SESSION_NAME_KEY);
   const inputVal = ((dom.lobbyNameInput && dom.lobbyNameInput.value) || "").trim();
   if (inputVal) {
     if (saved !== inputVal) {
-      sessionStorage.setItem(SESSION_NAME_KEY, inputVal);
+      localStorage.setItem(SESSION_NAME_KEY, inputVal);
     }
     return inputVal.slice(0, 20);
   }

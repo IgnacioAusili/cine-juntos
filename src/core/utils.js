@@ -50,6 +50,50 @@ export const REMOTE_VIDEO_EXTENSIONS = [".mp4", ".webm", ".ogg", ".mov", ".m4v"]
 export const CHAT_VIDEO_PREVIEW_MAX_SECONDS = 5 * 60;
 export const MAX_RENDERED_MESSAGES = 100;
 export const MAX_ROOM_PARTICIPANTS = 8;
+export const GUEST_ANIMALS = [
+  "Lobo",
+  "Jaguar",
+  "Lince",
+  "Halcón",
+  "Cuervo",
+  "Búho",
+  "Zorro",
+  "León",
+  "Tigre",
+  "Pantera",
+  "Cobra",
+  "Orca",
+  "Oso",
+  "Puma",
+  "Águila",
+  "Delfín",
+  "Fénix",
+  "Koala",
+  "Cóndor",
+  "Bisonte",
+];
+export const GUEST_ADJECTIVES = [
+  "Astral",
+  "Boreal",
+  "Carmesí",
+  "Sombrío",
+  "Glacial",
+  "Celestial",
+  "Arcano",
+  "Eterno",
+  "Salvaje",
+  "Imperial",
+  "Dorado",
+  "Plateado",
+  "Espectral",
+  "Místico",
+  "Ancestral",
+  "Sigiloso",
+  "Aurora",
+  "Trueno",
+  "Eclipse",
+  "Relámpago",
+];
 export const CHAT_DOCKS = ["right", "bottom", "top"];
 export const CHAT_DOCK_META = {
   right: { icon: "panel-right", next: "bottom", label: "lateral", tooltip: "Mover chat abajo" },
@@ -71,8 +115,9 @@ export function hasFirebaseConfig(config) {
 }
 
 export function makeGuestName(clientId) {
-  const suffix = String(clientId || "").slice(-4).toUpperCase();
-  return suffix ? `Usuario ${suffix}` : "Usuario";
+  const animal = GUEST_ANIMALS[Math.floor(Math.random() * GUEST_ANIMALS.length)];
+  const adjective = GUEST_ADJECTIVES[Math.floor(Math.random() * GUEST_ADJECTIVES.length)];
+  return `${animal} ${adjective}`;
 }
 
 export function makeParticipantLabel(participantId) {

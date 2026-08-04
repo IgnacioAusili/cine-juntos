@@ -15,6 +15,20 @@
     min-height: calc(100vh - 84px);
   }
 
+  .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone {
+    top: 58%;
+    right: auto;
+    bottom: auto;
+    left: 50%;
+    width: 48px;
+    height: 30px;
+    transform: translate(-50%, -50%);
+  }
+
+  .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-icon-anchor {
+    opacity: 1;
+  }
+
   .session-view[data-chat-dock] .workspace {
     grid-template-columns: 1fr;
     grid-template-rows: minmax(360px, 58vh) minmax(360px, 42vh);

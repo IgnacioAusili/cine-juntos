@@ -14,6 +14,7 @@
   transition:
     opacity 160ms ease,
     transform 160ms ease;
+  padding-inline: 2px;
   --chat-composer-reserve: 92px;
 }
 

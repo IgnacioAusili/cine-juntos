@@ -53,7 +53,7 @@ export function resetInsideUnread() {
 function updatePageTitle() {
   const unreadCount = state.chat.pageUnreadCount;
   const baseTitle = state.chat.pageTitleBase || document.title;
-  document.title = unreadCount > 0 ? `(${unreadCount}) ${baseTitle}` : baseTitle;
+  document.title = unreadCount > 0 ? `(+${unreadCount}) ${baseTitle}` : baseTitle;
 }
 
 export function incrementPageUnread() {

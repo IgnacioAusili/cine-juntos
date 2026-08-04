@@ -310,7 +310,7 @@ export function renderPresence() {
 
 export function updateDisplayName(value, sourceInput) {
   const nextName = String(value || "").slice(0, 28);
-  const lockedName = sessionStorage.getItem("cine-juntos-name") || makeGuestName(state.session.clientId);
+  const lockedName = localStorage.getItem("cine-juntos-name") || makeGuestName(state.session.clientId);
 
   if (state.chat.nameChangeUsed) {
     if (dom.nameInput) dom.nameInput.value = lockedName;
@@ -325,7 +325,7 @@ export function updateDisplayName(value, sourceInput) {
   if (sourceInput !== dom.nameInput) dom.nameInput.value = nextName;
   if (sourceInput !== dom.lobbyNameInput) dom.lobbyNameInput.value = nextName;
   if (sourceInput === dom.nameInput) syncNameInputWidth();
-  sessionStorage.setItem("cine-juntos-name", nextName.trim() || makeGuestName(state.session.clientId));
+  localStorage.setItem("cine-juntos-name", nextName.trim() || makeGuestName(state.session.clientId));
   state.session.knownMembers.set(state.session.clientId, getDisplayName());
   upsertParticipantRecord(state.session.clientId, { name: getDisplayName() });
   renderDisplayName();

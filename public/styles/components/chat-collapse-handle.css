@@ -26,26 +26,41 @@
 
 .chat-collapse-icon-anchor {
   display: inline-flex;
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   align-items: center;
   justify-content: center;
-  flex: 0 0 22px;
+  flex: 0 0 24px;
 }
 
 .chat-collapse-handle svg {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   stroke-width: 2.2px;
   transition: transform 0.2s ease, color 0.2s ease;
 }
 
 .chat-collapse-handle.is-transitioning .chat-collapse-icon-anchor {
   opacity: 0;
-  transform: scale(0.7);
+  transform: none;
 }
 
 .chat-collapse-handle.is-transitioning svg {
+  transition: none;
+}
+
+/* El control cambia de anclaje mientras la grilla se contrae. Mantenerlo
+   interactivo durante ese reflow permite que :hover lo revele en una
+   posicion intermedia y produce un rebote visible. */
+.chat-collapse-hover-zone.is-transitioning {
+  pointer-events: none;
+}
+
+.chat-collapse-hover-zone.is-transitioning .chat-collapse-handle,
+.chat-collapse-hover-zone.is-transitioning .chat-collapse-icon-anchor {
+  visibility: hidden;
+  opacity: 0 !important;
+  transform: none;
   transition: none;
 }
 
@@ -73,13 +88,29 @@
 }
 
 .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone {
-  position: relative;
-  grid-area: handle;
-  width: var(--chat-handle-gap);
+  position: absolute;
+  top: 0;
+  right: calc(var(--chat-panel-width) - 12px);
+  bottom: 0;
+  left: auto;
+  width: 24px;
   height: 100%;
   min-width: 0;
-  justify-self: center;
-  align-self: stretch;
+  transform: none;
+}
+
+.session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-icon-anchor {
+  opacity: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  box-shadow: none;
+  transition: opacity 160ms ease;
+}
+
+.session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone:hover .chat-collapse-icon-anchor,
+.session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-handle:focus-visible .chat-collapse-icon-anchor {
+  opacity: 1;
 }
 
 .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-hover-zone {

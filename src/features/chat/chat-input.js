@@ -39,6 +39,7 @@ const RAPID_MESSAGE_LIMIT = 5;
 const RAPID_MESSAGE_WINDOW_MS = 1000;
 const SPAM_COOLDOWN_MS = 15000;
 const PROGRESS_APPEAR_THRESHOLD = 150;
+let emojiFontReady = null;
 
 let lastMessageSpamKey = "";
 let sameMessageCount = 0;
@@ -46,6 +47,16 @@ let lastMessageSentAt = 0;
 let recentMessageSentAt = [];
 let spamCooldownUntil = 0;
 let spamCooldownTimer = 0;
+
+function preloadEmojiFont() {
+  if (emojiFontReady) return emojiFontReady;
+  if (!document.fonts?.load) return Promise.resolve();
+
+  emojiFontReady = document.fonts
+    .load('0.82rem "Noto Color Emoji"', "😂🫦")
+    .catch(() => undefined);
+  return emojiFontReady;
+}
 
 function getSendButtons() {
   return [dom.mainMessageSend, dom.overlayMessageSend].filter(Boolean);
@@ -314,6 +325,7 @@ export function autoResizeMessageInput(input) {
 }
 
 export function buildEmojiPicker() {
+  void preloadEmojiFont();
   dom.emojiPopover.innerHTML = "";
   EMOJI_PICKER_ITEMS.forEach(({ emoji, tags }) => {
     const button = document.createElement("button");
@@ -335,7 +347,7 @@ export function buildEmojiPicker() {
   });
 }
 
-export function toggleEmojiPicker(input, anchor) {
+export async function toggleEmojiPicker(input, anchor) {
   state.ui.activeEmojiInput = input;
   if (!dom.emojiPopover.hidden && dom.emojiPopover.dataset.anchor === anchor.id) {
     hideEmojiPicker();
@@ -344,6 +356,7 @@ export function toggleEmojiPicker(input, anchor) {
 
   const selectionStart = input?.selectionStart ?? input?.value.length ?? 0;
   const selectionEnd = input?.selectionEnd ?? input?.value.length ?? 0;
+  await preloadEmojiFont();
   const rect = anchor.getBoundingClientRect();
   dom.emojiPopover.hidden = false;
   dom.emojiPopover.dataset.anchor = anchor.id;

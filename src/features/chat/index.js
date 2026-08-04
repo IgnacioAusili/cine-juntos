@@ -263,6 +263,11 @@ export function wireChatEvents() {
     hideEmojiPicker();
   });
 
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Tab" || dom.emojiPopover.hidden) return;
+    hideEmojiPicker();
+  });
+
   document.addEventListener("click", (event) => {
     if (dom.messageMenu.hidden) return;
     if (Date.now() - state.chat.messageMenuOpenedAt < 220) return;

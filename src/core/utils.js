@@ -1,36 +1,50 @@
 export const FIREBASE_VERSION = "10.12.5";
 export const EXAMPLE_VIDEO_URL = "https://cdn.truefilesize.com/mp4/sample-200mb.mp4";
 export const EMOJI_PICKER_ITEMS = [
-  { emoji: "😊", tags: ["sonrisa"] },
-  { emoji: "😄", tags: ["risa"] },
-  { emoji: "😉", tags: ["guiño"] },
-  { emoji: "🥰", tags: ["enamorado"] },
-  { emoji: "😏", tags: ["coqueto"] },
-  { emoji: "🤤", tags: ["antojo"] },
-  { emoji: "😳", tags: ["sonrojo"] },
-  { emoji: "🙈", tags: ["esconderse"] },
-  { emoji: "🫣", tags: ["mirar"] },
-  { emoji: "🤫", tags: ["silencio"] },
-  { emoji: "🤔", tags: ["duda"] },
-  { emoji: "🤨", tags: ["sospecha"] },
-  { emoji: "😕", tags: ["confundido"] },
-  { emoji: "😒", tags: ["fastidio"] },
-  { emoji: "🥺", tags: ["tierno"] },
-  { emoji: "🥹", tags: ["emocion"] },
-  { emoji: "😔", tags: ["triste"] },
-  { emoji: "😥", tags: ["desanimado"] },
-  { emoji: "😭", tags: ["lloro"] },
-  { emoji: "💔", tags: ["corazonroto"] },
-  { emoji: "😮‍💨", tags: ["suspiro"] },
-  { emoji: "🤯", tags: ["asombro"] },
-  { emoji: "😡", tags: ["enojo"] },
-  { emoji: "🤮", tags: ["asco"] },
-  { emoji: "❌", tags: ["no"] },
-  { emoji: "👎", tags: ["mal"] },
-  { emoji: "✅", tags: ["ok"] },
-  { emoji: "👍", tags: ["bien"] },
-  { emoji: "🥳", tags: ["fiesta"] },
-  { emoji: "🙂‍↕️", tags: ["asentir"] },
+  // Alegria y afecto.
+  { emoji: "😊", tags: ["sonrisa", "feliz"] },
+  { emoji: "😂", tags: ["risa", "carcajada"] },
+  { emoji: "🤣", tags: ["jajaja", "risota"] },
+  { emoji: "😉", tags: ["guiño", "complice"] },
+  { emoji: "🥰", tags: ["enamorado", "amoroso"] },
+  { emoji: "😍", tags: ["amor", "adoracion"] },
+  { emoji: "🥺", tags: ["tierno", "suplicar"] },
+  { emoji: "🥹", tags: ["emocion", "orgullo"] },
+  { emoji: "😏", tags: ["coqueto", "picardia"] },
+  { emoji: "🫦", tags: ["morder", "labios"] },
+  { emoji: "🤤", tags: ["antojo", "babear"] },
+  { emoji: "🥳", tags: ["fiesta", "celebrar"] },
+
+  // Gestos, estados y reacciones.
+  { emoji: "😳", tags: ["sonrojo", "vergüenza"] },
+  { emoji: "🤔", tags: ["duda", "pensar"] },
+  { emoji: "🤨", tags: ["sospecha", "desconfianza"] },
+  { emoji: "😕", tags: ["confundido", "confusion"] },
+  { emoji: "🤯", tags: ["asombro", "explosion"] },
+  { emoji: "😎", tags: ["cool", "genial"] },
+  { emoji: "😱", tags: ["miedo", "susto"] },
+  { emoji: "😮‍💨", tags: ["suspiro", "alivio"] },
+  { emoji: "🤫", tags: ["silencio", "secreto"] },
+  { emoji: "🙈", tags: ["esconderse", "vergonzoso"] },
+  { emoji: "🫣", tags: ["mirar", "curioso"] },
+
+  // Tristeza y dolor.
+  { emoji: "😔", tags: ["triste", "melancolia"] },
+  { emoji: "😭", tags: ["lloro", "lagrimas"] },
+  { emoji: "💔", tags: ["desamor", "herido"] },
+
+  // Enojo y rechazo.
+  { emoji: "😡", tags: ["enojo", "furia"] },
+  { emoji: "🤮", tags: ["asco", "nausea"] },
+  { emoji: "😒", tags: ["fastidio", "molesto"] },
+  { emoji: "❌", tags: ["no", "error"] },
+  { emoji: "👎", tags: ["mal", "desacuerdo"] },
+
+  // Aprobacion.
+  { emoji: "✅", tags: ["ok", "correcto"] },
+  { emoji: "👍", tags: ["bien", "aprobado"] },
+  { emoji: "🙂‍↕️", tags: ["asentir", "aceptar"] },
+  { emoji: "🙏", tags: ["gracias", "favor"] },
 ];
 export const EMOJIS = EMOJI_PICKER_ITEMS.map((item) => item.emoji);
 

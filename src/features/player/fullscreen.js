@@ -140,6 +140,26 @@ function wirePlayerOverlayControls() {
   chatCollapseHoverZone?.addEventListener("mouseleave", () => {
     scheduleHide(400);
   });
+
+  // Ajustar el volumen con la rueda tambien mantiene activa la barra. Se
+  // escucha en captura para cubrir el caso en que el evento termine sobre el
+  // reproductor por el pointer-events del overlay oculto.
+  document.addEventListener("wheel", (event) => {
+    const volumeGroup = dom.playerVolumeGroup;
+    if (!volumeGroup) return;
+
+    const isInsideVolumeGroup = event.target instanceof Node && volumeGroup.contains(event.target);
+    const rect = volumeGroup.getBoundingClientRect();
+    const isOverVolumeGroup = event.clientX >= rect.left
+      && event.clientX <= rect.right
+      && event.clientY >= rect.top
+      && event.clientY <= rect.bottom;
+
+    if (isInsideVolumeGroup || isOverVolumeGroup) {
+      revealOverlay(event);
+    }
+  }, { passive: true, capture: true });
+
   dom.playerFrame.addEventListener("focusout", () => {
     scheduleHide(800);
   });

@@ -1,7 +1,12 @@
 // Motor de gesto swipe-to-reply: factory que encapsula estado y animacion.
 // Recibe bubble, hint, companions opcionales y un callback onReply. No toca estado global.
-export function createSwipeReply(bubble, hint, { onReply, companions = [] }) {
+export function createSwipeReply(
+  bubble,
+  hint,
+  { onReply, companions = [], pointerCaptureTarget = bubble },
+) {
   const swipeTargets = [bubble, ...companions].filter(Boolean);
+  const captureTarget = pointerCaptureTarget || bubble;
   // El rail reservado por el layout permite deslizar sin que la burbuja toque el borde.
   const THRESHOLD = 34, MAX_DRAG = 64, LOCK_DIST = 10, V_BIAS = 6;
   const RESTORE_MS = 340, EPS = 2;
@@ -91,8 +96,8 @@ export function createSwipeReply(bubble, hint, { onReply, companions = [] }) {
   }
   function finalize() {
     tracking = directionLocked = false;
-    if (pointerId != null && bubble.hasPointerCapture?.(pointerId)) {
-      try { bubble.releasePointerCapture(pointerId); } catch { /* liberada */ }
+    if (pointerId != null && captureTarget.hasPointerCapture?.(pointerId)) {
+      try { captureTarget.releasePointerCapture(pointerId); } catch { /* liberada */ }
     }
     pointerId = null;
     pointerType = "";
@@ -121,7 +126,7 @@ export function createSwipeReply(bubble, hint, { onReply, companions = [] }) {
     blockClick = false;
     setTransitions("");
     setState("idle");
-    try { bubble.setPointerCapture(event.pointerId); } catch { /* invalida */ }
+    try { captureTarget.setPointerCapture(event.pointerId); } catch { /* invalida */ }
   }
   function cancelSwipe(shouldAnimate) {
     if (shouldAnimate && offset > 0) {

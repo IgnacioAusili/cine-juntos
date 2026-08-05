@@ -32,6 +32,8 @@ import {
 } from "./image-compress.js";
 
 const floatingComposerObservers = new WeakMap();
+const CHAT_MESSAGE_BOTTOM_GAP = 12;
+const CHAT_OVERLAY_MESSAGE_BOTTOM_GAP = 4;
 const sendButtonMarkup = new WeakMap();
 const SAME_MESSAGE_LIMIT = 4;
 const SAME_MESSAGE_WINDOW_MS = 2500;
@@ -484,13 +486,26 @@ export function wireFloatingComposerLayout() {
     const container = form.closest(".chat-area, .player-chat");
     if (!container) return;
     const messagesContainer = form === dom.overlayMessageForm ? dom.overlayMessages : dom.messages;
+    const messagesWrap = messagesContainer?.closest(".messages-wrap");
+    const inputWrapper = form.querySelector(".input-wrapper");
+    wireChatScrollbar(messagesContainer);
 
     const updateReserve = () => {
       const wasPinnedToBottom = isPinnedToBottom(messagesContainer);
       const reserve = Math.ceil(form.getBoundingClientRect().height);
       const computedStyle = window.getComputedStyle(form);
       const bottomGap = Math.max(0, Math.round(Number.parseFloat(computedStyle.bottom) || 0));
-      const messageReserve = reserve + bottomGap + 2;
+      const messageGap = form === dom.overlayMessageForm
+        ? CHAT_OVERLAY_MESSAGE_BOTTOM_GAP
+        : CHAT_MESSAGE_BOTTOM_GAP;
+      const messageReserve = reserve + bottomGap + 2 + messageGap;
+      if (messagesWrap && inputWrapper) {
+        const messagesWrapRect = messagesWrap.getBoundingClientRect();
+        const inputRect = inputWrapper.getBoundingClientRect();
+        const visualEnd = Math.max(0, Math.round(inputRect.top - messagesWrapRect.top));
+        messagesWrap.style.setProperty("--chat-scrollbar-visual-end", `${visualEnd}px`);
+        syncChatScrollbar(messagesContainer);
+      }
       container.style.setProperty("--chat-composer-reserve", `${reserve}px`);
       container.style.setProperty("--chat-message-bottom-reserve", `${messageReserve}px`);
       if (wasPinnedToBottom) {
@@ -504,8 +519,45 @@ export function wireFloatingComposerLayout() {
 
     floatingComposerObservers.set(form, observer);
     observer.observe(form);
+    window.addEventListener("resize", updateReserve, { passive: true });
     updateReserve();
   });
+}
+
+function wireChatScrollbar(messagesContainer) {
+  if (!messagesContainer || messagesContainer.dataset.chatScrollbarBound === "true") return;
+  messagesContainer.dataset.chatScrollbarBound = "true";
+
+  const update = () => syncChatScrollbar(messagesContainer);
+  messagesContainer.addEventListener("scroll", update, { passive: true });
+  window.addEventListener("resize", update, { passive: true });
+  update();
+}
+
+function syncChatScrollbar(messagesContainer) {
+  const shell = messagesContainer?.closest(".messages-wrap");
+  const track = shell?.querySelector(".chat-scrollbar");
+  const thumb = shell?.querySelector(".chat-scrollbar-thumb");
+  if (!shell || !track || !thumb) return;
+
+  const overflow = messagesContainer.scrollHeight - messagesContainer.clientHeight;
+  if (overflow <= 1) {
+    shell.removeAttribute("data-scrollbar-visible");
+    thumb.style.height = "";
+    thumb.style.transform = "";
+    return;
+  }
+
+  const trackHeight = Math.max(0, track.clientHeight);
+  const ratio = messagesContainer.clientHeight / messagesContainer.scrollHeight;
+  const thumbHeight = Math.max(12, Math.min(trackHeight, Math.round(trackHeight * ratio)));
+  const maxOffset = Math.max(0, trackHeight - thumbHeight);
+  const scrollRatio = messagesContainer.scrollTop / overflow;
+  const top = Math.round(maxOffset * scrollRatio);
+
+  thumb.style.height = `${thumbHeight}px`;
+  thumb.style.transform = `translateY(${top}px)`;
+  shell.setAttribute("data-scrollbar-visible", "true");
 }
 
 function syncComposerScrollbar(input) {

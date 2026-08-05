@@ -57,7 +57,9 @@ async function applyRemoteState(statePayload, force = false) {
     const isNewVideoEvent = statePayload.action === "video";
     if (statePayload.src && (sourceIsDifferent || isNewVideoEvent)) {
       setVideoSource(statePayload.src, false, {
-        announceLoadCompletion: isNewVideoEvent,
+        // El mensaje de carga lo publica quien eligio el video. El cliente
+        // receptor solo debe aplicar la fuente, no anunciarla como propia.
+        announceLoadCompletion: false,
       });
       await waitForVideoMetadata().catch(() => {});
     }

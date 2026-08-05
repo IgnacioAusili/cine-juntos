@@ -24,6 +24,12 @@ export function sendVideoEventMessage(action, currentState) {
     system: true,
     createdAt: getTransportNow(),
   };
+  if (action === "video-ready") {
+    message.videoEvent = {
+      action,
+      isReload: Boolean(currentState.isReload),
+    };
+  }
 
   state.session.transport.sendMessage(message).catch((error) => {
     console.error(error);
@@ -58,10 +64,7 @@ function describeVideoEvent(action, currentState) {
     return isOwnEvent ? "" : `${name} recargó el video`;
   }
   if (action === "video-ready") {
-    if (isOwnEvent) {
-      return currentState.isReload ? "Recargaste el video" : "Ingresaste un video nuevo";
-    }
-    return `${name} recargó el video`;
+    return currentState.isReload ? "Recargaste el video para todos" : "Ingresaste un video nuevo";
   }
   if (action === "hold") return `${name} ${describePlaybackIssue(currentState.issueReason)} en ${time}`;
   return "";

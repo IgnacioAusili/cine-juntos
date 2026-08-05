@@ -33,7 +33,7 @@ import {
 } from "./chat-layout.js";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260802-02";
 
-const CHAT_SCROLL_WHEEL_MULTIPLIER = 0.55;
+const CHAT_SCROLL_WHEEL_MULTIPLIER = 0.35;
 const DOM_DELTA_PIXEL = 0;
 const DOM_DELTA_LINE = 1;
 const DOM_DELTA_PAGE = 2;

@@ -6,6 +6,46 @@
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
+  --chat-scrollbar-visual-end: calc(100% - var(--chat-message-bottom-reserve, 132px) + 2px);
+  --chat-scrollbar-visual-inset: 5px;
+}
+
+.messages-wrap .messages,
+.messages-wrap .overlay-messages {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.messages-wrap .messages::-webkit-scrollbar,
+.messages-wrap .overlay-messages::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.chat-scrollbar {
+  position: absolute;
+  top: var(--chat-scrollbar-visual-inset);
+  right: 0;
+  height: max(0px, calc(var(--chat-scrollbar-visual-end) - (var(--chat-scrollbar-visual-inset) * 2)));
+  z-index: 3;
+  width: 6px;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+  pointer-events: none;
+}
+
+.messages-wrap[data-scrollbar-visible="true"] .chat-scrollbar {
+  opacity: 1;
+}
+
+.chat-scrollbar-thumb {
+  position: absolute;
+  top: 0;
+  left: 1px;
+  width: 4px;
+  min-height: 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
 }
 
 .messages-wrap .messages,

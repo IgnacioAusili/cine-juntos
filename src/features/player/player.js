@@ -236,7 +236,10 @@ export function loadVideoFromUrl(source, origin) {
     return;
   }
 
-  const currentSourceKey = getCurrentVideoSourceKey();
+  // El valor inicial del input puede contener una URL de ejemplo, pero eso no
+  // significa que ya haya un video cargado. Para detectar una recarga hay que
+  // comparar únicamente contra la fuente real del reproductor.
+  const currentSourceKey = getLoadedVideoSourceKey();
   const nextSourceKey = getVideoSourceKey(source);
   const isReload = Boolean(currentSourceKey && currentSourceKey === nextSourceKey);
   setVideoSource(source, true, { isReload });
@@ -825,6 +828,12 @@ function getCurrentVideoSourceKey() {
     dom.videoPlayer.currentSrc ||
     dom.videoPlayer.getAttribute("src") ||
     dom.videoUrlInput.value.trim(),
+  );
+}
+
+function getLoadedVideoSourceKey() {
+  return getVideoSourceKey(
+    dom.videoPlayer.currentSrc || dom.videoPlayer.getAttribute("src") || "",
   );
 }
 

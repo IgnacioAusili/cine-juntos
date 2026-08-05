@@ -10,11 +10,18 @@ export function wireMessageInteractions(
   bubble,
   message,
   hint,
-  { setReplyTarget, replyInput, companions = [] },
+  {
+    setReplyTarget,
+    replyInput,
+    companions = [],
+    interactionTarget = bubble,
+    interactionBand = interactionTarget,
+  },
 ) {
   const swipe = createSwipeReply(bubble, hint, {
     onReply: () => setReplyTarget?.(message, replyInput),
     companions,
+    pointerCaptureTarget: interactionTarget,
   });
 
   function clearLongPress() {
@@ -33,26 +40,40 @@ export function wireMessageInteractions(
     }, LONG_PRESS_DELAY);
   }
 
+  function isWithinInteractionBand(event) {
+    if (interactionBand === interactionTarget) return true;
+    const rect = interactionBand.getBoundingClientRect();
+    return event.clientY >= rect.top && event.clientY <= rect.bottom;
+  }
+
   // --- listeners ---
 
-  bubble.addEventListener("contextmenu", (event) => {
+  interactionTarget.addEventListener("contextmenu", (event) => {
+    if (!isWithinInteractionBand(event)) return;
     event.preventDefault();
     showMessageMenu(message, event.clientX, event.clientY, replyInput);
   });
 
-  bubble.addEventListener("dragstart", (event) => {
+  interactionTarget.addEventListener("dragstart", (event) => {
+    if (bubble.contains(event.target)) return;
     event.preventDefault();
   });
 
-  bubble.addEventListener("click", (event) => {
+  interactionTarget.addEventListener("click", (event) => {
     if (!swipe.blockClick) return;
     swipe.blockClick = false;
     event.preventDefault();
     event.stopPropagation();
   }, true);
 
-  bubble.addEventListener("pointerdown", (event) => {
+  interactionTarget.addEventListener("pointerdown", (event) => {
     if (event.button && event.button !== 0) return;
+    if (!isWithinInteractionBand(event)) return;
+    // La burbuja queda fuera de la superficie de reply para permitir
+    // seleccionar texto sin que el gesto intercepte el puntero.
+    if (bubble.contains(event.target)) {
+      return;
+    }
     if (event.target instanceof HTMLElement && event.target.closest("button, input, textarea, select")) {
       return;
     }
@@ -67,24 +88,24 @@ export function wireMessageInteractions(
     }
   });
 
-  bubble.addEventListener("pointermove", (event) => {
+  interactionTarget.addEventListener("pointermove", (event) => {
     if (!swipe.tracking || event.pointerId !== swipe.pointerId) return;
     swipe.updateSwipe(event.clientX, event.clientY);
   });
 
-  bubble.addEventListener("pointerup", (event) => {
+  interactionTarget.addEventListener("pointerup", (event) => {
     if (event.pointerId !== swipe.pointerId) return;
     clearLongPress();
     swipe.endSwipe();
   });
 
-  bubble.addEventListener("pointercancel", (event) => {
+  interactionTarget.addEventListener("pointercancel", (event) => {
     if (event.pointerId !== swipe.pointerId) return;
     clearLongPress();
     swipe.cancelSwipe(swipe.offset > 0);
   });
 
-  bubble.addEventListener("lostpointercapture", () => {
+  interactionTarget.addEventListener("lostpointercapture", () => {
     if (swipe.tracking) {
       clearLongPress();
       swipe.cancelSwipe(swipe.offset > 0);

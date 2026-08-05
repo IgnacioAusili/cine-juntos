@@ -8,6 +8,8 @@
   width: min(260px, calc(100% - 10px));
   max-height: min(62%, 330px);
   grid-template-rows: auto minmax(0, 1fr);
+  border-bottom-right-radius: var(--radius-md);
+  overflow: hidden;
   opacity: 0;
   pointer-events: none;
   transform: translateX(16px);
@@ -31,7 +33,7 @@
 
 .player-frame[data-chat-style="panel"] .player-chat {
   border: 0;
-  border-radius: var(--radius-md) 0 0 var(--radius-md);
+  border-radius: var(--radius-md) 0 var(--radius-md) var(--radius-md);
   background: rgba(7, 10, 12, 0.34);
   box-shadow: none;
 }

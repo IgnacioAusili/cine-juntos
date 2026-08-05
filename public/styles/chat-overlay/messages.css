@@ -11,13 +11,7 @@
   pointer-events: auto;
   border: 0;
   background: transparent;
-  padding: 0px 8px 8px 8px;
-}
-
-.overlay-messages::after {
-  content: "";
-  flex: 0 0 max(0px, calc(var(--chat-message-bottom-reserve, 132px) - 8px));
-  width: 100%;
+  padding: 0 8px var(--chat-message-bottom-reserve, 132px) 8px;
 }
 
 .overlay-messages .message {

@@ -47,10 +47,19 @@ export function renderMessage(message) {
  */
 function appendMessageTo(container, message) {
   const isMine = message.from === state.session.clientId;
+  const authorKey = String(message.from || message.name || "").trim();
+  const previousMessage = container.lastElementChild;
+  const isContinuation = Boolean(
+    !message.system &&
+    !previousMessage?.classList.contains("system") &&
+    previousMessage?.dataset.authorId === authorKey,
+  );
+  const shouldRenderAuthorName = !isContinuation;
   const messageImages = Array.isArray(message?.images) ? message.images : [];
   const item = document.createElement("article");
   item.className = `message${isMine ? " mine" : ""}${message.system ? " system" : ""}`;
   item.dataset.messageId = message.id;
+  item.dataset.authorId = authorKey;
   item.style.setProperty("--participant-accent", getParticipantAccent(message.from || message.name));
 
   const meta = document.createElement("div");
@@ -77,9 +86,9 @@ function appendMessageTo(container, message) {
 
   if (isMine) {
     if (tsBtn) meta.append(tsBtn);
-    meta.append(metaName);
+    if (shouldRenderAuthorName) meta.append(metaName);
   } else {
-    meta.append(metaName);
+    if (shouldRenderAuthorName) meta.append(metaName);
     if (tsBtn) meta.append(tsBtn);
   }
 
@@ -121,7 +130,7 @@ function appendMessageTo(container, message) {
       systemText.className = "message-system-text";
 
       const exactName = String(message.name || "Invitado").trim();
-      const rawText = String(message.text || "").trim();
+      const rawText = getSystemMessageText(message, isMine);
       if (exactName && rawText.startsWith(exactName)) {
         const bodyText = rawText.slice(exactName.length).trimStart();
         const ownBodyText = isMine ? normalizeOwnSystemBody(bodyText) : "";
@@ -191,13 +200,16 @@ function appendMessageTo(container, message) {
     hintWrapper.append(hint);
 
     bubbleRow.append(bubble, hintWrapper);
-    item.append(meta, bubbleRow);
+    if (shouldRenderAuthorName || tsBtn) item.append(meta);
+    item.append(bubbleRow);
 
     const replyInput = container === dom.overlayMessages ? dom.overlayMessageInput : dom.messageInput;
     wireMessageInteractions(bubble, message, hint, {
       setReplyTarget,
       replyInput,
       companions: [meta],
+      interactionTarget: item,
+      interactionBand: bubbleRow,
     });
   }
   container.append(item);
@@ -217,6 +229,16 @@ function appendMessageTo(container, message) {
   }
 
   return item;
+}
+
+function getSystemMessageText(message, isMine) {
+  const videoEvent = message.videoEvent;
+  if (videoEvent?.action === "video-ready" && videoEvent.isReload) {
+    return isMine
+      ? "Recargaste el video para todos"
+      : `${String(message.name || "Invitado").trim()} recargó el video para todos`;
+  }
+  return String(message.text || "").trim();
 }
 
 function normalizeOwnSystemBody(bodyText) {

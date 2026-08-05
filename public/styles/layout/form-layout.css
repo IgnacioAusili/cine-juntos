@@ -17,6 +17,12 @@
   padding: 0px 8px 0px 8px;
 }
 
+.session-view[data-chat-dock="bottom"] .chat-tools {
+  min-height: 68px;
+  padding-top: 26px;
+  padding-bottom: 12px;
+}
+
 .chat-tools-actions {
   display: inline-flex;
   min-width: 0;
@@ -37,6 +43,7 @@
   align-items: center;
   gap: 4px;
   margin-left: -4px;
+  transform: translate(-4px, -3px);
   color: var(--text-faint);
   font-size: 0.64rem;
   font-weight: 700;
@@ -45,11 +52,12 @@
 }
 
 .chat-name-field .label-row .help-button {
-  transform: translateY(-1px);
+  transform: none;
 }
 
 .chat-name-editor {
   display: grid;
+  position: relative;
   min-width: 0;
   align-items: center;
   justify-items: start;
@@ -89,6 +97,12 @@
   pointer-events: none;
   transform: translateY(-6px);
   padding: 0;
+}
+
+.chat-name-editor:not([data-editing="true"]) .chat-name-edit-row,
+.chat-name-editor[data-editing="true"] .chat-name-display-row {
+  position: absolute;
+  inset: 0 auto auto 0;
 }
 
 .chat-name-edit-row input[type="text"] {
@@ -299,7 +313,8 @@
 }
 
 .session-toolbar-body input {
-  width: 100%;
+  width: calc(100% - 8px);
+  margin-inline: 4px;
   min-width: 0;
   min-height: 36px;
   padding: 0 12px;

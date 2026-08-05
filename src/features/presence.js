@@ -63,8 +63,9 @@ function syncNameInputWidth() {
   const gapValue = dom.chatNameEditor ? window.getComputedStyle(dom.chatNameEditor).columnGap : "0px";
   const rowGap = Number.parseFloat(gapValue);
   const safeRowGap = Number.isFinite(rowGap) ? rowGap : 0;
-  const maxWidth = Math.max(24, fieldWidth - buttonWidth - safeRowGap);
-  const minWidth = Math.max(24, nameInputBaseWidth || 0);
+  const availableWidth = Math.max(24, fieldWidth - buttonWidth - safeRowGap);
+  const maxWidth = Math.max(24, Math.min(nameInputBaseWidth || availableWidth, availableWidth));
+  const minWidth = 24;
   const targetWidth = Math.max(minWidth, Math.min(textWidth, maxWidth));
 
   input.style.width = `${targetWidth}px`;

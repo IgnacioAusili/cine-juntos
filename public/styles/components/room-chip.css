@@ -32,11 +32,12 @@
   gap: 4px;
   margin-bottom: 4px;
   min-width: 0;
+  transform: translateY(3px);
 }
 
 .room-chip-label-row .help-button {
   align-self: center;
-  transform: translateY(-1px);
+  transform: none;
 }
 
 .room-chip-title {

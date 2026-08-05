@@ -7,6 +7,7 @@ import {
   FULLSCREEN_SNAP_THRESHOLD,
 } from "../../core/utils.js";
 import {
+  hideTooltip,
   hydrateIcons,
 } from "../icons-tooltips.js";
 import { focusFullscreenWorkspace, setSyncStatus } from "../session-ui.js";
@@ -64,6 +65,8 @@ let hideTimer = null;
 function wirePlayerOverlayControls() {
   if (!dom.playerFrame || !dom.pageFullscreenButton) return;
 
+  const chatCollapseHoverZone = dom.collapseChatButton?.closest(".chat-collapse-hover-zone");
+
   const setOverlayVisible = (isVisible) => {
     dom.playerFrame.classList.toggle("player-overlay-visible", isVisible);
   };
@@ -78,8 +81,15 @@ function wirePlayerOverlayControls() {
   const scheduleHide = (delay = PLAYER_OVERLAY_IDLE_MS) => {
     clearHideTimer();
     hideTimer = window.setTimeout(() => {
+      hideTooltip();
       setOverlayVisible(false);
     }, delay);
+  };
+
+  const revealOverlayFromChatHandle = () => {
+    clearHideTimer();
+    setOverlayVisible(true);
+    scheduleHide();
   };
 
   const revealOverlay = (event) => {
@@ -99,7 +109,18 @@ function wirePlayerOverlayControls() {
   dom.playerFrame.addEventListener("mouseenter", revealOverlay);
   dom.playerFrame.addEventListener("focusin", revealOverlay);
 
-  dom.playerFrame.addEventListener("mouseleave", () => {
+  dom.playerFrame.addEventListener("mouseleave", (event) => {
+    // El control de contraer/expandir queda visualmente en la union del video
+    // y el chat, aunque su nodo no sea hijo del player. Mientras el cursor
+    // entra en esa zona seguimos considerando activo el overlay del video.
+    if (
+      chatCollapseHoverZone?.matches(":hover")
+      || chatCollapseHoverZone?.contains(event.relatedTarget)
+    ) {
+      revealOverlayFromChatHandle();
+      return;
+    }
+
     // El input del chat puede seguir enfocado aunque el cursor salga del video.
     // Solo quitamos el foco de controles del reproductor para no interrumpir la escritura.
     const activeElement = document.activeElement;
@@ -110,6 +131,13 @@ function wirePlayerOverlayControls() {
     ) {
       activeElement.blur();
     }
+    scheduleHide(400);
+  });
+
+  chatCollapseHoverZone?.addEventListener("mouseenter", revealOverlayFromChatHandle);
+  chatCollapseHoverZone?.addEventListener("mousemove", revealOverlayFromChatHandle, { passive: true });
+  chatCollapseHoverZone?.addEventListener("mousedown", revealOverlayFromChatHandle, { passive: true });
+  chatCollapseHoverZone?.addEventListener("mouseleave", () => {
     scheduleHide(400);
   });
   dom.playerFrame.addEventListener("focusout", () => {

@@ -153,6 +153,24 @@
   height: 22px;
   opacity: 0;
   transform: none;
+  cursor: default;
+}
+
+.session-view:not(.chat-collapsed)[data-chat-dock="bottom"] .chat-collapse-handle {
+  opacity: 0;
+}
+
+.session-view:not(.chat-collapsed)[data-chat-dock="bottom"]:has(.player-frame.player-overlay-visible) .chat-collapse-handle {
+  opacity: 1;
+  cursor: pointer;
+}
+
+.session-view:not(.chat-collapsed)[data-chat-dock="bottom"] .chat-collapse-icon-anchor {
+  opacity: 1;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .session-view[data-chat-dock="bottom"] .chat-collapse-hover-zone {
@@ -164,10 +182,6 @@
   height: 34px;
   transform: translate(-50%, -50%);
   transition: opacity 160ms ease, color 160ms ease, background 160ms ease;
-}
-
-.session-view[data-chat-dock="bottom"] .chat-collapse-hover-zone:hover .chat-collapse-handle {
-  opacity: 1;
 }
 
 .session-view.chat-collapsed[data-chat-dock="bottom"] .chat-collapse-hover-zone {

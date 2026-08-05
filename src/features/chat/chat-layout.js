@@ -18,6 +18,7 @@ const AUTO_EXPAND_EXTERNAL_KEY = "cine-juntos-chat-auto-expand-external";
 const CHAT_LAYOUT_SETTLE_MS = 320;
 const COLLAPSE_HANDLE_HIDE_MS = CHAT_LAYOUT_SETTLE_MS + 40;
 const CHAT_SCROLL_SNAP_LOCK_MS = 700;
+const BOTTOM_DOCK_UNION_REVEAL_PX = 0;
 
 let layoutAdjustmentTimer = 0;
 let expandScrollTimer = 0;
@@ -46,6 +47,18 @@ function clearAutoCollapseTimer(isOverlay) {
     window.clearTimeout(timerId);
     state.chat[timerKey] = null;
   }
+}
+
+export function revealBottomDockUnion(behavior = "smooth") {
+  if (!dom.chatArea) return;
+
+  syncExternalChatCollapseHandleOffset();
+  const chatTop = dom.chatArea.getBoundingClientRect().top + window.scrollY;
+  window.scrollTo({
+    top: Math.max(0, Math.round(chatTop - BOTTOM_DOCK_UNION_REVEAL_PX)),
+    behavior,
+  });
+  window.requestAnimationFrame(syncExternalChatCollapseHandleOffset);
 }
 
 function scheduleMessageTimeAdjustmentAfterLayout() {
@@ -163,12 +176,17 @@ export function syncExternalChatCollapseHandleOffset() {
 
   const workspaceRect = dom.workspace.getBoundingClientRect();
   const chatRect = dom.chatArea.getBoundingClientRect();
-  const dockGap = Number.parseFloat(
+  const parsedDockGap = Number.parseFloat(
     getComputedStyle(dom.sessionView).getPropertyValue("--chat-bottom-dock-gap"),
-  ) || 24;
+  );
+  const dockGap = Number.isFinite(parsedDockGap) ? parsedDockGap : 24;
+  const parsedArrowOffset = Number.parseFloat(
+    getComputedStyle(dom.sessionView).getPropertyValue("--chat-bottom-header-arrow-offset"),
+  );
+  const arrowOffset = Number.isFinite(parsedArrowOffset) ? parsedArrowOffset : 16;
   const handleTop = Math.max(
     0,
-    Math.round(chatRect.top - workspaceRect.top - dockGap / 2),
+    Math.round(chatRect.top - workspaceRect.top + arrowOffset - dockGap / 2),
   );
   const playerControlBar = dom.playerFrame?.querySelector(".player-controls-bar");
   const playerControlBarRect = playerControlBar?.getBoundingClientRect();
@@ -242,6 +260,10 @@ export function setChatDock(dock) {
   scheduleExternalChatCollapseHandleOffset();
   logEvent("ui", `Chat lateral en posicion: ${meta.label}.`);
 
+  if (nextDock === "bottom" && !dom.sessionView.classList.contains("chat-collapsed")) {
+    window.requestAnimationFrame(() => revealBottomDockUnion());
+  }
+
   const isFullscreen = document.body.classList.contains("fullscreen-mode") || Boolean(document.fullscreenElement);
   if (isFullscreen) {
     focusFullscreenWorkspace();
@@ -285,6 +307,11 @@ export function setExternalChatCollapsed(collapsed) {
       expandScrollTimer = 0;
       lockChatScrollSnapDuringProgrammaticScroll();
       window.requestAnimationFrame(() => {
+        if (dom.sessionView.dataset.chatDock === "bottom" && dom.chatArea) {
+          revealBottomDockUnion();
+          return;
+        }
+
         dom.chatArea?.scrollIntoView({
           block: "start",
           inline: "nearest",

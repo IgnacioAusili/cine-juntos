@@ -28,6 +28,7 @@ import {
   setInsideChatStyle,
   setInsideChatVisible,
   syncExternalChatCollapseHandleOffset,
+  revealBottomDockUnion,
   syncChatAutoExpandControls,
 } from "./chat-layout.js";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260802-02";
@@ -151,6 +152,12 @@ export function wireChatEvents() {
   if ("ResizeObserver" in window && dom.workspace) {
     const chatHandleResizeObserver = new ResizeObserver(() => {
       syncExternalChatCollapseHandleOffset();
+      if (
+        dom.sessionView?.dataset.chatDock === "bottom" &&
+        !dom.sessionView.classList.contains("chat-collapsed")
+      ) {
+        revealBottomDockUnion("auto");
+      }
     });
     chatHandleResizeObserver.observe(dom.workspace);
   }

@@ -7,7 +7,8 @@
 }
 
 .session-view[data-chat-dock="bottom"] {
-  --chat-bottom-dock-gap: 24px;
+  --chat-bottom-dock-gap: 0px;
+    --chat-bottom-header-arrow-offset: 16px;
   padding-bottom: 0;
 }
 
@@ -43,10 +44,10 @@
 .session-view[data-chat-dock="bottom"] .workspace {
   height: auto;
   padding-top: var(--app-shell-gutter);
-  row-gap: var(--chat-bottom-dock-gap);
+  row-gap: 0;
   grid-template-rows:
     calc(100dvh - (var(--app-shell-gutter) * 2))
-    minmax(0, calc(100dvh - var(--chat-bottom-dock-gap) - var(--app-shell-gutter)));
+    minmax(0, 100dvh);
   grid-template-areas:
     "video"
     "chat";

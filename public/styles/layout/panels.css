@@ -55,6 +55,19 @@
   padding: 0;
 }
 
+/* El dock inferior sigue la misma anchura del reproductor y deja una union
+   visible entre ambos bloques para anclar el control de colapso. */
+.session-view[data-chat-dock="bottom"] .player-frame {
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.session-view[data-chat-dock="bottom"] .chat-area {
+  padding-top: 0;
+  border-left: 1px solid var(--glass-border-strong);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+}
+
 /* Evita que el preview de respuesta amplie una columna de chat angosta. */
 .chat-area > * {
   min-width: 0;

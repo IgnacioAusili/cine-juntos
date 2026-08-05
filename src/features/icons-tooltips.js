@@ -149,7 +149,7 @@ function positionTooltip(anchor) {
   dom.tooltipLayer.style.left = `${left}px`;
 }
 
-function hideTooltip() {
+export function hideTooltip() {
   state.ui.tooltipTarget = null;
   window.clearTimeout(state.ui.tooltipPressTimer);
   window.cancelAnimationFrame(tooltipFrame);

@@ -164,26 +164,11 @@ body.fullscreen-mode .session-view[data-chat-dock="right"] .chat-area {
   border-radius: 0;
 }
 
-body.fullscreen-mode .session-view[data-chat-dock="top"] .workspace {
-  grid-template-columns: 1fr;
-  grid-template-rows: 100dvh 100dvh;
-  grid-template-areas:
-    "chat"
-    "video";
-}
-
 body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="right"] .workspace,
 body.fullscreen-mode .app-shell:fullscreen .session-view.chat-collapsed[data-chat-dock="right"] .workspace {
   column-gap: 0;
   grid-template-columns: minmax(0, 1fr) 0px;
   grid-template-areas: "video chat";
-}
-
-body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="top"] .workspace {
-  grid-template-rows: 0px 100dvh;
-  grid-template-areas:
-    "chat"
-    "video";
 }
 
 body.fullscreen-mode .video-area {

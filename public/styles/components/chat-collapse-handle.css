@@ -138,10 +138,18 @@
   min-width: 0;
   transform: none;
   opacity: 0;
+  cursor: default;
 }
 
 .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-hover-zone:hover .chat-collapse-handle {
+  opacity: 0;
+}
+
+/* La flecha lateral de expandir comparte el estado de actividad del overlay
+   del reproductor, igual que la flecha del chat acoplado abajo. */
+.session-view.chat-collapsed[data-chat-dock="right"]:has(.player-frame.player-overlay-visible) .chat-collapse-handle {
   opacity: 1;
+  cursor: pointer;
 }
 
 .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-icon-anchor {
@@ -151,13 +159,13 @@
 .session-view[data-chat-dock="bottom"] .chat-collapse-handle {
   width: 34px;
   height: 22px;
-  opacity: 0;
+  opacity: 1;
   transform: none;
-  cursor: default;
+  cursor: pointer;
 }
 
 .session-view:not(.chat-collapsed)[data-chat-dock="bottom"] .chat-collapse-handle {
-  opacity: 0;
+  opacity: 1;
 }
 
 .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]:has(.player-frame.player-overlay-visible) .chat-collapse-handle {
@@ -192,6 +200,7 @@
 /* Al expandir, la flecha sigue el mismo estado de visibilidad que los controles del video. */
 .session-view.chat-collapsed[data-chat-dock="bottom"] .chat-collapse-handle {
   opacity: 0;
+  cursor: default;
 }
 
 .session-view.chat-collapsed[data-chat-dock="bottom"] .chat-collapse-handle.is-transitioning {
@@ -204,27 +213,5 @@
 
 .session-view.chat-collapsed[data-chat-dock="bottom"]:has(.player-frame.player-overlay-visible) .chat-collapse-handle {
   opacity: 1;
-}
-
-.session-view[data-chat-dock="top"] .chat-collapse-handle {
-  width: 34px;
-  height: 22px;
-  opacity: 0;
-  transform: none;
-}
-
-.session-view[data-chat-dock="top"] .chat-collapse-hover-zone {
-  top: 0;
-  left: 50%;
-  width: 48px;
-  height: 34px;
-  transform: translate(-50%, -50%);
-}
-
-.session-view[data-chat-dock="top"] .chat-collapse-hover-zone:hover .chat-collapse-handle {
-  opacity: 1;
-}
-
-.session-view.chat-collapsed[data-chat-dock="top"] .chat-collapse-handle {
-  border-radius: 0 0 6px 6px;
+  cursor: pointer;
 }

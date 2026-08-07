@@ -36,8 +36,12 @@ import { togglePageFullscreen } from "./fullscreen.js";
 
 const SKIP_LOAD_REPLACE_DIALOG_KEY = "cine-juntos-skip-load-replace-dialog";
 const VIDEO_RESUME_STORAGE_KEY = "cine-juntos-video-resume-times";
+const PLAYER_VOLUME_STORAGE_KEY = "cine-juntos-player-volume";
 const SLOW_LOAD_DIALOG_DELAY_MS = 5 * 60 * 1000;
 const VIDEO_LOAD_COOLDOWN_MS = 3500;
+const PLAY_BUTTON_BURST_WINDOW_MS = 1000;
+const PLAY_BUTTON_BURST_LIMIT = 4;
+const PLAY_BUTTON_COOLDOWN_MS = 30000;
 const MIN_RESUME_PROMPT_SECONDS = 5;
 const KEYBOARD_SEEK_STEP_SECONDS = 10;
 const KEYBOARD_VOLUME_STEP = 0.05;
@@ -48,6 +52,10 @@ export function initializePlayer() {
   isDurationShowingRemaining = false;
   pendingLoadCompletionAnnouncement = false;
   clearSlowLoadPromptTracking();
+  const persistedVolume = readPersistedVolume();
+  if (persistedVolume !== null) {
+    dom.videoPlayer.volume = persistedVolume;
+  }
   setVideoStatus("empty", "Sin contenido");
   syncPlayerControls(true);
 }
@@ -60,7 +68,7 @@ export function wirePlayerCoreEvents() {
   });
 
   dom.playerPlayButton?.addEventListener("click", () => {
-    togglePlaybackFromControls();
+    togglePlaybackFromControls("button");
   });
 
   dom.playerSeekInput?.addEventListener("input", () => {
@@ -119,6 +127,7 @@ export function wirePlayerCoreEvents() {
   }, { passive: false });
 
   dom.videoPlayer.addEventListener("volumechange", () => {
+    persistVolume(dom.videoPlayer.volume);
     syncPlayerControls();
   });
 
@@ -331,16 +340,56 @@ export function waitForVideoMetadata() {
   });
 }
 
-function togglePlaybackFromControls() {
+function togglePlaybackFromControls(source = "keyboard") {
   const hasMedia = hasLoadedMediaSource();
   if (!hasMedia) return;
 
-  if (dom.videoPlayer.paused || dom.videoPlayer.ended) {
-    dom.videoPlayer.play().catch(() => {});
-    return;
+  const now = Date.now();
+  if (source === "button") {
+    if (isPlayButtonCoolingDown(now)) return;
+    state.player.playButtonPressTimes = (state.player.playButtonPressTimes || [])
+      .filter((pressedAt) => now - pressedAt <= PLAY_BUTTON_BURST_WINDOW_MS);
+    state.player.playButtonPressTimes.push(now);
   }
 
-  dom.videoPlayer.pause();
+  const wasPlaying = !dom.videoPlayer.paused && !dom.videoPlayer.ended;
+  if (source === "button" && wasPlaying) {
+    // Solo una pausa iniciada desde este botón puede activar el bloqueo.
+    state.player.lastUserPauseAt = now;
+  }
+
+  if (dom.videoPlayer.paused || dom.videoPlayer.ended) {
+    dom.videoPlayer.play().catch(() => {});
+  } else {
+    dom.videoPlayer.pause();
+  }
+
+  if (
+    source === "button" &&
+    state.player.playButtonPressTimes.length >= PLAY_BUTTON_BURST_LIMIT &&
+    now - Number(state.player.lastUserPauseAt || 0) <= PLAY_BUTTON_BURST_WINDOW_MS
+  ) {
+    activatePlayButtonCooldown(now);
+  }
+}
+
+function isPlayButtonCoolingDown(now = Date.now()) {
+  return now < Number(state.player.playButtonCooldownUntil || 0);
+}
+
+function activatePlayButtonCooldown(now = Date.now()) {
+  state.player.playButtonCooldownUntil = now + PLAY_BUTTON_COOLDOWN_MS;
+  state.player.playButtonPressTimes = [];
+  window.clearInterval(state.player.playButtonCooldownTimeoutId);
+  state.player.playButtonCooldownTimeoutId = window.setInterval(() => {
+    if (!isPlayButtonCoolingDown()) {
+      state.player.playButtonCooldownUntil = 0;
+      window.clearInterval(state.player.playButtonCooldownTimeoutId);
+      state.player.playButtonCooldownTimeoutId = null;
+    }
+    syncPlayerControls();
+  }, 1000);
+  syncPlayerControls();
 }
 
 function handleGlobalPlayerKeydown(event) {
@@ -435,6 +484,30 @@ function adjustVolumeBy(delta) {
   syncPlayerControls();
 }
 
+function readPersistedVolume() {
+  try {
+    const storedVolume = Number(localStorage.getItem(PLAYER_VOLUME_STORAGE_KEY));
+    if (!Number.isFinite(storedVolume)) return null;
+    return Math.min(1, Math.max(0, storedVolume));
+  } catch {
+    return null;
+  }
+}
+
+function persistVolume(volume) {
+  const safeVolume = Number(volume);
+  if (!Number.isFinite(safeVolume)) return;
+
+  try {
+    localStorage.setItem(
+      PLAYER_VOLUME_STORAGE_KEY,
+      String(Math.min(1, Math.max(0, safeVolume))),
+    );
+  } catch {
+    // El reproductor sigue funcionando aunque el almacenamiento no esté disponible.
+  }
+}
+
 function previewSeekPosition() {
   if (!dom.playerSeekInput) return;
   const nextTime = Number(dom.playerSeekInput.value);
@@ -514,10 +587,29 @@ function syncPlayerControls(forceSliderSync = false) {
   }
 
   if (dom.playerPlayButton) {
-    dom.playerPlayButton.disabled = !hasMedia;
-    const icon = dom.playerPlayButton.querySelector("[data-lucide]");
+    const playButtonCoolingDown = isPlayButtonCoolingDown();
+    dom.playerPlayButton.disabled = !hasMedia || playButtonCoolingDown;
     const isPaused = dom.videoPlayer.paused || dom.videoPlayer.ended;
-    const tooltip = withShortcutHint(isPaused ? "Reproducir video" : "Pausar video", "Espacio");
+    const cooldownSeconds = Math.max(
+      1,
+      Math.ceil((Number(state.player.playButtonCooldownUntil || 0) - Date.now()) / 1000),
+    );
+    if (playButtonCoolingDown) {
+      if (dom.playerPlayButton.dataset.playButtonCooldown !== "true") {
+        dom.playerPlayButton.dataset.playButtonCooldown = "true";
+        dom.playerPlayButton.innerHTML = "<span class=\"play-button-cooldown\" aria-hidden=\"true\"></span>";
+      }
+      const counter = dom.playerPlayButton.querySelector(".play-button-cooldown");
+      if (counter) counter.textContent = String(cooldownSeconds);
+    } else if (dom.playerPlayButton.dataset.playButtonCooldown === "true") {
+      delete dom.playerPlayButton.dataset.playButtonCooldown;
+      dom.playerPlayButton.innerHTML = `<span data-lucide=\"${isPaused ? "play" : "pause"}\"></span>`;
+      hydrateIcons();
+    }
+    const icon = dom.playerPlayButton.querySelector("[data-lucide]");
+    const tooltip = playButtonCoolingDown
+      ? `Espera ${cooldownSeconds}s para usar el reproductor`
+      : withShortcutHint(isPaused ? "Reproducir video" : "Pausar video", "Espacio");
     dom.playerPlayButton.dataset.tooltip = tooltip;
     dom.playerPlayButton.setAttribute("aria-label", tooltip);
     dom.playerPlayButton.removeAttribute("title");

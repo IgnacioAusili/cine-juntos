@@ -52,9 +52,10 @@
   border-color: rgba(170, 140, 108, 0.34);
   background: linear-gradient(180deg, rgba(178, 145, 112, 0.92), rgba(150, 124, 98, 0.92));
   color: rgba(32, 25, 18, 0.88);
+  opacity: 0.78;
   text-shadow: none;
   box-shadow: none;
-  filter: saturate(0.42) brightness(0.92);
+  filter: saturate(0.72) brightness(0.94);
 }
 
 .button:not(:disabled):hover,

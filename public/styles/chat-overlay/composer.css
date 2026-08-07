@@ -121,7 +121,7 @@
   resize: none;
   color: var(--text);
   font-family: var(--emoji-font-family);
-  overscroll-behavior: contain;
+  overscroll-behavior: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
@@ -249,7 +249,6 @@
 }
 
 .overlay-message-form .send[data-spam-cooldown="true"] {
-  cursor: wait;
   pointer-events: auto;
 }
 

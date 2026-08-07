@@ -15,6 +15,7 @@ const pendingOverlayHighlightTimers = new WeakMap();
  * @param {HTMLElement} [focusInput] - Input que debe recuperar el foco.
  */
 export function setReplyTarget(message, focusInput = dom.messageInput) {
+  const hadReplyTarget = Boolean(state.chat.replyTarget);
   const isSameReplyTarget = state.chat.replyTarget?.id === message.id;
   state.chat.replyTarget = {
     id: message.id,
@@ -22,7 +23,10 @@ export function setReplyTarget(message, focusInput = dom.messageInput) {
     name: message.name || "Invitado",
     text: message.text || "",
   };
-  renderReplyPreview({ animate: !isSameReplyTarget });
+  renderReplyPreview({
+    animate: !isSameReplyTarget,
+    preserveHeight: hadReplyTarget && !isSameReplyTarget,
+  });
   focusInput?.focus({ preventScroll: true });
 }
 
@@ -34,10 +38,39 @@ export function clearReplyTarget() {
   renderReplyPreview();
 }
 
+function createReplyPreviewContent(container) {
+  const replyIcon = document.createElement("span");
+  replyIcon.className = "reply-preview-icon";
+  replyIcon.innerHTML =
+    "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><polyline points='9 17 4 12 9 7'/><path d='M20 18v-2a4 4 0 0 0-4-4H4'/></svg>";
+
+  const textBtn = document.createElement("button");
+  textBtn.type = "button";
+  textBtn.className = "reply-preview-text";
+  textBtn.innerHTML = `<span class="reply-preview-name">${state.chat.replyTarget.name}</span><span class="reply-preview-body">${truncateText(state.chat.replyTarget.text || "", 58)}</span>`;
+  const preferredScrollContainer = container === dom.overlayReplyPreview ? dom.overlayMessages : dom.messages;
+  textBtn.addEventListener("click", () =>
+    scrollToMessage(state.chat.replyTarget.id, preferredScrollContainer),
+  );
+
+  const close = document.createElement("button");
+  close.type = "button";
+  close.className = "reply-preview-close";
+  close.innerHTML =
+    "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5'><line x1='18' y1='6' x2='6' y2='18'/><line x1='6' y1='6' x2='18' y2='18'/></svg>";
+  close.setAttribute("aria-label", "Cancelar respuesta");
+  close.addEventListener("click", clearReplyTarget);
+
+  const replyContent = document.createElement("div");
+  replyContent.className = "reply-preview-content";
+  replyContent.append(replyIcon, textBtn, close);
+  return replyContent;
+}
+
 /**
  * Renderiza la vista previa de la respuesta en los inputs (normal y overlay).
  */
-export function renderReplyPreview({ animate = true } = {}) {
+export function renderReplyPreview({ animate = true, preserveHeight = false } = {}) {
   const getExpandedReplyHeight = (container) => Math.max(container.scrollHeight, 42);
   const cancelPreviewAnimation = (container) => {
     const animation = pendingReplyPreviewAnimations.get(container);
@@ -60,8 +93,14 @@ export function renderReplyPreview({ animate = true } = {}) {
       window.cancelAnimationFrame(previousShowFrame);
       pendingReplyPreviewShow.delete(container);
     }
+    const visibleHeight =
+      !container.hidden && container.classList.contains("reply-preview--visible")
+        ? container.getBoundingClientRect().height
+        : 0;
+    const currentHeight = preserveHeight ? visibleHeight : 0;
     if (!state.chat.replyTarget) {
       container.style.removeProperty("--reply-participant-accent");
+      container.style.setProperty("transition", "none");
       const startHeight = container.getBoundingClientRect().height;
       container.style.height = `${startHeight}px`;
       container.classList.remove("reply-preview--visible");
@@ -78,6 +117,7 @@ export function renderReplyPreview({ animate = true } = {}) {
         if (pendingReplyPreviewAnimations.get(container) !== animation) return;
         pendingReplyPreviewAnimations.delete(container);
         container.style.height = "0px";
+        animation.cancel();
       };
       animation.oncancel = () => {
         if (pendingReplyPreviewAnimations.get(container) !== animation) return;
@@ -88,6 +128,7 @@ export function renderReplyPreview({ animate = true } = {}) {
           container.hidden = true;
           container.innerHTML = "";
           container.style.removeProperty("height");
+          container.style.removeProperty("transition");
         }
         pendingReplyPreviewHides.delete(container);
       }, 240);
@@ -95,45 +136,92 @@ export function renderReplyPreview({ animate = true } = {}) {
       return;
     }
 
-    container.innerHTML = "";
+    container.style.removeProperty("transition");
     container.style.setProperty(
       "--reply-participant-accent",
       getParticipantAccent(state.chat.replyTarget.from || state.chat.replyTarget.id || state.chat.replyTarget.name),
     );
-    const replyIcon = document.createElement("span");
-    replyIcon.className = "reply-preview-icon";
-    replyIcon.innerHTML =
-      "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><polyline points='9 17 4 12 9 7'/><path d='M20 18v-2a4 4 0 0 0-4-4H4'/></svg>";
-
-    const textBtn = document.createElement("button");
-    textBtn.type = "button";
-    textBtn.className = "reply-preview-text";
-    textBtn.innerHTML = `<span class="reply-preview-name">${state.chat.replyTarget.name}</span><span class="reply-preview-body">${truncateText(state.chat.replyTarget.text || "", 58)}</span>`;
-    const preferredScrollContainer = container === dom.overlayReplyPreview ? dom.overlayMessages : dom.messages;
-    textBtn.addEventListener("click", () =>
-      scrollToMessage(state.chat.replyTarget.id, preferredScrollContainer),
-    );
-
-    const close = document.createElement("button");
-    close.type = "button";
-    close.className = "reply-preview-close";
-    close.innerHTML =
-      "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5'><line x1='18' y1='6' x2='6' y2='18'/><line x1='6' y1='6' x2='18' y2='18'/></svg>";
-    close.setAttribute("aria-label", "Cancelar respuesta");
-    close.addEventListener("click", clearReplyTarget);
-
-    container.append(replyIcon, textBtn, close);
+    const nextReplyContent = createReplyPreviewContent(container);
+    const previousReplyContent = container.firstElementChild;
     container.hidden = false;
 
     if (!animate) {
+      container.innerHTML = "";
+      container.append(nextReplyContent);
       container.style.setProperty("transition", "none");
       container.classList.add("reply-preview--visible");
-      container.style.removeProperty("height");
+      if (visibleHeight > 0) {
+        container.style.height = `${visibleHeight}px`;
+      } else {
+        container.style.removeProperty("height");
+      }
       void container.offsetHeight;
       container.style.removeProperty("transition");
       return;
     }
 
+    if (currentHeight > 0) {
+      container.style.height = `${currentHeight}px`;
+      container.classList.add("reply-preview--visible");
+      const animateIncomingReply = () => {
+        if (!state.chat.replyTarget) return;
+        container.innerHTML = "";
+        container.append(nextReplyContent);
+        const animation = container.animate(
+          [
+            { clipPath: "inset(100% 0 0 0)" },
+            { clipPath: "inset(0 0 0 0)" },
+          ],
+          {
+            duration: 320,
+            easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+            fill: "forwards",
+          },
+        );
+        pendingReplyPreviewAnimations.set(container, animation);
+        animation.onfinish = () => {
+          if (pendingReplyPreviewAnimations.get(container) !== animation) return;
+          pendingReplyPreviewAnimations.delete(container);
+          animation.cancel();
+        };
+        animation.oncancel = () => {
+          if (pendingReplyPreviewAnimations.get(container) !== animation) return;
+          pendingReplyPreviewAnimations.delete(container);
+        };
+      };
+
+      if (!previousReplyContent?.classList.contains("reply-preview-content")) {
+        animateIncomingReply();
+        return;
+      }
+
+      const exitAnimation = container.animate(
+        [
+          { clipPath: "inset(0 0 0 0)" },
+          { clipPath: "inset(100% 0 0 0)" },
+        ],
+        {
+          duration: 180,
+          easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+          fill: "forwards",
+        },
+      );
+      pendingReplyPreviewAnimations.set(container, exitAnimation);
+      exitAnimation.onfinish = () => {
+        if (pendingReplyPreviewAnimations.get(container) !== exitAnimation) return;
+        pendingReplyPreviewAnimations.delete(container);
+        exitAnimation.cancel();
+        animateIncomingReply();
+      };
+      exitAnimation.oncancel = () => {
+        if (pendingReplyPreviewAnimations.get(container) !== exitAnimation) return;
+        pendingReplyPreviewAnimations.delete(container);
+      };
+      return;
+    }
+
+    container.innerHTML = "";
+    container.append(nextReplyContent);
     container.style.height = "0px";
     const targetHeight = getExpandedReplyHeight(container);
     const showFrame = window.requestAnimationFrame(() => {
@@ -152,6 +240,7 @@ export function renderReplyPreview({ animate = true } = {}) {
         if (pendingReplyPreviewAnimations.get(container) !== animation) return;
         pendingReplyPreviewAnimations.delete(container);
         container.style.height = `${targetHeight}px`;
+        animation.cancel();
       };
       animation.oncancel = () => {
         if (pendingReplyPreviewAnimations.get(container) !== animation) return;

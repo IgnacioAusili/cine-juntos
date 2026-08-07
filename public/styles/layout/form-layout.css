@@ -17,10 +17,15 @@
   padding: 0px 8px 0px 8px;
 }
 
+/* Baja el contenido solo en la cabecera del chat acoplado abajo. */
+.session-view[data-chat-dock="bottom"] .chat-tools > * {
+  transform: translateY(6px);
+}
+
 .session-view[data-chat-dock="bottom"] .chat-tools {
-  min-height: 68px;
-  padding-top: 26px;
-  padding-bottom: 12px;
+  min-height: 60px;
+  padding-top: 14px;
+  padding-bottom: 6px;
 }
 
 .chat-tools-actions {

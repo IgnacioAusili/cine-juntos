@@ -14,10 +14,10 @@ import { focusFullscreenWorkspace, setSyncStatus } from "../session-ui.js";
 import {
   logEvent,
 } from "../../core/state.js";
-import { syncInsideChatPanelOffset } from "../chat/chat-layout.js";
+import { syncInsideChatPanelOffset } from "../chat/chat-layout.js?v=20260806-dock-transition-03";
 import { withShortcutHint } from "../../core/utils.js";
 
-const PLAYER_OVERLAY_IDLE_MS = 1600;
+const PLAYER_OVERLAY_IDLE_MS = 2200;
 let fallbackFullscreenActive = false;
 
 const USE_NATIVE_FULLSCREEN = true;
@@ -48,11 +48,21 @@ export function wireFullscreenEvents() {
   let scrollSnapTimer = null;
   window.addEventListener("scroll", () => {
     const isBottomDock = dom.sessionView?.dataset.chatDock === "bottom";
-    if (isPageFullscreenActive() || !isBottomDock) return;
+    if (isPageFullscreenActive() || !isBottomDock) {
+      if (!isBottomDock && scrollSnapTimer) {
+        window.clearTimeout(scrollSnapTimer);
+        scrollSnapTimer = null;
+      }
+      return;
+    }
 
     if (scrollSnapTimer) window.clearTimeout(scrollSnapTimer);
     scrollSnapTimer = window.setTimeout(() => {
-      if (dom.sessionView?.classList.contains("chat-scroll-snap-locked")) return;
+      scrollSnapTimer = null;
+      if (
+        dom.sessionView?.dataset.chatDock !== "bottom"
+        || dom.sessionView?.classList.contains("chat-scroll-snap-locked")
+      ) return;
       snapFullscreenScroll();
     }, FULLSCREEN_SNAP_DELAY_MS);
   }, { passive: true });
@@ -215,6 +225,8 @@ function getFullscreenSnapPoints() {
 }
 
 export function snapFullscreenScroll() {
+  if (dom.sessionView?.dataset.chatDock !== "bottom") return;
+
   const points = getFullscreenSnapPoints();
   if (!points.length) return;
 
@@ -234,9 +246,11 @@ export function snapFullscreenScroll() {
     return;
   }
 
+  // El snap conserva el anclaje, pero no agrega otra animación a la rueda.
+  // El desplazamiento explícito de expandir el chat sí usa smooth más abajo.
   window.scrollTo({
     top: closestPoint,
-    behavior: "smooth",
+    behavior: "auto",
   });
 }
 

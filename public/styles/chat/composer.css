@@ -16,6 +16,12 @@
   box-shadow: none;
 }
 
+.session-view[data-chat-dock="bottom"] .message-form {
+  left: 64px;
+  right: 64px;
+  width: auto;
+}
+
 .message-form .input-wrapper {
   position: relative;
   z-index: 1;
@@ -95,7 +101,7 @@
   color: var(--text);
   font-family: var(--emoji-font-family);
   line-height: 1.28;
-  overscroll-behavior: contain;
+  overscroll-behavior: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
@@ -222,7 +228,6 @@
 }
 
 .message-form .send[data-spam-cooldown="true"] {
-  cursor: wait;
   pointer-events: auto;
 }
 

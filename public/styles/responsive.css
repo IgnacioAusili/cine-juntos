@@ -37,8 +37,7 @@
       "chat";
   }
 
-  .session-view[data-chat-dock="bottom"] .workspace,
-  .session-view[data-chat-dock="top"] .workspace {
+  .session-view[data-chat-dock="bottom"] .workspace {
     grid-template-rows: 100dvh 100dvh;
   }
 
@@ -47,13 +46,7 @@
     row-gap: 0;
     grid-template-rows:
       minmax(300px, calc(100dvh - (var(--app-shell-gutter) * 2)))
-      minmax(0, 100dvh);
-  }
-
-  .session-view[data-chat-dock="top"] .workspace {
-    grid-template-areas:
-      "chat"
-      "video";
+      minmax(0, calc(100dvh - var(--app-shell-gutter)));
   }
 
   .session-view.chat-collapsed[data-chat-dock] .workspace {
@@ -64,8 +57,7 @@
       "chat";
   }
 
-  .session-view.chat-collapsed[data-chat-dock="bottom"] .workspace,
-  .session-view.chat-collapsed[data-chat-dock="top"] .workspace {
+  .session-view.chat-collapsed[data-chat-dock="bottom"] .workspace {
     grid-template-rows: 100dvh 0px;
   }
 
@@ -73,13 +65,6 @@
     grid-template-rows: minmax(0, 1fr) 0px;
   }
 
-  .session-view.chat-collapsed[data-chat-dock="top"] .workspace {
-    row-gap: 0;
-    grid-template-rows: 0px 100dvh;
-    grid-template-areas:
-      "chat"
-      "video";
-  }
 }
 
 @media (max-width: 680px) {
@@ -129,6 +114,11 @@
 
   .session-toolbar {
     padding: 12px;
+  }
+
+  .session-view[data-chat-dock="bottom"] .message-form {
+    left: 18px;
+    right: 18px;
   }
 
   /* En movil apilamos input + boton de carga, como en la referencia */

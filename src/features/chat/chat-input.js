@@ -23,7 +23,7 @@ import { renderMessage } from "./chat-render.js?v=20260801-05";
 import {
   scheduleExternalChatAutoCollapse,
   scheduleInsideChatAutoCollapse,
-} from "./chat-layout.js";
+} from "./chat-layout.js?v=20260806-dock-transition-03";
 import { queuePinnedChatScrollSync, isPinnedToBottom } from "./chat-scroll-sync.js";
 import {
   compressImageBase64,

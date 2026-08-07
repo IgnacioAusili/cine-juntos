@@ -304,6 +304,11 @@ export async function joinRoom(rawRoomCode, sourceButton = "join") {
     state.player.lastPlaybackIssueAnnouncementAt = 0;
     state.player.lastPlaybackIssueAnnouncementKey = "";
     state.player.remotePlaybackIssueCooldownUntil = 0;
+    window.clearInterval(state.player.playButtonCooldownTimeoutId);
+    state.player.lastUserPauseAt = 0;
+    state.player.playButtonPressTimes = [];
+    state.player.playButtonCooldownUntil = 0;
+    state.player.playButtonCooldownTimeoutId = null;
     if (state.player.playbackRecoveryTimeoutId) {
       window.clearTimeout(state.player.playbackRecoveryTimeoutId);
     }
@@ -388,6 +393,11 @@ export async function leaveRoom() {
   state.chat.replyTarget = null;
   state.player.lastRemoteState = null;
   state.player.remoteStateActive = false;
+  window.clearInterval(state.player.playButtonCooldownTimeoutId);
+  state.player.lastUserPauseAt = 0;
+  state.player.playButtonPressTimes = [];
+  state.player.playButtonCooldownUntil = 0;
+  state.player.playButtonCooldownTimeoutId = null;
 
   dom.roomBadge.textContent = "Sin sala";
   setInviteCopyFeedback(false);

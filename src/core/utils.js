@@ -108,11 +108,10 @@ export const GUEST_ADJECTIVES = [
   "Eclipse",
   "Relámpago",
 ];
-export const CHAT_DOCKS = ["right", "bottom", "top"];
+export const CHAT_DOCKS = ["right", "bottom"];
 export const CHAT_DOCK_META = {
   right: { icon: "panel-right", next: "bottom", label: "lateral", tooltip: "Mover chat abajo" },
-  bottom: { icon: "panel-bottom", next: "top", label: "abajo", tooltip: "Mover chat arriba" },
-  top: { icon: "panel-top", next: "right", label: "arriba", tooltip: "Mover chat al lateral" },
+  bottom: { icon: "panel-bottom", next: "right", label: "abajo", tooltip: "Mover chat al lateral" },
 };
 export const FULLSCREEN_SNAP_DELAY_MS = 90;
 export const FULLSCREEN_SNAP_THRESHOLD = 52;

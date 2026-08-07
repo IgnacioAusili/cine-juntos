@@ -44,6 +44,14 @@
   pointer-events: auto;
 }
 
+.reply-preview-content {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  min-width: 0;
+}
+
 .reply-preview-icon {
   flex-shrink: 0;
   display: flex;

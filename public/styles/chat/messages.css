@@ -278,6 +278,23 @@
   align-items: center;
 }
 
+.message.system.message-system-exit {
+  pointer-events: none;
+  animation: systemMessageExit 220ms ease forwards;
+}
+
+@keyframes systemMessageExit {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
 .message.system .message-meta {
   display: none;
 }

@@ -28,9 +28,8 @@ import {
   setInsideChatStyle,
   setInsideChatVisible,
   syncExternalChatCollapseHandleOffset,
-  revealBottomDockUnion,
   syncChatAutoExpandControls,
-} from "./chat-layout.js";
+} from "./chat-layout.js?v=20260806-dock-transition-03";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260802-02";
 
 const CHAT_SCROLL_WHEEL_MULTIPLIER = 0.35;
@@ -98,7 +97,9 @@ function shouldBlockWheelForTextarea(textarea, event) {
   if (!deltaY) return false;
 
   const maxScrollTop = textarea.scrollHeight - textarea.clientHeight;
-  if (maxScrollTop <= 0) return true;
+  // Sin contenido desplazable, la rueda debe seguir propagándose hasta la
+  // página en lugar de quedar bloqueada dentro del input.
+  if (maxScrollTop <= 0) return false;
 
   if (deltaY > 0) {
     return textarea.scrollTop >= maxScrollTop;
@@ -109,6 +110,23 @@ function shouldBlockWheelForTextarea(textarea, event) {
   }
 
   return false;
+}
+
+function hasVerticalScroll(element) {
+  return Boolean(element && element.scrollHeight - element.clientHeight > 0);
+}
+
+function shouldBlockWheelForComposerControl(control, event) {
+  if (!control || event.ctrlKey || !event.deltaY) return false;
+
+  const form = control.closest("form");
+  const input = form?.querySelector("textarea");
+  const messages = form === dom.overlayMessageForm ? dom.overlayMessages : dom.messages;
+
+  // Los botones acompañan al input: solo frenan la rueda si alguno de los dos
+  // tiene contenido desplazable. Si ambos caben completos, la página debe
+  // poder desplazarse normalmente.
+  return hasVerticalScroll(messages) || hasVerticalScroll(input);
 }
 
 export {
@@ -143,7 +161,7 @@ export {
   setInsideChatVisible,
   syncChatAutoExpandControls,
   updateCollapseButton,
-} from "./chat-layout.js";
+} from "./chat-layout.js?v=20260806-dock-transition-03";
 
 export function wireChatEvents() {
   syncChatAutoExpandControls();
@@ -152,12 +170,6 @@ export function wireChatEvents() {
   if ("ResizeObserver" in window && dom.workspace) {
     const chatHandleResizeObserver = new ResizeObserver(() => {
       syncExternalChatCollapseHandleOffset();
-      if (
-        dom.sessionView?.dataset.chatDock === "bottom" &&
-        !dom.sessionView.classList.contains("chat-collapsed")
-      ) {
-        revealBottomDockUnion("auto");
-      }
     });
     chatHandleResizeObserver.observe(dom.workspace);
   }
@@ -400,6 +412,13 @@ export function wireChatEvents() {
     input?.addEventListener(
       "wheel",
       (event) => {
+        const form = input.closest("form");
+        const messages = form === dom.overlayMessageForm ? dom.overlayMessages : dom.messages;
+        if (!hasVerticalScroll(input) && hasVerticalScroll(messages)) {
+          event.preventDefault();
+          event.stopPropagation();
+          return;
+        }
         if (!shouldBlockWheelForTextarea(input, event)) return;
         event.preventDefault();
         event.stopPropagation();
@@ -417,6 +436,7 @@ export function wireChatEvents() {
     button?.addEventListener(
       "wheel",
       (event) => {
+        if (!shouldBlockWheelForComposerControl(button, event)) return;
         event.preventDefault();
         event.stopPropagation();
       },

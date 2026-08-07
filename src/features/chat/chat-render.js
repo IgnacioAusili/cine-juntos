@@ -15,6 +15,9 @@ import { setReplyTarget, scrollToMessage } from "./chat-reply.js";
 
 const EMOJI_ONLY_PATTERN = /^(?:[\s\p{Extended_Pictographic}\p{Emoji_Presentation}\p{Emoji_Modifier}\uFE0F\u200D\u20E3]|[0-9#*]\uFE0F?\u20E3)+$/u;
 const EMOJI_GLYPH_PATTERN = /[\p{Extended_Pictographic}\p{Emoji_Presentation}]|[0-9#*]\uFE0F?\u20E3/u;
+const SYSTEM_MESSAGE_STREAK_LIMIT = 4;
+const SYSTEM_MESSAGE_EXIT_MS = 220;
+const messageRenderQueues = new WeakMap();
 
 /**
  * Renderiza un mensaje en los contenedores de chat.
@@ -37,8 +40,12 @@ export function renderMessage(message) {
     handleIncomingUnread();
     handleIncomingPageUnread();
   }
-  scheduleMessageTimeAdjustmentForBubble(mainItem?.querySelector(".message-bubble"));
-  scheduleMessageTimeAdjustmentForBubble(overlayItem?.querySelector(".message-bubble"));
+  Promise.resolve(mainItem).then((item) => {
+    scheduleMessageTimeAdjustmentForBubble(item?.querySelector(".message-bubble"));
+  });
+  Promise.resolve(overlayItem).then((item) => {
+    scheduleMessageTimeAdjustmentForBubble(item?.querySelector(".message-bubble"));
+  });
   logEvent("chat:recv", `Mensaje recibido de ${message.name || "Invitado"}.`);
 }
 
@@ -46,6 +53,20 @@ export function renderMessage(message) {
  * Crea y añade el elemento DOM del mensaje al contenedor.
  */
 function appendMessageTo(container, message) {
+  const previousTask = messageRenderQueues.get(container);
+  if (!message.system && !previousTask) return appendMessageNow(container, message);
+
+  const task = (previousTask || Promise.resolve())
+    .catch(() => null)
+    .then(async () => {
+      if (message.system) await makeRoomForSystemMessage(container);
+      return appendMessageNow(container, message);
+    });
+  messageRenderQueues.set(container, task);
+  return task;
+}
+
+function appendMessageNow(container, message) {
   const isMine = message.from === state.session.clientId;
   const authorKey = String(message.from || message.name || "").trim();
   const previousMessage = container.lastElementChild;
@@ -287,6 +308,41 @@ function trimRenderedMessages(container) {
   while (container.children.length > MAX_RENDERED_MESSAGES) {
     container.firstElementChild?.remove();
   }
+}
+
+function getTrailingSystemStreak(container) {
+  const children = Array.from(container.children);
+  let streakStart = children.length;
+
+  while (streakStart > 0 && children[streakStart - 1].classList.contains("system")) {
+    streakStart -= 1;
+  }
+
+  return children.slice(streakStart);
+}
+
+async function makeRoomForSystemMessage(container) {
+  while (getTrailingSystemStreak(container).length >= SYSTEM_MESSAGE_STREAK_LIMIT) {
+    await removeOldestSystemMessage(container);
+  }
+}
+
+function removeOldestSystemMessage(container) {
+  const streak = getTrailingSystemStreak(container);
+  const oldest = streak[0];
+  if (!oldest) return Promise.resolve();
+
+  const wasNearBottom =
+    container.scrollHeight - container.scrollTop - container.clientHeight <= 120;
+  oldest.classList.add("message-system-exit");
+
+  return new Promise((resolve) => {
+    window.setTimeout(() => {
+      oldest.remove();
+      if (wasNearBottom) container.scrollTop = container.scrollHeight;
+      window.requestAnimationFrame(resolve);
+    }, SYSTEM_MESSAGE_EXIT_MS);
+  });
 }
 
 function appendMessageMedia(container, message) {

@@ -1,6 +1,7 @@
 import { dom } from "../core/dom.js";
 import { state } from "../core/state.js";
 import { setConnection } from "./session-ui.js";
+import { createForeignDocumentIcon } from "./foreign-lucide-icon.js";
 
 const TOOLTIP_ANCHOR_SELECTOR = "button, [role='button'], a, label, summary, input, select, textarea";
 const TOOLTIP_VIEWPORT_PADDING = 8;
@@ -18,6 +19,21 @@ export function hydrateIcons() {
   if (window.lucide) {
     window.lucide.createIcons();
   }
+}
+
+export function setControlIcon(control, iconName) {
+  const currentIcon = control?.querySelector("[data-lucide], svg.lucide");
+  if (!currentIcon) return;
+
+  if (currentIcon.ownerDocument === document) {
+    if (currentIcon.getAttribute("data-lucide") === iconName && currentIcon.childElementCount) return;
+    currentIcon.setAttribute("data-lucide", iconName);
+    currentIcon.innerHTML = "";
+    hydrateIcons();
+    return;
+  }
+
+  currentIcon.replaceWith(createForeignDocumentIcon(currentIcon.ownerDocument, iconName));
 }
 
 export function normalizeTooltips() {

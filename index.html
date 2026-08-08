@@ -21,7 +21,7 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap"
     />
     <link rel="icon" href="./public/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="./public/styles.css?v=20260806-dock-transition-01" />
+    <link rel="stylesheet" href="./public/styles.css?v=20260807-system-message-groups-02&mini=20260808-08" />
   </head>
   <body class="is-lobby">
     <div class="app-shell">
@@ -274,10 +274,14 @@
               <video
                 id="videoPlayer"
                 controlslist="nofullscreen nodownload noremoteplayback"
-                disablepictureinpicture
                 playsinline
                 preload="metadata"
               ></video>
+              <div class="mini-player-return-hint" aria-live="polite">
+                <span>El video está en el mini-reproductor</span>
+                <strong>Para verlo acá, cancelá la miniatura con este botón</strong>
+              </div>
+              <span class="mini-player-return-arrow" aria-hidden="true"></span>
               <div class="empty-player" id="emptyPlayer">
                 <span data-lucide="film"></span>
               </div>
@@ -285,7 +289,7 @@
                 id="syncStatus"
                 class="sync-status video-status empty player-status-badge"
                 title="Estado de video"
-                data-tooltip="Estado de video"
+                data-tooltip="Todavía no hay un video cargado en la sala"
               >
                 <span class="video-status-dot" id="videoStatusIcon" aria-hidden="true"></span>
                 <span id="videoStatusText">Sin contenido</span>
@@ -372,6 +376,18 @@
                       <option value="2">2x</option>
                     </select>
                   </label>
+
+                  <button
+                    class="video-control-button"
+                    id="playerMiniPlayerButton"
+                    type="button"
+                    aria-label="Abrir mini-reproductor"
+                    aria-pressed="false"
+                    title="Abrir mini-reproductor"
+                    data-tooltip="Mini-reproductor"
+                  >
+                    <span data-lucide="picture-in-picture-2"></span>
+                  </button>
 
                   <button
                     class="video-control-button"
@@ -752,6 +768,6 @@
     <script src="./public/dev-runtime.js?v=20260715-02"></script>
     <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script src="./public/firebase-config.js"></script>
-    <script type="module" src="./src/main.js?v=20260806-dock-enter-animation-01"></script>
+    <script type="module" src="./src/main.js?v=20260808-mini-player-08"></script>
   </body>
 </html>

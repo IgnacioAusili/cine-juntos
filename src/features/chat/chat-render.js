@@ -12,10 +12,12 @@ import {
   incrementScrollIndicator,
 } from "./unread-counters.js";
 import { setReplyTarget, scrollToMessage } from "./chat-reply.js";
+import { scheduleSystemMessageCollapse } from "./system-message-groups.js";
 
 const EMOJI_ONLY_PATTERN = /^(?:[\s\p{Extended_Pictographic}\p{Emoji_Presentation}\p{Emoji_Modifier}\uFE0F\u200D\u20E3]|[0-9#*]\uFE0F?\u20E3)+$/u;
 const EMOJI_GLYPH_PATTERN = /[\p{Extended_Pictographic}\p{Emoji_Presentation}]|[0-9#*]\uFE0F?\u20E3/u;
 const SYSTEM_MESSAGE_STREAK_LIMIT = 4;
+const SYSTEM_MESSAGE_EXPANDED_STREAK_LIMIT = 10;
 const SYSTEM_MESSAGE_EXIT_MS = 220;
 const messageRenderQueues = new WeakMap();
 
@@ -193,7 +195,24 @@ function appendMessageNow(container, message) {
   bubble.append(content);
 
   if (message.system) {
-    item.append(meta, bubble);
+    const bubbleRow = document.createElement("div");
+    bubbleRow.className = "message-bubble-row system-message-row";
+    const hintWrapper = document.createElement("div");
+    hintWrapper.className = "swipe-reply-hint-wrapper";
+    const hint = document.createElement("span");
+    hint.className = "swipe-reply-hint";
+    hint.innerHTML =
+      "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><polyline points='9 17 4 12 9 7'/><path d='M20 18v-2a4 4 0 0 0-4-4H4'/></svg>";
+    hintWrapper.append(hint);
+    bubbleRow.append(bubble, hintWrapper);
+    item.append(bubbleRow);
+
+    wireMessageInteractions(bubble, message, hint, {
+      setReplyTarget,
+      replyInput: container === dom.overlayMessages ? dom.overlayMessageInput : dom.messageInput,
+      interactionTarget: item,
+      interactionBand: bubbleRow,
+    });
   } else {
     const timeAnchor = document.createElement("div");
     timeAnchor.className = "message-time-anchor";
@@ -235,6 +254,7 @@ function appendMessageNow(container, message) {
   }
   container.append(item);
   trimRenderedMessages(container);
+  scheduleSystemMessageCollapse(container);
 
   const isOverlay = container === dom.overlayMessages;
   const threshold = 120;
@@ -305,13 +325,14 @@ function countEmojiGlyphs(text) {
  * Limita la cantidad de mensajes renderizados para optimizar el rendimiento.
  */
 function trimRenderedMessages(container) {
-  while (container.children.length > MAX_RENDERED_MESSAGES) {
-    container.firstElementChild?.remove();
+  const messageChildren = () => Array.from(container.children).filter((child) => child.classList.contains("message"));
+  while (messageChildren().length > MAX_RENDERED_MESSAGES) {
+    messageChildren()[0]?.remove();
   }
 }
 
 function getTrailingSystemStreak(container) {
-  const children = Array.from(container.children);
+  const children = Array.from(container.children).filter((child) => child.classList.contains("message"));
   let streakStart = children.length;
 
   while (streakStart > 0 && children[streakStart - 1].classList.contains("system")) {
@@ -322,7 +343,9 @@ function getTrailingSystemStreak(container) {
 }
 
 async function makeRoomForSystemMessage(container) {
-  while (getTrailingSystemStreak(container).length >= SYSTEM_MESSAGE_STREAK_LIMIT) {
+  const expanded = Boolean(container.querySelector('.system-group-toggle[aria-expanded="true"]'));
+  const limit = expanded ? SYSTEM_MESSAGE_EXPANDED_STREAK_LIMIT : SYSTEM_MESSAGE_STREAK_LIMIT;
+  while (getTrailingSystemStreak(container).length >= limit) {
     await removeOldestSystemMessage(container);
   }
 }

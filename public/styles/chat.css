@@ -9,4 +9,5 @@
 @import url("./chat/message-reply.css");
 @import url("./chat/message-highlight.css");
 @import url("./chat/swipe-reply.css");
+@import url("./chat/system-message-groups.css");
 @import url("./chat/char-counter.css");

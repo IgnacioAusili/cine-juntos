@@ -85,7 +85,8 @@ video::-webkit-media-controls-fullscreen-button {
     inset 0 1px 0 rgba(255, 255, 255, 0.04),
     var(--shadow-sm);
   backdrop-filter: blur(14px);
-  pointer-events: none;
+  pointer-events: auto;
+  cursor: help;
   opacity: 1;
   transform: translateY(0);
   transition:
@@ -231,7 +232,7 @@ video::-webkit-media-controls-fullscreen-button {
   width: 100%;
   max-width: 840px;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   border: 1px solid var(--glass-border-strong);
   border-radius: 999px;
   background:
@@ -240,7 +241,7 @@ video::-webkit-media-controls-fullscreen-button {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.05),
     0 10px 32px rgba(0, 0, 0, 0.4);
-  padding: 6px 14px;
+  padding: 6px 10px;
   backdrop-filter: blur(18px);
 }
 
@@ -297,12 +298,15 @@ video::-webkit-media-controls-fullscreen-button {
 
 .player-seek-input {
   --player-progress: 0%;
+  display: block;
   width: 100%;
+  min-width: 0;
   height: 6px;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   appearance: none;
+  border: 0;
   border-radius: 999px;
   outline: 0;
   background:
@@ -318,6 +322,8 @@ video::-webkit-media-controls-fullscreen-button {
 }
 
 .player-seek-input::-webkit-slider-runnable-track {
+  width: 100%;
+  box-sizing: border-box;
   height: 6px;
   border-radius: 999px;
   background: transparent;
@@ -372,9 +378,9 @@ video::-webkit-media-controls-fullscreen-button {
   transition: background 0.18s, color 0.18s, border-color 0.18s, transform 0.1s;
 }
 
-.video-control-button:hover,
-.video-control-button:focus-visible,
-.video-control-button.active {
+.video-control-button:not(:disabled):hover,
+.video-control-button:not(:disabled):focus-visible,
+.video-control-button.active:not(:disabled) {
   background: rgba(255, 255, 255, 0.14);
   border-color: rgba(255, 255, 255, 0.28);
   color: #fff;
@@ -410,9 +416,9 @@ video::-webkit-media-controls-fullscreen-button {
   background: rgba(255, 255, 255, 0.08);
 }
 
-.video-control-button:not(.primary-video-control):hover,
-.video-control-button:not(.primary-video-control):focus-visible,
-.video-control-button:not(.primary-video-control).active {
+.video-control-button:not(.primary-video-control):not(:disabled):hover,
+.video-control-button:not(.primary-video-control):not(:disabled):focus-visible,
+.video-control-button:not(.primary-video-control).active:not(:disabled) {
   background: rgba(255, 255, 255, 0.14);
   border-color: rgba(255, 255, 255, 0.28);
 }
@@ -423,14 +429,14 @@ video::-webkit-media-controls-fullscreen-button {
   color: #ffc896;
 }
 
-.primary-video-control:hover {
+.primary-video-control:not(:disabled):hover {
   background: rgba(240, 140, 58, 0.28);
   border-color: rgba(240, 140, 58, 0.42);
   color: #ffffff;
 }
 
-.primary-video-control[data-play-button-cooldown="true"]:hover,
-.primary-video-control[data-play-button-cooldown="true"]:focus-visible {
+.primary-video-control[data-play-button-cooldown="true"]:not(:disabled):hover,
+.primary-video-control[data-play-button-cooldown="true"]:not(:disabled):focus-visible {
   background: rgba(240, 140, 58, 0.15);
   border-color: rgba(240, 140, 58, 0.28);
   color: #ffc896;
@@ -513,6 +519,9 @@ video::-webkit-media-controls-fullscreen-button {
 
 .player-rate-select {
   flex: 0 0 auto;
+  width: var(--player-rate-select-width, 48px);
+  min-width: 48px;
+  transition: width 180ms ease;
 }
 
 .player-tool {
@@ -534,7 +543,7 @@ video::-webkit-media-controls-fullscreen-button {
   padding: 0;
   backdrop-filter: blur(12px);
   cursor: pointer;
-  transition: border-color 150ms ease, background 150ms ease;
+  transition: width 180ms ease, border-color 150ms ease, background 150ms ease;
 }
 
 .player-select:hover {
@@ -559,18 +568,20 @@ video::-webkit-media-controls-fullscreen-button {
 .player-select select {
   width: 100%;
   height: 100%;
-  min-width: 52px;
+  min-width: 0;
   min-height: 28px;
   border: 0;
   outline: 0;
   appearance: none;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgba(255, 255, 255, 0.9)' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 8px center / 10px 10px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgba(255, 255, 255, 0.9)' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 6px center / 10px 10px;
   color: #ffffff;
   box-shadow: none;
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.02em;
-  padding: 0 20px 0 10px;
+  padding: 0 22px 0 6px;
+  text-align: center;
+  text-align-last: center;
   cursor: pointer;
 }
 

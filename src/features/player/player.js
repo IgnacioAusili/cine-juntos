@@ -14,6 +14,7 @@ import {
 } from "../../core/utils.js";
 import {
   hydrateIcons,
+  setControlIcon,
 } from "../icons-tooltips.js";
 import { sendVideoEventMessage, setInsideChatVisible } from "../chat/index.js";
 // Import circular intencional y seguro: estas funciones se invocan en runtime,
@@ -33,6 +34,7 @@ import {
   showSlowLoadDialog,
 } from "../session-ui.js";
 import { togglePageFullscreen } from "./fullscreen.js";
+import { syncMiniPlayerButton } from "./mini-player.js";
 
 const SKIP_LOAD_REPLACE_DIALOG_KEY = "cine-juntos-skip-load-replace-dialog";
 const VIDEO_RESUME_STORAGE_KEY = "cine-juntos-video-resume-times";
@@ -45,6 +47,13 @@ const PLAY_BUTTON_COOLDOWN_MS = 30000;
 const MIN_RESUME_PROMPT_SECONDS = 5;
 const KEYBOARD_SEEK_STEP_SECONDS = 10;
 const KEYBOARD_VOLUME_STEP = 0.05;
+const VIDEO_STATUS_TOOLTIPS = Object.freeze({
+  empty: "Todavía no hay un video cargado en la sala",
+  loading: "El video se está cargando. Los controles se habilitarán cuando esté listo",
+  loaded: "El video está cargado para todos los usuarios y listo para reproducir",
+  playing: "El video se está reproduciendo de forma sincronizada para todos los usuarios",
+  error: "No se pudo cargar el video. Revisá el enlace e intentá cargarlo nuevamente",
+});
 let isDurationShowingRemaining = false;
 let pendingLoadCompletionAnnouncement = false;
 
@@ -147,7 +156,7 @@ export function wirePlayerCoreEvents() {
     if (dom.videoPlayer.ended) return;
     rememberPlaybackPosition();
     persistPlaybackPosition(true);
-    setVideoStatus("loaded", "Incorporado");
+    setVideoStatus("loaded", "Listo");
     logEvent("video", `Pausa local en ${formatSeconds(dom.videoPlayer.currentTime)}.`);
     state.player.lastManualPauseAt = Date.now();
     syncPlayerControls();
@@ -155,7 +164,7 @@ export function wirePlayerCoreEvents() {
   });
 
   dom.videoPlayer.addEventListener("ended", () => {
-    setVideoStatus("loaded", "Incorporado");
+    setVideoStatus("loaded", "Listo");
     logEvent("video", "Video terminado.");
     persistPlaybackPosition(true);
     syncPlayerControls(true);
@@ -179,7 +188,7 @@ export function wirePlayerCoreEvents() {
   dom.videoPlayer.addEventListener("loadedmetadata", () => {
     isDurationShowingRemaining = false;
     dom.emptyPlayer.classList.add("hidden");
-    setVideoStatus("loaded", "Incorporado");
+    setVideoStatus("loaded", "Listo");
     clearPlaybackErrorTracking();
     clearSlowLoadPromptTracking();
     announceVideoLoadCompletion();
@@ -326,6 +335,10 @@ function announceVideoLoadCompletion() {
 
 export function setVideoStatus(videoState, text) {
   dom.syncStatus.className = `sync-status video-status player-status-badge ${videoState}`;
+  const tooltipKey = videoState === "loaded" && text === "En vivo" ? "playing" : videoState;
+  const tooltip = VIDEO_STATUS_TOOLTIPS[tooltipKey] || "Estado actual del video en la sala";
+  dom.syncStatus.dataset.tooltip = tooltip;
+  dom.syncStatus.setAttribute("aria-label", `${text}. ${tooltip}`);
   if (dom.videoStatusText) {
     dom.videoStatusText.textContent = text;
   }
@@ -345,7 +358,8 @@ function togglePlaybackFromControls(source = "keyboard") {
   if (!hasMedia) return;
 
   const now = Date.now();
-  if (source === "button") {
+  const isUserToggle = source === "button" || source === "keyboard";
+  if (isUserToggle) {
     if (isPlayButtonCoolingDown(now)) return;
     state.player.playButtonPressTimes = (state.player.playButtonPressTimes || [])
       .filter((pressedAt) => now - pressedAt <= PLAY_BUTTON_BURST_WINDOW_MS);
@@ -353,8 +367,8 @@ function togglePlaybackFromControls(source = "keyboard") {
   }
 
   const wasPlaying = !dom.videoPlayer.paused && !dom.videoPlayer.ended;
-  if (source === "button" && wasPlaying) {
-    // Solo una pausa iniciada desde este botón puede activar el bloqueo.
+  if (isUserToggle && wasPlaying) {
+    // Solo una pausa iniciada por una interacción directa del usuario puede activar el bloqueo.
     state.player.lastUserPauseAt = now;
   }
 
@@ -365,7 +379,7 @@ function togglePlaybackFromControls(source = "keyboard") {
   }
 
   if (
-    source === "button" &&
+    isUserToggle &&
     state.player.playButtonPressTimes.length >= PLAY_BUTTON_BURST_LIMIT &&
     now - Number(state.player.lastUserPauseAt || 0) <= PLAY_BUTTON_BURST_WINDOW_MS
   ) {
@@ -604,7 +618,7 @@ function syncPlayerControls(forceSliderSync = false) {
     } else if (dom.playerPlayButton.dataset.playButtonCooldown === "true") {
       delete dom.playerPlayButton.dataset.playButtonCooldown;
       dom.playerPlayButton.innerHTML = `<span data-lucide=\"${isPaused ? "play" : "pause"}\"></span>`;
-      hydrateIcons();
+      setControlIcon(dom.playerPlayButton, isPaused ? "play" : "pause");
     }
     const icon = dom.playerPlayButton.querySelector("[data-lucide]");
     const tooltip = playButtonCoolingDown
@@ -616,9 +630,7 @@ function syncPlayerControls(forceSliderSync = false) {
     if (icon) {
       const nextIcon = isPaused ? "play" : "pause";
       if (icon.getAttribute("data-lucide") !== nextIcon) {
-        icon.setAttribute("data-lucide", nextIcon);
-        icon.innerHTML = "";
-        hydrateIcons();
+        setControlIcon(dom.playerPlayButton, nextIcon);
       }
     }
   }
@@ -629,6 +641,7 @@ function syncPlayerControls(forceSliderSync = false) {
     const rateSelectWrap = dom.playerRateSelect.closest(".player-select");
     if (rateSelectWrap) {
       rateSelectWrap.dataset.disabled = dom.playerRateSelect.disabled ? "true" : "false";
+      syncRateSelectWidth(rateSelectWrap);
     }
   }
 
@@ -637,15 +650,15 @@ function syncPlayerControls(forceSliderSync = false) {
     const isMuted = dom.videoPlayer.muted || dom.videoPlayer.volume === 0;
     const nextIcon = isMuted ? "volume-x" : dom.videoPlayer.volume < 0.5 ? "volume-1" : "volume-2";
     if (icon && icon.getAttribute("data-lucide") !== nextIcon) {
-      icon.setAttribute("data-lucide", nextIcon);
-      icon.innerHTML = "";
-      hydrateIcons();
+      setControlIcon(dom.playerMuteButton, nextIcon);
     }
     const tooltip = withShortcutHint(isMuted ? "Activar sonido" : "Silenciar", "M");
     dom.playerMuteButton.dataset.tooltip = tooltip;
     dom.playerMuteButton.setAttribute("aria-label", tooltip);
     dom.playerMuteButton.removeAttribute("title");
   }
+
+  syncMiniPlayerButton(hasMedia);
 
   if (dom.playerVolumeInput) {
     const isFocused = document.activeElement === dom.playerVolumeInput;
@@ -655,6 +668,37 @@ function syncPlayerControls(forceSliderSync = false) {
     const currentVol = dom.videoPlayer.muted ? 0 : dom.videoPlayer.volume;
     dom.playerVolumeInput.style.setProperty("--volume-progress", `${currentVol * 100}%`);
   }
+}
+
+function syncRateSelectWidth(rateSelectWrap) {
+  const select = dom.playerRateSelect;
+  const selectedOption = select?.selectedOptions?.[0];
+  if (!select || !rateSelectWrap || !selectedOption) return;
+
+  const selectedValue = selectedOption.value;
+  if (rateSelectWrap.dataset.rateWidthValue === selectedValue) return;
+
+  const selectStyles = getComputedStyle(select);
+  const measure = document.createElement("span");
+  measure.textContent = selectedOption.textContent.trim();
+  measure.setAttribute("aria-hidden", "true");
+  measure.style.cssText = [
+    "position: absolute",
+    "visibility: hidden",
+    "white-space: nowrap",
+    `font-family: ${selectStyles.fontFamily}`,
+    `font-size: ${selectStyles.fontSize}`,
+    `font-weight: ${selectStyles.fontWeight}`,
+    `letter-spacing: ${selectStyles.letterSpacing}`,
+  ].join(";");
+  document.body.append(measure);
+
+  const textWidth = measure.getBoundingClientRect().width;
+  measure.remove();
+
+  const nextWidth = Math.max(48, Math.ceil(textWidth + 30));
+  rateSelectWrap.style.setProperty("--player-rate-select-width", `${nextWidth}px`);
+  rateSelectWrap.dataset.rateWidthValue = selectedValue;
 }
 
 function updateSeekVisuals(currentTime, duration, forceEnd = false) {

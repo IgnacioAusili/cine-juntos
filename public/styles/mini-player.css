@@ -1,0 +1,176 @@
+.mini-player-inline {
+  position: absolute;
+  z-index: 32;
+  right: 16px;
+  bottom: 16px;
+  width: min(520px, calc(100% - 32px));
+  height: min(340px, calc(100% - 32px));
+  min-height: 210px;
+  overflow: hidden;
+  border-radius: 14px;
+}
+
+.mini-player-surface .player-bottom-actions {
+  padding: 6px 8px 8px;
+}
+
+.mini-player-return-hint {
+  position: absolute;
+  z-index: 9;
+  right: 72px;
+  bottom: 76px;
+  display: none;
+  width: min(270px, calc(100% - 32px));
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 12px;
+  background: rgba(9, 12, 14, 0.82);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.34);
+  color: rgba(255, 255, 255, 0.78);
+  padding: 10px 12px;
+  text-align: left;
+  backdrop-filter: blur(12px);
+}
+
+.player-frame.mini-player-active .mini-player-return-hint {
+  display: grid;
+  gap: 3px;
+}
+
+.mini-player-return-hint strong {
+  color: #ffffff;
+  font-size: 0.76rem;
+}
+
+.mini-player-return-arrow {
+  position: absolute;
+  z-index: 9;
+  bottom: var(--mini-player-return-arrow-bottom, 68px);
+  left: var(--mini-player-return-button-x, 50%);
+  display: none;
+  width: 2px;
+  height: 28px;
+  background: #ff8d4a;
+  color: #ff8d4a;
+  font-size: 0;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  transform: translateX(-50%);
+}
+
+.player-frame.mini-player-active .mini-player-return-arrow {
+  display: block;
+}
+
+.mini-player-return-arrow::after {
+  position: absolute;
+  top: 21px;
+  left: -5px;
+  width: 0;
+  height: 0;
+  border-top: 8px solid #ff8d4a;
+  border-right: 6px solid transparent;
+  border-left: 6px solid transparent;
+  content: "";
+}
+
+.mini-player-surface .mini-emoji-popover {
+  position: absolute;
+  z-index: 20;
+  right: 10px;
+  bottom: 48px;
+}
+
+.mini-player-surface .sync-status {
+  display: none;
+}
+
+.mini-player-surface .messages-wrap {
+  --chat-scrollbar-visual-end: calc(100% - 82px);
+  --chat-scrollbar-visual-inset: 6px;
+  overflow-y: hidden;
+}
+
+.mini-player-surface .overlay-messages {
+  height: 100%;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.mini-player-surface .overlay-messages::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.mini-player-surface .chat-scrollbar {
+  right: 3px;
+  width: 4px;
+}
+
+.mini-player-surface .chat-scrollbar-thumb {
+  left: 0;
+  width: 4px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.mini-player-surface .player-controls-bar {
+  flex-wrap: nowrap;
+  gap: 6px;
+  padding: 5px 7px;
+}
+
+.mini-player-surface .player-progress-group {
+  order: initial;
+  width: auto;
+  gap: 5px;
+}
+
+.mini-player-surface .player-time {
+  min-width: 28px;
+  font-size: 0.64rem;
+}
+
+.mini-player-surface .video-control-button {
+  width: 28px;
+  min-height: 28px;
+  flex-basis: 28px;
+}
+
+.mini-player-surface .player-rate-select,
+.mini-player-surface #pageFullscreenButton,
+.mini-player-surface [data-proxy-for="pageFullscreenButton"] {
+  display: none;
+}
+
+.mini-player-surface #playerMiniPlayerButton.active svg,
+.mini-player-surface [data-proxy-for="playerMiniPlayerButton"].active svg,
+.player-frame.mini-player-active #playerMiniPlayerButton.active svg {
+  width: 12px;
+  height: 12px;
+}
+
+.player-frame.mini-player-active #playerMiniPlayerButton.active,
+.mini-player-surface #playerMiniPlayerButton.active,
+.mini-player-surface [data-proxy-for="playerMiniPlayerButton"].active {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.player-frame.mini-player-active #playerMiniPlayerButton.active:hover svg,
+.player-frame.mini-player-active #playerMiniPlayerButton.active:focus-visible svg,
+.mini-player-surface #playerMiniPlayerButton.active:hover svg,
+.mini-player-surface #playerMiniPlayerButton.active:focus-visible svg,
+.mini-player-surface [data-proxy-for="playerMiniPlayerButton"].active:hover svg,
+.mini-player-surface [data-proxy-for="playerMiniPlayerButton"].active:focus-visible svg {
+  color: #ff6464;
+}
+
+@media (max-width: 760px) {
+  .mini-player-inline {
+    right: 8px;
+    bottom: 8px;
+    width: calc(100% - 16px);
+    height: min(340px, calc(100% - 16px));
+  }
+}

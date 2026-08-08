@@ -14,6 +14,7 @@ import { focusFullscreenWorkspace, setSyncStatus } from "../session-ui.js";
 import {
   logEvent,
 } from "../../core/state.js";
+import { isMiniPlayerActive } from "./mini-player.js";
 import { syncInsideChatPanelOffset } from "../chat/chat-layout.js?v=20260806-dock-transition-03";
 import { withShortcutHint } from "../../core/utils.js";
 
@@ -37,6 +38,7 @@ export function wireFullscreenEvents() {
   });
 
   dom.videoPlayer.addEventListener("dblclick", (event) => {
+    if (isMiniPlayerActive()) return;
     event.preventDefault();
     togglePageFullscreen();
   });

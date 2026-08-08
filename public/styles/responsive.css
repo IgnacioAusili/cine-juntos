@@ -147,7 +147,7 @@
   }
 
   .player-select select {
-    min-width: 62px;
+    min-width: 0;
   }
 
   .player-chat {

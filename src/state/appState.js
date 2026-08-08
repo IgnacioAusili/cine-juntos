@@ -1,5 +1,10 @@
 import { dom } from "../core/dom.js";
-import { EXAMPLE_VIDEO_URL, getOrCreateClientId, makeGuestName } from "../core/utils.js";
+import {
+  EXAMPLE_VIDEO_URL,
+  getOrCreateClientId,
+  makeGuestName,
+  normalizeGuestName,
+} from "../core/utils.js";
 
 export const firebaseConfig = window.CINE_JUNTOS_FIREBASE_CONFIG || {};
 const SESSION_NAME_KEY = "cine-juntos-name";
@@ -11,13 +16,18 @@ function isLegacyAutomaticName(value) {
 
 function readPersistedName() {
   const savedName = localStorage.getItem(SESSION_NAME_KEY);
-  if (savedName && !isLegacyAutomaticName(savedName)) return savedName;
+  if (savedName && !isLegacyAutomaticName(savedName)) {
+    const normalizedName = normalizeGuestName(savedName);
+    if (normalizedName !== savedName) localStorage.setItem(SESSION_NAME_KEY, normalizedName);
+    return normalizedName;
+  }
 
   // Migrar el nombre que ya existía antes de hacerlo persistente entre sesiones.
   const legacyName = sessionStorage.getItem(SESSION_NAME_KEY);
   if (legacyName && !isLegacyAutomaticName(legacyName)) {
-    localStorage.setItem(SESSION_NAME_KEY, legacyName);
-    return legacyName;
+    const normalizedName = normalizeGuestName(legacyName);
+    localStorage.setItem(SESSION_NAME_KEY, normalizedName);
+    return normalizedName;
   }
 
   if (savedName && isLegacyAutomaticName(savedName)) {
@@ -74,6 +84,7 @@ export const playerState = {
   slowLoadPromptSource: "",
   resumePromptSource: "",
   syncStatusTimer: null,
+  miniPlayerMode: "",
 };
 
 export const chatState = {

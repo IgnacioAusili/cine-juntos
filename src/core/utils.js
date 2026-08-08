@@ -86,28 +86,73 @@ export const GUEST_ANIMALS = [
   "Cóndor",
   "Bisonte",
 ];
-export const GUEST_ADJECTIVES = [
-  "Astral",
-  "Boreal",
-  "Carmesí",
-  "Sombrío",
-  "Glacial",
-  "Celestial",
-  "Arcano",
-  "Eterno",
-  "Salvaje",
-  "Imperial",
-  "Dorado",
-  "Plateado",
-  "Espectral",
-  "Místico",
-  "Ancestral",
-  "Sigiloso",
-  "Aurora",
-  "Trueno",
-  "Eclipse",
-  "Relámpago",
+const GUEST_ANIMAL_GENDER = new Map([
+  ["lobo", "masculine"],
+  ["jaguar", "masculine"],
+  ["lince", "masculine"],
+  ["halcón", "masculine"],
+  ["cuervo", "masculine"],
+  ["búho", "masculine"],
+  ["zorro", "masculine"],
+  ["león", "masculine"],
+  ["tigre", "masculine"],
+  ["pantera", "feminine"],
+  ["cobra", "feminine"],
+  ["orca", "feminine"],
+  ["oso", "masculine"],
+  ["puma", "masculine"],
+  ["águila", "feminine"],
+  ["delfín", "masculine"],
+  ["fénix", "masculine"],
+  ["koala", "masculine"],
+  ["cóndor", "masculine"],
+  ["bisonte", "masculine"],
+]);
+const GUEST_ADJECTIVE_FORMS = [
+  { masculine: "astral", feminine: "astral" },
+  { masculine: "boreal", feminine: "boreal" },
+  { masculine: "carmesí", feminine: "carmesí" },
+  { masculine: "sombrío", feminine: "sombría" },
+  { masculine: "glacial", feminine: "glacial" },
+  { masculine: "celestial", feminine: "celestial" },
+  { masculine: "arcano", feminine: "arcana" },
+  { masculine: "eterno", feminine: "eterna" },
+  { masculine: "salvaje", feminine: "salvaje" },
+  { masculine: "imperial", feminine: "imperial" },
+  { masculine: "dorado", feminine: "dorada" },
+  { masculine: "plateado", feminine: "plateada" },
+  { masculine: "espectral", feminine: "espectral" },
+  { masculine: "místico", feminine: "mística" },
+  { masculine: "ancestral", feminine: "ancestral" },
+  { masculine: "sigiloso", feminine: "sigilosa" },
+  { masculine: "brillante", feminine: "brillante" },
+  { masculine: "enigmático", feminine: "enigmática" },
+  { masculine: "nocturno", feminine: "nocturna" },
+  { masculine: "veloz", feminine: "veloz" },
 ];
+export const GUEST_ADJECTIVES = GUEST_ADJECTIVE_FORMS.map(({ masculine }) => masculine);
+const LEGACY_GUEST_ADJECTIVES = new Set([
+  "astral",
+  "boreal",
+  "carmesí",
+  "sombrío",
+  "glacial",
+  "celestial",
+  "arcano",
+  "eterno",
+  "salvaje",
+  "imperial",
+  "dorado",
+  "plateado",
+  "espectral",
+  "místico",
+  "ancestral",
+  "sigiloso",
+  "aurora",
+  "trueno",
+  "eclipse",
+  "relámpago",
+]);
 export const CHAT_DOCKS = ["right", "bottom"];
 export const CHAT_DOCK_META = {
   right: { icon: "panel-right", next: "bottom", label: "lateral", tooltip: "Mover chat abajo" },
@@ -129,8 +174,30 @@ export function hasFirebaseConfig(config) {
 
 export function makeGuestName(clientId) {
   const animal = GUEST_ANIMALS[Math.floor(Math.random() * GUEST_ANIMALS.length)];
-  const adjective = GUEST_ADJECTIVES[Math.floor(Math.random() * GUEST_ADJECTIVES.length)];
+  const adjectiveForm = GUEST_ADJECTIVE_FORMS[Math.floor(Math.random() * GUEST_ADJECTIVE_FORMS.length)];
+  const gender = GUEST_ANIMAL_GENDER.get(animal.toLocaleLowerCase("es-AR")) || "masculine";
+  const adjective = adjectiveForm[gender];
   return `${animal} ${adjective}`;
+}
+
+export function normalizeGuestName(value) {
+  const name = String(value || "").trim();
+  const match = name.match(/^(\S+)\s+(\S+)$/u);
+  if (!match) return value;
+
+  const animal = GUEST_ANIMALS.find(
+    (candidate) => candidate.toLocaleLowerCase("es-AR") === match[1].toLocaleLowerCase("es-AR"),
+  );
+  const legacyAdjective = match[2].toLocaleLowerCase("es-AR");
+  if (!animal || !LEGACY_GUEST_ADJECTIVES.has(legacyAdjective)) return value;
+
+  const adjectiveForm = GUEST_ADJECTIVE_FORMS.find(({ masculine, feminine }) =>
+    masculine === legacyAdjective || feminine === legacyAdjective,
+  );
+  if (!adjectiveForm) return makeGuestName();
+
+  const gender = GUEST_ANIMAL_GENDER.get(animal.toLocaleLowerCase("es-AR")) || "masculine";
+  return `${animal} ${adjectiveForm[gender]}`;
 }
 
 export function makeParticipantLabel(participantId) {

@@ -12,7 +12,7 @@ import {
   updateCharCounter,
   wireFloatingComposerLayout,
   wireComposerScrollbar,
-} from "./chat-input.js";
+} from "./chat-input.js?v=20260808-emoji-state-01";
 import { setReplyTarget } from "./chat-reply.js";
 import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js";
 import {
@@ -29,7 +29,7 @@ import {
   setInsideChatVisible,
   syncExternalChatCollapseHandleOffset,
   syncChatAutoExpandControls,
-} from "./chat-layout.js?v=20260806-dock-transition-03";
+} from "./chat-layout.js?v=20260808-user-scroll-lock-03";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260802-02";
 
 const CHAT_SCROLL_WHEEL_MULTIPLIER = 0.35;
@@ -133,7 +133,7 @@ export {
   buildEmojiPicker,
   updateCharCounter,
   sendMessage,
-} from "./chat-input.js";
+} from "./chat-input.js?v=20260808-emoji-state-01";
 export { renderMessage } from "./chat-render.js?v=20260801-05";
 export {
   clearReplyTarget,
@@ -161,7 +161,7 @@ export {
   setInsideChatVisible,
   syncChatAutoExpandControls,
   updateCollapseButton,
-} from "./chat-layout.js?v=20260806-dock-transition-03";
+} from "./chat-layout.js?v=20260808-user-scroll-lock-03";
 
 export function wireChatEvents() {
   syncChatAutoExpandControls();

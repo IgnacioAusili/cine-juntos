@@ -21,7 +21,7 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap"
     />
     <link rel="icon" href="./public/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="./public/styles.css?v=20260807-system-message-groups-02&mini=20260808-08" />
+    <link rel="stylesheet" href="./public/styles.css?v=20260807-system-message-groups-02&mini=20260808-08&emoji-state=20260808-02" />
   </head>
   <body class="is-lobby">
     <div class="app-shell">
@@ -225,6 +225,14 @@
             <div class="lobby-ticket-perforation" aria-hidden="true"></div>
           </aside>
         </div>
+
+        <footer class="lobby-footer" aria-label="Información legal y licencia">
+          <p class="lobby-disclaimer">
+            © 2026 Cine Juntos · Código abierto bajo
+            <a class="lobby-license" href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener noreferrer">GPLv3</a>
+            · No aloja ni distribuye videos · El creador no se responsabiliza por el contenido reproducido
+          </p>
+        </footer>
       </section>
 
       <main class="session-view" id="sessionView" data-chat-dock="right" hidden>
@@ -768,6 +776,6 @@
     <script src="./public/dev-runtime.js?v=20260715-02"></script>
     <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script src="./public/firebase-config.js"></script>
-    <script type="module" src="./src/main.js?v=20260808-mini-player-08"></script>
+    <script type="module" src="./src/main.js?v=20260808-emoji-state-01"></script>
   </body>
 </html>

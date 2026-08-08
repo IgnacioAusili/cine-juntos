@@ -32,7 +32,7 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js";
+} from "./features/chat/index.js?v=20260808-emoji-state-01";
 import {
   initializePlayer,
   wirePlayerEvents,

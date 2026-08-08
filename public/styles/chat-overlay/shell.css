@@ -5,7 +5,7 @@
   right: 24px;
   bottom: 8px;
   display: grid;
-  width: min(260px, calc(100% - 10px));
+  width: min(280px, calc(100% - 10px));
   max-height: min(62%, 330px);
   grid-template-rows: auto minmax(0, 1fr);
   border-bottom-right-radius: var(--radius-md);

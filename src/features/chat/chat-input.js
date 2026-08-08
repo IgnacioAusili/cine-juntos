@@ -23,7 +23,7 @@ import { renderMessage } from "./chat-render.js?v=20260801-05";
 import {
   scheduleExternalChatAutoCollapse,
   scheduleInsideChatAutoCollapse,
-} from "./chat-layout.js?v=20260806-dock-transition-03";
+} from "./chat-layout.js?v=20260808-user-scroll-lock-03";
 import { queuePinnedChatScrollSync, isPinnedToBottom } from "./chat-scroll-sync.js";
 import {
   compressImageBase64,
@@ -315,7 +315,7 @@ export function autoResizeMessageInput(input) {
 
   input.style.height = "auto";
   const maxHeight = isOverlay ? 86 : 118;
-  const minHeight = isOverlay ? 28 : 36;
+  const minHeight = isOverlay ? 34 : 36;
   input.style.height = `${Math.min(input.scrollHeight, maxHeight)}px`;
   const wrapper = input.closest(".input-wrapper");
   if (wrapper) {
@@ -329,6 +329,7 @@ export function autoResizeMessageInput(input) {
 export function buildEmojiPicker() {
   void preloadEmojiFont();
   dom.emojiPopover.innerHTML = "";
+  syncEmojiTriggerState();
   EMOJI_PICKER_ITEMS.forEach(({ emoji, tags }) => {
     const button = document.createElement("button");
     button.className = "emoji-option";
@@ -367,6 +368,8 @@ export async function toggleEmojiPicker(input, anchor) {
   dom.emojiPopover.style.top = `${top}px`;
   dom.emojiPopover.style.left = `${left}px`;
 
+  syncEmojiTriggerState(anchor);
+
   window.requestAnimationFrame(() => {
     input?.focus({ preventScroll: true });
     if (typeof input?.setSelectionRange === "function") {
@@ -375,9 +378,19 @@ export async function toggleEmojiPicker(input, anchor) {
   });
 }
 
+function syncEmojiTriggerState(activeAnchor = null) {
+  [dom.messageEmojiButton, dom.overlayEmojiButton].forEach((button) => {
+    if (!button) return;
+    const isActive = button === activeAnchor;
+    button.classList.toggle("is-emoji-picker-open", isActive);
+    button.setAttribute("aria-expanded", String(isActive));
+  });
+}
+
 export function hideEmojiPicker() {
   dom.emojiPopover.hidden = true;
   dom.emojiPopover.dataset.anchor = "";
+  syncEmojiTriggerState();
 }
 
 export function normalizeEmojiShortcodesInput(input) {

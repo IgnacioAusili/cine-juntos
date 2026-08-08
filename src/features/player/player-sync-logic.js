@@ -14,7 +14,7 @@ import {
 } from "../../core/utils.js";
 import { markParticipantActive, rememberParticipant } from "../presence.js";
 import { setSyncStatus } from "../session-ui.js";
-import { sendVideoEventMessage, renderMessage } from "../chat/index.js";
+import { sendVideoEventMessage, renderMessage } from "../chat/index.js?v=20260808-emoji-state-01";
 // Import circular intencional y seguro: estas funciones se invocan en runtime,
 // no durante la carga del modulo, y player.js a su vez importa publishState.
 import { setVideoSource, waitForVideoMetadata } from "./player.js";

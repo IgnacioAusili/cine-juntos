@@ -18,6 +18,7 @@ const AUTO_EXPAND_EXTERNAL_KEY = "cine-juntos-chat-auto-expand-external";
 const CHAT_LAYOUT_SETTLE_MS = 320;
 const COLLAPSE_HANDLE_HIDE_MS = CHAT_LAYOUT_SETTLE_MS + 40;
 const CHAT_SCROLL_SNAP_LOCK_MS = 900;
+const CHAT_USER_SCROLL_LOCK_MS = 900;
 const BOTTOM_DOCK_UNION_REVEAL_PX = 0;
 const BOTTOM_TO_RIGHT_SCROLL_TIMEOUT_MS = 1200;
 const BOTTOM_TO_RIGHT_LAYOUT_MS = 420;
@@ -26,8 +27,85 @@ let layoutAdjustmentTimer = 0;
 let collapseHandleOffsetTimer = 0;
 let expandScrollTimer = 0;
 let chatScrollSnapLockTimer = 0;
+let chatUserScrollUnlockTimer = 0;
 let pendingCollapseScrollFinish = null;
 let pendingBottomToRightSwitch = null;
+
+const PAGE_SCROLL_KEYS = new Set([
+  "ArrowDown",
+  "ArrowUp",
+  "PageDown",
+  "PageUp",
+  "Home",
+  "End",
+  " ",
+  "Spacebar",
+]);
+const PAGE_SCROLL_LOCK_LISTENER_OPTIONS = { capture: true, passive: false };
+
+function isChatScrollTarget(target) {
+  return target instanceof Element && Boolean(target.closest("#messages, #overlayMessages, textarea"));
+}
+
+function preventPageScrollDuringChatTransition(event) {
+  if (isChatScrollTarget(event.target)) return;
+  event.preventDefault();
+}
+
+function preventPageScrollKeysDuringChatTransition(event) {
+  if (!PAGE_SCROLL_KEYS.has(event.key) || event.ctrlKey || event.metaKey || event.altKey) return;
+
+  const target = event.target;
+  if (
+    target instanceof HTMLInputElement
+    || target instanceof HTMLTextAreaElement
+    || target instanceof HTMLElement && target.isContentEditable
+  ) {
+    return;
+  }
+
+  event.preventDefault();
+}
+
+function unlockUserScrollDuringChatTransition() {
+  document.removeEventListener("wheel", preventPageScrollDuringChatTransition, true);
+  document.removeEventListener("touchmove", preventPageScrollDuringChatTransition, true);
+  document.removeEventListener("keydown", preventPageScrollKeysDuringChatTransition, true);
+  dom.sessionView?.classList.remove("chat-user-scroll-locked");
+  chatUserScrollUnlockTimer = 0;
+}
+
+function lockUserScrollDuringChatTransition() {
+  if (!dom.sessionView || dom.sessionView.hidden) return;
+
+  document.removeEventListener("wheel", preventPageScrollDuringChatTransition, true);
+  document.removeEventListener("touchmove", preventPageScrollDuringChatTransition, true);
+  document.removeEventListener("keydown", preventPageScrollKeysDuringChatTransition, true);
+  document.addEventListener(
+    "wheel",
+    preventPageScrollDuringChatTransition,
+    PAGE_SCROLL_LOCK_LISTENER_OPTIONS,
+  );
+  document.addEventListener(
+    "touchmove",
+    preventPageScrollDuringChatTransition,
+    PAGE_SCROLL_LOCK_LISTENER_OPTIONS,
+  );
+  document.addEventListener(
+    "keydown",
+    preventPageScrollKeysDuringChatTransition,
+    PAGE_SCROLL_LOCK_LISTENER_OPTIONS,
+  );
+  dom.sessionView.classList.add("chat-user-scroll-locked");
+
+  if (chatUserScrollUnlockTimer) {
+    window.clearTimeout(chatUserScrollUnlockTimer);
+  }
+  chatUserScrollUnlockTimer = window.setTimeout(
+    unlockUserScrollDuringChatTransition,
+    CHAT_USER_SCROLL_LOCK_MS,
+  );
+}
 
 function getAutoExpandTooltip() {
   return "Se abre al recibir mensajes y se oculta al responder";
@@ -121,6 +199,8 @@ function scheduleAutoCollapse(isOverlay) {
 }
 
 export function setInsideChatVisible(visible) {
+  const wasVisible = dom.playerFrame.classList.contains("chat-inside-open");
+  if (wasVisible !== visible) lockUserScrollDuringChatTransition();
   clearAutoCollapseTimer(true);
   if (!visible) cancelIdentityEditing();
   dom.playerFrame.classList.toggle("chat-inside-open", visible);
@@ -372,6 +452,8 @@ function getBottomDockVideoScrollTop() {
 }
 
 export function setExternalChatCollapsed(collapsed) {
+  const wasCollapsed = dom.sessionView.classList.contains("chat-collapsed");
+  if (wasCollapsed !== collapsed) lockUserScrollDuringChatTransition();
   clearPendingCollapseScroll();
 
   if (

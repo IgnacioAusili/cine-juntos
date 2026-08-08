@@ -2,6 +2,14 @@
 
 App estatica para crear una sala, cargar un link directo de video y sincronizar reproduccion + chat.
 
+## Licencia y responsabilidad
+
+El proyecto se distribuye bajo la **GNU General Public License v3.0 (GPLv3)**. Consulta el archivo
+[LICENSE](./LICENSE) para conocer los términos aplicables.
+
+Cine Juntos no aloja ni distribuye videos: solo reproduce enlaces aportados por sus usuarios. El
+creador no se responsabiliza por el contenido reproducido ni por el uso del servicio.
+
 ## Usar localmente
 
 ```powershell

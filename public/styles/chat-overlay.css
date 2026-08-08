@@ -1,6 +1,6 @@
-@import url("./chat-overlay/shell.css");
+@import url("./chat-overlay/shell.css?v=20260808-chat-input-03");
 @import url("./chat-overlay/header.css");
 @import url("./chat-overlay/messages.css?v=20260802-04");
-@import url("./chat-overlay/composer.css");
+@import url("./chat-overlay/composer.css?v=20260808-emoji-state-02");
 @import url("./chat-overlay/sync-status.css");
 @import url("./chat/system-message-groups.css");

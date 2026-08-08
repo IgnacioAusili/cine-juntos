@@ -4,8 +4,8 @@
 @import url("./styles/components.css");
 @import url("./styles/lobby.css");
 @import url("./styles/player.css");
-@import url("./styles/chat.css");
-@import url("./styles/chat-overlay.css?v=20260802-04");
+@import url("./styles/chat.css?v=20260808-emoji-state-02");
+@import url("./styles/chat-overlay.css?v=20260808-emoji-state-02");
 @import url("./styles/states.css");
-@import url("./styles/responsive.css");
+@import url("./styles/responsive.css?v=20260808-chat-dock-form-01");
 @import url("./styles/mini-player.css?v=20260808-mini-player-08");

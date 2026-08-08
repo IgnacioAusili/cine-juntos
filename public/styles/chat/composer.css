@@ -16,7 +16,7 @@
   box-shadow: none;
 }
 
-.session-view[data-chat-dock="bottom"] .message-form {
+.session-view[data-chat-dock="bottom"] .chat-area > .message-form {
   left: 64px;
   right: 64px;
   width: auto;
@@ -156,7 +156,8 @@
   transition: color 0.2s ease;
 }
 
-.chat-area .input-wrapper .emoji-trigger:hover {
+.chat-area .input-wrapper .emoji-trigger:hover,
+.chat-area .input-wrapper .emoji-trigger.is-emoji-picker-open {
   color: var(--text);
 }
 

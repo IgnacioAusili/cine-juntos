@@ -116,7 +116,7 @@
     padding: 12px;
   }
 
-  .session-view[data-chat-dock="bottom"] .message-form {
+  .session-view[data-chat-dock="bottom"] .chat-area > .message-form {
     left: 18px;
     right: 18px;
   }

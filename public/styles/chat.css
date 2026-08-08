@@ -1,6 +1,6 @@
 @import url("./chat/messages.css");
 @import url("./chat/message-media.css");
-@import url("./chat/composer.css");
+@import url("./chat/composer.css?v=20260808-emoji-state-02");
 @import url("./chat/message-menu.css");
 @import url("./chat/image-preview.css");
 @import url("./chat/messages-wrap.css");

@@ -1,7 +1,113 @@
 /* Ajustes de composición para teléfonos. Se carga después del resto de las
    capas para conservar intacta la geometría de escritorio. */
 
+.lobby-description-mobile,
+.lobby-disclaimer-mobile {
+  display: none;
+}
+
 @media (max-width: 680px) {
+  /* En pantallas chicas la entrada usa una sola columna real: el contenido
+     no hereda el padding lateral del grid de escritorio ni el desplazamiento
+     decorativo del boleto. */
+  .lobby-screen {
+    min-height: auto;
+    gap: 0;
+    padding: 28px 0 24px;
+  }
+
+  .lobby-marquee {
+    display: none;
+  }
+
+  .lobby-grid {
+    width: 100%;
+    gap: 40px;
+    padding-inline: 0;
+  }
+
+  .lobby-hero {
+    width: min(360px, calc(100% - 32px));
+    gap: 22px;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .lobby-title {
+    font-size: clamp(3.15rem, 14vw, 4rem);
+    text-align: center;
+  }
+
+  .lobby-description {
+    max-width: 34ch;
+    font-size: 0.95rem;
+    line-height: 1.55;
+    text-wrap: balance;
+  }
+
+  .lobby-description-full,
+  .lobby-disclaimer-full {
+    display: none;
+  }
+
+  .lobby-description-mobile,
+  .lobby-disclaimer-mobile {
+    display: inline;
+  }
+
+  .lobby-features {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+    gap: 8px;
+    margin-top: 2px;
+  }
+
+  .lobby-feature {
+    min-width: 0;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 7px;
+    padding: 10px 4px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.025);
+    text-align: center;
+  }
+
+  .lobby-feature-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .lobby-feature-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .lobby-feature-text {
+    align-items: center;
+    gap: 0;
+  }
+
+  .lobby-feature-text strong {
+    font-size: 0.72rem;
+    line-height: 1.15;
+  }
+
+  .lobby-feature-text small {
+    display: none;
+  }
+
+  .lobby-ticket {
+    width: min(380px, 100%);
+    justify-self: center;
+    transform: none;
+  }
+
+  .lobby-footer {
+    width: min(380px, calc(100% - 28px));
+  }
+
   /* La toolbar es absoluta sobre el video y en una pantalla angosta crece a
      dos filas. Reservamos su alto real para que no tape las acciones de sala. */
   body:not(.is-lobby) .session-view .workspace {

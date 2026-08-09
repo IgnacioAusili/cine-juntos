@@ -12,8 +12,12 @@
   /* En pantallas chicas la entrada usa una sola columna real: el contenido
      no hereda el padding lateral del grid de escritorio ni el desplazamiento
      decorativo del boleto. */
+  body.is-lobby {
+    overflow-y: auto;
+  }
+
   .lobby-screen {
-    min-height: auto;
+    min-height: calc(100dvh + 64px);
     gap: 0;
     padding: 28px 0 24px;
   }
@@ -128,6 +132,9 @@
 
   .lobby-footer {
     width: min(380px, calc(100% - 28px));
+    align-self: end;
+    margin-top: 56px;
+    padding-bottom: 16px;
   }
 
   /* La toolbar es absoluta sobre el video y en una pantalla angosta crece a

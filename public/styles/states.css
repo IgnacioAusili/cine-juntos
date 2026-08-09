@@ -332,7 +332,8 @@ body.fullscreen-mode .session-view[data-chat-dock="right"] .video-area {
   display: flex;
 }
 
-body.fullscreen-mode .session-view[data-chat-dock="right"] .session-toolbar {
+body.fullscreen-mode .session-view[data-chat-dock="right"] .session-toolbar,
+body.fullscreen-mode .session-view[data-chat-dock="bottom"] .session-toolbar {
   position: absolute;
   inset: auto;
   z-index: 10;
@@ -373,4 +374,56 @@ body.fullscreen-mode .session-view[data-chat-dock="right"] .player-chat {
   right: 24px;
   bottom: 8px;
   max-height: min(62%, 330px);
+}
+
+/* El dock inferior en fullscreen conserva el scroll del shell, pero su
+   reproductor debe poder extenderse hasta los bordes del viewport. El
+   gutter del shell sigue siendo correcto para la cabecera y para la vista
+   normal; acá lo compensamos únicamente en la sesión inferior. */
+body.fullscreen-mode .session-view[data-chat-dock="bottom"] {
+  position: static;
+  inset: auto;
+  z-index: auto;
+  width: calc(100% + (var(--app-shell-gutter) * 2));
+  height: auto;
+  min-height: 0;
+  margin-inline: calc(var(--app-shell-gutter) * -1);
+}
+
+body.fullscreen-mode .app-shell:has(.session-view[data-chat-dock="bottom"]) {
+  scroll-snap-type: y proximity;
+}
+
+body.fullscreen-mode .session-view[data-chat-dock="bottom"] .video-area,
+body.fullscreen-mode .session-view[data-chat-dock="bottom"] .chat-area {
+  scroll-snap-align: start;
+  scroll-snap-stop: normal;
+}
+
+body.fullscreen-mode .session-view[data-chat-dock="bottom"] .session-toolbar {
+  scroll-snap-align: start;
+  scroll-snap-stop: normal;
+}
+
+body.fullscreen-mode .session-view[data-chat-dock="bottom"] .workspace {
+  display: grid;
+  width: 100%;
+  height: auto;
+  min-height: 100dvh;
+  flex: 0 0 auto;
+  margin-top: 68px;
+  gap: 0;
+  padding-top: 0;
+  grid-template-rows: 100dvh minmax(0, 100dvh);
+  grid-template-areas:
+    "video"
+    "chat";
+}
+
+body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="bottom"] .workspace {
+  height: 100dvh;
+  min-height: 0;
+  flex: 0 0 auto;
+  row-gap: 0;
+  grid-template-rows: 100dvh 0;
 }

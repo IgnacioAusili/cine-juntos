@@ -1,0 +1,23 @@
+/* Ajustes de composición para teléfonos. Se carga después del resto de las
+   capas para conservar intacta la geometría de escritorio. */
+
+@media (max-width: 680px) {
+  /* La toolbar es absoluta sobre el video y en una pantalla angosta crece a
+     dos filas. Reservamos su alto real para que no tape las acciones de sala. */
+  body:not(.is-lobby) .session-view .workspace {
+    margin-top: 138px;
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .workspace {
+    margin-top: 138px;
+  }
+
+  /* El mini-reproductor fijo acompaña al chat inferior sin cubrir su
+     cabecera, que conserva las acciones de usuario y dock. */
+  .mini-player-scroll {
+    top: calc(var(--app-shell-gutter) + 48px);
+    right: 16px;
+    width: min(260px, calc(100vw - 32px));
+    border-radius: 12px;
+  }
+}

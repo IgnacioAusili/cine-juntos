@@ -16,10 +16,16 @@
     overflow-y: auto;
   }
 
+  body.is-lobby .app-shell {
+    min-height: 0;
+  }
+
   .lobby-screen {
-    min-height: calc(100dvh + 64px);
+    min-height: 0;
     gap: 0;
-    padding: 28px 0 24px;
+    padding: 12px 0 10px;
+    grid-template-rows: auto auto auto;
+    align-content: start;
   }
 
   .lobby-marquee {
@@ -28,19 +34,19 @@
 
   .lobby-grid {
     width: 100%;
-    gap: 40px;
+    gap: 28px;
     padding-inline: 0;
   }
 
   .lobby-hero {
     width: min(360px, calc(100% - 32px));
-    gap: 22px;
+    gap: 18px;
     justify-items: center;
     text-align: center;
   }
 
   .lobby-title {
-    font-size: clamp(3.15rem, 14vw, 4rem);
+    font-size: clamp(3.5rem, 16vw, 4.6rem);
     text-align: center;
   }
 
@@ -133,8 +139,8 @@
   .lobby-footer {
     width: min(380px, calc(100% - 28px));
     align-self: end;
-    margin-top: 56px;
-    padding-bottom: 16px;
+    margin-top: 28px;
+    padding-bottom: 8px;
   }
 
   /* La toolbar es absoluta sobre el video y en una pantalla angosta crece a
@@ -154,29 +160,5 @@
     right: 16px;
     width: min(260px, calc(100vw - 32px));
     border-radius: 12px;
-  }
-}
-
-@media (max-width: 380px) {
-  .lobby-features {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  .lobby-feature {
-    flex-direction: row;
-    align-items: center;
-    gap: 10px;
-    padding: 0;
-    text-align: left;
-  }
-
-  .lobby-feature-text {
-    align-items: flex-start;
-  }
-
-  .lobby-feature-text strong,
-  .lobby-feature-text small {
-    text-align: left;
   }
 }

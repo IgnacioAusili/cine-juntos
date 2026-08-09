@@ -23,7 +23,7 @@
   .lobby-screen {
     min-height: 0;
     gap: 0;
-    padding: 12px 0 10px;
+    padding: 0 0 10px;
     grid-template-rows: auto auto auto;
     align-content: start;
   }
@@ -54,11 +54,15 @@
     display: block;
     width: 64px;
     height: 64px;
-    margin: 0 auto -6px;
+    margin: -6px auto -6px;
   }
 
   .lobby-title .lobby-title-icon {
     display: none;
+  }
+
+  .lobby-title {
+    margin-bottom: 28px;
   }
 
   .lobby-description {

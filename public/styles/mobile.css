@@ -3,7 +3,8 @@
 
 .lobby-description-mobile,
 .lobby-disclaimer-mobile,
-.lobby-mobile-title-icon {
+.lobby-mobile-title-icon,
+.lobby-feature-description-mobile {
   display: none;
 }
 
@@ -63,8 +64,13 @@
   }
 
   .lobby-description-mobile,
-  .lobby-disclaimer-mobile {
+  .lobby-disclaimer-mobile,
+  .lobby-feature-description-mobile {
     display: inline;
+  }
+
+  .lobby-feature-description-full {
+    display: none;
   }
 
   .lobby-features {

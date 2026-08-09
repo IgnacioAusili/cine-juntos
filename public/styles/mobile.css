@@ -2,7 +2,8 @@
    capas para conservar intacta la geometría de escritorio. */
 
 .lobby-description-mobile,
-.lobby-disclaimer-mobile {
+.lobby-disclaimer-mobile,
+.lobby-mobile-title-icon {
   display: none;
 }
 
@@ -38,6 +39,17 @@
     text-align: center;
   }
 
+  .lobby-mobile-title-icon {
+    display: block;
+    width: 64px;
+    height: 64px;
+    margin: 0 auto -6px;
+  }
+
+  .lobby-title .lobby-title-icon {
+    display: none;
+  }
+
   .lobby-description {
     max-width: 34ch;
     font-size: 0.95rem;
@@ -67,10 +79,10 @@
     flex-direction: column;
     justify-content: flex-start;
     gap: 7px;
-    padding: 10px 4px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.025);
+    padding: 0 4px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
     text-align: center;
   }
 
@@ -95,7 +107,11 @@
   }
 
   .lobby-feature-text small {
-    display: none;
+    display: block;
+    color: var(--muted-2);
+    font-size: 0.62rem;
+    line-height: 1.25;
+    text-align: center;
   }
 
   .lobby-ticket {
@@ -125,5 +141,29 @@
     right: 16px;
     width: min(260px, calc(100vw - 32px));
     border-radius: 12px;
+  }
+}
+
+@media (max-width: 380px) {
+  .lobby-features {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .lobby-feature {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    padding: 0;
+    text-align: left;
+  }
+
+  .lobby-feature-text {
+    align-items: flex-start;
+  }
+
+  .lobby-feature-text strong,
+  .lobby-feature-text small {
+    text-align: left;
   }
 }

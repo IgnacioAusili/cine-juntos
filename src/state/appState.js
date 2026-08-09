@@ -85,6 +85,7 @@ export const playerState = {
   resumePromptSource: "",
   syncStatusTimer: null,
   miniPlayerMode: "",
+  scrollMiniPlayerDismissed: false,
 };
 
 export const chatState = {

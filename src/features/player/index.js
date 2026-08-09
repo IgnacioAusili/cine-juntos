@@ -1,6 +1,6 @@
 // Coordinacion general del player: reexporta sync de video y fullscreen sin romper imports existentes.
 import { wireFullscreenEvents } from "./fullscreen.js";
-import { wireMiniPlayerEvents } from "./mini-player.js";
+import { wireMiniPlayerEvents } from "./mini-player.js?v=20260808-scroll-mini-player-07";
 import { wirePlayerCoreEvents } from "./player.js";
 
 export {

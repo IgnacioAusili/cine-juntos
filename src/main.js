@@ -36,7 +36,7 @@ import {
 import {
   initializePlayer,
   wirePlayerEvents,
-} from "./features/player/index.js";
+} from "./features/player/index.js?v=20260808-scroll-mini-player-07";
 import { joinRoom, wireRoomEvents } from "./features/room.js";
 import {
   showSlowLoadDialog,

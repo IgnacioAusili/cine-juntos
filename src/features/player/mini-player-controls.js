@@ -1,7 +1,7 @@
 export function installMiniPlayerWindowStyles(targetDocument) {
   [
-    "../../../public/styles.css?v=20260808-mini-player-08",
-    "../../../public/styles/mini-player-window.css?v=20260808-mini-player-08",
+    "../../../public/styles.css?v=20260808-mini-player-13",
+    "../../../public/styles/mini-player-window.css?v=20260808-mini-player-12",
   ].forEach((path) => {
     const stylesheet = targetDocument.createElement("link");
     stylesheet.rel = "stylesheet";

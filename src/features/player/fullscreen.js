@@ -14,7 +14,7 @@ import { focusFullscreenWorkspace, setSyncStatus } from "../session-ui.js";
 import {
   logEvent,
 } from "../../core/state.js";
-import { isMiniPlayerActive } from "./mini-player.js";
+import { isMiniPlayerActive } from "./mini-player.js?v=20260808-scroll-mini-player-07";
 import { syncInsideChatPanelOffset } from "../chat/chat-layout.js?v=20260808-user-scroll-lock-03";
 import { withShortcutHint } from "../../core/utils.js";
 
@@ -157,6 +157,7 @@ function wirePlayerOverlayControls() {
   // escucha en captura para cubrir el caso en que el evento termine sobre el
   // reproductor por el pointer-events del overlay oculto.
   document.addEventListener("wheel", (event) => {
+    if (event.target?.closest?.(".mini-player-surface")) return;
     const volumeGroup = dom.playerVolumeGroup;
     if (!volumeGroup) return;
 

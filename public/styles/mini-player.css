@@ -10,17 +10,138 @@
   border-radius: 14px;
 }
 
+/* En el dock inferior el video acompaña al usuario mientras el chat ocupa el
+   viewport. Es la misma superficie interactiva, pero anclada al navegador. */
+.mini-player-scroll {
+  position: fixed;
+  z-index: 80;
+  right: 24px;
+  top: 24px;
+  bottom: auto;
+  width: min(360px, 34vw, calc(100vw - 32px));
+  height: auto;
+  aspect-ratio: 16 / 9;
+  min-height: 0;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 14px;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.42);
+  animation: scrollMiniPlayerEnter 220ms ease both;
+  cursor: default;
+}
+
+.mini-player-surface.mini-player-scroll,
+.mini-player-surface.mini-player-scroll * {
+  cursor: default;
+}
+
+.mini-player-surface.mini-player-scroll.is-dragging {
+  cursor: grabbing;
+  user-select: none;
+}
+
+.mini-player-surface.mini-player-scroll.is-dragging * {
+  cursor: grabbing;
+}
+
+/* La miniatura automática arranca limpia: los controles aparecen solo al
+   pasar el cursor o entrar con teclado, sin ocupar el chat por defecto. */
+.mini-player-surface.mini-player-scroll .player-bottom-actions {
+  opacity: 0;
+  transform: translateY(6px);
+  pointer-events: none;
+}
+
+.mini-player-surface.mini-player-scroll:hover .player-bottom-actions,
+.mini-player-surface.mini-player-scroll:focus-within .player-bottom-actions {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Los controles clonados pierden el selector por id; recuperar el botón
+   circular actual del reproductor en su versión proxy. */
+.mini-player-surface [data-proxy-for="playerChatToggleButton"] {
+  position: relative;
+  width: 32px;
+  min-height: 32px;
+  flex-basis: 32px;
+  margin-top: 4px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-soft);
+  padding: 0;
+  transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.mini-player-surface [data-proxy-for="playerChatToggleButton"]:hover,
+.mini-player-surface [data-proxy-for="playerChatToggleButton"]:focus-visible {
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+  color: #ffffff;
+  transform: none;
+}
+
+.mini-player-surface [data-proxy-for="playerChatToggleButton"].active {
+  background: rgba(47, 184, 164, 0.14);
+  color: #d8fff9;
+}
+
+@keyframes scrollMiniPlayerEnter {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 .mini-player-surface .player-bottom-actions {
   padding: 6px 8px 8px;
+}
+
+.mini-player-surface.mini-player-scroll button,
+.mini-player-surface.mini-player-scroll input,
+.mini-player-surface.mini-player-scroll select {
+  cursor: pointer;
+}
+
+.mini-player-surface.mini-player-scroll button:disabled,
+.mini-player-surface.mini-player-scroll input:disabled,
+.mini-player-surface.mini-player-scroll select:disabled {
+  cursor: not-allowed;
+}
+
+.mini-player-surface.mini-player-scroll .player-volume-slider-wrap {
+  max-width: 0;
+}
+
+.mini-player-surface.mini-player-scroll .player-volume-input {
+  width: 40px;
+}
+
+.mini-player-surface.mini-player-scroll .player-volume-group:hover .player-volume-slider-wrap,
+.mini-player-surface.mini-player-scroll .player-volume-group:focus-within .player-volume-slider-wrap {
+  max-width: 40px;
 }
 
 .mini-player-return-hint {
   position: absolute;
   z-index: 9;
-  right: 72px;
+  left: clamp(
+    16px,
+    calc(var(--mini-player-return-button-x, 50%) - 135px),
+    calc(100% - 286px)
+  );
+  right: auto;
   bottom: 76px;
   display: none;
   width: min(270px, calc(100% - 32px));
+  box-sizing: border-box;
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 12px;
   background: rgba(9, 12, 14, 0.82);
@@ -167,10 +288,24 @@
 }
 
 @media (max-width: 760px) {
+  .mini-player-return-hint {
+    left: 16px;
+    right: 16px;
+    width: auto;
+  }
+
   .mini-player-inline {
     right: 8px;
     bottom: 8px;
     width: calc(100% - 16px);
     height: min(340px, calc(100% - 16px));
+  }
+
+  .mini-player-scroll {
+    right: 12px;
+    top: 12px;
+    bottom: auto;
+    width: min(320px, 72vw, calc(100vw - 24px));
+    height: auto;
   }
 }

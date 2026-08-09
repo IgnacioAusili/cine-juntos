@@ -1,5 +1,5 @@
 import { dom } from "../../core/dom.js";
-import { toggleMiniChatOverlay } from "./mini-player-chat-mirror.js";
+import { toggleMiniChatOverlay } from "./mini-player-chat-mirror.js?v=20260808-scroll-mini-player-02";
 
 const SEEK_STEP_SECONDS = 5;
 const VOLUME_STEP = 0.05;
@@ -7,12 +7,12 @@ const VOLUME_STEP = 0.05;
 export function wireMiniPlayerShortcuts(targetDocument, surface) {
   const handleKeydown = (event) => {
     if (event.defaultPrevented || event.repeat || event.altKey || event.ctrlKey || event.metaKey) return;
+    if (isEditableTarget(event.target) || isEditableTarget(targetDocument.activeElement)) return;
     if (event.key === "Tab") {
       event.preventDefault();
       toggleMiniChatOverlay(surface);
       return;
     }
-    if (event.target?.closest?.("input, textarea, select, [contenteditable='true']")) return;
 
     if (event.key === " " || event.key === "Spacebar") {
       event.preventDefault();
@@ -37,4 +37,8 @@ export function wireMiniPlayerShortcuts(targetDocument, surface) {
 
   targetDocument.addEventListener("keydown", handleKeydown);
   return () => targetDocument.removeEventListener("keydown", handleKeydown);
+}
+
+function isEditableTarget(target) {
+  return Boolean(target?.matches?.("input, textarea, select, [contenteditable='true']"));
 }

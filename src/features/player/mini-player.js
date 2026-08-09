@@ -8,15 +8,21 @@ import {
 } from "./mini-player-controls.js";
 import {
   mirrorMiniPlayerChatState,
-} from "./mini-player-chat.js";
-import { movePlayerInterface } from "./mini-player-interface.js";
+} from "./mini-player-chat.js?v=20260808-scroll-mini-player-02";
+import { movePlayerInterface } from "./mini-player-interface.js?v=20260808-scroll-mini-player-06";
 import { trackMiniPlayerReturnHint } from "./mini-player-return-hint.js";
+import { clampMiniPlayerPosition, wireMiniPlayerDrag } from "./mini-player-drag.js?v=20260808-scroll-mini-player-02";
 
 let miniSurface = null;
 let pictureInPictureWindow = null;
 let miniPlayerChat = null;
 let miniPlayerInterface = null;
 let stopMiniPlayerReturnHintTracking = null;
+let stopMiniPlayerDrag = null;
+let scrollMiniPlayerFrame = 0;
+let scrollMiniPlayerDismissedRoom = "";
+
+const SCROLL_MINI_PLAYER_DISMISSED_KEY = "cine-juntos-scroll-mini-player-dismissed";
 
 export function wireMiniPlayerEvents() {
   dom.playerMiniPlayerButton?.addEventListener("click", () => {
@@ -25,10 +31,24 @@ export function wireMiniPlayerEvents() {
   dom.videoPlayer.addEventListener("leavepictureinpicture", () => {
     if (state.player.miniPlayerMode === "native") restoreMainPlayer();
   });
+  window.addEventListener("scroll", scheduleScrollMiniPlayerSync, { passive: true });
+  window.addEventListener("resize", () => {
+    scheduleScrollMiniPlayerSync();
+    clampMiniPlayerPosition(miniSurface);
+  }, { passive: true });
+  if (dom.sessionView && "MutationObserver" in window) {
+    const chatLayoutObserver = new MutationObserver(scheduleScrollMiniPlayerSync);
+    chatLayoutObserver.observe(dom.sessionView, {
+      attributes: true,
+      attributeFilter: ["class", "data-chat-dock"],
+    });
+  }
+  scheduleScrollMiniPlayerSync();
 }
 
 export async function toggleMiniPlayer() {
   if (isMiniPlayerActive()) {
+    if (state.player.miniPlayerMode === "scroll") dismissScrollMiniPlayerForSession();
     await closeMiniPlayer();
     return;
   }
@@ -106,13 +126,28 @@ function openInlineMiniPlayer() {
   activateMiniPlayer("inline");
 }
 
+function openScrollMiniPlayer() {
+  miniSurface = createMiniPlayerSurface(document, dom.playerFrame.dataset.chatStyle);
+  miniSurface.classList.add("mini-player-inline", "mini-player-scroll");
+  miniSurface.classList.remove("player-overlay-visible");
+  document.body.append(miniSurface);
+  miniPlayerInterface = movePlayerInterface(miniSurface);
+  miniPlayerChat = mirrorMiniPlayerChatState(miniSurface, false);
+  stopMiniPlayerDrag = wireMiniPlayerDrag(miniSurface);
+  activateMiniPlayer("scroll");
+}
+
 function activateMiniPlayer(mode) {
   state.player.miniPlayerMode = mode;
   dom.playerFrame.classList.add("mini-player-active");
   syncMiniPlayerButton(true);
   stopMiniPlayerReturnHintTracking = trackMiniPlayerReturnHint();
-  setSyncStatus("Mini-reproductor abierto.");
-  logEvent("player", `Mini-reproductor abierto (${mode}).`);
+  setSyncStatus(mode === "scroll"
+    ? "Video en miniatura mientras ves el chat."
+    : "Mini-reproductor abierto.");
+  logEvent("player", mode === "scroll"
+    ? "Mini-reproductor flotante abierto al bajar al chat."
+    : `Mini-reproductor abierto (${mode}).`);
 }
 
 async function closeMiniPlayer() {
@@ -134,6 +169,8 @@ function restoreMainPlayer() {
   miniPlayerChat = null;
   miniPlayerInterface?.restore();
   miniPlayerInterface = null;
+  stopMiniPlayerDrag?.();
+  stopMiniPlayerDrag = null;
   stopMiniPlayerReturnHintTracking?.();
   stopMiniPlayerReturnHintTracking = null;
   miniSurface?.remove();
@@ -152,6 +189,74 @@ function supportsDocumentPictureInPicture() {
 
 function hasMedia() {
   return Boolean(dom.videoPlayer.currentSrc || dom.videoPlayer.getAttribute("src"));
+}
+
+function scheduleScrollMiniPlayerSync() {
+  if (scrollMiniPlayerFrame) return;
+  scrollMiniPlayerFrame = window.requestAnimationFrame(() => {
+    scrollMiniPlayerFrame = 0;
+    syncScrollMiniPlayer();
+  });
+}
+
+function syncScrollMiniPlayer() {
+  syncScrollMiniPlayerDismissalState();
+  const isBottomDock = dom.sessionView?.dataset.chatDock === "bottom";
+  if (!isBottomDock || !hasMedia()) {
+    if (state.player.miniPlayerMode === "scroll") restoreMainPlayer();
+    return;
+  }
+
+  const videoRect = dom.playerFrame?.getBoundingClientRect();
+  const chatRect = dom.chatArea?.getBoundingClientRect();
+  if (!videoRect || !chatRect) return;
+
+  const chatIsVisible = chatRect.top < window.innerHeight && chatRect.bottom > 0;
+  const videoIsMostlyOutOfView = videoRect.bottom < window.innerHeight * 0.6;
+  const shouldFloat = chatIsVisible && videoIsMostlyOutOfView;
+
+  if (!shouldFloat) {
+    if (state.player.miniPlayerMode === "scroll") restoreMainPlayer();
+    return;
+  }
+
+  if (
+    !state.player.miniPlayerMode
+    && !state.player.scrollMiniPlayerDismissed
+  ) {
+    openScrollMiniPlayer();
+  }
+}
+
+function syncScrollMiniPlayerDismissalState() {
+  const room = state.session.activeRoom || "lobby";
+  if (scrollMiniPlayerDismissedRoom === room) return;
+
+  scrollMiniPlayerDismissedRoom = room;
+  state.player.scrollMiniPlayerDismissed = readScrollMiniPlayerDismissal(room);
+}
+
+function dismissScrollMiniPlayerForSession() {
+  state.player.scrollMiniPlayerDismissed = true;
+  const room = state.session.activeRoom || "lobby";
+  scrollMiniPlayerDismissedRoom = room;
+  try {
+    sessionStorage.setItem(getScrollMiniPlayerDismissalKey(room), "1");
+  } catch {
+    // Si el almacenamiento está bloqueado, el estado en memoria sigue vigente.
+  }
+}
+
+function readScrollMiniPlayerDismissal(room) {
+  try {
+    return sessionStorage.getItem(getScrollMiniPlayerDismissalKey(room)) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function getScrollMiniPlayerDismissalKey(room) {
+  return `${SCROLL_MINI_PLAYER_DISMISSED_KEY}:${room}`;
 }
 
 function wireNativePictureInPictureActions() {

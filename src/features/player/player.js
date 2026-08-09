@@ -34,13 +34,13 @@ import {
   showSlowLoadDialog,
 } from "../session-ui.js";
 import { togglePageFullscreen } from "./fullscreen.js";
-import { syncMiniPlayerButton } from "./mini-player.js";
+import { syncMiniPlayerButton } from "./mini-player.js?v=20260808-scroll-mini-player-07";
 
 const SKIP_LOAD_REPLACE_DIALOG_KEY = "cine-juntos-skip-load-replace-dialog";
 const VIDEO_RESUME_STORAGE_KEY = "cine-juntos-video-resume-times";
 const PLAYER_VOLUME_STORAGE_KEY = "cine-juntos-player-volume";
 const SLOW_LOAD_DIALOG_DELAY_MS = 5 * 60 * 1000;
-const VIDEO_LOAD_COOLDOWN_MS = 3500;
+const VIDEO_LOAD_COOLDOWN_MS = 3000;
 const PLAY_BUTTON_BURST_WINDOW_MS = 1000;
 const PLAY_BUTTON_BURST_LIMIT = 4;
 const PLAY_BUTTON_COOLDOWN_MS = 30000;
@@ -306,6 +306,7 @@ export function setVideoSource(source, shouldAnnounce, options = {}) {
     state.player.videoLoadCooldownTimeoutId = null;
     updateLoadButtonState();
   }, VIDEO_LOAD_COOLDOWN_MS);
+  updateLoadButtonState();
   clearPlaybackErrorTracking();
   clearSlowLoadPromptTracking();
   clearPlaybackRecoveryTracking();
@@ -410,6 +411,7 @@ function handleGlobalPlayerKeydown(event) {
   if (event.defaultPrevented) return;
   if (event.repeat) return;
   if (event.altKey || event.ctrlKey || event.metaKey) return;
+  if (event.target?.closest?.(".mini-player-surface")) return;
 
   const key = event.key;
   if (key === "Tab") {

@@ -72,26 +72,35 @@
   position: relative;
   cursor: progress;
   opacity: 0.82;
-  font-size: 0;
-  line-height: 0;
   pointer-events: none;
 }
 
-.button[data-loading="true"]::after {
+.button[data-loading="true"] > [data-lucide],
+.button[data-loading="true"] .button-label {
+  visibility: hidden;
+}
+
+.button-spinner {
+  display: none;
+}
+
+.button > .button-spinner {
+  display: none;
+}
+
+.button[data-loading="true"] .button-spinner {
+  display: block;
   position: absolute;
-  inset: 0;
+  top: 50%;
+  left: 50%;
   width: 14px;
   height: 14px;
-  margin: auto;
+  margin: 0;
   border: 2.5px solid rgba(255, 255, 255, 0.38);
   border-top-color: #fff;
   border-radius: 999px;
-  content: "";
+  transform: translate(-50%, -50%);
   animation: buttonSpin 0.8s linear infinite;
-}
-
-.button[data-loading="true"] > * {
-  visibility: hidden;
 }
 
 .button.primary {
@@ -191,6 +200,6 @@
 
 @keyframes buttonSpin {
   to {
-    transform: rotate(360deg);
+    transform: translate(-50%, -50%) rotate(360deg);
   }
 }

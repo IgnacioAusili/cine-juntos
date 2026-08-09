@@ -11,8 +11,8 @@ import {
   toggleMiniEmojiPicker,
   toggleMiniChatOverlay,
   wireMirrorChatScrollbar,
-} from "./mini-player-chat-mirror.js";
-import { wireMiniPlayerShortcuts } from "./mini-player-shortcuts.js";
+} from "./mini-player-chat-mirror.js?v=20260808-scroll-mini-player-02";
+import { wireMiniPlayerShortcuts } from "./mini-player-shortcuts.js?v=20260808-scroll-mini-player-02";
 
 const VIDEO_EVENTS = ["play", "pause", "timeupdate", "seeked", "ratechange", "volumechange"];
 const PROXY_CONTROL_SELECTOR = "button, input, select, textarea";
@@ -57,7 +57,7 @@ function createInteractiveMirror(source, targetDocument) {
       }
       return;
     }
-    if (source === dom.playerBottomActions && records.every(isRoutinePlayerMutation)) {
+    if (source === dom.playerBottomActions) {
       syncState();
       return;
     }
@@ -107,6 +107,21 @@ function createInteractiveMirror(source, targetDocument) {
     });
   });
 
+  element.addEventListener("wheel", (event) => {
+    if (source !== dom.playerBottomActions) return;
+    const volumeGroup = event.target?.closest?.(".player-volume-group");
+    if (!volumeGroup || !element.contains(volumeGroup)) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    const step = 0.05;
+    const delta = event.deltaY < 0 ? step : -step;
+    const nextVolume = Math.min(1, Math.max(0, dom.videoPlayer.volume + delta));
+    dom.videoPlayer.volume = nextVolume;
+    if (nextVolume > 0 && dom.videoPlayer.muted) dom.videoPlayer.muted = false;
+    syncState();
+  }, { passive: false });
+
   observer.observe(source, {
     subtree: true,
     childList: true,
@@ -142,6 +157,7 @@ function createInteractiveMirror(source, targetDocument) {
   function syncState() {
     copyControlState(source, element);
     copyPlayerTimeLabels(source, element);
+    if (source === dom.playerBottomActions) copyDynamicButtonPresentation(source, element);
   }
 }
 
@@ -176,10 +192,16 @@ function copyPlayerTimeLabels(source, element) {
   });
 }
 
-function isRoutinePlayerMutation(record) {
-  return Boolean(record.target.closest?.(
-    "#playerCurrentTime, #playerDuration, #playerSeekInput, #playerVolumeInput",
-  ));
+function copyDynamicButtonPresentation(source, element) {
+  ["playerPlayButton", "playerMuteButton", "playerMiniPlayerButton"].forEach((id) => {
+    const sourceButton = source.querySelector(`#${id}`);
+    const mirrorButton = element.querySelector(`[data-proxy-for="${id}"]`);
+    if (!sourceButton || !mirrorButton) return;
+    mirrorButton.className = sourceButton.className;
+    mirrorButton.innerHTML = sourceButton.innerHTML;
+    mirrorButton.setAttribute("aria-label", sourceButton.getAttribute("aria-label") || "");
+    mirrorButton.dataset.tooltip = sourceButton.dataset.tooltip || "";
+  });
 }
 
 function getSourceControl(source, target) {

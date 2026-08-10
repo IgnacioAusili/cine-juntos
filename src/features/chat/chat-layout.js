@@ -4,7 +4,7 @@ import { state, logEvent } from "../../core/state.js";
 import { CHAT_DOCKS, CHAT_DOCK_META, withShortcutHint } from "../../core/utils.js";
 import { hydrateIcons, refreshTooltipForTarget } from "../icons-tooltips.js";
 import { focusFullscreenWorkspace } from "../session-ui.js";
-import { cancelIdentityEditing } from "../presence.js";
+import { cancelIdentityEditing } from "../presence.js?v=20260810-chat-fixes-04";
 import {
   isExternalChatVisibleToUser,
   isInsideChatVisibleToUser,
@@ -30,6 +30,49 @@ let chatScrollSnapLockTimer = 0;
 let chatUserScrollUnlockTimer = 0;
 let pendingCollapseScrollFinish = null;
 let pendingBottomToRightSwitch = null;
+
+function isFullscreenPageActive() {
+  return Boolean(document.fullscreenElement) || document.body.classList.contains("fullscreen-mode");
+}
+
+function getPageScrollContainer() {
+  if (!isFullscreenPageActive()) return window;
+  return dom.sessionView?.closest(".app-shell") || document.scrollingElement || document.documentElement;
+}
+
+function getPageScrollTop() {
+  if (!isFullscreenPageActive()) return Math.round(window.scrollY || 0);
+  return Math.round(getPageScrollContainer().scrollTop || 0);
+}
+
+function getPageScrollMax() {
+  if (!isFullscreenPageActive()) {
+    return Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+  }
+
+  const container = getPageScrollContainer();
+  return Math.max(0, (container.scrollHeight || 0) - (container.clientHeight || 0));
+}
+
+function getElementPageTop(element) {
+  if (!element) return 0;
+  if (!isFullscreenPageActive()) {
+    return element.getBoundingClientRect().top + window.scrollY;
+  }
+
+  const container = getPageScrollContainer();
+  const containerRect = container.getBoundingClientRect();
+  return element.getBoundingClientRect().top - containerRect.top + (container.scrollTop || 0);
+}
+
+function scrollPageTo(top, behavior = "auto") {
+  if (isFullscreenPageActive()) {
+    getPageScrollContainer().scrollTo({ top, behavior });
+    return;
+  }
+
+  window.scrollTo({ top, behavior });
+}
 
 const PAGE_SCROLL_KEYS = new Set([
   "ArrowDown",
@@ -135,11 +178,9 @@ export function revealBottomDockUnion(behavior = "smooth") {
   if (!dom.chatArea) return;
 
   syncExternalChatCollapseHandleOffset();
-  const chatTop = dom.chatArea.getBoundingClientRect().top + window.scrollY;
-  window.scrollTo({
-    top: Math.max(0, Math.round(chatTop - BOTTOM_DOCK_UNION_REVEAL_PX)),
-    behavior,
-  });
+  const nextBehavior = isFullscreenPageActive() ? "auto" : behavior;
+  const chatTop = getElementPageTop(dom.chatArea);
+  scrollPageTo(Math.max(0, Math.round(chatTop - BOTTOM_DOCK_UNION_REVEAL_PX)), nextBehavior);
   window.requestAnimationFrame(syncExternalChatCollapseHandleOffset);
 }
 
@@ -373,9 +414,12 @@ function getBottomToRightScrollTop() {
   if (!dom.videoArea) return 0;
 
   const videoRect = dom.videoArea.getBoundingClientRect();
-  const maxScrollTop = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+  const maxScrollTop = getPageScrollMax();
+  const viewportHeight = isFullscreenPageActive()
+    ? (getPageScrollContainer().clientHeight || window.innerHeight)
+    : window.innerHeight;
   const centeredVideoTop =
-    window.scrollY + videoRect.top + videoRect.height / 2 - window.innerHeight / 2;
+    getElementPageTop(dom.videoArea) + videoRect.height / 2 - viewportHeight / 2;
 
   return Math.min(maxScrollTop, Math.max(0, Math.round(centeredVideoTop)));
 }
@@ -389,10 +433,10 @@ function scheduleBottomToRightSwitch(nextDock, targetScrollTop) {
   };
   pendingBottomToRightSwitch = transition;
 
-  const needsScroll = Math.abs(window.scrollY - targetScrollTop) > 2;
+  const needsScroll = Math.abs(getPageScrollTop() - targetScrollTop) > 2;
   if (needsScroll) {
     lockChatScrollSnapDuringProgrammaticScroll();
-    window.scrollTo({ top: targetScrollTop, behavior: "smooth" });
+    scrollPageTo(targetScrollTop, "smooth");
   }
 
   const finish = () => {
@@ -423,7 +467,7 @@ function scheduleBottomToRightSwitch(nextDock, targetScrollTop) {
   const startedAt = performance.now();
   const waitForScroll = () => {
     if (
-      Math.abs(window.scrollY - targetScrollTop) <= 2
+      Math.abs(getPageScrollTop() - targetScrollTop) <= 2
       || performance.now() - startedAt >= BOTTOM_TO_RIGHT_SCROLL_TIMEOUT_MS
     ) {
       finish();
@@ -448,7 +492,7 @@ function getBottomDockVideoScrollTop() {
   const gutter = Number.parseFloat(
     getComputedStyle(dom.sessionView).getPropertyValue("--app-shell-gutter"),
   ) || 0;
-  return Math.max(0, Math.round(dom.videoArea.getBoundingClientRect().top + window.scrollY - gutter));
+  return Math.max(0, Math.round(getElementPageTop(dom.videoArea) - gutter));
 }
 
 export function setExternalChatCollapsed(collapsed) {

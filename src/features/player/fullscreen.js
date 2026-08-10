@@ -23,6 +23,37 @@ let fallbackFullscreenActive = false;
 
 const USE_NATIVE_FULLSCREEN = true;
 
+function getFullscreenScrollContainer() {
+  return dom.sessionView?.closest(".app-shell") || document.scrollingElement || document.documentElement;
+}
+
+function getFullscreenScrollTop() {
+  if (!isPageFullscreenActive()) return window.scrollY;
+  return Math.round(getFullscreenScrollContainer().scrollTop || 0);
+}
+
+function getFullscreenScrollMax() {
+  if (!isPageFullscreenActive()) {
+    return Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+  }
+
+  const container = getFullscreenScrollContainer();
+  return Math.max(0, (container.scrollHeight || 0) - (container.clientHeight || 0));
+}
+
+function getElementScrollTop(element) {
+  if (!element) return 0;
+  if (!isPageFullscreenActive()) {
+    return Math.round(element.getBoundingClientRect().top + window.scrollY);
+  }
+
+  const container = getFullscreenScrollContainer();
+  const containerRect = container.getBoundingClientRect();
+  return Math.round(
+    element.getBoundingClientRect().top - containerRect.top + (container.scrollTop || 0),
+  );
+}
+
 export function wireFullscreenEvents() {
   dom.pageFullscreenButton.addEventListener("click", () => {
     togglePageFullscreen();
@@ -48,9 +79,9 @@ export function wireFullscreenEvents() {
   });
 
   let scrollSnapTimer = null;
-  window.addEventListener("scroll", () => {
+  const handleFullscreenScroll = () => {
     const isBottomDock = dom.sessionView?.dataset.chatDock === "bottom";
-    if (isPageFullscreenActive() || !isBottomDock) {
+    if (!isBottomDock) {
       if (!isBottomDock && scrollSnapTimer) {
         window.clearTimeout(scrollSnapTimer);
         scrollSnapTimer = null;
@@ -67,7 +98,10 @@ export function wireFullscreenEvents() {
       ) return;
       snapFullscreenScroll();
     }, FULLSCREEN_SNAP_DELAY_MS);
-  }, { passive: true });
+  };
+
+  window.addEventListener("scroll", handleFullscreenScroll, { passive: true });
+  getFullscreenScrollContainer()?.addEventListener("scroll", handleFullscreenScroll, { passive: true });
 
   window.addEventListener("resize", syncInsideChatPanelOffset, { passive: true });
 }
@@ -192,15 +226,14 @@ function isPageFullscreenActive() {
 }
 
 function getDocumentTop(element) {
-  if (!element) return 0;
-  return Math.round(element.getBoundingClientRect().top + window.scrollY);
+  return getElementScrollTop(element);
 }
 
 function getFullscreenSnapPoints() {
   const isBottomDock = dom.sessionView?.dataset.chatDock === "bottom";
-  if (!isBottomDock || isPageFullscreenActive() || !dom.workspace) return [];
+  if (!isBottomDock || !dom.workspace) return [];
 
-  const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+  const maxScroll = getFullscreenScrollMax();
   const collapsed = dom.sessionView.classList.contains("chat-collapsed");
   const dock = dom.sessionView.dataset.chatDock || "right";
   const gutter = Number.parseFloat(
@@ -233,7 +266,7 @@ export function snapFullscreenScroll() {
   const points = getFullscreenSnapPoints();
   if (!points.length) return;
 
-  const currentY = window.scrollY;
+  const currentY = getFullscreenScrollTop();
   let closestPoint = null;
   let closestDistance = Number.POSITIVE_INFINITY;
 
@@ -251,6 +284,14 @@ export function snapFullscreenScroll() {
 
   // El snap conserva el anclaje, pero no agrega otra animación a la rueda.
   // El desplazamiento explícito de expandir el chat sí usa smooth más abajo.
+  if (isPageFullscreenActive()) {
+    getFullscreenScrollContainer().scrollTo({
+      top: closestPoint,
+      behavior: "auto",
+    });
+    return;
+  }
+
   window.scrollTo({
     top: closestPoint,
     behavior: "auto",

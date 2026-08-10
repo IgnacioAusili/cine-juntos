@@ -28,7 +28,7 @@
 .workspace {
   position: relative;
   display: grid;
-  height: calc(100vh - (var(--app-shell-gutter) * 2));
+  height: calc(var(--app-viewport-height) - (var(--app-shell-gutter) * 2));
   min-height: 560px;
   margin-top: 68px;
   gap: var(--workspace-gap);
@@ -62,8 +62,8 @@
      un rebote visible en el video. */
   transition: none;
   grid-template-rows:
-    calc(100dvh - (var(--app-shell-gutter) * 2))
-    minmax(0, calc(100dvh - var(--app-shell-gutter)));
+    calc(var(--app-viewport-height) - (var(--app-shell-gutter) * 2))
+    minmax(0, calc(var(--app-viewport-height) - var(--app-shell-gutter)));
   grid-template-areas:
     "video"
     "chat";
@@ -100,7 +100,7 @@
 }
 
 .session-view.chat-collapsed[data-chat-dock="bottom"] .workspace {
-  height: calc(100dvh - var(--app-shell-gutter));
+  height: calc(var(--app-viewport-height) - var(--app-shell-gutter));
   min-height: 0;
   padding-top: var(--app-shell-gutter);
   row-gap: 0;

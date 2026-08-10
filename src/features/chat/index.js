@@ -12,7 +12,7 @@ import {
   updateCharCounter,
   wireFloatingComposerLayout,
   wireComposerScrollbar,
-} from "./chat-input.js?v=20260808-emoji-state-01";
+} from "./chat-input.js?v=20260810-chat-fixes-02";
 import { setReplyTarget } from "./chat-reply.js";
 import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js";
 import {
@@ -133,8 +133,8 @@ export {
   buildEmojiPicker,
   updateCharCounter,
   sendMessage,
-} from "./chat-input.js?v=20260808-emoji-state-01";
-export { renderMessage } from "./chat-render.js?v=20260801-05";
+} from "./chat-input.js?v=20260810-chat-fixes-02";
+export { renderMessage } from "./chat-render.js?v=20260810-chat-fixes-02";
 export {
   clearReplyTarget,
   renderReplyPreview,

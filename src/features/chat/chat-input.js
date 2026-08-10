@@ -17,14 +17,14 @@ import {
   setSyncStatus,
 } from "../session-ui.js";
 import { refreshTooltipForTarget } from "../icons-tooltips.js";
-import { markParticipantActive } from "../presence.js";
+import { markParticipantActive } from "../presence.js?v=20260810-chat-fixes-04";
 import { clearReplyTarget } from "./chat-reply.js";
-import { renderMessage } from "./chat-render.js?v=20260801-05";
+import { renderMessage } from "./chat-render.js?v=20260810-chat-fixes-02";
 import {
   scheduleExternalChatAutoCollapse,
   scheduleInsideChatAutoCollapse,
 } from "./chat-layout.js?v=20260808-user-scroll-lock-03";
-import { queuePinnedChatScrollSync, isPinnedToBottom } from "./chat-scroll-sync.js";
+import { queuePinnedChatScrollSync, isPinnedToBottom } from "./chat-scroll-sync.js?v=20260810-chat-fixes-01";
 import {
   compressImageBase64,
   renderImagePreview,
@@ -32,6 +32,7 @@ import {
 } from "./image-compress.js";
 
 const floatingComposerObservers = new WeakMap();
+const scrollbarDragState = new WeakMap();
 const CHAT_MESSAGE_BOTTOM_GAP = 12;
 const CHAT_OVERLAY_MESSAGE_BOTTOM_GAP = 4;
 const sendButtonMarkup = new WeakMap();
@@ -544,7 +545,95 @@ function wireChatScrollbar(messagesContainer) {
   const update = () => syncChatScrollbar(messagesContainer);
   messagesContainer.addEventListener("scroll", update, { passive: true });
   window.addEventListener("resize", update, { passive: true });
+  wireChatScrollbarDragging(messagesContainer);
   update();
+}
+
+function wireChatScrollbarDragging(messagesContainer) {
+  if (!messagesContainer || messagesContainer.dataset.chatScrollbarDragBound === "true") return;
+  messagesContainer.dataset.chatScrollbarDragBound = "true";
+
+  const shell = messagesContainer.closest(".messages-wrap");
+  const track = shell?.querySelector(".chat-scrollbar");
+  if (!shell || !track) return;
+
+  const getThumb = () => shell.querySelector(".chat-scrollbar-thumb");
+
+  const updateFromPointer = (clientY) => {
+    const thumb = getThumb();
+    if (!thumb) return;
+
+    const overflow = messagesContainer.scrollHeight - messagesContainer.clientHeight;
+    if (overflow <= 0) return;
+
+    const trackRect = track.getBoundingClientRect();
+    const thumbRect = thumb.getBoundingClientRect();
+    const thumbHeight = Math.max(12, Math.round(thumbRect.height || 12));
+    const maxOffset = Math.max(0, trackRect.height - thumbHeight);
+    const dragState = scrollbarDragState.get(messagesContainer);
+    const offsetWithinThumb = dragState?.offsetWithinThumb ?? thumbHeight / 2;
+    const nextTop = Math.max(0, Math.min(maxOffset, clientY - trackRect.top - offsetWithinThumb));
+    const scrollRatio = maxOffset <= 0 ? 0 : nextTop / maxOffset;
+    messagesContainer.scrollTop = scrollRatio * overflow;
+    syncChatScrollbar(messagesContainer);
+  };
+
+  const stopDragging = (event) => {
+    const dragState = scrollbarDragState.get(messagesContainer);
+    if (!dragState || event.pointerId !== dragState.pointerId) return;
+
+    scrollbarDragState.delete(messagesContainer);
+    try {
+      track.releasePointerCapture(event.pointerId);
+    } catch {
+      // Ignorado: el puntero ya pudo haberse liberado.
+    }
+    track.classList.remove("is-dragging");
+    shell.classList.remove("is-dragging");
+  };
+
+  track.addEventListener("pointerdown", (event) => {
+    if (event.button !== 0) return;
+
+    const thumb = getThumb();
+    if (!thumb) return;
+
+    const overflow = messagesContainer.scrollHeight - messagesContainer.clientHeight;
+    if (overflow <= 0) return;
+
+    const thumbRect = thumb.getBoundingClientRect();
+    const offsetWithinThumb = event.target === thumb || thumb.contains(event.target)
+      ? Math.max(0, Math.min(thumbRect.height, event.clientY - thumbRect.top))
+      : Math.max(0, thumbRect.height / 2);
+
+    scrollbarDragState.set(messagesContainer, {
+      pointerId: event.pointerId,
+      offsetWithinThumb,
+    });
+
+    track.classList.add("is-dragging");
+    shell.classList.add("is-dragging");
+
+    try {
+      track.setPointerCapture(event.pointerId);
+    } catch {
+      // Ignorado: algunos navegadores no permiten capturar ciertos punteros.
+    }
+
+    event.preventDefault();
+    updateFromPointer(event.clientY);
+  });
+
+  track.addEventListener("pointermove", (event) => {
+    const dragState = scrollbarDragState.get(messagesContainer);
+    if (!dragState || event.pointerId !== dragState.pointerId) return;
+    event.preventDefault();
+    updateFromPointer(event.clientY);
+  });
+
+  track.addEventListener("pointerup", stopDragging);
+  track.addEventListener("pointercancel", stopDragging);
+  track.addEventListener("lostpointercapture", stopDragging);
 }
 
 function syncChatScrollbar(messagesContainer) {

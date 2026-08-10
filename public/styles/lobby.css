@@ -6,7 +6,7 @@
 
 .lobby-screen {
   display: grid;
-  min-height: calc(100vh - 64px);
+  min-height: calc(var(--app-viewport-height) - 64px);
   grid-template-rows: auto 1fr auto;
   align-content: space-between;
   justify-items: center;

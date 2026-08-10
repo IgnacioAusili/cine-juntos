@@ -2,9 +2,9 @@ html.fullscreen-mode,
 html.fullscreen-mode:fullscreen,
 body.fullscreen-mode {
   width: 100vw;
-  height: 100dvh;
+  height: var(--app-viewport-height);
   min-width: 100vw;
-  min-height: 100dvh;
+  min-height: var(--app-viewport-height);
   margin: 0 !important;
   padding: 0 !important;
   overflow: hidden !important;
@@ -63,7 +63,7 @@ body.fullscreen-mode .session-view[data-chat-dock] .workspace {
   display: grid;
   width: 100%;
   height: auto;
-  min-height: 100dvh;
+  min-height: var(--app-viewport-height);
   margin-top: 68px;
   gap: 0;
   padding: 0;
@@ -71,7 +71,7 @@ body.fullscreen-mode .session-view[data-chat-dock] .workspace {
 
 body.fullscreen-mode .session-view[data-chat-dock] .workspace {
   grid-template-columns: 1fr;
-  grid-template-rows: 100dvh 100dvh;
+  grid-template-rows: var(--app-viewport-height) var(--app-viewport-height);
   grid-template-areas:
     "video"
     "chat";
@@ -199,12 +199,12 @@ body.fullscreen-mode .session-view[data-chat-dock="bottom"] .workspace {
   padding-top: 0;
   row-gap: var(--chat-bottom-dock-gap);
   grid-template-rows:
-    100dvh
-    minmax(0, 100dvh);
+    var(--app-viewport-height)
+    minmax(0, var(--app-viewport-height));
 }
 
 body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="bottom"] .workspace {
-  height: 100dvh;
+  height: var(--app-viewport-height);
   min-height: 0;
   padding-top: 0;
   row-gap: 0;
@@ -312,7 +312,7 @@ body.fullscreen-mode .session-view[data-chat-dock="right"] .workspace,
 body.fullscreen-mode .app-shell:fullscreen .session-view[data-chat-dock="right"] .workspace {
   display: grid;
   width: 100%;
-  height: 100vh;
+  height: var(--app-viewport-height);
   min-height: 560px;
   flex: 0 0 auto;
   margin-top: 68px;
@@ -409,21 +409,21 @@ body.fullscreen-mode .session-view[data-chat-dock="bottom"] .workspace {
   display: grid;
   width: 100%;
   height: auto;
-  min-height: 100dvh;
+  min-height: var(--app-viewport-height);
   flex: 0 0 auto;
   margin-top: 68px;
   gap: 0;
   padding-top: 0;
-  grid-template-rows: 100dvh minmax(0, 100dvh);
+  grid-template-rows: var(--app-viewport-height) minmax(0, var(--app-viewport-height));
   grid-template-areas:
     "video"
     "chat";
 }
 
 body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="bottom"] .workspace {
-  height: 100dvh;
+  height: var(--app-viewport-height);
   min-height: 0;
   flex: 0 0 auto;
   row-gap: 0;
-  grid-template-rows: 100dvh 0;
+  grid-template-rows: var(--app-viewport-height) 0;
 }

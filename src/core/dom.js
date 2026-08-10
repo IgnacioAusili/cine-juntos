@@ -13,6 +13,7 @@ export const dom = {
   backToLobbyButton: document.querySelector("#backToLobbyButton"),
   videoUrlInput: document.querySelector("#videoUrlInput"),
   loadVideoButton: document.querySelector("#loadVideoButton"),
+  sessionToolbar: document.querySelector(".session-toolbar"),
   workspace: document.querySelector(".workspace"),
   videoArea: document.querySelector(".video-area"),
   chatArea: document.querySelector(".chat-area"),

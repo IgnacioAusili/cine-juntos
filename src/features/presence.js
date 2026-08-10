@@ -3,9 +3,9 @@ import { state, getDisplayName, getTransportNow, logEvent } from "../core/state.
 import { makeGuestName, makeParticipantLabel } from "../core/utils.js";
 
 const RECENT_ACTIVITY_WINDOW_MS = 12000;
+const SUPPORTS_FIELD_SIZING_CONTENT = Boolean(CSS.supports?.("field-sizing", "content"));
 
 let nameInputMeasureCanvas = null;
-let nameInputBaseWidth = 0;
 let activityRefreshTimer = null;
 const recentActivityByParticipantId = new Map();
 
@@ -42,8 +42,40 @@ function buildCanvasFont(computedStyle) {
   return `${fontStyle} ${fontVariant} ${fontWeight} ${fontSize}${lineHeight} ${fontFamily}`;
 }
 
+function applyNativeNameInputSizing() {
+  if (!dom.nameInput) return;
+  dom.nameInput.style.fieldSizing = "content";
+  dom.nameInput.style.removeProperty("width");
+  dom.nameInput.style.removeProperty("max-width");
+}
+
+function getNameInputAvailableWidth() {
+  const tools = dom.chatNameField?.parentElement;
+  if (!tools) return Number.POSITIVE_INFINITY;
+
+  const computed = window.getComputedStyle(tools);
+  const paddingLeft = Number.parseFloat(computed.paddingLeft) || 0;
+  const paddingRight = Number.parseFloat(computed.paddingRight) || 0;
+  const columnGap = Number.parseFloat(computed.columnGap || computed.gap || "0") || 0;
+  const leftColumn = tools.children[0];
+  const rightColumn = tools.children[2];
+  const leftWidth = leftColumn ? Math.ceil(leftColumn.getBoundingClientRect().width) : 0;
+  const rightWidth = rightColumn ? Math.ceil(rightColumn.getBoundingClientRect().width) : 0;
+  const contentWidth = Math.max(0, Math.floor(tools.getBoundingClientRect().width - paddingLeft - paddingRight));
+
+  // El editor vive en la columna central del grid; calculamos el ancho real
+  // que le queda descontando las columnas laterales y los separadores.
+  const availableWidth = contentWidth - leftWidth - rightWidth - (columnGap * 2);
+  return Math.max(24, Math.floor(availableWidth));
+}
+
 function syncNameInputWidth() {
   if (!dom.nameInput || !dom.chatNameField) return;
+
+  if (SUPPORTS_FIELD_SIZING_CONTENT) {
+    applyNativeNameInputSizing();
+    return;
+  }
 
   const input = dom.nameInput;
   const display = dom.nameDisplay;
@@ -58,13 +90,8 @@ function syncNameInputWidth() {
   const text = input.value || getDisplayName() || "";
   const measuredWidth = context ? Math.ceil(context.measureText(text || " ").width) : 24;
   const textWidth = Math.max(24, measuredWidth);
-  const fieldWidth = Math.floor(dom.chatNameField.getBoundingClientRect().width);
-  const buttonWidth = dom.confirmNameButton ? Math.ceil(dom.confirmNameButton.getBoundingClientRect().width) : 0;
-  const gapValue = dom.chatNameEditor ? window.getComputedStyle(dom.chatNameEditor).columnGap : "0px";
-  const rowGap = Number.parseFloat(gapValue);
-  const safeRowGap = Number.isFinite(rowGap) ? rowGap : 0;
-  const availableWidth = Math.max(24, fieldWidth - buttonWidth - safeRowGap);
-  const maxWidth = Math.max(24, Math.min(nameInputBaseWidth || availableWidth, availableWidth));
+  const availableWidth = getNameInputAvailableWidth();
+  const maxWidth = Math.max(24, availableWidth);
   const minWidth = 24;
   const targetWidth = Math.max(minWidth, Math.min(textWidth, maxWidth));
 
@@ -169,15 +196,15 @@ function setIdentityEditing(isEditing) {
   dom.chatNameField.dataset.editing = isEditing ? "true" : "false";
 
   if (!isEditing) {
-    nameInputBaseWidth = 0;
     dom.nameInput.value = getDisplayName();
+    syncNameInputWidth();
     return;
   }
 
   dom.nameInput.value = getDisplayName();
+  applyNativeNameInputSizing();
   window.requestAnimationFrame(() => {
-    nameInputBaseWidth = Math.ceil(dom.nameDisplay?.getBoundingClientRect().width || dom.nameInput.getBoundingClientRect().width || 24);
-    syncNameInputWidth();
+    applyNativeNameInputSizing();
     dom.nameInput.focus();
     dom.nameInput.select();
   });
@@ -336,8 +363,11 @@ export function updateDisplayName(value, sourceInput) {
 export function wireIdentityEvents() {
   renderDisplayName();
   dom.nameInput.value = getDisplayName();
-  nameInputBaseWidth = Math.ceil(dom.nameDisplay?.getBoundingClientRect().width || dom.nameInput.getBoundingClientRect().width || 24);
-  syncNameInputWidth();
+  if (SUPPORTS_FIELD_SIZING_CONTENT) {
+    applyNativeNameInputSizing();
+  } else {
+    syncNameInputWidth();
+  }
   syncEditNameButtonState();
 
   dom.editNameButton?.addEventListener("click", () => {
@@ -387,11 +417,11 @@ export function wireIdentityEvents() {
   });
 
   dom.nameInput.addEventListener("input", () => {
-    syncNameInputWidth();
+    if (!SUPPORTS_FIELD_SIZING_CONTENT) syncNameInputWidth();
   });
 
   window.addEventListener("resize", () => {
-    if (dom.chatNameField?.dataset.editing === "true") {
+    if (dom.chatNameField?.dataset.editing === "true" && !SUPPORTS_FIELD_SIZING_CONTENT) {
       syncNameInputWidth();
     }
   });

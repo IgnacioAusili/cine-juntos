@@ -6,30 +6,32 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 5px;
-  min-height: 32px;
-  border: 1px solid rgba(47, 184, 164, 0.35);
+  gap: 4px;
+  min-height: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 999px;
-  background: rgba(18, 22, 26, 0.9);
+  background: rgba(18, 22, 26, 0.72);
   color: var(--accent-2);
-  padding: 0 12px 0 10px;
-  font-size: 0.72rem;
+  padding: 0 9px 0 8px;
+  font-size: 0.68rem;
   font-weight: 700;
   cursor: pointer;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(6px);
+  box-shadow: none;
   opacity: 0;
   transform: translateX(-50%) translateY(10px);
   transition:
     opacity 0.25s ease,
-    transform 0.25s ease;
+    transform 0.25s ease,
+    background 0.18s ease,
+    border-color 0.18s ease;
   pointer-events: none;
 }
 
 .scroll-bottom-btn svg {
-  width: 15px;
-  height: 15px;
-  stroke-width: 2.5;
+  width: 13px;
+  height: 13px;
+  stroke-width: 2.4;
 }
 
 .scroll-bottom-btn--visible {
@@ -39,23 +41,23 @@
 }
 
 .scroll-bottom-btn:hover {
-  background: rgba(47, 184, 164, 0.2);
-  border-color: rgba(47, 184, 164, 0.6);
+  background: rgba(47, 184, 164, 0.12);
+  border-color: rgba(47, 184, 164, 0.32);
 }
 
 .scroll-bottom-badge {
   display: inline-grid;
   box-sizing: border-box;
-  min-width: 18px;
-  height: 18px;
+  min-width: 16px;
+  height: 16px;
   place-items: center;
   border-radius: 999px;
   background: var(--danger);
   color: #fff;
-  font-size: 0.6rem;
+  font-size: 0.54rem;
   font-weight: 800;
   line-height: 1;
-  padding: 0 4px;
+  padding: 0 3px;
   text-align: center;
   white-space: nowrap;
 }

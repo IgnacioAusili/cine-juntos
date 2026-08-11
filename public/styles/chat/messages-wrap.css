@@ -31,11 +31,19 @@
   width: 6px;
   opacity: 0;
   transition: opacity 0.12s ease;
-  pointer-events: none;
+  pointer-events: auto;
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
 }
 
 .messages-wrap[data-scrollbar-visible="true"] .chat-scrollbar {
   opacity: 1;
+}
+
+.messages-wrap.is-dragging .chat-scrollbar,
+.chat-scrollbar.is-dragging {
+  cursor: grabbing;
 }
 
 .chat-scrollbar-thumb {
@@ -46,6 +54,7 @@
   min-height: 12px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.18);
+  pointer-events: auto;
 }
 
 .messages-wrap .messages,

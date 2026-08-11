@@ -1,3 +1,6 @@
+import { dom } from "../../core/dom.js";
+import { isPinnedToBottom, queuePinnedChatScrollSync } from "./chat-scroll-sync.js";
+
 const SYSTEM_GROUP_MIN_SIZE = 3;
 const SYSTEM_GROUP_IDLE_MS = 3200;
 const SYSTEM_GROUP_ANIMATION_MS = 280;
@@ -14,14 +17,19 @@ export function scheduleSystemMessageCollapse(container) {
 
   if (candidate.length < SYSTEM_GROUP_MIN_SIZE) {
     collapseRuns.set(container, (collapseRuns.get(container) || 0) + 1);
+    current.collapsed = false;
+    current.timer = null;
     containerStates.set(container, current);
+    clearSystemGroupState(container, candidate);
     return;
   }
 
   const expandedToggle = container.querySelector('.system-group-toggle[aria-expanded="true"]');
   if (expandedToggle) {
     current.collapsed = false;
-    updateToggleCount(expandedToggle, candidate.length - 1, true);
+    syncSystemGroupLastMarker(candidate);
+    updateToggleCount(expandedToggle, getSystemGroupHiddenCount(candidate), true);
+    syncSystemGroupTogglePosition(expandedToggle, container, candidate.at(-1));
     containerStates.set(container, current);
     return;
   }
@@ -52,10 +60,25 @@ function getLatestSystemStreak(container) {
   return children.slice(start, end);
 }
 
+function clearSystemGroupState(container, items = []) {
+  container?.querySelector(".system-group-toggle")?.remove();
+  items.forEach((item) => {
+    item.classList.remove("system-group-collapsed-item", "system-group-last");
+  });
+}
+
+function syncSystemGroupLastMarker(items) {
+  const visibleItem = items.at(-1);
+  items.forEach((item) => {
+    item.classList.toggle("system-group-last", item === visibleItem);
+  });
+}
+
 function applyCollapsedState(items, animate) {
   const visibleItem = items.at(-1);
   if (!visibleItem) return;
   const container = visibleItem.parentElement;
+  const wasPinnedToBottom = isPinnedToBottom(container);
   const runId = (collapseRuns.get(container) || 0) + 1;
   collapseRuns.set(container, runId);
   container?.querySelector(".system-group-toggle")?.remove();
@@ -67,24 +90,20 @@ function applyCollapsedState(items, animate) {
     return null;
   });
   visibleItem.classList.remove("system-group-collapsed-item");
-  visibleItem.classList.add("system-group-last");
-
-  items.forEach((item) => {
-    if (item !== visibleItem) item.classList.remove("system-group-last");
-  });
+  syncSystemGroupLastMarker(items);
 
   const appendToggle = () => {
     const latest = container ? getLatestSystemStreak(container).at(-1) : null;
     if (!visibleItem.isConnected || latest !== visibleItem || collapseRuns.get(container) !== runId) return;
 
-    const hiddenCount = items.length - 1;
+    const hiddenCount = getSystemGroupHiddenCount(items);
+    if (!hiddenCount) return;
     const toggle = document.createElement("button");
     toggle.type = "button";
     toggle.className = "system-group-toggle";
     toggle.setAttribute("aria-expanded", "false");
-    toggle.setAttribute("aria-label", `Mostrar ${hiddenCount} mensajes de sincronización`);
-    toggle.innerHTML = `${getChevronMarkup(false)}<span class="system-group-toggle-count">${hiddenCount}</span>`;
-    positionSystemGroupToggle(toggle, container, visibleItem);
+    updateToggleCount(toggle, hiddenCount, false);
+    syncSystemGroupTogglePosition(toggle, container, visibleItem);
     toggle.addEventListener("pointerdown", (event) => event.stopPropagation());
     toggle.addEventListener("click", (event) => {
       event.preventDefault();
@@ -94,15 +113,19 @@ function applyCollapsedState(items, animate) {
     container.append(toggle);
     window.requestAnimationFrame(() => {
       if (toggle.isConnected && visibleItem.isConnected) {
-        positionSystemGroupToggle(toggle, container, visibleItem);
+        syncSystemGroupTogglePosition(toggle, container, visibleItem);
       }
     });
   };
 
   if (animate) {
-    Promise.all(animations).then(appendToggle);
+    Promise.all(animations).then(() => {
+      appendToggle();
+      if (wasPinnedToBottom) queuePinnedChatScrollSync(container, container === dom.overlayMessages, true);
+    });
   } else {
     appendToggle();
+    if (wasPinnedToBottom) queuePinnedChatScrollSync(container, container === dom.overlayMessages, true);
   }
 }
 
@@ -111,14 +134,17 @@ function toggleSystemGroup(items, toggle) {
   const nextExpanded = !isExpanded;
   const container = items[0]?.parentElement;
   const currentItems = container ? getLatestSystemStreak(container) : items;
+  const hiddenCount = getSystemGroupHiddenCount(currentItems);
+  const wasPinnedToBottom = isPinnedToBottom(container);
+  if (!hiddenCount) {
+    toggle.remove();
+    clearSystemGroupState(container, currentItems);
+    return;
+  }
   collapseRuns.set(container, (collapseRuns.get(container) || 0) + 1);
 
   toggle.setAttribute("aria-expanded", String(!isExpanded));
-  toggle.setAttribute(
-    "aria-label",
-    `${isExpanded ? "Mostrar" : "Ocultar"} ${items.length - 1} mensajes de sincronización`,
-  );
-  updateToggleCount(toggle, currentItems.length - 1, nextExpanded);
+  updateToggleCount(toggle, hiddenCount, nextExpanded);
 
   const animations = currentItems.slice(0, -1).map((item) => {
     if (isExpanded) {
@@ -133,20 +159,34 @@ function toggleSystemGroup(items, toggle) {
   const fixedTop = toggle.style.top;
   Promise.all(animations).then(() => {
     if (!toggle.isConnected) return;
-    positionSystemGroupToggle(toggle, container, items.at(-1), { horizontalOnly: true });
+    const latestItems = container ? getLatestSystemStreak(container) : currentItems;
+    const latestVisibleItem = latestItems.at(-1) || currentItems.at(-1) || items.at(-1);
+    updateToggleCount(toggle, getSystemGroupHiddenCount(latestItems), nextExpanded);
+    syncSystemGroupLastMarker(latestItems);
+    syncSystemGroupTogglePosition(toggle, container, latestVisibleItem, { horizontalOnly: true });
     toggle.style.top = fixedTop;
+    if (wasPinnedToBottom) queuePinnedChatScrollSync(container, container === dom.overlayMessages, true);
   });
 }
 
 function updateToggleCount(toggle, hiddenCount, expanded) {
+  const safeHiddenCount = Math.max(0, hiddenCount);
   toggle.setAttribute(
     "aria-label",
-    `${expanded ? "Ocultar" : "Mostrar"} ${hiddenCount} mensajes de sincronización`,
+    `${expanded ? "Ocultar" : "Mostrar"} ${safeHiddenCount} mensajes de sincronización`,
   );
-  toggle.innerHTML = `${getChevronMarkup(expanded)}<span class="system-group-toggle-count">${hiddenCount}</span>`;
+  toggle.innerHTML = `${getChevronMarkup(expanded)}<span class="system-group-toggle-count">${safeHiddenCount}</span>`;
+}
+
+function getSystemGroupHiddenCount(items) {
+  return Math.max(0, items.length - 1);
 }
 
 function positionSystemGroupToggle(toggle, container, visibleItem, options = {}) {
+  syncSystemGroupTogglePosition(toggle, container, visibleItem, options);
+}
+
+function syncSystemGroupTogglePosition(toggle, container, visibleItem, options = {}) {
   const row = visibleItem.querySelector(".system-message-row");
   if (!row || !container) return;
 

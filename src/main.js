@@ -17,14 +17,18 @@ import {
   setConnection,
 } from "./features/icons-tooltips.js";
 import {
+  wireLayoutMetrics,
+} from "./features/layout-metrics.js";
+import {
   renderPresence,
   wireIdentityEvents,
-} from "./features/presence.js";
+} from "./features/presence.js?v=20260811-chat-style-persist-01";
 import {
   showLobby,
 } from "./features/session-ui.js";
 import {
   buildEmojiPicker,
+  getPersistedInsideChatStyle,
   setInsideChatStyle,
   setInsideChatVisible,
   setChatDock,
@@ -32,7 +36,7 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js?v=20260808-emoji-state-01";
+} from "./features/chat/index.js?v=20260811-chat-style-persist-01";
 import {
   initializePlayer,
   wirePlayerEvents,
@@ -50,6 +54,7 @@ const isSlowLoadDialogTest = new URLSearchParams(window.location.search).get("sl
 
 document.body.classList.remove("app-ready");
 applyInitialDefaults();
+wireLayoutMetrics();
 initializeUi();
 renderPresence();
 wireRoomEvents();
@@ -58,7 +63,7 @@ wireChatEvents();
 wirePlayerEvents();
 buildEmojiPicker();
 initializePlayer();
-setInsideChatStyle("float");
+setInsideChatStyle(getPersistedInsideChatStyle());
 setInsideChatVisible(false);
 setChatDock(localStorage.getItem("cine-juntos-chat-dock") || "right");
 syncChatAutoExpandControls();

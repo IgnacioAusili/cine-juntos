@@ -153,9 +153,7 @@ function appendEmojiAwareText(container, text) {
 }
 
 function isEmojiSegment(segment) {
-  return /[\p{Extended_Pictographic}\p{Emoji_Presentation}\p{Regional_Indicator}]|[0-9#*]\uFE0F?\u20E3/u.test(
-    segment,
-  );
+  return /[\p{Extended_Pictographic}\p{Emoji_Presentation}\p{Regional_Indicator}]/u.test(segment);
 }
 
 function appendVideoPreview(container, videoUrl, fallbackUrl) {

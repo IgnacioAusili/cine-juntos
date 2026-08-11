@@ -423,6 +423,19 @@ video::-webkit-media-controls-fullscreen-button {
   border-color: rgba(255, 255, 255, 0.28);
 }
 
+#pageFullscreenButton.active:not(:disabled) {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.82);
+}
+
+#pageFullscreenButton.active:not(:disabled):hover,
+#pageFullscreenButton.active:not(:disabled):focus-visible {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.28);
+  color: #fff;
+}
+
 .primary-video-control {
   border-color: rgba(240, 140, 58, 0.28);
   background: rgba(240, 140, 58, 0.15);

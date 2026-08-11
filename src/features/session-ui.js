@@ -1,17 +1,36 @@
 import { dom } from "../core/dom.js";
 import { state, logEvent } from "../core/state.js";
+import { refreshLayoutMetrics } from "./layout-metrics.js";
 
 export function showLobby() {
   dom.lobbyScreen.hidden = false;
   dom.sessionView.hidden = true;
   document.body.classList.add("is-lobby");
   setHostBadge(false);
+  console.info("[lobby-state]", "showLobby", {
+    scrollY: Math.round(window.scrollY || 0),
+    innerHeight: Math.round(window.innerHeight || 0),
+    visualViewportHeight: Math.round(window.visualViewport?.height || 0),
+    bodyScrollHeight: Math.round(document.body.scrollHeight || 0),
+    bodyClientHeight: Math.round(document.body.clientHeight || 0),
+    bodyClass: document.body.className,
+  });
+  refreshLayoutMetrics();
 }
 
 export function showSession() {
   dom.lobbyScreen.hidden = true;
   dom.sessionView.hidden = false;
   document.body.classList.remove("is-lobby");
+  console.info("[lobby-state]", "showSession", {
+    scrollY: Math.round(window.scrollY || 0),
+    innerHeight: Math.round(window.innerHeight || 0),
+    visualViewportHeight: Math.round(window.visualViewport?.height || 0),
+    bodyScrollHeight: Math.round(document.body.scrollHeight || 0),
+    bodyClientHeight: Math.round(document.body.clientHeight || 0),
+    bodyClass: document.body.className,
+  });
+  refreshLayoutMetrics();
 }
 
 export function setHostBadge(visible) {
@@ -21,7 +40,14 @@ export function setHostBadge(visible) {
 
 export function focusMainWorkspace() {
   window.requestAnimationFrame(() => {
-    dom.workspace?.scrollIntoView({ block: "start" });
+    const workspaceTop = dom.workspace?.offsetTop ?? 0;
+    console.info("[lobby-state]", "focusMainWorkspace", {
+      workspaceTop,
+      scrollY: Math.round(window.scrollY || 0),
+      innerHeight: Math.round(window.innerHeight || 0),
+      bodyClass: document.body.className,
+    });
+    window.scrollTo({ top: workspaceTop, behavior: "auto" });
   });
 }
 

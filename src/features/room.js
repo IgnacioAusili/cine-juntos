@@ -18,7 +18,7 @@ import {
   renderMembers,
   renderPresence,
   updateDisplayName,
-} from "./presence.js";
+} from "./presence.js?v=20260810-chat-fixes-04";
 import { setConnection } from "./icons-tooltips.js";
 import {
   focusMainWorkspace,
@@ -34,7 +34,7 @@ import {
   resetInsideUnread,
   resetPageUnread,
   renderReplyPreview,
-} from "./chat/index.js?v=20260808-emoji-state-01";
+} from "./chat/index.js?v=20260810-chat-fixes-02";
 
 const ACTIVE_TAB_KEY = "cine-juntos-active-tab";
 const ACTIVE_TAB_TTL_MS = 30000;

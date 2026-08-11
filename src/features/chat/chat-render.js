@@ -1,9 +1,9 @@
 import { dom } from "../../core/dom.js";
 import { state, logEvent } from "../../core/state.js";
 import { MAX_RENDERED_MESSAGES, formatTime, formatClockTime } from "../../core/utils.js";
-import { markParticipantActive, rememberParticipant } from "../presence.js";
+import { markParticipantActive, rememberParticipant } from "../presence.js?v=20260810-chat-fixes-04";
 import { wireMessageInteractions } from "./chat-message-interactions.js";
-import { appendMessageContent, truncateText } from "./chat-content-parser.js?v=20260801-01";
+import { appendMessageContent, truncateText } from "./chat-content-parser.js?v=20260810-chat-fixes-02";
 import { getParticipantAccent } from "./chat-participant-color.js";
 import { scheduleMessageTimeAdjustmentForBubble } from "./message-time-layout.js?v=20260802-02";
 import {
@@ -12,10 +12,10 @@ import {
   incrementScrollIndicator,
 } from "./unread-counters.js";
 import { setReplyTarget, scrollToMessage } from "./chat-reply.js";
-import { scheduleSystemMessageCollapse } from "./system-message-groups.js";
+import { scheduleSystemMessageCollapse } from "./system-message-groups.js?v=20260810-chat-fixes-02";
 
-const EMOJI_ONLY_PATTERN = /^(?:[\s\p{Extended_Pictographic}\p{Emoji_Presentation}\p{Emoji_Modifier}\uFE0F\u200D\u20E3]|[0-9#*]\uFE0F?\u20E3)+$/u;
-const EMOJI_GLYPH_PATTERN = /[\p{Extended_Pictographic}\p{Emoji_Presentation}]|[0-9#*]\uFE0F?\u20E3/u;
+const EMOJI_ONLY_PATTERN = /^(?:[\s\p{Extended_Pictographic}\p{Emoji_Presentation}\p{Emoji_Modifier}\uFE0F\u200D\u20E3])+$/u;
+const EMOJI_GLYPH_PATTERN = /[\p{Extended_Pictographic}\p{Emoji_Presentation}]/u;
 const SYSTEM_MESSAGE_STREAK_LIMIT = 4;
 const SYSTEM_MESSAGE_EXPANDED_STREAK_LIMIT = 10;
 const SYSTEM_MESSAGE_EXIT_MS = 220;
@@ -71,7 +71,7 @@ function appendMessageTo(container, message) {
 function appendMessageNow(container, message) {
   const isMine = message.from === state.session.clientId;
   const authorKey = String(message.from || message.name || "").trim();
-  const previousMessage = container.lastElementChild;
+  const previousMessage = getPreviousRenderableMessage(container);
   const isContinuation = Boolean(
     !message.system &&
     !previousMessage?.classList.contains("system") &&
@@ -270,6 +270,17 @@ function appendMessageNow(container, message) {
   }
 
   return item;
+}
+
+function getPreviousRenderableMessage(container) {
+  const children = Array.from(container.children);
+  for (let index = children.length - 1; index >= 0; index -= 1) {
+    const child = children[index];
+    if (!child.classList.contains("message")) continue;
+    if (child.classList.contains("system-group-collapsed-item")) continue;
+    return child;
+  }
+  return null;
 }
 
 function getSystemMessageText(message, isMine) {

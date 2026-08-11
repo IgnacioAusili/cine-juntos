@@ -70,27 +70,32 @@
   line-height: 1;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
   user-select: none;
 }
 
 .message-video-ts:hover {
   background: rgba(47, 184, 164, 0.22);
   border-color: rgba(47, 184, 164, 0.5);
-  transform: translateY(-0.5px);
+  transform: translateY(-1px);
 }
 
 .message-video-ts svg {
+  display: block;
   flex-shrink: 0;
   fill: currentColor;
 }
 
 .message-video-ts span {
   display: inline-flex;
-  height: 100%;
   align-items: center;
   line-height: 1;
-  transform: translateY(1px);
+  transform: none;
 }
 
 .message-time-anchor {

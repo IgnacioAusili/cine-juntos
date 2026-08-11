@@ -15,6 +15,7 @@ import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=202607
 const AUTO_COLLAPSE_DELAY_MS = 3200;
 const AUTO_EXPAND_INSIDE_KEY = "cine-juntos-chat-auto-expand-inside";
 const AUTO_EXPAND_EXTERNAL_KEY = "cine-juntos-chat-auto-expand-external";
+const CHAT_STYLE_KEY = "cine-juntos-chat-style";
 const CHAT_LAYOUT_SETTLE_MS = 320;
 const COLLAPSE_HANDLE_HIDE_MS = CHAT_LAYOUT_SETTLE_MS + 40;
 const CHAT_SCROLL_SNAP_LOCK_MS = 900;
@@ -355,12 +356,18 @@ function lockChatScrollSnapDuringProgrammaticScroll() {
   }, CHAT_SCROLL_SNAP_LOCK_MS);
 }
 
+export function getPersistedInsideChatStyle() {
+  const savedStyle = localStorage.getItem(CHAT_STYLE_KEY);
+  return ["float", "panel"].includes(savedStyle) ? savedStyle : "float";
+}
+
 export function setInsideChatStyle(style) {
   const nextStyle = ["float", "panel"].includes(style) ? style : "float";
   dom.playerFrame.dataset.chatStyle = nextStyle;
   dom.chatStyleToggle.querySelectorAll("[data-chat-style]").forEach((button) => {
     button.classList.toggle("active", button.dataset.chatStyle === nextStyle);
   });
+  localStorage.setItem(CHAT_STYLE_KEY, nextStyle);
   scheduleMessageTimeAdjustmentAfterLayout();
   logEvent("ui", `Estilo de chat interno: ${nextStyle}.`);
 }

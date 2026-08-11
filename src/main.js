@@ -22,12 +22,13 @@ import {
 import {
   renderPresence,
   wireIdentityEvents,
-} from "./features/presence.js?v=20260810-chat-fixes-04";
+} from "./features/presence.js?v=20260811-chat-style-persist-01";
 import {
   showLobby,
 } from "./features/session-ui.js";
 import {
   buildEmojiPicker,
+  getPersistedInsideChatStyle,
   setInsideChatStyle,
   setInsideChatVisible,
   setChatDock,
@@ -35,7 +36,7 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js?v=20260810-chat-fixes-02";
+} from "./features/chat/index.js?v=20260811-chat-style-persist-01";
 import {
   initializePlayer,
   wirePlayerEvents,
@@ -62,7 +63,7 @@ wireChatEvents();
 wirePlayerEvents();
 buildEmojiPicker();
 initializePlayer();
-setInsideChatStyle("float");
+setInsideChatStyle(getPersistedInsideChatStyle());
 setInsideChatVisible(false);
 setChatDock(localStorage.getItem("cine-juntos-chat-dock") || "right");
 syncChatAutoExpandControls();

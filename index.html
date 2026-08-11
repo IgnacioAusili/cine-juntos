@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Cine Juntos | Mirar, chatear y disfrutar</title>
+    <title>Cine Juntos | Mirar, chatear y compartir</title>
     <meta
       name="description"
       content="Mirar videos juntos, chatear en vivo y disfrutar una sala compartida con reproducción sincronizada."
@@ -21,7 +21,7 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap"
     />
     <link rel="icon" href="./public/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="./public/styles.css?v=20260810-chat-fixes-06" />
+    <link rel="stylesheet" href="./public/styles.css?v=20260811-lobby-center-01" />
   </head>
   <body class="is-lobby">
     <div class="app-shell">
@@ -84,35 +84,26 @@
       <section class="lobby-screen" id="lobbyScreen" aria-label="Entrada a sala">
         <div class="lobby-marquee" aria-hidden="true">
           <span class="lobby-marquee-track">
-            <span class="live">En vivo</span><span>Salas privadas</span><span>Video compartido</span><span>Chat integrado</span><span class="spacer"></span><span class="live">En vivo</span><span>Salas privadas</span><span>Video compartido</span><span>Chat integrado</span><span class="spacer"></span><span class="live">En vivo</span><span>Salas privadas</span><span>Video compartido</span><span>Chat integrado</span><span class="spacer"></span><span class="live">En vivo</span><span>Salas privadas</span><span>Video compartido</span><span>Chat integrado</span><span class="spacer"></span>
+            <span class="live">En vivo</span><span>Salas publicas</span><span>Video compartido</span><span>Chat integrado</span><span>Entrada libre</span><span class="spacer"></span><span class="live">En vivo</span><span>Salas publicas</span><span>Video compartido</span><span>Chat integrado</span><span>Entrada libre</span><span class="spacer"></span><span class="live">En vivo</span><span>Salas publicas</span><span>Video compartido</span><span>Chat integrado</span><span>Entrada libre</span><span class="spacer"></span><span class="live">En vivo</span><span>Salas publicas</span><span>Video compartido</span><span>Chat integrado</span><span>Entrada libre</span><span class="spacer"></span>
           </span>
         </div>
 
         <div class="lobby-grid">
           <div class="lobby-hero">
             <img
-              class="lobby-mobile-title-icon"
+              class="lobby-title-icon"
               src="./public/favicon.svg"
               alt=""
               aria-hidden="true"
             />
             <h1 class="lobby-title">
-              <span class="lobby-title-line">
-                <img
-                  class="lobby-title-icon"
-                  src="./public/favicon.svg"
-                  alt=""
-                  aria-hidden="true"
-                />
-                Cine
-              </span>
+              <span class="lobby-title-line">Cine</span>
               <span class="lobby-title-line lobby-title-accent">Juntos</span>
             </h1>
             <p class="lobby-description">
               <span class="lobby-description-full">
-                Salas privadas con reproducción sincronizada entre todos los participantes.
-                Controles compartidos, chat en vivo y una experiencia que se siente como
-                compartir el mismo sillón.
+                Todo lo necesario para ver videos juntos: creá una sala, invitá a quienes
+                quieras, miren un video al mismo tiempo y compartan la experiecia por el chat
               </span>
               <span class="lobby-description-mobile">
                 Miramos juntos, aunque estemos lejos.
@@ -142,10 +133,10 @@
               <li class="lobby-feature">
                 <span class="lobby-feature-icon" data-lucide="message-square"></span>
                 <span class="lobby-feature-text">
-                  <strong>Chat en vivo</strong>
+                  <strong>Chat</strong>
                   <small>
-                    <span class="lobby-feature-description-full">Mensajes, imágenes y replies</span>
-                    <span class="lobby-feature-description-mobile">Mensajes, imágenes y replies</span>
+                    <span class="lobby-feature-description-full">Mensajes, emojis, gifs, imagenes</span>
+                    <span class="lobby-feature-description-mobile">Mensajes, emojis, gifs, imagenes</span>
                   </small>
                 </span>
               </li>
@@ -805,6 +796,6 @@
     <script src="./public/dev-runtime.js?v=20260715-02"></script>
     <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script src="./public/firebase-config.js"></script>
-    <script type="module" src="./src/main.js?v=20260810-chat-fixes-06"></script>
+    <script type="module" src="./src/main.js?v=20260811-chat-style-persist-01"></script>
   </body>
 </html>

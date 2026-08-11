@@ -90,24 +90,67 @@
 /* ===== Grid principal: hero | ticket ===== */
 .lobby-grid {
   display: grid;
-  width: min(1480px, 100%);
+  width: min(1220px, 100%);
   align-items: center;
-  grid-template-columns: minmax(0, 1.28fr) minmax(360px, 0.72fr);
-  gap: 32px;
+  grid-template-columns: minmax(0, 1fr) minmax(420px, 0.9fr);
+  gap: clamp(36px, 4vw, 64px);
   padding-inline: 20px;
+}
+
+/* Composición base: hero centrado dentro de su columna y ticket a la derecha. */
+.lobby-hero,
+.lobby-ticket {
+  z-index: 1;
+}
+
+.lobby-hero {
+  justify-self: center;
+  align-self: center;
+  width: min(760px, 100%);
+  max-width: 760px;
+}
+
+.lobby-description {
+  max-width: 68ch;
+}
+
+.lobby-features {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px 20px;
+  width: min(680px, 100%);
+  margin-top: 12px;
+}
+
+.lobby-feature {
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.lobby-ticket {
+  justify-self: center;
+  transform: none;
 }
 
 /* ===== HERO (izquierda) ===== */
 .lobby-hero {
   display: grid;
   justify-items: start;
-  gap: 14px;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas:
+    "icon title"
+    "description description"
+    "features features";
+  align-items: center;
+  column-gap: 28px;
+  row-gap: 14px;
   width: 100%;
   max-width: none;
 }
 
 /* Titulo tipografico dramatico */
 .lobby-title {
+  grid-area: title;
   display: flex;
   flex-direction: column;
   gap: 0;
@@ -125,6 +168,15 @@
 .lobby-title-line {
   display: block;
   line-height: 1.02;
+}
+
+.lobby-title-icon {
+  grid-area: icon;
+  display: block;
+  flex: 0 0 auto;
+  width: clamp(118px, 9vw, 160px);
+  height: clamp(118px, 9vw, 160px);
+  filter: none;
 }
 
 .lobby-title-accent {
@@ -147,8 +199,9 @@
 }
 
 .lobby-description {
+  grid-area: description;
   margin: 0;
-  max-width: 46ch;
+  max-width: 68ch;
   color: var(--text-soft);
   font-size: clamp(0.9rem, 1.2vw, 1rem);
   line-height: 1.5;
@@ -156,6 +209,7 @@
 
 /* Feature pills */
 .lobby-features {
+  grid-area: features;
   display: grid;
   gap: 8px;
   margin: 2px 0 0;
@@ -164,6 +218,7 @@
 }
 
 .lobby-feature {
+  justify-self: center;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -194,6 +249,8 @@
   display: flex;
   flex-direction: column;
   gap: 1px;
+  align-items: center;
+  text-align: center;
 }
 
 .lobby-feature-text strong {
@@ -496,6 +553,15 @@ body:not(.is-lobby) .live-badge {
 @media (max-width: 680px) {
   .lobby-title {
     font-size: clamp(2.85rem, 12vw, 4.2rem);
+  }
+
+  .lobby-title-line {
+    line-height: 1.02;
+  }
+
+  .lobby-title-icon {
+    width: clamp(72px, 22vw, 106px);
+    height: clamp(72px, 22vw, 106px);
   }
 
   .lobby-feature {

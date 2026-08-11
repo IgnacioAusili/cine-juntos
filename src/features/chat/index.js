@@ -29,7 +29,7 @@ import {
   setInsideChatVisible,
   syncExternalChatCollapseHandleOffset,
   syncChatAutoExpandControls,
-} from "./chat-layout.js?v=20260808-user-scroll-lock-03";
+} from "./chat-layout.js?v=20260811-chat-style-persist-01";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260802-02";
 
 const CHAT_SCROLL_WHEEL_MULTIPLIER = 0.35;
@@ -153,6 +153,7 @@ export {
   showMessageMenu,
 } from "./message-menu.js";
 export {
+  getPersistedInsideChatStyle,
   setChatDock,
   setExternalChatAutoExpandEnabled,
   setExternalChatCollapsed,

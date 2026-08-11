@@ -29,14 +29,18 @@ export function scheduleSystemMessageCollapse(container) {
     current.collapsed = false;
     syncSystemGroupLastMarker(candidate);
     updateToggleCount(expandedToggle, getSystemGroupHiddenCount(candidate), true);
-    syncSystemGroupTogglePosition(expandedToggle, container, candidate.at(-1));
+    const anchorItem = getToggleAnchorItem(expandedToggle) || candidate.at(-1);
+    syncSystemGroupTogglePosition(expandedToggle, container, anchorItem);
     containerStates.set(container, current);
     return;
   }
 
   const isAlreadyCollapsed = current.collapsed;
   if (isAlreadyCollapsed) {
-    applyCollapsedState(candidate, false);
+    updateCollapsedState(candidate);
+    current.timer = null;
+    containerStates.set(container, current);
+    return;
   }
 
   current.timer = window.setTimeout(() => {
@@ -62,8 +66,11 @@ function getLatestSystemStreak(container) {
 
 function clearSystemGroupState(container, items = []) {
   container?.querySelector(".system-group-toggle")?.remove();
-  items.forEach((item) => {
-    item.classList.remove("system-group-collapsed-item", "system-group-last");
+  const targets = items.length
+    ? items
+    : Array.from(container?.querySelectorAll(".message.system-group-collapsed-item, .message.system-group-last, .message.system-group-toggle-host") || []);
+  targets.forEach((item) => {
+    item.classList.remove("system-group-collapsed-item", "system-group-last", "system-group-toggle-host");
   });
 }
 
@@ -84,8 +91,11 @@ function applyCollapsedState(items, animate) {
   container?.querySelector(".system-group-toggle")?.remove();
 
   const hiddenItems = items.slice(0, -1);
+  items.forEach((item) => item.classList.remove("system-group-toggle-host"));
+  const toggleAnchorItem = getSystemGroupToggleAnchorItem(items);
+  toggleAnchorItem?.classList.add("system-group-toggle-host");
   const animations = hiddenItems.map((item) => {
-    if (animate) return animateMessage(item, false);
+    if (animate) return animateMessage(item, false, { preserveItemOpacity: item === toggleAnchorItem });
     item.classList.add("system-group-collapsed-item");
     return null;
   });
@@ -94,26 +104,34 @@ function applyCollapsedState(items, animate) {
 
   const appendToggle = () => {
     const latest = container ? getLatestSystemStreak(container).at(-1) : null;
-    if (!visibleItem.isConnected || latest !== visibleItem || collapseRuns.get(container) !== runId) return;
+    if (
+      !visibleItem.isConnected ||
+      !toggleAnchorItem?.isConnected ||
+      latest !== visibleItem ||
+      collapseRuns.get(container) !== runId
+    )
+      return;
 
     const hiddenCount = getSystemGroupHiddenCount(items);
     if (!hiddenCount) return;
-    const toggle = document.createElement("button");
+    const toggle = container?.querySelector(".system-group-toggle") || document.createElement("button");
     toggle.type = "button";
     toggle.className = "system-group-toggle";
     toggle.setAttribute("aria-expanded", "false");
     updateToggleCount(toggle, hiddenCount, false);
-    syncSystemGroupTogglePosition(toggle, container, visibleItem);
-    toggle.addEventListener("pointerdown", (event) => event.stopPropagation());
-    toggle.addEventListener("click", (event) => {
+    toggle.onpointerdown = (event) => event.stopPropagation();
+    toggle.onclick = (event) => {
       event.preventDefault();
       event.stopPropagation();
       toggleSystemGroup(items, toggle);
-    });
-    container.append(toggle);
+    };
+    const row = toggleAnchorItem.querySelector(".system-message-row");
+    if (!row) return;
+    row.append(toggle);
+    syncSystemGroupTogglePosition(toggle, container, toggleAnchorItem);
     window.requestAnimationFrame(() => {
-      if (toggle.isConnected && visibleItem.isConnected) {
-        syncSystemGroupTogglePosition(toggle, container, visibleItem);
+      if (toggle.isConnected && toggleAnchorItem.isConnected) {
+        syncSystemGroupTogglePosition(toggle, container, toggleAnchorItem);
       }
     });
   };
@@ -146,27 +164,69 @@ function toggleSystemGroup(items, toggle) {
   toggle.setAttribute("aria-expanded", String(!isExpanded));
   updateToggleCount(toggle, hiddenCount, nextExpanded);
 
+  currentItems.forEach((item) => item.classList.remove("system-group-toggle-host"));
+  const toggleAnchorItem = getSystemGroupToggleAnchorItem(currentItems);
+  toggleAnchorItem?.classList.add("system-group-toggle-host");
+  if (nextExpanded) syncSystemGroupTogglePosition(toggle, container, toggleAnchorItem);
+
   const animations = currentItems.slice(0, -1).map((item) => {
     if (isExpanded) {
-      return animateMessage(item, false);
+      return animateMessage(item, false, { preserveItemOpacity: item === toggleAnchorItem });
     } else {
-      return animateMessage(item, true);
+      return animateMessage(item, true, { preserveItemOpacity: item === toggleAnchorItem });
     }
   });
   const state = containerStates.get(container);
   if (state) state.collapsed = !isExpanded;
 
-  const fixedTop = toggle.style.top;
   Promise.all(animations).then(() => {
     if (!toggle.isConnected) return;
     const latestItems = container ? getLatestSystemStreak(container) : currentItems;
-    const latestVisibleItem = latestItems.at(-1) || currentItems.at(-1) || items.at(-1);
+    const latestAnchorItem = getSystemGroupToggleAnchorItem(latestItems) || toggleAnchorItem || currentItems[0] || items[0];
     updateToggleCount(toggle, getSystemGroupHiddenCount(latestItems), nextExpanded);
     syncSystemGroupLastMarker(latestItems);
-    syncSystemGroupTogglePosition(toggle, container, latestVisibleItem, { horizontalOnly: true });
-    toggle.style.top = fixedTop;
+    syncSystemGroupTogglePosition(toggle, container, latestAnchorItem);
     if (wasPinnedToBottom) queuePinnedChatScrollSync(container, container === dom.overlayMessages, true);
   });
+}
+
+function updateCollapsedState(items) {
+  const visibleItem = items.at(-1);
+  if (!visibleItem) return;
+
+  const container = visibleItem.parentElement;
+  const wasPinnedToBottom = isPinnedToBottom(container);
+  const existingToggle = container?.querySelector('.system-group-toggle[aria-expanded="false"]');
+  const existingAnchor = getToggleAnchorItem(existingToggle);
+  const toggleAnchorItem = items.includes(existingAnchor) ? existingAnchor : getSystemGroupToggleAnchorItem(items);
+  if (!toggleAnchorItem) return;
+
+  items.forEach((item) => {
+    stopMessageAnimation(item);
+    item.classList.toggle("system-group-toggle-host", item === toggleAnchorItem);
+    item.classList.toggle("system-group-collapsed-item", item !== visibleItem);
+  });
+  visibleItem.classList.remove("system-group-collapsed-item");
+  syncSystemGroupLastMarker(items);
+
+  const hiddenCount = getSystemGroupHiddenCount(items);
+  if (!hiddenCount) return;
+  const toggle = existingToggle || document.createElement("button");
+  toggle.type = "button";
+  toggle.className = "system-group-toggle";
+  toggle.setAttribute("aria-expanded", "false");
+  updateToggleCount(toggle, hiddenCount, false);
+  toggle.onpointerdown = (event) => event.stopPropagation();
+  toggle.onclick = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    toggleSystemGroup(items, toggle);
+  };
+
+  const row = toggleAnchorItem.querySelector(".system-message-row");
+  if (row && toggle.parentElement !== row) row.append(toggle);
+  syncSystemGroupTogglePosition(toggle, container, toggleAnchorItem);
+  if (wasPinnedToBottom) queuePinnedChatScrollSync(container, container === dom.overlayMessages, true);
 }
 
 function updateToggleCount(toggle, hiddenCount, expanded) {
@@ -182,6 +242,14 @@ function getSystemGroupHiddenCount(items) {
   return Math.max(0, items.length - 1);
 }
 
+function getSystemGroupToggleAnchorItem(items) {
+  return items[0] || null;
+}
+
+function getToggleAnchorItem(toggle) {
+  return toggle?.closest(".message.system") || null;
+}
+
 function positionSystemGroupToggle(toggle, container, visibleItem, options = {}) {
   syncSystemGroupTogglePosition(toggle, container, visibleItem, options);
 }
@@ -190,22 +258,26 @@ function syncSystemGroupTogglePosition(toggle, container, visibleItem, options =
   const row = visibleItem.querySelector(".system-message-row");
   if (!row || !container) return;
 
-  const containerRect = container.getBoundingClientRect();
-  const bubble = visibleItem.querySelector(".message-system-bubble") || row;
-  const bubbleRect = bubble.getBoundingClientRect();
+  const isCollapsed = toggle.getAttribute("aria-expanded") !== "true";
+  const visualItem = isCollapsed
+    ? getLatestSystemStreak(container).at(-1) || visibleItem
+    : visibleItem;
+  const bubble = visualItem.querySelector(".message-system-bubble") || visualItem.querySelector(".system-message-row") || row;
   const buttonHeight = Number.parseFloat(getComputedStyle(toggle).height) || 18;
   const buttonWidth = 26;
-  const decorationLineCenter = bubbleRect.top + bubbleRect.height / 2;
-  const top = decorationLineCenter - containerRect.top + container.scrollTop - buttonHeight / 2;
   const lineGap = 12;
-  const left = bubbleRect.left - containerRect.left + container.scrollLeft - buttonWidth - lineGap;
+  const rowRect = row.getBoundingClientRect();
+  const bubbleRect = bubble.getBoundingClientRect();
+  const decorationLineCenter = bubbleRect.top + bubbleRect.height / 2;
+  const top = decorationLineCenter - rowRect.top - buttonHeight / 2;
+  const left = bubbleRect.left - rowRect.left - buttonWidth - lineGap;
   if (!options.horizontalOnly) toggle.style.top = `${Math.max(0, top)}px`;
   toggle.style.left = `${Math.max(0, left)}px`;
   toggle.style.right = "auto";
   toggle.style.bottom = "auto";
 }
 
-function animateMessage(item, show) {
+function animateMessage(item, show, options = {}) {
   const fromHeight = item.getBoundingClientRect().height;
   const currentStyles = getComputedStyle(item);
   const fromMarginTop = currentStyles.marginTop;
@@ -217,21 +289,28 @@ function animateMessage(item, show) {
   const expandedMarginTop = expandedStyles.marginTop;
   const expandedMarginBottom = expandedStyles.marginBottom;
   const toHeight = show ? targetHeight : 0;
+  const fromFrame = {
+    height: `${fromHeight}px`,
+    marginTop: fromMarginTop,
+    marginBottom: fromMarginBottom,
+  };
+  const toFrame = {
+    height: `${toHeight}px`,
+    marginTop: show ? expandedMarginTop : "0px",
+    marginBottom: show ? expandedMarginBottom : "0px",
+  };
+  const frames = show
+    ? [fromFrame, { opacity: 0, offset: 0.18 }, toFrame]
+    : [fromFrame, { opacity: 0, offset: 0.46 }, toFrame];
+  if (!options.preserveItemOpacity) {
+    fromFrame.opacity = show ? 0 : 1;
+    toFrame.opacity = show ? 1 : 0;
+  } else {
+    frames.splice(1, 1);
+    animateSystemMessageContent(item, show);
+  }
   const animation = item.animate(
-    [
-      {
-        height: `${fromHeight}px`,
-        opacity: show ? 0 : 1,
-        marginTop: fromMarginTop,
-        marginBottom: fromMarginBottom,
-      },
-      {
-        height: `${toHeight}px`,
-        opacity: show ? 1 : 0,
-        marginTop: show ? expandedMarginTop : "0px",
-        marginBottom: show ? expandedMarginBottom : "0px",
-      },
-    ],
+    frames,
     { duration: SYSTEM_GROUP_ANIMATION_MS, easing: "cubic-bezier(0.22, 1, 0.36, 1)" },
   );
   messageAnimations.set(item, animation);
@@ -253,6 +332,28 @@ function animateMessage(item, show) {
     animation.finished.then(
       () => settle(true),
       () => settle(false),
+    );
+  });
+}
+
+function stopMessageAnimation(item) {
+  messageAnimations.get(item)?.cancel();
+  item.getAnimations({ subtree: true }).forEach((animation) => animation.cancel());
+  messageAnimations.delete(item);
+  item.style.removeProperty("height");
+  item.style.removeProperty("opacity");
+  item.style.removeProperty("margin-top");
+  item.style.removeProperty("margin-bottom");
+}
+
+function animateSystemMessageContent(item, show) {
+  const targets = item.querySelectorAll(".message-system-bubble, .swipe-reply-hint-wrapper");
+  targets.forEach((target) => {
+    target.animate(
+      show
+        ? [{ opacity: 0 }, { opacity: 0, offset: 0.18 }, { opacity: 1 }]
+        : [{ opacity: 1 }, { opacity: 0, offset: 0.46 }, { opacity: 0 }],
+      { duration: SYSTEM_GROUP_ANIMATION_MS, easing: "cubic-bezier(0.22, 1, 0.36, 1)" },
     );
   });
 }

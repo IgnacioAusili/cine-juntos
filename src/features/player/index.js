@@ -1,7 +1,7 @@
 // Coordinacion general del player: reexporta sync de video y fullscreen sin romper imports existentes.
 import { wireFullscreenEvents } from "./fullscreen.js";
 import { wireMiniPlayerEvents } from "./mini-player.js?v=20260808-scroll-mini-player-07";
-import { wirePlayerCoreEvents } from "./player.js";
+import { wirePlayerCoreEvents } from "./player.js?v=20260811-sync-messages-01";
 
 export {
   initializePlayer,
@@ -9,11 +9,11 @@ export {
   setVideoSource,
   setVideoStatus,
   waitForVideoMetadata,
-} from "./player.js";
+} from "./player.js?v=20260811-sync-messages-01";
 export {
   handleRemoteState,
   publishState,
-} from "./player-sync-logic.js";
+} from "./player-sync-logic.js?v=20260811-sync-messages-01";
 export {
   handleFullscreenChange,
   snapFullscreenScroll,

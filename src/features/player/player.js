@@ -16,7 +16,7 @@ import {
   hydrateIcons,
   setControlIcon,
 } from "../icons-tooltips.js";
-import { sendVideoEventMessage, setInsideChatVisible } from "../chat/index.js?v=20260810-chat-fixes-02";
+import { sendVideoEventMessage, setInsideChatVisible } from "../chat/index.js?v=20260811-system-group-incremental-01";
 // Import circular intencional y seguro: estas funciones se invocan en runtime,
 // no durante la carga del modulo, y player-sync-logic.js a su vez importa
 // setVideoSource y waitForVideoMetadata desde aqui.
@@ -25,7 +25,7 @@ import {
   clearPlaybackRecoveryTracking,
   pauseRoomForPlaybackIssue,
   publishState,
-} from "./player-sync-logic.js";
+} from "./player-sync-logic.js?v=20260811-sync-messages-01";
 
 import {
   showErrorDialog,
@@ -176,6 +176,14 @@ export function wirePlayerCoreEvents() {
     logEvent("video", `Seek local a ${formatSeconds(dom.videoPlayer.currentTime)}.`);
     state.player.lastManualSeekAt = Date.now();
     syncPlayerControls(true);
+    if (state.player.remoteSeekPending) {
+      state.player.remoteSeekPending = false;
+      if (state.player.remoteSeekTimeoutId) {
+        window.clearTimeout(state.player.remoteSeekTimeoutId);
+        state.player.remoteSeekTimeoutId = null;
+      }
+      return;
+    }
     if (!state.player.suppressVideoEvents) publishState("seek");
   });
 

@@ -30,10 +30,10 @@
   z-index: 3;
   width: 6px;
   opacity: 0;
-  transition: opacity 0.12s ease;
+  transition: opacity 0.12s ease, filter 0.12s ease;
   pointer-events: auto;
   touch-action: none;
-  cursor: grab;
+  cursor: default;
   user-select: none;
 }
 
@@ -41,9 +41,15 @@
   opacity: 1;
 }
 
+.messages-wrap[data-scrollbar-visible="true"] .chat-scrollbar:hover,
 .messages-wrap.is-dragging .chat-scrollbar,
 .chat-scrollbar.is-dragging {
-  cursor: grabbing;
+  filter: brightness(1.08);
+}
+
+.messages-wrap.is-dragging .chat-scrollbar,
+.chat-scrollbar.is-dragging {
+  cursor: default;
 }
 
 .chat-scrollbar-thumb {
@@ -54,7 +60,17 @@
   min-height: 12px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.04);
+  transition: background-color 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
   pointer-events: auto;
+}
+
+.messages-wrap[data-scrollbar-visible="true"] .chat-scrollbar:hover .chat-scrollbar-thumb,
+.messages-wrap.is-dragging .chat-scrollbar-thumb,
+.chat-scrollbar.is-dragging .chat-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.28);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.09), 0 0 10px rgba(255, 255, 255, 0.12);
+  filter: brightness(1.06);
 }
 
 .messages-wrap .messages,

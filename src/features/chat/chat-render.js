@@ -11,8 +11,8 @@ import {
   handleIncomingPageUnread,
   incrementScrollIndicator,
 } from "./unread-counters.js";
-import { setReplyTarget, scrollToMessage } from "./chat-reply.js";
-import { scheduleSystemMessageCollapse } from "./system-message-groups.js?v=20260810-chat-fixes-02";
+import { setReplyTarget, scrollToMessage } from "./chat-reply.js?v=20260811-reply-curtain-close-03";
+import { scheduleSystemMessageCollapse } from "./system-message-groups.js?v=20260811-system-group-incremental-02";
 
 const EMOJI_ONLY_PATTERN = /^(?:[\s\p{Extended_Pictographic}\p{Emoji_Presentation}\p{Emoji_Modifier}\uFE0F\u200D\u20E3])+$/u;
 const EMOJI_GLYPH_PATTERN = /[\p{Extended_Pictographic}\p{Emoji_Presentation}]/u;
@@ -287,8 +287,8 @@ function getSystemMessageText(message, isMine) {
   const videoEvent = message.videoEvent;
   if (videoEvent?.action === "video-ready" && videoEvent.isReload) {
     return isMine
-      ? "Recargaste el video para todos"
-      : `${String(message.name || "Invitado").trim()} recargó el video para todos`;
+      ? "Se te ha recargado el video"
+      : `${String(message.name || "Invitado").trim()} le ha recargado el video`;
   }
   return String(message.text || "").trim();
 }
@@ -300,10 +300,12 @@ function normalizeOwnSystemBody(bodyText) {
 
   const rules = [
     [/^inició el video$/i, "Iniciaste el video"],
+    [/^ingresó un video$/i, "Ingresaste un video"],
     [/^reprodujo el video en (.+)$/i, "Reprodujiste el video en $1"],
     [/^pausó el video en (.+)$/i, "Pausaste el video en $1"],
     [/^saltó a (.+)$/i, "Saltaste a $1"],
     [/^cambió la velocidad a (.+)$/i, "Cambiaste la velocidad a $1"],
+    [/^le ha cargado el video$/i, "Se te ha cargado el video"],
   ];
 
   for (const [pattern, replacement] of rules) {
@@ -355,7 +357,8 @@ function getTrailingSystemStreak(container) {
 
 async function makeRoomForSystemMessage(container) {
   const expanded = Boolean(container.querySelector('.system-group-toggle[aria-expanded="true"]'));
-  const limit = expanded ? SYSTEM_MESSAGE_EXPANDED_STREAK_LIMIT : SYSTEM_MESSAGE_STREAK_LIMIT;
+  const collapsed = Boolean(container.querySelector('.system-group-toggle[aria-expanded="false"]'));
+  const limit = expanded || collapsed ? SYSTEM_MESSAGE_EXPANDED_STREAK_LIMIT : SYSTEM_MESSAGE_STREAK_LIMIT;
   while (getTrailingSystemStreak(container).length >= limit) {
     await removeOldestSystemMessage(container);
   }

@@ -70,6 +70,8 @@ export const playerState = {
   playButtonCooldownUntil: 0,
   playButtonCooldownTimeoutId: null,
   lastManualSeekAt: 0,
+  remoteSeekPending: false,
+  remoteSeekTimeoutId: null,
   lastResumePersistAt: 0,
   videoLoadCooldownUntil: 0,
   videoLoadCooldownTimeoutId: null,

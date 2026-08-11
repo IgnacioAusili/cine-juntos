@@ -99,13 +99,50 @@ export function renderReplyPreview({ animate = true, preserveHeight = false } = 
         : 0;
     const currentHeight = preserveHeight ? visibleHeight : 0;
     if (!state.chat.replyTarget) {
+      const hideReplyPreview = () => {
+        container.classList.remove("reply-preview--visible");
+        container.hidden = true;
+        container.innerHTML = "";
+        container.style.removeProperty("height");
+        container.style.removeProperty("transition");
+        container.style.removeProperty("clip-path");
+        container.style.removeProperty("padding-top");
+        container.style.removeProperty("padding-bottom");
+      };
+
+      if (container.hidden && !container.classList.contains("reply-preview--visible")) {
+        container.innerHTML = "";
+        container.style.removeProperty("--reply-participant-accent");
+        return;
+      }
+
       container.style.removeProperty("--reply-participant-accent");
+      if (!animate) {
+        hideReplyPreview();
+        return;
+      }
+
       container.style.setProperty("transition", "none");
       const startHeight = container.getBoundingClientRect().height;
+      const currentStyles = getComputedStyle(container);
+      const startPaddingTop = currentStyles.paddingTop;
+      const startPaddingBottom = currentStyles.paddingBottom;
       container.style.height = `${startHeight}px`;
-      container.classList.remove("reply-preview--visible");
       const animation = container.animate(
-        [{ height: `${startHeight}px` }, { height: "0px" }],
+        [
+          {
+            height: `${startHeight}px`,
+            paddingTop: startPaddingTop,
+            paddingBottom: startPaddingBottom,
+            clipPath: "inset(0 0 0 0)",
+          },
+          {
+            height: "0px",
+            paddingTop: "0px",
+            paddingBottom: "0px",
+            clipPath: "inset(100% 0 0 0)",
+          },
+        ],
         {
           duration: 240,
           easing: "cubic-bezier(0.22, 1, 0.36, 1)",
@@ -113,25 +150,28 @@ export function renderReplyPreview({ animate = true, preserveHeight = false } = 
         },
       );
       pendingReplyPreviewAnimations.set(container, animation);
-      animation.onfinish = () => {
-        if (pendingReplyPreviewAnimations.get(container) !== animation) return;
-        pendingReplyPreviewAnimations.delete(container);
-        container.style.height = "0px";
+      let hideTimer = null;
+      const finishClose = () => {
+        if (state.chat.replyTarget) return;
+        if (hideTimer != null) {
+          window.clearTimeout(hideTimer);
+          pendingReplyPreviewHides.delete(container);
+          hideTimer = null;
+        }
+        if (pendingReplyPreviewAnimations.get(container) === animation) {
+          pendingReplyPreviewAnimations.delete(container);
+        }
+        animation.onfinish = null;
+        animation.oncancel = null;
         animation.cancel();
+        hideReplyPreview();
       };
+      animation.onfinish = finishClose;
       animation.oncancel = () => {
         if (pendingReplyPreviewAnimations.get(container) !== animation) return;
         pendingReplyPreviewAnimations.delete(container);
       };
-      const hideTimer = window.setTimeout(() => {
-        if (!state.chat.replyTarget) {
-          container.hidden = true;
-          container.innerHTML = "";
-          container.style.removeProperty("height");
-          container.style.removeProperty("transition");
-        }
-        pendingReplyPreviewHides.delete(container);
-      }, 240);
+      hideTimer = window.setTimeout(finishClose, 260);
       pendingReplyPreviewHides.set(container, hideTimer);
       return;
     }
@@ -153,7 +193,7 @@ export function renderReplyPreview({ animate = true, preserveHeight = false } = 
       if (visibleHeight > 0) {
         container.style.height = `${visibleHeight}px`;
       } else {
-        container.style.removeProperty("height");
+        container.style.height = `${getExpandedReplyHeight(container)}px`;
       }
       void container.offsetHeight;
       container.style.removeProperty("transition");

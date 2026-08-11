@@ -14,16 +14,27 @@ import {
 } from "../../core/utils.js";
 import { markParticipantActive, rememberParticipant } from "../presence.js?v=20260810-chat-fixes-04";
 import { setSyncStatus } from "../session-ui.js";
-import { sendVideoEventMessage, renderMessage } from "../chat/index.js?v=20260810-chat-fixes-02";
+import { sendVideoEventMessage, renderMessage } from "../chat/index.js?v=20260811-system-group-incremental-01";
 // Import circular intencional y seguro: estas funciones se invocan en runtime,
 // no durante la carga del modulo, y player.js a su vez importa publishState.
-import { setVideoSource, waitForVideoMetadata } from "./player.js";
+import { setVideoSource, waitForVideoMetadata } from "./player.js?v=20260811-sync-messages-01";
 
 const PLAYBACK_ISSUE_SYNC_COOLDOWN_MS = 2200;
 const PAUSE_TO_ISSUE_GRACE_MS = 900;
 const SEEK_TO_ISSUE_GRACE_MS = 1400;
 const REMOTE_HOLD_ISSUE_SUPPRESSION_MS = 2200;
 const PLAYBACK_RECOVERY_TIMEOUT_MS = 5 * 60 * 1000;
+
+function markRemoteSeekPending() {
+  state.player.remoteSeekPending = true;
+  if (state.player.remoteSeekTimeoutId) {
+    window.clearTimeout(state.player.remoteSeekTimeoutId);
+  }
+  state.player.remoteSeekTimeoutId = window.setTimeout(() => {
+    state.player.remoteSeekPending = false;
+    state.player.remoteSeekTimeoutId = null;
+  }, 3000);
+}
 
 export function handleRemoteState(statePayload) {
   if (!statePayload || statePayload.from === state.session.clientId) return;
@@ -57,9 +68,9 @@ async function applyRemoteState(statePayload, force = false) {
     const isNewVideoEvent = statePayload.action === "video";
     if (statePayload.src && (sourceIsDifferent || isNewVideoEvent)) {
       setVideoSource(statePayload.src, false, {
-        // El mensaje de carga lo publica quien eligio el video. El cliente
-        // receptor solo debe aplicar la fuente, no anunciarla como propia.
-        announceLoadCompletion: false,
+        // Cada participante anuncia su propia finalizacion de carga, porque
+        // los tiempos pueden ser diferentes en cada navegador.
+        announceLoadCompletion: true,
       });
       await waitForVideoMetadata().catch(() => {});
     }
@@ -73,6 +84,7 @@ async function applyRemoteState(statePayload, force = false) {
       `Aplicar remoto: action=${statePayload.action || "evento"} base=${formatSeconds(statePayload.time)} target=${formatSeconds(targetTime)} current=${formatSeconds(currentTime)} drift=${drift.toFixed(2)} paused=${String(Boolean(statePayload.paused))}.`,
     );
     if (Number.isFinite(targetTime) && shouldSeek) {
+      markRemoteSeekPending();
       dom.videoPlayer.currentTime = Math.max(0, targetTime);
     }
 

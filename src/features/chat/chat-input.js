@@ -18,8 +18,8 @@ import {
 } from "../session-ui.js";
 import { refreshTooltipForTarget } from "../icons-tooltips.js";
 import { markParticipantActive } from "../presence.js?v=20260810-chat-fixes-04";
-import { clearReplyTarget } from "./chat-reply.js";
-import { renderMessage } from "./chat-render.js?v=20260810-chat-fixes-02";
+import { clearReplyTarget } from "./chat-reply.js?v=20260811-reply-curtain-close-03";
+import { renderMessage } from "./chat-render.js?v=20260811-system-group-incremental-01";
 import {
   scheduleExternalChatAutoCollapse,
   scheduleInsideChatAutoCollapse,

@@ -9,6 +9,11 @@
   gap: 6px;
 }
 
+#messages .message.system .message-system-bubble,
+#overlayMessages .message.system .message-system-bubble {
+  max-width: min(calc(100% - 32px), 560px);
+}
+
 .system-message-row .swipe-reply-hint-wrapper {
   position: absolute;
   right: -18px;
@@ -28,6 +33,32 @@
   opacity: 0;
   overflow: hidden;
   pointer-events: none;
+}
+
+/* La fila original del selector debe mantener prioridad de capa durante el
+   colapso y la expansión; los mensajes animados nacen en la misma coordenada. */
+.message.system.system-group-toggle-host {
+  position: relative;
+  z-index: 5;
+  overflow: visible;
+}
+
+.message.system.system-group-toggle-host.system-group-collapsed-item {
+  min-height: 0;
+  max-height: 0;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.message.system.system-group-toggle-host.system-group-collapsed-item .message-system-bubble,
+.message.system.system-group-toggle-host.system-group-collapsed-item .swipe-reply-hint-wrapper {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.message.system.system-group-toggle-host.system-group-collapsed-item .system-group-toggle {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .overlay-messages .message.system.system-group-collapsed-item {
@@ -53,9 +84,11 @@
   color: var(--muted);
   line-height: 1;
   padding: 0;
-  z-index: 4;
+  z-index: 8;
   cursor: pointer;
   transition:
+    top 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    left 220ms cubic-bezier(0.22, 1, 0.36, 1),
     color 160ms ease,
     border-color 160ms ease,
     background 160ms ease;
@@ -127,4 +160,8 @@
 
 #overlayMessages .message.system .system-message-row {
   max-width: min(100%, 420px);
+}
+
+#overlayMessages .message.system .message-system-bubble {
+  max-width: min(calc(100% - 28px), 420px);
 }

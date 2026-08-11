@@ -5,7 +5,7 @@ import {
   logEvent,
 } from "../../core/state.js";
 import { formatClockTime } from "../../core/utils.js";
-import { renderMessage } from "./chat-render.js?v=20260810-chat-fixes-02";
+import { renderMessage } from "./chat-render.js?v=20260811-system-group-incremental-01";
 
 /**
  * Genera y envía un mensaje de sistema al chat describiendo un evento de video.
@@ -48,7 +48,6 @@ export function sendVideoEventMessage(action, currentState) {
  */
 function describeVideoEvent(action, currentState) {
   const name = currentState.name || getDisplayName();
-  const isOwnEvent = currentState.from === state.session.clientId;
   const time = formatClockTime(currentState.time);
   if (action === "play") {
     if (currentState.time === 0 || time === "0:00") {
@@ -61,10 +60,12 @@ function describeVideoEvent(action, currentState) {
   if (action === "rate")
     return `${name} cambió la velocidad a ${currentState.rate}x`;
   if (action === "video") {
-    return isOwnEvent ? "" : `${name} recargó el video`;
+    return `${name} ingresó un video`;
   }
   if (action === "video-ready") {
-    return currentState.isReload ? "Recargaste el video para todos" : "Ingresaste un video nuevo";
+    return currentState.isReload
+      ? `${name} le ha recargado el video`
+      : `${name} le ha cargado el video`;
   }
   if (action === "hold") return `${name} ${describePlaybackIssue(currentState.issueReason)} en ${time}`;
   return "";

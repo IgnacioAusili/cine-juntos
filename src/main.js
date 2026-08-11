@@ -36,12 +36,12 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js?v=20260811-chat-style-persist-01";
+} from "./features/chat/index.js?v=20260811-system-group-incremental-01";
 import {
   initializePlayer,
   wirePlayerEvents,
-} from "./features/player/index.js?v=20260808-scroll-mini-player-07";
-import { joinRoom, wireRoomEvents } from "./features/room.js";
+} from "./features/player/index.js?v=20260811-sync-messages-01";
+import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260811-system-group-incremental-01";
 import {
   showSlowLoadDialog,
 } from "./features/session-ui.js";

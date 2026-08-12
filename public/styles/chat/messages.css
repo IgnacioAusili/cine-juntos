@@ -281,6 +281,100 @@
   max-width: calc(50% - 3px);
 }
 
+.message-media-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.message-media-row .swipe-reply-hint-wrapper {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  left: auto;
+  width: 0;
+  height: 0;
+  flex: 0 0 auto;
+}
+
+.message--media-only {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+  max-width: min(100%, 320px);
+  align-items: flex-start;
+  gap: 3px;
+}
+
+/* La fila de una imagen no debe heredar el align-items:flex-end del mensaje propio. */
+.message.message--media-only {
+  align-items: flex-start;
+  margin-inline-start: 0;
+}
+
+.message.mine.message--media-only {
+  align-items: flex-start;
+  margin-inline-start: auto;
+}
+
+.message.mine.message--media-only .message-meta {
+  align-self: flex-end;
+}
+
+.message--media-only .message-media-row {
+  align-self: flex-start;
+}
+
+.message.mine.message--media-only .message-media-row {
+  align-self: flex-start;
+}
+
+.message--media-only .message-media-strip {
+  margin-top: 0;
+}
+
+.message--media-only .message-time-anchor {
+  position: static;
+  z-index: auto;
+  float: none;
+  display: flex;
+  flex: 0 0 auto;
+  height: auto;
+  min-height: 0;
+  margin: 0;
+  shape-outside: none;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 6px 2px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  background: rgba(9, 12, 14, 0.12);
+}
+
+.message--media-only .message-time {
+  line-height: 1;
+  text-align: center;
+}
+
+.message:not(.mine).message--media-only .message-time-anchor {
+  align-self: flex-start;
+}
+
+.message.mine.message--media-only .message-time-anchor {
+  align-self: flex-end;
+  border-color: rgba(47, 184, 164, 0.34);
+  background: rgba(47, 184, 164, 0.16);
+}
+
+.message:not(.mine).message--media-only .message-time-anchor {
+  border-color: rgba(240, 140, 58, 0.28);
+  background: rgba(240, 140, 58, 0.12);
+}
+
 .message.mine .message-bubble {
   border-color: rgba(47, 184, 164, 0.34);
   background: rgba(47, 184, 164, 0.16);

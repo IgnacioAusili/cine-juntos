@@ -47,3 +47,9 @@
   position: relative;
   z-index: 3;
 }
+
+.message--media-only.message-highlight::before {
+  right: auto;
+  left: var(--message-highlight-left, -10px);
+  width: var(--message-highlight-width, calc(100% + 20px));
+}

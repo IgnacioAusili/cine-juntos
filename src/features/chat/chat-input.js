@@ -18,12 +18,12 @@ import {
 } from "../session-ui.js";
 import { refreshTooltipForTarget } from "../icons-tooltips.js";
 import { markParticipantActive } from "../presence.js?v=20260810-chat-fixes-04";
-import { clearReplyTarget } from "./chat-reply.js?v=20260811-reply-curtain-close-03";
-import { renderMessage } from "./chat-render.js?v=20260811-system-group-incremental-01";
+import { clearReplyTarget } from "./chat-reply.js?v=20260811-reply-motion-01";
+import { renderMessage } from "./chat-render.js?v=20260812-overlay-selector-reply-14";
 import {
   scheduleExternalChatAutoCollapse,
   scheduleInsideChatAutoCollapse,
-} from "./chat-layout.js?v=20260808-user-scroll-lock-03";
+} from "./chat-layout.js?v=20260811-text-stable-motion-01";
 import { queuePinnedChatScrollSync, isPinnedToBottom } from "./chat-scroll-sync.js?v=20260810-chat-fixes-01";
 import {
   compressImageBase64,
@@ -40,7 +40,11 @@ const SAME_MESSAGE_LIMIT = 4;
 const SAME_MESSAGE_WINDOW_MS = 2500;
 const RAPID_MESSAGE_LIMIT = 5;
 const RAPID_MESSAGE_WINDOW_MS = 1000;
-const SPAM_COOLDOWN_MS = 15000;
+const TEXT_SPAM_COOLDOWN_MS = 15000;
+const IMAGE_RAPID_LIMIT = 4;
+const IMAGE_RAPID_WINDOW_MS = 2500;
+const IMAGE_SPAM_COOLDOWN_MS = 30000;
+const IMAGE_FINGERPRINT_CACHE_LIMIT = 100;
 const PROGRESS_APPEAR_THRESHOLD = 150;
 let emojiFontReady = null;
 
@@ -48,6 +52,9 @@ let lastMessageSpamKey = "";
 let sameMessageCount = 0;
 let lastMessageSentAt = 0;
 let recentMessageSentAt = [];
+let recentImageSentAt = [];
+let sentImageFingerprintQueue = [];
+let sentImageFingerprintSet = new Set();
 let spamCooldownUntil = 0;
 let spamCooldownTimer = 0;
 
@@ -80,6 +87,84 @@ function getSpamKey(text, attachedImage) {
       ? 1
       : 0;
   return `${normalizedText}|images:${imageCount}`;
+}
+
+function getAttachedImages(attachedImage) {
+  return Array.isArray(attachedImage)
+    ? attachedImage.filter(Boolean)
+    : attachedImage
+      ? [attachedImage]
+      : [];
+}
+
+function hashImageFingerprint(image) {
+  const value = String(image || "").trim();
+  if (!value) return "";
+
+  let hash = 0x811c9dc5;
+  for (let index = 0; index < value.length; index += 1) {
+    hash ^= value.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  return `img:${(hash >>> 0).toString(16)}`;
+}
+
+function getImageFingerprints(attachedImage) {
+  const fingerprints = getAttachedImages(attachedImage)
+    .map((image) => hashImageFingerprint(image))
+    .filter(Boolean);
+  return [...new Set(fingerprints)];
+}
+
+function commitImageSpamState(fingerprints, now) {
+  if (!fingerprints.length) return;
+
+  const timestamp = Number.isFinite(now) ? now : Date.now();
+  recentImageSentAt = recentImageSentAt.filter(
+    (sentAt) => timestamp - sentAt < IMAGE_RAPID_WINDOW_MS,
+  );
+  recentImageSentAt.push(timestamp);
+
+  for (const fingerprint of fingerprints) {
+    if (sentImageFingerprintSet.has(fingerprint)) continue;
+    sentImageFingerprintSet.add(fingerprint);
+    sentImageFingerprintQueue.push(fingerprint);
+  }
+
+  while (sentImageFingerprintQueue.length > IMAGE_FINGERPRINT_CACHE_LIMIT) {
+    const oldest = sentImageFingerprintQueue.shift();
+    if (oldest) sentImageFingerprintSet.delete(oldest);
+  }
+}
+
+function evaluateImageSpamCheck(attachedImage) {
+  const fingerprints = getImageFingerprints(attachedImage);
+  if (!fingerprints.length) {
+    return { allowed: true, fingerprints: [], now: Date.now() };
+  }
+
+  const now = Date.now();
+  const duplicateWithinMessage = fingerprints.length !== getAttachedImages(attachedImage).length;
+  const alreadySent = fingerprints.some((fingerprint) => sentImageFingerprintSet.has(fingerprint));
+  if (duplicateWithinMessage || alreadySent) {
+    setSyncStatus("Esa imagen ya se envió antes.");
+    logEvent("chat", "Imagen bloqueada: duplicada.");
+    return { allowed: false, fingerprints: [], now };
+  }
+
+  const recentImageCount = recentImageSentAt.filter(
+    (sentAt) => now - sentAt < IMAGE_RAPID_WINDOW_MS,
+  ).length;
+  if (recentImageCount >= IMAGE_RAPID_LIMIT) {
+    startSpamCooldown(
+      IMAGE_SPAM_COOLDOWN_MS,
+      "Envío pausado temporalmente por muchas imágenes seguidas.",
+    );
+    setSyncStatus("Demasiadas imágenes seguidas. Esperá 30 segundos.");
+    return { allowed: false, fingerprints: [], now };
+  }
+
+  return { allowed: true, fingerprints, now };
 }
 
 function restoreSendButton(button) {
@@ -127,24 +212,28 @@ function updateSpamCooldownButtons() {
   spamCooldownTimer = window.setTimeout(updateSpamCooldownButtons, 250);
 }
 
-function startSpamCooldown() {
+function startSpamCooldown(durationMs = TEXT_SPAM_COOLDOWN_MS, reason = "Envío pausado temporalmente por mensajes repetidos.") {
   lastMessageSpamKey = "";
   sameMessageCount = 0;
   lastMessageSentAt = 0;
   recentMessageSentAt = [];
-  spamCooldownUntil = Date.now() + SPAM_COOLDOWN_MS;
+  recentImageSentAt = [];
+  spamCooldownUntil = Date.now() + durationMs;
   window.clearTimeout(spamCooldownTimer);
   updateSpamCooldownButtons();
-  logEvent("chat", "Envío pausado temporalmente por mensajes repetidos.");
+  logEvent("chat", reason);
 }
 
 function registerMessageForSpamCheck(text, attachedImage) {
+  const imageCheck = evaluateImageSpamCheck(attachedImage);
+  if (!imageCheck.allowed) return false;
+
   const now = Date.now();
   recentMessageSentAt = recentMessageSentAt.filter(
     (sentAt) => now - sentAt < RAPID_MESSAGE_WINDOW_MS,
   );
   if (recentMessageSentAt.length >= RAPID_MESSAGE_LIMIT) {
-    startSpamCooldown();
+    startSpamCooldown(TEXT_SPAM_COOLDOWN_MS);
     return false;
   }
 
@@ -162,9 +251,11 @@ function registerMessageForSpamCheck(text, attachedImage) {
   recentMessageSentAt.push(now);
 
   if (sameMessageCount > SAME_MESSAGE_LIMIT) {
-    startSpamCooldown();
+    startSpamCooldown(TEXT_SPAM_COOLDOWN_MS);
     return false;
   }
+
+  commitImageSpamState(imageCheck.fingerprints, imageCheck.now);
   return true;
 }
 
@@ -527,13 +618,23 @@ export function wireFloatingComposerLayout() {
       }
     };
 
-    const observer = new ResizeObserver(() => {
-      updateReserve();
-    });
+    let reserveFrame = 0;
+    const scheduleReserveUpdate = () => {
+      if (form === dom.messageForm && dom.sessionView?.classList.contains("chat-layout-transitioning")) return;
+      if (reserveFrame) return;
+      reserveFrame = window.requestAnimationFrame(() => {
+        reserveFrame = 0;
+        updateReserve();
+      });
+    };
+    const observer = new ResizeObserver(scheduleReserveUpdate);
 
     floatingComposerObservers.set(form, observer);
     observer.observe(form);
-    window.addEventListener("resize", updateReserve, { passive: true });
+    window.addEventListener("resize", scheduleReserveUpdate, { passive: true });
+    if (form === dom.messageForm) {
+      window.addEventListener("chat-layout-settled", scheduleReserveUpdate, { passive: true });
+    }
     updateReserve();
   });
 }
@@ -545,6 +646,7 @@ function wireChatScrollbar(messagesContainer) {
   const update = () => syncChatScrollbar(messagesContainer);
   messagesContainer.addEventListener("scroll", update, { passive: true });
   window.addEventListener("resize", update, { passive: true });
+  window.addEventListener("chat-layout-settled", update, { passive: true });
   wireChatScrollbarDragging(messagesContainer);
   update();
 }
@@ -641,6 +743,15 @@ function syncChatScrollbar(messagesContainer) {
   const track = shell?.querySelector(".chat-scrollbar");
   const thumb = shell?.querySelector(".chat-scrollbar-thumb");
   if (!shell || !track || !thumb) return;
+
+  const isLayoutTransitioning = dom.sessionView?.classList.contains("chat-layout-transitioning")
+    || dom.sessionView?.classList.contains("chat-dock-switching");
+  if (isLayoutTransitioning) {
+    shell.removeAttribute("data-scrollbar-visible");
+    thumb.style.height = "";
+    thumb.style.transform = "";
+    return;
+  }
 
   const overflow = messagesContainer.scrollHeight - messagesContainer.clientHeight;
   if (overflow <= 1) {

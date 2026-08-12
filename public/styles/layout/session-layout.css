@@ -38,6 +38,36 @@
     grid-template-rows 220ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* El ancho/alto real cambia en un único paso. El movimiento visible se hace
+   con transform en el video para no reenvolver texto y controles por frame. */
+.session-view.chat-layout-transitioning .workspace {
+  transition: none;
+}
+
+.session-view.chat-layout-visual-motion .video-area {
+  transform: scale(
+    var(--chat-layout-video-scale-x, 1),
+    var(--chat-layout-video-scale-y, 1)
+  );
+  transform-origin: left top;
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+/* Al cerrar el lateral se conserva brevemente su caja original para que el
+   contenido se desvanezca completo, en vez de comprimirse y reenvolverse. */
+.session-view.chat-layout-visual-motion.chat-collapsed[data-chat-dock="right"] .chat-area {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: var(--chat-panel-width);
+  height: 100%;
+  box-sizing: border-box;
+  padding: 8px 0 0;
+  border-width: 1px;
+  border-left-width: 0;
+}
+
 /* El desenfoque de vidrio se vuelve muy costoso mientras cambia el ancho de
    la grilla. Durante ese movimiento el fondo opaco conserva la lectura del
    panel y evita repintar toda la superficie en cada frame. */

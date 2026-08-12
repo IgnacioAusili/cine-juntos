@@ -21,13 +21,22 @@ export function setReplyTarget(message, focusInput = dom.messageInput) {
     id: message.id,
     from: message.from || null,
     name: message.name || "Invitado",
-    text: message.text || "",
+    text: getReplyLabel(message),
   };
   renderReplyPreview({
     animate: !isSameReplyTarget,
     preserveHeight: hadReplyTarget && !isSameReplyTarget,
   });
   focusInput?.focus({ preventScroll: true });
+}
+
+function getReplyLabel(message) {
+  const text = String(message?.text || "").trim();
+  if (text && !(text.startsWith("data:image/") && text.includes("base64,"))) return text;
+  if (message?.image || (Array.isArray(message?.images) && message.images.length)) {
+    return "(Imagen)";
+  }
+  return "";
 }
 
 /**
@@ -134,13 +143,15 @@ export function renderReplyPreview({ animate = true, preserveHeight = false } = 
             height: `${startHeight}px`,
             paddingTop: startPaddingTop,
             paddingBottom: startPaddingBottom,
-            clipPath: "inset(0 0 0 0)",
+            opacity: 1,
+            transform: "translateY(0)",
           },
           {
             height: "0px",
             paddingTop: "0px",
             paddingBottom: "0px",
-            clipPath: "inset(100% 0 0 0)",
+            opacity: 0,
+            transform: "translateY(-4px)",
           },
         ],
         {
@@ -209,8 +220,8 @@ export function renderReplyPreview({ animate = true, preserveHeight = false } = 
         container.append(nextReplyContent);
         const animation = container.animate(
           [
-            { clipPath: "inset(100% 0 0 0)" },
-            { clipPath: "inset(0 0 0 0)" },
+            { opacity: 0, transform: "translateY(4px)" },
+            { opacity: 1, transform: "translateY(0)" },
           ],
           {
             duration: 320,
@@ -237,8 +248,8 @@ export function renderReplyPreview({ animate = true, preserveHeight = false } = 
 
       const exitAnimation = container.animate(
         [
-          { clipPath: "inset(0 0 0 0)" },
-          { clipPath: "inset(100% 0 0 0)" },
+          { opacity: 1, transform: "translateY(0)" },
+          { opacity: 0, transform: "translateY(-4px)" },
         ],
         {
           duration: 180,
@@ -268,7 +279,10 @@ export function renderReplyPreview({ animate = true, preserveHeight = false } = 
       pendingReplyPreviewShow.delete(container);
       container.classList.add("reply-preview--visible");
       const animation = container.animate(
-        [{ height: "0px" }, { height: `${targetHeight}px` }],
+        [
+          { height: "0px", opacity: 0, transform: "translateY(4px)" },
+          { height: `${targetHeight}px`, opacity: 1, transform: "translateY(0)" },
+        ],
         {
           duration: 320,
           easing: "cubic-bezier(0.22, 1, 0.36, 1)",
@@ -333,11 +347,21 @@ function highlightMessage(element) {
     return;
   }
 
+  const highlightContainer = element.closest(".messages");
+  if (element.classList.contains("message--media-only") && highlightContainer) {
+    const elementRect = element.getBoundingClientRect();
+    const containerRect = highlightContainer.getBoundingClientRect();
+    element.style.setProperty("--message-highlight-left", `${containerRect.left - elementRect.left - 2}px`);
+    element.style.setProperty("--message-highlight-width", `${containerRect.width + 4}px`);
+  }
+
   element.classList.remove("message-highlight");
   void element.offsetWidth; // Force reflow
   element.classList.add("message-highlight");
   window.setTimeout(() => {
     element.classList.remove("message-highlight");
+    element.style.removeProperty("--message-highlight-left");
+    element.style.removeProperty("--message-highlight-width");
   }, 2600);
 }
 

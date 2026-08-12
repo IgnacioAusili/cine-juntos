@@ -25,8 +25,14 @@
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 14px;
   box-shadow: 0 18px 44px rgba(0, 0, 0, 0.42);
-  animation: scrollMiniPlayerEnter 220ms ease both;
+  animation: none;
   cursor: default;
+}
+
+.mini-player-surface.mini-player-initializing {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .mini-player-surface.mini-player-scroll,
@@ -91,17 +97,24 @@
 @keyframes scrollMiniPlayerEnter {
   from {
     opacity: 0;
-    transform: translateY(12px) scale(0.96);
+    transform: translateY(12px);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 
 .mini-player-surface .player-bottom-actions {
   padding: 6px 8px 8px;
+}
+
+/* Evita mostrar durante un instante el estado copiado del reproductor
+   principal antes de aplicar el estado propio del mini reproductor. */
+.mini-player-surface:not(.mini-chat-state-ready) .player-chat {
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 .mini-player-surface.mini-player-scroll button,
@@ -205,7 +218,8 @@
 }
 
 .mini-player-surface .messages-wrap {
-  --chat-scrollbar-visual-end: calc(100% - 82px);
+  --chat-scrollbar-visual-end: calc(100% - var(--chat-composer-reserve, 92px));
+  --chat-scrollbar-visual-gap: 8px;
   --chat-scrollbar-visual-inset: 6px;
   overflow-y: hidden;
 }
@@ -223,6 +237,32 @@
   height: 0;
 }
 
+/* Igualar explícitamente la tipografía y escala de emojis del overlay
+   principal dentro de la ventana mini/Picture-in-Picture. */
+.mini-player-surface .overlay-messages .message-bubble:not(.message-bubble--emoji-only) .message-emoji {
+  font-family: var(--emoji-font-family);
+  font-size: 1.12em;
+  line-height: 1;
+  vertical-align: -0.08em;
+}
+
+.mini-player-surface .overlay-messages .message-bubble--emoji-only .message-text {
+  display: inline-block;
+  font-family: var(--emoji-font-family);
+  font-size: 1.4rem;
+  line-height: 1.25;
+}
+
+.mini-player-surface .overlay-messages .message-bubble--emoji-only-compact .message-text {
+  font-size: 1.25rem;
+}
+
+.mini-player-surface .mini-emoji-popover .emoji-option {
+  font-family: var(--emoji-font-family);
+  font-size: 0.82rem;
+  line-height: 1;
+}
+
 .mini-player-surface .chat-scrollbar {
   right: 3px;
   width: 4px;
@@ -238,6 +278,46 @@
   flex-wrap: nowrap;
   gap: 6px;
   padding: 5px 7px;
+}
+
+.mini-player-surface .player-volume-input {
+  width: 42px;
+}
+
+.mini-player-surface .player-volume-group:hover .player-volume-slider-wrap,
+.mini-player-surface .player-volume-group:focus-within .player-volume-slider-wrap {
+  max-width: 42px;
+}
+
+.mini-player-surface .player-volume-group.volume-hovered {
+  gap: 6px;
+}
+
+.mini-player-surface .player-volume-group.volume-hovered .player-volume-slider-wrap {
+  max-width: 42px;
+}
+
+.mini-player-surface .player-volume-group .video-control-button {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.mini-player-surface .player-rate-select {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.mini-player-surface .overlay-messages .message.system,
+.mini-player-surface .overlay-messages .message.system .message-bubble-row,
+.mini-player-surface .overlay-messages .message.system .message-bubble,
+.mini-player-surface .overlay-messages .message.system .message-system-bubble {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.mini-player-surface .overlay-messages .message.system .message-bubble {
+  padding: 2px 0 !important;
 }
 
 .mini-player-surface .player-progress-group {

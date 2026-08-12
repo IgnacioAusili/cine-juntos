@@ -8,6 +8,8 @@ import {
   restoreMirrorChatDraft,
   submitMirrorChat,
   syncMirroredChatMessages,
+  positionMiniSystemToggles,
+  wireMiniMessageReplies,
   toggleMiniEmojiPicker,
   toggleMiniChatOverlay,
   wireMirrorChatScrollbar,
@@ -54,6 +56,8 @@ function createInteractiveMirror(source, targetDocument) {
     if (source === dom.playerChat) {
       if (records.some((record) => record.target.closest?.(".overlay-messages"))) {
         syncMirroredChatMessages(source, element);
+      } else if (records.some((record) => record.target.closest?.(".overlay-message-form"))) {
+        syncMirrorComposerState(source, element);
       }
       return;
     }
@@ -65,8 +69,29 @@ function createInteractiveMirror(source, targetDocument) {
   });
   let isSyncing = false;
 
+  // El overlay del mini reproductor es una superficie independiente. Se
+  // clona al abrirse, pero no vuelve a copiar cambios del reproductor normal.
+  const observesSource = true;
+
   element.addEventListener("click", (event) => {
     if (event.target.matches?.("input, select, textarea")) return;
+    if (source === dom.playerChat && event.target.closest?.("#insideChatAutoExpandSwitch, [data-proxy-for=\"insideChatAutoExpandSwitch\"]")) {
+      event.preventDefault();
+      event.stopPropagation();
+      handleMiniChatInteraction(element, event.target);
+      return;
+    }
+    if (source === dom.playerChat && event.target.closest?.(".system-group-toggle")) {
+      const mirrorToggle = event.target.closest(".system-group-toggle");
+      const expanded = mirrorToggle.getAttribute("aria-expanded") !== "true";
+      mirrorToggle.setAttribute("aria-expanded", String(expanded));
+      const systemItems = [...element.querySelectorAll(".overlay-messages .message.system")];
+      systemItems.forEach((item, index) => {
+        item.classList.toggle("system-group-collapsed-item", !expanded && index < systemItems.length - 1);
+      });
+      positionMiniSystemToggles(element);
+      return;
+    }
     const target = getSourceControl(source, event.target);
     if (!target || target.disabled) return;
     event.preventDefault();
@@ -86,8 +111,14 @@ function createInteractiveMirror(source, targetDocument) {
       handleMiniChatInteraction(element, event.target);
       return;
     }
+    if (source === dom.playerBottomActions && event.target.closest?.(".player-volume-group")) {
+      event.target.closest(".player-volume-group").classList.add("volume-hovered");
+    }
     target.click();
-    requestAnimationFrame(sync);
+    requestAnimationFrame(() => {
+      if (source === dom.playerBottomActions) syncState();
+      else sync();
+    });
   });
 
   element.addEventListener("submit", (event) => {
@@ -100,12 +131,26 @@ function createInteractiveMirror(source, targetDocument) {
     element.addEventListener(eventName, (event) => {
       const target = getSourceControl(source, event.target);
       if (!target) return;
-      if (isOverlayMessageInput(source, target)) return;
+      if (isOverlayMessageInput(source, target)) {
+        target.value = event.target.value;
+        target.dispatchEvent(new Event(eventName, { bubbles: true }));
+        return;
+      }
       target.value = event.target.value;
       target.dispatchEvent(new Event(eventName, { bubbles: true }));
-      if (eventName === "change") sync();
+      if (eventName === "change") {
+        if (source === dom.playerBottomActions) syncState();
+        else sync();
+      }
     });
   });
+
+  element.addEventListener("pointerout", (event) => {
+    if (source !== dom.playerBottomActions) return;
+    const volumeGroup = event.target.closest?.(".player-volume-group");
+    if (!volumeGroup || volumeGroup.contains(event.relatedTarget)) return;
+    volumeGroup.classList.remove("volume-hovered");
+  }, { passive: true });
 
   element.addEventListener("wheel", (event) => {
     if (source !== dom.playerBottomActions) return;
@@ -116,18 +161,22 @@ function createInteractiveMirror(source, targetDocument) {
     event.stopPropagation();
     const step = 0.05;
     const delta = event.deltaY < 0 ? step : -step;
-    const nextVolume = Math.min(1, Math.max(0, dom.videoPlayer.volume + delta));
+    const currentVolume = dom.videoPlayer.muted ? 0 : dom.videoPlayer.volume;
+    const nextVolume = Math.min(1, Math.max(0, currentVolume + delta));
+    volumeGroup.classList.add("volume-hovered");
     dom.videoPlayer.volume = nextVolume;
     if (nextVolume > 0 && dom.videoPlayer.muted) dom.videoPlayer.muted = false;
     syncState();
   }, { passive: false });
 
-  observer.observe(source, {
-    subtree: true,
-    childList: true,
-    attributes: true,
-    characterData: true,
-  });
+  if (observesSource) {
+    observer.observe(source, {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      characterData: true,
+    });
+  }
   sync();
 
   return {
@@ -149,8 +198,15 @@ function createInteractiveMirror(source, targetDocument) {
     element.innerHTML = source.innerHTML;
     markProxyControls(element, keepIds);
     copyControlState(source, element);
+    if (source === dom.playerBottomActions) copyDynamicButtonPresentation(source, element);
     restoreMirrorChatDraft(source, element, draft);
     wireMirrorChatScrollbar(element);
+    if (source === dom.playerChat) {
+      const sourceMessages = source.querySelector(".overlay-messages");
+      const mirrorMessages = element.querySelector(".overlay-messages");
+      if (sourceMessages && mirrorMessages) wireMiniMessageReplies(sourceMessages, mirrorMessages, element);
+    }
+    if (source === dom.playerChat) positionMiniSystemToggles(element);
     isSyncing = false;
   }
 
@@ -158,6 +214,19 @@ function createInteractiveMirror(source, targetDocument) {
     copyControlState(source, element);
     copyPlayerTimeLabels(source, element);
     if (source === dom.playerBottomActions) copyDynamicButtonPresentation(source, element);
+  }
+}
+
+function syncMirrorComposerState(source, element) {
+  const sourceWrapper = source.querySelector(".overlay-message-form .input-wrapper");
+  const mirrorWrapper = element.querySelector(".overlay-message-form .input-wrapper");
+  const sourceInput = source.querySelector("#overlayMessageInput");
+  const mirrorInput = element.querySelector("#overlayMessageInput, [data-proxy-for=\"overlayMessageInput\"]");
+  if (!sourceWrapper || !mirrorWrapper) return;
+
+  mirrorWrapper.dataset.expanded = sourceWrapper.dataset.expanded || "false";
+  if (sourceInput && mirrorInput && mirrorInput !== element.ownerDocument.activeElement) {
+    mirrorInput.style.cssText = sourceInput.style.cssText;
   }
 }
 
@@ -195,13 +264,14 @@ function copyPlayerTimeLabels(source, element) {
 function copyDynamicButtonPresentation(source, element) {
   ["playerPlayButton", "playerMuteButton", "playerMiniPlayerButton"].forEach((id) => {
     const sourceButton = source.querySelector(`#${id}`);
-    const mirrorButton = element.querySelector(`[data-proxy-for="${id}"]`);
+    const mirrorButton = element.querySelector(`#${id}, [data-proxy-for="${id}"]`);
     if (!sourceButton || !mirrorButton) return;
     mirrorButton.className = sourceButton.className;
     mirrorButton.innerHTML = sourceButton.innerHTML;
     mirrorButton.setAttribute("aria-label", sourceButton.getAttribute("aria-label") || "");
     mirrorButton.dataset.tooltip = sourceButton.dataset.tooltip || "";
   });
+
 }
 
 function getSourceControl(source, target) {

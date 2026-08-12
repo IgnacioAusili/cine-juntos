@@ -5,19 +5,22 @@ import { markParticipantActive, rememberParticipant } from "../presence.js?v=202
 import { wireMessageInteractions } from "./chat-message-interactions.js";
 import { appendMessageContent, truncateText } from "./chat-content-parser.js?v=20260810-chat-fixes-02";
 import { getParticipantAccent } from "./chat-participant-color.js";
-import { scheduleMessageTimeAdjustmentForBubble } from "./message-time-layout.js?v=20260802-02";
+import { scheduleMessageTimeAdjustmentForBubble } from "./message-time-layout.js?v=20260811-layout-motion-01";
 import {
   handleIncomingUnread,
   handleIncomingPageUnread,
   incrementScrollIndicator,
 } from "./unread-counters.js";
-import { setReplyTarget, scrollToMessage } from "./chat-reply.js?v=20260811-reply-curtain-close-03";
-import { scheduleSystemMessageCollapse } from "./system-message-groups.js?v=20260811-system-group-incremental-02";
+import { setReplyTarget, scrollToMessage } from "./chat-reply.js?v=20260812-image-reply-03";
+import {
+  prepareSystemMessageRemoval,
+  refreshSystemMessageGroup,
+  scheduleSystemMessageCollapse,
+} from "./system-message-groups.js?v=20260812-overlay-selector-reply-14";
 
 const EMOJI_ONLY_PATTERN = /^(?:[\s\p{Extended_Pictographic}\p{Emoji_Presentation}\p{Emoji_Modifier}\uFE0F\u200D\u20E3])+$/u;
 const EMOJI_GLYPH_PATTERN = /[\p{Extended_Pictographic}\p{Emoji_Presentation}]/u;
-const SYSTEM_MESSAGE_STREAK_LIMIT = 4;
-const SYSTEM_MESSAGE_EXPANDED_STREAK_LIMIT = 10;
+const SYSTEM_MESSAGE_STREAK_LIMIT = 10;
 const SYSTEM_MESSAGE_EXIT_MS = 220;
 const messageRenderQueues = new WeakMap();
 
@@ -25,9 +28,10 @@ const messageRenderQueues = new WeakMap();
  * Renderiza un mensaje en los contenedores de chat.
  */
 export function renderMessage(message) {
-  const messageImages = Array.isArray(message?.images) ? message.images : [];
+  const messageText = String(message?.text || "").trim();
+  const messageImages = getRenderableMessageImages(message, messageText);
   if (
-    (!message?.text && !message?.image && !messageImages.length) ||
+    (!messageText && !message?.image && !messageImages.length) ||
     state.chat.lastMessageIds.has(message.id)
   )
     return;
@@ -72,15 +76,24 @@ function appendMessageNow(container, message) {
   const isMine = message.from === state.session.clientId;
   const authorKey = String(message.from || message.name || "").trim();
   const previousMessage = getPreviousRenderableMessage(container);
+  const messageText = String(message?.text || "").trim();
+  const messageImages = getRenderableMessageImages(message, messageText);
   const isContinuation = Boolean(
     !message.system &&
     !previousMessage?.classList.contains("system") &&
     previousMessage?.dataset.authorId === authorKey,
   );
   const shouldRenderAuthorName = !isContinuation;
-  const messageImages = Array.isArray(message?.images) ? message.images : [];
+  const hasRenderableText = Boolean(messageText) && !isStandaloneImageText(messageText);
+  const hasReply = Boolean(
+    message.replyTo?.text ||
+    message.replyTo?.image ||
+    (Array.isArray(message.replyTo?.images) && message.replyTo.images.length),
+  );
+  const isMediaOnly = !message.system && Boolean(messageImages.length) && !hasReply && !hasRenderableText;
   const item = document.createElement("article");
   item.className = `message${isMine ? " mine" : ""}${message.system ? " system" : ""}`;
+  item._chatMessage = message;
   item.dataset.messageId = message.id;
   item.dataset.authorId = authorKey;
   item.style.setProperty("--participant-accent", getParticipantAccent(message.from || message.name));
@@ -119,14 +132,12 @@ function appendMessageNow(container, message) {
   bubble.className = "message-bubble";
   const content = document.createElement("div");
   content.className = "message-content";
-  const hasReply = Boolean(message.replyTo?.text);
-  const emojiOnlyCount = countEmojiGlyphs(message.text);
+  const emojiOnlyCount = countEmojiGlyphs(messageText);
   const isEmojiOnly =
     !message.system &&
     !hasReply &&
-    !message.image &&
     !messageImages.length &&
-    isEmojiOnlyText(message.text);
+    isEmojiOnlyText(messageText);
   if (isEmojiOnly) {
     bubble.classList.add("message-bubble--emoji-only");
     if (emojiOnlyCount > 4) bubble.classList.add("message-bubble--emoji-only-compact");
@@ -141,7 +152,12 @@ function appendMessageNow(container, message) {
       "--reply-participant-accent",
       getParticipantAccent(message.replyTo.from || message.replyTo.id || message.replyTo.name),
     );
-    reply.innerHTML = `<span class="message-reply-name">${message.replyTo.name || "Invitado"}</span><span class="message-reply-body">${truncateText(message.replyTo.text, 90)}</span>`;
+    const rawReplyLabel = String(message.replyTo.text || "").trim();
+    const replyLabel =
+      rawReplyLabel && !(rawReplyLabel.startsWith("data:image/") && rawReplyLabel.includes("base64,"))
+        ? rawReplyLabel
+        : "(Imagen)";
+    reply.innerHTML = `<span class="message-reply-name">${message.replyTo.name || "Invitado"}</span><span class="message-reply-body">${truncateText(replyLabel, 90)}</span>`;
     reply.addEventListener("click", () => scrollToMessage(message.replyTo.id, container));
     content.append(reply);
   }
@@ -157,7 +173,6 @@ function appendMessageNow(container, message) {
       if (exactName && rawText.startsWith(exactName)) {
         const bodyText = rawText.slice(exactName.length).trimStart();
         const ownBodyText = isMine ? normalizeOwnSystemBody(bodyText) : "";
-
         if (ownBodyText) {
           const body = document.createElement("span");
           body.className = "message-system-body";
@@ -168,7 +183,6 @@ function appendMessageNow(container, message) {
           systemName.className = "message-system-name";
           systemName.textContent = isMine ? "Tu" : exactName;
           systemText.append(systemName);
-
           if (bodyText) {
             const body = document.createElement("span");
             body.className = "message-system-body";
@@ -179,9 +193,8 @@ function appendMessageNow(container, message) {
       } else {
         systemText.textContent = rawText;
       }
-
       content.append(systemText);
-    } else {
+    } else if (hasRenderableText) {
       appendMessageContent(replyTextRow || content, message.text);
     }
   }
@@ -191,9 +204,8 @@ function appendMessageNow(container, message) {
     content.append(replyTextRow);
   }
 
-  appendMessageMedia(content, message);
+  if (!isMediaOnly) appendMessageMedia(content, messageImages);
   bubble.append(content);
-
   if (message.system) {
     const bubbleRow = document.createElement("div");
     bubbleRow.className = "message-bubble-row system-message-row";
@@ -212,6 +224,39 @@ function appendMessageNow(container, message) {
       replyInput: container === dom.overlayMessages ? dom.overlayMessageInput : dom.messageInput,
       interactionTarget: item,
       interactionBand: bubbleRow,
+    });
+  } else if (isMediaOnly) {
+    item.classList.add("message--media-only");
+    const mediaRow = document.createElement("div");
+    mediaRow.className = "message-media-row";
+    const hintWrapper = document.createElement("div");
+    hintWrapper.className = "swipe-reply-hint-wrapper";
+    const hint = document.createElement("span");
+    hint.className = "swipe-reply-hint";
+    hint.innerHTML =
+      "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><polyline points='9 17 4 12 9 7'/><path d='M20 18v-2a4 4 0 0 0-4-4H4'/></svg>";
+    hintWrapper.append(hint);
+
+    const mediaStrip = appendMessageMedia(mediaRow, messageImages, true);
+    mediaRow.append(hintWrapper);
+    if (shouldRenderAuthorName || tsBtn) item.append(meta);
+    item.append(mediaRow);
+
+    const timeAnchor = document.createElement("div");
+    timeAnchor.className = "message-time-anchor";
+    const time = document.createElement("div");
+    time.className = "message-time";
+    time.textContent = formatTime(message.createdAt);
+    timeAnchor.append(time);
+    item.append(timeAnchor);
+
+    const replyInput = container === dom.overlayMessages ? dom.overlayMessageInput : dom.messageInput;
+    wireMessageInteractions(mediaStrip || mediaRow, message, hint, {
+      setReplyTarget,
+      replyInput,
+      interactionTarget: item,
+      interactionBand: mediaRow,
+      allowSwipeInsideBubble: true,
     });
   } else {
     const timeAnchor = document.createElement("div");
@@ -340,7 +385,12 @@ function countEmojiGlyphs(text) {
 function trimRenderedMessages(container) {
   const messageChildren = () => Array.from(container.children).filter((child) => child.classList.contains("message"));
   while (messageChildren().length > MAX_RENDERED_MESSAGES) {
-    messageChildren()[0]?.remove();
+    const oldest = messageChildren()[0];
+    if (!oldest) break;
+    const groupHeader = prepareSystemMessageRemoval(container, oldest);
+    oldest.remove();
+    refreshSystemMessageGroup(groupHeader);
+    scheduleSystemMessageCollapse(container);
   }
 }
 
@@ -356,10 +406,7 @@ function getTrailingSystemStreak(container) {
 }
 
 async function makeRoomForSystemMessage(container) {
-  const expanded = Boolean(container.querySelector('.system-group-toggle[aria-expanded="true"]'));
-  const collapsed = Boolean(container.querySelector('.system-group-toggle[aria-expanded="false"]'));
-  const limit = expanded || collapsed ? SYSTEM_MESSAGE_EXPANDED_STREAK_LIMIT : SYSTEM_MESSAGE_STREAK_LIMIT;
-  while (getTrailingSystemStreak(container).length >= limit) {
+  while (getTrailingSystemStreak(container).length >= SYSTEM_MESSAGE_STREAK_LIMIT) {
     await removeOldestSystemMessage(container);
   }
 }
@@ -371,28 +418,41 @@ function removeOldestSystemMessage(container) {
 
   const wasNearBottom =
     container.scrollHeight - container.scrollTop - container.clientHeight <= 120;
+  const groupHeader = prepareSystemMessageRemoval(container, oldest);
   oldest.classList.add("message-system-exit");
 
   return new Promise((resolve) => {
     window.setTimeout(() => {
       oldest.remove();
+      refreshSystemMessageGroup(groupHeader);
+      scheduleSystemMessageCollapse(container);
       if (wasNearBottom) container.scrollTop = container.scrollHeight;
       window.requestAnimationFrame(resolve);
     }, SYSTEM_MESSAGE_EXIT_MS);
   });
 }
 
-function appendMessageMedia(container, message) {
-  const images = Array.isArray(message.images)
+function getRenderableMessageImages(message, messageText = "") {
+  const images = Array.isArray(message?.images)
     ? message.images.filter(Boolean)
-    : message.image
+    : message?.image
       ? [message.image]
       : [];
+  if (images.length) return images;
+  if (isStandaloneImageText(messageText)) return [messageText.trim()];
+  return [];
+}
 
-  if (!images.length) return;
+function isStandaloneImageText(text) {
+  const trimmed = String(text || "").trim();
+  return trimmed.startsWith("data:image/") && trimmed.includes("base64,");
+}
 
+function appendMessageMedia(container, images, isStandalone = false) {
+  if (!container || !Array.isArray(images) || !images.length) return null;
   const strip = document.createElement("div");
   strip.className = "message-media-strip";
+  if (isStandalone) strip.classList.add("message-media-strip--standalone");
 
   for (const imageUrl of images.slice(0, 2)) {
     const link = document.createElement("a");
@@ -412,4 +472,5 @@ function appendMessageMedia(container, message) {
   }
 
   container.append(strip);
+  return strip;
 }

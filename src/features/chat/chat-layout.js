@@ -10,7 +10,7 @@ import {
   isInsideChatVisibleToUser,
   syncUnreadBadgesWithVisibility,
 } from "./unread-counters.js";
-import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260731-03";
+import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 
 const AUTO_COLLAPSE_DELAY_MS = 3200;
 const AUTO_EXPAND_INSIDE_KEY = "cine-juntos-chat-auto-expand-inside";
@@ -31,6 +31,54 @@ let chatScrollSnapLockTimer = 0;
 let chatUserScrollUnlockTimer = 0;
 let pendingCollapseScrollFinish = null;
 let pendingBottomToRightSwitch = null;
+let externalChatVisualMotionTimer = 0;
+
+function getVideoAreaRect() {
+  if (!dom.videoArea) return null;
+  const rect = dom.videoArea.getBoundingClientRect();
+  return rect.width > 0 && rect.height > 0 ? rect : null;
+}
+
+// La grilla debe cambiar de una vez para evitar que el texto se reenvuelva en
+// cada frame. Esta transición FLIP conserva el movimiento visual del video sin
+// volver a calcular el contenido del chat ni los controles durante el trayecto.
+function animateExternalChatLayoutFrom(previousRect) {
+  if (!dom.sessionView || !dom.videoArea || !previousRect) return;
+
+  if (externalChatVisualMotionTimer) {
+    window.clearTimeout(externalChatVisualMotionTimer);
+    externalChatVisualMotionTimer = 0;
+  }
+  dom.sessionView.classList.remove("chat-layout-visual-motion");
+  dom.sessionView.style.removeProperty("--chat-layout-video-scale-x");
+  dom.sessionView.style.removeProperty("--chat-layout-video-scale-y");
+
+  const nextRect = getVideoAreaRect();
+  if (!nextRect) return;
+  const scaleX = previousRect.width / nextRect.width;
+  const scaleY = previousRect.height / nextRect.height;
+  if (Math.abs(1 - scaleX) < 0.01 && Math.abs(1 - scaleY) < 0.01) return;
+
+  dom.sessionView.style.setProperty("--chat-layout-video-scale-x", String(scaleX));
+  dom.sessionView.style.setProperty("--chat-layout-video-scale-y", String(scaleY));
+  dom.sessionView.classList.add("chat-layout-visual-motion");
+  // Confirma el estado inicial antes del siguiente frame; sin esta lectura el
+  // navegador puede agrupar ambos valores y convertir la transición en salto.
+  void dom.videoArea.offsetWidth;
+
+  window.requestAnimationFrame(() => {
+    if (!dom.sessionView?.classList.contains("chat-layout-visual-motion")) return;
+    dom.sessionView.style.setProperty("--chat-layout-video-scale-x", "1");
+    dom.sessionView.style.setProperty("--chat-layout-video-scale-y", "1");
+  });
+
+  externalChatVisualMotionTimer = window.setTimeout(() => {
+    externalChatVisualMotionTimer = 0;
+    dom.sessionView?.classList.remove("chat-layout-visual-motion");
+    dom.sessionView?.style.removeProperty("--chat-layout-video-scale-x");
+    dom.sessionView?.style.removeProperty("--chat-layout-video-scale-y");
+  }, CHAT_LAYOUT_SETTLE_MS + 40);
+}
 
 function isFullscreenPageActive() {
   return Boolean(document.fullscreenElement) || document.body.classList.contains("fullscreen-mode");
@@ -186,7 +234,6 @@ export function revealBottomDockUnion(behavior = "smooth") {
 }
 
 function scheduleMessageTimeAdjustmentAfterLayout() {
-  scheduleMessageTimeAdjustment();
   if (layoutAdjustmentTimer) {
     window.clearTimeout(layoutAdjustmentTimer);
   }
@@ -196,7 +243,10 @@ function scheduleMessageTimeAdjustmentAfterLayout() {
   }, CHAT_LAYOUT_SETTLE_MS);
 }
 
-function setCollapseHandleTransitioning(isTransitioning) {
+function setCollapseHandleTransitioning(
+  isTransitioning,
+  settleDelayMs = COLLAPSE_HANDLE_HIDE_MS,
+) {
   if (!dom.collapseChatButton) return;
 
   const collapseHandleZone = dom.collapseChatButton.closest(".chat-collapse-hover-zone");
@@ -216,7 +266,9 @@ function setCollapseHandleTransitioning(isTransitioning) {
     collapseHandleZone?.classList.remove("is-transitioning");
     dom.sessionView?.classList.remove("chat-layout-transitioning");
     state.chat.collapseHandleTransitionTimer = null;
-  }, COLLAPSE_HANDLE_HIDE_MS);
+    syncExternalChatCollapseHandleOffset();
+    window.dispatchEvent(new Event("chat-layout-settled"));
+  }, settleDelayMs);
 }
 
 function scheduleAutoCollapse(isOverlay) {
@@ -295,6 +347,7 @@ export function syncInsideChatPanelOffset() {
 
 export function syncExternalChatCollapseHandleOffset() {
   if (!dom.sessionView || !dom.workspace || !dom.chatArea) return;
+  if (dom.sessionView.classList.contains("chat-layout-transitioning")) return;
 
   if ((dom.sessionView.dataset.chatDock || "right") !== "bottom") {
     dom.sessionView.style.removeProperty("--chat-bottom-dock-handle-top");
@@ -386,6 +439,13 @@ export function setChatDock(dock, options = {}) {
     return;
   }
 
+  // El paso al dock inferior no interpola la grilla, pero sí mueve el
+  // viewport. Congelar las mediciones auxiliares evita lecturas de layout
+  // mientras el navegador realiza ese desplazamiento suave.
+  if (!options.skipTransition) {
+    setCollapseHandleTransitioning(true);
+  }
+
   const meta = CHAT_DOCK_META[nextDock];
   const icon = dom.dockChatButton.querySelector("[data-lucide]");
 
@@ -454,6 +514,9 @@ function scheduleBottomToRightSwitch(nextDock, targetScrollTop) {
 
     // Separar el cambio de clase del cambio de dock permite que la grilla
     // tenga un estado inicial estable antes de extender el panel lateral.
+    // Este es el único cambio de grilla animado entre docks. Durante él no
+    // se deben recalcular offsets ni reservas del compositor por cada frame.
+    setCollapseHandleTransitioning(true, BOTTOM_TO_RIGHT_LAYOUT_MS + 80);
     dom.sessionView.classList.add("chat-dock-switching");
     window.requestAnimationFrame(() => {
       setChatDock(nextDock, { skipTransition: true });
@@ -535,6 +598,7 @@ export function setExternalChatCollapsed(collapsed) {
 }
 
 function applyExternalChatCollapsed(collapsed) {
+  const previousVideoRect = getVideoAreaRect();
   clearAutoCollapseTimer(false);
   if (collapsed) cancelIdentityEditing();
   if (chatScrollSnapLockTimer) {
@@ -551,6 +615,7 @@ function applyExternalChatCollapsed(collapsed) {
   lockChatScrollSnapDuringProgrammaticScroll();
   setCollapseHandleTransitioning(true);
   dom.sessionView.classList.toggle("chat-collapsed", collapsed);
+  animateExternalChatLayoutFrom(previousVideoRect);
 
   if (dom.chatArea) {
     dom.chatArea.setAttribute("aria-hidden", String(collapsed));

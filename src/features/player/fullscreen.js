@@ -15,7 +15,7 @@ import {
   logEvent,
 } from "../../core/state.js";
 import { isMiniPlayerActive } from "./mini-player.js?v=20260808-scroll-mini-player-07";
-import { syncInsideChatPanelOffset } from "../chat/chat-layout.js?v=20260808-user-scroll-lock-03";
+import { syncInsideChatPanelOffset } from "../chat/chat-layout.js?v=20260811-text-stable-motion-01";
 import { withShortcutHint } from "../../core/utils.js";
 
 const PLAYER_OVERLAY_IDLE_MS = 2200;
@@ -128,6 +128,9 @@ function wirePlayerOverlayControls() {
     clearHideTimer();
     hideTimer = window.setTimeout(() => {
       hideTooltip();
+      if (document.activeElement === dom.playerRateSelect) {
+        dom.playerRateSelect.blur();
+      }
       setOverlayVisible(false);
     }, delay);
   };

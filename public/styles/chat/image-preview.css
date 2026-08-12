@@ -1,14 +1,14 @@
 .image-preview-container {
   display: flex;
   flex-direction: row;
-  align-items: center;
-  gap: 8px;
+  align-items: flex-start;
+  gap: 6px;
   width: 100%;
-  padding: 8px;
+  padding: 6px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px dashed rgba(255, 255, 255, 0.15);
   border-radius: 6px;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .image-preview-container[hidden] {
@@ -18,10 +18,10 @@
 .preview-box {
   position: relative;
   display: inline-block;
-  flex: 0 0 60px;
-  width: 60px;
-  height: 60px;
-  min-height: 60px;
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+  min-height: 48px;
   border-radius: 6px;
   overflow: hidden;
   border: 1px solid var(--line);

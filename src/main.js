@@ -22,7 +22,7 @@ import {
 import {
   renderPresence,
   wireIdentityEvents,
-} from "./features/presence.js?v=20260811-chat-style-persist-01";
+} from "./features/presence.js?v=20260811-name-validation-01";
 import {
   showLobby,
 } from "./features/session-ui.js";
@@ -36,12 +36,12 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js?v=20260811-system-group-incremental-01";
+} from "./features/chat/index.js?v=20260812-image-media-10";
 import {
   initializePlayer,
   wirePlayerEvents,
-} from "./features/player/index.js?v=20260811-sync-messages-01";
-import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260811-system-group-incremental-01";
+} from "./features/player/index.js?v=20260811-layout-motion-01";
+import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260811-layout-motion-01";
 import {
   showSlowLoadDialog,
 } from "./features/session-ui.js";

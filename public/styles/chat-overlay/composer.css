@@ -13,27 +13,27 @@
 }
 
 .overlay-message-form .reply-preview {
-  background: rgba(12, 16, 18, 0.22);
-  border-left-color: rgba(47, 184, 164, 0.1);
-  border-top-color: rgba(47, 184, 164, 0.07);
-  border-right-color: rgba(47, 184, 164, 0.07);
-  border-bottom-color: rgba(47, 184, 164, 0.07);
-  backdrop-filter: blur(8px) saturate(0.88);
-  -webkit-backdrop-filter: blur(8px) saturate(0.88);
+  background: rgba(18, 24, 27, 0.46);
+  border-left-color: rgba(47, 184, 164, 0.32);
+  border-top-color: rgba(47, 184, 164, 0.12);
+  border-right-color: rgba(47, 184, 164, 0.12);
+  border-bottom-color: rgba(47, 184, 164, 0.12);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 .overlay-message-form .input-wrapper {
   position: relative;
   z-index: 1;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   width: calc(100% - 4px);
   margin: 0 auto;
   box-sizing: border-box;
   border-radius: 18px;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01)),
-    rgba(12, 15, 17, 0.26);
+    rgba(12, 15, 17, 0.38);
   border: 1px solid rgba(255, 255, 255, 0.06);
   overflow: hidden;
   backdrop-filter: blur(18px) saturate(1.08);
@@ -68,19 +68,32 @@
   min-width: 0;
   align-self: stretch;
   display: flex;
+  align-items: center;
+}
+
+/* El cierre anima al contenedor completo; el composer no debe iniciar otra
+   transición visual al perder el foco en el mismo instante. */
+.player-frame:not(.chat-inside-open) .overlay-message-form .input-wrapper {
+  transition: none;
 }
 
 .overlay-message-form .input-wrapper[data-expanded="true"] {
   border-radius: 17px;
+  align-items: flex-end;
+}
+
+.overlay-message-form .input-wrapper[data-expanded="true"] .icon-button,
+.overlay-message-form .input-wrapper[data-expanded="true"] .send {
+  margin-top: 0;
 }
 
 .player-frame[data-chat-style="float"] .overlay-message-form .input-wrapper {
   background: linear-gradient(
     90deg,
-    rgba(12, 15, 17, 0.34) 0%,
-    rgba(12, 15, 17, 0.22) 56%,
-    rgba(12, 15, 17, 0.14) 82%,
-    rgba(12, 15, 17, 0.14) 100%
+    rgba(12, 15, 17, 0.46) 0%,
+    rgba(12, 15, 17, 0.34) 56%,
+    rgba(12, 15, 17, 0.24) 82%,
+    rgba(12, 15, 17, 0.24) 100%
   );
   border-color: transparent;
   backdrop-filter: blur(2px);
@@ -112,9 +125,10 @@
   border: 0 !important;
   background: transparent !important;
   box-shadow: none !important;
-  padding-top: 8px;
-  padding-bottom: 7px;
+  padding-top: 9px;
+  padding-bottom: 9px;
   padding-inline: 6px;
+  padding-right: 58px;
   font-size: 0.78rem;
   line-height: 1.28;
   outline: none;
@@ -157,7 +171,9 @@
 }
 
 .overlay-message-form .input-wrapper .icon-button {
-  position: static;
+  position: absolute;
+  right: 34px;
+  bottom: 2px;
   transform: none;
   flex: 0 0 28px;
   width: 28px;
@@ -169,7 +185,7 @@
   border: 0;
   background: transparent;
   padding: 0;
-  margin-bottom: 2px;
+  margin: 0;
   color: var(--muted);
   opacity: 0.62;
   cursor: pointer;
@@ -183,12 +199,14 @@
 }
 
 .overlay-message-form .input-wrapper .send {
-  position: relative;
+  position: absolute;
+  right: 6px;
+  bottom: 2px;
   flex: 0 0 28px;
   width: 28px;
   min-height: 28px;
   height: 28px;
-  margin: 0 6px 2px 0;
+  margin: 0;
   padding: 0;
   border: 0;
   border-radius: 50%;

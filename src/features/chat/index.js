@@ -12,8 +12,8 @@ import {
   updateCharCounter,
   wireFloatingComposerLayout,
   wireComposerScrollbar,
-} from "./chat-input.js?v=20260811-system-group-incremental-01";
-import { setReplyTarget } from "./chat-reply.js?v=20260811-reply-curtain-close-03";
+} from "./chat-input.js?v=20260812-image-media-02";
+import { setReplyTarget } from "./chat-reply.js?v=20260812-image-reply-03";
 import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js";
 import {
   copyMessageText,
@@ -29,8 +29,8 @@ import {
   setInsideChatVisible,
   syncExternalChatCollapseHandleOffset,
   syncChatAutoExpandControls,
-} from "./chat-layout.js?v=20260811-chat-style-persist-01";
-import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260802-02";
+} from "./chat-layout.js?v=20260811-text-stable-motion-01";
+import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 
 const CHAT_SCROLL_WHEEL_MULTIPLIER = 0.35;
 const DOM_DELTA_PIXEL = 0;
@@ -133,15 +133,15 @@ export {
   buildEmojiPicker,
   updateCharCounter,
   sendMessage,
-} from "./chat-input.js?v=20260811-system-group-incremental-01";
-export { renderMessage } from "./chat-render.js?v=20260811-system-group-incremental-01";
+} from "./chat-input.js?v=20260812-image-media-02";
+export { renderMessage } from "./chat-render.js?v=20260812-overlay-selector-reply-14";
 export {
   clearReplyTarget,
   renderReplyPreview,
   scrollToMessage,
   setReplyTarget,
-} from "./chat-reply.js?v=20260811-reply-curtain-close-03";
-export { sendVideoEventMessage } from "./chat-system-messages.js?v=20260811-system-group-incremental-01";
+} from "./chat-reply.js?v=20260811-reply-motion-01";
+export { sendVideoEventMessage } from "./chat-system-messages.js?v=20260812-image-media-02";
 export {
   checkScrollPosition,
   resetInsideUnread,
@@ -162,18 +162,24 @@ export {
   setInsideChatVisible,
   syncChatAutoExpandControls,
   updateCollapseButton,
-} from "./chat-layout.js?v=20260808-user-scroll-lock-03";
+} from "./chat-layout.js?v=20260811-text-stable-motion-01";
 
 export function wireChatEvents() {
   syncChatAutoExpandControls();
   wireFloatingComposerLayout();
 
   if ("ResizeObserver" in window && dom.workspace) {
+    let pendingHandleSync = 0;
     const chatHandleResizeObserver = new ResizeObserver(() => {
-      syncExternalChatCollapseHandleOffset();
+      if (dom.sessionView?.classList.contains("chat-layout-transitioning") || pendingHandleSync) return;
+      pendingHandleSync = window.requestAnimationFrame(() => {
+        pendingHandleSync = 0;
+        syncExternalChatCollapseHandleOffset();
+      });
     });
     chatHandleResizeObserver.observe(dom.workspace);
   }
+  window.addEventListener("chat-layout-settled", syncExternalChatCollapseHandleOffset, { passive: true });
   window.requestAnimationFrame(syncExternalChatCollapseHandleOffset);
 
   dom.insideChatAutoExpandSwitch.addEventListener("click", () => {

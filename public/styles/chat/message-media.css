@@ -1,15 +1,15 @@
 .message-media-link {
   display: block;
-  max-width: min(100%, 300px);
+  max-width: min(100%, 260px);
   overflow: hidden;
-  border-radius: 7px;
+  border-radius: 8px;
   color: inherit;
 }
 
 .message-media {
   display: block;
   width: 100%;
-  max-height: 260px;
+  max-height: 210px;
   object-fit: contain;
   background: rgba(0, 0, 0, 0.18);
 }
@@ -34,4 +34,33 @@
 
 .message-text + .message-media-link {
   margin-top: 8px;
+}
+
+.message-media-strip {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.message-media-strip .message-media-link {
+  flex: 1 1 0;
+  max-width: calc(50% - 3px);
+}
+
+.message-media-strip--standalone {
+  width: fit-content;
+  max-width: min(100%, 320px);
+  margin-top: 0;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.message-media-strip--standalone .message-media-link {
+  flex: 0 1 260px;
+  max-width: min(100%, 260px);
+}
+
+.message-media-strip--standalone .message-media {
+  max-height: 180px;
 }

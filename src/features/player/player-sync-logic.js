@@ -14,7 +14,7 @@ import {
 } from "../../core/utils.js";
 import { markParticipantActive, rememberParticipant } from "../presence.js?v=20260810-chat-fixes-04";
 import { setSyncStatus } from "../session-ui.js";
-import { sendVideoEventMessage, renderMessage } from "../chat/index.js?v=20260811-system-group-incremental-01";
+import { sendVideoEventMessage, renderMessage } from "../chat/index.js?v=20260811-layout-motion-01";
 // Import circular intencional y seguro: estas funciones se invocan en runtime,
 // no durante la carga del modulo, y player.js a su vez importa publishState.
 import { setVideoSource, waitForVideoMetadata } from "./player.js?v=20260811-sync-messages-01";
@@ -429,7 +429,8 @@ function getCurrentVideoSourceKey() {
 
 function getPlaybackSnapshotTime() {
   const currentTime = Number(dom.videoPlayer.currentTime);
-  const lastKnownTime = Number(state.player.lastKnownTime || 0);
   const safeCurrentTime = Number.isFinite(currentTime) ? Math.max(0, currentTime) : 0;
-  return Math.max(safeCurrentTime, lastKnownTime);
+  // El tiempo actual es la fuente de verdad: usar max() con lastKnownTime
+  // reintroduce una posición vieja cuando el usuario busca hacia atrás.
+  return safeCurrentTime;
 }

@@ -16,6 +16,7 @@
   transition:
     opacity 160ms ease,
     transform 160ms ease;
+  will-change: opacity, transform;
   padding-inline: 2px;
   --chat-composer-reserve: 92px;
 }
@@ -34,12 +35,12 @@
 .player-frame[data-chat-style="panel"] .player-chat {
   border: 0;
   border-radius: var(--radius-md) 0 var(--radius-md) var(--radius-md);
-  background: rgba(7, 10, 12, 0.34);
-  box-shadow: none;
+  background: rgba(7, 10, 12, 0.7);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
 }
 
 .player-frame[data-chat-style="float"] .player-chat {
   border: 0;
-  background: transparent;
-  box-shadow: none;
+  background: rgba(7, 10, 12, 0.42);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.16);
 }

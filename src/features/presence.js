@@ -8,6 +8,40 @@ const SUPPORTS_FIELD_SIZING_CONTENT = Boolean(CSS.supports?.("field-sizing", "co
 let nameInputMeasureCanvas = null;
 let activityRefreshTimer = null;
 const recentActivityByParticipantId = new Map();
+const MIN_DISPLAY_NAME_LENGTH = 3;
+
+function getPendingDisplayName() {
+  return String(dom.nameInput?.value || "").trim().slice(0, 28);
+}
+
+function syncConfirmNameButtonState() {
+  if (!dom.confirmNameButton) return;
+
+  const isEditing = dom.chatNameField?.dataset.editing === "true";
+  const nextName = getPendingDisplayName();
+  const currentName = getDisplayName();
+  const isNoOpConfirm = nextName === currentName;
+  const isTooShort = nextName.length < MIN_DISPLAY_NAME_LENGTH;
+  dom.confirmNameButton.disabled = false;
+
+  if (!isEditing) {
+    dom.confirmNameButton.dataset.tooltip = "Aceptar nombre (Enter)";
+    dom.confirmNameButton.setAttribute("aria-label", "Aceptar nombre");
+  } else if (isNoOpConfirm) {
+    dom.confirmNameButton.dataset.tooltip = "No hay cambios para guardar";
+    dom.confirmNameButton.setAttribute("aria-label", "Aceptar nombre. No hay cambios para guardar");
+  } else if (isTooShort) {
+    dom.confirmNameButton.dataset.tooltip = `Si confirmas, volverá al usuario anterior porque el nombre debe tener al menos ${MIN_DISPLAY_NAME_LENGTH} caracteres`;
+    dom.confirmNameButton.setAttribute(
+      "aria-label",
+      `Aceptar nombre. Si confirmas, volverá al usuario anterior porque el nombre debe tener al menos ${MIN_DISPLAY_NAME_LENGTH} caracteres`,
+    );
+  } else {
+    dom.confirmNameButton.dataset.tooltip = "Aceptar nombre (Enter)";
+    dom.confirmNameButton.setAttribute("aria-label", "Aceptar nombre");
+  }
+  dom.confirmNameButton.removeAttribute("title");
+}
 
 function syncEditNameButtonState() {
   if (!dom.editNameButton) return;
@@ -198,10 +232,13 @@ function setIdentityEditing(isEditing) {
   if (!isEditing) {
     dom.nameInput.value = getDisplayName();
     syncNameInputWidth();
+    syncConfirmNameButtonState();
     return;
   }
 
   dom.nameInput.value = getDisplayName();
+  dom.nameInput.setCustomValidity("");
+  syncConfirmNameButtonState();
   applyNativeNameInputSizing();
   window.requestAnimationFrame(() => {
     applyNativeNameInputSizing();
@@ -222,21 +259,38 @@ function commitDisplayNameChange() {
   }
 
   const previousName = getDisplayName();
-  updateDisplayName(dom.nameInput.value, dom.nameInput);
+  const requestedName = getPendingDisplayName();
+  if (requestedName === previousName) {
+    setIdentityEditing(false);
+    return;
+  }
+  if (requestedName.length < MIN_DISPLAY_NAME_LENGTH) {
+    dom.nameInput.setCustomValidity("");
+    if (dom.nameInput) dom.nameInput.value = previousName;
+    if (dom.lobbyNameInput) dom.lobbyNameInput.value = previousName;
+    syncNameInputWidth();
+    renderDisplayName(previousName);
+    renderPresence();
+    syncConfirmNameButtonState();
+    setIdentityEditing(false);
+    return;
+  }
+
+  dom.nameInput.setCustomValidity("");
+  updateDisplayName(requestedName, dom.nameInput);
   const confirmedName = getDisplayName();
   dom.nameInput.value = confirmedName;
   syncNameInputWidth();
   if (dom.lobbyNameInput) dom.lobbyNameInput.value = confirmedName;
-  state.session.transport?.updateMember?.(confirmedName);
   const nameChanged = confirmedName !== previousName;
   if (nameChanged) {
+    state.session.transport?.updateMember?.(confirmedName);
     state.chat.nameChangeUsed = true;
     sessionStorage.setItem("cine-juntos-name-change-used", "1");
     logEvent("user", `Nombre actualizado: ${confirmedName}`);
-  } else {
-    logEvent("user", "Edición de nombre cancelada: no hubo cambios.");
   }
   syncEditNameButtonState();
+  syncConfirmNameButtonState();
   setIdentityEditing(false);
 }
 
@@ -417,6 +471,8 @@ export function wireIdentityEvents() {
   });
 
   dom.nameInput.addEventListener("input", () => {
+    dom.nameInput.setCustomValidity("");
+    syncConfirmNameButtonState();
     if (!SUPPORTS_FIELD_SIZING_CONTENT) syncNameInputWidth();
   });
 

@@ -16,6 +16,7 @@ export function wireMessageInteractions(
     companions = [],
     interactionTarget = bubble,
     interactionBand = interactionTarget,
+    allowSwipeInsideBubble = false,
   },
 ) {
   const swipe = createSwipeReply(bubble, hint, {
@@ -71,7 +72,7 @@ export function wireMessageInteractions(
     if (!isWithinInteractionBand(event)) return;
     // La burbuja queda fuera de la superficie de reply para permitir
     // seleccionar texto sin que el gesto intercepte el puntero.
-    if (bubble.contains(event.target)) {
+    if (!allowSwipeInsideBubble && bubble.contains(event.target)) {
       return;
     }
     if (event.target instanceof HTMLElement && event.target.closest("button, input, textarea, select")) {

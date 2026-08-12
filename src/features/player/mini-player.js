@@ -19,6 +19,7 @@ let miniPlayerChat = null;
 let miniPlayerInterface = null;
 let stopMiniPlayerReturnHintTracking = null;
 let stopMiniPlayerDrag = null;
+let stopMiniPlayerOverlayControls = null;
 let scrollMiniPlayerFrame = 0;
 let scrollMiniPlayerDismissedRoom = "";
 
@@ -54,15 +55,17 @@ export async function toggleMiniPlayer() {
   }
   if (!hasMedia()) return;
 
+  const chatWasOpen = dom.playerFrame.classList.contains("chat-inside-open");
+
   state.player.miniPlayerMode = "opening";
   syncMiniPlayerButton(true);
   try {
     if (supportsDocumentPictureInPicture()) {
-      await openDocumentPictureInPicture();
+      await openDocumentPictureInPicture(chatWasOpen);
     } else if (typeof dom.videoPlayer.requestPictureInPicture === "function") {
       await openNativePictureInPicture();
     } else {
-      openInlineMiniPlayer();
+      openInlineMiniPlayer(chatWasOpen);
     }
   } catch (error) {
     console.warn("No se pudo abrir Picture-in-Picture; se usa la miniatura local.", error);
@@ -96,7 +99,7 @@ export function syncMiniPlayerButton(hasLoadedMedia) {
   setControlIcon(button, iconName);
 }
 
-async function openDocumentPictureInPicture() {
+async function openDocumentPictureInPicture(chatWasOpen) {
   const pipWindow = await window.documentPictureInPicture.requestWindow({
     width: 520,
     height: 320,
@@ -106,7 +109,8 @@ async function openDocumentPictureInPicture() {
   miniSurface = createMiniPlayerSurface(pipWindow.document, dom.playerFrame.dataset.chatStyle);
   pipWindow.document.body.append(miniSurface);
   miniPlayerInterface = movePlayerInterface(miniSurface);
-  miniPlayerChat = mirrorMiniPlayerChatState(miniSurface);
+  miniPlayerChat = mirrorMiniPlayerChatState(miniSurface, chatWasOpen);
+  stopMiniPlayerOverlayControls = wireMiniPlayerOverlayControls(miniSurface, pipWindow);
   pipWindow.addEventListener("pagehide", restoreMainPlayer, { once: true });
   activateMiniPlayer("document");
 }
@@ -117,12 +121,13 @@ async function openNativePictureInPicture() {
   activateMiniPlayer("native");
 }
 
-function openInlineMiniPlayer() {
+function openInlineMiniPlayer(chatWasOpen) {
   miniSurface = createMiniPlayerSurface(document, dom.playerFrame.dataset.chatStyle);
   miniSurface.classList.add("mini-player-inline");
   dom.playerFrame.append(miniSurface);
   miniPlayerInterface = movePlayerInterface(miniSurface);
-  miniPlayerChat = mirrorMiniPlayerChatState(miniSurface);
+  miniPlayerChat = mirrorMiniPlayerChatState(miniSurface, chatWasOpen);
+  stopMiniPlayerOverlayControls = wireMiniPlayerOverlayControls(miniSurface, window);
   activateMiniPlayer("inline");
 }
 
@@ -132,13 +137,27 @@ function openScrollMiniPlayer() {
   miniSurface.classList.remove("player-overlay-visible");
   document.body.append(miniSurface);
   miniPlayerInterface = movePlayerInterface(miniSurface);
-  miniPlayerChat = mirrorMiniPlayerChatState(miniSurface, false);
+  miniPlayerChat = mirrorMiniPlayerChatState(
+    miniSurface,
+    dom.playerFrame.classList.contains("chat-inside-open"),
+  );
+  stopMiniPlayerOverlayControls = wireMiniPlayerOverlayControls(miniSurface, window);
   stopMiniPlayerDrag = wireMiniPlayerDrag(miniSurface);
   activateMiniPlayer("scroll");
 }
 
 function activateMiniPlayer(mode) {
   state.player.miniPlayerMode = mode;
+  if (miniSurface) {
+    miniSurface.classList.remove("mini-player-initializing");
+    const surfaceToReveal = miniSurface;
+    const reveal = () => {
+      if (miniSurface !== surfaceToReveal) return;
+      surfaceToReveal.style.removeProperty("visibility");
+      surfaceToReveal.style.removeProperty("opacity");
+    };
+    window.requestAnimationFrame(() => window.requestAnimationFrame(reveal));
+  }
   dom.playerFrame.classList.add("mini-player-active");
   syncMiniPlayerButton(true);
   stopMiniPlayerReturnHintTracking = trackMiniPlayerReturnHint();
@@ -171,6 +190,8 @@ function restoreMainPlayer() {
   miniPlayerInterface = null;
   stopMiniPlayerDrag?.();
   stopMiniPlayerDrag = null;
+  stopMiniPlayerOverlayControls?.();
+  stopMiniPlayerOverlayControls = null;
   stopMiniPlayerReturnHintTracking?.();
   stopMiniPlayerReturnHintTracking = null;
   miniSurface?.remove();
@@ -181,6 +202,43 @@ function restoreMainPlayer() {
   syncMiniPlayerButton(hasMedia());
   setSyncStatus("Video devuelto al reproductor principal.");
   logEvent("player", "Mini-reproductor cerrado sin pausar el video.");
+}
+
+function wireMiniPlayerOverlayControls(surface, ownerWindow) {
+  let hideTimer = null;
+  const clearHideTimer = () => {
+    if (hideTimer) ownerWindow.clearTimeout(hideTimer);
+    hideTimer = null;
+  };
+  const hide = () => {
+    clearHideTimer();
+    const activeSelect = ownerWindow.document.activeElement;
+    if (activeSelect?.matches?.(".player-rate-select select, [data-proxy-for=\"playerRateSelect\"]")) {
+      activeSelect.blur();
+    }
+    surface.classList.remove("player-overlay-visible");
+  };
+  const reveal = () => {
+    clearHideTimer();
+    surface.classList.add("player-overlay-visible");
+    hideTimer = ownerWindow.setTimeout(hide, 2200);
+  };
+
+  surface.addEventListener("pointermove", reveal, { passive: true });
+  surface.addEventListener("pointerdown", reveal, { passive: true });
+  surface.addEventListener("mouseenter", reveal);
+  surface.addEventListener("mouseleave", hide);
+  ownerWindow.addEventListener("blur", hide);
+  reveal();
+
+  return () => {
+    clearHideTimer();
+    surface.removeEventListener("pointermove", reveal);
+    surface.removeEventListener("pointerdown", reveal);
+    surface.removeEventListener("mouseenter", reveal);
+    surface.removeEventListener("mouseleave", hide);
+    ownerWindow.removeEventListener("blur", hide);
+  };
 }
 
 function supportsDocumentPictureInPicture() {

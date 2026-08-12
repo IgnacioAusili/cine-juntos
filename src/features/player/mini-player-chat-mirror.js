@@ -1,3 +1,7 @@
+import { clearReplyTarget, setReplyTarget } from "../chat/chat-reply.js?v=20260811-reply-motion-01";
+import { wireMessageInteractions } from "../chat/chat-message-interactions.js";
+import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js";
+
 export function isOverlayMessageInput(source, target) {
   return source.id === "playerChat" && target.id === "overlayMessageInput";
 }
@@ -60,8 +64,109 @@ export function syncMirroredChatMessages(source, element) {
   const sourceMessages = source.querySelector(".overlay-messages");
   const mirrorMessages = element.querySelector(".overlay-messages");
   if (!sourceMessages || !mirrorMessages) return;
+  const previousStates = [...mirrorMessages.querySelectorAll(".system-group-toggle")]
+    .map((toggle) => toggle.getAttribute("aria-expanded"));
   mirrorMessages.innerHTML = sourceMessages.innerHTML;
   wireMirrorChatScrollbar(element);
+  wireMiniMessageReplies(sourceMessages, mirrorMessages, element);
+
+  mirrorMessages.querySelectorAll(".system-group-toggle").forEach((toggle, index) => {
+    const previous = previousStates[index];
+    const sourceExpanded = toggle.getAttribute("aria-expanded") === "true";
+    const expanded = previous == null
+      ? sourceExpanded
+      : previous === "true";
+    toggle.setAttribute("aria-expanded", String(expanded));
+    setMiniSystemGroupVisibility(toggle, expanded);
+    if (previous && previous !== String(sourceExpanded)) {
+      toggle.animate(
+        [
+          { opacity: 0.45, transform: "scale(0.82)" },
+          { opacity: 1, transform: "scale(1)" },
+        ],
+        { duration: 220, easing: "cubic-bezier(0.22, 1, 0.36, 1)" },
+      );
+      mirrorMessages.querySelectorAll(".message.system:not(.system-group-collapsed-item) .message-system-bubble, .message.system:not(.system-group-collapsed-item) .message-system-text")
+        .forEach((part) => part.animate(
+          [
+            { opacity: 0.35, transform: "translateY(-4px)" },
+            { opacity: 1, transform: "translateY(0)" },
+          ],
+          { duration: 240, easing: "cubic-bezier(0.22, 1, 0.36, 1)" },
+        ));
+    }
+  });
+}
+
+function setMiniSystemGroupVisibility(toggle, expanded) {
+  const items = [];
+  let item = toggle.nextElementSibling;
+  while (item?.classList.contains("message") && item.classList.contains("system")) {
+    items.push(item);
+    item = item.nextElementSibling;
+  }
+  items.forEach((systemItem, index) => {
+    systemItem.classList.toggle(
+      "system-group-collapsed-item",
+      !expanded && index < items.length - 1,
+    );
+  });
+}
+
+export function wireMiniMessageReplies(sourceMessages, mirrorMessages, surfaceElement) {
+  const mirrorInput = surfaceElement.querySelector("#overlayMessageInput, [data-proxy-for=\"overlayMessageInput\"]");
+  if (!mirrorInput) return;
+
+  mirrorMessages.querySelectorAll(".message").forEach((mirrorItem) => {
+    const sourceItem = sourceMessages.querySelector(`[data-message-id=\"${CSS.escape(mirrorItem.dataset.messageId || "")}\"]`);
+    const message = sourceItem?._chatMessage;
+    const bubble = mirrorItem.querySelector(".message-bubble");
+    const hint = mirrorItem.querySelector(".swipe-reply-hint");
+    const row = mirrorItem.querySelector(".message-bubble-row");
+    if (!message || !bubble || !hint || !row || mirrorItem.dataset.replyWired === "true") return;
+    mirrorItem.dataset.replyWired = "true";
+    wireMessageInteractions(bubble, message, hint, {
+      setReplyTarget: (replyMessage, replyInput) => {
+        setReplyTarget(replyMessage, replyInput);
+        syncMiniReplyPreview(sourceMessages, mirrorMessages, surfaceElement);
+      },
+      replyInput: mirrorInput,
+      interactionTarget: mirrorItem,
+      interactionBand: row,
+    });
+  });
+}
+
+function syncMiniReplyPreview(sourceMessages, mirrorMessages, surfaceElement) {
+  const sourcePreview = sourceMessages.closest(".player-chat")?.querySelector("#overlayReplyPreview")
+    || document.querySelector("#overlayReplyPreview");
+  const mirrorPreview = surfaceElement.querySelector("#overlayReplyPreview, [data-proxy-for=\"overlayReplyPreview\"]");
+  if (!sourcePreview || !mirrorPreview) return;
+  mirrorPreview.className = sourcePreview.className;
+  mirrorPreview.innerHTML = sourcePreview.innerHTML;
+  mirrorPreview.hidden = sourcePreview.hidden;
+  mirrorPreview.querySelector(".reply-preview-close")?.addEventListener("click", () => {
+    clearReplyTarget();
+    mirrorPreview.hidden = true;
+  }, { once: true });
+}
+
+export function positionMiniSystemToggles(element) {
+  const messages = element.querySelector(".overlay-messages");
+  if (!messages) return;
+  const messagesRect = messages.getBoundingClientRect();
+  messages.querySelectorAll(".system-group-toggle").forEach((toggle) => {
+    const item = toggle.nextElementSibling;
+    const bubble = item?.querySelector(".message-system-bubble");
+    if (!bubble) return;
+    const bubbleRect = bubble.getBoundingClientRect();
+    const left = bubbleRect.left - messagesRect.left - toggle.offsetWidth - 18;
+    const top = bubbleRect.top - messagesRect.top + messages.scrollTop
+      + (bubbleRect.height - toggle.offsetHeight) / 2;
+    toggle.style.right = "auto";
+    toggle.style.left = `${Math.max(4, left)}px`;
+    toggle.style.top = `${Math.max(0, top)}px`;
+  });
 }
 
 export function handleMiniChatInteraction(element, eventTarget) {
@@ -72,6 +177,16 @@ export function handleMiniChatInteraction(element, eventTarget) {
     element.querySelectorAll("[data-chat-style]").forEach((button) => {
       button.classList.toggle("active", button === styleButton);
     });
+    document.querySelector("#playerChat")?.querySelectorAll("[data-chat-style]").forEach((button) => {
+      button.classList.toggle("active", button.dataset.chatStyle === styleButton.dataset.chatStyle);
+    });
+    return;
+  }
+
+  const groupToggle = eventTarget.closest?.(".system-group-toggle");
+  if (groupToggle) {
+    const toggleIndex = [...element.querySelectorAll(".system-group-toggle")].indexOf(groupToggle);
+    document.querySelector("#playerChat")?.querySelectorAll(".system-group-toggle")?.[toggleIndex]?.click();
     return;
   }
 
@@ -80,6 +195,7 @@ export function handleMiniChatInteraction(element, eventTarget) {
     const enabled = autoExpand.getAttribute("aria-checked") !== "true";
     autoExpand.setAttribute("aria-checked", String(enabled));
     autoExpand.classList.toggle("active", enabled);
+    setInsideChatAutoExpandEnabled(enabled);
     return;
   }
 

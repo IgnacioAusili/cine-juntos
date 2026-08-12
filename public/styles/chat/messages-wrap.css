@@ -7,6 +7,7 @@
   flex-direction: column;
   overflow-x: hidden;
   --chat-scrollbar-visual-end: calc(100% - var(--chat-message-bottom-reserve, 132px) + 2px);
+  --chat-scrollbar-visual-gap: 8px;
   --chat-scrollbar-visual-inset: 5px;
 }
 
@@ -26,7 +27,7 @@
   position: absolute;
   top: var(--chat-scrollbar-visual-inset);
   right: 0;
-  height: max(0px, calc(var(--chat-scrollbar-visual-end) - (var(--chat-scrollbar-visual-inset) * 2)));
+  height: max(0px, calc(var(--chat-scrollbar-visual-end) - var(--chat-scrollbar-visual-gap) - (var(--chat-scrollbar-visual-inset) * 2)));
   z-index: 3;
   width: 6px;
   opacity: 0;

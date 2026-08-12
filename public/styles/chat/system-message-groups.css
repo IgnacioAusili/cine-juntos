@@ -9,6 +9,14 @@
   gap: 6px;
 }
 
+/* El selector se posiciona fuera del flujo; la fila conserva todo su ancho
+   para que la línea y el texto queden centrados respecto del chat. */
+#messages .message.system .system-message-row,
+#overlayMessages .message.system .system-message-row {
+  width: 100%;
+  max-width: 100%;
+}
+
 #messages .message.system .message-system-bubble,
 #overlayMessages .message.system .message-system-bubble {
   max-width: min(calc(100% - 32px), 560px);
@@ -27,50 +35,12 @@
   color: var(--accent-2);
 }
 
-.system-group-collapsed-item {
-  max-height: 0;
-  margin-block: 0;
-  opacity: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-/* La fila original del selector debe mantener prioridad de capa durante el
-   colapso y la expansión; los mensajes animados nacen en la misma coordenada. */
-.message.system.system-group-toggle-host {
-  position: relative;
-  z-index: 5;
-  overflow: visible;
-}
-
-.message.system.system-group-toggle-host.system-group-collapsed-item {
-  min-height: 0;
-  max-height: 0;
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.message.system.system-group-toggle-host.system-group-collapsed-item .message-system-bubble,
-.message.system.system-group-toggle-host.system-group-collapsed-item .swipe-reply-hint-wrapper {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.message.system.system-group-toggle-host.system-group-collapsed-item .system-group-toggle {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.overlay-messages .message.system.system-group-collapsed-item {
-  margin-block: 0;
-}
-
+/* El selector es una cabecera independiente del grupo. Nunca pertenece a un
+   mensaje que pueda ser eliminado al aplicar el límite de diez. */
 .system-group-toggle {
   position: absolute;
-  right: auto;
-  left: 0;
-  display: inline-flex;
-  flex: 0 0 auto;
+  z-index: 8;
+  display: flex;
   align-items: center;
   justify-content: center;
   gap: 2px;
@@ -84,11 +54,10 @@
   color: var(--muted);
   line-height: 1;
   padding: 0;
-  z-index: 8;
   cursor: pointer;
   transition:
-    top 220ms cubic-bezier(0.22, 1, 0.36, 1),
-    left 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    top 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    left 240ms cubic-bezier(0.22, 1, 0.36, 1),
     color 160ms ease,
     border-color 160ms ease,
     background 160ms ease;
@@ -100,6 +69,22 @@
   background: rgba(47, 184, 164, 0.16);
   color: var(--text);
   outline: none;
+}
+
+/* En el panel translúcido el selector necesita una superficie propia para
+   conservar contraste sobre el fondo del reproductor. */
+.player-frame[data-chat-style="panel"] .system-group-toggle {
+  border-color: rgba(215, 229, 232, 0.34);
+  background: rgba(24, 34, 38, 0.86);
+  color: rgba(235, 247, 247, 0.88);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+}
+
+.player-frame[data-chat-style="panel"] .system-group-toggle:hover,
+.player-frame[data-chat-style="panel"] .system-group-toggle:focus-visible {
+  border-color: var(--accent-2);
+  background: rgba(24, 73, 70, 0.92);
+  color: var(--text);
 }
 
 .system-group-toggle svg {
@@ -124,42 +109,30 @@
   line-height: 1;
 }
 
-.overlay-messages .system-message-row {
+#messages .message.system.system-group-collapsed-item,
+#overlayMessages .message.system.system-group-collapsed-item {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .system-group-toggle {
+    transition: none;
+  }
+}
+
+.overlay-messages .system-message-row,
+#overlayMessages .message.system .system-message-row {
   max-width: min(100%, 420px);
 }
 
-.overlay-messages .system-message-row .swipe-reply-hint-wrapper {
+.overlay-messages .system-message-row .swipe-reply-hint-wrapper,
+#overlayMessages .system-message-row .swipe-reply-hint-wrapper {
   right: -15px;
-}
-
-.overlay-messages .system-group-toggle {
-  width: 26px;
-  height: 18px;
-  min-width: 26px;
 }
 
 #overlayMessages .system-message-row {
   display: flex;
   width: 100%;
-  max-width: 100%;
-}
-
-#overlayMessages .system-message-row .swipe-reply-hint-wrapper {
-  position: absolute;
-  right: -15px;
-  left: auto;
-  width: 0;
-}
-
-#messages .message.system .system-message-row,
-#overlayMessages .message.system .system-message-row {
-  align-self: center;
-  width: 100%;
-  max-width: 100%;
-}
-
-#overlayMessages .message.system .system-message-row {
-  max-width: min(100%, 420px);
 }
 
 #overlayMessages .message.system .message-system-bubble {

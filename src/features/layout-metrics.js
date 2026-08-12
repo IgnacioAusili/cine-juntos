@@ -177,17 +177,9 @@ export function wireLayoutMetrics() {
   window.addEventListener("orientationchange", () => scheduleLayoutMetricsSync("orientationchange"), {
     passive: true,
   });
-  window.addEventListener("scroll", () => scheduleLayoutMetricsSync("window.scroll"), {
-    passive: true,
-  });
   window.visualViewport?.addEventListener(
     "resize",
     () => scheduleLayoutMetricsSync("visualViewport.resize"),
-    { passive: true },
-  );
-  window.visualViewport?.addEventListener(
-    "scroll",
-    () => scheduleLayoutMetricsSync("visualViewport.scroll"),
     { passive: true },
   );
 

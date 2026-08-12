@@ -252,21 +252,131 @@
   max-width: calc(50% - 3px);
 }
 
+.overlay-messages .message-media-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.overlay-messages .message-media-row .swipe-reply-hint-wrapper {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  left: auto;
+  width: 0;
+  height: 0;
+  flex: 0 0 auto;
+}
+
+.overlay-messages .message--media-only {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+  max-width: min(100%, 320px);
+  align-items: flex-start;
+  gap: 3px;
+}
+
+.overlay-messages .message.message--media-only {
+  align-items: flex-start;
+  margin-inline-start: 0;
+}
+
+.overlay-messages .message.mine.message--media-only {
+  align-items: flex-start;
+  margin-inline-start: auto;
+}
+
+.overlay-messages .message.mine.message--media-only .message-meta {
+  align-self: flex-end;
+}
+
+.overlay-messages .message--media-only .message-media-row {
+  align-self: flex-start;
+}
+
+.overlay-messages .message.mine.message--media-only .message-media-row {
+  align-self: flex-start;
+}
+
+.overlay-messages .message--media-only .message-media-strip {
+  margin-top: 0;
+}
+
+.overlay-messages .message--media-only .message-time-anchor {
+  position: static;
+  z-index: auto;
+  float: none;
+  display: flex;
+  flex: 0 0 auto;
+  height: auto;
+  min-height: 0;
+  margin: 0;
+  shape-outside: none;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 6px 2px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  background: rgba(9, 12, 14, 0.12);
+}
+
+.overlay-messages .message--media-only .message-time {
+  line-height: 1;
+  text-align: center;
+}
+
+.overlay-messages .message:not(.mine).message--media-only .message-time-anchor {
+  align-self: flex-start;
+  border-color: rgba(240, 140, 58, 0.16);
+  background: rgba(240, 140, 58, 0.08);
+}
+
+.overlay-messages .message.mine.message--media-only .message-time-anchor {
+  align-self: flex-end;
+  border-color: rgba(47, 184, 164, 0.2);
+  background: rgba(47, 184, 164, 0.12);
+}
+
 .player-frame[data-chat-style="float"] .overlay-messages .message-bubble {
   border-color: rgba(255, 255, 255, 0.06);
   background: rgba(7, 9, 10, 0.1);
 }
 
-.overlay-messages .message.mine .message-bubble {
+.overlay-messages .message.mine .message-bubble:not(.message-bubble--emoji-only) {
   border-color: rgba(47, 184, 164, 0.2);
   background: rgba(47, 184, 164, 0.12);
   margin-left: auto;
 }
 
-.overlay-messages .message:not(.mine) .message-bubble {
+.overlay-messages .message:not(.mine) .message-bubble:not(.message-bubble--emoji-only) {
   border-color: rgba(240, 140, 58, 0.16);
   background: rgba(240, 140, 58, 0.08);
   margin-right: auto;
+}
+
+.player-frame[data-chat-style="panel"] .overlay-messages .message.mine .message-bubble:not(.message-bubble--emoji-only) {
+  border-color: rgba(47, 184, 164, 0.42);
+  background: rgba(47, 184, 164, 0.32);
+}
+
+.player-frame[data-chat-style="panel"] .overlay-messages .message:not(.mine) .message-bubble:not(.message-bubble--emoji-only) {
+  border-color: rgba(240, 140, 58, 0.38);
+  background: rgba(240, 140, 58, 0.26);
+}
+
+.player-frame[data-chat-style="float"] .overlay-messages .message.mine .message-bubble:not(.message-bubble--emoji-only) {
+  border-color: rgba(47, 184, 164, 0.34);
+  background: rgba(47, 184, 164, 0.24);
+}
+
+.player-frame[data-chat-style="float"] .overlay-messages .message:not(.mine) .message-bubble:not(.message-bubble--emoji-only) {
+  border-color: rgba(240, 140, 58, 0.3);
+  background: rgba(240, 140, 58, 0.2);
 }
 
 .overlay-messages .message.system {
@@ -286,6 +396,22 @@
   font-size: 0.62rem;
   padding: 2px 0;
   text-align: center;
+}
+
+.player-chat .overlay-messages .message.system .message-bubble,
+.player-chat .overlay-messages .message.system .message-system-bubble {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Las variantes visuales del reproductor no deben convertir los avisos de
+   sincronización en globos de chat normales. */
+.player-frame[data-chat-style="panel"] .overlay-messages .message.system .message-bubble,
+.player-frame[data-chat-style="float"] .overlay-messages .message.system .message-bubble {
+  border: 0;
+  background: transparent;
 }
 
 .overlay-messages .message.system .message-system-bubble {
@@ -350,4 +476,16 @@
   position: static;
   right: auto;
   bottom: auto;
+}
+
+/* Los emojis standalone quedan fuera de cualquier burbuja; la hora conserva
+   su propia tarjeta debajo del emoji. Este override va al final para ganar a
+   los fondos específicos de los estilos float/panel. */
+.overlay-messages .message.mine .message-bubble.message-bubble--emoji-only,
+.overlay-messages .message:not(.mine) .message-bubble.message-bubble--emoji-only,
+.player-frame[data-chat-style="float"] .overlay-messages .message-bubble.message-bubble--emoji-only {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
 }

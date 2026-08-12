@@ -16,7 +16,7 @@ import {
   hydrateIcons,
   setControlIcon,
 } from "../icons-tooltips.js";
-import { sendVideoEventMessage, setInsideChatVisible } from "../chat/index.js?v=20260811-system-group-incremental-01";
+import { sendVideoEventMessage, setInsideChatVisible } from "../chat/index.js?v=20260811-layout-motion-01";
 // Import circular intencional y seguro: estas funciones se invocan en runtime,
 // no durante la carga del modulo, y player-sync-logic.js a su vez importa
 // setVideoSource y waitForVideoMetadata desde aqui.
@@ -129,7 +129,8 @@ export function wirePlayerCoreEvents() {
     e.preventDefault();
     const step = 0.05;
     const delta = e.deltaY < 0 ? step : -step;
-    const newVol = Math.min(1, Math.max(0, dom.videoPlayer.volume + delta));
+    const currentVol = dom.videoPlayer.muted ? 0 : dom.videoPlayer.volume;
+    const newVol = Math.min(1, Math.max(0, currentVol + delta));
     dom.videoPlayer.volume = newVol;
     if (newVol > 0 && dom.videoPlayer.muted) dom.videoPlayer.muted = false;
     syncPlayerControls();

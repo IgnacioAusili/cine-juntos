@@ -480,34 +480,6 @@ video::-webkit-media-controls-fullscreen-button {
   max-width: 48px;
 }
 
-/* Al ocultar la barra se cierra el popup nativo, pero el selector permanece
-   visible y usable como control persistente del reproductor. */
-.player-frame:not(.player-overlay-visible) .player-bottom-actions {
-  opacity: 1;
-  pointer-events: none;
-  background: transparent;
-  transform: translateY(0);
-}
-
-.player-frame:not(.player-overlay-visible) .player-controls-bar {
-  border-color: transparent;
-  background: transparent;
-  box-shadow: none;
-  backdrop-filter: none;
-}
-
-.player-frame:not(.player-overlay-visible) .player-controls-bar > :not(.player-rate-select) {
-  visibility: hidden;
-  opacity: 0;
-}
-
-.player-frame:not(.player-overlay-visible) .player-rate-select,
-.player-frame:not(.player-overlay-visible) .player-rate-select select {
-  visibility: visible;
-  opacity: 1;
-  pointer-events: auto;
-}
-
 .player-volume-input {
   --volume-progress: 100%;
   display: block;

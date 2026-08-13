@@ -14,7 +14,7 @@ import { focusFullscreenWorkspace, setSyncStatus } from "../session-ui.js";
 import {
   logEvent,
 } from "../../core/state.js";
-import { isMiniPlayerActive } from "./mini-player.js?v=20260808-scroll-mini-player-07";
+import { isMiniPlayerActive } from "./mini-player.js?v=20260812-mini-chat-fixes-09";
 import { syncInsideChatPanelOffset } from "../chat/chat-layout.js?v=20260811-text-stable-motion-01";
 import { withShortcutHint } from "../../core/utils.js";
 

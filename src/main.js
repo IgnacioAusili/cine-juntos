@@ -40,7 +40,7 @@ import {
 import {
   initializePlayer,
   wirePlayerEvents,
-} from "./features/player/index.js?v=20260811-layout-motion-01";
+} from "./features/player/index.js?v=20260812-mini-chat-fixes-02";
 import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260811-layout-motion-01";
 import {
   showSlowLoadDialog,

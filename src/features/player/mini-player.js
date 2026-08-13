@@ -8,8 +8,8 @@ import {
 } from "./mini-player-controls.js";
 import {
   mirrorMiniPlayerChatState,
-} from "./mini-player-chat.js?v=20260808-scroll-mini-player-02";
-import { movePlayerInterface } from "./mini-player-interface.js?v=20260808-scroll-mini-player-06";
+} from "./mini-player-chat.js?v=20260812-mini-chat-fixes-01";
+import { movePlayerInterface } from "./mini-player-interface.js?v=20260812-mini-chat-fixes-09";
 import { trackMiniPlayerReturnHint } from "./mini-player-return-hint.js";
 import { clampMiniPlayerPosition, wireMiniPlayerDrag } from "./mini-player-drag.js?v=20260808-scroll-mini-player-02";
 
@@ -69,7 +69,7 @@ export async function toggleMiniPlayer() {
     }
   } catch (error) {
     console.warn("No se pudo abrir Picture-in-Picture; se usa la miniatura local.", error);
-    openInlineMiniPlayer();
+    openInlineMiniPlayer(chatWasOpen);
   }
 }
 
@@ -105,8 +105,12 @@ async function openDocumentPictureInPicture(chatWasOpen) {
     height: 320,
   });
   pictureInPictureWindow = pipWindow;
-  installMiniPlayerWindowStyles(pipWindow.document);
-  miniSurface = createMiniPlayerSurface(pipWindow.document, dom.playerFrame.dataset.chatStyle);
+  await installMiniPlayerWindowStyles(pipWindow.document);
+  miniSurface = createMiniPlayerSurface(
+    pipWindow.document,
+    dom.playerFrame.dataset.chatStyle,
+    chatWasOpen,
+  );
   pipWindow.document.body.append(miniSurface);
   miniPlayerInterface = movePlayerInterface(miniSurface);
   miniPlayerChat = mirrorMiniPlayerChatState(miniSurface, chatWasOpen);
@@ -122,7 +126,7 @@ async function openNativePictureInPicture() {
 }
 
 function openInlineMiniPlayer(chatWasOpen) {
-  miniSurface = createMiniPlayerSurface(document, dom.playerFrame.dataset.chatStyle);
+  miniSurface = createMiniPlayerSurface(document, dom.playerFrame.dataset.chatStyle, chatWasOpen);
   miniSurface.classList.add("mini-player-inline");
   dom.playerFrame.append(miniSurface);
   miniPlayerInterface = movePlayerInterface(miniSurface);
@@ -132,7 +136,11 @@ function openInlineMiniPlayer(chatWasOpen) {
 }
 
 function openScrollMiniPlayer() {
-  miniSurface = createMiniPlayerSurface(document, dom.playerFrame.dataset.chatStyle);
+  miniSurface = createMiniPlayerSurface(
+    document,
+    dom.playerFrame.dataset.chatStyle,
+    dom.playerFrame.classList.contains("chat-inside-open"),
+  );
   miniSurface.classList.add("mini-player-inline", "mini-player-scroll");
   miniSurface.classList.remove("player-overlay-visible");
   document.body.append(miniSurface);

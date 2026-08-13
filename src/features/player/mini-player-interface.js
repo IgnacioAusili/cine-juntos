@@ -9,11 +9,12 @@ import {
   submitMirrorChat,
   syncMirroredChatMessages,
   positionMiniSystemToggles,
+  syncMiniChatAutoExpand,
   wireMiniMessageReplies,
   toggleMiniEmojiPicker,
   toggleMiniChatOverlay,
   wireMirrorChatScrollbar,
-} from "./mini-player-chat-mirror.js?v=20260808-scroll-mini-player-02";
+} from "./mini-player-chat-mirror.js?v=20260812-mini-chat-fixes-04";
 import { wireMiniPlayerShortcuts } from "./mini-player-shortcuts.js?v=20260808-scroll-mini-player-02";
 
 const VIDEO_EVENTS = ["play", "pause", "timeupdate", "seeked", "ratechange", "volumechange"];
@@ -31,6 +32,36 @@ export function movePlayerInterface(surface) {
     dom.playerChat,
   ].filter(Boolean).map((source) => createInteractiveMirror(source, surface.ownerDocument));
   mirrors.forEach(({ element }) => surface.append(element));
+  // Los espejos se sincronizan una primera vez antes de insertarse. Repetir
+  // el de acciones después de anexarlo permite aplicar el estado propio del
+  // mini reproductor al botón de chat (sin copiar el estado del principal).
+  mirrors
+    .filter(({ source }) => source === dom.playerActions)
+    .forEach(({ sync }) => sync());
+  const playerChatMirror = mirrors.find(({ source }) => source === dom.playerChat)?.element;
+  const handleMiniAutoExpandControl = (event) => {
+    const target = event.target.closest?.(
+      "#insideChatAutoExpandSwitch, [data-proxy-for=\"insideChatAutoExpandSwitch\"]",
+    );
+    if (!target || !playerChatMirror?.contains(target)) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    handleMiniChatInteraction(playerChatMirror, target);
+  };
+  playerChatMirror?.addEventListener("click", handleMiniAutoExpandControl, true);
+  const handleMiniAutoExpandClick = (event) => {
+    // El espejo delegado suele resolverlo antes de que el evento llegue a la
+    // superficie; en ese caso no volver a invertir el switch por segunda vez.
+    if (event.defaultPrevented) return;
+    const target = event.target.closest?.(
+      "#insideChatAutoExpandSwitch, [data-proxy-for=\"insideChatAutoExpandSwitch\"]",
+    );
+    if (!target || !playerChatMirror?.contains(target)) return;
+    event.preventDefault();
+    event.stopPropagation();
+    handleMiniChatInteraction(playerChatMirror, target);
+  };
+  surface.addEventListener("click", handleMiniAutoExpandClick, true);
   const removeShortcuts = wireMiniPlayerShortcuts(surface.ownerDocument, surface);
 
   const syncMirrors = () => mirrors
@@ -42,6 +73,8 @@ export function movePlayerInterface(surface) {
     restore() {
       VIDEO_EVENTS.forEach((eventName) => dom.videoPlayer.removeEventListener(eventName, syncMirrors));
       mirrors.forEach(({ restore }) => restore());
+      playerChatMirror?.removeEventListener("click", handleMiniAutoExpandControl, true);
+      surface.removeEventListener("click", handleMiniAutoExpandClick, true);
       removeShortcuts();
       videoAnchor.parentNode?.insertBefore(dom.videoPlayer, videoAnchor);
       videoAnchor.remove();
@@ -75,10 +108,13 @@ function createInteractiveMirror(source, targetDocument) {
 
   element.addEventListener("click", (event) => {
     if (event.target.matches?.("input, select, textarea")) return;
-    if (source === dom.playerChat && event.target.closest?.("#insideChatAutoExpandSwitch, [data-proxy-for=\"insideChatAutoExpandSwitch\"]")) {
+    const autoExpandTarget = event.target.closest?.(
+      "#insideChatAutoExpandSwitch, [data-proxy-for=\"insideChatAutoExpandSwitch\"]",
+    );
+    if (autoExpandTarget) {
       event.preventDefault();
       event.stopPropagation();
-      handleMiniChatInteraction(element, event.target);
+      handleMiniChatInteraction(element, autoExpandTarget);
       return;
     }
     if (source === dom.playerChat && event.target.closest?.(".system-group-toggle")) {
@@ -199,12 +235,19 @@ function createInteractiveMirror(source, targetDocument) {
     markProxyControls(element, keepIds);
     copyControlState(source, element);
     if (source === dom.playerBottomActions) copyDynamicButtonPresentation(source, element);
+    if (source === dom.playerActions) {
+      const surface = element.closest(".mini-player-surface");
+      if (surface) {
+        toggleMiniChatOverlay(surface, surface.classList.contains("chat-inside-open"));
+      }
+    }
     restoreMirrorChatDraft(source, element, draft);
     wireMirrorChatScrollbar(element);
     if (source === dom.playerChat) {
       const sourceMessages = source.querySelector(".overlay-messages");
       const mirrorMessages = element.querySelector(".overlay-messages");
       if (sourceMessages && mirrorMessages) wireMiniMessageReplies(sourceMessages, mirrorMessages, element);
+      syncMiniChatAutoExpand(element.closest(".mini-player-surface"));
     }
     if (source === dom.playerChat) positionMiniSystemToggles(element);
     isSyncing = false;

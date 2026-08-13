@@ -1,6 +1,7 @@
 import { clearReplyTarget, setReplyTarget } from "../chat/chat-reply.js?v=20260811-reply-motion-01";
 import { wireMessageInteractions } from "../chat/chat-message-interactions.js";
 import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js";
+import { state } from "../../core/state.js";
 
 export function isOverlayMessageInput(source, target) {
   return source.id === "playerChat" && target.id === "overlayMessageInput";
@@ -170,7 +171,8 @@ export function positionMiniSystemToggles(element) {
 }
 
 export function handleMiniChatInteraction(element, eventTarget) {
-  const surface = element.closest(".mini-player-surface");
+  const surface = element.closest(".mini-player-surface")
+    || element.ownerDocument.querySelector(".mini-player-surface");
   const styleButton = eventTarget.closest?.("[data-chat-style]");
   if (surface && styleButton) {
     surface.dataset.chatStyle = styleButton.dataset.chatStyle;
@@ -193,8 +195,7 @@ export function handleMiniChatInteraction(element, eventTarget) {
   const autoExpand = eventTarget.closest?.("#insideChatAutoExpandSwitch, [data-proxy-for=\"insideChatAutoExpandSwitch\"]");
   if (autoExpand) {
     const enabled = autoExpand.getAttribute("aria-checked") !== "true";
-    autoExpand.setAttribute("aria-checked", String(enabled));
-    autoExpand.classList.toggle("active", enabled);
+    syncMiniChatAutoExpand(element.closest(".mini-player-surface"), enabled);
     setInsideChatAutoExpandEnabled(enabled);
     return;
   }
@@ -234,6 +235,15 @@ export function toggleMiniChatOverlay(
     toggle.dataset.tooltip = label;
     toggle.setAttribute("aria-label", label);
   }
+}
+
+export function syncMiniChatAutoExpand(surface, enabled = state.chat.autoExpandInsideEnabled) {
+  const toggle = surface?.querySelector(
+    "#insideChatAutoExpandSwitch, [data-proxy-for=\"insideChatAutoExpandSwitch\"]",
+  );
+  if (!toggle) return;
+  toggle.classList.toggle("active", Boolean(enabled));
+  toggle.setAttribute("aria-checked", String(Boolean(enabled)));
 }
 
 function getMirrorChatInput(element) {

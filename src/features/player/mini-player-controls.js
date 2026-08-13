@@ -4,22 +4,29 @@ export function installMiniPlayerWindowStyles(targetDocument) {
   emojiFont.href = "https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap";
   targetDocument.head.append(emojiFont);
 
-  [
+  const stylesheets = [
     "../../../public/styles.css?v=20260808-mini-player-13",
     "../../../public/styles/mini-player-window.css?v=20260808-mini-player-12",
-  ].forEach((path) => {
+  ].map((path) => {
     const stylesheet = targetDocument.createElement("link");
     stylesheet.rel = "stylesheet";
     stylesheet.href = new URL(path, import.meta.url).href;
     targetDocument.head.append(stylesheet);
+    return new Promise((resolve) => {
+      stylesheet.addEventListener("load", resolve, { once: true });
+      stylesheet.addEventListener("error", resolve, { once: true });
+      targetDocument.defaultView?.setTimeout(resolve, 1200);
+    });
   });
   targetDocument.fonts?.load('1rem "Noto Color Emoji"', "😂🫦").catch(() => {});
   targetDocument.body.classList.add("app-ready");
+  return Promise.all(stylesheets);
 }
 
-export function createMiniPlayerSurface(targetDocument, chatStyle) {
+export function createMiniPlayerSurface(targetDocument, chatStyle, chatVisible = false) {
   const surface = targetDocument.createElement("section");
   surface.className = "mini-player-surface player-frame player-overlay-visible";
+  surface.classList.toggle("chat-inside-open", Boolean(chatVisible));
   surface.classList.add("mini-player-initializing");
   surface.style.visibility = "hidden";
   surface.style.opacity = "0";

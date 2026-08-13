@@ -1,7 +1,12 @@
-import { toggleMiniChatOverlay } from "./mini-player-chat-mirror.js?v=20260808-scroll-mini-player-02";
+import {
+  syncMiniChatAutoExpand,
+  toggleMiniChatOverlay,
+} from "./mini-player-chat-mirror.js?v=20260812-mini-chat-fixes-04";
+import { state } from "../../core/state.js";
 
 export function mirrorMiniPlayerChatState(surface, visible = true) {
   toggleMiniChatOverlay(surface, visible);
+  syncMiniChatAutoExpand(surface, state.chat.autoExpandInsideEnabled);
   surface.classList.add("mini-chat-state-ready");
 
   return {

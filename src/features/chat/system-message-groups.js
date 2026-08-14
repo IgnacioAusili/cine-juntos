@@ -1,5 +1,7 @@
 const SYSTEM_GROUP_MIN_SIZE = 3;
 const SYSTEM_GROUP_TRANSITION_MS = 180;
+const SYSTEM_GROUP_EXPANSION_MS = 240;
+const SYSTEM_GROUP_SCROLL_EDGE_GAP = 56;
 const groupStates = new WeakMap();
 const groupTransitions = new WeakMap();
 
@@ -48,6 +50,24 @@ export function refreshSystemMessageGroup(header) {
   if (!header?.isConnected) return;
   const state = getGroupState(header);
   applyGroupState(header, state?.expanded ?? header.getAttribute("aria-expanded") === "true");
+}
+
+/** Expande el grupo solo cuando el mensaje objetivo está oculto. */
+export function expandSystemMessageGroupForItem(item) {
+  if (!item?.classList.contains("message") || !item.classList.contains("system")) return null;
+  if (!item.classList.contains("system-group-collapsed-item")) return null;
+
+  const items = getContiguousSystemItems(item);
+  const header = findGroupToggle(items);
+  if (!header || item === items.at(-1)) return null;
+
+  const state = getGroupState(header) || {
+    expanded: header.getAttribute("aria-expanded") === "true",
+  };
+  if (state.expanded) return null;
+
+  applyGroupState(header, true, { animate: true });
+  return groupTransitions.get(header)?.finished || Promise.resolve();
 }
 
 function getLatestSystemStreak(container) {
@@ -153,7 +173,7 @@ function applyGroupState(
   if (animate && preserveSelectorHighlight) header.classList.add("system-group-transitioning");
   const visualState = animate
     ? expanded
-      ? prepareExpansionVisualTransition(lastItem)
+      ? prepareExpansionVisualTransition(lastItem, items)
       : prepareCollapseVisualTransition(items)
     : null;
 
@@ -187,7 +207,7 @@ function applyStructuralGroupState(header, items, expanded) {
   moveGroupToggle(header, expanded ? firstItem : lastItem);
 }
 
-function prepareExpansionVisualTransition(anchor) {
+function prepareExpansionVisualTransition(anchor, items) {
   const target = getGroupTransitionTarget(anchor);
   if (!target) return null;
 
@@ -195,6 +215,8 @@ function prepareExpansionVisualTransition(anchor) {
     target,
     opacity: target.style.opacity,
     transform: target.style.transform,
+    layoutEntries: captureLayoutEntries(items),
+    scrollState: captureScrollState(items),
   };
   target.style.opacity = "0";
   target.style.transform = "translateY(-3px)";
@@ -202,6 +224,7 @@ function prepareExpansionVisualTransition(anchor) {
 }
 
 function prepareCollapseVisualTransition(items) {
+  const container = items[0]?.parentElement;
   const entries = items
     .map((item) => {
       const target = getGroupTransitionTarget(item);
@@ -218,10 +241,11 @@ function prepareCollapseVisualTransition(items) {
 
   if (!entries.length) return null;
 
+  const layoutEntries = captureLayoutEntries(items, container);
+
   const layer = document.createElement("div");
   layer.className = "system-group-transition-layer";
   layer.setAttribute("aria-hidden", "true");
-  const container = items[0]?.parentElement;
   const containerRect = container?.getBoundingClientRect();
   Object.assign(layer.style, {
     position: "absolute",
@@ -275,11 +299,42 @@ function prepareCollapseVisualTransition(items) {
   // ancho específicas de #messages y #overlayMessages. Las coordenadas se
   // expresan en el espacio scrolleable del contenedor, no en el viewport.
   (items[0]?.parentElement || document.body).append(layer);
-  return { entries: visualEntries, layer };
+  return { entries: visualEntries, layoutEntries, layer, scrollState: captureScrollState(items) };
+}
+
+function captureLayoutEntries(items, container = items[0]?.parentElement) {
+  return Array.from(container?.children || [])
+    .filter((item) => item.classList.contains("message") && !items.includes(item))
+    .map((item) => ({
+      item,
+      rect: item.getBoundingClientRect(),
+    }));
+}
+
+function captureScrollState(items) {
+  const container = items[0]?.parentElement;
+  const lastItem = items.at(-1);
+  if (!container || !lastItem) return null;
+
+  const containerRect = container.getBoundingClientRect();
+  const lastRect = lastItem.getBoundingClientRect();
+  const distanceFromScrollEnd = container.scrollHeight - container.scrollTop - container.clientHeight;
+  const distanceFromViewportEdge = containerRect.bottom - lastRect.bottom;
+  if (
+    distanceFromViewportEdge > SYSTEM_GROUP_SCROLL_EDGE_GAP &&
+    distanceFromScrollEnd > SYSTEM_GROUP_SCROLL_EDGE_GAP
+  ) return null;
+
+  return {
+    container,
+    initialScrollTop: container.scrollTop,
+    lastBottom: lastRect.bottom,
+  };
 }
 
 function animateGroupTransition(items, header, visualState, expanded) {
   const animations = [];
+  const transitionDuration = expanded ? SYSTEM_GROUP_EXPANSION_MS : SYSTEM_GROUP_TRANSITION_MS;
 
   if (!expanded && visualState?.entries) {
     const finalTarget = getGroupTransitionTarget(items.at(-1));
@@ -307,6 +362,30 @@ function animateGroupTransition(items, header, visualState, expanded) {
     });
   }
 
+  if (visualState?.layoutEntries) {
+    visualState.layoutEntries.forEach((entry) => {
+      if (!entry.item.isConnected) return;
+      const finalRect = entry.item.getBoundingClientRect();
+      const deltaY = entry.rect.top - finalRect.top;
+      const deltaX = entry.rect.left - finalRect.left;
+      if (Math.abs(deltaX) < 0.5 && Math.abs(deltaY) < 0.5) return;
+
+      const animation = entry.item.animate(
+        [
+          { transform: `translate3d(${deltaX}px, ${deltaY}px, 0)` },
+          { transform: "translate3d(0, 0, 0)" },
+        ],
+        {
+          duration: transitionDuration,
+          easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+        },
+      );
+      animations.push(animation);
+    });
+  }
+
+  const scrollAnimation = createGroupScrollAnimation(visualState?.scrollState, items, transitionDuration);
+
   items.forEach((item) => {
     if (!expanded) return;
     const animationTarget = getGroupTransitionTarget(item);
@@ -318,29 +397,81 @@ function animateGroupTransition(items, header, visualState, expanded) {
         { opacity: 1, transform: "translateY(0)" },
       ],
       {
-        duration: SYSTEM_GROUP_TRANSITION_MS,
+        duration: transitionDuration,
         easing: "cubic-bezier(0.22, 1, 0.36, 1)",
       },
     );
     animations.push(animation);
   });
 
+  const finished = Promise.all([
+    ...animations.map((animation) => animation.finished.catch(() => undefined)),
+    scrollAnimation?.finished,
+  ]);
   const transition = {
     animations,
+    scrollAnimation,
+    finished,
     cleanup: () => {
       restoreExpansionVisualTransition(visualState);
       visualState?.layer?.remove();
+      scrollAnimation?.cancel();
       header.classList.remove("system-group-transitioning");
       items.forEach((item) => item.classList.remove("system-group-transitioning"));
     },
   };
   items.forEach((item) => item.classList.add("system-group-transitioning"));
   groupTransitions.set(header, transition);
-  Promise.all(animations.map((animation) => animation.finished.catch(() => undefined))).then(() => {
+  finished.then(() => {
     if (groupTransitions.get(header) !== transition || !header.isConnected) return;
     transition.cleanup();
     groupTransitions.delete(header);
   });
+}
+
+function createGroupScrollAnimation(scrollState, items, duration) {
+  if (!scrollState?.container) return null;
+
+  const { container, initialScrollTop, lastBottom } = scrollState;
+  const lastRect = items.at(-1)?.getBoundingClientRect();
+  if (!lastRect) return null;
+
+  const maxScrollTop = Math.max(0, container.scrollHeight - container.clientHeight);
+  const targetScrollTop = Math.min(
+    maxScrollTop,
+    Math.max(0, initialScrollTop + lastRect.bottom - lastBottom),
+  );
+  if (Math.abs(targetScrollTop - initialScrollTop) < 0.5) return null;
+
+  let frameId = 0;
+  let cancelled = false;
+  let resolveFinished;
+  const finished = new Promise((resolve) => {
+    resolveFinished = resolve;
+  });
+  const startedAt = performance.now();
+
+  const tick = (now) => {
+    if (cancelled) return;
+    const progress = Math.min(1, (now - startedAt) / duration);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    container.scrollTop = initialScrollTop + (targetScrollTop - initialScrollTop) * eased;
+    if (progress < 1) {
+      frameId = window.requestAnimationFrame(tick);
+    } else {
+      resolveFinished();
+    }
+  };
+
+  frameId = window.requestAnimationFrame(tick);
+  return {
+    finished,
+    cancel: () => {
+      cancelled = true;
+      window.cancelAnimationFrame(frameId);
+      resolveFinished?.();
+    },
+  };
 }
 
 function getGroupTransitionTarget(item) {

@@ -2,6 +2,7 @@ import { dom } from "../../core/dom.js";
 import { state } from "../../core/state.js";
 import { truncateText } from "./chat-content-parser.js?v=20260810-chat-fixes-02";
 import { getParticipantAccent } from "./chat-participant-color.js";
+import { expandSystemMessageGroupForItem } from "./system-message-groups.js?v=20260814-system-group-reply-02";
 
 const pendingReplyPreviewHides = new WeakMap();
 const pendingReplyPreviewShow = new WeakMap();
@@ -104,6 +105,39 @@ export function renderReplyPreview({ animate = true, preserveHeight = false } = 
       pendingReplyPreviewAnimations.delete(container);
     }
   };
+  const showReplyPreview = (container, replyContent) => {
+    container.innerHTML = "";
+    container.append(replyContent);
+    container.style.height = "0px";
+    const targetHeight = getExpandedReplyHeight(container);
+    const showFrame = window.requestAnimationFrame(() => {
+      pendingReplyPreviewShow.delete(container);
+      container.classList.add("reply-preview--visible");
+      const animation = container.animate(
+        [
+          { height: "0px", opacity: 0 },
+          { height: `${targetHeight}px`, opacity: 1 },
+        ],
+        {
+          duration: 320,
+          easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+          fill: "forwards",
+        },
+      );
+      pendingReplyPreviewAnimations.set(container, animation);
+      animation.onfinish = () => {
+        if (pendingReplyPreviewAnimations.get(container) !== animation) return;
+        pendingReplyPreviewAnimations.delete(container);
+        container.style.height = `${targetHeight}px`;
+        animation.cancel();
+      };
+      animation.oncancel = () => {
+        if (pendingReplyPreviewAnimations.get(container) !== animation) return;
+        pendingReplyPreviewAnimations.delete(container);
+      };
+    });
+    pendingReplyPreviewShow.set(container, showFrame);
+  };
 
   [dom.replyPreview, dom.overlayReplyPreview].forEach((container) => {
     if (!container) return;
@@ -163,14 +197,12 @@ export function renderReplyPreview({ animate = true, preserveHeight = false } = 
             paddingTop: startPaddingTop,
             paddingBottom: startPaddingBottom,
             opacity: 1,
-            transform: "translateY(0)",
           },
           {
             height: "0px",
             paddingTop: "0px",
             paddingBottom: "0px",
             opacity: 0,
-            transform: "translateY(-4px)",
           },
         ],
         {
@@ -212,7 +244,6 @@ export function renderReplyPreview({ animate = true, preserveHeight = false } = 
       getParticipantAccent(state.chat.replyTarget.from || state.chat.replyTarget.id || state.chat.replyTarget.name),
     );
     const nextReplyContent = createReplyPreviewContent(container);
-    const previousReplyContent = container.firstElementChild;
     container.hidden = false;
 
     if (!animate) {
@@ -233,45 +264,13 @@ export function renderReplyPreview({ animate = true, preserveHeight = false } = 
     if (currentHeight > 0) {
       container.style.height = `${currentHeight}px`;
       container.classList.add("reply-preview--visible");
-      const animateIncomingReply = () => {
-        if (!state.chat.replyTarget) return;
-        container.innerHTML = "";
-        container.append(nextReplyContent);
-        const animation = container.animate(
-          [
-            { opacity: 0, transform: "translateY(4px)" },
-            { opacity: 1, transform: "translateY(0)" },
-          ],
-          {
-            duration: 320,
-            easing: "cubic-bezier(0.22, 1, 0.36, 1)",
-            fill: "forwards",
-          },
-        );
-        pendingReplyPreviewAnimations.set(container, animation);
-        animation.onfinish = () => {
-          if (pendingReplyPreviewAnimations.get(container) !== animation) return;
-          pendingReplyPreviewAnimations.delete(container);
-          animation.cancel();
-        };
-        animation.oncancel = () => {
-          if (pendingReplyPreviewAnimations.get(container) !== animation) return;
-          pendingReplyPreviewAnimations.delete(container);
-        };
-      };
-
-      if (!previousReplyContent?.classList.contains("reply-preview-content")) {
-        animateIncomingReply();
-        return;
-      }
-
       const exitAnimation = container.animate(
         [
-          { opacity: 1, transform: "translateY(0)" },
-          { opacity: 0, transform: "translateY(-4px)" },
+          { height: `${currentHeight}px`, opacity: 1 },
+          { height: "0px", opacity: 0 },
         ],
         {
-          duration: 180,
+          duration: 240,
           easing: "cubic-bezier(0.22, 1, 0.36, 1)",
           fill: "forwards",
         },
@@ -281,7 +280,8 @@ export function renderReplyPreview({ animate = true, preserveHeight = false } = 
         if (pendingReplyPreviewAnimations.get(container) !== exitAnimation) return;
         pendingReplyPreviewAnimations.delete(container);
         exitAnimation.cancel();
-        animateIncomingReply();
+        if (!state.chat.replyTarget) return;
+        showReplyPreview(container, nextReplyContent);
       };
       exitAnimation.oncancel = () => {
         if (pendingReplyPreviewAnimations.get(container) !== exitAnimation) return;
@@ -290,37 +290,7 @@ export function renderReplyPreview({ animate = true, preserveHeight = false } = 
       return;
     }
 
-    container.innerHTML = "";
-    container.append(nextReplyContent);
-    container.style.height = "0px";
-    const targetHeight = getExpandedReplyHeight(container);
-    const showFrame = window.requestAnimationFrame(() => {
-      pendingReplyPreviewShow.delete(container);
-      container.classList.add("reply-preview--visible");
-      const animation = container.animate(
-        [
-          { height: "0px", opacity: 0, transform: "translateY(4px)" },
-          { height: `${targetHeight}px`, opacity: 1, transform: "translateY(0)" },
-        ],
-        {
-          duration: 320,
-          easing: "cubic-bezier(0.22, 1, 0.36, 1)",
-          fill: "forwards",
-        },
-      );
-      pendingReplyPreviewAnimations.set(container, animation);
-      animation.onfinish = () => {
-        if (pendingReplyPreviewAnimations.get(container) !== animation) return;
-        pendingReplyPreviewAnimations.delete(container);
-        container.style.height = `${targetHeight}px`;
-        animation.cancel();
-      };
-      animation.oncancel = () => {
-        if (pendingReplyPreviewAnimations.get(container) !== animation) return;
-        pendingReplyPreviewAnimations.delete(container);
-      };
-    });
-    pendingReplyPreviewShow.set(container, showFrame);
+    showReplyPreview(container, nextReplyContent);
   });
 }
 
@@ -339,6 +309,12 @@ export function scrollToMessage(messageId, preferredContainer = null) {
       `article[data-message-id="${messageId}"]`,
     );
     if (target) {
+      const expansion = expandSystemMessageGroupForItem(target);
+      if (expansion) {
+        expansion.then(() => scrollToMessage(messageId, container));
+        return;
+      }
+
       const targetTop = target.offsetTop;
       const targetBottom = targetTop + target.offsetHeight;
       const viewTop = container.scrollTop;
@@ -367,7 +343,7 @@ function highlightMessage(element) {
   }
 
   const highlightContainer = element.closest(".messages");
-  if (element.classList.contains("message--media-only") && highlightContainer) {
+  if (highlightContainer) {
     const elementRect = element.getBoundingClientRect();
     const containerRect = highlightContainer.getBoundingClientRect();
     element.style.setProperty("--message-highlight-left", `${containerRect.left - elementRect.left - 2}px`);

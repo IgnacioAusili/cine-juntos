@@ -23,7 +23,11 @@
 
 .message-highlight::before {
   position: absolute;
-  inset: -2px -10px;
+  top: -2px;
+  bottom: -2px;
+  right: auto;
+  left: var(--message-highlight-left, -10px);
+  width: var(--message-highlight-width, calc(100% + 20px));
   border-radius: 0;
   background: rgba(255, 255, 255, 0.1);
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06) inset;
@@ -34,7 +38,10 @@
 }
 
 .message.system.message-highlight::before {
-  inset: -1px -2px;
+  top: -1px;
+  bottom: -1px;
+  left: var(--message-highlight-left, -2px);
+  width: var(--message-highlight-width, calc(100% + 4px));
   border-radius: 0;
 }
 

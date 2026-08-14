@@ -90,17 +90,17 @@
 .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone {
   position: absolute;
   top: 0;
-  right: calc(var(--chat-panel-width) - 12px);
+  right: calc(var(--chat-panel-width) - 6px);
   bottom: 0;
   left: auto;
-  width: 24px;
+  width: 18px;
   height: 100%;
   min-width: 0;
   transform: none;
 }
 
 .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-icon-anchor {
-  opacity: 0;
+  opacity: 1;
   border: 0;
   border-radius: 999px;
   background: transparent;
@@ -108,7 +108,6 @@
   transition: opacity 160ms ease;
 }
 
-.session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone:hover .chat-collapse-icon-anchor,
 .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-handle:focus-visible .chat-collapse-icon-anchor {
   opacity: 1;
 }
@@ -116,10 +115,10 @@
 .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-hover-zone {
   position: absolute;
   top: 0;
-  right: 0;
+  right: 4px;
   bottom: 0;
   left: auto;
-  width: var(--chat-handle-gap-collapsed);
+  width: 14px;
   height: 100%;
   min-width: 0;
   transform: none;
@@ -141,8 +140,10 @@
   cursor: default;
 }
 
-.session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-hover-zone:hover .chat-collapse-handle {
-  opacity: 0;
+.session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-hover-zone.is-transitioning .chat-collapse-handle,
+.session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-hover-zone.is-transitioning .chat-collapse-icon-anchor {
+  visibility: visible;
+  opacity: 0 !important;
 }
 
 /* La flecha lateral de expandir comparte el estado de actividad del overlay

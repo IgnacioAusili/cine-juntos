@@ -54,7 +54,9 @@
   color: var(--participant-accent, var(--muted-2));
 }
 
-.message-video-ts {
+.message-video-ts,
+.player-frame .overlay-messages .message-video-ts,
+.mini-player-surface .overlay-messages .message-video-ts {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -66,7 +68,7 @@
   border-radius: 4px;
   height: 14px;
   padding: 0 3px;
-  font-size: 0.54rem;
+  font-size: 1em;
   line-height: 1;
   font-weight: 500;
   cursor: pointer;
@@ -95,7 +97,6 @@
   display: inline-flex;
   align-items: center;
   line-height: 1;
-  transform: translateY(2px);
 }
 
 .message-time-anchor {
@@ -206,8 +207,6 @@
   display: inline-block;
   font-family: var(--emoji-font-family);
   font-size: 1.5rem;
-  /* Segoe UI Emoji necesita un poco más de alto que el texto común para no
-     recortar los extremos del glifo. */
   line-height: 1.25;
 }
 

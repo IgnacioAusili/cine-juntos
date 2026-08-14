@@ -8,13 +8,15 @@ import {
   restoreMirrorChatDraft,
   submitMirrorChat,
   syncMirroredChatMessages,
-  positionMiniSystemToggles,
+  setMiniSystemGroupVisibility,
+  animateMiniSystemGroupTransition,
   syncMiniChatAutoExpand,
   wireMiniMessageReplies,
   toggleMiniEmojiPicker,
   toggleMiniChatOverlay,
   wireMirrorChatScrollbar,
-} from "./mini-player-chat-mirror.js?v=20260812-mini-chat-fixes-04";
+} from "./mini-player-chat-mirror.js?v=20260813-anchored-selector-08";
+import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js";
 import { wireMiniPlayerShortcuts } from "./mini-player-shortcuts.js?v=20260808-scroll-mini-player-02";
 
 const VIDEO_EVENTS = ["play", "pause", "timeupdate", "seeked", "ratechange", "volumechange"];
@@ -39,29 +41,18 @@ export function movePlayerInterface(surface) {
     .filter(({ source }) => source === dom.playerActions)
     .forEach(({ sync }) => sync());
   const playerChatMirror = mirrors.find(({ source }) => source === dom.playerChat)?.element;
-  const handleMiniAutoExpandControl = (event) => {
-    const target = event.target.closest?.(
-      "#insideChatAutoExpandSwitch, [data-proxy-for=\"insideChatAutoExpandSwitch\"]",
-    );
-    if (!target || !playerChatMirror?.contains(target)) return;
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    handleMiniChatInteraction(playerChatMirror, target);
-  };
-  playerChatMirror?.addEventListener("click", handleMiniAutoExpandControl, true);
   const handleMiniAutoExpandClick = (event) => {
-    // El espejo delegado suele resolverlo antes de que el evento llegue a la
-    // superficie; en ese caso no volver a invertir el switch por segunda vez.
-    if (event.defaultPrevented) return;
     const target = event.target.closest?.(
       "#insideChatAutoExpandSwitch, [data-proxy-for=\"insideChatAutoExpandSwitch\"]",
     );
     if (!target || !playerChatMirror?.contains(target)) return;
     event.preventDefault();
     event.stopPropagation();
-    handleMiniChatInteraction(playerChatMirror, target);
+    const enabled = target.getAttribute("aria-checked") !== "true";
+    syncMiniChatAutoExpand(surface, enabled);
+    setInsideChatAutoExpandEnabled(enabled);
   };
-  surface.addEventListener("click", handleMiniAutoExpandClick, true);
+  playerChatMirror?.addEventListener("click", handleMiniAutoExpandClick);
   const removeShortcuts = wireMiniPlayerShortcuts(surface.ownerDocument, surface);
 
   const syncMirrors = () => mirrors
@@ -73,8 +64,7 @@ export function movePlayerInterface(surface) {
     restore() {
       VIDEO_EVENTS.forEach((eventName) => dom.videoPlayer.removeEventListener(eventName, syncMirrors));
       mirrors.forEach(({ restore }) => restore());
-      playerChatMirror?.removeEventListener("click", handleMiniAutoExpandControl, true);
-      surface.removeEventListener("click", handleMiniAutoExpandClick, true);
+      playerChatMirror?.removeEventListener("click", handleMiniAutoExpandClick);
       removeShortcuts();
       videoAnchor.parentNode?.insertBefore(dom.videoPlayer, videoAnchor);
       videoAnchor.remove();
@@ -108,24 +98,18 @@ function createInteractiveMirror(source, targetDocument) {
 
   element.addEventListener("click", (event) => {
     if (event.target.matches?.("input, select, textarea")) return;
-    const autoExpandTarget = event.target.closest?.(
-      "#insideChatAutoExpandSwitch, [data-proxy-for=\"insideChatAutoExpandSwitch\"]",
-    );
-    if (autoExpandTarget) {
-      event.preventDefault();
-      event.stopPropagation();
-      handleMiniChatInteraction(element, autoExpandTarget);
+    if (
+      source === dom.playerChat
+      && event.target.closest?.("#insideChatAutoExpandSwitch, [data-proxy-for=\"insideChatAutoExpandSwitch\"]")
+    ) {
       return;
     }
     if (source === dom.playerChat && event.target.closest?.(".system-group-toggle")) {
       const mirrorToggle = event.target.closest(".system-group-toggle");
       const expanded = mirrorToggle.getAttribute("aria-expanded") !== "true";
       mirrorToggle.setAttribute("aria-expanded", String(expanded));
-      const systemItems = [...element.querySelectorAll(".overlay-messages .message.system")];
-      systemItems.forEach((item, index) => {
-        item.classList.toggle("system-group-collapsed-item", !expanded && index < systemItems.length - 1);
-      });
-      positionMiniSystemToggles(element);
+      setMiniSystemGroupVisibility(mirrorToggle, expanded);
+      animateMiniSystemGroupTransition(mirrorToggle, expanded);
       return;
     }
     const target = getSourceControl(source, event.target);
@@ -249,7 +233,6 @@ function createInteractiveMirror(source, targetDocument) {
       if (sourceMessages && mirrorMessages) wireMiniMessageReplies(sourceMessages, mirrorMessages, element);
       syncMiniChatAutoExpand(element.closest(".mini-player-surface"));
     }
-    if (source === dom.playerChat) positionMiniSystemToggles(element);
     isSyncing = false;
   }
 

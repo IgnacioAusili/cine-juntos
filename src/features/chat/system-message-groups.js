@@ -1,15 +1,11 @@
 const SYSTEM_GROUP_MIN_SIZE = 3;
-const SYSTEM_GROUP_IDLE_MS = 3200;
-const SYSTEM_GROUP_ANIMATION_MS = 240;
+const SYSTEM_GROUP_TRANSITION_MS = 180;
 const groupStates = new WeakMap();
-const headerObservers = new WeakMap();
-const itemAnimations = new WeakMap();
-const headerAnimationRuns = new WeakMap();
+const groupTransitions = new WeakMap();
 
 /**
- * Agrupa la última racha de mensajes de sistema. El selector es un hermano
- * propio de los mensajes, nunca contenido de uno de ellos: así el primer
- * mensaje puede desaparecer sin desplazar ni destruir el selector.
+ * Agrupa la última racha de mensajes de sistema. Cada selector pertenece al
+ * mensaje que representa, por lo que el layout lo mueve junto con esa fila.
  */
 export function scheduleSystemMessageCollapse(container) {
   if (!container) return;
@@ -17,50 +13,41 @@ export function scheduleSystemMessageCollapse(container) {
   const items = getLatestSystemStreak(container);
   if (items.length < SYSTEM_GROUP_MIN_SIZE) {
     // Un mensaje de usuario termina la racha actual, pero no debe desarmar ni
-    // cancelar el menú de la racha anterior.
-    if (items.length) clearShortGroup(container, items);
+    // cancelar el grupo anterior.
+    if (items.length) clearShortGroup(items);
     return;
   }
 
-  const header = ensureGroupHeader(container, items);
-  const expanded = header.getAttribute("aria-expanded") === "true";
-  applyGroupState(header, expanded);
-
-  const state = groupStates.get(container) || { timer: 0 };
-  window.clearTimeout(state.timer);
-  state.timer = 0;
-  if (expanded) {
-    state.timer = window.setTimeout(() => {
-      // La racha puede haber dejado de ser la última si llegó un mensaje de
-      // usuario; el encabezado todavía identifica de forma estable su grupo.
-      if (!header.isConnected || header.getAttribute("aria-expanded") !== "true") return;
-      applyGroupState(header, false, { animate: true });
-    }, SYSTEM_GROUP_IDLE_MS);
-  }
-  groupStates.set(container, state);
+  const header = ensureGroupHeader(items);
+  const state = getGroupState(header);
+  applyGroupState(header, state?.expanded ?? false);
 }
 
 /**
- * Limpia solamente un selector que pertenezca al mensaje que se va a borrar.
- * Si hay más mensajes de sistema detrás, el selector queda exactamente donde
- * estaba y pasa a preceder al nuevo primero de forma natural en el DOM.
+ * Reancla el selector antes de eliminar su mensaje anfitrión. El selector no
+ * puede quedar dentro de un nodo que está por salir del DOM.
  */
 export function prepareSystemMessageRemoval(container, item) {
   if (!container || !item?.classList.contains("system")) return null;
 
-  const header = item.previousElementSibling;
-  if (!header?.classList.contains("system-group-toggle")) return null;
-  if (!item.nextElementSibling?.classList.contains("system")) {
+  const header = findGroupToggle(getContiguousSystemItems(item));
+  if (!header) return null;
+
+  const nextItem = item.nextElementSibling;
+  if (!nextItem?.classList.contains("message") || !nextItem.classList.contains("system")) {
     removeGroupHeader(header);
     return null;
   }
+
+  moveGroupToggle(header, nextItem);
   return header;
 }
 
-/** Reancla la cabecera una vez que su antiguo primer mensaje ya no existe. */
+/** Reaplica el estado de un grupo después de retirar uno de sus mensajes. */
 export function refreshSystemMessageGroup(header) {
   if (!header?.isConnected) return;
-  applyGroupState(header, header.getAttribute("aria-expanded") === "true");
+  const state = getGroupState(header);
+  applyGroupState(header, state?.expanded ?? header.getAttribute("aria-expanded") === "true");
 }
 
 function getLatestSystemStreak(container) {
@@ -71,59 +58,88 @@ function getLatestSystemStreak(container) {
 }
 
 function getGroupItems(header) {
-  const items = [];
-  let item = header?.nextElementSibling;
+  const anchor = header?.closest(".message.system");
+  return getContiguousSystemItems(anchor);
+}
+
+function getContiguousSystemItems(anchor) {
+  if (!anchor?.classList.contains("message") || !anchor.classList.contains("system")) return [];
+
+  const items = [anchor];
+  let item = anchor.previousElementSibling;
+  while (item?.classList.contains("message") && item.classList.contains("system")) {
+    items.unshift(item);
+    item = item.previousElementSibling;
+  }
+
+  item = anchor.nextElementSibling;
   while (item?.classList.contains("message") && item.classList.contains("system")) {
     items.push(item);
     item = item.nextElementSibling;
   }
+
   return items;
 }
 
-function clearShortGroup(container, items) {
-  const first = items[0];
-  const header = first?.previousElementSibling;
-  if (header?.classList.contains("system-group-toggle")) removeGroupHeader(header);
-  items.forEach((item) => item.classList.remove("system-group-collapsed-item", "system-group-last"));
-
-  const state = groupStates.get(container);
-  if (state) {
-    window.clearTimeout(state.timer);
-    state.timer = 0;
-  }
+function findGroupToggle(items) {
+  return items
+    .map((item) => item.querySelector(":scope .system-group-toggle"))
+    .find(Boolean) || null;
 }
 
-function ensureGroupHeader(container, items) {
+function clearShortGroup(items) {
+  const header = findGroupToggle(items);
+  if (header) removeGroupHeader(header);
+  items.forEach((item) => item.classList.remove("system-group-collapsed-item", "system-group-last"));
+}
+
+function ensureGroupHeader(items) {
   const first = items[0];
-  let header = first.previousElementSibling;
-  if (!header?.classList.contains("system-group-toggle")) {
+  let header = findGroupToggle(items);
+  if (!header) {
     header = document.createElement("button");
     header.type = "button";
     header.className = "system-group-toggle";
-    header.setAttribute("aria-expanded", "true");
-    container.insertBefore(header, first);
+    header.setAttribute("aria-expanded", "false");
+    groupStates.set(header, { expanded: false });
   }
-  bindGroupHeader(header, container);
+  bindGroupHeader(header, items);
+  moveGroupToggle(header, first);
   return header;
 }
 
-function bindGroupHeader(header, container) {
+function bindGroupHeader(header, items = getGroupItems(header)) {
   header.onpointerdown = (event) => event.stopPropagation();
   header.onclick = (event) => {
     event.preventDefault();
     event.stopPropagation();
-    const expanded = header.getAttribute("aria-expanded") !== "true";
-    applyGroupState(header, expanded, { animate: true });
-
-    const state = groupStates.get(container);
-    if (state) {
-      window.clearTimeout(state.timer);
-      state.timer = 0;
-    }
+    const state = getGroupState(header) || { expanded: header.getAttribute("aria-expanded") === "true" };
+    if (groupTransitions.has(header)) return;
+    applyGroupState(header, !state.expanded, { animate: true, preserveSelectorHighlight: true });
   };
+
+  items.forEach((item) => {
+    item.classList.add("system-group-member");
+    item.oncontextmenu = null;
+    item.onclick = (event) => {
+      if (event.target instanceof HTMLElement && event.target.closest("button, input, textarea, select")) {
+        return;
+      }
+      event.stopPropagation();
+      if (groupTransitions.has(header) || !header.isConnected) return;
+      const state = getGroupState(header) || {
+        expanded: header.getAttribute("aria-expanded") === "true",
+      };
+      applyGroupState(header, !state.expanded, { animate: true });
+    };
+  });
 }
 
-function applyGroupState(header, expanded, { animate = false } = {}) {
+function applyGroupState(
+  header,
+  expanded,
+  { animate = false, preserveSelectorHighlight = false } = {},
+) {
   const items = getGroupItems(header);
   if (items.length < SYSTEM_GROUP_MIN_SIZE) {
     removeGroupHeader(header);
@@ -131,156 +147,249 @@ function applyGroupState(header, expanded, { animate = false } = {}) {
     return;
   }
 
-  const container = header.parentElement;
-  // Contraído: queda junto al último aviso visible. Expandido: vuelve al
-  // primero, que ocupa la misma altura visual en la que se pulsó el selector.
-  // Así el botón no salta verticalmente al abrir o cerrar el grupo.
+  const lastItem = items.at(-1);
+
+  cancelGroupTransition(header);
+  if (animate && preserveSelectorHighlight) header.classList.add("system-group-transitioning");
+  const visualState = animate
+    ? expanded
+      ? prepareExpansionVisualTransition(lastItem)
+      : prepareCollapseVisualTransition(items)
+    : null;
+
+  const state = getGroupState(header) || {};
+  state.expanded = Boolean(expanded);
+  groupStates.set(header, state);
+
+  applyStructuralGroupState(header, items, expanded);
+
+  if (animate) {
+    animateGroupTransition(items, header, visualState, expanded);
+  }
+}
+
+function applyStructuralGroupState(header, items, expanded) {
   const firstItem = items[0];
   const lastItem = items.at(-1);
-  const visibleItem = lastItem;
-  const positionAnchor = expanded ? firstItem : lastItem;
-  const hiddenItems = items.filter((item) => item !== visibleItem);
-  const animationRun = (headerAnimationRuns.get(header) || 0) + 1;
-  headerAnimationRuns.set(header, animationRun);
+  const visibleItem = expanded ? null : items.at(-1);
+  const hiddenItems = items.slice(0, -1);
 
-  if (animate) {
-    header.dataset.groupAnimating = "true";
-    if (expanded) {
-      hiddenItems.forEach((item) => item.classList.remove("system-group-collapsed-item"));
-      animateGroupItems(hiddenItems, true);
-      trackExpandedGroupScroll(header, container, lastItem, animationRun);
-    } else {
-      animateGroupItems(hiddenItems, false);
-    }
-  } else {
-    hiddenItems.forEach(stopItemAnimation);
-    hiddenItems.forEach((item) => item.classList.toggle("system-group-collapsed-item", !expanded));
-  }
-  visibleItem.classList.remove("system-group-collapsed-item");
+  // El layout adopta siempre el estado definitivo antes de mover el selector.
+  // La contracción mantiene la imagen anterior en una capa temporal para que
+  // este cambio estructural no haga desaparecer las filas de golpe.
+  hiddenItems.forEach((item) => item.classList.toggle("system-group-collapsed-item", !expanded));
+
+  if (visibleItem) visibleItem.classList.remove("system-group-collapsed-item");
   items.forEach((item) => item.classList.toggle("system-group-last", item === visibleItem));
-  header.setAttribute("aria-expanded", String(expanded));
-  updateHeader(header, items.length - 1, expanded);
-  watchGroupHeader(header, container, positionAnchor);
-  if (animate) {
-    window.setTimeout(() => {
-      if (headerAnimationRuns.get(header) !== animationRun || !header.isConnected) return;
-      delete header.dataset.groupAnimating;
-      positionGroupHeader(header, positionAnchor);
-    }, SYSTEM_GROUP_ANIMATION_MS);
-  } else {
-    delete header.dataset.groupAnimating;
-    positionGroupHeader(header, positionAnchor);
-  }
+  header.setAttribute("aria-expanded", String(Boolean(expanded)));
+  updateHeader(header, items.length - 1, Boolean(expanded));
+
+  moveGroupToggle(header, expanded ? firstItem : lastItem);
 }
 
-/** Mantiene visible el final del grupo mientras la expansión agrega altura. */
-function trackExpandedGroupScroll(header, container, lastItem, animationRun) {
-  if (!container || !lastItem) return;
+function prepareExpansionVisualTransition(anchor) {
+  const target = getGroupTransitionTarget(anchor);
+  if (!target) return null;
 
-  const startedAt = performance.now();
-  const follow = () => {
-    if (!header.isConnected || !container.isConnected || !lastItem.isConnected || headerAnimationRuns.get(header) !== animationRun) {
-      return;
-    }
-
-    const containerRect = container.getBoundingClientRect();
-    const itemRect = lastItem.getBoundingClientRect();
-    const overflowBottom = itemRect.bottom - containerRect.bottom;
-    if (overflowBottom > 0.5) container.scrollTop += overflowBottom;
-
-    if (performance.now() - startedAt < SYSTEM_GROUP_ANIMATION_MS + 64) {
-      window.requestAnimationFrame(follow);
-    }
+  const state = {
+    target,
+    opacity: target.style.opacity,
+    transform: target.style.transform,
   };
-
-  window.requestAnimationFrame(follow);
+  target.style.opacity = "0";
+  target.style.transform = "translateY(-3px)";
+  return state;
 }
 
-function animateGroupItems(items, expanded) {
-  items.forEach((item) => {
-    stopItemAnimation(item);
-    const currentStyle = getComputedStyle(item);
-    const height = item.getBoundingClientRect().height || item.scrollHeight;
-    const from = expanded
-      ? { height: "0px", marginTop: "0px", marginBottom: "0px", opacity: 0, transform: "translateY(-4px)" }
-      : {
-          height: `${height}px`,
-          marginTop: currentStyle.marginTop,
-          marginBottom: currentStyle.marginBottom,
-          opacity: 1,
-          transform: "translateY(0)",
-        };
-    const to = expanded
-      ? {
-          height: `${height}px`,
-          marginTop: currentStyle.marginTop,
-          marginBottom: currentStyle.marginBottom,
-          opacity: 1,
-          transform: "translateY(0)",
-        }
-      : { height: "0px", marginTop: "0px", marginBottom: "0px", opacity: 0, transform: "translateY(-4px)" };
-    const animation = item.animate([from, to], {
-      duration: SYSTEM_GROUP_ANIMATION_MS,
-      easing: "cubic-bezier(0.22, 1, 0.36, 1)",
-      fill: "both",
+function prepareCollapseVisualTransition(items) {
+  const entries = items
+    .map((item) => {
+      const target = getGroupTransitionTarget(item);
+      if (!target) return null;
+      return {
+        item,
+        target,
+        rect: target.getBoundingClientRect(),
+        opacity: target.style.opacity,
+        transform: target.style.transform,
+      };
+    })
+    .filter(Boolean);
+
+  if (!entries.length) return null;
+
+  const layer = document.createElement("div");
+  layer.className = "system-group-transition-layer";
+  layer.setAttribute("aria-hidden", "true");
+  const container = items[0]?.parentElement;
+  const containerRect = container?.getBoundingClientRect();
+  Object.assign(layer.style, {
+    position: "absolute",
+    top: "0",
+    left: "0",
+    width: "100%",
+    height: `${Math.max(container?.scrollHeight || 0, container?.clientHeight || 0)}px`,
+    zIndex: "20",
+    pointerEvents: "none",
+  });
+
+  const visualEntries = entries.map((entry) => {
+    // La burbuja necesita conservar los ancestros de un mensaje de sistema:
+    // fuera de `.message.system` cae en los estilos genéricos de burbuja y
+    // aparece como un panel redondeado durante la transición.
+    const clone = entry.target.cloneNode(true);
+    const row = document.createElement("div");
+    row.className = "message-bubble-row system-message-row";
+    const shell = document.createElement("article");
+    shell.className = "message system";
+    row.append(clone);
+    shell.append(row);
+    const { rect } = entry;
+    const left = rect.left - (containerRect?.left || 0) + (container?.scrollLeft || 0);
+    const top = rect.top - (containerRect?.top || 0) + (container?.scrollTop || 0);
+    Object.assign(clone.style, {
+      width: `${rect.width}px`,
+      height: `${rect.height}px`,
+      maxWidth: "none",
+      boxSizing: "border-box",
+      margin: "0",
+      opacity: "1",
+      transform: "none",
+      pointerEvents: "none",
     });
-    itemAnimations.set(item, animation);
-    const settle = () => {
-      if (itemAnimations.get(item) !== animation) return;
-      if (!expanded) item.classList.add("system-group-collapsed-item");
-      // `fill: both` mantiene el último fotograma (altura 0 al contraer).
-      // Al cancelarlo después de fijar el estado CSS, el mensaje recupera
-      // su alto natural cuando se vuelve a expandir.
-      animation.cancel();
-      itemAnimations.delete(item);
-    };
-    animation.finished.then(settle, () => undefined);
-    // Respaldo: algunos ciclos de reflow interrumpen la promesa `finished`
-    // sin cancelar la animación. Nunca dejamos un fotograma de altura cero.
-    window.setTimeout(settle, SYSTEM_GROUP_ANIMATION_MS + 32);
+    Object.assign(shell.style, {
+      position: "absolute",
+      left: `${left}px`,
+      top: `${top}px`,
+      width: `${rect.width}px`,
+      height: `${rect.height}px`,
+      margin: "0",
+      pointerEvents: "none",
+    });
+    layer.append(shell);
+    entry.target.style.opacity = "0";
+    return { ...entry, clone: shell };
+  });
+
+  // Mantener la capa dentro del contenedor original conserva las reglas de
+  // ancho específicas de #messages y #overlayMessages. Las coordenadas se
+  // expresan en el espacio scrolleable del contenedor, no en el viewport.
+  (items[0]?.parentElement || document.body).append(layer);
+  return { entries: visualEntries, layer };
+}
+
+function animateGroupTransition(items, header, visualState, expanded) {
+  const animations = [];
+
+  if (!expanded && visualState?.entries) {
+    const finalTarget = getGroupTransitionTarget(items.at(-1));
+    const finalRect = finalTarget?.getBoundingClientRect();
+
+    visualState.entries.forEach((entry) => {
+      const isLastItem = entry.item === items.at(-1);
+      const deltaX = isLastItem && finalRect ? finalRect.left - entry.rect.left : 0;
+      const deltaY = isLastItem && finalRect ? finalRect.top - entry.rect.top : -5;
+      const animation = entry.clone.animate(
+        [
+          { opacity: 1, transform: "translate3d(0, 0, 0)" },
+          {
+            opacity: isLastItem ? 1 : 0,
+            transform: `translate3d(${deltaX}px, ${deltaY}px, 0)`,
+          },
+        ],
+        {
+          duration: SYSTEM_GROUP_TRANSITION_MS,
+          easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+          fill: "forwards",
+        },
+      );
+      animations.push(animation);
+    });
+  }
+
+  items.forEach((item) => {
+    if (!expanded) return;
+    const animationTarget = getGroupTransitionTarget(item);
+    if (!animationTarget) return;
+
+    const animation = animationTarget.animate(
+      [
+        { opacity: 0.35, transform: "translateY(-3px)" },
+        { opacity: 1, transform: "translateY(0)" },
+      ],
+      {
+        duration: SYSTEM_GROUP_TRANSITION_MS,
+        easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+      },
+    );
+    animations.push(animation);
+  });
+
+  const transition = {
+    animations,
+    cleanup: () => {
+      restoreExpansionVisualTransition(visualState);
+      visualState?.layer?.remove();
+      header.classList.remove("system-group-transitioning");
+      items.forEach((item) => item.classList.remove("system-group-transitioning"));
+    },
+  };
+  items.forEach((item) => item.classList.add("system-group-transitioning"));
+  groupTransitions.set(header, transition);
+  Promise.all(animations.map((animation) => animation.finished.catch(() => undefined))).then(() => {
+    if (groupTransitions.get(header) !== transition || !header.isConnected) return;
+    transition.cleanup();
+    groupTransitions.delete(header);
   });
 }
 
-function stopItemAnimation(item) {
-  itemAnimations.get(item)?.cancel();
-  itemAnimations.delete(item);
+function getGroupTransitionTarget(item) {
+  return item?.querySelector(".message-system-bubble")
+    || item?.querySelector(".system-message-row")
+    || item;
 }
 
-function watchGroupHeader(header, container, firstItem) {
-  headerObservers.get(header)?.disconnect();
-  const observer = new ResizeObserver(() => {
-    if (header.dataset.groupAnimating === "true") return;
-    positionGroupHeader(header, firstItem);
+function restoreExpansionVisualTransition(state) {
+  if (state?.target) {
+    state.target.style.opacity = state.opacity;
+    state.target.style.transform = state.transform;
+  }
+  state?.entries?.forEach((entry) => {
+    entry.target.style.opacity = entry.opacity;
+    entry.target.style.transform = entry.transform;
   });
-  observer.observe(container);
-  observer.observe(firstItem);
-  headerObservers.set(header, observer);
+}
+
+function cancelGroupTransition(header) {
+  const transition = groupTransitions.get(header);
+  if (!transition) return;
+  transition.frameIds?.forEach((frameId) => window.cancelAnimationFrame(frameId));
+  transition.animations.forEach((animation) => animation.cancel());
+  transition.cleanup?.();
+  transition.layer?.remove();
+  groupTransitions.delete(header);
+}
+
+function moveGroupToggle(header, anchor) {
+  if (!header || !anchor?.isConnected) return;
+
+  const row = anchor.querySelector(".system-message-row") || anchor;
+  if (header.parentElement !== row) row.append(header);
+  header.style.removeProperty("top");
+  header.style.removeProperty("left");
+  header.style.removeProperty("right");
 }
 
 function removeGroupHeader(header) {
-  headerObservers.get(header)?.disconnect();
-  headerObservers.delete(header);
+  if (!header) return;
+  cancelGroupTransition(header);
+  window.clearTimeout(getGroupState(header)?.timer);
+  groupStates.delete(header);
   header.remove();
 }
 
-function positionGroupHeader(header, firstItem) {
-  if (!header?.isConnected || !firstItem?.isConnected) return;
-
-  const container = header.parentElement;
-  const row = firstItem.querySelector(".system-message-row");
-  const bubble = firstItem.querySelector(".message-system-bubble") || row;
-  if (!container || !row || !bubble) return;
-
-  const containerRect = container.getBoundingClientRect();
-  const bubbleRect = bubble.getBoundingClientRect();
-  const buttonWidth = header.offsetWidth || 26;
-  const buttonHeight = header.offsetHeight || 18;
-  const gap = 18;
-  const top = bubbleRect.top - containerRect.top + container.scrollTop + (bubbleRect.height - buttonHeight) / 2;
-  const left = bubbleRect.left - containerRect.left + container.scrollLeft - buttonWidth - gap;
-
-  header.style.top = `${Math.max(0, top)}px`;
-  header.style.left = `${Math.max(4, left)}px`;
+function getGroupState(header) {
+  return header ? groupStates.get(header) : null;
 }
 
 function updateHeader(header, hiddenCount, expanded) {

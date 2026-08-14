@@ -100,6 +100,7 @@ export const chatState = {
   autoCollapseInsideTimer: null,
   autoCollapseExternalTimer: null,
   replyTarget: null,
+  replyPreviewScope: "both",
   pendingImage: [],
   pendingOverlayImage: [],
   menuMessage: null,

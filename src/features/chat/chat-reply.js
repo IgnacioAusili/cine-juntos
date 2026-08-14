@@ -23,6 +23,9 @@ export function setReplyTarget(message, focusInput = dom.messageInput) {
     name: message.name || "Invitado",
     text: getReplyLabel(message),
   };
+  state.chat.replyPreviewScope = focusInput?.closest?.(".player-chat")
+    ? "overlay"
+    : "external";
   renderReplyPreview({
     animate: !isSameReplyTarget,
     preserveHeight: hadReplyTarget && !isSameReplyTarget,
@@ -44,7 +47,20 @@ function getReplyLabel(message) {
  */
 export function clearReplyTarget() {
   state.chat.replyTarget = null;
+  state.chat.replyPreviewScope = "both";
   renderReplyPreview();
+}
+
+function hideReplyPreviewContainer(container) {
+  container.classList.remove("reply-preview--visible");
+  container.hidden = true;
+  container.innerHTML = "";
+  container.style.removeProperty("height");
+  container.style.removeProperty("transition");
+  container.style.removeProperty("clip-path");
+  container.style.removeProperty("padding-top");
+  container.style.removeProperty("padding-bottom");
+  container.style.removeProperty("--reply-participant-accent");
 }
 
 function createReplyPreviewContent(container) {
@@ -102,6 +118,16 @@ export function renderReplyPreview({ animate = true, preserveHeight = false } = 
       window.cancelAnimationFrame(previousShowFrame);
       pendingReplyPreviewShow.delete(container);
     }
+
+    if (
+      state.chat.replyTarget
+      && state.chat.replyPreviewScope !== "both"
+      && ((state.chat.replyPreviewScope === "overlay") !== (container === dom.overlayReplyPreview))
+    ) {
+      hideReplyPreviewContainer(container);
+      return;
+    }
+
     const visibleHeight =
       !container.hidden && container.classList.contains("reply-preview--visible")
         ? container.getBoundingClientRect().height
@@ -109,14 +135,7 @@ export function renderReplyPreview({ animate = true, preserveHeight = false } = 
     const currentHeight = preserveHeight ? visibleHeight : 0;
     if (!state.chat.replyTarget) {
       const hideReplyPreview = () => {
-        container.classList.remove("reply-preview--visible");
-        container.hidden = true;
-        container.innerHTML = "";
-        container.style.removeProperty("height");
-        container.style.removeProperty("transition");
-        container.style.removeProperty("clip-path");
-        container.style.removeProperty("padding-top");
-        container.style.removeProperty("padding-bottom");
+        hideReplyPreviewContainer(container);
       };
 
       if (container.hidden && !container.classList.contains("reply-preview--visible")) {

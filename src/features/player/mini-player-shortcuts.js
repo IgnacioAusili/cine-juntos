@@ -1,5 +1,5 @@
 import { dom } from "../../core/dom.js";
-import { toggleMiniChatOverlay } from "./mini-player-chat-mirror.js?v=20260812-mini-chat-fixes-03";
+import { toggleMiniChatOverlay } from "./mini-player-chat-mirror.js?v=20260813-anchored-selector-08";
 
 const SEEK_STEP_SECONDS = 5;
 const VOLUME_STEP = 0.05;

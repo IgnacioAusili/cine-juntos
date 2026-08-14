@@ -22,6 +22,51 @@
   max-width: min(calc(100% - 32px), 560px);
 }
 
+/* Los avisos de sincronización se realzan apenas al pasar el mouse. El
+   estado de transición lo desactiva para que la copia animada sea la única
+   representación visible durante el cambio de layout. */
+.system-group-member:not(.system-group-transitioning):hover .message-system-bubble,
+.system-group-member.message-menu-open:not(.system-group-transitioning) .message-system-bubble {
+  color: var(--muted);
+  filter: none;
+}
+
+.system-group-member .message-system-text {
+  transition: filter 140ms ease;
+}
+
+.system-group-member:not(.system-group-transitioning):hover .message-system-text,
+.system-group-member.message-menu-open:not(.system-group-transitioning) .message-system-text {
+  filter: brightness(1.18);
+}
+
+.system-group-member {
+  cursor: pointer;
+}
+
+.system-group-member .message-system-bubble,
+.system-group-member .message-system-bubble * {
+  cursor: pointer;
+}
+
+.system-group-member:not(.system-group-transitioning):hover .message-system-bubble::before,
+.system-group-member:not(.system-group-transitioning):hover .message-system-bubble::after,
+.system-group-member.message-menu-open:not(.system-group-transitioning) .message-system-bubble::before,
+.system-group-member.message-menu-open:not(.system-group-transitioning) .message-system-bubble::after {
+  background: linear-gradient(90deg, transparent, rgba(165, 176, 184, 0.82), transparent);
+}
+
+.system-group-member .message-system-bubble {
+  transition: color 140ms ease, filter 140ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .system-group-member .message-system-bubble,
+  .system-group-member .message-system-text {
+    transition: none;
+  }
+}
+
 .system-message-row .swipe-reply-hint-wrapper {
   position: absolute;
   right: -18px;
@@ -35,10 +80,13 @@
   color: var(--accent-2);
 }
 
-/* El selector es una cabecera independiente del grupo. Nunca pertenece a un
-   mensaje que pueda ser eliminado al aplicar el límite de diez. */
+/* El selector pertenece al mensaje visible que representa al grupo. El
+   mensaje ya es position:relative, así que su posición sigue al layout sin
+   coordenadas calculadas desde el contenedor. */
 .system-group-toggle {
   position: absolute;
+  top: 50%;
+  left: -6px;
   z-index: 8;
   display: flex;
   align-items: center;
@@ -56,19 +104,26 @@
   padding: 0;
   cursor: pointer;
   transition:
-    top 240ms cubic-bezier(0.22, 1, 0.36, 1),
-    left 240ms cubic-bezier(0.22, 1, 0.36, 1),
     color 160ms ease,
     border-color 160ms ease,
     background 160ms ease;
+  transform: translateY(-50%);
 }
 
 .system-group-toggle:hover,
-.system-group-toggle:focus-visible {
+.system-group-toggle:focus-visible,
+.system-group-toggle.system-group-transitioning {
   border-color: var(--accent-2);
   background: rgba(47, 184, 164, 0.16);
   color: var(--text);
   outline: none;
+}
+
+/* El overlay tiene menos espacio horizontal y la burbuja conserva una
+   reserva menor para el control de respuesta. Estos offsets mantienen la
+   separación visual anterior sin medir coordenadas desde JavaScript. */
+#overlayMessages .message.system .system-group-toggle {
+  left: -22px;
 }
 
 /* En el panel translúcido el selector necesita una superficie propia para
@@ -81,7 +136,8 @@
 }
 
 .player-frame[data-chat-style="panel"] .system-group-toggle:hover,
-.player-frame[data-chat-style="panel"] .system-group-toggle:focus-visible {
+.player-frame[data-chat-style="panel"] .system-group-toggle:focus-visible,
+.player-frame[data-chat-style="panel"] .system-group-toggle.system-group-transitioning {
   border-color: var(--accent-2);
   background: rgba(24, 73, 70, 0.92);
   color: var(--text);

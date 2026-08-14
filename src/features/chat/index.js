@@ -13,7 +13,7 @@ import {
   wireFloatingComposerLayout,
   wireComposerScrollbar,
 } from "./chat-input.js?v=20260812-image-media-02";
-import { setReplyTarget } from "./chat-reply.js?v=20260812-image-reply-03";
+import { setReplyTarget } from "./chat-reply.js?v=20260813-overlay-reply-fix-01";
 import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js";
 import {
   copyMessageText,
@@ -140,7 +140,7 @@ export {
   renderReplyPreview,
   scrollToMessage,
   setReplyTarget,
-} from "./chat-reply.js?v=20260811-reply-motion-01";
+} from "./chat-reply.js?v=20260813-overlay-reply-fix-01";
 export { sendVideoEventMessage } from "./chat-system-messages.js?v=20260812-image-media-02";
 export {
   checkScrollPosition,

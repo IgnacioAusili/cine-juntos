@@ -34,7 +34,7 @@ import {
   showSlowLoadDialog,
 } from "../session-ui.js";
 import { togglePageFullscreen } from "./fullscreen.js";
-import { syncMiniPlayerButton } from "./mini-player.js?v=20260812-mini-chat-fixes-09";
+import { syncMiniPlayerButton } from "./mini-player.js?v=20260813-mini-chat-reply-fix-01";
 
 const SKIP_LOAD_REPLACE_DIALOG_KEY = "cine-juntos-skip-load-replace-dialog";
 const VIDEO_RESUME_STORAGE_KEY = "cine-juntos-video-resume-times";

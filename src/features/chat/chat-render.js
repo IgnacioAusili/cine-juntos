@@ -11,12 +11,12 @@ import {
   handleIncomingPageUnread,
   incrementScrollIndicator,
 } from "./unread-counters.js";
-import { setReplyTarget, scrollToMessage } from "./chat-reply.js?v=20260812-image-reply-03";
+import { setReplyTarget, scrollToMessage } from "./chat-reply.js?v=20260813-overlay-reply-fix-01";
 import {
   prepareSystemMessageRemoval,
   refreshSystemMessageGroup,
   scheduleSystemMessageCollapse,
-} from "./system-message-groups.js?v=20260812-overlay-selector-reply-14";
+} from "./system-message-groups.js?v=20260813-anchored-selector-08";
 
 const EMOJI_ONLY_PATTERN = /^(?:[\s\p{Extended_Pictographic}\p{Emoji_Presentation}\p{Emoji_Modifier}\uFE0F\u200D\u20E3])+$/u;
 const EMOJI_GLYPH_PATTERN = /[\p{Extended_Pictographic}\p{Emoji_Presentation}]/u;

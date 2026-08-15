@@ -18,13 +18,13 @@ const AUTO_COLLAPSE_DELAY_MS = 5000;
 const AUTO_EXPAND_INSIDE_KEY = "cine-juntos-chat-auto-expand-inside";
 const AUTO_EXPAND_EXTERNAL_KEY = "cine-juntos-chat-auto-expand-external";
 const CHAT_STYLE_KEY = "cine-juntos-chat-style";
-const CHAT_LAYOUT_SETTLE_MS = 320;
+const CHAT_LAYOUT_SETTLE_MS = 280;
 const COLLAPSE_HANDLE_HIDE_MS = CHAT_LAYOUT_SETTLE_MS + 40;
 const CHAT_SCROLL_SNAP_LOCK_MS = 900;
 const CHAT_USER_SCROLL_LOCK_MS = 900;
 const BOTTOM_DOCK_UNION_REVEAL_PX = 0;
 const BOTTOM_TO_RIGHT_SCROLL_TIMEOUT_MS = 1200;
-const BOTTOM_TO_RIGHT_LAYOUT_MS = 420;
+const BOTTOM_TO_RIGHT_LAYOUT_MS = 280;
 
 let layoutAdjustmentTimer = 0;
 let collapseHandleOffsetTimer = 0;
@@ -265,12 +265,17 @@ function setCollapseHandleTransitioning(
   dom.collapseChatButton.classList.toggle("is-transitioning", isTransitioning);
   collapseHandleZone?.classList.toggle("is-transitioning", isTransitioning);
   dom.sessionView?.classList.toggle("chat-layout-transitioning", isTransitioning);
+  const messageForm = dom.chatArea?.querySelector(".message-form");
+  if (isTransitioning) {
+    messageForm?.style.setProperty("width", "calc(var(--chat-panel-width) - 37px)");
+  }
   if (!isTransitioning) return;
 
   state.chat.collapseHandleTransitionTimer = window.setTimeout(() => {
     dom.collapseChatButton.classList.remove("is-transitioning");
     collapseHandleZone?.classList.remove("is-transitioning");
     dom.sessionView?.classList.remove("chat-layout-transitioning");
+    messageForm?.style.removeProperty("width");
     state.chat.collapseHandleTransitionTimer = null;
     syncExternalChatCollapseHandleOffset();
     window.dispatchEvent(new Event("chat-layout-settled"));

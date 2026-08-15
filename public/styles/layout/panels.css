@@ -83,6 +83,11 @@
   width: auto;
 }
 
+.session-view.chat-layout-transitioning[data-chat-dock="right"] .chat-area > .message-form {
+  width: calc(var(--chat-panel-width) - 37px) !important;
+  max-width: none;
+}
+
 .session-view.chat-collapsed .chat-area {
   opacity: 0;
   pointer-events: none;

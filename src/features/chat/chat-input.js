@@ -21,8 +21,7 @@ import { markParticipantActive } from "../presence.js?v=20260810-chat-fixes-04";
 import { clearReplyTarget } from "./chat-reply.js?v=20260814-reply-preview-sharp-01";
 import { renderMessage } from "./chat-render.js?v=20260812-overlay-selector-reply-14";
 import {
-  scheduleExternalChatAutoCollapse,
-  scheduleInsideChatAutoCollapse,
+  completeAutoOpenedChatResponse,
 } from "./chat-layout.js?v=20260811-text-stable-motion-01";
 import { queuePinnedChatScrollSync, isPinnedToBottom } from "./chat-scroll-sync.js?v=20260810-chat-fixes-01";
 import {
@@ -352,13 +351,9 @@ export function submitMessageFrom(input) {
   } else {
     clearPendingImage(false);
   }
+  completeAutoOpenedChatResponse(isOverlay);
   autoResizeMessageInput(input);
   input.focus({ preventScroll: true });
-  if (isOverlay) {
-    scheduleInsideChatAutoCollapse();
-  } else {
-    scheduleExternalChatAutoCollapse();
-  }
 }
 
 export function handlePasteEvent(event, isOverlay) {

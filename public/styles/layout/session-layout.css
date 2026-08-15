@@ -40,7 +40,7 @@
 
 /* El ancho/alto real cambia en un único paso. El movimiento visible se hace
    con transform en el video para no reenvolver texto y controles por frame. */
-.session-view.chat-layout-transitioning .workspace {
+.session-view.chat-layout-transitioning[data-chat-dock="bottom"] .workspace {
   transition: none;
 }
 
@@ -78,9 +78,25 @@
 }
 
 .session-view[data-chat-dock="right"] .workspace {
+  display: flex;
   column-gap: 0;
-  grid-template-columns: minmax(0, 1fr) var(--chat-panel-width);
-  grid-template-areas: "video chat";
+  transition: none;
+}
+
+.session-view[data-chat-dock="right"] .video-area {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.session-view[data-chat-dock="right"] .chat-area {
+  flex: 0 0 var(--chat-panel-width);
+  width: var(--chat-panel-width);
+  transition:
+    flex-basis 400ms ease-in-out,
+    width 400ms ease-in-out,
+    opacity 400ms ease-in-out,
+    padding 400ms ease-in-out,
+    border-width 400ms ease-in-out;
 }
 
 .session-view[data-chat-dock="bottom"] .workspace {
@@ -125,8 +141,41 @@
 
 .session-view.chat-collapsed[data-chat-dock="right"] .workspace {
   column-gap: 0;
-  grid-template-columns: minmax(0, 1fr) 0px;
-  grid-template-areas: "video chat";
+}
+
+.session-view.chat-collapsed[data-chat-dock="right"] .chat-area {
+  flex-basis: 0;
+}
+
+/* Al cerrar el chat, el reproductor recupera sus dos esquinas derechas.
+   En pantalla completa los bordes del reproductor deben seguir planos. */
+body:not(.fullscreen-mode) .app-shell:not(:fullscreen)
+  .session-view.chat-collapsed[data-chat-dock="right"] .player-frame {
+  border-bottom-right-radius: var(--radius-md);
+}
+
+/* Al cambiar del dock inferior al lateral, la apertura debe ser la misma
+   cortina horizontal que dispara la flecha de expandir. */
+.session-view.chat-dock-switching[data-chat-dock="right"] .chat-area {
+  flex-basis: 0;
+  width: 0;
+  opacity: 0;
+  transform: none;
+  filter: none;
+}
+
+.session-view.chat-dock-switching.chat-dock-switching-entered[data-chat-dock="right"] .chat-area {
+  flex-basis: var(--chat-panel-width);
+  width: var(--chat-panel-width);
+  opacity: 1;
+  transform: none;
+  filter: none;
+  transition:
+    flex-basis 400ms ease-in-out,
+    width 400ms ease-in-out,
+    opacity 400ms ease-in-out,
+    padding 400ms ease-in-out,
+    border-width 400ms ease-in-out;
 }
 
 .session-view.chat-collapsed[data-chat-dock="bottom"] .workspace {

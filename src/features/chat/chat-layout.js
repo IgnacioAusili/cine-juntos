@@ -8,11 +8,13 @@ import { cancelIdentityEditing } from "../presence.js?v=20260810-chat-fixes-04";
 import {
   isExternalChatVisibleToUser,
   isInsideChatVisibleToUser,
+  resetInsideUnread,
+  resetPageUnread,
   syncUnreadBadgesWithVisibility,
 } from "./unread-counters.js";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 
-const AUTO_COLLAPSE_DELAY_MS = 3200;
+const AUTO_COLLAPSE_DELAY_MS = 5000;
 const AUTO_EXPAND_INSIDE_KEY = "cine-juntos-chat-auto-expand-inside";
 const AUTO_EXPAND_EXTERNAL_KEY = "cine-juntos-chat-auto-expand-external";
 const CHAT_STYLE_KEY = "cine-juntos-chat-style";
@@ -44,6 +46,10 @@ function getVideoAreaRect() {
 // volver a calcular el contenido del chat ni los controles durante el trayecto.
 function animateExternalChatLayoutFrom(previousRect) {
   if (!dom.sessionView || !dom.videoArea || !previousRect) return;
+
+  // El dock lateral copia la cortina del prototipo: se anima el ancho del
+  // panel, sin aplicar escala al area del video ni modificar su alto.
+  if ((dom.sessionView.dataset.chatDock || "right") === "right") return;
 
   if (externalChatVisualMotionTimer) {
     window.clearTimeout(externalChatVisualMotionTimer);
@@ -275,27 +281,33 @@ function scheduleAutoCollapse(isOverlay) {
   const enabled = isOverlay
     ? state.chat.autoExpandInsideEnabled
     : state.chat.autoExpandExternalEnabled;
-  const isVisible = isOverlay ? isInsideChatVisibleToUser() : isExternalChatVisibleToUser();
-  if (!enabled || !isVisible) return;
+  const autoOpenedKey = isOverlay ? "autoOpenedInside" : "autoOpenedExternal";
+  if (!enabled || !state.chat[autoOpenedKey]) return;
 
   clearAutoCollapseTimer(isOverlay);
   const timerKey = isOverlay ? "autoCollapseInsideTimer" : "autoCollapseExternalTimer";
   state.chat[timerKey] = window.setTimeout(() => {
     state.chat[timerKey] = null;
     if (isOverlay) {
-      if (!isInsideChatVisibleToUser()) return;
-      setInsideChatVisible(false);
+      if (!dom.playerFrame.classList.contains("chat-inside-open")) return;
+      setInsideChatVisible(false, { source: "auto-timeout" });
     } else {
-      if (!isExternalChatVisibleToUser()) return;
-      setExternalChatCollapsed(true);
+      if (dom.sessionView.classList.contains("chat-collapsed")) return;
+      setExternalChatCollapsed(true, { source: "auto-timeout" });
     }
   }, AUTO_COLLAPSE_DELAY_MS);
 }
 
-export function setInsideChatVisible(visible) {
+export function setInsideChatVisible(visible, options = {}) {
+  const source = options.source || "user";
   const wasVisible = dom.playerFrame.classList.contains("chat-inside-open");
   if (wasVisible !== visible) lockUserScrollDuringChatTransition();
   clearAutoCollapseTimer(true);
+  if (visible) {
+    state.chat.autoOpenedInside = source === "auto";
+  } else {
+    state.chat.autoOpenedInside = false;
+  }
   if (!visible) cancelIdentityEditing();
   dom.playerFrame.classList.toggle("chat-inside-open", visible);
   dom.playerChatToggleButton.classList.toggle("active", visible);
@@ -327,6 +339,7 @@ export function setInsideChatVisible(visible) {
   refreshTooltipForTarget(dom.playerChatToggleButton);
   syncUnreadBadgesWithVisibility();
   scheduleMessageTimeAdjustmentAfterLayout();
+  if (visible && source === "auto") scheduleAutoCollapse(true);
   logEvent("ui", visible ? "Chat interno visible." : "Chat interno oculto.");
 }
 
@@ -520,6 +533,10 @@ function scheduleBottomToRightSwitch(nextDock, targetScrollTop) {
     dom.sessionView.classList.add("chat-dock-switching");
     window.requestAnimationFrame(() => {
       setChatDock(nextDock, { skipTransition: true });
+      // Confirmar el estado lateral colapsado antes de habilitar la entrada.
+      // Sin esta lectura el navegador puede agrupar ambos estados y saltar
+      // directamente de dock inferior a 320px.
+      void dom.chatArea?.offsetWidth;
       window.requestAnimationFrame(() => {
         dom.sessionView.classList.add("chat-dock-switching-entered");
         window.setTimeout(() => {
@@ -565,7 +582,13 @@ function getBottomDockVideoScrollTop() {
   return Math.max(0, Math.round(getElementPageTop(dom.videoArea) - gutter));
 }
 
-export function setExternalChatCollapsed(collapsed) {
+export function setExternalChatCollapsed(collapsed, options = {}) {
+  const source = options.source || "user";
+  if (!collapsed) {
+    state.chat.autoOpenedExternal = source === "auto";
+  } else {
+    state.chat.autoOpenedExternal = false;
+  }
   const wasCollapsed = dom.sessionView.classList.contains("chat-collapsed");
   if (wasCollapsed !== collapsed) lockUserScrollDuringChatTransition();
   clearPendingCollapseScroll();
@@ -634,6 +657,8 @@ function applyExternalChatCollapsed(collapsed) {
   scheduleExternalChatCollapseHandleOffset();
   logEvent("ui", collapsed ? "Chat externo contraido." : "Chat externo expandido.");
 
+  if (!collapsed && state.chat.autoOpenedExternal) scheduleAutoCollapse(false);
+
   if (!collapsed) {
     expandScrollTimer = window.setTimeout(() => {
       expandScrollTimer = 0;
@@ -685,6 +710,21 @@ export function scheduleInsideChatAutoCollapse() {
 
 export function scheduleExternalChatAutoCollapse() {
   scheduleAutoCollapse(false);
+}
+
+export function completeAutoOpenedChatResponse(isOverlay) {
+  const openedKey = isOverlay ? "autoOpenedInside" : "autoOpenedExternal";
+  if (!state.chat[openedKey]) return false;
+
+  if (isOverlay) {
+    resetInsideUnread();
+    setInsideChatVisible(false, { source: "response" });
+  } else {
+    resetInsideUnread();
+    resetPageUnread();
+    setExternalChatCollapsed(true, { source: "response" });
+  }
+  return true;
 }
 
 export function syncChatAutoExpandControls() {

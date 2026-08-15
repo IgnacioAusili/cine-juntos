@@ -97,6 +97,7 @@
   height: 100%;
   min-width: 0;
   transform: none;
+  transition: right 400ms ease-in-out;
 }
 
 .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-icon-anchor {
@@ -123,7 +124,7 @@
   min-width: 0;
   transform: none;
   border-radius: 6px 0 0 6px;
-  transition: opacity 160ms ease, color 160ms ease, background 160ms ease;
+  transition: right 400ms ease-in-out, opacity 160ms ease, color 160ms ease, background 160ms ease;
 }
 
 .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-handle {

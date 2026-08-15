@@ -41,7 +41,9 @@ export function isAnyChatVisibleToUser() {
 
 export function incrementInsideUnread() {
   state.chat.unreadInsideCount += 1;
-  dom.insideChatUnread.textContent = String(Math.min(state.chat.unreadInsideCount, 99));
+  dom.insideChatUnread.textContent = state.chat.unreadInsideCount > 99
+    ? "+99"
+    : String(state.chat.unreadInsideCount);
   dom.insideChatUnread.hidden = false;
 }
 
@@ -67,7 +69,13 @@ export function resetPageUnread() {
 }
 
 export function syncUnreadBadgesWithVisibility() {
-  if (isAnyChatVisibleToUser()) {
+  // Una apertura automática debe conservar el contador hasta que haya una
+  // respuesta; de lo contrario el propio cambio de visibilidad lo borra.
+  if (
+    isAnyChatVisibleToUser()
+    && !state.chat.autoOpenedInside
+    && !state.chat.autoOpenedExternal
+  ) {
     resetInsideUnread();
   }
   if (!document.hidden) {
@@ -76,16 +84,20 @@ export function syncUnreadBadgesWithVisibility() {
 }
 
 export function handleIncomingUnread() {
-  if (isAnyChatVisibleToUser()) {
+  const insideVisible = isInsideChatVisibleToUser();
+  const externalVisible = isExternalChatVisibleToUser();
+
+  if (insideVisible && !state.chat.autoOpenedInside) {
     resetInsideUnread();
   } else {
     incrementInsideUnread();
-    if (state.chat.autoExpandInsideEnabled) {
-      setInsideChatVisible(true);
+    if (state.chat.autoExpandInsideEnabled && !insideVisible) {
+      setInsideChatVisible(true, { source: "auto" });
     }
-    if (state.chat.autoExpandExternalEnabled) {
-      setExternalChatCollapsed(false);
-    }
+  }
+
+  if (state.chat.autoExpandExternalEnabled && !externalVisible) {
+    setExternalChatCollapsed(false, { source: "auto" });
   }
 }
 
@@ -100,10 +112,10 @@ export function incrementScrollIndicator(isOverlay) {
 
   if (isOverlay) {
     state.chat.overlayScrollUnread += 1;
-    badge.textContent = state.chat.overlayScrollUnread > 99 ? "99+" : String(state.chat.overlayScrollUnread);
+    badge.textContent = state.chat.overlayScrollUnread > 99 ? "+99" : String(state.chat.overlayScrollUnread);
   } else {
     state.chat.mainScrollUnread += 1;
-    badge.textContent = state.chat.mainScrollUnread > 99 ? "99+" : String(state.chat.mainScrollUnread);
+    badge.textContent = state.chat.mainScrollUnread > 99 ? "+99" : String(state.chat.mainScrollUnread);
   }
 
   const count = isOverlay ? state.chat.overlayScrollUnread : state.chat.mainScrollUnread;

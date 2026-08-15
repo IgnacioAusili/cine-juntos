@@ -186,14 +186,14 @@ function getParticipantActivityAt(participantId) {
 
 function isParticipantRecentlyActive(participantId) {
   const lastActivityAt = getParticipantActivityAt(participantId);
-  return lastActivityAt > 0 && Date.now() - lastActivityAt <= RECENT_ACTIVITY_WINDOW_MS;
+  return lastActivityAt > 0 && getTransportNow() - lastActivityAt <= RECENT_ACTIVITY_WINDOW_MS;
 }
 
 function scheduleActivityRefresh() {
   window.clearTimeout(activityRefreshTimer);
 
   let nextRefreshIn = Number.POSITIVE_INFINITY;
-  const now = Date.now();
+  const now = getTransportNow();
 
   for (const participantId of state.session.knownParticipants || []) {
     const lastActivityAt = getParticipantActivityAt(participantId);
@@ -214,7 +214,7 @@ function scheduleActivityRefresh() {
 export function markParticipantActive(participantId, participantName = "") {
   if (!participantId) return;
 
-  recentActivityByParticipantId.set(participantId, Date.now());
+  recentActivityByParticipantId.set(participantId, getTransportNow());
   if (participantName) {
     upsertParticipantRecord(participantId, { name: participantName });
   } else if (state.session.knownMembers?.has(participantId)) {
@@ -346,7 +346,10 @@ export function renderPresence() {
   renderDisplayName();
 
   const members = Array.from(state.session.knownMembers.entries())
-    .filter(([id]) => state.session.knownParticipants.has(id))
+    .filter(([id]) => {
+      if (!state.session.knownParticipants.has(id)) return false;
+      return id === state.session.clientId || isParticipantRecentlyActive(id);
+    })
     .map(([id, name]) => {
       const displayName = id === state.session.clientId
         ? `(Vos) ${name || makeGuestName(state.session.clientId)}`

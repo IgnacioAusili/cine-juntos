@@ -74,17 +74,23 @@
   max-width: 100%;
 }
 
+.session-view[data-chat-dock="right"] .chat-area > * {
+  width: var(--chat-panel-width);
+  max-width: none;
+}
+
+.session-view[data-chat-dock="right"] .chat-area > .message-form {
+  width: auto;
+}
+
 .session-view.chat-collapsed .chat-area {
   opacity: 0;
   pointer-events: none;
 }
 
 .session-view.chat-collapsed[data-chat-dock="right"] .chat-area {
-  width: 0;
   padding: 0;
   border-width: 0;
-  transform: translateX(18px) scale(0.985);
-  transform-origin: right center;
 }
 
 .session-view.chat-collapsed[data-chat-dock="bottom"] .chat-area {

@@ -99,6 +99,8 @@ export const chatState = {
   autoExpandExternalEnabled: localStorage.getItem("cine-juntos-chat-auto-expand-external") === "1",
   autoCollapseInsideTimer: null,
   autoCollapseExternalTimer: null,
+  autoOpenedInside: false,
+  autoOpenedExternal: false,
   replyTarget: null,
   replyPreviewScope: "both",
   pendingImage: [],

@@ -14,6 +14,7 @@ import {
 } from "../../core/utils.js";
 import {
   hydrateIcons,
+  hideTooltip,
   setControlIcon,
 } from "../icons-tooltips.js";
 import { sendVideoEventMessage, setInsideChatVisible } from "../chat/index.js?v=20260811-layout-motion-01";
@@ -25,7 +26,7 @@ import {
   clearPlaybackRecoveryTracking,
   pauseRoomForPlaybackIssue,
   publishState,
-} from "./player-sync-logic.js?v=20260811-sync-messages-01";
+} from "./player-sync-logic.js?v=20260815-seek-tooltip-01";
 
 import {
   showErrorDialog,
@@ -34,7 +35,7 @@ import {
   showSlowLoadDialog,
 } from "../session-ui.js";
 import { togglePageFullscreen } from "./fullscreen.js";
-import { syncMiniPlayerButton } from "./mini-player.js?v=20260813-mini-chat-reply-fix-01";
+import { syncMiniPlayerButton } from "./mini-player.js?v=20260815-seek-tooltip-01";
 
 const SKIP_LOAD_REPLACE_DIALOG_KEY = "cine-juntos-skip-load-replace-dialog";
 const VIDEO_RESUME_STORAGE_KEY = "cine-juntos-video-resume-times";
@@ -47,6 +48,8 @@ const PLAY_BUTTON_COOLDOWN_MS = 30000;
 const MIN_RESUME_PROMPT_SECONDS = 5;
 const KEYBOARD_SEEK_STEP_SECONDS = 10;
 const KEYBOARD_VOLUME_STEP = 0.05;
+const SEEK_TOOLTIP_GAP = 14;
+const SEEK_TOOLTIP_VIEWPORT_PADDING = 8;
 const VIDEO_STATUS_TOOLTIPS = Object.freeze({
   empty: "Todavía no hay un video cargado en la sala",
   loading: "El video se está cargando. Los controles se habilitarán cuando esté listo",
@@ -56,10 +59,14 @@ const VIDEO_STATUS_TOOLTIPS = Object.freeze({
 });
 let isDurationShowingRemaining = false;
 let pendingLoadCompletionAnnouncement = false;
+let seekTooltipFrame = 0;
+let seekTooltipPoint = null;
+let seekTooltipRect = null;
 
 export function initializePlayer() {
   isDurationShowingRemaining = false;
   pendingLoadCompletionAnnouncement = false;
+  hideSeekTooltip();
   clearSlowLoadPromptTracking();
   const persistedVolume = readPersistedVolume();
   if (persistedVolume !== null) {
@@ -87,6 +94,8 @@ export function wirePlayerCoreEvents() {
   dom.playerSeekInput?.addEventListener("change", () => {
     commitSeekPosition();
   });
+
+  wireSeekTooltipEvents();
 
   dom.playerDuration?.addEventListener("click", () => {
     const duration = getFiniteDuration();
@@ -540,6 +549,7 @@ function previewSeekPosition() {
   if (dom.playerCurrentTime) {
     dom.playerCurrentTime.textContent = formatSeconds(nextTime);
   }
+  updateSeekTooltipForValue(nextTime);
 }
 
 function commitSeekPosition() {
@@ -609,6 +619,7 @@ function syncPlayerControls(forceSliderSync = false) {
       dom.playerSeekInput.value = String(seekValue);
     }
     updateSeekVisuals(Number(dom.playerSeekInput.value || 0), duration, isEnded);
+    if (dom.playerSeekInput.disabled) hideSeekTooltip();
   }
 
   if (dom.playerPlayButton) {
@@ -718,6 +729,108 @@ function updateSeekVisuals(currentTime, duration, forceEnd = false) {
     ? 100
     : duration > 0 ? Math.min(100, Math.max(0, (currentTime / duration) * 100)) : 0;
   dom.playerSeekInput.style.setProperty("--player-progress", `${progress}%`);
+}
+
+function wireSeekTooltipEvents() {
+  if (!dom.playerSeekInput || !dom.tooltipLayer) return;
+
+  const handlePointerMove = (event) => {
+    if (dom.playerSeekInput.disabled) {
+      hideSeekTooltip();
+      return;
+    }
+    updateSeekTooltipFromPointer(event);
+  };
+
+  dom.playerSeekInput.addEventListener("pointerenter", handlePointerMove);
+  dom.playerSeekInput.addEventListener("pointermove", handlePointerMove);
+  dom.playerSeekInput.addEventListener("pointerdown", handlePointerMove);
+  dom.playerSeekInput.addEventListener("pointerleave", hideSeekTooltip);
+  dom.playerSeekInput.addEventListener("pointercancel", hideSeekTooltip);
+  dom.playerSeekInput.addEventListener("blur", hideSeekTooltip);
+}
+
+function updateSeekTooltipFromPointer(event) {
+  const duration = getFiniteDuration();
+  if (!dom.playerSeekInput || !dom.tooltipLayer || !hasLoadedMediaSource() || duration <= 0) {
+    hideSeekTooltip();
+    return;
+  }
+
+  const rect = dom.playerSeekInput.getBoundingClientRect();
+  if (rect.width <= 0 || rect.height <= 0) {
+    hideSeekTooltip();
+    return;
+  }
+
+  const clientX = Number.isFinite(event?.clientX)
+    ? event.clientX
+    : rect.left + rect.width / 2;
+  const ratio = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+  const nextTime = duration * ratio;
+
+  showSeekTooltip(nextTime, clientX, rect);
+}
+
+function updateSeekTooltipForValue(value) {
+  if (!seekTooltipPoint || !dom.tooltipLayer || dom.playerSeekInput?.disabled) return;
+  showSeekTooltip(value, seekTooltipPoint.x, seekTooltipRect);
+}
+
+function showSeekTooltip(value, clientX, rect) {
+  if (!dom.tooltipLayer) return;
+
+  hideTooltip();
+  seekTooltipPoint = { x: clientX };
+  seekTooltipRect = rect || null;
+  dom.tooltipLayer.textContent = formatSeconds(value);
+  dom.tooltipLayer.hidden = false;
+  dom.tooltipLayer.style.visibility = "hidden";
+  dom.tooltipLayer.style.left = "0px";
+  dom.tooltipLayer.style.top = "0px";
+  dom.tooltipLayer.dataset.placement = "top";
+
+  window.cancelAnimationFrame(seekTooltipFrame);
+  seekTooltipFrame = window.requestAnimationFrame(() => {
+    if (!dom.tooltipLayer || dom.tooltipLayer.hidden) return;
+    positionSeekTooltip();
+    dom.tooltipLayer.style.visibility = "";
+  });
+}
+
+function positionSeekTooltip() {
+  if (!dom.tooltipLayer || !seekTooltipPoint || !seekTooltipRect) return;
+
+  const tooltipRect = dom.tooltipLayer.getBoundingClientRect();
+  const maxLeft = Math.max(
+    SEEK_TOOLTIP_VIEWPORT_PADDING,
+    window.innerWidth - tooltipRect.width - SEEK_TOOLTIP_VIEWPORT_PADDING,
+  );
+  const maxTop = Math.max(SEEK_TOOLTIP_VIEWPORT_PADDING, window.innerHeight - tooltipRect.height - SEEK_TOOLTIP_VIEWPORT_PADDING);
+  const centeredLeft = seekTooltipPoint.x - tooltipRect.width / 2;
+  const left = Math.min(Math.max(centeredLeft, SEEK_TOOLTIP_VIEWPORT_PADDING), maxLeft);
+  const aboveTop = seekTooltipRect.top - tooltipRect.height - SEEK_TOOLTIP_GAP;
+  const belowTop = seekTooltipRect.bottom + SEEK_TOOLTIP_GAP;
+  const canShowAbove = aboveTop >= SEEK_TOOLTIP_VIEWPORT_PADDING;
+  const top = canShowAbove
+    ? Math.min(Math.max(aboveTop, SEEK_TOOLTIP_VIEWPORT_PADDING), maxTop)
+    : Math.min(Math.max(belowTop, SEEK_TOOLTIP_VIEWPORT_PADDING), maxTop);
+
+  dom.tooltipLayer.dataset.placement = canShowAbove ? "top" : "bottom";
+  dom.tooltipLayer.style.left = `${Math.round(left)}px`;
+  dom.tooltipLayer.style.top = `${Math.round(top)}px`;
+}
+
+function hideSeekTooltip() {
+  seekTooltipPoint = null;
+  seekTooltipRect = null;
+  window.cancelAnimationFrame(seekTooltipFrame);
+  seekTooltipFrame = 0;
+
+  if (!dom.tooltipLayer) return;
+  dom.tooltipLayer.hidden = true;
+  dom.tooltipLayer.style.visibility = "";
+  dom.tooltipLayer.removeAttribute("data-placement");
 }
 
 function getFiniteDuration() {

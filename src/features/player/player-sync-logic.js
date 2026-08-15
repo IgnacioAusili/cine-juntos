@@ -17,7 +17,7 @@ import { setSyncStatus } from "../session-ui.js";
 import { sendVideoEventMessage, renderMessage } from "../chat/index.js?v=20260811-layout-motion-01";
 // Import circular intencional y seguro: estas funciones se invocan en runtime,
 // no durante la carga del modulo, y player.js a su vez importa publishState.
-import { setVideoSource, waitForVideoMetadata } from "./player.js?v=20260811-sync-messages-01";
+import { setVideoSource, waitForVideoMetadata } from "./player.js?v=20260815-seek-tooltip-01";
 
 const PLAYBACK_ISSUE_SYNC_COOLDOWN_MS = 2200;
 const PAUSE_TO_ISSUE_GRACE_MS = 900;

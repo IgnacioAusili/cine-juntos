@@ -1,19 +1,69 @@
 .tooltip-layer {
+  --tooltip-arrow-size: 7px;
+  --tooltip-arrow-border-size: 1px;
+  --tooltip-arrow-offset: 50%;
+  --tooltip-arrow-border-color: rgba(255, 255, 255, 0.16);
+  --tooltip-arrow-fill-color: rgba(8, 10, 12, 0.97);
   position: fixed;
   z-index: 10000;
   box-sizing: border-box;
   max-width: min(320px, calc(100vw - 16px));
   border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 6px;
+  border-radius: 12px;
   background: rgba(8, 10, 12, 0.97);
-  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.34);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.38);
+  backdrop-filter: blur(10px);
   color: var(--text);
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   font-weight: 650;
   line-height: 1.25;
-  padding: 5px 7px;
+  padding: 6px 9px;
   overflow-wrap: anywhere;
   pointer-events: none;
   white-space: pre-line;
   word-break: normal;
+}
+
+.tooltip-layer::after {
+  content: "";
+  position: absolute;
+  left: var(--tooltip-arrow-offset);
+  width: 0;
+  height: 0;
+  transform: translateX(-50%);
+  border-left: var(--tooltip-arrow-size) solid transparent;
+  border-right: var(--tooltip-arrow-size) solid transparent;
+  border-top: var(--tooltip-arrow-size) solid var(--tooltip-arrow-fill-color);
+}
+
+.tooltip-layer::before {
+  content: "";
+  position: absolute;
+  left: var(--tooltip-arrow-offset);
+  width: 0;
+  height: 0;
+  transform: translateX(-50%);
+  border-left: calc(var(--tooltip-arrow-size) + var(--tooltip-arrow-border-size)) solid transparent;
+  border-right: calc(var(--tooltip-arrow-size) + var(--tooltip-arrow-border-size)) solid transparent;
+  border-top: calc(var(--tooltip-arrow-size) + var(--tooltip-arrow-border-size)) solid var(--tooltip-arrow-border-color);
+}
+
+.tooltip-layer[data-placement="top"]::before {
+  bottom: calc((var(--tooltip-arrow-size) + var(--tooltip-arrow-border-size)) * -1);
+}
+
+.tooltip-layer[data-placement="top"]::after {
+  bottom: calc(var(--tooltip-arrow-size) * -1);
+}
+
+.tooltip-layer[data-placement="bottom"]::before {
+  top: calc((var(--tooltip-arrow-size) + var(--tooltip-arrow-border-size)) * -1);
+  border-top: 0;
+  border-bottom: calc(var(--tooltip-arrow-size) + var(--tooltip-arrow-border-size)) solid var(--tooltip-arrow-border-color);
+}
+
+.tooltip-layer[data-placement="bottom"]::after {
+  top: calc(var(--tooltip-arrow-size) * -1);
+  border-top: 0;
+  border-bottom: var(--tooltip-arrow-size) solid var(--tooltip-arrow-fill-color);
 }

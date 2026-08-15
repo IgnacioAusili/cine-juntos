@@ -137,6 +137,7 @@ function showTooltip(context) {
   dom.tooltipLayer.style.visibility = "hidden";
   dom.tooltipLayer.style.left = "0px";
   dom.tooltipLayer.style.top = "0px";
+  dom.tooltipLayer.removeAttribute("data-placement");
 
   window.cancelAnimationFrame(tooltipFrame);
   tooltipFrame = window.requestAnimationFrame(() => {
@@ -155,14 +156,23 @@ function positionTooltip(anchor) {
   const left = Math.min(Math.max(rawLeft, TOOLTIP_VIEWPORT_PADDING), maxLeft);
   const candidateBelow = rect.bottom + TOOLTIP_GAP;
   const candidateAbove = rect.top - tooltipRect.height - TOOLTIP_GAP;
-  const top = candidateBelow + tooltipRect.height <= window.innerHeight - TOOLTIP_VIEWPORT_PADDING
+  const fitsBelow = candidateBelow + tooltipRect.height <= window.innerHeight - TOOLTIP_VIEWPORT_PADDING;
+  const fitsAbove = candidateAbove >= TOOLTIP_VIEWPORT_PADDING;
+  const top = fitsBelow
     ? candidateBelow
-    : candidateAbove >= TOOLTIP_VIEWPORT_PADDING
+    : fitsAbove
       ? candidateAbove
       : Math.min(Math.max(candidateBelow, TOOLTIP_VIEWPORT_PADDING), maxTop);
+  const arrowPadding = 14;
+  const arrowOffset = Math.min(
+    Math.max(rect.left + rect.width / 2 - left, arrowPadding),
+    Math.max(arrowPadding, tooltipRect.width - arrowPadding),
+  );
 
   dom.tooltipLayer.style.top = `${top}px`;
   dom.tooltipLayer.style.left = `${left}px`;
+  dom.tooltipLayer.style.setProperty("--tooltip-arrow-offset", `${Math.round(arrowOffset)}px`);
+  dom.tooltipLayer.dataset.placement = top > rect.bottom ? "bottom" : "top";
 }
 
 export function hideTooltip() {
@@ -172,4 +182,6 @@ export function hideTooltip() {
   tooltipFrame = 0;
   dom.tooltipLayer.hidden = true;
   dom.tooltipLayer.style.visibility = "";
+  dom.tooltipLayer.style.removeProperty("--tooltip-arrow-offset");
+  dom.tooltipLayer.removeAttribute("data-placement");
 }

@@ -6,8 +6,10 @@ import { createForeignDocumentIcon } from "./foreign-lucide-icon.js";
 const TOOLTIP_ANCHOR_SELECTOR = "button, [role='button'], a, label, summary, input, select, textarea";
 const TOOLTIP_VIEWPORT_PADDING = 8;
 const TOOLTIP_GAP = 4;
+const TOUCH_FOCUS_SUPPRESSION_MS = 500;
 
 let tooltipFrame = 0;
+let suppressFocusTooltipUntil = 0;
 
 export function initializeUi() {
   hydrateIcons();
@@ -48,6 +50,7 @@ export function wireTooltipEvents() {
   if (!dom.tooltipLayer) return;
 
   document.addEventListener("pointerover", (event) => {
+    if (event.pointerType !== "mouse") return;
     const context = getTooltipContext(event.target);
     if (context) showTooltip(context);
   });
@@ -68,12 +71,26 @@ export function wireTooltipEvents() {
     const context = getTooltipContext(event.target);
     if (!context) return;
     if (event.pointerType === "mouse" && window.matchMedia("(hover: hover)").matches) return;
+    if (event.pointerType !== "mouse") suppressFocusTooltipUntil = performance.now() + TOUCH_FOCUS_SUPPRESSION_MS;
     showTooltip(context);
     window.clearTimeout(state.ui.tooltipPressTimer);
     state.ui.tooltipPressTimer = window.setTimeout(hideTooltip, 2200);
   });
 
+  document.addEventListener("pointerup", (event) => {
+    if (event.pointerType === "mouse") return;
+    suppressFocusTooltipUntil = performance.now() + TOUCH_FOCUS_SUPPRESSION_MS;
+    hideTooltip();
+  });
+
+  document.addEventListener("pointercancel", (event) => {
+    if (event.pointerType === "mouse") return;
+    suppressFocusTooltipUntil = performance.now() + TOUCH_FOCUS_SUPPRESSION_MS;
+    hideTooltip();
+  });
+
   document.addEventListener("focusin", (event) => {
+    if (performance.now() < suppressFocusTooltipUntil) return;
     const context = getTooltipContext(event.target);
     if (context) showTooltip(context);
   });

@@ -90,7 +90,7 @@
   .lobby-description {
     grid-area: description;
     justify-self: center;
-    width: min(38ch, 100%);
+    width: min(42ch, calc(100% + 8px));
     max-width: none;
     font-size: 0.95rem;
     line-height: 1.55;
@@ -124,19 +124,25 @@
     overflow: visible;
     text-overflow: clip;
     white-space: normal;
+    transform: translateX(8px);
   }
 
   .lobby-features {
     grid-area: features;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    width: 100%;
-    gap: 8px;
-    margin-top: 10px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.1fr);
+    width: calc(100% + 16px);
+    margin-inline: -8px;
+    column-gap: 14px;
+    row-gap: 8px;
+    margin-top: 18px;
+    transform: translateY(10px);
     padding-top: 12px;
+    justify-items: center;
   }
 
   .lobby-feature {
     min-width: 0;
+    width: 100%;
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
@@ -160,6 +166,8 @@
   }
 
   .lobby-feature-text {
+    min-width: 0;
+    flex: 1 1 auto;
     align-items: flex-start;
     text-align: left;
     gap: 0;
@@ -187,10 +195,25 @@
   }
 
   .lobby-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
     width: min(380px, calc(100% - 28px));
     align-self: start;
     margin-top: 28px;
-    padding-bottom: 12px;
+  }
+
+  .lobby-about-button {
+    position: static;
+    flex: 0 0 36px;
+    margin: 0;
+    transform: translateX(14px);
+  }
+
+  .lobby-about-button:hover,
+  .lobby-about-button:focus-visible {
+    transform: translate(14px, -2px);
   }
 
   /* La toolbar es absoluta sobre el video y en una pantalla angosta crece a
@@ -198,6 +221,17 @@
   body:not(.is-lobby) .session-view .workspace {
     margin-top: var(--session-toolbar-height);
     scroll-margin-top: var(--session-toolbar-height);
+  }
+
+  /* El header conserva el gutter lateral; video y chat ocupan todo el ancho
+     disponible y llegan hasta el borde inferior de la pantalla. */
+  body:not(.is-lobby) .app-shell {
+    padding-bottom: 0;
+  }
+
+  body:not(.is-lobby) .session-view {
+    width: calc(100% + (var(--app-shell-gutter) * 2));
+    margin-inline: calc(var(--app-shell-gutter) * -1);
   }
 
   body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .workspace {
@@ -247,7 +281,8 @@
   }
 
   .lobby-features {
-    gap: 6px;
+    column-gap: 10px;
+    row-gap: 6px;
     margin-top: 10px;
   }
 

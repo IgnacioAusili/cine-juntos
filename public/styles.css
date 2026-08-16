@@ -2,7 +2,7 @@
 @import url("./styles/base.css");
 @import url("./styles/layout.css?v=20260816-anim-smooth-07");
 @import url("./styles/components.css?v=20260816-anim-fix-space-06");
-@import url("./styles/lobby.css");
+@import url("./styles/lobby.css?v=20260816-about-corner-02");
 @import url("./styles/player.css?v=20260810-player-fixes-01");
 @import url("./styles/chat.css?v=20260812-overlay-panel-contrast-01");
 @import url("./styles/chat-overlay.css?v=20260812-overlay-composer-stability-02");

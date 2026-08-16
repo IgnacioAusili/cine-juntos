@@ -78,15 +78,9 @@
   max-width: none;
 }
 
-/* Durante la transicion el ancho del form puede verse afectado por el
-   clip. Lo mantenemos fijo para que no haya salto al terminar. */
 .session-view[data-chat-dock="right"] .chat-area > .message-form {
-  width: auto;
-}
-
-.session-view.chat-layout-transitioning[data-chat-dock="right"] .chat-area > .message-form {
-  width: calc(var(--chat-panel-width) - 37px) !important;
-  max-width: none;
+  width: calc(var(--chat-panel-width) - 36px);
+  right: auto;
 }
 
 .session-view.chat-collapsed .chat-area {

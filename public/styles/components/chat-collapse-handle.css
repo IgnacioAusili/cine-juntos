@@ -97,7 +97,6 @@
   height: 100%;
   min-width: 0;
   transform: none;
-  transition: right 400ms ease-in-out;
 }
 
 .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-icon-anchor {

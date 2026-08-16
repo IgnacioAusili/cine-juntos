@@ -76,17 +76,15 @@
   min-width: 0;
 }
 
-/* Al COLAPSAR: opacity fade en 160ms, luego flex-basis empieza exactamente
-   cuando opacity llega a 0 (delay=160ms). El header nunca es visible
-   mientras el panel se esta moviendo: cero desplazamiento perceptible. */
+/* Dock lateral: animar flex-basis y opacity limpiamente.
+   El contenido interno conserva su ancho fijo (--chat-panel-width) y su padding
+   constante, evitando saltos en el header y reflows durante la animación. */
 .session-view[data-chat-dock="right"] .chat-area {
   flex: 0 0 var(--chat-panel-width);
   width: var(--chat-panel-width);
   transition:
-    opacity 160ms ease,
-    flex-basis 280ms cubic-bezier(0.22, 1, 0.36, 1) 160ms,
-    padding 1ms ease 155ms,
-    border-width 1ms ease 155ms;
+    flex-basis 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 200ms ease;
 }
 
 .session-view[data-chat-dock="bottom"] .workspace {
@@ -129,16 +127,18 @@
     filter 220ms ease;
 }
 
-/* Al EXPANDIR: flex-basis abre en 280ms, opacity arranca exactamente cuando
-   flex-basis termina (delay=280ms). El header nunca se ve mientras el
-   panel se esta abriendo: aparece cuando ya tiene su espacio completo. */
+.session-view.chat-collapsed[data-chat-dock="right"] .workspace {
+  column-gap: 0;
+}
+
 .session-view.chat-collapsed[data-chat-dock="right"] .chat-area {
   flex-basis: 0;
-  padding: 0;
-  border-width: 0;
+  width: 0;
+  opacity: 0;
+  pointer-events: none;
   transition:
-    flex-basis 280ms cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 180ms ease 280ms;
+    flex-basis 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 200ms ease;
 }
 
 /* Al cerrar el chat, el reproductor recupera sus dos esquinas derechas.

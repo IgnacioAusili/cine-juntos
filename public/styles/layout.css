@@ -1,4 +1,4 @@
 @import url("./layout/app-shell.css");
-@import url("./layout/session-layout.css?v=20260816-anim-no-reflow-04");
-@import url("./layout/panels.css?v=20260816-anim-no-reflow-02");
-@import url("./layout/form-layout.css?v=20260816-anim-no-reflow-01");
+@import url("./layout/session-layout.css?v=20260816-anim-fix-header-05");
+@import url("./layout/panels.css?v=20260816-anim-fix-header-05");
+@import url("./layout/form-layout.css?v=20260816-anim-fix-header-05");

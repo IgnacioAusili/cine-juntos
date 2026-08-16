@@ -78,14 +78,16 @@
 
 /* Al COLAPSAR (origen=expandido): esta transicion se activa cuando se
    agrega .chat-collapsed. Primero fade del contenido (160ms), luego
-   colapso del layout con 80ms de delay — el contenido ya es invisible
-   antes de que el panel se mueva fisicamente. */
+   colapso del layout con 80ms de delay. padding y border-width cambian
+   en 1ms pero con 150ms de delay: cuando opacity ya es ~0, invisible. */
 .session-view[data-chat-dock="right"] .chat-area {
   flex: 0 0 var(--chat-panel-width);
   width: var(--chat-panel-width);
   transition:
     opacity 160ms ease,
-    flex-basis 320ms cubic-bezier(0.22, 1, 0.36, 1) 80ms;
+    flex-basis 320ms cubic-bezier(0.22, 1, 0.36, 1) 80ms,
+    padding 1ms ease 150ms,
+    border-width 1ms ease 150ms;
 }
 
 .session-view[data-chat-dock="bottom"] .workspace {
@@ -129,11 +131,13 @@
 }
 
 /* Al EXPANDIR (origen=colapsado): esta transicion se activa cuando se
-   remueve .chat-collapsed. Primero el panel abre su espacio (320ms),
-   luego el contenido aparece con delay — nunca se ve contenido
-   desplazandose antes de que el panel tenga espacio. */
+   remueve .chat-collapsed. padding y border-width vuelven a sus valores
+   instantaneamente al inicio (opacity=0 hasta 260ms, no se ve el cambio).
+   Luego el panel abre su espacio (320ms) y el contenido aparece con delay. */
 .session-view.chat-collapsed[data-chat-dock="right"] .chat-area {
   flex-basis: 0;
+  padding: 0;
+  border-width: 0;
   transition:
     flex-basis 320ms cubic-bezier(0.22, 1, 0.36, 1),
     opacity 200ms ease 260ms;

@@ -10,6 +10,8 @@ import {
 } from "../core/state.js";
 import {
   MAX_ROOM_PARTICIPANTS,
+  ROOM_CREATE_ATTEMPT_LIMIT,
+  ROOM_CREATE_ATTEMPT_WINDOW_MS,
   generateRoomCode,
   normalizeRoomCode,
 } from "../core/utils.js";
@@ -39,6 +41,7 @@ import {
 const ACTIVE_TAB_KEY = "cine-juntos-active-tab";
 const ACTIVE_TAB_TTL_MS = 30000;
 const MAX_OPEN_TABS = 1;
+const ROOM_CREATE_ATTEMPTS_KEY = "cine-juntos-room-create-attempts";
 let inviteCopyFeedbackTimer = 0;
 
 function getTabId() {
@@ -155,6 +158,23 @@ function syncJoinRoomButtonState() {
   dom.joinRoomButton.disabled = !sanitizeRoomInput(dom.roomInput.value);
 }
 
+function consumeRoomCreationAttempt() {
+  const now = Date.now();
+  let attempts = [];
+  try {
+    attempts = JSON.parse(localStorage.getItem(ROOM_CREATE_ATTEMPTS_KEY) || "[]");
+  } catch {
+    attempts = [];
+  }
+  attempts = Array.isArray(attempts)
+    ? attempts.filter((timestamp) => Number.isFinite(timestamp) && now - timestamp < ROOM_CREATE_ATTEMPT_WINDOW_MS)
+    : [];
+  if (attempts.length >= ROOM_CREATE_ATTEMPT_LIMIT) return false;
+  attempts.push(now);
+  localStorage.setItem(ROOM_CREATE_ATTEMPTS_KEY, JSON.stringify(attempts));
+  return true;
+}
+
 function shouldEnforceSingleActiveTabLimit() {
   const hostname = window.location.hostname;
   if (window.location.protocol === "file:") return false;
@@ -191,6 +211,11 @@ export function wireRoomEvents() {
   });
 
   dom.createRoomButton.addEventListener("click", () => {
+    if (!consumeRoomCreationAttempt()) {
+      setSyncStatus("Alcanzaste el límite temporal de creación de salas. Intentá de nuevo en un minuto.");
+      logEvent("room", "Creación bloqueada por límite temporal de intentos.");
+      return;
+    }
     const roomCode = sanitizeRoomInput(dom.roomInput.value) || generateRoomCode();
     dom.roomInput.value = roomCode;
     rememberLastRoom(roomCode);

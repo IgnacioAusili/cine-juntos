@@ -19,6 +19,112 @@
   background: linear-gradient(180deg, rgba(22, 27, 31, 0.98), rgba(10, 14, 17, 0.98));
 }
 
+.about-dialog {
+  width: min(520px, calc(100% - 32px));
+  max-width: 520px;
+  padding: 0;
+  border: 1px solid var(--glass-border-strong);
+  border-radius: 16px;
+  background: linear-gradient(145deg, rgba(27, 31, 35, 0.98), rgba(11, 15, 18, 0.98));
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.58), 0 0 36px rgba(240, 140, 58, 0.1);
+}
+
+.about-dialog-card {
+  position: relative;
+  padding: 28px 30px 26px;
+}
+
+.about-dialog-header {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding-right: 26px;
+}
+
+.about-dialog-icon {
+  display: inline-flex;
+  color: var(--amber);
+}
+
+.about-dialog-icon svg {
+  width: 27px;
+  height: 27px;
+  transform: rotate(180deg);
+}
+
+.about-dialog-eyebrow {
+  margin: 0 0 2px;
+  color: var(--amber);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.about-dialog h2 {
+  margin: 0;
+  color: var(--text);
+  font-size: 1.3rem;
+}
+
+.about-dialog-intro {
+  margin: 20px 0 18px;
+  color: var(--text-soft);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.about-dialog-details {
+  display: grid;
+  gap: 13px;
+  margin: 0;
+}
+
+.about-dialog-details > div {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  gap: 12px;
+  padding-bottom: 11px;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.about-dialog-details dt {
+  color: var(--muted-2);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.about-dialog-details dd {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.about-dialog a {
+  color: var(--teal);
+  text-decoration: none;
+}
+
+.about-dialog a:hover,
+.about-dialog a:focus-visible {
+  color: #b7fff3;
+  text-decoration: underline;
+}
+
+.about-dialog-disclaimer {
+  margin: 18px 0 0;
+  color: var(--muted-2);
+  font-size: 0.76rem;
+  line-height: 1.5;
+}
+
+.about-dialog-disclaimer strong {
+  color: var(--text-soft);
+}
+
 .player-dialog {
   max-width: none;
   width: calc(100% - 32px);

@@ -460,6 +460,44 @@
   color: var(--amber);
 }
 
+/* ===== Acceso a información del proyecto ===== */
+.lobby-about-button {
+  position: fixed;
+  right: clamp(16px, 2.5vw, 34px);
+  bottom: clamp(16px, 3vh, 30px);
+  z-index: 8;
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border: 1px solid rgba(240, 140, 58, 0.42);
+  border-radius: 999px;
+  background: rgba(20, 24, 28, 0.82);
+  color: var(--amber);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28), 0 0 18px rgba(240, 140, 58, 0.12);
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+}
+
+.lobby-about-button:hover,
+.lobby-about-button:focus-visible {
+  border-color: var(--amber);
+  background: rgba(240, 140, 58, 0.16);
+  transform: translateY(-2px);
+}
+
+.lobby-about-button svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2;
+  transform: rotate(180deg);
+}
+
+body:not(.is-lobby) .lobby-about-button {
+  display: none;
+}
+
 /* ===== Live badge del topbar (heredado de iteracion previa) ===== */
 .live-badge {
   display: inline-flex;

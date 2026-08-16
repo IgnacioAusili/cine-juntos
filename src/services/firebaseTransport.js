@@ -1,4 +1,4 @@
-import { FIREBASE_VERSION, MAX_ROOM_PARTICIPANTS } from "../core/utils.js";
+import { FIREBASE_VERSION, MAX_ROOM_PARTICIPANTS, STALE_MEMBER_TIMEOUT_MS } from "../core/utils.js";
 import { state, makeMemberPayload, logEvent } from "../core/state.js";
 
 export async function createFirebaseTransport(roomCode, config) {
@@ -83,14 +83,30 @@ export async function createFirebaseTransport(roomCode, config) {
       unsubscribers.push(
         dbModule.onValue(membersRef, (snapshot) => {
           const val = snapshot.val() || {};
-          const membersList = Object.keys(val);
+          const now = Date.now() + serverTimeOffset;
+          const activeMembers = {};
+          const staleMemberIds = [];
+
+          Object.entries(val).forEach(([memberId, member]) => {
+            if (Number.isFinite(member?.lastSeenAt) && now - member.lastSeenAt >= STALE_MEMBER_TIMEOUT_MS) {
+              staleMemberIds.push(memberId);
+              return;
+            }
+            activeMembers[memberId] = member;
+          });
+
+          staleMemberIds.forEach((memberId) => {
+            dbModule.remove(dbModule.ref(db, `${roomPath}/members/${memberId}`)).catch(() => {});
+          });
+
+          const membersList = Object.keys(activeMembers);
 
           if (!snapshot.exists() || membersList.length === 0) {
             logEvent("firebase", "Sala vacia detectada. Limpiando datos residuales.");
             dbModule.remove(roomRef).catch(() => {});
           }
 
-          handlers.onMembers?.(val);
+          handlers.onMembers?.(activeMembers);
         }),
       );
 

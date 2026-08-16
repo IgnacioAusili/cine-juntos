@@ -167,6 +167,9 @@ export const HARD_DRIFT_SECONDS = 1.8;
 export const PLAYBACK_ERROR_CONFIRMATION_MS = 900;
 export const SEND_THROTTLE_MS = 650;
 export const MAX_CHARS = 300;
+export const ROOM_CREATE_ATTEMPT_LIMIT = 5;
+export const ROOM_CREATE_ATTEMPT_WINDOW_MS = 60 * 1000;
+export const STALE_MEMBER_TIMEOUT_MS = 35 * 1000;
 
 export function hasFirebaseConfig(config) {
   return Boolean(config.apiKey && config.authDomain && config.databaseURL && config.projectId && config.appId);

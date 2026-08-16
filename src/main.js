@@ -25,6 +25,7 @@ import {
 } from "./features/presence.js?v=20260811-name-validation-01";
 import {
   showLobby,
+  initializeAboutDialog,
 } from "./features/session-ui.js";
 import {
   buildEmojiPicker,
@@ -56,6 +57,7 @@ document.body.classList.remove("app-ready");
 applyInitialDefaults();
 wireLayoutMetrics();
 initializeUi();
+initializeAboutDialog();
 renderPresence();
 wireRoomEvents();
 wireIdentityEvents();

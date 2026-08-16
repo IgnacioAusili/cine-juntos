@@ -16,7 +16,6 @@
   box-shadow: var(--shadow-lg);
   backdrop-filter: blur(16px);
   transition:
-    padding 160ms ease,
     opacity 220ms ease,
     transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
   overflow-x: hidden;
@@ -79,6 +78,8 @@
   max-width: none;
 }
 
+/* Durante la transicion el ancho del form puede verse afectado por el
+   clip. Lo mantenemos fijo para que no haya salto al terminar. */
 .session-view[data-chat-dock="right"] .chat-area > .message-form {
   width: auto;
 }

@@ -427,7 +427,7 @@
 
 /* ===== Información legal inferior ===== */
 .lobby-footer {
-  overflow: hidden;
+  overflow: visible;
   width: min(980px, calc(100% - 40px));
   margin-top: 14px;
   padding: 4px 16px;
@@ -463,8 +463,8 @@
 /* ===== Acceso a información del proyecto ===== */
 .lobby-about-button {
   position: fixed;
-  right: clamp(16px, 2.5vw, 34px);
-  bottom: clamp(16px, 3vh, 30px);
+  right: 8px;
+  bottom: 8px;
   z-index: 8;
   display: grid;
   width: 36px;
@@ -586,6 +586,10 @@ body:not(.is-lobby) .live-badge {
   }
 
   .lobby-footer {
+    transform: none;
+  }
+
+  .lobby-footer .lobby-disclaimer {
     transform: translateY(18px);
   }
 }
@@ -620,6 +624,7 @@ body:not(.is-lobby) .live-badge {
     width: min(440px, calc(100% - 32px));
     padding: 4px 8px;
   }
+
 }
 
 @media (max-width: 480px) {

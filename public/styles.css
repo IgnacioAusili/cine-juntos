@@ -1,6 +1,6 @@
 @import url("./styles/tokens.css");
 @import url("./styles/base.css");
-@import url("./styles/layout.css");
+@import url("./styles/layout.css?v=20260816-anim-smooth-07");
 @import url("./styles/components.css?v=20260816-anim-fix-space-06");
 @import url("./styles/lobby.css");
 @import url("./styles/player.css?v=20260810-player-fixes-01");

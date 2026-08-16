@@ -14,7 +14,7 @@
   gap: 6px;
   grid-template-columns: auto minmax(0, 1fr) auto;
   width: 100%;
-  padding: 0px 8px 0px 8px;
+  padding: 8px 8px 0px 8px;
 }
 
 /* Aisla el layout del header del reflow del panel durante la animacion

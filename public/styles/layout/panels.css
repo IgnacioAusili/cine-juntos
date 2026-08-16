@@ -94,10 +94,7 @@
   pointer-events: none;
 }
 
-.session-view.chat-collapsed[data-chat-dock="right"] .chat-area {
-  padding: 0;
-  border-width: 0;
-}
+
 
 .session-view.chat-collapsed[data-chat-dock="bottom"] .chat-area {
   height: 0;

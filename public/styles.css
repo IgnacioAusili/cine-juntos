@@ -1,7 +1,7 @@
 @import url("./styles/tokens.css");
 @import url("./styles/base.css");
 @import url("./styles/layout.css");
-@import url("./styles/components.css?v=20260808-buttons-spinner-02");
+@import url("./styles/components.css?v=20260816-anim-no-reflow-02");
 @import url("./styles/lobby.css");
 @import url("./styles/player.css?v=20260810-player-fixes-01");
 @import url("./styles/chat.css?v=20260812-overlay-panel-contrast-01");

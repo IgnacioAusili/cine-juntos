@@ -239,6 +239,14 @@ export function revealBottomDockUnion(behavior = "smooth") {
   window.requestAnimationFrame(syncExternalChatCollapseHandleOffset);
 }
 
+export function scrollToVideoPosition(behavior = "smooth") {
+  if (!dom.sessionView || dom.sessionView.hidden) return;
+
+  lockChatScrollSnapDuringProgrammaticScroll();
+  const targetTop = getBottomToRightScrollTop();
+  scrollPageTo(targetTop, behavior);
+}
+
 function scheduleMessageTimeAdjustmentAfterLayout() {
   if (layoutAdjustmentTimer) {
     window.clearTimeout(layoutAdjustmentTimer);

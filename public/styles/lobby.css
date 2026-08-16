@@ -103,37 +103,10 @@
   z-index: 1;
 }
 
+/* ===== HERO (izquierda) ===== */
 .lobby-hero {
   justify-self: center;
   align-self: center;
-  width: min(760px, 100%);
-  max-width: 760px;
-}
-
-.lobby-description {
-  max-width: 68ch;
-}
-
-.lobby-features {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px 20px;
-  width: min(680px, 100%);
-  margin-top: 12px;
-}
-
-.lobby-feature {
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-}
-
-.lobby-ticket {
-  justify-self: center;
-  transform: none;
-}
-
-/* ===== HERO (izquierda) ===== */
-.lobby-hero {
   display: grid;
   justify-items: start;
   grid-template-columns: auto minmax(0, 1fr);
@@ -144,8 +117,8 @@
   align-items: center;
   column-gap: 28px;
   row-gap: 14px;
-  width: 100%;
-  max-width: none;
+  width: min(760px, 100%);
+  max-width: 760px;
 }
 
 /* Titulo tipografico dramatico */
@@ -211,17 +184,37 @@
 .lobby-features {
   grid-area: features;
   display: grid;
-  gap: 8px;
-  margin: 2px 0 0;
-  padding: 0;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px 20px;
+  width: 100%;
+  margin: 14px 0 0;
+  padding: 16px 0 0;
   list-style: none;
+  position: relative;
+}
+
+/* Línea decorativa separadora horizontal arriba de las 3 opciones */
+.lobby-features::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    rgba(240, 140, 58, 0.45) 0%,
+    var(--glass-border-strong) 35%,
+    var(--glass-border) 75%,
+    transparent 100%
+  );
 }
 
 .lobby-feature {
-  justify-self: center;
   display: flex;
+  flex-direction: row;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .lobby-feature-icon {
@@ -241,16 +234,16 @@
 }
 
 .lobby-feature-icon svg {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
 }
 
 .lobby-feature-text {
   display: flex;
   flex-direction: column;
-  gap: 1px;
-  align-items: center;
-  text-align: center;
+  gap: 2px;
+  align-items: flex-start;
+  text-align: left;
 }
 
 .lobby-feature-text strong {
@@ -270,7 +263,7 @@
 .lobby-ticket {
   position: relative;
   display: grid;
-  grid-template-columns: 28px 1fr;
+  grid-template-columns: 36px 1fr;
   width: min(404px, 100%);
   justify-self: end;
   overflow: hidden;
@@ -310,39 +303,42 @@
   display: grid;
   align-content: space-between;
   padding: 14px 0;
-  border-right: 1px dashed var(--glass-border-strong);
+  border-right: 0;
   background:
     repeating-linear-gradient(
       45deg,
-      rgba(240, 140, 58, 0.16) 0 6px,
+      rgba(240, 140, 58, 0.38) 0 6px,
       transparent 6px 12px
     ),
-    rgba(7, 9, 11, 0.35);
+    rgba(14, 16, 20, 0.45);
   color: var(--amber);
   text-align: center;
   writing-mode: vertical-rl;
   transform: rotate(180deg);
 }
 
-.lobby-ticket-no {
-  font-size: 0.66rem;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-}
-
-.lobby-ticket-id {
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.3em;
-}
-
 /* Cuerpo principal del boleto */
 .lobby-ticket-body {
-  position: relative;
   z-index: 1;
   display: grid;
   gap: 14px;
   padding: 18px 18px 16px;
+}
+
+/* Perforacion del ticket: el mismo corte circular que en escritorio. */
+.lobby-ticket-perforation {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: 36px;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: var(--bg);
+  box-shadow:
+    inset 0 0 0 1px var(--glass-border),
+    inset 0 1px 2px rgba(0, 0, 0, 0.5);
+  transform: translate(-50%, -50%);
 }
 
 .lobby-ticket-head {
@@ -429,27 +425,11 @@
   gap: 4px;
 }
 
-/* Perforacion del ticket: muesca semicircular a la izquierda */
-.lobby-ticket-perforation {
-  position: absolute;
-  z-index: 2;
-  top: 50%;
-  left: 28px;
-  width: 14px;
-  height: 14px;
-  border-radius: 999px;
-  background: var(--bg);
-  box-shadow:
-    inset 0 0 0 1px var(--glass-border),
-    inset 0 1px 2px rgba(0, 0, 0, 0.5);
-  transform: translate(-50%, -50%);
-}
-
 /* ===== Información legal inferior ===== */
 .lobby-footer {
   overflow: hidden;
   width: min(980px, calc(100% - 40px));
-  margin-top: 2px;
+  margin-top: 14px;
   padding: 4px 16px;
 }
 
@@ -550,6 +530,28 @@ body:not(.is-lobby) .live-badge {
   }
 }
 
+@media (min-width: 981px) {
+  .lobby-title {
+    transform: translateY(-16px);
+  }
+
+  .lobby-title-icon {
+    transform: translateY(-16px);
+  }
+
+  .lobby-description {
+    transform: translateY(-8px);
+  }
+
+  .lobby-features {
+    transform: translateY(6px);
+  }
+
+  .lobby-footer {
+    transform: translateY(18px);
+  }
+}
+
 @media (max-width: 680px) {
   .lobby-title {
     font-size: clamp(2.85rem, 12vw, 4.2rem);
@@ -587,16 +589,49 @@ body:not(.is-lobby) .live-badge {
     gap: 26px;
   }
 
-  /* En muy angosto, ocultamos el stub rayado para ganar espacio */
+  /* En movil el stub pasa arriba del cuerpo, como una solapa horizontal. */
   .lobby-ticket {
     grid-template-columns: 1fr;
+    grid-template-rows: 36px auto;
+    border-top-color: var(--glass-border-strong);
   }
 
   .lobby-ticket-stub {
-    display: none;
+    grid-column: 1;
+    grid-row: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 36px;
+    padding: 8px 14px;
+    border-right: 0;
+    border-bottom: 0;
+    writing-mode: horizontal-tb;
+    transform: none;
+  }
+
+  .lobby-ticket-body {
+    grid-column: 1;
+    grid-row: 2;
   }
 
   .lobby-ticket-perforation {
-    display: none;
+    top: 36px;
+    left: 50%;
+    width: 14px;
+    height: 14px;
+    box-shadow: none;
+    transform: translate(-50%, -50%);
+  }
+
+  .lobby-ticket::after {
+    /* Conserva solo la iluminacion del boleto; la perforacion es independiente. */
+    inset: 0;
+    left: 0;
+    width: auto;
+    height: auto;
+    border-radius: inherit;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), transparent 16%);
+    transform: none;
   }
 }

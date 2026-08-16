@@ -35,7 +35,6 @@
   .lobby-screen {
     min-height: 0;
     gap: 0;
-    padding: 0 0 clamp(10px, 2vh, 18px);
     grid-template-rows: auto auto auto;
     align-content: start;
   }
@@ -46,7 +45,7 @@
 
   .lobby-grid {
     width: 100%;
-    gap: clamp(20px, 4vh, 30px);
+    gap: clamp(28px, 5vh, 38px);
     padding-inline: 0;
   }
 
@@ -90,19 +89,29 @@
 
   .lobby-description {
     grid-area: description;
-    max-width: 34ch;
+    justify-self: center;
+    width: min(38ch, 100%);
+    max-width: none;
     font-size: 0.95rem;
     line-height: 1.55;
+    text-align: center;
     text-wrap: balance;
+  }
+
+  .lobby-description-full {
+    display: none;
   }
 
   .lobby-description-full,
   .lobby-disclaimer-full {
-    display: none;
+    display: inline;
   }
 
   .lobby-description-mobile,
-  .lobby-disclaimer-mobile,
+  .lobby-disclaimer-mobile {
+    display: none;
+  }
+
   .lobby-feature-description-mobile {
     display: inline;
   }
@@ -111,29 +120,38 @@
     display: none;
   }
 
+  .lobby-disclaimer {
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+  }
+
   .lobby-features {
     grid-area: features;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     width: 100%;
     gap: 8px;
     margin-top: 10px;
+    padding-top: 12px;
   }
 
   .lobby-feature {
     min-width: 0;
-    flex-direction: column;
+    flex-direction: row;
+    align-items: center;
     justify-content: flex-start;
-    gap: 7px;
-    padding: 0 4px;
+    gap: 6px;
+    padding: 0 2px;
     border: 0;
     border-radius: 0;
     background: transparent;
-    text-align: center;
+    text-align: left;
   }
 
   .lobby-feature-icon {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
+    flex: 0 0 auto;
   }
 
   .lobby-feature-icon svg {
@@ -142,7 +160,8 @@
   }
 
   .lobby-feature-text {
-    align-items: center;
+    align-items: flex-start;
+    text-align: left;
     gap: 0;
   }
 
@@ -157,20 +176,21 @@
     color: var(--muted-2);
     font-size: 0.62rem;
     line-height: 1.25;
-    text-align: center;
+    text-align: left;
   }
 
   .lobby-ticket {
     width: min(380px, 100%);
     justify-self: center;
+    margin-top: 8px;
     transform: none;
   }
 
   .lobby-footer {
     width: min(380px, calc(100% - 28px));
     align-self: start;
-    margin-top: 4px;
-    padding-bottom: 8px;
+    margin-top: 28px;
+    padding-bottom: 12px;
   }
 
   /* La toolbar es absoluta sobre el video y en una pantalla angosta crece a
@@ -202,7 +222,7 @@
   }
 
   .lobby-grid {
-    gap: clamp(14px, 2.6vh, 22px);
+    gap: clamp(20px, 3.2vh, 28px);
   }
 
   .lobby-hero {

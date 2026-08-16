@@ -2,7 +2,7 @@
 @import url("./components/room-chip.css");
 @import url("./components/host-badge.css");
 @import url("./components/buttons.css?v=20260808-buttons-spinner-02");
-@import url("./components/chat-collapse-handle.css");
+@import url("./components/chat-collapse-handle.css?v=20260816-anim-no-reflow-02");
 @import url("./components/chat-auto-switch.css");
 @import url("./components/presence.css");
 @import url("./components/icon-fallbacks.css");

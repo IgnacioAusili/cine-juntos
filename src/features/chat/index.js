@@ -154,6 +154,7 @@ export {
 } from "./message-menu.js";
 export {
   getPersistedInsideChatStyle,
+  scrollToVideoPosition,
   setChatDock,
   setExternalChatAutoExpandEnabled,
   setExternalChatCollapsed,

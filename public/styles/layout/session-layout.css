@@ -54,19 +54,7 @@
   will-change: transform;
 }
 
-/* Al cerrar el lateral se conserva brevemente su caja original para que el
-   contenido se desvanezca completo, en vez de comprimirse y reenvolverse. */
-.session-view.chat-layout-visual-motion.chat-collapsed[data-chat-dock="right"] .chat-area {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: var(--chat-panel-width);
-  height: 100%;
-  box-sizing: border-box;
-  padding: 8px 0 0;
-  border-width: 1px;
-  border-left-width: 0;
-}
+
 
 /* El desenfoque de vidrio se vuelve muy costoso mientras cambia el ancho de
    la grilla. Durante ese movimiento el fondo opaco conserva la lectura del
@@ -88,15 +76,16 @@
   min-width: 0;
 }
 
+/* Dock lateral: animar flex-basis, width y opacity coordinados.
+   El contenido interno conserva su ancho fijo (--chat-panel-width) y su padding
+   constante, evitando saltos en el header y reflows durante la animación. */
 .session-view[data-chat-dock="right"] .chat-area {
   flex: 0 0 var(--chat-panel-width);
   width: var(--chat-panel-width);
   transition:
-    flex-basis 400ms ease-in-out,
-    width 400ms ease-in-out,
-    opacity 400ms ease-in-out,
-    padding 400ms ease-in-out,
-    border-width 400ms ease-in-out;
+    flex-basis 350ms cubic-bezier(0.22, 1, 0.36, 1),
+    width 350ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 250ms ease;
 }
 
 .session-view[data-chat-dock="bottom"] .workspace {
@@ -145,6 +134,14 @@
 
 .session-view.chat-collapsed[data-chat-dock="right"] .chat-area {
   flex-basis: 0;
+  width: 0;
+  min-width: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    flex-basis 350ms cubic-bezier(0.22, 1, 0.36, 1),
+    width 350ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 250ms ease;
 }
 
 /* Al cerrar el chat, el reproductor recupera sus dos esquinas derechas.
@@ -172,10 +169,7 @@ body:not(.fullscreen-mode) .app-shell:not(:fullscreen)
   filter: none;
   transition:
     flex-basis 400ms ease-in-out,
-    width 400ms ease-in-out,
-    opacity 400ms ease-in-out,
-    padding 400ms ease-in-out,
-    border-width 400ms ease-in-out;
+    opacity 400ms ease-in-out;
 }
 
 .session-view.chat-collapsed[data-chat-dock="bottom"] .workspace {

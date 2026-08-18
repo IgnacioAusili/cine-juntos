@@ -17,7 +17,7 @@ import {
   hideTooltip,
   setControlIcon,
 } from "../icons-tooltips.js";
-import { sendVideoEventMessage, setInsideChatVisible } from "../chat/index.js?v=20260811-layout-motion-01";
+import { scrollToVideoPosition, sendVideoEventMessage, setInsideChatVisible } from "../chat/index.js?v=20260811-layout-motion-01";
 // Import circular intencional y seguro: estas funciones se invocan en runtime,
 // no durante la carga del modulo, y player-sync-logic.js a su vez importa
 // setVideoSource y waitForVideoMetadata desde aqui.
@@ -307,6 +307,7 @@ async function handleManualLoadRequest() {
   }
 
   loadVideoFromUrl(source, "manual");
+  window.requestAnimationFrame(() => scrollToVideoPosition("smooth"));
 }
 
 export function setVideoSource(source, shouldAnnounce, options = {}) {

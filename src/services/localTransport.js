@@ -1,4 +1,4 @@
-import { MAX_ROOM_PARTICIPANTS } from "../core/utils.js";
+import { MAX_ROOM_PARTICIPANTS, STALE_MEMBER_TIMEOUT_MS } from "../core/utils.js";
 import { state, getDisplayName, logEvent } from "../core/state.js";
 
 export function createLocalTransport(roomCode, firebaseError = null) {
@@ -166,7 +166,7 @@ function readLocalMembers(roomCode) {
 
     try {
       const member = JSON.parse(localStorage.getItem(key));
-      if (now - member.lastSeenAt < 35000) {
+      if (now - member.lastSeenAt < STALE_MEMBER_TIMEOUT_MS) {
         members[member.id] = member;
       }
     } catch {

@@ -227,6 +227,12 @@ video::-webkit-media-controls-fullscreen-button {
   pointer-events: auto;
 }
 
+.player-frame.player-overlay-suppressed .player-bottom-actions {
+  opacity: 0 !important;
+  transform: translateY(6px);
+  pointer-events: none;
+}
+
 .player-controls-bar {
   display: flex;
   width: 100%;

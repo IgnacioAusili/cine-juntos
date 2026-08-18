@@ -14,7 +14,14 @@
   gap: 6px;
   grid-template-columns: auto minmax(0, 1fr) auto;
   width: 100%;
-  padding: 0px 8px 0px 8px;
+  padding: 8px 8px 0px 8px;
+}
+
+/* Aisla el layout del header del reflow del panel durante la animacion
+   de colapso/expansion en el dock lateral: evita que el nombre de
+   usuario salte al cambiar el flex-basis del panel. */
+.session-view[data-chat-dock="right"] .chat-tools {
+  contain: layout;
 }
 
 /* Baja el contenido solo en la cabecera del chat acoplado abajo. */

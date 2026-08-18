@@ -96,9 +96,29 @@ let errorDialogInitialized = false;
 let confirmLoadDialogInitialized = false;
 let slowLoadDialogInitialized = false;
 let resumeVideoDialogInitialized = false;
+let aboutDialogInitialized = false;
 let pendingLoadDialogResolver = null;
 let pendingSlowLoadDialogResolver = null;
 let pendingResumeVideoDialogResolver = null;
+
+export function initializeAboutDialog() {
+  if (aboutDialogInitialized || !dom.aboutDialog || !dom.aboutButton) return;
+
+  dom.aboutButton.addEventListener("click", () => {
+    dom.aboutDialog.showModal();
+    dom.closeAboutDialogButton?.focus();
+  });
+
+  dom.closeAboutDialogButton?.addEventListener("click", () => {
+    dom.aboutDialog.close();
+  });
+
+  dom.aboutDialog.addEventListener("click", (event) => {
+    if (event.target === dom.aboutDialog) dom.aboutDialog.close();
+  });
+
+  aboutDialogInitialized = true;
+}
 
 export function showErrorDialog(message) {
   if (!dom.errorDialog) return;

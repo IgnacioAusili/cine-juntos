@@ -35,7 +35,6 @@
   .lobby-screen {
     min-height: 0;
     gap: 0;
-    padding: 0 0 clamp(10px, 2vh, 18px);
     grid-template-rows: auto auto auto;
     align-content: start;
   }
@@ -46,7 +45,7 @@
 
   .lobby-grid {
     width: 100%;
-    gap: clamp(20px, 4vh, 30px);
+    gap: clamp(28px, 5vh, 38px);
     padding-inline: 0;
   }
 
@@ -90,19 +89,29 @@
 
   .lobby-description {
     grid-area: description;
-    max-width: 34ch;
+    justify-self: center;
+    width: min(42ch, calc(100% + 8px));
+    max-width: none;
     font-size: 0.95rem;
     line-height: 1.55;
+    text-align: center;
     text-wrap: balance;
+  }
+
+  .lobby-description-full {
+    display: none;
   }
 
   .lobby-description-full,
   .lobby-disclaimer-full {
-    display: none;
+    display: inline;
   }
 
   .lobby-description-mobile,
-  .lobby-disclaimer-mobile,
+  .lobby-disclaimer-mobile {
+    display: none;
+  }
+
   .lobby-feature-description-mobile {
     display: inline;
   }
@@ -111,29 +120,44 @@
     display: none;
   }
 
+  .lobby-disclaimer {
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+    transform: translateX(8px);
+  }
+
   .lobby-features {
     grid-area: features;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    width: 100%;
-    gap: 8px;
-    margin-top: 10px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.1fr);
+    width: calc(100% + 16px);
+    margin-inline: -8px;
+    column-gap: 14px;
+    row-gap: 8px;
+    margin-top: 18px;
+    transform: translateY(10px);
+    padding-top: 12px;
+    justify-items: center;
   }
 
   .lobby-feature {
     min-width: 0;
-    flex-direction: column;
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
     justify-content: flex-start;
-    gap: 7px;
-    padding: 0 4px;
+    gap: 6px;
+    padding: 0 2px;
     border: 0;
     border-radius: 0;
     background: transparent;
-    text-align: center;
+    text-align: left;
   }
 
   .lobby-feature-icon {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
+    flex: 0 0 auto;
   }
 
   .lobby-feature-icon svg {
@@ -142,7 +166,10 @@
   }
 
   .lobby-feature-text {
-    align-items: center;
+    min-width: 0;
+    flex: 1 1 auto;
+    align-items: flex-start;
+    text-align: left;
     gap: 0;
   }
 
@@ -157,20 +184,36 @@
     color: var(--muted-2);
     font-size: 0.62rem;
     line-height: 1.25;
-    text-align: center;
+    text-align: left;
   }
 
   .lobby-ticket {
     width: min(380px, 100%);
     justify-self: center;
+    margin-top: 8px;
     transform: none;
   }
 
   .lobby-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
     width: min(380px, calc(100% - 28px));
     align-self: start;
-    margin-top: 4px;
-    padding-bottom: 8px;
+    margin-top: 28px;
+  }
+
+  .lobby-about-button {
+    position: static;
+    flex: 0 0 36px;
+    margin: 0;
+    transform: translateX(14px);
+  }
+
+  .lobby-about-button:hover,
+  .lobby-about-button:focus-visible {
+    transform: translate(14px, -2px);
   }
 
   /* La toolbar es absoluta sobre el video y en una pantalla angosta crece a
@@ -180,9 +223,170 @@
     scroll-margin-top: var(--session-toolbar-height);
   }
 
+  /* El header conserva el gutter lateral; video y chat ocupan todo el ancho
+     disponible y llegan hasta el borde inferior de la pantalla. */
+  body:not(.is-lobby) .app-shell {
+    padding-bottom: 0;
+  }
+
+  body:not(.is-lobby) .session-view {
+    width: calc(100% + (var(--app-shell-gutter) * 2));
+    margin-inline: calc(var(--app-shell-gutter) * -1);
+  }
+
   body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .workspace {
     margin-top: var(--session-toolbar-height);
     scroll-margin-top: var(--session-toolbar-height);
+    /* En móvil el video y el chat forman una única pantalla desplazable.
+       Las reglas generales del dock inferior les asignan un viewport entero
+       a cada fila, dejando solo el chat visible al llegar al final. */
+    height: var(--app-viewport-height);
+    min-height: 0;
+    padding-top: 0;
+    grid-template-rows:
+      minmax(220px, 42%)
+      minmax(0, 1fr);
+  }
+
+  /* Cuando el chat inferior está contraído, no reservar su segunda fila:
+     el reproductor debe recuperar todo el alto de la pantalla. */
+  body:not(.is-lobby) .session-view.chat-collapsed[data-chat-dock="bottom"] .workspace {
+    grid-template-rows: minmax(0, 1fr) 0;
+  }
+
+  /* La expansión del reproductor no debe arrancar con la barra de controles
+     oculta: el overlay puede estar entrando mediante el gesto de contraer. */
+  body:not(.is-lobby) .session-view.chat-layout-transitioning .player-bottom-actions {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  /* En móvil la flecha queda contenida en un botón circular más cómodo para
+     tocar, tanto al contraer como al volver a expandir el chat. */
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-collapse-hover-zone {
+    width: 44px;
+    height: 34px;
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-collapse-handle {
+    width: 32px;
+    height: 30px;
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-collapse-icon-anchor {
+    width: 26px;
+    height: 26px;
+    flex-basis: 26px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+    background: rgba(20, 24, 28, 0.9);
+    box-shadow:
+      0 4px 14px rgba(0, 0, 0, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-collapse-handle svg {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2.35px;
+  }
+
+  /* El chat inferior gana espacio útil: la cabecera se pliega al recorrer
+     mensajes y vuelve a entrar cuando el gesto va hacia arriba. */
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-tools {
+    min-height: 42px;
+    height: 42px;
+    max-height: 42px;
+    padding-top: 2px;
+    padding-bottom: 0;
+    overflow: hidden;
+    transition:
+      height 220ms ease,
+      max-height 180ms ease,
+      min-height 220ms ease,
+      transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 160ms ease,
+      padding 180ms ease;
+    transform: translateY(0);
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-area {
+    gap: 3px;
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-tools > * {
+    align-self: center;
+    transform: none;
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-name-field {
+    justify-self: center;
+    transform: translateX(-8px);
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-name-field .label-row {
+    transform: translate(-4px, -1px);
+  }
+
+  body:not(.is-lobby) .session-view.chat-header-collapsed[data-chat-dock="bottom"] .chat-tools {
+    height: 0;
+    min-height: 0;
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-100%);
+  }
+
+  body:not(.is-lobby) .session-view.chat-header-collapsed[data-chat-dock="bottom"] .chat-area {
+    gap: 3px;
+    grid-template-rows: 0 minmax(0, 1fr);
+  }
+
+  /* La flecha de contraer queda apenas por encima de la unión video/chat;
+     la de expandir conserva su anclaje propio cuando el chat está cerrado. */
+  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"] .chat-collapse-hover-zone {
+    transform: translate(-50%, calc(-50% - 5px));
+  }
+
+  /* Compactar el estado del reproductor libera espacio visual en pantallas
+     angostas sin perder la lectura de "Sin contenido". */
+  body:not(.is-lobby) .player-status-badge {
+    height: 26px;
+    min-height: 26px;
+    max-width: min(200px, calc(100% - 72px));
+    gap: 6px;
+    padding-inline: 9px;
+    font-size: 0.66rem;
+  }
+
+  body:not(.is-lobby) #playerChatToggleButton {
+    width: 34px;
+    min-height: 34px;
+    flex-basis: 34px;
+    background: transparent;
+  }
+
+  body:not(.is-lobby) #playerChatToggleButton svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  body:not(.is-lobby) #playerChatToggleButton:hover,
+  body:not(.is-lobby) #playerChatToggleButton:focus-visible {
+    background: transparent;
+  }
+
+  body:not(.is-lobby) #playerChatToggleButton.active {
+    background: rgba(47, 184, 164, 0.14);
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-collapse-handle:hover .chat-collapse-icon-anchor,
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-collapse-handle:focus-visible .chat-collapse-icon-anchor {
+    border-color: rgba(255, 255, 255, 0.38);
+    background: rgba(32, 38, 43, 0.98);
   }
 
   /* El mini-reproductor fijo acompaña al chat inferior sin cubrir su
@@ -202,7 +406,7 @@
   }
 
   .lobby-grid {
-    gap: clamp(14px, 2.6vh, 22px);
+    gap: clamp(20px, 3.2vh, 28px);
   }
 
   .lobby-hero {
@@ -227,7 +431,8 @@
   }
 
   .lobby-features {
-    gap: 6px;
+    column-gap: 10px;
+    row-gap: 6px;
     margin-top: 10px;
   }
 

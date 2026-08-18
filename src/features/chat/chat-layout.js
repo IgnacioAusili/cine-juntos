@@ -239,6 +239,14 @@ export function revealBottomDockUnion(behavior = "smooth") {
   window.requestAnimationFrame(syncExternalChatCollapseHandleOffset);
 }
 
+export function scrollToVideoPosition(behavior = "smooth") {
+  if (!dom.sessionView || dom.sessionView.hidden) return;
+
+  lockChatScrollSnapDuringProgrammaticScroll();
+  const targetTop = getBottomToRightScrollTop();
+  scrollPageTo(targetTop, behavior);
+}
+
 function scheduleMessageTimeAdjustmentAfterLayout() {
   if (layoutAdjustmentTimer) {
     window.clearTimeout(layoutAdjustmentTimer);
@@ -469,6 +477,7 @@ export function setChatDock(dock, options = {}) {
 
   cancelIdentityEditing();
   dom.sessionView.dataset.chatDock = nextDock;
+  dom.sessionView.classList.remove("chat-header-collapsed");
   dom.dockChatButton.dataset.tooltip = meta.tooltip;
   dom.dockChatButton.removeAttribute("title");
   dom.dockChatButton.setAttribute("aria-label", `Chat ${meta.label}. ${meta.tooltip}`);
@@ -643,6 +652,7 @@ function applyExternalChatCollapsed(collapsed) {
   lockChatScrollSnapDuringProgrammaticScroll();
   setCollapseHandleTransitioning(true);
   dom.sessionView.classList.toggle("chat-collapsed", collapsed);
+  if (!collapsed) dom.sessionView.classList.remove("chat-header-collapsed");
   animateExternalChatLayoutFrom(previousVideoRect);
 
   if (dom.chatArea) {

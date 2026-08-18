@@ -30,11 +30,17 @@
   }
 
   .session-view[data-chat-dock] .workspace {
+    display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: minmax(360px, 58vh) minmax(360px, 42vh);
     grid-template-areas:
       "video"
       "chat";
+  }
+
+  .session-view[data-chat-dock="right"] .chat-area {
+    flex: none;
+    width: auto;
   }
 
   .session-view[data-chat-dock="bottom"] .workspace {
@@ -82,13 +88,15 @@
   }
 
   .topbar-actions {
+    width: 100%;
+    flex: 0 0 auto;
     justify-content: flex-start;
   }
 
   .room-chip {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 14px;
+    align-items: center;
+    flex-direction: row;
+    gap: 12px;
   }
 
   .room-chip-title {
@@ -101,8 +109,9 @@
   }
 
   .room-chip-actions {
-    width: 100%;
-    justify-content: flex-start;
+    width: auto;
+    flex: 0 0 auto;
+    justify-content: flex-end;
   }
 
   .lobby-actions,

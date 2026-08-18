@@ -36,6 +36,44 @@ const CHAT_SCROLL_WHEEL_MULTIPLIER = 0.35;
 const DOM_DELTA_PIXEL = 0;
 const DOM_DELTA_LINE = 1;
 const DOM_DELTA_PAGE = 2;
+const MOBILE_CHAT_HEADER_IDLE_MS = 2200;
+
+let mobileChatHeaderHideTimer = 0;
+let mobileChatPageScrollTop = 0;
+let mobileChatIgnorePageScrollUntil = 0;
+
+function setMobileBottomChatHeader(collapsed) {
+  if (!dom.sessionView) return;
+  const isMobileBottomDock =
+    dom.sessionView.dataset.chatDock === "bottom"
+    && window.matchMedia("(max-width: 680px)").matches;
+
+  if (mobileChatHeaderHideTimer) {
+    window.clearTimeout(mobileChatHeaderHideTimer);
+    mobileChatHeaderHideTimer = 0;
+  }
+  mobileChatIgnorePageScrollUntil = Date.now() + 280;
+  dom.sessionView.classList.toggle("chat-header-collapsed", isMobileBottomDock && collapsed);
+}
+
+function scheduleMobileBottomChatHeaderCollapse(messages, reveal = false) {
+  if (!dom.sessionView || !messages) return;
+  if (dom.sessionView.dataset.chatDock !== "bottom") return;
+  if (!window.matchMedia("(max-width: 680px)").matches) return;
+
+  if (!messages.querySelector(".message")) {
+    setMobileBottomChatHeader(false);
+    return;
+  }
+
+  if (reveal) setMobileBottomChatHeader(false);
+
+  if (mobileChatHeaderHideTimer) window.clearTimeout(mobileChatHeaderHideTimer);
+  mobileChatHeaderHideTimer = window.setTimeout(() => {
+    mobileChatHeaderHideTimer = 0;
+    setMobileBottomChatHeader(true);
+  }, MOBILE_CHAT_HEADER_IDLE_MS);
+}
 
 function getWheelScrollDelta(event, container) {
   const rawDeltaY = event.deltaY;
@@ -154,6 +192,7 @@ export {
 } from "./message-menu.js";
 export {
   getPersistedInsideChatStyle,
+  scrollToVideoPosition,
   setChatDock,
   setExternalChatAutoExpandEnabled,
   setExternalChatCollapsed,
@@ -367,6 +406,106 @@ export function wireChatEvents() {
   dom.messages.addEventListener("scroll", () => checkScrollPosition(false), {
     passive: true,
   });
+
+  // La altura del header cambia el viewport de mensajes y por eso no usamos
+  // el scrollTop para inferir la dirección: al plegarlo el navegador puede
+  // emitir otro scroll y provocar un ciclo de mostrar/ocultar.
+  dom.messages.addEventListener(
+    "wheel",
+    (event) => {
+      if (!event.deltaY) return;
+      const canScrollWithinChat = Boolean(dom.messages.querySelector(".message"));
+      if (event.deltaY < 0 && canScrollWithinChat) {
+        scheduleMobileBottomChatHeaderCollapse(dom.messages, true);
+      } else if (event.deltaY > 0 && canScrollWithinChat) {
+        scheduleMobileBottomChatHeaderCollapse(dom.messages);
+      }
+    },
+    { passive: true },
+  );
+
+  let touchStartY = null;
+  dom.messages.addEventListener(
+    "touchstart",
+    (event) => {
+      touchStartY = event.touches[0]?.clientY ?? null;
+    },
+    { passive: true },
+  );
+  dom.messages.addEventListener(
+    "touchmove",
+    (event) => {
+      if (touchStartY == null) return;
+      const currentY = event.touches[0]?.clientY;
+      if (currentY == null) return;
+      const deltaY = touchStartY - currentY;
+      if (Math.abs(deltaY) < 4) return;
+      const canScrollWithinChat = Boolean(dom.messages.querySelector(".message"));
+      if (deltaY < 0 && canScrollWithinChat) {
+        scheduleMobileBottomChatHeaderCollapse(dom.messages, true);
+      } else if (deltaY > 0 && canScrollWithinChat) {
+        scheduleMobileBottomChatHeaderCollapse(dom.messages);
+      }
+      touchStartY = currentY;
+    },
+    { passive: true },
+  );
+  dom.messages.addEventListener(
+    "touchend",
+    () => {
+      touchStartY = null;
+    },
+    { passive: true },
+  );
+
+  const chatMessageObserver = new MutationObserver((records) => {
+    if (records.some((record) => record.addedNodes.length > 0)) {
+      setMobileBottomChatHeader(true);
+    }
+  });
+  chatMessageObserver.observe(dom.messages, { childList: true });
+  dom.chatArea.addEventListener(
+    "pointerdown",
+    (event) => {
+      if (!dom.sessionView.classList.contains("chat-header-collapsed")) return;
+      if (!window.matchMedia("(max-width: 680px)").matches) return;
+      const areaRect = dom.chatArea.getBoundingClientRect();
+      if (event.clientY - areaRect.top > 18) return;
+      setMobileBottomChatHeader(false);
+    },
+    { passive: true },
+  );
+  window.addEventListener(
+    "resize",
+    () => {
+      mobileChatPageScrollTop = window.scrollY || 0;
+      setMobileBottomChatHeader(false);
+    },
+    { passive: true },
+  );
+  mobileChatPageScrollTop = window.scrollY || 0;
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (!dom.sessionView || Date.now() < mobileChatIgnorePageScrollUntil) return;
+      const currentScrollTop = window.scrollY || 0;
+      const deltaY = currentScrollTop - mobileChatPageScrollTop;
+      mobileChatPageScrollTop = currentScrollTop;
+      if (Math.abs(deltaY) < 2) return;
+      if (
+        !dom.messages.querySelector(".message")
+      ) {
+        setMobileBottomChatHeader(false);
+        return;
+      }
+      if (deltaY < 0) {
+        scheduleMobileBottomChatHeaderCollapse(dom.messages, true);
+      } else {
+        scheduleMobileBottomChatHeaderCollapse(dom.messages);
+      }
+    },
+    { passive: true },
+  );
   dom.overlayMessages.addEventListener(
     "scroll",
     () => checkScrollPosition(true),

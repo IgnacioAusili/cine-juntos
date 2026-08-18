@@ -24,6 +24,7 @@ let scrollMiniPlayerFrame = 0;
 let scrollMiniPlayerDismissedRoom = "";
 
 const SCROLL_MINI_PLAYER_DISMISSED_KEY = "cine-juntos-scroll-mini-player-dismissed";
+const MOBILE_VIEWPORT_QUERY = "(max-width: 680px)";
 
 export function wireMiniPlayerEvents() {
   dom.playerMiniPlayerButton?.addEventListener("click", () => {
@@ -267,6 +268,11 @@ function scheduleScrollMiniPlayerSync() {
 
 function syncScrollMiniPlayer() {
   syncScrollMiniPlayerDismissalState();
+  if (isMobileViewport()) {
+    if (state.player.miniPlayerMode === "scroll") restoreMainPlayer();
+    return;
+  }
+
   const isBottomDock = dom.sessionView?.dataset.chatDock === "bottom";
   if (!isBottomDock || !hasMedia()) {
     if (state.player.miniPlayerMode === "scroll") restoreMainPlayer();
@@ -292,6 +298,10 @@ function syncScrollMiniPlayer() {
   ) {
     openScrollMiniPlayer();
   }
+}
+
+function isMobileViewport() {
+  return window.matchMedia?.(MOBILE_VIEWPORT_QUERY).matches === true;
 }
 
 function syncScrollMiniPlayerDismissalState() {

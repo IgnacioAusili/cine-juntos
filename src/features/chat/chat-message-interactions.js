@@ -24,18 +24,27 @@ export function wireMessageInteractions(
     companions,
     pointerCaptureTarget: interactionTarget,
   });
+  let longPressPointerId = null;
+  let longPressStart = null;
 
   function clearLongPress() {
     window.clearTimeout(state.chat.longPressTimer);
     state.chat.longPressTimer = null;
     state.chat.longPressStart = null;
+    longPressPointerId = null;
+    longPressStart = null;
   }
 
   function armLongPress(event) {
+    longPressPointerId = event.pointerId;
+    longPressStart = { x: event.clientX, y: event.clientY };
     state.chat.longPressStart = { x: event.clientX, y: event.clientY, message };
     window.clearTimeout(state.chat.longPressTimer);
     state.chat.longPressTimer = window.setTimeout(() => {
-      if (!swipe.directionLocked && swipe.tracking) {
+      if (
+        longPressPointerId === event.pointerId
+        && longPressStart
+      ) {
         showMessageMenu(message, event.clientX, event.clientY, replyInput);
       }
     }, LONG_PRESS_DELAY);
@@ -70,12 +79,11 @@ export function wireMessageInteractions(
   interactionTarget.addEventListener("pointerdown", (event) => {
     if (event.button && event.button !== 0) return;
     if (!isWithinInteractionBand(event)) return;
-    // La burbuja queda fuera de la superficie de reply para permitir
-    // seleccionar texto sin que el gesto intercepte el puntero.
-    if (!allowSwipeInsideBubble && bubble.contains(event.target)) {
+    if (event.target instanceof HTMLElement && event.target.closest("button, input, textarea, select")) {
       return;
     }
-    if (event.target instanceof HTMLElement && event.target.closest("button, input, textarea, select")) {
+    if (!allowSwipeInsideBubble && bubble.contains(event.target)) {
+      if (event.pointerType === "touch") armLongPress(event);
       return;
     }
     if (event.pointerType !== "touch") {
@@ -90,25 +98,30 @@ export function wireMessageInteractions(
   });
 
   interactionTarget.addEventListener("pointermove", (event) => {
+    if (longPressStart && longPressPointerId === event.pointerId) {
+      const movedX = event.clientX - longPressStart.x;
+      const movedY = event.clientY - longPressStart.y;
+      if (Math.hypot(movedX, movedY) > 10) clearLongPress();
+    }
     if (!swipe.tracking || event.pointerId !== swipe.pointerId) return;
     swipe.updateSwipe(event.clientX, event.clientY);
   });
 
   interactionTarget.addEventListener("pointerup", (event) => {
-    if (event.pointerId !== swipe.pointerId) return;
     clearLongPress();
+    if (event.pointerId !== swipe.pointerId) return;
     swipe.endSwipe();
   });
 
   interactionTarget.addEventListener("pointercancel", (event) => {
-    if (event.pointerId !== swipe.pointerId) return;
     clearLongPress();
+    if (event.pointerId !== swipe.pointerId) return;
     swipe.cancelSwipe(swipe.offset > 0);
   });
 
   interactionTarget.addEventListener("lostpointercapture", () => {
+    clearLongPress();
     if (swipe.tracking) {
-      clearLongPress();
       swipe.cancelSwipe(swipe.offset > 0);
     }
   });

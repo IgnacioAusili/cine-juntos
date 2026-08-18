@@ -146,6 +146,18 @@ function wirePlayerOverlayControls() {
       delete dom.playerFrame.dataset.suppressOverlayFocus;
       return;
     }
+
+    // Estos controles tienen su propia interacción: tocar el botón del chat o
+    // el estado del video no debe encender la barra inferior del reproductor.
+    const target = event?.target instanceof Element ? event.target : null;
+    if (target?.closest("#playerChatToggleButton, .player-status-badge")) {
+      clearHideTimer();
+      dom.playerFrame.classList.add("player-overlay-suppressed");
+      setOverlayVisible(false);
+      return;
+    }
+
+    dom.playerFrame.classList.remove("player-overlay-suppressed");
     setOverlayVisible(true);
     scheduleHide();
   };

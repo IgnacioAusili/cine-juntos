@@ -39,7 +39,9 @@ export function sendVideoEventMessage(action, currentState) {
     );
   });
 
-  // En modo local, el transporte no hace eco de los mensajes, así que lo renderizamos manualmente.
+  // En modo local, el transporte no hace eco de los mensajes, así que lo
+  // renderizamos manualmente. En Firebase lo renderiza el eco de onChildAdded
+  // para evitar que el aviso aparezca dos veces.
   if (state.session.transport.mode === "local") renderMessage(message);
 }
 

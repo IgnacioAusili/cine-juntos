@@ -128,9 +128,12 @@ export function showErrorDialog(message) {
     if (msgEl) msgEl.textContent = message;
   }
 
-  if (!errorDialogInitialized && dom.closeDialogButton) {
-    dom.closeDialogButton.addEventListener("click", () => {
-      dom.errorDialog.close();
+  if (!errorDialogInitialized) {
+    const closeErrorDialog = () => dom.errorDialog.close();
+    dom.closeDialogButton?.addEventListener("click", closeErrorDialog);
+    dom.closeDialogActionButton?.addEventListener("click", closeErrorDialog);
+    dom.errorDialog.addEventListener("click", (event) => {
+      if (event.target === dom.errorDialog) closeErrorDialog();
     });
     errorDialogInitialized = true;
   }

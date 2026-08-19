@@ -22,7 +22,7 @@ import {
 import {
   renderPresence,
   wireIdentityEvents,
-} from "./features/presence.js?v=20260811-name-validation-01";
+} from "./features/presence.js?v=20260818-presence-window-01";
 import {
   showLobby,
   initializeAboutDialog,
@@ -41,7 +41,7 @@ import {
 import {
   initializePlayer,
   wirePlayerEvents,
-} from "./features/player/index.js?v=20260815-seek-tooltip-01";
+} from "./features/player/index.js?v=20260819-chat-overlay-controls-01";
 import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260811-layout-motion-01";
 import {
   showSlowLoadDialog,

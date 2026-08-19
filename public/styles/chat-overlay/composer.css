@@ -134,7 +134,9 @@
   outline: none;
   resize: none;
   color: var(--text);
-  font-family: var(--emoji-font-family);
+  /* La fuente de interfaz conserva letras, números y símbolos; Noto queda
+     como fallback únicamente para los glifos emoji que esa fuente no tiene. */
+  font-family: var(--text-font), "Noto Color Emoji", ui-sans-serif, sans-serif;
   overscroll-behavior: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;

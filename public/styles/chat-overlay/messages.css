@@ -489,3 +489,25 @@
   box-shadow: none;
   padding: 0;
 }
+
+/* La tarjeta de hora de un emoji solo debe conservar el mismo contraste que
+   la burbuja equivalente cuando el chat interno usa panel u overlay flotante. */
+.player-frame[data-chat-style="panel"] .overlay-messages .message.mine .message-bubble--emoji-only .message-time-anchor {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(47, 184, 164, 0.32);
+}
+
+.player-frame[data-chat-style="panel"] .overlay-messages .message:not(.mine) .message-bubble--emoji-only .message-time-anchor {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(240, 140, 58, 0.26);
+}
+
+.player-frame[data-chat-style="float"] .overlay-messages .message.mine .message-bubble--emoji-only .message-time-anchor {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(47, 184, 164, 0.24);
+}
+
+.player-frame[data-chat-style="float"] .overlay-messages .message:not(.mine) .message-bubble--emoji-only .message-time-anchor {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(240, 140, 58, 0.2);
+}

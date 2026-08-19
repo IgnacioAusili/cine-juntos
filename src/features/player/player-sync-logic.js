@@ -12,14 +12,17 @@ import {
   SEND_THROTTLE_MS,
   formatSeconds,
 } from "../../core/utils.js";
-import { markParticipantActive, rememberParticipant } from "../presence.js?v=20260810-chat-fixes-04";
+import { markParticipantActive, rememberParticipant } from "../presence.js?v=20260818-presence-window-01";
 import { setSyncStatus } from "../session-ui.js";
 import { sendVideoEventMessage, renderMessage } from "../chat/index.js?v=20260811-layout-motion-01";
 // Import circular intencional y seguro: estas funciones se invocan en runtime,
 // no durante la carga del modulo, y player.js a su vez importa publishState.
-import { setVideoSource, waitForVideoMetadata } from "./player.js?v=20260815-seek-tooltip-01";
+import { setVideoSource, waitForVideoMetadata } from "./player.js?v=20260818-playback-issue-threshold-01";
 
 const PLAYBACK_ISSUE_SYNC_COOLDOWN_MS = 2200;
+// Los eventos waiting/stalled también se disparan por pequeños saltos de red.
+// Solo son una incidencia de sala si la falta de datos persiste este tiempo.
+const PLAYBACK_ISSUE_CONFIRMATION_MS = 1800;
 const PAUSE_TO_ISSUE_GRACE_MS = 900;
 const SEEK_TO_ISSUE_GRACE_MS = 1400;
 const REMOTE_HOLD_ISSUE_SUPPRESSION_MS = 2200;
@@ -144,11 +147,39 @@ function describePlaybackIssue(reason) {
   return "un problema de reproducción";
 }
 
-export function pauseRoomForPlaybackIssue(reason) {
+export function cancelPendingPlaybackIssueDetection() {
+  if (state.player.playbackIssueDetectionTimerId) {
+    window.clearTimeout(state.player.playbackIssueDetectionTimerId);
+  }
+  state.player.playbackIssueDetectionTimerId = null;
+  state.player.playbackIssueDetectionReason = "";
+}
+
+export function pauseRoomForPlaybackIssue(reason, options = {}) {
+  const confirmed = Boolean(options.confirmed);
   if (state.player.remoteStateActive || state.player.suppressVideoEvents) return;
   if (!dom.videoPlayer.currentSrc && !dom.videoPlayer.src && !dom.videoUrlInput.value.trim()) return;
   if (dom.videoPlayer.ended) return;
   if (reason !== "error" && dom.videoPlayer.paused) return;
+
+  if (!confirmed && (reason === "waiting" || reason === "stalled")) {
+    if (state.player.playbackIssueDetectionReason === reason && state.player.playbackIssueDetectionTimerId) {
+      return;
+    }
+    cancelPendingPlaybackIssueDetection();
+    state.player.playbackIssueDetectionReason = reason;
+    state.player.playbackIssueDetectionTimerId = window.setTimeout(() => {
+      state.player.playbackIssueDetectionTimerId = null;
+      state.player.playbackIssueDetectionReason = "";
+      pauseRoomForPlaybackIssue(reason, { confirmed: true });
+    }, PLAYBACK_ISSUE_CONFIRMATION_MS);
+    logEvent(
+      "sync:issue",
+      `Esperando ${PLAYBACK_ISSUE_CONFIRMATION_MS} ms para confirmar incidencia (${reason}).`,
+    );
+    return;
+  }
+
   if (
     (reason === "waiting" || reason === "stalled") &&
     Date.now() < Number(state.player.remotePlaybackIssueCooldownUntil || 0)
@@ -182,8 +213,9 @@ export function pauseRoomForPlaybackIssue(reason) {
   const issueTime = getPlaybackSnapshotTime();
   const shouldAnnounceIssue = shouldAnnouncePlaybackIssue(reason);
 
-  // Mostrar aviso en el chat local siempre, independientemente de si hay sala activa.
-  if (shouldAnnounceIssue) {
+  // Fuera de una sala no hay un evento remoto que pueda devolver el aviso;
+  // dentro de una sala lo renderiza inmediatamente sendVideoEventMessage.
+  if (shouldAnnounceIssue && (!state.session.activeRoom || !state.session.transport)) {
     const displayName = getDisplayName();
     const issueText = `${displayName} ${describePlaybackIssueChat(reason)} en ${formatSeconds(issueTime)}`;
     renderMessage({
@@ -231,6 +263,7 @@ export function clearPlaybackRecoveryTracking() {
   state.player.playbackRecoveryPending = false;
   state.player.playbackRecoveryAttempting = false;
   state.player.playbackRecoveryTimeoutId = null;
+  cancelPendingPlaybackIssueDetection();
   clearPlaybackIssueAnnouncementTracking();
 }
 

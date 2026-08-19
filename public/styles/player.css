@@ -12,15 +12,10 @@
   backdrop-filter: blur(16px);
 }
 
-/* El cursor sigue el mismo estado de inactividad que la barra de controles. */
-.player-frame:not(.player-overlay-visible) * {
+/* Ocultar el puntero solo cuando el reproductor ya entró en inactividad. */
+.player-frame.player-cursor-hidden,
+.player-frame.player-cursor-hidden * {
   cursor: none;
-}
-
-/* El chat interno conserva sus propios controles aunque el overlay del video se oculte. */
-.player-frame:not(.player-overlay-visible) .player-chat,
-.player-frame:not(.player-overlay-visible) .player-chat * {
-  cursor: auto;
 }
 
 video {
@@ -61,30 +56,26 @@ video::-webkit-media-controls-fullscreen-button {
 .player-status-badge {
   position: absolute;
   z-index: 20;
-  top: 4px;
-  left: 8px;
+  top: 5px;
+  left: 16px;
   display: inline-flex;
   align-items: center;
   justify-content: flex-start;
   gap: 7px;
-  margin: 0;
-  margin-top: 4px;
-  height: 32px;
-  min-height: 32px;
+  min-height: 24px;
   max-width: min(240px, calc(100% - 84px));
-  padding: 0 12px;
-  border: 1px solid var(--glass-border-strong);
-  border-radius: 999px;
-  background: rgba(18, 22, 26, 0.72);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  overflow: visible;
+  text-overflow: clip;
   color: var(--text-soft);
   font-size: 0.76rem;
   font-weight: 700;
   letter-spacing: 0.01em;
   line-height: 1;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.04),
-    var(--shadow-sm);
-  backdrop-filter: blur(14px);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), 0 0 10px rgba(0, 0, 0, 0.45);
   pointer-events: auto;
   cursor: help;
   opacity: 1;
@@ -92,6 +83,13 @@ video::-webkit-media-controls-fullscreen-button {
   transition:
     opacity 180ms ease,
     transform 180ms ease;
+}
+
+/* El halo de la bolita no debe quedar recortado por la regla general del estado. */
+.sync-status.player-status-badge {
+  margin: 0;
+  overflow: visible;
+  text-overflow: clip;
 }
 
 /* El badge siempre es visible cuando no hay video cargado o se está cargando. Con video cargado se oculta y reaparece con el hover del reproductor (.player-overlay-visible) */
@@ -108,13 +106,17 @@ video::-webkit-media-controls-fullscreen-button {
   transform: translateY(0);
 }
 
+.player-status-badge.empty {
+  top: 8px;
+}
+
 .player-status-badge .video-status-dot {
   width: 6px;
   height: 6px;
   flex: 0 0 6px;
   border-radius: 999px;
   background: #ffffff;
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.14);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.16), 0 1px 5px rgba(0, 0, 0, 0.85);
   transition: background 180ms ease, box-shadow 180ms ease;
 }
 
@@ -164,8 +166,8 @@ video::-webkit-media-controls-fullscreen-button {
 .player-actions {
   position: absolute;
   z-index: 8;
-  top: 4px;
-  right: 8px;
+  top: 2px;
+  right: 4px;
   display: flex;
   align-items: center;
   gap: 5px;
@@ -173,7 +175,7 @@ video::-webkit-media-controls-fullscreen-button {
 
 #playerChatToggleButton {
   position: relative;
-  margin-top: 4px;
+  margin-top: 2px;
   width: 32px;
   min-height: 32px;
   flex-basis: 32px;

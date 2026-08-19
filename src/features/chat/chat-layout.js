@@ -4,7 +4,7 @@ import { state, logEvent } from "../../core/state.js";
 import { CHAT_DOCKS, CHAT_DOCK_META, withShortcutHint } from "../../core/utils.js";
 import { hydrateIcons, refreshTooltipForTarget } from "../icons-tooltips.js";
 import { focusFullscreenWorkspace } from "../session-ui.js";
-import { cancelIdentityEditing } from "../presence.js?v=20260810-chat-fixes-04";
+import { cancelIdentityEditing } from "../presence.js?v=20260818-presence-window-01";
 import {
   isExternalChatVisibleToUser,
   isInsideChatVisibleToUser,
@@ -318,6 +318,11 @@ export function setInsideChatVisible(visible, options = {}) {
   clearAutoCollapseTimer(true);
   if (visible) {
     state.chat.autoOpenedInside = source === "auto";
+    // La apertura con Tab ocurre mientras el overlay todavía está en su
+    // transición de entrada; en ese momento el detector geométrico aún puede
+    // considerarlo invisible. La apertura manual ya implica que el usuario
+    // está atendiendo el chat, por lo que el contador debe desaparecer aquí.
+    if (source !== "auto") resetInsideUnread();
   } else {
     state.chat.autoOpenedInside = false;
   }
@@ -351,6 +356,13 @@ export function setInsideChatVisible(visible, options = {}) {
   }
   refreshTooltipForTarget(dom.playerChatToggleButton);
   syncUnreadBadgesWithVisibility();
+  if (visible && source !== "auto") {
+    window.setTimeout(() => {
+      if (dom.playerFrame.classList.contains("chat-inside-open")) {
+        resetInsideUnread();
+      }
+    }, 220);
+  }
   scheduleMessageTimeAdjustmentAfterLayout();
   if (visible && source === "auto") scheduleAutoCollapse(true);
   logEvent("ui", visible ? "Chat interno visible." : "Chat interno oculto.");
@@ -593,7 +605,12 @@ function getBottomDockVideoScrollTop() {
   const gutter = Number.parseFloat(
     getComputedStyle(dom.sessionView).getPropertyValue("--app-shell-gutter"),
   ) || 0;
-  return Math.max(0, Math.round(getElementPageTop(dom.videoArea) - gutter));
+  // En móvil la sesión ocupa todo el ancho y el video debe comenzar en el
+  // borde superior del viewport. El gutter ya no forma parte del espacio
+  // visible, por lo que restarlo deja el reproductor desplazado al contraer.
+  const mobileViewport = window.matchMedia("(max-width: 680px)").matches;
+  const topOffset = mobileViewport ? 0 : gutter;
+  return Math.max(0, Math.round(getElementPageTop(dom.videoArea) - topOffset));
 }
 
 export function setExternalChatCollapsed(collapsed, options = {}) {

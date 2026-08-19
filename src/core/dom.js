@@ -80,6 +80,7 @@ export const dom = {
   overlayCharCounter: document.querySelector("#overlayCharCounter"),
   errorDialog: document.querySelector("#errorDialog"),
   closeDialogButton: document.querySelector("#closeDialogButton"),
+  closeDialogActionButton: document.querySelector("#closeDialogActionButton"),
   aboutDialog: document.querySelector("#aboutDialog"),
   closeAboutDialogButton: document.querySelector("#closeAboutDialogButton"),
   slowLoadDialog: document.querySelector("#slowLoadDialog"),

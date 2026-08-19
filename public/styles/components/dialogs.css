@@ -358,22 +358,21 @@ body:has(.about-dialog[open]) {
   box-shadow: none;
 }
 
-.error-dialog .dialog-content button {
-  margin-top: 8px;
-  min-width: 110px;
-  background: #ff5555;
-  color: #fff;
-  border: 0;
-  border-radius: 8px;
-  padding: 8px 16px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s ease;
+.error-dialog .dialog-title-icon {
+  color: #ff7777;
 }
 
-.error-dialog .dialog-content button:hover {
-  background: #ff3c3c;
+.error-dialog .error-action {
+  min-height: 36px;
+  min-width: 110px;
+  padding: 0 18px;
+  background: #e85d5d;
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.error-dialog .error-action:hover {
+  background: #f06b6b;
 }
 
 .dialog-actions {

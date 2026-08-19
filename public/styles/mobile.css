@@ -28,6 +28,10 @@
     align-content: start;
   }
 
+  .app-shell {
+    gap: 0;
+  }
+
   body.is-lobby .topbar {
     display: none;
   }
@@ -248,9 +252,10 @@
       minmax(0, 1fr);
   }
 
-  /* Cuando el chat inferior está contraído, no reservar su segunda fila:
-     el reproductor debe recuperar todo el alto de la pantalla. */
-  body:not(.is-lobby) .session-view.chat-collapsed[data-chat-dock="bottom"] .workspace {
+  /* Cuando el chat está contraído, no reservar su segunda fila. En móvil el
+     dock lateral también se apila debajo del video, por lo que ambos docks
+     deben recuperar todo el alto disponible de la pantalla. */
+  body:not(.is-lobby) .session-view.chat-collapsed[data-chat-dock] .workspace {
     grid-template-rows: minmax(0, 1fr) 0;
   }
 
@@ -354,12 +359,16 @@
   /* Compactar el estado del reproductor libera espacio visual en pantallas
      angostas sin perder la lectura de "Sin contenido". */
   body:not(.is-lobby) .player-status-badge {
-    height: 26px;
-    min-height: 26px;
+    height: auto;
+    min-height: 24px;
     max-width: min(200px, calc(100% - 72px));
     gap: 6px;
-    padding-inline: 9px;
+    padding: 0;
     font-size: 0.66rem;
+  }
+
+  body:not(.is-lobby) .player-status-badge.empty {
+    top: 10px;
   }
 
   body:not(.is-lobby) #playerChatToggleButton {

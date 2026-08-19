@@ -23,10 +23,11 @@ import { scrollToVideoPosition, sendVideoEventMessage, setInsideChatVisible } fr
 // setVideoSource y waitForVideoMetadata desde aqui.
 import {
   attemptPlaybackRecovery,
+  cancelPendingPlaybackIssueDetection,
   clearPlaybackRecoveryTracking,
   pauseRoomForPlaybackIssue,
   publishState,
-} from "./player-sync-logic.js?v=20260815-seek-tooltip-01";
+} from "./player-sync-logic.js?v=20260818-playback-issue-threshold-01";
 
 import {
   showErrorDialog,
@@ -46,6 +47,8 @@ const PLAY_BUTTON_BURST_WINDOW_MS = 1000;
 const PLAY_BUTTON_BURST_LIMIT = 4;
 const PLAY_BUTTON_COOLDOWN_MS = 30000;
 const MIN_RESUME_PROMPT_SECONDS = 5;
+const VIDEO_FINGERPRINT_WIDTH = 32;
+const VIDEO_FINGERPRINT_HEIGHT = 18;
 const KEYBOARD_SEEK_STEP_SECONDS = 10;
 const KEYBOARD_VOLUME_STEP = 0.05;
 const SEEK_TOOLTIP_GAP = 14;
@@ -59,6 +62,7 @@ const VIDEO_STATUS_TOOLTIPS = Object.freeze({
 });
 let isDurationShowingRemaining = false;
 let pendingLoadCompletionAnnouncement = false;
+let pendingVideoActivityAnnouncement = false;
 let seekTooltipFrame = 0;
 let seekTooltipPoint = null;
 let seekTooltipRect = null;
@@ -66,6 +70,7 @@ let seekTooltipRect = null;
 export function initializePlayer() {
   isDurationShowingRemaining = false;
   pendingLoadCompletionAnnouncement = false;
+  pendingVideoActivityAnnouncement = false;
   hideSeekTooltip();
   clearSlowLoadPromptTracking();
   const persistedVolume = readPersistedVolume();
@@ -204,28 +209,33 @@ export function wirePlayerCoreEvents() {
   });
 
   dom.videoPlayer.addEventListener("loadedmetadata", () => {
+    state.player.hasPlayableVideo = true;
     isDurationShowingRemaining = false;
     dom.emptyPlayer.classList.add("hidden");
     setVideoStatus("loaded", "Listo");
     clearPlaybackErrorTracking();
     clearSlowLoadPromptTracking();
+    announceVideoActivity();
     announceVideoLoadCompletion();
     syncPlayerControls(true);
-    void maybePromptResumePlayback();
     attemptPlaybackRecovery("loadedmetadata");
   });
 
   dom.videoPlayer.addEventListener("loadeddata", () => {
+    cancelPendingPlaybackIssueDetection();
     clearPlaybackErrorTracking();
     attemptPlaybackRecovery("loadeddata");
+    void prepareVideoFingerprintAndPrompt();
   });
 
   dom.videoPlayer.addEventListener("canplay", () => {
+    cancelPendingPlaybackIssueDetection();
     clearPlaybackErrorTracking();
     attemptPlaybackRecovery("canplay");
   });
 
   dom.videoPlayer.addEventListener("playing", () => {
+    cancelPendingPlaybackIssueDetection();
     clearPlaybackErrorTracking();
     attemptPlaybackRecovery("playing");
   });
@@ -255,6 +265,7 @@ export function wirePlayerCoreEvents() {
   });
 
   dom.videoPlayer.addEventListener("emptied", () => {
+    state.player.hasPlayableVideo = false;
     isDurationShowingRemaining = false;
     clearPlaybackErrorTracking();
     clearSlowLoadPromptTracking();
@@ -266,6 +277,7 @@ export function loadVideoFromUrl(source, origin) {
   if (!source) {
     setVideoStatus("empty", "Sin contenido");
     pendingLoadCompletionAnnouncement = false;
+    pendingVideoActivityAnnouncement = false;
     state.player.resumePromptSource = "";
     clearSlowLoadPromptTracking();
     logEvent("video", "No se cargo video: falta URL.");
@@ -281,7 +293,8 @@ export function loadVideoFromUrl(source, origin) {
   setVideoSource(source, true, { isReload });
   logEvent("video", `Video ${isReload ? "recargado" : `${origin} cargado`}: ${source}`);
   if (state.session.activeRoom && state.session.transport) {
-    publishState("video");
+    pendingVideoActivityAnnouncement = true;
+    publishState("video", { suppressActivityMessage: true });
   }
 }
 
@@ -312,12 +325,23 @@ async function handleManualLoadRequest() {
 
 export function setVideoSource(source, shouldAnnounce, options = {}) {
   isDurationShowingRemaining = false;
+  pendingVideoActivityAnnouncement = false;
+  state.player.hasPlayableVideo = false;
+  state.player.videoFingerprint = "";
+  state.player.videoFingerprintSource = "";
   pendingLoadCompletionAnnouncement = Boolean(
     options.announceLoadCompletion ?? shouldAnnounce,
   );
   const isReload = Boolean(options.isReload);
   state.player.lastVideoLoadWasReload = isReload;
-  state.player.resumePromptSource = shouldAnnounce ? getVideoSourceKey(source) : "";
+  const nextSourceKey = getVideoSourceKey(source);
+  // La sala puede devolver nuestro propio evento de carga. Si sigue siendo
+  // el mismo contenido, no hay que borrar el aviso que se está preparando.
+  if (shouldAnnounce) {
+    state.player.resumePromptSource = nextSourceKey;
+  } else if (state.player.resumePromptSource !== nextSourceKey) {
+    state.player.resumePromptSource = "";
+  }
   window.clearTimeout(state.player.videoLoadCooldownTimeoutId);
   state.player.videoLoadCooldownUntil = Date.now() + VIDEO_LOAD_COOLDOWN_MS;
   state.player.videoLoadCooldownTimeoutId = window.setTimeout(() => {
@@ -348,6 +372,19 @@ function announceVideoLoadCompletion() {
     from: state.session.clientId,
     name: getDisplayName(),
     isReload: Boolean(state.player.lastVideoLoadWasReload),
+    time: Number(dom.videoPlayer.currentTime) || 0,
+    rate: Number(dom.videoPlayer.playbackRate || 1),
+  });
+}
+
+function announceVideoActivity() {
+  if (!pendingVideoActivityAnnouncement) return;
+  pendingVideoActivityAnnouncement = false;
+  if (!state.session.activeRoom || !state.session.transport) return;
+
+  sendVideoEventMessage("video", {
+    from: state.session.clientId,
+    name: getDisplayName(),
     time: Number(dom.videoPlayer.currentTime) || 0,
     rate: Number(dom.videoPlayer.playbackRate || 1),
   });
@@ -923,14 +960,19 @@ function reloadVideoLocally() {
   armSlowLoadPrompt(source);
 }
 
-async function maybePromptResumePlayback() {
+async function prepareVideoFingerprintAndPrompt() {
   const sourceKey = getCurrentVideoSourceKey();
   if (!sourceKey || state.player.resumePromptSource !== sourceKey) {
     state.player.resumePromptSource = "";
     return;
   }
 
-  const resumeTime = getStoredResumeTime(sourceKey);
+  const fingerprint = await getCurrentVideoFingerprint(sourceKey);
+  if (!fingerprint || getCurrentVideoSourceKey() !== sourceKey) return;
+
+  state.player.videoFingerprint = fingerprint;
+  state.player.videoFingerprintSource = sourceKey;
+  const resumeTime = getStoredResumeTime(fingerprint);
   state.player.resumePromptSource = "";
   if (!Number.isFinite(resumeTime) || resumeTime < MIN_RESUME_PROMPT_SECONDS) {
     return;
@@ -979,6 +1021,7 @@ function schedulePlaybackErrorConfirmation() {
     }
 
     clearPlaybackErrorTracking();
+    pendingVideoActivityAnnouncement = false;
     const error = dom.videoPlayer.error;
     const errorCode = error?.code || currentSnapshot.errorCode;
     const details = describePlaybackError(errorCode);
@@ -986,7 +1029,11 @@ function schedulePlaybackErrorConfirmation() {
     logEvent("error", `Error de video confirmado (${details}).`);
     clearSlowLoadPromptTracking();
     syncPlayerControls(true);
-    pauseRoomForPlaybackIssue("error");
+    // Un error al cargar un video incompatible se informa con el diálogo; no
+    // es una interrupción de reproducción que deba anunciarse en el chat.
+    if (state.player.hasPlayableVideo) {
+      pauseRoomForPlaybackIssue("error");
+    }
     showErrorDialog(details);
   }, PLAYBACK_ERROR_CONFIRMATION_MS);
 }
@@ -1038,7 +1085,10 @@ function clearPlaybackErrorTracking() {
 
 function persistPlaybackPosition(force = false) {
   const sourceKey = getCurrentVideoSourceKey();
-  if (!sourceKey) return;
+  const fingerprint = state.player.videoFingerprintSource === sourceKey
+    ? state.player.videoFingerprint
+    : "";
+  if (!fingerprint) return;
 
   const currentTime = Number(dom.videoPlayer.currentTime);
   if (!Number.isFinite(currentTime)) return;
@@ -1048,40 +1098,80 @@ function persistPlaybackPosition(force = false) {
   if (!force && Date.now() - state.player.lastResumePersistAt < 5000) return;
 
   state.player.lastResumePersistAt = Date.now();
-  setStoredResumeTime(sourceKey, safeTime);
+  setStoredResumeTime(fingerprint, safeTime);
 }
 
-function getStoredResumeTime(sourceKey) {
-  const store = readResumeStore();
-  const time = Number(store[sourceKey]);
-  return Number.isFinite(time) ? Math.max(0, time) : 0;
+function getStoredResumeTime(fingerprint) {
+  const record = readResumeRecord();
+  if (!record || record.fingerprint !== fingerprint) return 0;
+  return Number.isFinite(Number(record.time)) ? Math.max(0, Number(record.time)) : 0;
 }
 
-function setStoredResumeTime(sourceKey, time) {
-  const store = readResumeStore();
+function setStoredResumeTime(fingerprint, time) {
   const safeTime = Math.max(0, Number(time) || 0);
-  if (!safeTime) {
-    delete store[sourceKey];
-  } else {
-    store[sourceKey] = safeTime;
-  }
+  const record = safeTime ? { fingerprint, time: safeTime } : null;
 
   try {
-    localStorage.setItem(VIDEO_RESUME_STORAGE_KEY, JSON.stringify(store));
+    if (record) {
+      localStorage.setItem(VIDEO_RESUME_STORAGE_KEY, JSON.stringify(record));
+    } else {
+      localStorage.removeItem(VIDEO_RESUME_STORAGE_KEY);
+    }
   } catch (error) {
     console.warn("No se pudo guardar el tiempo de reanudación del video:", error);
   }
 }
 
-function readResumeStore() {
+function readResumeRecord() {
   try {
     const raw = localStorage.getItem(VIDEO_RESUME_STORAGE_KEY);
     if (!raw) return {};
     const parsed = JSON.parse(raw);
-    return parsed && typeof parsed === "object" ? parsed : {};
+    // Las entradas antiguas usaban la URL como clave. Se ignoran para no
+    // confundir una URL vieja con la huella real del contenido.
+    return parsed && typeof parsed === "object" && parsed.fingerprint
+      ? parsed
+      : null;
   } catch {
-    return {};
+    return null;
   }
+}
+
+async function getCurrentVideoFingerprint(sourceKey) {
+  if (state.player.videoFingerprintSource === sourceKey && state.player.videoFingerprint) {
+    return state.player.videoFingerprint;
+  }
+
+  const video = dom.videoPlayer;
+  const duration = Number.isFinite(video.duration) ? Math.round(video.duration * 10) : 0;
+  const metadata = `${duration}|${video.videoWidth || 0}x${video.videoHeight || 0}|`;
+  let sample = "metadata";
+
+  try {
+    const canvas = document.createElement("canvas");
+    canvas.width = VIDEO_FINGERPRINT_WIDTH;
+    canvas.height = VIDEO_FINGERPRINT_HEIGHT;
+    const context = canvas.getContext("2d", { willReadFrequently: true });
+    if (context && video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
+      let hash = 2166136261;
+      for (let index = 0; index < pixels.length; index += 4) {
+        hash ^= pixels[index];
+        hash = Math.imul(hash, 16777619) >>> 0;
+        hash ^= pixels[index + 1];
+        hash = Math.imul(hash, 16777619) >>> 0;
+        hash ^= pixels[index + 2];
+        hash = Math.imul(hash, 16777619) >>> 0;
+      }
+      sample = hash.toString(16).padStart(8, "0");
+    }
+  } catch {
+    // Un video sin CORS puede reproducirse, pero no permite leer el canvas.
+    // Los metadatos siguen dando una huella mínima sin romper la reproducción.
+  }
+
+  return `${metadata}${sample}`;
 }
 
 function getCurrentVideoSourceKey() {

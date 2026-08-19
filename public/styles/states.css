@@ -212,8 +212,8 @@ body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="bottom"] .work
 }
 
 body.fullscreen-mode .player-actions {
-  top: 14px;
-  right: 14px;
+  top: 12px;
+  right: 12px;
   flex-direction: column;
   align-items: flex-end;
 }
@@ -363,8 +363,8 @@ body.fullscreen-mode .session-view[data-chat-dock="right"] .chat-area {
 }
 
 body.fullscreen-mode .session-view[data-chat-dock="right"] .player-actions {
-  top: 4px;
-  right: 8px;
+  top: 2px;
+  right: 4px;
   flex-direction: row;
   align-items: center;
 }

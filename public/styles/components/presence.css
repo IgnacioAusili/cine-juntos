@@ -7,6 +7,7 @@
   gap: 6px;
   border: 0;
   border-radius: 0;
+  cursor: default;
   background: transparent;
   color: var(--muted);
   font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
@@ -14,7 +15,6 @@
   font-weight: 700;
   line-height: 1;
   padding: 0 4px;
-  cursor: pointer;
 }
 
 .presence-dot {

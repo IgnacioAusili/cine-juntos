@@ -19,7 +19,7 @@
 
 #messages .message.system .message-system-bubble,
 #overlayMessages .message.system .message-system-bubble {
-  max-width: min(calc(100% - 32px), 560px);
+  max-width: min(calc(100% - 48px), 560px);
 }
 
 /* Los avisos de sincronización se realzan apenas al pasar el mouse. El
@@ -42,11 +42,13 @@
 
 .system-group-member {
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .system-group-member .message-system-bubble,
 .system-group-member .message-system-bubble * {
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .system-group-member:not(.system-group-transitioning):hover .message-system-bubble::before,
@@ -86,7 +88,7 @@
 .system-group-toggle {
   position: absolute;
   top: 50%;
-  left: -6px;
+  left: 2px;
   z-index: 8;
   display: flex;
   align-items: center;
@@ -103,6 +105,7 @@
   line-height: 1;
   padding: 0;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
   transition:
     color 160ms ease,
     border-color 160ms ease,
@@ -123,7 +126,7 @@
    reserva menor para el control de respuesta. Estos offsets mantienen la
    separación visual anterior sin medir coordenadas desde JavaScript. */
 #overlayMessages .message.system .system-group-toggle {
-  left: -22px;
+  left: -14px;
 }
 
 /* En el panel translúcido el selector necesita una superficie propia para
@@ -192,5 +195,5 @@
 }
 
 #overlayMessages .message.system .message-system-bubble {
-  max-width: min(calc(100% - 28px), 420px);
+  max-width: min(calc(100% - 36px), 420px);
 }

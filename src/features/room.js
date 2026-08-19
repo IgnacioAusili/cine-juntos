@@ -20,7 +20,7 @@ import {
   renderMembers,
   renderPresence,
   updateDisplayName,
-} from "./presence.js?v=20260810-chat-fixes-04";
+} from "./presence.js?v=20260818-presence-window-01";
 import { setConnection } from "./icons-tooltips.js";
 import {
   focusMainWorkspace,

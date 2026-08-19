@@ -413,7 +413,9 @@ export function wireChatEvents() {
   dom.messages.addEventListener(
     "wheel",
     (event) => {
-      if (!event.deltaY) return;
+      // Un gesto horizontal puede traer una pequeña componente vertical.
+      // El header solo debe responder al eje que realmente se está desplazando.
+      if (!event.deltaY || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
       const canScrollWithinChat = Boolean(dom.messages.querySelector(".message"));
       if (event.deltaY < 0 && canScrollWithinChat) {
         scheduleMobileBottomChatHeaderCollapse(dom.messages, true);
@@ -424,28 +426,41 @@ export function wireChatEvents() {
     { passive: true },
   );
 
+  let touchStartX = null;
   let touchStartY = null;
+  let touchScrollAxis = null;
   dom.messages.addEventListener(
     "touchstart",
     (event) => {
+      touchStartX = event.touches[0]?.clientX ?? null;
       touchStartY = event.touches[0]?.clientY ?? null;
+      touchScrollAxis = null;
     },
     { passive: true },
   );
   dom.messages.addEventListener(
     "touchmove",
     (event) => {
-      if (touchStartY == null) return;
-      const currentY = event.touches[0]?.clientY;
-      if (currentY == null) return;
+      if (touchStartX == null || touchStartY == null) return;
+      const touch = event.touches[0];
+      const currentX = touch?.clientX;
+      const currentY = touch?.clientY;
+      if (currentX == null || currentY == null) return;
+
+      const deltaX = touchStartX - currentX;
       const deltaY = touchStartY - currentY;
-      if (Math.abs(deltaY) < 4) return;
+      if (!touchScrollAxis && Math.max(Math.abs(deltaX), Math.abs(deltaY)) >= 4) {
+        touchScrollAxis = Math.abs(deltaX) > Math.abs(deltaY) ? "horizontal" : "vertical";
+      }
+      if (touchScrollAxis !== "vertical") return;
+
       const canScrollWithinChat = Boolean(dom.messages.querySelector(".message"));
       if (deltaY < 0 && canScrollWithinChat) {
         scheduleMobileBottomChatHeaderCollapse(dom.messages, true);
       } else if (deltaY > 0 && canScrollWithinChat) {
         scheduleMobileBottomChatHeaderCollapse(dom.messages);
       }
+      touchStartX = currentX;
       touchStartY = currentY;
     },
     { passive: true },
@@ -453,7 +468,9 @@ export function wireChatEvents() {
   dom.messages.addEventListener(
     "touchend",
     () => {
+      touchStartX = null;
       touchStartY = null;
+      touchScrollAxis = null;
     },
     { passive: true },
   );

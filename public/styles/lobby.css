@@ -272,7 +272,7 @@
   background: var(--glass-bg-elevated);
   box-shadow: var(--shadow-lg);
   backdrop-filter: blur(22px);
-  transform: translateX(-22px);
+  transform: none;
 }
 
 /* Glow ambiental dentro del ticket */

@@ -386,6 +386,11 @@
 
 .message.system {
   align-items: center;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.message.system * {
+  -webkit-tap-highlight-color: transparent;
 }
 
 .message.system.message-system-exit {

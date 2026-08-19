@@ -34,13 +34,14 @@
 
 .player-frame[data-chat-style="panel"] .player-chat {
   border: 0;
-  border-radius: var(--radius-md) 0 var(--radius-md) var(--radius-md);
+  border-radius: var(--radius-md);
   background: rgba(7, 10, 12, 0.7);
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
 }
 
 .player-frame[data-chat-style="float"] .player-chat {
   border: 0;
+  border-radius: var(--radius-md);
   background: rgba(7, 10, 12, 0.42);
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.16);
 }

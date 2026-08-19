@@ -132,28 +132,35 @@ function wirePlayerOverlayControls() {
         dom.playerRateSelect.blur();
       }
       setOverlayVisible(false);
+      dom.playerFrame.classList.add("player-cursor-hidden");
     }, delay);
   };
 
   const revealOverlayFromChatHandle = () => {
     clearHideTimer();
+    dom.playerFrame.classList.remove("player-cursor-hidden");
     setOverlayVisible(true);
     scheduleHide();
   };
 
   const revealOverlay = (event) => {
+    dom.playerFrame.classList.remove("player-cursor-hidden");
+
     if (event?.type === "focusin" && dom.playerFrame.dataset.suppressOverlayFocus === "1") {
       delete dom.playerFrame.dataset.suppressOverlayFocus;
       return;
     }
 
-    // Estos controles tienen su propia interacción: tocar el botón del chat o
-    // el estado del video no debe encender la barra inferior del reproductor.
     const target = event?.target instanceof Element ? event.target : null;
-    if (target?.closest("#playerChatToggleButton, .player-status-badge")) {
+    // Al abrir el chat, el foco pasa automáticamente a su textarea. Ese
+    // focusin burbujea hasta el playerFrame y no debe interpretarse como una
+    // interacción con el video. Mientras el puntero siga sobre el overlay,
+    // tampoco dejamos que un movimiento o una pulsación vuelva a revelarla.
+    if (target?.closest(".player-chat")) {
       clearHideTimer();
       dom.playerFrame.classList.add("player-overlay-suppressed");
       setOverlayVisible(false);
+      scheduleHide();
       return;
     }
 

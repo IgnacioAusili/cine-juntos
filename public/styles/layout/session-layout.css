@@ -144,6 +144,13 @@
     opacity 250ms ease;
 }
 
+/* El borde derecho del reproductor queda visualmente más abierto cuando el
+   chat lateral está colapsado. Extendemos solo el frame unos píxeles para
+   equilibrar ambos márgenes sin mover el borde izquierdo. */
+.session-view.chat-collapsed[data-chat-dock="right"] .player-frame {
+  width: calc(100% + 2px);
+}
+
 /* Al cerrar el chat, el reproductor recupera sus dos esquinas derechas.
    En pantalla completa los bordes del reproductor deben seguir planos. */
 body:not(.fullscreen-mode) .app-shell:not(:fullscreen)

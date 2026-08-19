@@ -26,6 +26,7 @@ export function wireMessageInteractions(
   });
   let longPressPointerId = null;
   let longPressStart = null;
+  let longPressTriggered = false;
 
   function clearLongPress() {
     window.clearTimeout(state.chat.longPressTimer);
@@ -36,6 +37,7 @@ export function wireMessageInteractions(
   }
 
   function armLongPress(event) {
+    longPressTriggered = false;
     longPressPointerId = event.pointerId;
     longPressStart = { x: event.clientX, y: event.clientY };
     state.chat.longPressStart = { x: event.clientX, y: event.clientY, message };
@@ -45,6 +47,7 @@ export function wireMessageInteractions(
         longPressPointerId === event.pointerId
         && longPressStart
       ) {
+        longPressTriggered = true;
         showMessageMenu(message, event.clientX, event.clientY, replyInput);
       }
     }, LONG_PRESS_DELAY);
@@ -70,6 +73,12 @@ export function wireMessageInteractions(
   });
 
   interactionTarget.addEventListener("click", (event) => {
+    if (longPressTriggered) {
+      longPressTriggered = false;
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
     if (!swipe.blockClick) return;
     swipe.blockClick = false;
     event.preventDefault();

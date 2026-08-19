@@ -54,4 +54,4 @@ La idea general es separar responsabilidades sin meter frameworks ni refactors g
 - Mantener logs tecnicos en consola o terminal
 - Si consideras necesario validar cambios con `node --check src/main.js` y se puede revisar visualmente en `http://127.0.0.1:8080` levantado el servidor, aunque es preferible evitarlo.
 - Si un fix ya esta en `main` pero GitHub Pages sigue cargando una version vieja, actualizar el query param `?v=` en `index.html` para forzar cache-busting.
--  las clases no deben superar nunca las 200 lineas, si estas modificando una clase y notas que supera ese limite, decime que habria que refactorizarla al terminar tu trabajo.
+- Es muy importante, las clases no deben superar nunca las 200 lineas, si estas modificando una clase y notas que supera ese limite, decime que habria que refactorizarla al terminar tu trabajo.

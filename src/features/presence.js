@@ -2,7 +2,12 @@ import { dom } from "../core/dom.js";
 import { state, getDisplayName, getTransportNow, logEvent } from "../core/state.js";
 import { makeGuestName, makeParticipantLabel } from "../core/utils.js";
 
-const RECENT_ACTIVITY_WINDOW_MS = 12000;
+// El heartbeat llega cada 10 s. La ventana anterior de 12 s dejaba solo
+// 2 s para tolerar latencia o una actualización demorada de Firebase, lo
+// que hacía parpadear el indicador aunque el participante siguiera activo.
+// Debe ser menor que STALE_MEMBER_TIMEOUT_MS para que los desconectados sigan
+// limpiándose por el timeout del transporte.
+const RECENT_ACTIVITY_WINDOW_MS = 30000;
 const SUPPORTS_FIELD_SIZING_CONTENT = Boolean(CSS.supports?.("field-sizing", "content"));
 
 let nameInputMeasureCanvas = null;

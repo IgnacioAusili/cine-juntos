@@ -488,6 +488,26 @@ video::-webkit-media-controls-fullscreen-button {
   max-width: 48px;
 }
 
+/* En superficies táctiles :hover puede quedar retenido después de un toque.
+   El estado equivalente lo controla el detector de pulsación larga. */
+@media (hover: none) {
+  .player-volume-group:hover:not(.is-touch-hover) {
+    gap: 0;
+  }
+
+  .player-volume-group:hover:not(.is-touch-hover) .player-volume-slider-wrap {
+    max-width: 0;
+  }
+
+  .player-volume-group.is-touch-hover {
+    gap: 6px;
+  }
+
+  .player-volume-group.is-touch-hover .player-volume-slider-wrap {
+    max-width: 48px;
+  }
+}
+
 .player-volume-input {
   --volume-progress: 100%;
   display: block;

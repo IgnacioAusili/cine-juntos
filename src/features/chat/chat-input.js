@@ -424,7 +424,8 @@ export function buildEmojiPicker() {
     const tooltip = tags?.length ? `:${tags[0]}:` : "";
     button.setAttribute("aria-label", `Insertar ${emoji}`);
     if (tooltip) {
-      button.title = tooltip;
+      button.dataset.tooltip = tooltip;
+      button.removeAttribute("title");
     }
     button.textContent = emoji;
     button.addEventListener("mousedown", (event) => {

@@ -1,5 +1,6 @@
 import { dom } from "../../core/dom.js";
 import { state, logEvent } from "../../core/state.js";
+import { wireTouchHover } from "../../core/touch-interactions.js";
 import { setControlIcon } from "../icons-tooltips.js";
 import { setSyncStatus } from "../session-ui.js";
 import {
@@ -233,20 +234,31 @@ function wireMiniPlayerOverlayControls(surface, ownerWindow) {
     hideTimer = ownerWindow.setTimeout(hide, 2200);
   };
 
-  surface.addEventListener("pointermove", reveal, { passive: true });
-  surface.addEventListener("pointerdown", reveal, { passive: true });
+  const revealForTouch = () => {
+    clearHideTimer();
+    surface.classList.add("player-overlay-visible");
+  };
+
+  const handlePointerMove = (event) => {
+    if (event.pointerType === "mouse") reveal();
+  };
+  surface.addEventListener("pointermove", handlePointerMove, { passive: true });
   surface.addEventListener("mouseenter", reveal);
   surface.addEventListener("mouseleave", hide);
   ownerWindow.addEventListener("blur", hide);
-  reveal();
+  const removeTouchHover = wireTouchHover(surface, {
+    onActivate: revealForTouch,
+    onDeactivate: hide,
+    eventDocument: ownerWindow.document,
+  });
 
   return () => {
     clearHideTimer();
-    surface.removeEventListener("pointermove", reveal);
-    surface.removeEventListener("pointerdown", reveal);
+    surface.removeEventListener("pointermove", handlePointerMove);
     surface.removeEventListener("mouseenter", reveal);
     surface.removeEventListener("mouseleave", hide);
     ownerWindow.removeEventListener("blur", hide);
+    removeTouchHover();
   };
 }
 

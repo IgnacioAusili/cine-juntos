@@ -110,7 +110,8 @@ function appendMessageNow(container, message) {
     tsBtn = document.createElement("button");
     tsBtn.type = "button";
     tsBtn.className = "message-video-ts";
-    tsBtn.title = `Ir al minuto ${formatClockTime(message.videoTimestamp)} del video`;
+    tsBtn.dataset.tooltip = `Ir al minuto ${formatClockTime(message.videoTimestamp)} del video`;
+    tsBtn.removeAttribute("title");
     tsBtn.setAttribute("aria-label", `Saltar a ${formatClockTime(message.videoTimestamp)} en el video`);
     tsBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="8" height="8" aria-hidden="true"><polygon points="5,3 19,12 5,21"/></svg><span>${formatClockTime(message.videoTimestamp)}</span>`;
     tsBtn.addEventListener("click", () => {

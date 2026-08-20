@@ -17,6 +17,7 @@ import {
 import { isMiniPlayerActive } from "./mini-player.js?v=20260815-seek-tooltip-01";
 import { syncInsideChatPanelOffset } from "../chat/chat-layout.js?v=20260811-text-stable-motion-01";
 import { withShortcutHint } from "../../core/utils.js";
+import { wireTouchHover } from "../../core/touch-interactions.js";
 
 const PLAYER_OVERLAY_IDLE_MS = 2200;
 let fallbackFullscreenActive = false;
@@ -169,10 +170,31 @@ function wirePlayerOverlayControls() {
     scheduleHide();
   };
 
+  // En táctil, la barra del reproductor se comporta como un hover: aparece
+  // solo mientras se mantiene la pulsación y se limpia al soltar.
+  wireTouchHover(dom.playerFrame, {
+    onActivate: (event) => {
+      // El chat vive dentro del playerFrame, pero sus pulsaciones no son una
+      // interacción con el video. En móvil no revelar la barra al mantener
+      // presionado un mensaje, el input o cualquier control del overlay.
+      if (event?.target?.closest?.(".player-chat")) {
+        clearHideTimer();
+        dom.playerFrame.classList.add("player-overlay-suppressed");
+        setOverlayVisible(false);
+        return;
+      }
+
+      clearHideTimer();
+      dom.playerFrame.classList.remove("player-cursor-hidden");
+      dom.playerFrame.classList.remove("player-overlay-suppressed");
+      setOverlayVisible(true);
+    },
+    onDeactivate: () => scheduleHide(0),
+  });
+
   // Al mover o clickear el mouse en el player frame, se muestra el overlay
   dom.playerFrame.addEventListener("mousemove", revealOverlay, { passive: true });
   dom.playerFrame.addEventListener("mousedown", revealOverlay, { passive: true });
-  dom.playerFrame.addEventListener("touchstart", revealOverlay, { passive: true });
 
   dom.playerFrame.addEventListener("mouseenter", revealOverlay);
   dom.playerFrame.addEventListener("focusin", revealOverlay);
@@ -207,6 +229,10 @@ function wirePlayerOverlayControls() {
   chatCollapseHoverZone?.addEventListener("mousedown", revealOverlayFromChatHandle, { passive: true });
   chatCollapseHoverZone?.addEventListener("mouseleave", () => {
     scheduleHide(400);
+  });
+  wireTouchHover(chatCollapseHoverZone, {
+    onActivate: revealOverlayFromChatHandle,
+    onDeactivate: () => scheduleHide(0),
   });
 
   // Ajustar el volumen con la rueda tambien mantiene activa la barra. Se

@@ -503,7 +503,6 @@ export function setChatDock(dock, options = {}) {
   updateCollapseButton();
   syncUnreadBadgesWithVisibility();
   scheduleExternalChatCollapseHandleOffset();
-  logEvent("ui", `Chat lateral en posicion: ${meta.label}.`);
 
   if (nextDock === "bottom" && !dom.sessionView.classList.contains("chat-collapsed")) {
     lockChatScrollSnapDuringProgrammaticScroll();
@@ -673,6 +672,9 @@ function applyExternalChatCollapsed(collapsed) {
   animateExternalChatLayoutFrom(previousVideoRect);
 
   if (dom.chatArea) {
+    if (collapsed && dom.chatArea.contains(document.activeElement)) {
+      dom.videoPlayer?.focus({ preventScroll: true });
+    }
     dom.chatArea.setAttribute("aria-hidden", String(collapsed));
     if (collapsed) {
       dom.chatArea.setAttribute("inert", "");
@@ -687,7 +689,6 @@ function applyExternalChatCollapsed(collapsed) {
   syncUnreadBadgesWithVisibility();
   scheduleMessageTimeAdjustmentAfterLayout();
   scheduleExternalChatCollapseHandleOffset();
-  logEvent("ui", collapsed ? "Chat externo contraido." : "Chat externo expandido.");
 
   if (!collapsed && state.chat.autoOpenedExternal) scheduleAutoCollapse(false);
 

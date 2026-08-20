@@ -2,14 +2,22 @@ import { dom } from "../core/dom.js";
 import { state } from "../core/state.js";
 import { setConnection } from "./session-ui.js";
 import { createForeignDocumentIcon } from "./foreign-lucide-icon.js";
+import {
+  isTouchPointer,
+  TOUCH_LONG_PRESS_DELAY_MS,
+} from "../core/touch-interactions.js";
 
 const TOOLTIP_ANCHOR_SELECTOR = "button, [role='button'], a, label, summary, input, select, textarea";
 const TOOLTIP_VIEWPORT_PADDING = 8;
 const TOOLTIP_GAP = 4;
 const TOUCH_FOCUS_SUPPRESSION_MS = 500;
+const TOUCH_TOOLTIP_MOVE_TOLERANCE_PX = 10;
+const TOUCH_TOOLTIP_MAX_VISIBLE_MS = 2200;
 
 let tooltipFrame = 0;
 let suppressFocusTooltipUntil = 0;
+let touchTooltipPress = null;
+let touchTooltipTimer = null;
 
 export function initializeUi() {
   hydrateIcons();
@@ -39,7 +47,8 @@ export function setControlIcon(control, iconName) {
 }
 
 export function normalizeTooltips() {
-  document.querySelectorAll("[data-tooltip][title]").forEach((element) => {
+  document.querySelectorAll("[title]").forEach((element) => {
+    if (!element.dataset.tooltip) element.dataset.tooltip = element.getAttribute("title") || "";
     element.removeAttribute("title");
   });
 }
@@ -56,6 +65,7 @@ export function wireTooltipEvents() {
   });
 
   document.addEventListener("pointerout", (event) => {
+    if (event.pointerType !== "mouse") return;
     if (!state.ui.tooltipTarget) return;
     if (event.relatedTarget instanceof Node && state.ui.tooltipTarget.contains(event.relatedTarget)) return;
     const context = getTooltipContext(event.target);
@@ -63,6 +73,16 @@ export function wireTooltipEvents() {
   });
 
   document.addEventListener("pointermove", (event) => {
+    if (isTouchPointer(event) && touchTooltipPress?.pointerId === event.pointerId) {
+      const movedX = event.clientX - touchTooltipPress.x;
+      const movedY = event.clientY - touchTooltipPress.y;
+      if (Math.hypot(movedX, movedY) > TOUCH_TOOLTIP_MOVE_TOLERANCE_PX) {
+        clearTouchTooltipPress();
+        hideTooltip();
+        return;
+      }
+    }
+
     if (!state.ui.tooltipTarget) return;
     if (!isPointInsideElement(state.ui.tooltipTarget, event.clientX, event.clientY)) hideTooltip();
   });
@@ -71,21 +91,62 @@ export function wireTooltipEvents() {
     const context = getTooltipContext(event.target);
     if (!context) return;
     if (event.pointerType === "mouse" && window.matchMedia("(hover: hover)").matches) return;
-    if (event.pointerType !== "mouse") suppressFocusTooltipUntil = performance.now() + TOUCH_FOCUS_SUPPRESSION_MS;
-    showTooltip(context);
-    window.clearTimeout(state.ui.tooltipPressTimer);
-    state.ui.tooltipPressTimer = window.setTimeout(hideTooltip, 2200);
+    if (!isTouchPointer(event)) return;
+
+    suppressFocusTooltipUntil = performance.now() + TOUCH_FOCUS_SUPPRESSION_MS;
+    const isHelpButton = context.anchor.classList?.contains("help-button");
+    const shouldToggleOff = isHelpButton
+      && state.ui.tooltipTarget === context.anchor
+      && !dom.tooltipLayer.hidden;
+    clearTouchTooltipPress();
+    if (shouldToggleOff) {
+      hideTooltip();
+      return;
+    }
+
+    hideTooltip();
+    touchTooltipPress = {
+      pointerId: event.pointerId,
+      x: event.clientX,
+      y: event.clientY,
+      context,
+      isHelpButton,
+    };
+    touchTooltipTimer = window.setTimeout(() => {
+      if (
+        !touchTooltipPress
+        || touchTooltipPress.pointerId !== event.pointerId
+        || !touchTooltipPress.context.anchor.isConnected
+      ) return;
+
+      showTooltip(touchTooltipPress.context);
+      state.ui.tooltipPressTimer = window.setTimeout(hideTooltip, TOUCH_TOOLTIP_MAX_VISIBLE_MS);
+    }, TOUCH_LONG_PRESS_DELAY_MS);
   });
 
   document.addEventListener("pointerup", (event) => {
-    if (event.pointerType === "mouse") return;
+    if (!isTouchPointer(event)) return;
     suppressFocusTooltipUntil = performance.now() + TOUCH_FOCUS_SUPPRESSION_MS;
+    const press = touchTooltipPress;
+    if (
+      press?.pointerId === event.pointerId
+      && press.isHelpButton
+      && press.context.anchor.isConnected
+    ) {
+      clearTouchTooltipPress();
+      showTooltip(press.context);
+      state.ui.tooltipPressTimer = window.setTimeout(hideTooltip, TOUCH_TOOLTIP_MAX_VISIBLE_MS);
+      return;
+    }
+
+    clearTouchTooltipPress();
     hideTooltip();
   });
 
   document.addEventListener("pointercancel", (event) => {
-    if (event.pointerType === "mouse") return;
+    if (!isTouchPointer(event)) return;
     suppressFocusTooltipUntil = performance.now() + TOUCH_FOCUS_SUPPRESSION_MS;
+    clearTouchTooltipPress();
     hideTooltip();
   });
 
@@ -193,6 +254,7 @@ function positionTooltip(anchor) {
 }
 
 export function hideTooltip() {
+  clearTouchTooltipPress();
   state.ui.tooltipTarget = null;
   window.clearTimeout(state.ui.tooltipPressTimer);
   window.cancelAnimationFrame(tooltipFrame);
@@ -201,4 +263,10 @@ export function hideTooltip() {
   dom.tooltipLayer.style.visibility = "";
   dom.tooltipLayer.style.removeProperty("--tooltip-arrow-offset");
   dom.tooltipLayer.removeAttribute("data-placement");
+}
+
+function clearTouchTooltipPress() {
+  if (touchTooltipTimer !== null) window.clearTimeout(touchTooltipTimer);
+  touchTooltipTimer = null;
+  touchTooltipPress = null;
 }

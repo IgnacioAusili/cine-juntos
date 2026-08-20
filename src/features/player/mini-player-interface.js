@@ -18,6 +18,7 @@ import {
 } from "./mini-player-chat-mirror.js?v=20260813-anchored-selector-08";
 import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js";
 import { wireMiniPlayerShortcuts } from "./mini-player-shortcuts.js?v=20260808-scroll-mini-player-02";
+import { wireTouchHover } from "../../core/touch-interactions.js";
 
 const VIDEO_EVENTS = ["play", "pause", "timeupdate", "seeked", "ratechange", "volumechange"];
 const PROXY_CONTROL_SELECTOR = "button, input, select, textarea";
@@ -95,6 +96,7 @@ function createInteractiveMirror(source, targetDocument) {
   // El overlay del mini reproductor es una superficie independiente. Se
   // clona al abrirse, pero no vuelve a copiar cambios del reproductor normal.
   const observesSource = true;
+  let removeTouchVolumeHovers = [];
 
   element.addEventListener("click", (event) => {
     if (event.target.matches?.("input, select, textarea")) return;
@@ -130,9 +132,6 @@ function createInteractiveMirror(source, targetDocument) {
     if (source === dom.playerChat) {
       handleMiniChatInteraction(element, event.target);
       return;
-    }
-    if (source === dom.playerBottomActions && event.target.closest?.(".player-volume-group")) {
-      event.target.closest(".player-volume-group").classList.add("volume-hovered");
     }
     target.click();
     requestAnimationFrame(() => {
@@ -206,6 +205,7 @@ function createInteractiveMirror(source, targetDocument) {
     syncState,
     restore() {
       observer.disconnect();
+      removeTouchVolumeHovers.forEach((removeTouchHover) => removeTouchHover());
       element.remove();
     },
   };
@@ -219,6 +219,12 @@ function createInteractiveMirror(source, targetDocument) {
     markProxyControls(element, keepIds);
     copyControlState(source, element);
     if (source === dom.playerBottomActions) copyDynamicButtonPresentation(source, element);
+    removeTouchVolumeHovers.forEach((removeTouchHover) => removeTouchHover());
+    removeTouchVolumeHovers = source === dom.playerBottomActions
+      ? Array.from(element.querySelectorAll(".player-volume-group"), (volumeGroup) => (
+        wireTouchHover(volumeGroup, { activeClass: "volume-hovered" })
+      ))
+      : [];
     if (source === dom.playerActions) {
       const surface = element.closest(".mini-player-surface");
       if (surface) {

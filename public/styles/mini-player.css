@@ -297,6 +297,38 @@
   max-width: 42px;
 }
 
+@media (hover: none) {
+  .mini-player-surface.mini-player-scroll:hover .player-bottom-actions {
+    opacity: 0;
+    transform: translateY(6px);
+    pointer-events: none;
+  }
+
+  .mini-player-surface.mini-player-scroll.is-touch-hover .player-bottom-actions {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .mini-player-surface .player-volume-group:hover:not(.is-touch-hover):not(.volume-hovered) {
+    gap: 0;
+  }
+
+  .mini-player-surface .player-volume-group:hover:not(.is-touch-hover):not(.volume-hovered) .player-volume-slider-wrap {
+    max-width: 0;
+  }
+
+  .mini-player-surface .player-volume-group.is-touch-hover,
+  .mini-player-surface .player-volume-group.volume-hovered {
+    gap: 6px;
+  }
+
+  .mini-player-surface .player-volume-group.is-touch-hover .player-volume-slider-wrap,
+  .mini-player-surface .player-volume-group.volume-hovered .player-volume-slider-wrap {
+    max-width: 42px;
+  }
+}
+
 .mini-player-surface .player-volume-group .video-control-button {
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.14);

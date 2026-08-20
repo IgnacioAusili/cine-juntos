@@ -8,8 +8,8 @@ const port = Number(process.env.PORT || (portArgIndex >= 0 ? process.argv[portAr
 
 const csp = [
   "default-src 'self'",
-  "script-src 'self' https://unpkg.com https://www.gstatic.com https://cinecompartidopagina-default-rtdb.firebaseio.com https://*.firebaseio.com https://*.firebasedatabase.app",
-  "script-src-elem 'self' https://unpkg.com https://www.gstatic.com https://cinecompartidopagina-default-rtdb.firebaseio.com https://*.firebaseio.com https://*.firebasedatabase.app",
+  "script-src 'self' https://unpkg.com https://www.gstatic.com https://apis.google.com https://cinecompartidopagina-default-rtdb.firebaseio.com https://*.firebaseio.com https://*.firebasedatabase.app",
+  "script-src-elem 'self' https://unpkg.com https://www.gstatic.com https://apis.google.com https://cinecompartidopagina-default-rtdb.firebaseio.com https://*.firebaseio.com https://*.firebasedatabase.app",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "style-src-elem 'self' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com data:",

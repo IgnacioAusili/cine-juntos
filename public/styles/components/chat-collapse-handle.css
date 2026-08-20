@@ -65,6 +65,8 @@
 }
 
 .chat-collapse-handle:hover,
+.chat-collapse-handle.is-touch-hover,
+.chat-collapse-hover-zone.is-touch-hover .chat-collapse-handle,
 .chat-collapse-handle:focus-visible {
   color: #fff;
   background: transparent;
@@ -84,6 +86,10 @@
 }
 
 .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone:hover .chat-collapse-handle {
+  opacity: 1;
+}
+
+.session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone.is-touch-hover .chat-collapse-handle {
   opacity: 1;
 }
 
@@ -209,6 +215,10 @@
 }
 
 .session-view.chat-collapsed[data-chat-dock="bottom"] .chat-collapse-hover-zone:hover .chat-collapse-handle {
+  opacity: 0;
+}
+
+.session-view.chat-collapsed[data-chat-dock="bottom"] .chat-collapse-hover-zone.is-touch-hover .chat-collapse-handle {
   opacity: 0;
 }
 

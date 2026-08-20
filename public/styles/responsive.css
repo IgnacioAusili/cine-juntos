@@ -173,3 +173,58 @@
     width: min(250px, calc(100% - 10px));
   }
 }
+
+/* En escritorio el control del chat interno queda más visible dentro del
+   reproductor. Este ajuste no modifica tablet ni móvil. */
+@media (min-width: 981px) {
+  .player-actions {
+    top: 5px;
+    right: 8px;
+  }
+
+  #playerChatToggleButton {
+    width: 36px;
+    min-height: 36px;
+    flex-basis: 36px;
+    margin-top: 2px;
+  }
+
+  #playerChatToggleButton > svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* En PC las zonas de contraer/expandir no necesitan ocupar todo el borde
+     vertical: el ícono queda centrado dentro de un área más corta. */
+  .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone,
+  .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-hover-zone {
+    top: 50%;
+    bottom: auto;
+    height: 72px;
+    transform: translateY(-50%);
+  }
+
+  .player-status-badge.empty {
+    top: 9px;
+    left: 20px;
+    min-height: 28px;
+    gap: 8px;
+    font-size: 0.82rem;
+  }
+
+  .player-status-badge.empty .video-status-dot {
+    width: 7px;
+    height: 7px;
+    flex-basis: 7px;
+  }
+
+  .player-status-badge.video-status.empty {
+    color: rgba(255, 255, 255, 0.76);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.78), 0 0 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .player-status-badge.video-status.empty .video-status-dot {
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.13);
+  }
+}

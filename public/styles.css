@@ -4,8 +4,8 @@
 @import url("./styles/components.css?v=20260816-anim-fix-space-06");
 @import url("./styles/lobby.css?v=20260816-about-corner-02");
 @import url("./styles/player.css?v=20260810-player-fixes-01");
-@import url("./styles/chat.css?v=20260819-emoji-fallback-01");
-@import url("./styles/chat-overlay.css?v=20260819-emoji-fallback-01");
+@import url("./styles/chat.css?v=20260820-system-lines-01");
+@import url("./styles/chat-overlay.css?v=20260820-system-lines-01");
 @import url("./styles/states.css");
 @import url("./styles/responsive.css?v=20260808-chat-dock-form-01");
 @import url("./styles/mini-player.css?v=20260808-mini-player-13");

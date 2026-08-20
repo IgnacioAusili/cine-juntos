@@ -10,11 +10,15 @@ import {
 const TOOLTIP_ANCHOR_SELECTOR = "button, [role='button'], a, label, summary, input, select, textarea";
 const TOOLTIP_VIEWPORT_PADDING = 8;
 const TOOLTIP_GAP = 4;
+const TOOLTIP_SHOW_DELAY_MS = 800;
+const HELP_TOOLTIP_SHOW_DELAY_MS = 500;
 const TOUCH_FOCUS_SUPPRESSION_MS = 500;
 const TOUCH_TOOLTIP_MOVE_TOLERANCE_PX = 10;
 const TOUCH_TOOLTIP_MAX_VISIBLE_MS = 2200;
 
 let tooltipFrame = 0;
+let tooltipShowTimer = null;
+let tooltipShowContext = null;
 let suppressFocusTooltipUntil = 0;
 let touchTooltipPress = null;
 let touchTooltipTimer = null;
@@ -61,15 +65,16 @@ export function wireTooltipEvents() {
   document.addEventListener("pointerover", (event) => {
     if (event.pointerType !== "mouse") return;
     const context = getTooltipContext(event.target);
-    if (context) showTooltip(context);
+    if (context) scheduleTooltip(context);
   });
 
   document.addEventListener("pointerout", (event) => {
     if (event.pointerType !== "mouse") return;
-    if (!state.ui.tooltipTarget) return;
-    if (event.relatedTarget instanceof Node && state.ui.tooltipTarget.contains(event.relatedTarget)) return;
     const context = getTooltipContext(event.target);
-    if (context?.anchor === state.ui.tooltipTarget) hideTooltip();
+    if (!context) return;
+    if (event.relatedTarget instanceof Node && context.anchor.contains(event.relatedTarget)) return;
+    if (context.anchor === tooltipShowContext?.anchor) cancelScheduledTooltip();
+    if (context.anchor === state.ui.tooltipTarget) hideTooltip();
   });
 
   document.addEventListener("pointermove", (event) => {
@@ -90,11 +95,16 @@ export function wireTooltipEvents() {
   document.addEventListener("pointerdown", (event) => {
     const context = getTooltipContext(event.target);
     if (!context) return;
-    if (event.pointerType === "mouse" && window.matchMedia("(hover: hover)").matches) return;
+    const isHelpButton = context.anchor.classList?.contains("help-button");
+    if (event.pointerType === "mouse" && isButtonTooltipContext(context)) {
+      if (isHelpButton) return;
+      suppressFocusTooltipUntil = performance.now() + TOOLTIP_SHOW_DELAY_MS;
+      hideTooltip();
+      return;
+    }
     if (!isTouchPointer(event)) return;
 
     suppressFocusTooltipUntil = performance.now() + TOUCH_FOCUS_SUPPRESSION_MS;
-    const isHelpButton = context.anchor.classList?.contains("help-button");
     const shouldToggleOff = isHelpButton
       && state.ui.tooltipTarget === context.anchor
       && !dom.tooltipLayer.hidden;
@@ -125,6 +135,14 @@ export function wireTooltipEvents() {
   });
 
   document.addEventListener("pointerup", (event) => {
+    const context = getTooltipContext(event.target);
+    const isHelpButton = context?.anchor.classList?.contains("help-button");
+    if (event.pointerType === "mouse" && isButtonTooltipContext(context)) {
+      if (isHelpButton) return;
+      suppressFocusTooltipUntil = performance.now() + TOOLTIP_SHOW_DELAY_MS;
+      hideTooltip();
+      return;
+    }
     if (!isTouchPointer(event)) return;
     suppressFocusTooltipUntil = performance.now() + TOUCH_FOCUS_SUPPRESSION_MS;
     const press = touchTooltipPress;
@@ -206,9 +224,38 @@ function getTooltipAnchor(source) {
   return source.closest?.(TOOLTIP_ANCHOR_SELECTOR) || source;
 }
 
+function isButtonTooltipContext(context) {
+  return Boolean(context?.anchor?.matches?.("button, [role='button']"));
+}
+
+function scheduleTooltip(context) {
+  if (state.ui.tooltipTarget === context.anchor && !dom.tooltipLayer.hidden) return;
+  if (tooltipShowContext?.anchor === context.anchor) return;
+
+  cancelScheduledTooltip();
+  tooltipShowContext = context;
+  const showDelay = context.anchor.classList?.contains("help-button")
+    ? HELP_TOOLTIP_SHOW_DELAY_MS
+    : TOOLTIP_SHOW_DELAY_MS;
+  tooltipShowTimer = window.setTimeout(() => {
+    const pendingContext = tooltipShowContext;
+    tooltipShowTimer = null;
+    tooltipShowContext = null;
+    if (!pendingContext?.anchor?.isConnected) return;
+    showTooltip(pendingContext);
+  }, showDelay);
+}
+
+function cancelScheduledTooltip() {
+  if (tooltipShowTimer !== null) window.clearTimeout(tooltipShowTimer);
+  tooltipShowTimer = null;
+  tooltipShowContext = null;
+}
+
 function showTooltip(context) {
   const text = context?.source?.dataset?.tooltip;
   if (!text) return;
+  cancelScheduledTooltip();
   state.ui.tooltipTarget = context.anchor;
   dom.tooltipLayer.textContent = text;
   dom.tooltipLayer.hidden = false;
@@ -254,6 +301,7 @@ function positionTooltip(anchor) {
 }
 
 export function hideTooltip() {
+  cancelScheduledTooltip();
   clearTouchTooltipPress();
   state.ui.tooltipTarget = null;
   window.clearTimeout(state.ui.tooltipPressTimer);

@@ -1,6 +1,8 @@
 const SYSTEM_GROUP_MIN_SIZE = 3;
 const SYSTEM_GROUP_TRANSITION_MS = 180;
-const SYSTEM_GROUP_EXPANSION_MS = 240;
+// La expansión revela varias filas a la vez; necesita más tiempo que la
+// contracción para que el cambio de layout se perciba sin sentirse brusco.
+const SYSTEM_GROUP_EXPANSION_MS = 300;
 const SYSTEM_GROUP_SCROLL_EDGE_GAP = 56;
 const groupStates = new WeakMap();
 const groupTransitions = new WeakMap();

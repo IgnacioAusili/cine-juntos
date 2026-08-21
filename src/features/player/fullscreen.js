@@ -20,6 +20,7 @@ import { withShortcutHint } from "../../core/utils.js";
 import { wireTouchHover } from "../../core/touch-interactions.js";
 
 const PLAYER_OVERLAY_IDLE_MS = 2200;
+const PLAYER_OVERLAY_LEAVE_HIDE_DELAY_MS = 650;
 let fallbackFullscreenActive = false;
 
 const USE_NATIVE_FULLSCREEN = true;
@@ -153,11 +154,12 @@ function wirePlayerOverlayControls() {
     }
 
     const target = event?.target instanceof Element ? event.target : null;
+    const isChatInteraction = target?.closest(".player-chat, #playerChatToggleButton");
     // Al abrir el chat, el foco pasa automáticamente a su textarea. Ese
     // focusin burbujea hasta el playerFrame y no debe interpretarse como una
     // interacción con el video. Mientras el puntero siga sobre el overlay,
     // tampoco dejamos que un movimiento o una pulsación vuelva a revelarla.
-    if (target?.closest(".player-chat")) {
+    if (isChatInteraction) {
       clearHideTimer();
       dom.playerFrame.classList.add("player-overlay-suppressed");
       setOverlayVisible(false);
@@ -177,7 +179,7 @@ function wirePlayerOverlayControls() {
       // El chat vive dentro del playerFrame, pero sus pulsaciones no son una
       // interacción con el video. En móvil no revelar la barra al mantener
       // presionado un mensaje, el input o cualquier control del overlay.
-      if (event?.target?.closest?.(".player-chat")) {
+      if (event?.target?.closest?.(".player-chat, #playerChatToggleButton")) {
         clearHideTimer();
         dom.playerFrame.classList.add("player-overlay-suppressed");
         setOverlayVisible(false);
@@ -195,6 +197,14 @@ function wirePlayerOverlayControls() {
   // Al mover o clickear el mouse en el player frame, se muestra el overlay
   dom.playerFrame.addEventListener("mousemove", revealOverlay, { passive: true });
   dom.playerFrame.addEventListener("mousedown", revealOverlay, { passive: true });
+
+  // pointerenter ocurre antes que mouseenter. Quitar aquí el cursor oculto
+  // evita que parpadee o desaparezca un instante al volver al reproductor.
+  dom.playerFrame.addEventListener("pointerenter", (event) => {
+    if (event.pointerType === "touch") return;
+    clearHideTimer();
+    dom.playerFrame.classList.remove("player-cursor-hidden");
+  }, { passive: true, capture: true });
 
   dom.playerFrame.addEventListener("mouseenter", revealOverlay);
   dom.playerFrame.addEventListener("focusin", revealOverlay);
@@ -221,14 +231,17 @@ function wirePlayerOverlayControls() {
     ) {
       activeElement.blur();
     }
-    scheduleHide(400);
+    // Darle un margen al cursor para volver al reproductor. Si vuelve antes
+    // de este plazo, revealOverlay cancela este ocultamiento y reinicia el
+    // contador normal de la barra.
+    scheduleHide(PLAYER_OVERLAY_LEAVE_HIDE_DELAY_MS);
   });
 
   chatCollapseHoverZone?.addEventListener("mouseenter", revealOverlayFromChatHandle);
   chatCollapseHoverZone?.addEventListener("mousemove", revealOverlayFromChatHandle, { passive: true });
   chatCollapseHoverZone?.addEventListener("mousedown", revealOverlayFromChatHandle, { passive: true });
   chatCollapseHoverZone?.addEventListener("mouseleave", () => {
-    scheduleHide(400);
+    scheduleHide(PLAYER_OVERLAY_LEAVE_HIDE_DELAY_MS);
   });
   wireTouchHover(chatCollapseHoverZone, {
     onActivate: revealOverlayFromChatHandle,

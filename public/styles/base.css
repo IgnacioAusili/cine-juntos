@@ -53,7 +53,8 @@ body:not(.app-ready) {
 }
 
 body.is-lobby {
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 /* Grano de film sutil solo en el lobby (textura cinematografica) */

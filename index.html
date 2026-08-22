@@ -329,6 +329,21 @@
               </p>
 
               <div class="player-actions" aria-label="Controles de reproductor">
+                  <label
+                    class="player-select player-control-style-select"
+                    for="playerControlStyleSelect"
+                    data-tooltip="Estilo de la barra de controles"
+                  >
+                    <select id="playerControlStyleSelect" aria-label="Estilo de la barra de controles">
+                      <option value="glass" selected>Cristal</option>
+                      <option value="cinema">Cine</option>
+                      <option value="theater">Estudio</option>
+                      <option value="compact">Compacta</option>
+                      <option value="line">Línea</option>
+                      <option value="edge">Borde</option>
+                      <option value="split">Separada</option>
+                    </select>
+                  </label>
                   <button
                     class="icon-button player-tool compact-tool"
                     id="playerChatToggleButton"
@@ -345,6 +360,16 @@
               <div class="player-bottom-actions" aria-label="Controles inferiores del reproductor">
                 <div class="player-controls-bar">
                   <button
+                    class="video-control-button player-skip-control"
+                    id="playerBackButton"
+                    type="button"
+                    aria-label="Retroceder 10 segundos"
+                    data-tooltip="Retroceder 10 segundos (←)"
+                  >
+                    <span data-lucide="rewind"></span>
+                  </button>
+
+                  <button
                     class="video-control-button primary-video-control"
                     id="playerPlayButton"
                     type="button"
@@ -353,6 +378,16 @@
                     data-tooltip="Reproducir video (Espacio)"
                   >
                     <span data-lucide="play"></span>
+                  </button>
+
+                  <button
+                    class="video-control-button player-skip-control"
+                    id="playerForwardButton"
+                    type="button"
+                    aria-label="Avanzar 10 segundos"
+                    data-tooltip="Avanzar 10 segundos (→)"
+                  >
+                    <span data-lucide="fast-forward"></span>
                   </button>
 
                   <div class="player-progress-group">

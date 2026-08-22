@@ -38,6 +38,11 @@ function setSecurityHeaders(res) {
   res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
   res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
   res.setHeader("X-Content-Type-Options", "nosniff");
+  // Este servidor solo se usa para desarrollo. Evita que el navegador
+  // conserve versiones anteriores de HTML, CSS o módulos ES.
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
 }
 
 function readBody(req) {

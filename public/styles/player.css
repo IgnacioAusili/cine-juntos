@@ -56,7 +56,7 @@ video::-webkit-media-controls-fullscreen-button {
 .player-status-badge {
   position: absolute;
   z-index: 20;
-  top: 5px;
+  top: 8px;
   left: 16px;
   display: inline-flex;
   align-items: center;
@@ -173,6 +173,19 @@ video::-webkit-media-controls-fullscreen-button {
   gap: 5px;
 }
 
+.player-control-style-select {
+  height: 28px;
+  margin-top: 2px;
+  margin-right: 2px;
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(9, 12, 15, 0.28);
+}
+
+.player-control-style-select select {
+  font-size: 0.66rem;
+  letter-spacing: 0.04em;
+}
+
 #playerChatToggleButton {
   position: relative;
   margin-top: 2px;
@@ -182,7 +195,7 @@ video::-webkit-media-controls-fullscreen-button {
   border: 0;
   border-radius: 999px;
   background: transparent;
-  color: var(--text-soft);
+  color: rgba(255, 255, 255, 0.84);
   box-shadow: none;
   padding: 0;
   transition:
@@ -202,6 +215,10 @@ video::-webkit-media-controls-fullscreen-button {
 #playerChatToggleButton.active {
   background: rgba(47, 184, 164, 0.14);
   color: #d8fff9;
+}
+
+#playerChatToggleButton.active svg {
+  filter: drop-shadow(0 0 5px rgba(119, 244, 222, 0.36));
 }
 
 .player-bottom-actions {
@@ -251,6 +268,298 @@ video::-webkit-media-controls-fullscreen-button {
     0 10px 32px rgba(0, 0, 0, 0.4);
   padding: 6px 10px;
   backdrop-filter: blur(18px);
+}
+
+#playerChatToggleButton svg {
+  width: 19px;
+  height: 19px;
+  stroke-width: 2.25;
+  filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.45));
+}
+
+#playerChatToggleButton:not(:disabled):hover,
+#playerChatToggleButton:not(:disabled):focus-visible {
+  color: #ffffff;
+  filter: drop-shadow(0 1px 5px rgba(0, 0, 0, 0.55));
+}
+
+/* Variantes temporales: cambian la composición completa, no solo el color. */
+.player-frame[data-control-style="cinema"] .player-controls-bar {
+  display: grid;
+  max-width: 760px;
+  grid-template-columns: auto auto auto minmax(0, 1fr) auto auto auto;
+  gap: 6px;
+  border-radius: 18px;
+  padding: 8px 12px 9px;
+}
+
+.player-frame[data-control-style="cinema"] .player-progress-group {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  width: 100%;
+  padding-top: 3px;
+}
+
+.player-frame[data-control-style="cinema"] .player-skip-control {
+  opacity: 0.78;
+}
+
+.player-frame[data-control-style="theater"] .player-bottom-actions {
+  align-items: flex-end;
+  justify-content: flex-start;
+  padding: 18px;
+}
+
+.player-frame[data-control-style="theater"] .player-controls-bar {
+  display: grid;
+  max-width: 560px;
+  grid-template-columns: auto auto auto minmax(90px, 1fr) auto auto auto;
+  gap: 7px;
+  border-radius: 20px;
+  background: rgba(12, 18, 22, 0.94);
+  padding: 9px 12px;
+}
+
+.player-frame[data-control-style="theater"] .player-progress-group {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  width: 100%;
+  padding-bottom: 5px;
+}
+
+.player-frame[data-control-style="theater"] .primary-video-control {
+  width: 38px;
+  min-height: 38px;
+  border-radius: 12px;
+  background: var(--accent);
+  color: #071311;
+}
+
+.player-frame[data-control-style="compact"] .player-controls-bar {
+  max-width: 470px;
+  gap: 3px;
+  border-color: rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  padding: 4px 6px;
+  background: rgba(10, 14, 18, 0.86);
+}
+
+.player-frame[data-control-style="compact"] .player-bottom-actions {
+  justify-content: flex-end;
+  padding: 8px 10px 10px;
+}
+
+.player-frame[data-control-style="compact"] .player-progress-group {
+  order: 1;
+}
+
+.player-frame[data-control-style="compact"] .player-skip-control {
+  order: 2;
+}
+
+.player-frame[data-control-style="compact"] .primary-video-control {
+  order: 3;
+  width: 30px;
+  min-height: 30px;
+  border-radius: 9px;
+}
+
+.player-frame[data-control-style="compact"] .player-volume-group {
+  order: 4;
+}
+
+.player-frame[data-control-style="compact"] .player-volume-slider-wrap {
+  display: none;
+}
+
+.player-frame[data-control-style="compact"] .player-time {
+  display: none;
+}
+
+.player-frame[data-control-style="compact"] .player-controls-bar .video-control-button {
+  width: 26px;
+  min-height: 26px;
+}
+
+.player-frame[data-control-style="compact"] .player-controls-bar .player-time {
+  min-width: 28px;
+  font-size: 0.62rem;
+}
+
+.player-frame[data-control-style="compact"] .player-controls-bar .player-select {
+  height: 26px;
+}
+
+/* Línea: controles desnudos, sin panel. El progreso se vuelve la única guía visual. */
+.player-frame[data-control-style="line"] .player-bottom-actions {
+  padding: 14px 18px 12px;
+  background: transparent;
+}
+
+.player-frame[data-control-style="line"] .player-controls-bar {
+  position: relative;
+  max-width: none;
+  gap: 10px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.36));
+  padding: 4px 0;
+  backdrop-filter: none;
+}
+
+.player-frame[data-control-style="line"] .player-progress-group {
+  position: absolute;
+  right: 0;
+  bottom: 100%;
+  left: 0;
+  display: block;
+  height: 10px;
+}
+
+.player-frame[data-control-style="line"] .player-progress-group .player-time {
+  display: none;
+}
+
+.player-frame[data-control-style="line"] .player-seek-input {
+  height: 3px;
+  transition: height 140ms ease;
+}
+
+.player-frame[data-control-style="line"] .player-seek-input:hover {
+  height: 5px;
+}
+
+.player-frame[data-control-style="line"] .player-volume-group {
+  margin-left: auto;
+}
+
+/* En Línea ningún comando tiene una cápsula: solo quedan los iconos y su estado. */
+.player-frame[data-control-style="line"] .player-controls-bar .video-control-button {
+  width: auto;
+  min-height: 30px;
+  flex-basis: auto;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: rgba(255, 255, 255, 0.74);
+  padding: 0 4px;
+}
+
+.player-frame[data-control-style="line"] .player-controls-bar .video-control-button svg {
+  width: 19px;
+  height: 19px;
+  stroke-width: 2.35;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.55));
+}
+
+.player-frame[data-control-style="line"] .player-controls-bar .primary-video-control svg {
+  width: 22px;
+  height: 22px;
+  stroke-width: 2.45;
+}
+
+.player-frame[data-control-style="line"] .player-controls-bar .video-control-button:not(:disabled):hover,
+.player-frame[data-control-style="line"] .player-controls-bar .video-control-button:not(:disabled):focus-visible,
+.player-frame[data-control-style="line"] .player-controls-bar .video-control-button.active:not(:disabled) {
+  border: 0;
+  background: transparent;
+  color: var(--accent-soft, #d8fff9);
+  transform: translateY(-1px);
+}
+
+.player-frame[data-control-style="line"] .player-controls-bar .primary-video-control {
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+}
+
+.player-frame[data-control-style="line"] .player-controls-bar .player-select {
+  height: 30px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.player-frame[data-control-style="line"] .player-controls-bar .player-select:hover,
+.player-frame[data-control-style="line"] .player-controls-bar .player-select:focus-within {
+  border: 0;
+  background: transparent;
+}
+
+.player-frame[data-control-style="line"] .player-controls-bar .player-select select {
+  padding-right: 18px;
+  padding-left: 2px;
+  background-position: right 2px center;
+}
+
+/* Borde: una única línea de anclaje que ocupa todo el ancho del video. */
+.player-frame[data-control-style="edge"] .player-bottom-actions {
+  padding: 0;
+  background: transparent;
+}
+
+.player-frame[data-control-style="edge"] .player-controls-bar {
+  max-width: none;
+  gap: 9px;
+  border: 0;
+  border-top: 1px solid rgba(216, 255, 249, 0.28);
+  border-radius: 0;
+  background: rgba(6, 10, 12, 0.82);
+  box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.25);
+  padding: 7px 18px 8px;
+  backdrop-filter: blur(10px);
+}
+
+.player-frame[data-control-style="edge"] .player-progress-group {
+  order: 1;
+}
+
+.player-frame[data-control-style="edge"] .player-skip-control {
+  order: 2;
+}
+
+.player-frame[data-control-style="edge"] .primary-video-control {
+  order: 3;
+}
+
+.player-frame[data-control-style="edge"] .player-volume-group {
+  order: 4;
+  margin-left: auto;
+}
+
+/* Separada: progreso arriba y comandos abajo, pero sin una caja contenedora. */
+.player-frame[data-control-style="split"] .player-bottom-actions {
+  padding: 12px 18px 14px;
+  background: linear-gradient(0deg, rgba(4, 7, 8, 0.68), transparent);
+}
+
+.player-frame[data-control-style="split"] .player-controls-bar {
+  display: grid;
+  max-width: 900px;
+  grid-template-columns: auto auto auto minmax(0, 1fr) auto auto auto;
+  gap: 8px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 5px 0;
+  backdrop-filter: none;
+}
+
+.player-frame[data-control-style="split"] .player-progress-group {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  width: 100%;
+  padding-bottom: 7px;
+}
+
+.player-frame[data-control-style="split"] .player-seek-input {
+  height: 4px;
 }
 
 .player-progress-group {
@@ -432,16 +741,24 @@ video::-webkit-media-controls-fullscreen-button {
 }
 
 #pageFullscreenButton.active:not(:disabled) {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.14);
-  color: rgba(255, 255, 255, 0.82);
+  background: transparent;
+  border-color: transparent;
+  color: #ffffff;
+  box-shadow: none;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.18));
 }
 
 #pageFullscreenButton.active:not(:disabled):hover,
 #pageFullscreenButton.active:not(:disabled):focus-visible {
-  background: rgba(255, 255, 255, 0.14);
-  border-color: rgba(255, 255, 255, 0.28);
+  background: transparent;
+  border-color: transparent;
   color: #fff;
+  box-shadow: none;
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.24));
+}
+
+#pageFullscreenButton.active:not(:disabled) svg {
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.22));
 }
 
 .primary-video-control {

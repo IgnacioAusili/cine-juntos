@@ -425,6 +425,11 @@ function animateGroupTransition(items, header, visualState, expanded) {
     scrollAnimation,
     finished,
     cleanup: () => {
+      // Las animaciones de expansión usan `fill: both` para sostener las
+      // filas durante el stagger. Al terminar hay que quitarlas del elemento;
+      // si quedan adheridas, interfieren con la siguiente contracción y dejan
+      // una copia visual tenue de los mensajes anteriores.
+      animations.forEach((animation) => animation.cancel());
       restoreExpansionVisualTransition(visualState);
       visualState?.layer?.remove();
       scrollAnimation?.cancel();

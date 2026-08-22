@@ -12,6 +12,7 @@ const TOOLTIP_VIEWPORT_PADDING = 8;
 const TOOLTIP_GAP = 4;
 const TOOLTIP_SHOW_DELAY_MS = 800;
 const HELP_TOOLTIP_SHOW_DELAY_MS = 500;
+const PRESENCE_TOOLTIP_SHOW_DELAY_MS = 300;
 const TOUCH_FOCUS_SUPPRESSION_MS = 500;
 const TOUCH_TOOLTIP_MOVE_TOLERANCE_PX = 10;
 const TOUCH_TOOLTIP_MAX_VISIBLE_MS = 2200;
@@ -64,6 +65,11 @@ export function wireTooltipEvents() {
 
   document.addEventListener("pointerover", (event) => {
     if (event.pointerType !== "mouse") return;
+    if (event.target.closest?.(".player-rate-menu")) {
+      cancelScheduledTooltip();
+      hideTooltip();
+      return;
+    }
     const context = getTooltipContext(event.target);
     if (context) scheduleTooltip(context);
   });
@@ -96,8 +102,13 @@ export function wireTooltipEvents() {
     const context = getTooltipContext(event.target);
     if (!context) return;
     const isHelpButton = context.anchor.classList?.contains("help-button");
+    if (event.pointerType === "mouse" && isSelectTooltipContext(context)) {
+      suppressFocusTooltipUntil = performance.now() + TOOLTIP_SHOW_DELAY_MS;
+      hideTooltip();
+      return;
+    }
     if (event.pointerType === "mouse" && isButtonTooltipContext(context)) {
-      if (isHelpButton) return;
+      if (isHelpButton || isPresenceTooltipContext(context)) return;
       suppressFocusTooltipUntil = performance.now() + TOOLTIP_SHOW_DELAY_MS;
       hideTooltip();
       return;
@@ -138,7 +149,7 @@ export function wireTooltipEvents() {
     const context = getTooltipContext(event.target);
     const isHelpButton = context?.anchor.classList?.contains("help-button");
     if (event.pointerType === "mouse" && isButtonTooltipContext(context)) {
-      if (isHelpButton) return;
+      if (isHelpButton || isPresenceTooltipContext(context)) return;
       suppressFocusTooltipUntil = performance.now() + TOOLTIP_SHOW_DELAY_MS;
       hideTooltip();
       return;
@@ -161,6 +172,13 @@ export function wireTooltipEvents() {
     hideTooltip();
   });
 
+  document.addEventListener("click", (event) => {
+    const context = getTooltipContext(event.target);
+    if (!isPresenceTooltipContext(context) && !context?.anchor?.classList?.contains("help-button")) return;
+    if (state.ui.tooltipTarget === context.anchor && !dom.tooltipLayer.hidden) return;
+    showTooltip(context);
+  });
+
   document.addEventListener("pointercancel", (event) => {
     if (!isTouchPointer(event)) return;
     suppressFocusTooltipUntil = performance.now() + TOUCH_FOCUS_SUPPRESSION_MS;
@@ -174,8 +192,25 @@ export function wireTooltipEvents() {
     if (context) showTooltip(context);
   });
 
+  document.addEventListener("keydown", (event) => {
+    const select = event.target.closest?.("select");
+    if (!select) return;
+    const opensMenu = event.key === "Enter"
+      || event.key === " "
+      || event.key === "ArrowDown"
+      || event.key === "ArrowUp"
+      || (event.altKey && (event.key === "ArrowDown" || event.key === "ArrowUp"));
+    if (!opensMenu) return;
+    suppressFocusTooltipUntil = performance.now() + TOOLTIP_SHOW_DELAY_MS;
+    hideTooltip();
+  });
+
   document.addEventListener("focusout", (event) => {
     if (getTooltipContext(event.target)) hideTooltip();
+  });
+
+  document.addEventListener("input", (event) => {
+    if (event.target.matches?.("input, textarea, [contenteditable='true']")) hideTooltip();
   });
 
   window.addEventListener("resize", hideTooltip);
@@ -228,15 +263,25 @@ function isButtonTooltipContext(context) {
   return Boolean(context?.anchor?.matches?.("button, [role='button']"));
 }
 
+function isSelectTooltipContext(context) {
+  return Boolean(context?.anchor?.querySelector?.("select"));
+}
+
+function isPresenceTooltipContext(context) {
+  return Boolean(context?.anchor?.classList?.contains("presence-pill"));
+}
+
 function scheduleTooltip(context) {
   if (state.ui.tooltipTarget === context.anchor && !dom.tooltipLayer.hidden) return;
   if (tooltipShowContext?.anchor === context.anchor) return;
 
   cancelScheduledTooltip();
   tooltipShowContext = context;
-  const showDelay = context.anchor.classList?.contains("help-button")
-    ? HELP_TOOLTIP_SHOW_DELAY_MS
-    : TOOLTIP_SHOW_DELAY_MS;
+  const showDelay = isPresenceTooltipContext(context)
+    ? PRESENCE_TOOLTIP_SHOW_DELAY_MS
+    : context.anchor.classList?.contains("help-button")
+      ? HELP_TOOLTIP_SHOW_DELAY_MS
+      : TOOLTIP_SHOW_DELAY_MS;
   tooltipShowTimer = window.setTimeout(() => {
     const pendingContext = tooltipShowContext;
     tooltipShowTimer = null;

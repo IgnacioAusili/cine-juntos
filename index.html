@@ -21,7 +21,7 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap"
     />
     <link rel="icon" href="./public/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="./public/styles.css?v=20260820-tooltip-copy-01" />
+    <link rel="stylesheet" href="./public/styles.css?v=20260822-lobby-overflow-03" />
   </head>
   <body class="is-lobby">
     <div class="app-shell">
@@ -38,7 +38,7 @@
                   class="help-button"
                   type="button"
                   aria-label="Ayuda sobre la sala"
-                  data-tooltip="Esta es la sala a la que perteneces. Si deseas compartirla, envía este código a otras personas para que puedan unirse."
+                  data-tooltip="Esta es la sala a la que perteneces. Para invitar a más personas, copia y comparte el código o enlace que aparece debajo."
                 >
                   <span data-lucide="circle-help"></span>
                 </button>
@@ -267,7 +267,7 @@
               <div class="session-toolbar-body">
                 <div class="session-toolbar-field">
                   <span class="session-toolbar-label-row">
-                    <span class="session-toolbar-label">Enlace de video</span>
+                        <span class="session-toolbar-label">Enlace del video</span>
                     <button
                       class="help-button"
                       type="button"
@@ -329,21 +329,6 @@
               </p>
 
               <div class="player-actions" aria-label="Controles de reproductor">
-                  <label
-                    class="player-select player-control-style-select"
-                    for="playerControlStyleSelect"
-                    data-tooltip="Estilo de la barra de controles"
-                  >
-                    <select id="playerControlStyleSelect" aria-label="Estilo de la barra de controles">
-                      <option value="glass" selected>Cristal</option>
-                      <option value="cinema">Cine</option>
-                      <option value="theater">Estudio</option>
-                      <option value="compact">Compacta</option>
-                      <option value="line">Línea</option>
-                      <option value="edge">Borde</option>
-                      <option value="split">Separada</option>
-                    </select>
-                  </label>
                   <button
                     class="icon-button player-tool compact-tool"
                     id="playerChatToggleButton"
@@ -545,14 +530,20 @@
                       <span data-lucide="x"></span>
                     </button>
                     <button
+                      class="help-button chat-auto-switch-help"
+                      type="button"
+                      aria-label="Ayuda sobre la autoexpansión del chat"
+                      data-tooltip="Al activar esta opción, el chat se abrirá automáticamente al recibir un mensaje y se cerrará al responder."
+                    >
+                      <span data-lucide="circle-help"></span>
+                    </button>
+                    <button
                       class="chat-auto-switch"
                       id="insideChatAutoExpandSwitch"
                       type="button"
                       role="switch"
                       aria-checked="false"
                       aria-label="Autoexpandir chat interno"
-                      title="Autoexpandir chat interno"
-                      data-tooltip="Se abre al recibir mensajes y se oculta al responder"
                     >
                       <span class="chat-auto-switch-track" aria-hidden="true">
                         <span class="chat-auto-switch-thumb"></span>
@@ -628,20 +619,13 @@
                 <span id="participantCount">1</span>
               </button>
               <div class="chat-name-field">
-                <span class="label-row">
-                  Usuario
-                  <button
-                    class="help-button"
-                    type="button"
-                    aria-label="Ayuda sobre nombre"
-                    data-tooltip="Este nombre sera el que veran los demas usuarios en la sala"
-                  >
-                    <span data-lucide="circle-help"></span>
-                  </button>
-                </span>
                 <div class="chat-name-editor" id="chatNameField" data-editing="false">
                   <div class="chat-name-display-row">
-                    <span class="chat-name-display" id="nameDisplay">Invitado</span>
+                    <span
+                      class="chat-name-display"
+                      id="nameDisplay"
+                      data-tooltip="Nombre visible para los participantes de la sala"
+                    >Invitado</span>
                     <button
                       class="chat-name-edit-button"
                       id="editNameButton"
@@ -663,6 +647,8 @@
                       data-bwignore="true"
                       data-lpignore="true"
                       maxlength="20"
+                      aria-label="Nombre visible para los participantes de la sala"
+                      data-tooltip="Nombre visible para los participantes de la sala"
                     />
                     <button
                       class="chat-name-confirm-button"
@@ -679,14 +665,20 @@
               </div>
               <div class="chat-tools-actions">
                 <button
+                  class="help-button chat-auto-switch-help"
+                  type="button"
+                  aria-label="Ayuda sobre la autoexpansión del chat"
+                  data-tooltip="Al activar esta opción, el chat se abrirá automáticamente al recibir un mensaje y se cerrará al responder."
+                >
+                  <span data-lucide="circle-help"></span>
+                </button>
+                <button
                   class="chat-auto-switch"
                   id="externalChatAutoExpandSwitch"
                   type="button"
                   role="switch"
                   aria-checked="false"
                   aria-label="Autoexpandir chat externo"
-                  title="Autoexpandir chat externo"
-                  data-tooltip="Se abre al recibir mensajes y se oculta al responder"
                 >
                   <span class="chat-auto-switch-track" aria-hidden="true">
                     <span class="chat-auto-switch-thumb"></span>
@@ -871,19 +863,25 @@
 
     <dialog
       id="confirmLoadDialog"
-      class="app-dialog confirm-dialog"
+      class="app-dialog player-dialog confirm-load-dialog"
       aria-modal="true"
       aria-labelledby="confirmLoadDialogTitle"
       aria-describedby="confirmLoadDialogMessage"
     >
-      <div class="dialog-content dialog-content-left">
-        <h2 id="confirmLoadDialogTitle">Cargar otro video</h2>
-        <p id="confirmLoadDialogMessage">Hay un video reproduciendose. ¿Seguro que queres cargar otro ahora?</p>
-        <label class="dialog-checkbox" for="skipLoadConfirmCheckbox">
+      <div class="player-dialog-card">
+        <button id="closeConfirmLoadDialogButton" type="button" class="dialog-close" aria-label="Cerrar diálogo" data-tooltip="Cerrar diálogo (Esc)">
+          <span data-lucide="x" aria-hidden="true"></span>
+        </button>
+        <div class="player-dialog-header">
+          <span class="dialog-title-icon" aria-hidden="true" data-lucide="triangle-alert"></span>
+          <h2 id="confirmLoadDialogTitle">Cargar otro video</h2>
+        </div>
+        <p id="confirmLoadDialogMessage" class="player-dialog-message">Hay un video reproduciendose. ¿Seguro que queres cargar otro ahora?</p>
+        <label class="dialog-checkbox confirm-load-checkbox" for="skipLoadConfirmCheckbox">
           <input id="skipLoadConfirmCheckbox" type="checkbox" />
           <span>No volver a mostrar</span>
         </label>
-        <div class="dialog-actions">
+        <div class="player-dialog-actions">
           <button id="cancelLoadDialogButton" type="button" class="button">Cancelar</button>
           <button id="confirmLoadDialogButton" type="button" class="button primary">Cargar</button>
         </div>

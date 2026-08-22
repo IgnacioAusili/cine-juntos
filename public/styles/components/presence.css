@@ -9,7 +9,8 @@
   border-radius: 0;
   cursor: default;
   background: transparent;
-  color: var(--muted);
+  color: #eef1f3;
+  text-shadow: 0 0 7px rgba(255, 255, 255, 0.16);
   font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
   font-size: 0.74rem;
   font-weight: 700;

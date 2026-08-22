@@ -198,6 +198,11 @@
     transform: none;
   }
 
+  .lobby-fields input[type="text"] {
+    width: calc(100% - 5px);
+    transform: translateX(5px);
+  }
+
   .lobby-footer {
     display: flex;
     align-items: center;

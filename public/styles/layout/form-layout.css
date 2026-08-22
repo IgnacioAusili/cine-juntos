@@ -14,7 +14,7 @@
   gap: 6px;
   grid-template-columns: auto minmax(0, 1fr) auto;
   width: 100%;
-  padding: 8px 8px 0px 8px;
+  padding: 2px 8px;
 }
 
 /* Aisla el layout del header del reflow del panel durante la animacion
@@ -30,9 +30,9 @@
 }
 
 .session-view[data-chat-dock="bottom"] .chat-tools {
-  min-height: 60px;
-  padding-top: 14px;
-  padding-bottom: 6px;
+  min-height: 48px;
+  padding-top: 8px;
+  padding-bottom: 4px;
 }
 
 .chat-tools-actions {
@@ -48,23 +48,6 @@
   min-width: 0;
   width: fit-content;
   justify-self: center;
-}
-
-.chat-name-field .label-row {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  margin-left: -4px;
-  transform: translate(-4px, -3px);
-  color: var(--text-faint);
-  font-size: 0.64rem;
-  font-weight: 700;
-  letter-spacing: 0;
-  text-transform: uppercase;
-}
-
-.chat-name-field .label-row .help-button {
-  transform: none;
 }
 
 .chat-name-editor {
@@ -244,7 +227,8 @@
 }
 
 .field span {
-  color: var(--muted);
+  color: #eef1f3;
+  text-shadow: 0 0 7px rgba(255, 255, 255, 0.16);
   font-size: 0.76rem;
   font-weight: 700;
   letter-spacing: 0;
@@ -256,6 +240,8 @@
   align-items: center;
   gap: 4px;
   padding-inline-start: 0;
+  color: #eef1f3;
+  text-shadow: 0 0 7px rgba(255, 255, 255, 0.16);
 }
 
 .session-toolbar {
@@ -299,11 +285,12 @@
 .session-toolbar-label {
   display: inline-flex;
   align-items: center;
-  color: var(--text-faint);
+  color: #eef1f3;
   font-size: 0.64rem;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+  text-shadow: 0 0 7px rgba(255, 255, 255, 0.16);
   user-select: none;
 }
 

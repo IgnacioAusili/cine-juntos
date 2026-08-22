@@ -10,6 +10,14 @@
   background: #050607;
   box-shadow: var(--shadow-lg);
   backdrop-filter: blur(16px);
+  user-select: none;
+}
+
+.player-frame .player-chat,
+.player-frame .player-chat input,
+.player-frame .player-chat textarea,
+.player-frame .player-chat [contenteditable="true"] {
+  user-select: text;
 }
 
 /* Ocultar el puntero solo cuando el reproductor ya entró en inactividad. */
@@ -70,7 +78,8 @@ video::-webkit-media-controls-fullscreen-button {
   background: transparent;
   overflow: visible;
   text-overflow: clip;
-  color: var(--text-soft);
+  color: #eef1f3;
+  text-shadow: 0 0 7px rgba(255, 255, 255, 0.16);
   font-size: 0.76rem;
   font-weight: 700;
   letter-spacing: 0.01em;
@@ -121,7 +130,7 @@ video::-webkit-media-controls-fullscreen-button {
 }
 
 .player-status-badge.video-status.empty {
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.94);
 }
 
 .player-status-badge.video-status.empty .video-status-dot {
@@ -252,6 +261,10 @@ video::-webkit-media-controls-fullscreen-button {
   pointer-events: none;
 }
 
+.player-frame.player-no-content .player-seek-input {
+  transition: none;
+}
+
 .player-controls-bar {
   display: flex;
   width: 100%;
@@ -283,128 +296,28 @@ video::-webkit-media-controls-fullscreen-button {
   filter: drop-shadow(0 1px 5px rgba(0, 0, 0, 0.55));
 }
 
-/* Variantes temporales: cambian la composición completa, no solo el color. */
-.player-frame[data-control-style="cinema"] .player-controls-bar {
-  display: grid;
-  max-width: 760px;
-  grid-template-columns: auto auto auto minmax(0, 1fr) auto auto auto;
-  gap: 6px;
-  border-radius: 18px;
-  padding: 8px 12px 9px;
-}
-
-.player-frame[data-control-style="cinema"] .player-progress-group {
-  grid-column: 1 / -1;
-  grid-row: 2;
-  width: 100%;
-  padding-top: 3px;
-}
-
-.player-frame[data-control-style="cinema"] .player-skip-control {
-  opacity: 0.78;
-}
-
-.player-frame[data-control-style="theater"] .player-bottom-actions {
-  align-items: flex-end;
-  justify-content: flex-start;
-  padding: 18px;
-}
-
-.player-frame[data-control-style="theater"] .player-controls-bar {
-  display: grid;
-  max-width: 560px;
-  grid-template-columns: auto auto auto minmax(90px, 1fr) auto auto auto;
-  gap: 7px;
-  border-radius: 20px;
-  background: rgba(12, 18, 22, 0.94);
-  padding: 9px 12px;
-}
-
-.player-frame[data-control-style="theater"] .player-progress-group {
-  grid-column: 1 / -1;
-  grid-row: 1;
-  width: 100%;
-  padding-bottom: 5px;
-}
-
-.player-frame[data-control-style="theater"] .primary-video-control {
-  width: 38px;
-  min-height: 38px;
-  border-radius: 12px;
-  background: var(--accent);
-  color: #071311;
-}
-
-.player-frame[data-control-style="compact"] .player-controls-bar {
-  max-width: 470px;
-  gap: 3px;
-  border-color: rgba(255, 255, 255, 0.18);
-  border-radius: 12px;
-  padding: 4px 6px;
-  background: rgba(10, 14, 18, 0.86);
-}
-
-.player-frame[data-control-style="compact"] .player-bottom-actions {
-  justify-content: flex-end;
-  padding: 8px 10px 10px;
-}
-
-.player-frame[data-control-style="compact"] .player-progress-group {
-  order: 1;
-}
-
-.player-frame[data-control-style="compact"] .player-skip-control {
-  order: 2;
-}
-
-.player-frame[data-control-style="compact"] .primary-video-control {
-  order: 3;
-  width: 30px;
-  min-height: 30px;
-  border-radius: 9px;
-}
-
-.player-frame[data-control-style="compact"] .player-volume-group {
-  order: 4;
-}
-
-.player-frame[data-control-style="compact"] .player-volume-slider-wrap {
-  display: none;
-}
-
-.player-frame[data-control-style="compact"] .player-time {
-  display: none;
-}
-
-.player-frame[data-control-style="compact"] .player-controls-bar .video-control-button {
-  width: 26px;
-  min-height: 26px;
-}
-
-.player-frame[data-control-style="compact"] .player-controls-bar .player-time {
-  min-width: 28px;
-  font-size: 0.62rem;
-}
-
-.player-frame[data-control-style="compact"] .player-controls-bar .player-select {
-  height: 26px;
-}
-
 /* Línea: controles desnudos, sin panel. El progreso se vuelve la única guía visual. */
 .player-frame[data-control-style="line"] .player-bottom-actions {
-  padding: 14px 18px 12px;
-  background: transparent;
+  min-height: 112px;
+  box-sizing: border-box;
+  padding: 10px 18px 10px;
+  background:
+    radial-gradient(ellipse 32% 72% at 10% 100%, rgba(0, 0, 0, 0.5) 0%, transparent 78%),
+    radial-gradient(ellipse 38% 84% at 38% 100%, rgba(0, 0, 0, 0.5) 0%, transparent 76%),
+    radial-gradient(ellipse 30% 68% at 67% 100%, rgba(0, 0, 0, 0.5) 0%, transparent 80%),
+    radial-gradient(ellipse 34% 76% at 94% 100%, rgba(0, 0, 0, 0.5) 0%, transparent 77%),
+    linear-gradient(0deg, rgba(4, 7, 8, 0.78), rgba(4, 7, 8, 0.32) 42%, transparent 100%);
 }
 
 .player-frame[data-control-style="line"] .player-controls-bar {
   position: relative;
+  z-index: 1;
   max-width: none;
   gap: 10px;
   border: 0;
   border-radius: 0;
   background: transparent;
   box-shadow: none;
-  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.36));
   padding: 4px 0;
   backdrop-filter: none;
 }
@@ -415,7 +328,7 @@ video::-webkit-media-controls-fullscreen-button {
   bottom: 100%;
   left: 0;
   display: block;
-  height: 10px;
+  height: 16px;
 }
 
 .player-frame[data-control-style="line"] .player-progress-group .player-time {
@@ -423,16 +336,20 @@ video::-webkit-media-controls-fullscreen-button {
 }
 
 .player-frame[data-control-style="line"] .player-seek-input {
-  height: 3px;
-  transition: height 140ms ease;
+  height: 14px;
+  background-size: 100% 3px;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: background-size 280ms ease-in-out;
 }
 
-.player-frame[data-control-style="line"] .player-seek-input:hover {
-  height: 5px;
+.player-frame[data-control-style="line"]:not(.player-no-content) .player-seek-input:hover {
+  background-size: 100% 5px;
 }
 
 .player-frame[data-control-style="line"] .player-volume-group {
   margin-left: auto;
+  margin-right: -9px;
 }
 
 /* En Línea ningún comando tiene una cápsula: solo quedan los iconos y su estado. */
@@ -478,6 +395,8 @@ video::-webkit-media-controls-fullscreen-button {
 
 .player-frame[data-control-style="line"] .player-controls-bar .player-select {
   height: 30px;
+  margin-left: -2px;
+  margin-right: 6px;
   border: 0;
   border-radius: 0;
   background: transparent;
@@ -491,75 +410,14 @@ video::-webkit-media-controls-fullscreen-button {
   background: transparent;
 }
 
+.player-frame[data-control-style="line"] .player-controls-bar .player-select::after {
+  right: 2px;
+}
+
 .player-frame[data-control-style="line"] .player-controls-bar .player-select select {
-  padding-right: 18px;
+  padding-right: 16px;
   padding-left: 2px;
   background-position: right 2px center;
-}
-
-/* Borde: una única línea de anclaje que ocupa todo el ancho del video. */
-.player-frame[data-control-style="edge"] .player-bottom-actions {
-  padding: 0;
-  background: transparent;
-}
-
-.player-frame[data-control-style="edge"] .player-controls-bar {
-  max-width: none;
-  gap: 9px;
-  border: 0;
-  border-top: 1px solid rgba(216, 255, 249, 0.28);
-  border-radius: 0;
-  background: rgba(6, 10, 12, 0.82);
-  box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.25);
-  padding: 7px 18px 8px;
-  backdrop-filter: blur(10px);
-}
-
-.player-frame[data-control-style="edge"] .player-progress-group {
-  order: 1;
-}
-
-.player-frame[data-control-style="edge"] .player-skip-control {
-  order: 2;
-}
-
-.player-frame[data-control-style="edge"] .primary-video-control {
-  order: 3;
-}
-
-.player-frame[data-control-style="edge"] .player-volume-group {
-  order: 4;
-  margin-left: auto;
-}
-
-/* Separada: progreso arriba y comandos abajo, pero sin una caja contenedora. */
-.player-frame[data-control-style="split"] .player-bottom-actions {
-  padding: 12px 18px 14px;
-  background: linear-gradient(0deg, rgba(4, 7, 8, 0.68), transparent);
-}
-
-.player-frame[data-control-style="split"] .player-controls-bar {
-  display: grid;
-  max-width: 900px;
-  grid-template-columns: auto auto auto minmax(0, 1fr) auto auto auto;
-  gap: 8px;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-  padding: 5px 0;
-  backdrop-filter: none;
-}
-
-.player-frame[data-control-style="split"] .player-progress-group {
-  grid-column: 1 / -1;
-  grid-row: 1;
-  width: 100%;
-  padding-bottom: 7px;
-}
-
-.player-frame[data-control-style="split"] .player-seek-input {
-  height: 4px;
 }
 
 .player-progress-group {
@@ -802,7 +660,7 @@ video::-webkit-media-controls-fullscreen-button {
 
 .player-volume-group:hover .player-volume-slider-wrap,
 .player-volume-group:focus-within .player-volume-slider-wrap {
-  max-width: 48px;
+  max-width: 60px;
 }
 
 /* En superficies táctiles :hover puede quedar retenido después de un toque.
@@ -821,14 +679,14 @@ video::-webkit-media-controls-fullscreen-button {
   }
 
   .player-volume-group.is-touch-hover .player-volume-slider-wrap {
-    max-width: 48px;
+    max-width: 60px;
   }
 }
 
 .player-volume-input {
   --volume-progress: 100%;
   display: block;
-  width: 48px;
+  width: 60px;
   height: 4px;
   margin: 0;
   appearance: none;
@@ -905,6 +763,113 @@ video::-webkit-media-controls-fullscreen-button {
   transition: width 180ms ease, border-color 150ms ease, background 150ms ease;
 }
 
+.player-select::after {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  width: 4px;
+  height: 4px;
+  border-right: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  content: "";
+  pointer-events: none;
+  transform: translateY(-65%) rotate(45deg);
+  transition: transform 150ms ease;
+}
+
+.player-select:focus-within::after {
+  transform: translateY(-25%) rotate(225deg);
+}
+
+.player-rate-select select {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.player-rate-trigger {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  padding: 0 16px 0 6px;
+  font: inherit;
+  font-family: "Arial Rounded MT Bold", "Trebuchet MS", sans-serif;
+  font-size: 0.86rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  cursor: pointer;
+}
+
+.player-rate-trigger:disabled {
+  cursor: not-allowed;
+}
+
+.player-controls-bar .player-rate-select::after {
+  width: 6px;
+  height: 6px;
+  border-right-width: 1.5px;
+  border-bottom-width: 1.5px;
+}
+
+.player-controls-bar .player-rate-select:focus-within::after {
+  transform: translateY(-65%) rotate(45deg);
+}
+
+.player-controls-bar .player-rate-select.is-open::after {
+  transform: translateY(-25%) rotate(225deg);
+}
+
+.player-rate-menu {
+  position: absolute;
+  right: auto;
+  left: 50%;
+  bottom: calc(100% + 6px);
+  z-index: 20;
+  display: grid;
+  min-width: 100%;
+  gap: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 10px;
+  background: rgba(34, 43, 47, 0.84);
+  backdrop-filter: blur(14px) saturate(1.08);
+  -webkit-backdrop-filter: blur(14px) saturate(1.08);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.38);
+  padding: 4px;
+  transform: translateX(calc(-50% + 6px));
+}
+
+.player-frame:not(.player-overlay-visible) .player-rate-menu,
+.player-frame.player-overlay-suppressed .player-rate-menu {
+  display: none;
+}
+
+.player-rate-option {
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #fff;
+  padding: 5px 8px;
+  font: inherit;
+  font-family: "Arial Rounded MT Bold", "Trebuchet MS", sans-serif;
+  font-size: 0.74rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.player-rate-option:hover,
+.player-rate-option.selected {
+  background: rgba(216, 255, 249, 0.14);
+}
+
 .player-select:hover {
   border-color: rgba(255, 255, 255, 0.28);
   background: rgba(255, 255, 255, 0.14);
@@ -933,7 +898,7 @@ video::-webkit-media-controls-fullscreen-button {
   outline: 0;
   appearance: none;
   background-color: transparent;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgba(255, 255, 255, 0.9)' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-image: none;
   background-repeat: no-repeat;
   background-position: right 6px center;
   background-size: 10px 10px;
@@ -942,10 +907,14 @@ video::-webkit-media-controls-fullscreen-button {
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.02em;
-  padding: 0 22px 0 6px;
-  text-align: center;
-  text-align-last: center;
+  padding: 0 16px 0 6px;
+  text-align: right;
+  text-align-last: right;
   cursor: pointer;
+}
+
+.player-controls-bar .player-rate-select select {
+  font-size: 0.86rem;
 }
 
 .player-select select:disabled {

@@ -594,6 +594,12 @@ body:not(.is-lobby) .live-badge {
   }
 }
 
+/* Los campos sobresalen del cuerpo del boleto sin mover sus etiquetas ni los tags. */
+.lobby-fields input[type="text"] {
+  width: calc(100% - 6px);
+  transform: translateX(6px);
+}
+
 @media (max-width: 680px) {
   .lobby-title {
     font-size: clamp(2.85rem, 12vw, 4.2rem);

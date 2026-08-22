@@ -60,34 +60,28 @@ const VIDEO_STATUS_TOOLTIPS = Object.freeze({
   playing: "El video se está reproduciendo de forma sincronizada para todos los usuarios",
   error: "No se pudo cargar el video. Revisá el enlace e intentá cargarlo nuevamente",
 });
-const PLAYER_CONTROL_STYLES = new Set([
-  "glass",
-  "cinema",
-  "theater",
-  "compact",
-  "line",
-  "edge",
-  "split",
-]);
+const PLAYER_CONTROL_STYLES = new Set(["line"]);
 let isDurationShowingRemaining = false;
 let pendingLoadCompletionAnnouncement = false;
 let pendingVideoActivityAnnouncement = false;
 let seekTooltipFrame = 0;
 let seekTooltipPoint = null;
 let seekTooltipRect = null;
+let rateMenuCloseTimer = null;
 
 export function initializePlayer() {
   isDurationShowingRemaining = false;
   pendingLoadCompletionAnnouncement = false;
   pendingVideoActivityAnnouncement = false;
   hideSeekTooltip();
-  applyPlayerControlStyle("glass");
+  applyPlayerControlStyle("line");
   clearSlowLoadPromptTracking();
   const persistedVolume = readPersistedVolume();
   if (persistedVolume !== null) {
     dom.videoPlayer.volume = persistedVolume;
   }
   setVideoStatus("empty", "Sin contenido");
+  initializeRateSelectMenu();
   syncPlayerControls(true);
 }
 
@@ -96,10 +90,6 @@ export function wirePlayerCoreEvents() {
 
   dom.loadVideoButton.addEventListener("click", async () => {
     await handleManualLoadRequest();
-  });
-
-  dom.playerControlStyleSelect?.addEventListener("change", () => {
-    applyPlayerControlStyle(dom.playerControlStyleSelect.value);
   });
 
   dom.playerPlayButton?.addEventListener("click", () => {
@@ -296,11 +286,8 @@ export function wirePlayerCoreEvents() {
 }
 
 function applyPlayerControlStyle(style) {
-  const nextStyle = PLAYER_CONTROL_STYLES.has(style) ? style : "glass";
+  const nextStyle = PLAYER_CONTROL_STYLES.has(style) ? style : "line";
   dom.playerFrame?.setAttribute("data-control-style", nextStyle);
-  if (dom.playerControlStyleSelect) {
-    dom.playerControlStyleSelect.value = nextStyle;
-  }
 }
 
 export function loadVideoFromUrl(source, origin) {
@@ -331,6 +318,10 @@ export function loadVideoFromUrl(source, origin) {
 async function handleManualLoadRequest() {
   const source = dom.videoUrlInput.value.trim();
   if (!source) {
+    // Sin un video cargado no hay nada que reemplazar ni limpiar.
+    // Evita mostrar la confirmación y deja el botón sin efecto.
+    if (!hasLoadedMediaSource()) return;
+
     const { confirmed } = await showLoadReplaceDialog(
       "No hay un enlace de video. Si continuás, se quitará el video actual para todas las personas de la sala. ¿Estás seguro?",
     );
@@ -449,6 +440,7 @@ function announceVideoActivity() {
 
 export function setVideoStatus(videoState, text) {
   dom.syncStatus.className = `sync-status video-status player-status-badge ${videoState}`;
+  dom.playerFrame?.classList.toggle("player-no-content", videoState === "empty");
   const tooltipKey = videoState === "loaded" && text === "En vivo" ? "playing" : videoState;
   const tooltip = VIDEO_STATUS_TOOLTIPS[tooltipKey] || "Estado actual del video en la sala";
   dom.syncStatus.dataset.tooltip = tooltip;
@@ -764,6 +756,7 @@ function syncPlayerControls(forceSliderSync = false) {
     if (rateSelectWrap) {
       rateSelectWrap.dataset.disabled = dom.playerRateSelect.disabled ? "true" : "false";
       syncRateSelectWidth(rateSelectWrap);
+      syncRateSelectMenu(rateSelectWrap);
     }
   }
 
@@ -790,6 +783,112 @@ function syncPlayerControls(forceSliderSync = false) {
     const currentVol = dom.videoPlayer.muted ? 0 : dom.videoPlayer.volume;
     dom.playerVolumeInput.style.setProperty("--volume-progress", `${currentVol * 100}%`);
   }
+}
+
+function initializeRateSelectMenu() {
+  const select = dom.playerRateSelect;
+  const wrap = select?.closest(".player-rate-select");
+  if (!select || !wrap || wrap.querySelector(".player-rate-trigger")) return;
+
+  const trigger = document.createElement("button");
+  trigger.type = "button";
+  trigger.className = "player-rate-trigger";
+  trigger.setAttribute("aria-haspopup", "listbox");
+  trigger.setAttribute("aria-expanded", "false");
+
+  const menu = document.createElement("div");
+  menu.className = "player-rate-menu";
+  menu.hidden = true;
+  menu.setAttribute("role", "listbox");
+
+  [...select.options].forEach((option) => {
+    const item = document.createElement("button");
+    item.type = "button";
+    item.className = "player-rate-option";
+    item.dataset.value = option.value;
+    item.textContent = option.textContent;
+    item.setAttribute("role", "option");
+    item.addEventListener("click", () => {
+      select.value = item.dataset.value;
+      select.dispatchEvent(new Event("change", { bubbles: true }));
+      closeRateSelectMenu(wrap);
+    });
+    menu.append(item);
+  });
+
+  trigger.addEventListener("click", () => {
+    if (select.disabled) return;
+    if (menu.hidden) openRateSelectMenu(wrap);
+    else closeRateSelectMenu(wrap);
+  });
+  wrap.addEventListener("mouseenter", () => clearRateSelectCloseTimer());
+  wrap.addEventListener("mouseleave", () => scheduleRateSelectClose(wrap));
+  document.addEventListener("pointerdown", (event) => {
+    if (!wrap.contains(event.target)) closeRateSelectMenu(wrap);
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeRateSelectMenu(wrap);
+  });
+
+  const overlayObserver = new MutationObserver(() => {
+    if (
+      !dom.playerFrame?.classList.contains("player-overlay-visible")
+      || dom.playerFrame.classList.contains("player-overlay-suppressed")
+    ) {
+      closeRateSelectMenu(wrap);
+    }
+  });
+  overlayObserver.observe(dom.playerFrame, { attributes: true, attributeFilter: ["class"] });
+
+  select.tabIndex = -1;
+  wrap.append(trigger, menu);
+}
+
+function syncRateSelectMenu(rateSelectWrap) {
+  const select = dom.playerRateSelect;
+  const trigger = rateSelectWrap.querySelector(".player-rate-trigger");
+  const menu = rateSelectWrap.querySelector(".player-rate-menu");
+  if (!select || !trigger || !menu) return;
+
+  const selectedValue = select.value;
+  trigger.textContent = select.selectedOptions?.[0]?.textContent || "";
+  trigger.disabled = select.disabled;
+  menu.querySelectorAll(".player-rate-option").forEach((option) => {
+    const selected = option.dataset.value === selectedValue;
+    option.classList.toggle("selected", selected);
+    option.setAttribute("aria-selected", String(selected));
+  });
+}
+
+function openRateSelectMenu(rateSelectWrap) {
+  clearRateSelectCloseTimer();
+  const trigger = rateSelectWrap.querySelector(".player-rate-trigger");
+  const menu = rateSelectWrap.querySelector(".player-rate-menu");
+  if (!trigger || !menu) return;
+  menu.hidden = false;
+  rateSelectWrap.classList.add("is-open");
+  trigger.setAttribute("aria-expanded", "true");
+}
+
+function closeRateSelectMenu(rateSelectWrap) {
+  clearRateSelectCloseTimer();
+  const trigger = rateSelectWrap.querySelector(".player-rate-trigger");
+  const menu = rateSelectWrap.querySelector(".player-rate-menu");
+  if (!trigger || !menu) return;
+  menu.hidden = true;
+  rateSelectWrap.classList.remove("is-open");
+  trigger.setAttribute("aria-expanded", "false");
+}
+
+function scheduleRateSelectClose(rateSelectWrap) {
+  clearRateSelectCloseTimer();
+  if (rateSelectWrap.querySelector(".player-rate-menu")?.hidden) return;
+  rateMenuCloseTimer = window.setTimeout(() => closeRateSelectMenu(rateSelectWrap), 1200);
+}
+
+function clearRateSelectCloseTimer() {
+  if (rateMenuCloseTimer !== null) window.clearTimeout(rateMenuCloseTimer);
+  rateMenuCloseTimer = null;
 }
 
 function syncRateSelectWidth(rateSelectWrap) {
@@ -880,15 +979,20 @@ function updateSeekTooltipForValue(value) {
 function showSeekTooltip(value, clientX, rect) {
   if (!dom.tooltipLayer) return;
 
-  hideTooltip();
+  const isVisibleSeekTooltip = Boolean(seekTooltipPoint && !dom.tooltipLayer.hidden);
+  if (!isVisibleSeekTooltip) hideTooltip();
+
   seekTooltipPoint = { x: clientX };
   seekTooltipRect = rect || null;
   dom.tooltipLayer.textContent = formatSeconds(value);
-  dom.tooltipLayer.hidden = false;
-  dom.tooltipLayer.style.visibility = "hidden";
-  dom.tooltipLayer.style.left = "0px";
-  dom.tooltipLayer.style.top = "0px";
-  dom.tooltipLayer.dataset.placement = "top";
+
+  if (!isVisibleSeekTooltip) {
+    dom.tooltipLayer.hidden = false;
+    dom.tooltipLayer.style.visibility = "hidden";
+    dom.tooltipLayer.style.left = "0px";
+    dom.tooltipLayer.style.top = "0px";
+    dom.tooltipLayer.dataset.placement = "top";
+  }
 
   window.cancelAnimationFrame(seekTooltipFrame);
   seekTooltipFrame = window.requestAnimationFrame(() => {

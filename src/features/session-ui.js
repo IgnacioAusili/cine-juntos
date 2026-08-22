@@ -210,6 +210,10 @@ function initializeConfirmLoadDialog() {
     resolveLoadReplaceDialog(false);
   });
 
+  dom.closeConfirmLoadDialogButton?.addEventListener("click", () => {
+    resolveLoadReplaceDialog(false);
+  });
+
   dom.confirmLoadDialog.addEventListener("cancel", (event) => {
     event.preventDefault();
     resolveLoadReplaceDialog(false);

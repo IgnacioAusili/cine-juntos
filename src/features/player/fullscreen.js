@@ -154,7 +154,22 @@ function wirePlayerOverlayControls() {
     }
 
     const target = event?.target instanceof Element ? event.target : null;
-    const isChatInteraction = target?.closest(".player-chat, #playerChatToggleButton");
+    const isChatToggle = target?.closest("#playerChatToggleButton");
+    if (event?.type === "focusin" && dom.playerFrame.dataset.suppressOverlayFocus === "chat-toggle") {
+      return;
+    }
+    if (event?.type === "mousedown" && isChatToggle
+      && !dom.playerFrame.classList.contains("player-overlay-visible")) {
+      dom.playerFrame.dataset.suppressOverlayFocus = "chat-toggle";
+      window.setTimeout(() => {
+        if (dom.playerFrame?.dataset.suppressOverlayFocus === "chat-toggle") {
+          delete dom.playerFrame.dataset.suppressOverlayFocus;
+        }
+      }, 500);
+      return;
+    }
+    const isChatInteraction = target?.closest(".player-chat")
+      && !dom.playerChatToggleButton?.matches(":hover");
     // Al abrir el chat, el foco pasa automáticamente a su textarea. Ese
     // focusin burbujea hasta el playerFrame y no debe interpretarse como una
     // interacción con el video. Mientras el puntero siga sobre el overlay,
@@ -179,7 +194,7 @@ function wirePlayerOverlayControls() {
       // El chat vive dentro del playerFrame, pero sus pulsaciones no son una
       // interacción con el video. En móvil no revelar la barra al mantener
       // presionado un mensaje, el input o cualquier control del overlay.
-      if (event?.target?.closest?.(".player-chat, #playerChatToggleButton")) {
+      if (event?.target?.closest?.(".player-chat")) {
         clearHideTimer();
         dom.playerFrame.classList.add("player-overlay-suppressed");
         setOverlayVisible(false);

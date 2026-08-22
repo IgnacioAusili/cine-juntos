@@ -1,6 +1,7 @@
 import { dom } from "../core/dom.js";
 import { state, getDisplayName, getTransportNow, logEvent } from "../core/state.js";
 import { makeGuestName, makeParticipantLabel } from "../core/utils.js";
+import { hideTooltip } from "./icons-tooltips.js";
 
 // El heartbeat llega cada 10 s. La ventana anterior de 12 s dejaba solo
 // 2 s para tolerar latencia o una actualización demorada de Firebase, lo
@@ -479,6 +480,7 @@ export function wireIdentityEvents() {
   });
 
   dom.nameInput.addEventListener("input", () => {
+    hideTooltip();
     dom.nameInput.setCustomValidity("");
     syncConfirmNameButtonState();
     if (!SUPPORTS_FIELD_SIZING_CONTENT) syncNameInputWidth();

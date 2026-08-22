@@ -11,7 +11,7 @@
   display: inline-flex;
   align-items: center;
   margin-bottom: 0;
-  color: var(--text-faint);
+  color: #eef1f3;
   font-size: 0.64rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -46,11 +46,12 @@
   align-items: center;
   gap: 6px;
   margin: 0;
-  color: var(--text);
+  color: #f3f5f7;
   font-size: clamp(1.75rem, 3vw, 2.35rem);
   line-height: 1;
   font-weight: 700;
   letter-spacing: -0.03em;
+  text-shadow: none;
 }
 
 .room-chip-status-inline {

@@ -569,6 +569,49 @@ body:not(.is-lobby) .live-badge {
 }
 
 @media (min-width: 981px) {
+  /* En escritorio priorizamos la lectura del hero y dejamos el boleto un
+     poco más compacto para equilibrar ambas columnas. */
+  .lobby-title {
+    font-size: clamp(3.9rem, 7.5vw, 6.8rem);
+  }
+
+  .lobby-description {
+    font-size: clamp(1.05rem, 1.35vw, 1.12rem);
+  }
+
+  .lobby-feature-icon svg {
+    width: 25px;
+    height: 25px;
+  }
+
+  .lobby-feature-text strong {
+    font-size: 0.98rem;
+  }
+
+  .lobby-feature-text small {
+    font-size: 0.82rem;
+  }
+
+  .lobby-fields .help-button {
+    width: 16px;
+    min-height: 16px;
+    flex: 0 0 16px;
+  }
+
+  .lobby-fields .help-button svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .lobby-ticket {
+    transform: translateX(-16px) scale(0.95);
+    transform-origin: right center;
+  }
+
+  .lobby-hero {
+    transform: translateX(28px);
+  }
+
   .lobby-title {
     transform: translateY(-16px);
   }
@@ -578,11 +621,16 @@ body:not(.is-lobby) .live-badge {
   }
 
   .lobby-description {
-    transform: translateY(-8px);
+    transform: translateY(0);
   }
 
   .lobby-features {
-    transform: translateY(6px);
+    column-gap: 28px;
+    transform: translateY(14px);
+  }
+
+  .lobby-feature {
+    justify-content: center;
   }
 
   .lobby-footer {

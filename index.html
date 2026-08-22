@@ -21,7 +21,7 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap"
     />
     <link rel="icon" href="./public/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="./public/styles.css?v=20260820-system-lines-01" />
+    <link rel="stylesheet" href="./public/styles.css?v=20260820-tooltip-copy-01" />
   </head>
   <body class="is-lobby">
     <div class="app-shell">
@@ -275,7 +275,7 @@
                     >
                       <span
                         data-lucide="circle-help"
-                        data-tooltip="Pegue un enlace directo al archivo de video. Debe terminar en .mp4, .webm u otro formato compatible; no use páginas intermedias ni enlaces de vista previa."
+                        data-tooltip="Enlace directo a un video MP4, WebM o similar."
                       ></span>
                     </button>
                   </span>
@@ -288,15 +288,14 @@
                     data-bwignore="true"
                     data-lpignore="true"
                     placeholder="https://servidor.com/video.mp4"
-                    title="Pega un link directo a MP4, WebM u otro video compatible"
                   />
                 </div>
                 <button
                   class="button primary"
                   id="loadVideoButton"
                   type="button"
-                  title="Cargar y sincronizar este video en la sala"
-                  data-tooltip="Cargar y sincronizar video"
+                  title="Cargar el video en la sala"
+                  data-tooltip="Cargar el video en la sala"
                 >
                   <span data-lucide="play-square"></span>
                   <span class="button-label">Cargar</span>
@@ -330,6 +329,21 @@
               </p>
 
               <div class="player-actions" aria-label="Controles de reproductor">
+                  <label
+                    class="player-select player-control-style-select"
+                    for="playerControlStyleSelect"
+                    data-tooltip="Estilo de la barra de controles"
+                  >
+                    <select id="playerControlStyleSelect" aria-label="Estilo de la barra de controles">
+                      <option value="glass" selected>Cristal</option>
+                      <option value="cinema">Cine</option>
+                      <option value="theater">Estudio</option>
+                      <option value="compact">Compacta</option>
+                      <option value="line">Línea</option>
+                      <option value="edge">Borde</option>
+                      <option value="split">Separada</option>
+                    </select>
+                  </label>
                   <button
                     class="icon-button player-tool compact-tool"
                     id="playerChatToggleButton"
@@ -346,6 +360,16 @@
               <div class="player-bottom-actions" aria-label="Controles inferiores del reproductor">
                 <div class="player-controls-bar">
                   <button
+                    class="video-control-button player-skip-control"
+                    id="playerBackButton"
+                    type="button"
+                    aria-label="Retroceder 10 segundos"
+                    data-tooltip="Retroceder 10 segundos (←)"
+                  >
+                    <span data-lucide="rewind"></span>
+                  </button>
+
+                  <button
                     class="video-control-button primary-video-control"
                     id="playerPlayButton"
                     type="button"
@@ -354,6 +378,16 @@
                     data-tooltip="Reproducir video (Espacio)"
                   >
                     <span data-lucide="play"></span>
+                  </button>
+
+                  <button
+                    class="video-control-button player-skip-control"
+                    id="playerForwardButton"
+                    type="button"
+                    aria-label="Avanzar 10 segundos"
+                    data-tooltip="Avanzar 10 segundos (→)"
+                  >
+                    <span data-lucide="fast-forward"></span>
                   </button>
 
                   <div class="player-progress-group">
@@ -859,6 +893,6 @@
     <script src="./public/dev-runtime.js?v=20260715-02"></script>
     <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script src="./public/firebase-config.js"></script>
-    <script type="module" src="./src/main.js?v=20260819-chat-overlay-controls-01"></script>
+    <script type="module" src="./src/main.js?v=20260820-tooltip-copy-01"></script>
   </body>
 </html>

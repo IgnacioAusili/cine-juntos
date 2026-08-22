@@ -5,6 +5,7 @@ import { wirePlayerCoreEvents } from "./player.js?v=20260818-fingerprint-01";
 
 export {
   initializePlayer,
+  clearVideoSource,
   loadVideoFromUrl,
   setVideoSource,
   setVideoStatus,

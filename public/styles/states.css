@@ -221,23 +221,24 @@ body.fullscreen-mode .player-actions {
 body.fullscreen-mode .session-view[data-chat-dock="right"] .chat-collapse-hover-zone {
   position: absolute;
   grid-area: auto;
-  top: 0;
+  top: 50%;
   right: auto;
   bottom: auto;
   left: calc(100% - var(--chat-panel-width) - 12px);
   width: 24px;
-  height: 100%;
+  height: 52px;
   min-width: 0;
-  transform: none;
+  transform: translateY(-50%);
 }
 
 body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-hover-zone {
-  top: 0;
+  top: 50%;
   right: 0;
   bottom: auto;
   left: auto;
   width: var(--chat-handle-gap-collapsed);
-  height: 100%;
+  height: 52px;
+  transform: translateY(-50%);
 }
 
 body.fullscreen-mode .player-chat {
@@ -353,7 +354,7 @@ body.fullscreen-mode .session-view[data-chat-dock="right"] .player-frame {
 }
 
 body.fullscreen-mode .session-view[data-chat-dock="right"] .chat-area {
-  padding: 8px 2px 0;
+  padding: 8px 0 0;
   border: 1px solid var(--glass-border-strong);
   border-left: 0;
   border-radius: 0 var(--radius-md) var(--radius-md) 0;

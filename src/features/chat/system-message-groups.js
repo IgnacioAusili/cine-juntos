@@ -1,6 +1,7 @@
 const SYSTEM_GROUP_MIN_SIZE = 3;
 const SYSTEM_GROUP_TRANSITION_MS = 180;
-const SYSTEM_GROUP_EXPANSION_MS = 240;
+const SYSTEM_GROUP_EXPANSION_MS = SYSTEM_GROUP_TRANSITION_MS;
+const SYSTEM_GROUP_EXPANSION_STAGGER_MS = 14;
 const SYSTEM_GROUP_SCROLL_EDGE_GAP = 56;
 const groupStates = new WeakMap();
 const groupTransitions = new WeakMap();
@@ -213,13 +214,12 @@ function prepareExpansionVisualTransition(anchor, items) {
 
   const state = {
     target,
+    anchorRect: target.getBoundingClientRect(),
     opacity: target.style.opacity,
     transform: target.style.transform,
     layoutEntries: captureLayoutEntries(items),
     scrollState: captureScrollState(items),
   };
-  target.style.opacity = "0";
-  target.style.transform = "translateY(-3px)";
   return state;
 }
 
@@ -386,19 +386,31 @@ function animateGroupTransition(items, header, visualState, expanded) {
 
   const scrollAnimation = createGroupScrollAnimation(visualState?.scrollState, items, transitionDuration);
 
-  items.forEach((item) => {
+  items.forEach((item, index) => {
     if (!expanded) return;
     const animationTarget = getGroupTransitionTarget(item);
     if (!animationTarget) return;
 
+    const isAnchor = item === items.at(-1);
+    const finalRect = animationTarget.getBoundingClientRect();
+    const anchorRect = visualState?.anchorRect;
+    const deltaX = isAnchor && anchorRect ? anchorRect.left - finalRect.left : 0;
+    const deltaY = isAnchor && anchorRect ? anchorRect.top - finalRect.top : -5;
+    const delay = isAnchor ? 0 : index * SYSTEM_GROUP_EXPANSION_STAGGER_MS;
+
     const animation = animationTarget.animate(
       [
-        { opacity: 0.35, transform: "translateY(-3px)" },
-        { opacity: 1, transform: "translateY(0)" },
+        {
+          opacity: isAnchor ? 1 : 0,
+          transform: `translate3d(${isAnchor ? deltaX : 0}px, ${deltaY}px, 0)`,
+        },
+        { opacity: 1, transform: "translate3d(0, 0, 0)" },
       ],
       {
-        duration: transitionDuration,
+        duration: SYSTEM_GROUP_EXPANSION_MS,
+        delay,
         easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+        fill: "both",
       },
     );
     animations.push(animation);
@@ -413,6 +425,11 @@ function animateGroupTransition(items, header, visualState, expanded) {
     scrollAnimation,
     finished,
     cleanup: () => {
+      // Las animaciones de expansión usan `fill: both` para sostener las
+      // filas durante el stagger. Al terminar hay que quitarlas del elemento;
+      // si quedan adheridas, interfieren con la siguiente contracción y dejan
+      // una copia visual tenue de los mensajes anteriores.
+      animations.forEach((animation) => animation.cancel());
       restoreExpansionVisualTransition(visualState);
       visualState?.layer?.remove();
       scrollAnimation?.cancel();

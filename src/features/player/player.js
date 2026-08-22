@@ -60,6 +60,15 @@ const VIDEO_STATUS_TOOLTIPS = Object.freeze({
   playing: "El video se está reproduciendo de forma sincronizada para todos los usuarios",
   error: "No se pudo cargar el video. Revisá el enlace e intentá cargarlo nuevamente",
 });
+const PLAYER_CONTROL_STYLES = new Set([
+  "glass",
+  "cinema",
+  "theater",
+  "compact",
+  "line",
+  "edge",
+  "split",
+]);
 let isDurationShowingRemaining = false;
 let pendingLoadCompletionAnnouncement = false;
 let pendingVideoActivityAnnouncement = false;
@@ -72,6 +81,7 @@ export function initializePlayer() {
   pendingLoadCompletionAnnouncement = false;
   pendingVideoActivityAnnouncement = false;
   hideSeekTooltip();
+  applyPlayerControlStyle("glass");
   clearSlowLoadPromptTracking();
   const persistedVolume = readPersistedVolume();
   if (persistedVolume !== null) {
@@ -88,8 +98,20 @@ export function wirePlayerCoreEvents() {
     await handleManualLoadRequest();
   });
 
+  dom.playerControlStyleSelect?.addEventListener("change", () => {
+    applyPlayerControlStyle(dom.playerControlStyleSelect.value);
+  });
+
   dom.playerPlayButton?.addEventListener("click", () => {
     togglePlaybackFromControls("button");
+  });
+
+  dom.playerBackButton?.addEventListener("click", () => {
+    seekVideoBy(-10);
+  });
+
+  dom.playerForwardButton?.addEventListener("click", () => {
+    seekVideoBy(10);
   });
 
   dom.playerSeekInput?.addEventListener("input", () => {
@@ -273,6 +295,14 @@ export function wirePlayerCoreEvents() {
   });
 }
 
+function applyPlayerControlStyle(style) {
+  const nextStyle = PLAYER_CONTROL_STYLES.has(style) ? style : "glass";
+  dom.playerFrame?.setAttribute("data-control-style", nextStyle);
+  if (dom.playerControlStyleSelect) {
+    dom.playerControlStyleSelect.value = nextStyle;
+  }
+}
+
 export function loadVideoFromUrl(source, origin) {
   if (!source) {
     setVideoStatus("empty", "Sin contenido");
@@ -301,7 +331,11 @@ export function loadVideoFromUrl(source, origin) {
 async function handleManualLoadRequest() {
   const source = dom.videoUrlInput.value.trim();
   if (!source) {
-    loadVideoFromUrl(source, "manual");
+    const { confirmed } = await showLoadReplaceDialog(
+      "No hay un enlace de video. Si continuás, se quitará el video actual para todas las personas de la sala. ¿Estás seguro?",
+    );
+    if (!confirmed) return;
+    clearVideoSource(true);
     return;
   }
 
@@ -361,6 +395,29 @@ export function setVideoSource(source, shouldAnnounce, options = {}) {
   syncPlayerControls(true);
   armSlowLoadPrompt(source);
   if (shouldAnnounce) logEvent("video", "Carga de video iniciada.");
+}
+
+export function clearVideoSource(shouldAnnounce = false) {
+  isDurationShowingRemaining = false;
+  pendingLoadCompletionAnnouncement = false;
+  pendingVideoActivityAnnouncement = false;
+  state.player.hasPlayableVideo = false;
+  state.player.videoFingerprint = "";
+  state.player.videoFingerprintSource = "";
+  state.player.resumePromptSource = "";
+  clearPlaybackErrorTracking();
+  clearSlowLoadPromptTracking();
+  clearPlaybackRecoveryTracking();
+  dom.videoPlayer.pause();
+  dom.videoPlayer.removeAttribute("src");
+  dom.videoPlayer.load();
+  dom.videoUrlInput.value = "";
+  dom.emptyPlayer.classList.remove("hidden");
+  setVideoStatus("empty", "Sin contenido");
+  syncPlayerControls(true);
+  if (shouldAnnounce && state.session.activeRoom && state.session.transport) {
+    publishState("video", { suppressActivityMessage: true });
+  }
 }
 
 function announceVideoLoadCompletion() {
@@ -693,6 +750,11 @@ function syncPlayerControls(forceSliderSync = false) {
         setControlIcon(dom.playerPlayButton, nextIcon);
       }
     }
+  }
+
+  const skipControlsDisabled = !hasMedia || duration <= 0;
+  for (const control of [dom.playerBackButton, dom.playerForwardButton]) {
+    if (control) control.disabled = skipControlsDisabled;
   }
 
   if (dom.playerRateSelect) {

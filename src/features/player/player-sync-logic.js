@@ -17,7 +17,7 @@ import { setSyncStatus } from "../session-ui.js";
 import { sendVideoEventMessage, renderMessage } from "../chat/index.js?v=20260811-layout-motion-01";
 // Import circular intencional y seguro: estas funciones se invocan en runtime,
 // no durante la carga del modulo, y player.js a su vez importa publishState.
-import { setVideoSource, waitForVideoMetadata } from "./player.js?v=20260818-playback-issue-threshold-01";
+import { clearVideoSource, setVideoSource, waitForVideoMetadata } from "./player.js?v=20260818-playback-issue-threshold-01";
 
 const PLAYBACK_ISSUE_SYNC_COOLDOWN_MS = 2200;
 // Los eventos waiting/stalled también se disparan por pequeños saltos de red.
@@ -56,7 +56,7 @@ export function handleRemoteState(statePayload) {
 }
 
 async function applyRemoteState(statePayload, force = false) {
-  if (!statePayload.src && !dom.videoPlayer.currentSrc) return;
+  if (!statePayload.src && !dom.videoPlayer.currentSrc && !dom.videoPlayer.getAttribute("src")) return;
 
   state.player.suppressVideoEvents = true;
   state.player.remoteStateActive = true;
@@ -64,6 +64,12 @@ async function applyRemoteState(statePayload, force = false) {
     state.player.remotePlaybackIssueCooldownUntil = Date.now() + REMOTE_HOLD_ISSUE_SUPPRESSION_MS;
   }
   try {
+    if (statePayload.action === "video" && !statePayload.src) {
+      clearVideoSource(false);
+      setSyncStatus(getRemoteStatusText(statePayload));
+      logEvent("sync:apply", "Video quitado para la sala.");
+      return;
+    }
     const sourceIsDifferent =
       statePayload.src &&
       statePayload.src !== dom.videoPlayer.currentSrc &&

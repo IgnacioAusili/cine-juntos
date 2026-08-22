@@ -248,6 +248,11 @@ function getTooltipContext(target) {
   const nestedSource = interactive.querySelector?.("[data-tooltip]");
   if (!nestedSource) return null;
 
+  // Un label puede contener un help-button. No heredar su tooltip cuando el
+  // cursor está sobre el resto del label: la zona activa debe ser el botón.
+  const nestedHelpButton = nestedSource.closest?.(".help-button");
+  if (nestedHelpButton && !target.closest?.(".help-button")) return null;
+
   return {
     source: nestedSource,
     anchor: getTooltipAnchor(nestedSource),

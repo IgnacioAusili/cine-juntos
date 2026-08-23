@@ -39,7 +39,8 @@
   transform: translateX(8px);
 }
 
-body:has(.about-dialog[open]) {
+html:has(.app-dialog[open]),
+body:has(.app-dialog[open]) {
   overflow: hidden;
 }
 
@@ -338,18 +339,25 @@ body:has(.about-dialog[open]) {
 .button.warning {
   min-height: 36px;
   padding: 0 18px;
-  border: 0.5px solid rgba(255, 255, 255, 0.15);
-  background: #f0b429;
+  border: 0.5px solid rgba(240, 180, 41, 0.5);
+  background: linear-gradient(180deg, #ffd166, #f0b429);
   color: #1c1c1e;
   border-radius: 6px;
   font-size: 14px;
-  font-weight: 500;
-  box-shadow: none;
+  font-weight: 800;
+  box-shadow:
+    0 0 0 1px rgba(240, 180, 41, 0.2),
+    0 8px 22px rgba(240, 180, 41, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.32);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 
 .button.warning:hover {
-  background: #f0b429;
-  box-shadow: none;
+  background: linear-gradient(180deg, #ffe08a, #ffd166);
+  box-shadow:
+    0 0 0 1px rgba(240, 180, 41, 0.32),
+    0 12px 30px rgba(240, 180, 41, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.42);
 }
 
 .error-dialog .dialog-title-icon {

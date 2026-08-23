@@ -21,7 +21,7 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap"
     />
     <link rel="icon" href="./public/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="./public/styles.css?v=20260822-lobby-overflow-03" />
+    <link rel="stylesheet" href="./public/styles.css?v=20260823-presence-align-01" />
   </head>
   <body class="is-lobby">
     <div class="app-shell">
@@ -156,14 +156,14 @@
                 </div>
               </div>
               <div class="lobby-fields">
-                <label class="field">
+                <div class="field">
                   <span class="label-row">
-                    Nombre
+                    <label class="field-label" for="lobbyNameInput">Nombre</label>
                     <button
                       class="help-button"
                       type="button"
                       aria-label="Ayuda sobre nombre"
-                      data-tooltip="Este nombre sera el que veran los demas usuarios en la sala"
+                      data-tooltip="Nombre visible para los participantes de la sala."
                     >
                       <span data-lucide="circle-help"></span>
                     </button>
@@ -178,17 +178,16 @@
                     data-lpignore="true"
                     maxlength="20"
                     placeholder="Tu nombre"
-                    title="Nombre visible en chat y sincronizacion"
                   />
-                </label>
-                <label class="field field-room">
+                </div>
+                <div class="field field-room">
                   <span class="label-row">
-                    Sala/Codigo
+                    <label class="field-label" for="roomInput">Sala/Codigo</label>
                     <button
                       class="help-button"
                       type="button"
                       aria-label="Ayuda sobre salas"
-                      data-tooltip="Crea una sala y comparte el codigo o el enlace para mirar juntos. Tambien puedes pegar el enlace completo aqui para entrar directo."
+                      data-tooltip="Crea una sala o ingresa mediante un código o enlace."
                     >
                       <span data-lucide="circle-help"></span>
                     </button>
@@ -205,7 +204,7 @@
                     maxlength="5"
                     placeholder="AB12C o enlace"
                   />
-                </label>
+                </div>
                 <div class="lobby-actions">
                   <button
                     class="button primary"
@@ -876,7 +875,7 @@
           <span class="dialog-title-icon" aria-hidden="true" data-lucide="triangle-alert"></span>
           <h2 id="confirmLoadDialogTitle">Cargar otro video</h2>
         </div>
-        <p id="confirmLoadDialogMessage" class="player-dialog-message">Hay un video reproduciendose. ¿Seguro que queres cargar otro ahora?</p>
+        <p id="confirmLoadDialogMessage" class="player-dialog-message">Se está reproduciendo un video. ¿Quieres cargar otro ahora?</p>
         <label class="dialog-checkbox confirm-load-checkbox" for="skipLoadConfirmCheckbox">
           <input id="skipLoadConfirmCheckbox" type="checkbox" />
           <span>No volver a mostrar</span>
@@ -891,6 +890,6 @@
     <script src="./public/dev-runtime.js?v=20260715-02"></script>
     <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script src="./public/firebase-config.js"></script>
-    <script type="module" src="./src/main.js?v=20260820-tooltip-copy-01"></script>
+    <script type="module" src="./src/main.js?v=20260823-name-input-bounds-04"></script>
   </body>
 </html>

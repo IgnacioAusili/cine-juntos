@@ -316,6 +316,8 @@ export function loadVideoFromUrl(source, origin) {
 }
 
 async function handleManualLoadRequest() {
+  if (state.player.remoteStateActive || state.player.suppressVideoEvents) return;
+
   const source = dom.videoUrlInput.value.trim();
   if (!source) {
     // Sin un video cargado no hay nada que reemplazar ni limpiar.
@@ -323,7 +325,8 @@ async function handleManualLoadRequest() {
     if (!hasLoadedMediaSource()) return;
 
     const { confirmed } = await showLoadReplaceDialog(
-      "No hay un enlace de video. Si continuás, se quitará el video actual para todas las personas de la sala. ¿Estás seguro?",
+      "No se encontró ningún enlace para cargar. Si continuás, se quitará el video cargado actualmente para todas las personas de la sala. ¿Estás seguro?",
+      { action: "remove" },
     );
     if (!confirmed) return;
     clearVideoSource(true);
@@ -334,18 +337,26 @@ async function handleManualLoadRequest() {
     return;
   }
 
+  let shouldCenterVideoAfterLoad = false;
   if (shouldConfirmLoadReplacement()) {
     const { confirmed, skipFutureWarnings } = await showLoadReplaceDialog(
-      "Hay un video reproduciendose. ¿Seguro que queres cargar otro ahora?",
+      "Se está reproduciendo un video. ¿Quieres cargar otro ahora?",
     );
     if (!confirmed) return;
+    shouldCenterVideoAfterLoad = true;
     if (skipFutureWarnings) {
       localStorage.setItem(SKIP_LOAD_REPLACE_DIALOG_KEY, "1");
     }
   }
 
   loadVideoFromUrl(source, "manual");
-  window.requestAnimationFrame(() => scrollToVideoPosition("smooth"));
+  window.requestAnimationFrame(() => {
+    if (shouldCenterVideoAfterLoad) {
+      dom.videoArea?.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+      return;
+    }
+    scrollToVideoPosition("smooth");
+  });
 }
 
 export function setVideoSource(source, shouldAnnounce, options = {}) {
@@ -407,6 +418,11 @@ export function clearVideoSource(shouldAnnounce = false) {
   setVideoStatus("empty", "Sin contenido");
   syncPlayerControls(true);
   if (shouldAnnounce && state.session.activeRoom && state.session.transport) {
+    sendVideoEventMessage("video-removed", {
+      from: state.session.clientId,
+      name: getDisplayName(),
+      time: 0,
+    });
     publishState("video", { suppressActivityMessage: true });
   }
 }
@@ -1064,7 +1080,7 @@ function updateLoadButtonState() {
 }
 
 function hasLoadedMediaSource() {
-  return Boolean(dom.videoPlayer.currentSrc || dom.videoPlayer.getAttribute("src"));
+  return Boolean(dom.videoPlayer.getAttribute("src"));
 }
 
 function shouldConfirmLoadReplacement() {

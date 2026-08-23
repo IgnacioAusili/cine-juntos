@@ -20,7 +20,7 @@ import {
   renderMembers,
   renderPresence,
   updateDisplayName,
-} from "./presence.js?v=20260818-presence-window-01";
+} from "./presence.js?v=20260823-name-input-bounds-04";
 import { setConnection } from "./icons-tooltips.js";
 import {
   focusMainWorkspace,
@@ -242,7 +242,7 @@ export function wireRoomEvents() {
   });
 
   dom.lobbyNameInput.addEventListener("input", () => {
-    updateDisplayName(dom.lobbyNameInput.value, dom.lobbyNameInput);
+    updateDisplayName(dom.lobbyNameInput.value, dom.lobbyNameInput, { allowLobbyEdit: true });
   });
 }
 

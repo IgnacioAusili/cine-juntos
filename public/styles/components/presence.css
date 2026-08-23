@@ -47,6 +47,11 @@
   color: var(--text);
 }
 
+/* La métrica visual de los dígitos queda apenas alta respecto del indicador. */
+.presence-pill span:last-child {
+  transform: translateY(1px);
+}
+
 .chat-tools-controls input[type="text"] {
   min-height: 36px;
   padding: 0 10px;

@@ -1,5 +1,11 @@
 import { dom } from "../core/dom.js";
-import { state, getDisplayName, getTransportNow, logEvent } from "../core/state.js";
+import {
+  state,
+  NAME_CHANGE_LIMIT,
+  getDisplayName,
+  getTransportNow,
+  logEvent,
+} from "../core/state.js";
 import { makeGuestName, makeParticipantLabel } from "../core/utils.js";
 import { hideTooltip } from "./icons-tooltips.js";
 
@@ -9,10 +15,10 @@ import { hideTooltip } from "./icons-tooltips.js";
 // Debe ser menor que STALE_MEMBER_TIMEOUT_MS para que los desconectados sigan
 // limpiándose por el timeout del transporte.
 const RECENT_ACTIVITY_WINDOW_MS = 30000;
-const SUPPORTS_FIELD_SIZING_CONTENT = Boolean(CSS.supports?.("field-sizing", "content"));
 
 let nameInputMeasureCanvas = null;
 let activityRefreshTimer = null;
+let nameInputResizeObserver = null;
 const recentActivityByParticipantId = new Map();
 const MIN_DISPLAY_NAME_LENGTH = 3;
 
@@ -51,10 +57,11 @@ function syncConfirmNameButtonState() {
 
 function syncEditNameButtonState() {
   if (!dom.editNameButton) return;
-  dom.editNameButton.disabled = Boolean(state.chat.nameChangeUsed);
-  if (state.chat.nameChangeUsed) {
-    dom.editNameButton.dataset.tooltip = "Ya superaste los cambios permitidos para tu nombre";
-    dom.editNameButton.setAttribute("aria-label", "Editar nombre deshabilitado. Ya superaste los cambios permitidos para tu nombre");
+  const limitReached = state.chat.nameChangeCount >= NAME_CHANGE_LIMIT;
+  dom.editNameButton.disabled = limitReached;
+  if (limitReached) {
+    dom.editNameButton.dataset.tooltip = `Alcanzaste el límite de ${NAME_CHANGE_LIMIT} cambios de nombre en esta sala`;
+    dom.editNameButton.setAttribute("aria-label", `Editar nombre deshabilitado. Alcanzaste el límite de ${NAME_CHANGE_LIMIT} cambios de nombre en esta sala`);
     dom.editNameButton.removeAttribute("title");
   } else {
     dom.editNameButton.dataset.tooltip = "Editar nombre";
@@ -82,15 +89,8 @@ function buildCanvasFont(computedStyle) {
   return `${fontStyle} ${fontVariant} ${fontWeight} ${fontSize}${lineHeight} ${fontFamily}`;
 }
 
-function applyNativeNameInputSizing() {
-  if (!dom.nameInput) return;
-  dom.nameInput.style.fieldSizing = "content";
-  dom.nameInput.style.removeProperty("width");
-  dom.nameInput.style.removeProperty("max-width");
-}
-
 function getNameInputAvailableWidth() {
-  const tools = dom.chatNameField?.parentElement;
+  const tools = dom.chatNameField?.closest(".chat-tools");
   if (!tools) return Number.POSITIVE_INFINITY;
 
   const computed = window.getComputedStyle(tools);
@@ -106,16 +106,15 @@ function getNameInputAvailableWidth() {
   // El editor vive en la columna central del grid; calculamos el ancho real
   // que le queda descontando las columnas laterales y los separadores.
   const availableWidth = contentWidth - leftWidth - rightWidth - (columnGap * 2);
-  return Math.max(24, Math.floor(availableWidth));
+  const editRow = dom.nameInput?.closest(".chat-name-edit-row");
+  const rowStyle = editRow ? window.getComputedStyle(editRow) : null;
+  const rowGap = Number.parseFloat(rowStyle?.columnGap || rowStyle?.gap || "0") || 0;
+  const confirmWidth = dom.confirmNameButton?.getBoundingClientRect().width || 0;
+  return Math.max(0, Math.floor(availableWidth - confirmWidth - rowGap));
 }
 
 function syncNameInputWidth() {
   if (!dom.nameInput || !dom.chatNameField) return;
-
-  if (SUPPORTS_FIELD_SIZING_CONTENT) {
-    applyNativeNameInputSizing();
-    return;
-  }
 
   const input = dom.nameInput;
   const display = dom.nameDisplay;
@@ -127,13 +126,13 @@ function syncNameInputWidth() {
     context.fontKerning = "normal";
   }
 
-  const text = input.value || getDisplayName() || "";
+  const isEditing = dom.chatNameField.dataset.editing === "true";
+  const text = input.value || (!isEditing ? getDisplayName() : "") || "";
   const measuredWidth = context ? Math.ceil(context.measureText(text || " ").width) : 24;
   const textWidth = Math.max(24, measuredWidth);
   const availableWidth = getNameInputAvailableWidth();
-  const maxWidth = Math.max(24, availableWidth);
-  const minWidth = 24;
-  const targetWidth = Math.max(minWidth, Math.min(textWidth, maxWidth));
+  const maxWidth = availableWidth;
+  const targetWidth = Math.min(textWidth, maxWidth);
 
   input.style.width = `${targetWidth}px`;
   input.style.maxWidth = `${maxWidth}px`;
@@ -232,8 +231,9 @@ export function markParticipantActive(participantId, participantName = "") {
 
 function setIdentityEditing(isEditing) {
   if (!dom.chatNameField) return;
-  if (isEditing && state.chat.nameChangeUsed) return;
+  if (isEditing && state.chat.nameChangeCount >= NAME_CHANGE_LIMIT) return;
   dom.chatNameField.dataset.editing = isEditing ? "true" : "false";
+  dom.chatNameField.parentElement?.setAttribute("data-editing", isEditing ? "true" : "false");
 
   if (!isEditing) {
     dom.nameInput.value = getDisplayName();
@@ -245,9 +245,9 @@ function setIdentityEditing(isEditing) {
   dom.nameInput.value = getDisplayName();
   dom.nameInput.setCustomValidity("");
   syncConfirmNameButtonState();
-  applyNativeNameInputSizing();
+  syncNameInputWidth();
   window.requestAnimationFrame(() => {
-    applyNativeNameInputSizing();
+    syncNameInputWidth();
     dom.nameInput.focus();
     dom.nameInput.select();
   });
@@ -259,7 +259,7 @@ function cancelIdentityEditing() {
 }
 
 function commitDisplayNameChange() {
-  if (state.chat.nameChangeUsed) {
+  if (state.chat.nameChangeCount >= NAME_CHANGE_LIMIT) {
     setIdentityEditing(false);
     return;
   }
@@ -291,8 +291,9 @@ function commitDisplayNameChange() {
   const nameChanged = confirmedName !== previousName;
   if (nameChanged) {
     state.session.transport?.updateMember?.(confirmedName);
-    state.chat.nameChangeUsed = true;
-    sessionStorage.setItem("cine-juntos-name-change-used", "1");
+    state.chat.nameChangeCount += 1;
+    sessionStorage.setItem("cine-juntos-name-change-count", String(state.chat.nameChangeCount));
+    sessionStorage.removeItem("cine-juntos-name-change-used");
     logEvent("user", `Nombre actualizado: ${confirmedName}`);
   }
   syncEditNameButtonState();
@@ -399,11 +400,11 @@ export function renderPresence() {
   scheduleActivityRefresh();
 }
 
-export function updateDisplayName(value, sourceInput) {
+export function updateDisplayName(value, sourceInput, { allowLobbyEdit = false } = {}) {
   const nextName = String(value || "").slice(0, 28);
   const lockedName = localStorage.getItem("cine-juntos-name") || makeGuestName(state.session.clientId);
 
-  if (state.chat.nameChangeUsed) {
+  if (state.chat.nameChangeCount >= NAME_CHANGE_LIMIT && !allowLobbyEdit) {
     if (dom.nameInput) dom.nameInput.value = lockedName;
     if (dom.lobbyNameInput) dom.lobbyNameInput.value = lockedName;
     state.session.knownMembers.set(state.session.clientId, lockedName);
@@ -426,15 +427,11 @@ export function updateDisplayName(value, sourceInput) {
 export function wireIdentityEvents() {
   renderDisplayName();
   dom.nameInput.value = getDisplayName();
-  if (SUPPORTS_FIELD_SIZING_CONTENT) {
-    applyNativeNameInputSizing();
-  } else {
-    syncNameInputWidth();
-  }
+  syncNameInputWidth();
   syncEditNameButtonState();
 
   dom.editNameButton?.addEventListener("click", () => {
-    if (state.chat.nameChangeUsed) return;
+    if (state.chat.nameChangeCount >= NAME_CHANGE_LIMIT) return;
     setIdentityEditing(true);
   });
 
@@ -483,14 +480,19 @@ export function wireIdentityEvents() {
     hideTooltip();
     dom.nameInput.setCustomValidity("");
     syncConfirmNameButtonState();
-    if (!SUPPORTS_FIELD_SIZING_CONTENT) syncNameInputWidth();
+    syncNameInputWidth();
   });
 
   window.addEventListener("resize", () => {
-    if (dom.chatNameField?.dataset.editing === "true" && !SUPPORTS_FIELD_SIZING_CONTENT) {
-      syncNameInputWidth();
-    }
+    syncNameInputWidth();
   });
+
+  const chatTools = dom.chatNameField.closest(".chat-tools");
+  if (typeof ResizeObserver === "function" && chatTools) {
+    nameInputResizeObserver?.disconnect();
+    nameInputResizeObserver = new ResizeObserver(syncNameInputWidth);
+    nameInputResizeObserver.observe(chatTools);
+  }
 }
 
 export { cancelIdentityEditing };

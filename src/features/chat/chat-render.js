@@ -98,7 +98,7 @@ function appendMessageNow(container, message) {
   item._chatMessage = message;
   item.dataset.messageId = message.id;
   item.dataset.authorId = authorKey;
-  item.style.setProperty("--participant-accent", getParticipantAccent(message.from || message.name));
+  item.style.setProperty("--participant-accent", getParticipantAccent(message.name));
 
   const meta = document.createElement("div");
   meta.className = "message-meta";
@@ -153,7 +153,7 @@ function appendMessageNow(container, message) {
     reply.className = "message-reply";
     reply.style.setProperty(
       "--reply-participant-accent",
-      getParticipantAccent(message.replyTo.from || message.replyTo.id || message.replyTo.name),
+      getParticipantAccent(message.replyTo.name),
     );
     const rawReplyLabel = String(message.replyTo.text || "").trim();
     const replyLabel =
@@ -259,6 +259,7 @@ function appendMessageNow(container, message) {
       replyInput,
       interactionTarget: item,
       interactionBand: mediaRow,
+      interactionBands: [meta],
       allowSwipeInsideBubble: true,
     });
   } else {
@@ -298,6 +299,7 @@ function appendMessageNow(container, message) {
       companions: [meta],
       interactionTarget: item,
       interactionBand: bubbleRow,
+      interactionBands: [meta],
     });
   }
   container.append(item);

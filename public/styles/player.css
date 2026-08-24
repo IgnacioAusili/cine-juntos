@@ -348,8 +348,8 @@ video::-webkit-media-controls-fullscreen-button {
 }
 
 .player-frame[data-control-style="line"] .player-volume-group {
-  margin-left: auto;
-  margin-right: -9px;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 /* En Línea ningún comando tiene una cápsula: solo quedan los iconos y su estado. */
@@ -395,7 +395,7 @@ video::-webkit-media-controls-fullscreen-button {
 
 .player-frame[data-control-style="line"] .player-controls-bar .player-select {
   height: 30px;
-  margin-left: -2px;
+  margin-left: auto;
   margin-right: 6px;
   border: 0;
   border-radius: 0;
@@ -814,8 +814,11 @@ video::-webkit-media-controls-fullscreen-button {
 .player-controls-bar .player-rate-select::after {
   width: 7px;
   height: 7px;
-  border-right-width: 1.5px;
-  border-bottom-width: 1.5px;
+  color: rgba(255, 255, 255, 0.74);
+  border-right-color: rgba(255, 255, 255, 0.74);
+  border-bottom-color: rgba(255, 255, 255, 0.74);
+  border-right-width: 2px;
+  border-bottom-width: 2px;
 }
 
 .player-controls-bar .player-rate-select:focus-within::after {
@@ -842,7 +845,7 @@ video::-webkit-media-controls-fullscreen-button {
   -webkit-backdrop-filter: blur(14px) saturate(1.08);
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.38);
   padding: 4px;
-  translate: calc(-50% + 6px) 0;
+  translate: calc(-50% + 7px) 0;
 }
 
 .player-frame:not(.player-overlay-visible) .player-rate-menu,

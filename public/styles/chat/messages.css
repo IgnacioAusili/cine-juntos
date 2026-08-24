@@ -50,7 +50,8 @@
 
 .message-meta-name {
   display: block;
-  font-size: 0.6rem;
+  font-size: 0.68rem;
+  font-weight: 700;
   color: var(--participant-accent, var(--muted-2));
 }
 
@@ -297,6 +298,11 @@
   width: 0;
   height: 0;
   flex: 0 0 auto;
+}
+
+.message:not(.mine) .message-media-row .swipe-reply-hint-wrapper {
+  right: auto;
+  left: 0;
 }
 
 .message--media-only {

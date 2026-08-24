@@ -241,7 +241,7 @@ export function renderReplyPreview({ animate = true, preserveHeight = false } = 
     container.style.removeProperty("transition");
     container.style.setProperty(
       "--reply-participant-accent",
-      getParticipantAccent(state.chat.replyTarget.from || state.chat.replyTarget.id || state.chat.replyTarget.name),
+      getParticipantAccent(state.chat.replyTarget.name),
     );
     const nextReplyContent = createReplyPreviewContent(container);
     container.hidden = false;

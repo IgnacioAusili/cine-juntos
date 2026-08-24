@@ -32,6 +32,11 @@
   display: none !important;
 }
 
+/* El preview del chat externo deja ver sutilmente el panel que queda debajo. */
+#replyPreview.reply-preview {
+  background: rgba(18, 24, 27, 0.72);
+}
+
 .reply-preview--visible {
   opacity: 1;
   padding-top: 6px;

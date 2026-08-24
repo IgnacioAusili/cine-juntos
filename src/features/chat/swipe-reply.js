@@ -8,12 +8,14 @@ export function createSwipeReply(
   const swipeTargets = [bubble, ...companions].filter(Boolean);
   const captureTarget = pointerCaptureTarget || bubble;
   // El rail reservado por el layout permite deslizar sin que la burbuja toque el borde.
-  const THRESHOLD = 34, MAX_DRAG = 64, LOCK_DIST = 10, V_BIAS = 6;
+  const THRESHOLD = 34, MAX_DRAG = 48, LOCK_DIST = 10, V_BIAS = 6;
   const RESTORE_MS = 340, EPS = 2;
   const EASING = "cubic-bezier(0.22, 1, 0.36, 1)", OPACITY = "opacity 160ms ease";
-  // El reply se activa deslizando de derecha a izquierda en ambos tipos de
-  // mensaje. Para los mensajes del invitado esto invierte el gesto anterior.
-  const swipeDirection = -1;
+  // El reply se activa deslizando de izquierda a derecha en ambos tipos de
+  // mensaje. Todo el cálculo del gesto usa esta misma dirección para que los
+  // umbrales, la animación y la flecha permanezcan sincronizados.
+  const swipeDirection = 1;
+  const messageOnLeft = !(hint.closest(".message")?.classList.contains("mine") ?? false);
 
   let state = "idle", pointerId = null, pointerType = "", tracking = false, directionLocked = false;
   let startX = 0, startY = 0, currentX = 0, currentY = 0, currentDx = 0, currentDy = 0;
@@ -47,8 +49,10 @@ export function createSwipeReply(
       progress = Math.min(offset / THRESHOLD, 1);
       const hintOpacity = offset <= EPS ? 0 : Math.min(1, 0.14 + progress * 0.86);
       const hintScale = 0.72 + progress * 0.28;
-      // La burbuja deja un hueco a la derecha; la flecha se centra siempre en ese hueco.
-      const hintX = swipeDirection > 0 ? -13 + offset / 2 : 13 - offset / 2;
+      // La flecha acompaña el hueco que deja la burbuja al desplazarse.
+      // En mensajes recibidos queda detrás (a la izquierda); en propios,
+      // delante (a la derecha), según el lado del mensaje.
+      const hintX = messageOnLeft ? -13 + offset / 2 : 13 + offset / 2;
       setSwipeTransform(offset > 0 ? `translateX(${offset * swipeDirection}px)` : "");
       hint.style.opacity = hintOpacity > 0 ? String(hintOpacity) : "0";
       hint.style.transform = `translate(${hintX}px, -50%) scale(${hintScale})`;
@@ -61,7 +65,7 @@ export function createSwipeReply(
     for (const target of swipeTargets) target.style.transition = target.style.transform = "";
     hint.style.transition = "";
     hint.style.opacity = "0";
-    hint.style.transform = `translate(${swipeDirection > 0 ? -14 : 14}px, -50%) scale(0.72)`;
+    hint.style.transform = `translate(${messageOnLeft ? -14 : 14}px, -50%) scale(0.72)`;
     bubble.classList.remove("swipe-dragging", "swipe-settling", "swipe-ready", "swipe-confirmed");
     hintVisible = thresholdReached = false;
   }

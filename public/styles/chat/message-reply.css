@@ -39,7 +39,7 @@
 }
 
 .message-reply-name {
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 700;
   color: var(--reply-participant-accent, var(--participant-accent, var(--accent-2)));
   display: block;

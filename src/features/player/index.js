@@ -1,7 +1,7 @@
 // Coordinacion general del player: reexporta sync de video y fullscreen sin romper imports existentes.
 import { wireFullscreenEvents } from "./fullscreen.js?v=20260819-chat-overlay-controls-01";
 import { wireMiniPlayerEvents } from "./mini-player.js?v=20260815-seek-tooltip-01";
-import { wirePlayerCoreEvents } from "./player.js?v=20260818-fingerprint-01";
+import { wirePlayerCoreEvents } from "./player.js?v=20260824-volume-unmute-01";
 
 export {
   initializePlayer,
@@ -10,7 +10,7 @@ export {
   setVideoSource,
   setVideoStatus,
   waitForVideoMetadata,
-} from "./player.js?v=20260818-fingerprint-01";
+} from "./player.js?v=20260824-volume-unmute-01";
 export {
   handleRemoteState,
   publishState,

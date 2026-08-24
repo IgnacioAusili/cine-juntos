@@ -188,6 +188,7 @@ export function wireMiniMessageReplies(sourceMessages, mirrorMessages, surfaceEl
       replyInput: mirrorInput,
       interactionTarget: mirrorItem,
       interactionBand: row,
+      interactionBands: [mirrorItem.querySelector(".message-meta")],
     });
   });
 }

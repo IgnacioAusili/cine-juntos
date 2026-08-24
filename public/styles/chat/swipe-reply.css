@@ -25,12 +25,17 @@
   user-select: none;
 }
 
-.message.mine .message-bubble-row {
-  align-self: flex-end;
-}
-
 .message:not(.system) {
   touch-action: pan-y;
+}
+
+.message.mine .message-bubble-row {
+  align-self: flex-end;
+  justify-content: flex-end;
+}
+
+.message.mine .message-bubble-row > .message-bubble {
+  margin-left: 0;
 }
 
 /* Los mensajes recibidos se alinean al borde izquierdo sin margen adicional. */
@@ -51,10 +56,22 @@
   z-index: 2;
 }
 
-/* Para mensajes recibidos, el hint aparece a la derecha del bubble */
+/* Los mensajes recibidos muestran la flecha detrás, a la izquierda del bubble. */
 .message:not(.mine) .swipe-reply-hint-wrapper {
-  right: 0;
+  left: 0;
+  right: auto;
+}
+
+/* Los mensajes propios muestran la flecha delante, a la derecha del bubble. */
+.message.mine .swipe-reply-hint-wrapper {
+  position: relative;
+  top: auto;
+  right: auto;
   left: auto;
+  margin-inline-start: auto;
+  flex: 0 0 0;
+  align-self: center;
+  order: -1;
 }
 
 .swipe-reply-hint {
@@ -79,13 +96,21 @@
   width: 13px;
   height: 13px;
   stroke-width: 2.2;
+  transform: scaleX(-1);
+  transform-origin: center;
 }
 
-/* El mensaje recibido también se desliza hacia la izquierda: la flecha apunta
-   en esa dirección y permanece en el rail derecho. */
-.message:not(.mine) .swipe-reply-hint svg {
-  transform: none;
-  transform-origin: center;
+/* El anclaje del icono debe coincidir con el borde del wrapper. */
+.message:not(.mine) .swipe-reply-hint {
+  left: 0;
+  right: auto;
+  transform: translate(-13px, -50%) scale(0.72);
+}
+
+.message.mine .swipe-reply-hint {
+  right: 0;
+  left: auto;
+  transform: translate(13px, -50%) scale(0.72);
 }
 
 .message-bubble.swipe-ready + .swipe-reply-hint-wrapper .swipe-reply-hint {

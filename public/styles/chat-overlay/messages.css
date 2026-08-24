@@ -65,6 +65,18 @@
   align-self: center;
 }
 
+.overlay-messages .message:not(.mine) .message-bubble-row .swipe-reply-hint-wrapper {
+  order: -1;
+}
+
+.overlay-messages .message.mine .message-bubble-row .swipe-reply-hint-wrapper {
+  order: -1;
+}
+
+.overlay-messages .message.mine .message-bubble-row > .message-bubble {
+  margin-left: 0;
+}
+
 .overlay-messages .message:not(.mine) .message-bubble-row > .message-bubble {
   margin-right: 0;
 }
@@ -269,6 +281,11 @@
   width: 0;
   height: 0;
   flex: 0 0 auto;
+}
+
+.overlay-messages .message:not(.mine) .message-media-row .swipe-reply-hint-wrapper {
+  right: auto;
+  left: 0;
 }
 
 .overlay-messages .message--media-only {

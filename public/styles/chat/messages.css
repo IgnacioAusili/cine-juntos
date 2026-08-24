@@ -299,6 +299,11 @@
   flex: 0 0 auto;
 }
 
+.message:not(.mine) .message-media-row .swipe-reply-hint-wrapper {
+  right: auto;
+  left: 0;
+}
+
 .message--media-only {
   position: relative;
   display: flex;

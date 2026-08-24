@@ -4,8 +4,8 @@
 @import url("./styles/components.css?v=20260823-presence-align-01");
 @import url("./styles/lobby.css?v=20260823-lobby-help-name-01");
 @import url("./styles/player.css?v=20260824-rate-menu-center-07");
-@import url("./styles/chat.css?v=20260823-system-message-drum-05");
-@import url("./styles/chat-overlay.css?v=20260823-system-message-drum-05");
+@import url("./styles/chat.css?v=20260824-reply-direction-01");
+@import url("./styles/chat-overlay.css?v=20260824-reply-direction-01");
 @import url("./styles/states.css");
 @import url("./styles/responsive.css?v=20260808-chat-dock-form-01");
 @import url("./styles/mini-player.css?v=20260808-mini-player-13");

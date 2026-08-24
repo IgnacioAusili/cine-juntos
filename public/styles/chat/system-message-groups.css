@@ -83,6 +83,11 @@
   width: 0;
 }
 
+.message.system:not(.mine) .system-message-row .swipe-reply-hint-wrapper {
+  right: auto;
+  left: -18px;
+}
+
 .system-message-row .swipe-reply-hint {
   width: 22px;
   height: 22px;
@@ -194,6 +199,12 @@
 .overlay-messages .system-message-row .swipe-reply-hint-wrapper,
 #overlayMessages .system-message-row .swipe-reply-hint-wrapper {
   right: -15px;
+}
+
+.overlay-messages .message.system:not(.mine) .system-message-row .swipe-reply-hint-wrapper,
+#overlayMessages .message.system:not(.mine) .system-message-row .swipe-reply-hint-wrapper {
+  right: auto;
+  left: -15px;
 }
 
 #overlayMessages .system-message-row {

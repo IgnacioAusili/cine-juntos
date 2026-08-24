@@ -96,7 +96,8 @@
 .overlay-messages .message-meta-name {
   display: block;
   padding-inline-start: 0;
-  font-size: 0.54rem;
+  font-size: 0.68rem;
+  font-weight: 700;
   color: var(--participant-accent, rgba(255, 255, 255, 0.74));
 }
 

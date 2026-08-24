@@ -308,10 +308,7 @@ function appendMessageNow(container, message) {
   const threshold = 120;
   const distanceFromBottom =
     container.scrollHeight - container.scrollTop - container.clientHeight;
-  if (
-    distanceFromBottom <= threshold ||
-    message.from === state.session.clientId
-  ) {
+  if (distanceFromBottom <= threshold || message.from === state.session.clientId) {
     container.scrollTop = container.scrollHeight;
   } else if (message.from !== state.session.clientId) {
     incrementScrollIndicator(isOverlay);

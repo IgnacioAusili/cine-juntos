@@ -337,7 +337,7 @@
                     data-tooltip="Mostrar chat (Tab)"
                   >
                     <span data-lucide="message-square"></span>
-                    <span class="unread-badge player-chat-unread-badge" id="insideChatUnread" hidden>0</span>
+                    <span class="unread-badge player-chat-unread-badge" id="insideChatUnread" hidden><span class="player-chat-unread-count">0</span></span>
                 </button>
               </div>
 
@@ -555,7 +555,7 @@
                   <div class="chat-scrollbar" aria-hidden="true">
                     <div class="chat-scrollbar-thumb"></div>
                   </div>
-                  <button class="scroll-bottom-btn" id="overlayScrollBottomBtn" hidden aria-label="Ir al último mensaje">
+                  <button class="scroll-bottom-btn" id="overlayScrollBottomBtn" hidden aria-label="Ir al último mensaje" data-tooltip="Ir al último mensaje">
                     <span data-lucide="chevrons-down"></span>
                     <span class="scroll-bottom-badge" id="overlayScrollBadge">0</span>
                   </button>
@@ -700,7 +700,7 @@
               <div class="chat-scrollbar" aria-hidden="true">
                 <div class="chat-scrollbar-thumb"></div>
               </div>
-              <button class="scroll-bottom-btn" id="mainScrollBottomBtn" hidden aria-label="Ir al último mensaje">
+              <button class="scroll-bottom-btn" id="mainScrollBottomBtn" hidden aria-label="Ir al último mensaje" data-tooltip="Ir al último mensaje">
                 <span data-lucide="chevrons-down"></span>
                 <span class="scroll-bottom-badge" id="mainScrollBadge">0</span>
               </button>

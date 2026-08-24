@@ -41,7 +41,8 @@ export function isAnyChatVisibleToUser() {
 
 export function incrementInsideUnread() {
   state.chat.unreadInsideCount += 1;
-  dom.insideChatUnread.textContent = state.chat.unreadInsideCount > 99
+  const countElement = dom.insideChatUnread.querySelector(".player-chat-unread-count");
+  (countElement || dom.insideChatUnread).textContent = state.chat.unreadInsideCount > 99
     ? "+99"
     : String(state.chat.unreadInsideCount);
   dom.insideChatUnread.hidden = false;
@@ -71,10 +72,15 @@ export function resetPageUnread() {
 export function syncUnreadBadgesWithVisibility() {
   // Una apertura automática debe conservar el contador hasta que haya una
   // respuesta; de lo contrario el propio cambio de visibilidad lo borra.
+  const externalVisible = isExternalChatVisibleToUser();
+  const insideVisible = isInsideChatVisibleToUser();
   if (
-    isAnyChatVisibleToUser()
-    && !state.chat.autoOpenedInside
-    && !state.chat.autoOpenedExternal
+    externalVisible
+    || (
+      insideVisible
+      && !state.chat.autoOpenedInside
+      && !state.chat.autoOpenedExternal
+    )
   ) {
     resetInsideUnread();
   }
@@ -87,7 +93,10 @@ export function handleIncomingUnread() {
   const insideVisible = isInsideChatVisibleToUser();
   const externalVisible = isExternalChatVisibleToUser();
 
-  if (insideVisible && !state.chat.autoOpenedInside) {
+  if (
+    externalVisible
+    || (insideVisible && !state.chat.autoOpenedInside)
+  ) {
     resetInsideUnread();
   } else {
     incrementInsideUnread();

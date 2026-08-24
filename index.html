@@ -21,7 +21,7 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap"
     />
     <link rel="icon" href="./public/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="./public/styles.css?v=20260824-reply-direction-01" />
+    <link rel="stylesheet" href="./public/styles.css?v=20260824-rate-menu-position-07" />
   </head>
   <body class="is-lobby">
     <div class="app-shell">
@@ -374,29 +374,14 @@
                     <span data-lucide="fast-forward"></span>
                   </button>
 
-                  <div class="player-progress-group">
-                    <span class="player-time" id="playerCurrentTime">0:00</span>
-                    <input
-                      class="player-seek-input"
-                      id="playerSeekInput"
-                      type="range"
-                      min="0"
-                      max="0"
-                      step="0.1"
-                      value="0"
-                      aria-label="Avance del video"
-                    />
-                    <button class="player-time player-time-total" id="playerDuration" type="button">0:00</button>
-                  </div>
-
                   <div class="player-volume-group" id="playerVolumeGroup">
                     <button
                       class="video-control-button"
                       id="playerMuteButton"
-                    type="button"
-                    aria-label="Silenciar"
-                    title="Silenciar"
-                    data-tooltip="Silenciar (M)"
+                      type="button"
+                      aria-label="Silenciar"
+                      title="Silenciar"
+                      data-tooltip="Silenciar (M)"
                     >
                       <span data-lucide="volume-2"></span>
                     </button>
@@ -412,6 +397,21 @@
                         aria-label="Volumen"
                       />
                     </div>
+                  </div>
+
+                  <div class="player-progress-group">
+                    <span class="player-time" id="playerCurrentTime">0:00</span>
+                    <input
+                      class="player-seek-input"
+                      id="playerSeekInput"
+                      type="range"
+                      min="0"
+                      max="0"
+                      step="0.1"
+                      value="0"
+                      aria-label="Avance del video"
+                    />
+                    <button class="player-time player-time-total" id="playerDuration" type="button">0:00</button>
                   </div>
 
                   <label
@@ -890,6 +890,6 @@
     <script src="./public/dev-runtime.js?v=20260715-02"></script>
     <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script src="./public/firebase-config.js"></script>
-    <script type="module" src="./src/main.js?v=20260823-name-input-bounds-04"></script>
+    <script type="module" src="./src/main.js?v=20260824-volume-unmute-03"></script>
   </body>
 </html>

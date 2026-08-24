@@ -68,6 +68,7 @@ let seekTooltipFrame = 0;
 let seekTooltipPoint = null;
 let seekTooltipRect = null;
 let rateMenuCloseTimer = null;
+let lastAudibleVolume = 1;
 
 export function initializePlayer() {
   isDurationShowingRemaining = false;
@@ -79,6 +80,9 @@ export function initializePlayer() {
   const persistedVolume = readPersistedVolume();
   if (persistedVolume !== null) {
     dom.videoPlayer.volume = persistedVolume;
+    if (persistedVolume > 0) lastAudibleVolume = persistedVolume;
+  } else if (dom.videoPlayer.volume > 0) {
+    lastAudibleVolume = dom.videoPlayer.volume;
   }
   setVideoStatus("empty", "Sin contenido");
   initializeRateSelectMenu();
@@ -130,7 +134,14 @@ export function wirePlayerCoreEvents() {
   });
 
   dom.playerMuteButton?.addEventListener("click", () => {
-    dom.videoPlayer.muted = !dom.videoPlayer.muted;
+    const isEffectivelyMuted = dom.videoPlayer.muted || dom.videoPlayer.volume === 0;
+    if (isEffectivelyMuted) {
+      dom.videoPlayer.volume = lastAudibleVolume > 0 ? lastAudibleVolume : 1;
+      dom.videoPlayer.muted = false;
+    } else {
+      lastAudibleVolume = dom.videoPlayer.volume;
+      dom.videoPlayer.muted = true;
+    }
     syncPlayerControls();
   });
 
@@ -138,6 +149,7 @@ export function wirePlayerCoreEvents() {
     const vol = Number(dom.playerVolumeInput.value);
     if (Number.isFinite(vol)) {
       dom.videoPlayer.volume = vol;
+      if (vol > 0) lastAudibleVolume = vol;
       if (vol > 0 && dom.videoPlayer.muted) {
         dom.videoPlayer.muted = false;
       }
@@ -158,11 +170,13 @@ export function wirePlayerCoreEvents() {
     const currentVol = dom.videoPlayer.muted ? 0 : dom.videoPlayer.volume;
     const newVol = Math.min(1, Math.max(0, currentVol + delta));
     dom.videoPlayer.volume = newVol;
+    if (newVol > 0) lastAudibleVolume = newVol;
     if (newVol > 0 && dom.videoPlayer.muted) dom.videoPlayer.muted = false;
     syncPlayerControls();
   }, { passive: false });
 
   dom.videoPlayer.addEventListener("volumechange", () => {
+    if (dom.videoPlayer.volume > 0) lastAudibleVolume = dom.videoPlayer.volume;
     persistVolume(dom.videoPlayer.volume);
     syncPlayerControls();
   });
@@ -615,6 +629,7 @@ function seekVideoBy(deltaSeconds) {
 function adjustVolumeBy(delta) {
   const nextVolume = Math.min(1, Math.max(0, Number(dom.videoPlayer.volume || 0) + delta));
   dom.videoPlayer.volume = nextVolume;
+  if (nextVolume > 0) lastAudibleVolume = nextVolume;
   if (nextVolume > 0 && dom.videoPlayer.muted) {
     dom.videoPlayer.muted = false;
   }

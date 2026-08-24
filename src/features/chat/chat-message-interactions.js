@@ -16,9 +16,11 @@ export function wireMessageInteractions(
     companions = [],
     interactionTarget = bubble,
     interactionBand = interactionTarget,
+    interactionBands = [],
     allowSwipeInsideBubble = false,
   },
 ) {
+  const swipeBands = [interactionBand, ...interactionBands].filter(Boolean);
   const swipe = createSwipeReply(bubble, hint, {
     onReply: () => setReplyTarget?.(message, replyInput),
     companions,
@@ -54,9 +56,11 @@ export function wireMessageInteractions(
   }
 
   function isWithinInteractionBand(event) {
-    if (interactionBand === interactionTarget) return true;
-    const rect = interactionBand.getBoundingClientRect();
-    return event.clientY >= rect.top && event.clientY <= rect.bottom;
+    if (swipeBands.includes(interactionTarget)) return true;
+    return swipeBands.some((band) => {
+      const rect = band.getBoundingClientRect();
+      return event.clientY >= rect.top && event.clientY <= rect.bottom;
+    });
   }
 
   // --- listeners ---

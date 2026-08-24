@@ -41,7 +41,7 @@ import {
 import {
   initializePlayer,
   wirePlayerEvents,
-} from "./features/player/index.js?v=20260819-chat-overlay-controls-01";
+} from "./features/player/index.js?v=20260824-volume-unmute-02";
 import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260823-lobby-name-01";
 import {
   showSlowLoadDialog,

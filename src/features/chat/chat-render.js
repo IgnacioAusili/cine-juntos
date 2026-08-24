@@ -259,6 +259,7 @@ function appendMessageNow(container, message) {
       replyInput,
       interactionTarget: item,
       interactionBand: mediaRow,
+      interactionBands: [meta],
       allowSwipeInsideBubble: true,
     });
   } else {
@@ -298,6 +299,7 @@ function appendMessageNow(container, message) {
       companions: [meta],
       interactionTarget: item,
       interactionBand: bubbleRow,
+      interactionBands: [meta],
     });
   }
   container.append(item);

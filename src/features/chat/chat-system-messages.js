@@ -5,7 +5,7 @@ import {
   logEvent,
 } from "../../core/state.js";
 import { formatClockTime } from "../../core/utils.js";
-import { renderMessage } from "./chat-render.js?v=20260812-overlay-selector-reply-14";
+import { renderMessage } from "./chat-render.js?v=20260823-system-message-drum-09";
 
 /**
  * Genera y envía un mensaje de sistema al chat describiendo un evento de video.

@@ -1,16 +1,26 @@
+import {
+  animateCollapsedSystemMessageAdvance,
+  settleSystemMessageRoll,
+} from "./system-message-roll.js?v=20260823-system-message-drum-09";
+
 const SYSTEM_GROUP_MIN_SIZE = 3;
 const SYSTEM_GROUP_TRANSITION_MS = 180;
 const SYSTEM_GROUP_EXPANSION_MS = SYSTEM_GROUP_TRANSITION_MS;
 const SYSTEM_GROUP_EXPANSION_STAGGER_MS = 14;
 const SYSTEM_GROUP_SCROLL_EDGE_GAP = 56;
+const SYSTEM_GROUP_TOGGLE_TRANSITION_MS = 180;
+const SYSTEM_GROUP_REMOVAL_MS = 380;
+const SYSTEM_GROUP_ENTRY_OFFSET_X = 28;
+const SYSTEM_GROUP_ENTRY_ROTATION = 1.5;
 const groupStates = new WeakMap();
 const groupTransitions = new WeakMap();
+const groupToggleAnimations = new WeakMap();
 
 /**
  * Agrupa la última racha de mensajes de sistema. Cada selector pertenece al
  * mensaje que representa, por lo que el layout lo mueve junto con esa fila.
  */
-export function scheduleSystemMessageCollapse(container) {
+export function scheduleSystemMessageCollapse(container, { animateIncoming = false } = {}) {
   if (!container) return;
 
   const items = getLatestSystemStreak(container);
@@ -21,20 +31,47 @@ export function scheduleSystemMessageCollapse(container) {
     return;
   }
 
+  const hadExistingHeader = Boolean(findGroupToggle(items)?.isConnected);
   const header = ensureGroupHeader(items);
   const state = getGroupState(header);
+  const wasExpanded = state?.expanded === true;
+  const previousVisibleItem = hadExistingHeader && state?.expanded === false
+    ? header.closest(".message.system")
+    : null;
+  settleSystemMessageRoll(previousVisibleItem?.querySelector(".message-system-text"));
+  const previousSnapshot = animateIncoming && previousVisibleItem && !groupTransitions.has(header)
+    ? captureSystemTextSnapshot(previousVisibleItem)
+    : null;
   applyGroupState(header, state?.expanded ?? false);
+
+  if (previousSnapshot) {
+    animateCollapsedSystemMessageAdvance(
+      previousSnapshot,
+      items.at(-1)?.querySelector(".message-system-text"),
+    );
+  }
+
+  if (animateIncoming && hadExistingHeader && wasExpanded) {
+    animateExpandedSystemMessageEntry(items.at(-1));
+  }
 }
 
 /**
- * Reancla el selector antes de eliminar su mensaje anfitrión. El selector no
- * puede quedar dentro de un nodo que está por salir del DOM.
+ * Reancla el selector antes de eliminar su mensaje anfitrión. El reanclaje
+ * puede diferirse hasta la misma tarea que retira la fila para no pintar un
+ * estado intermedio en el que el selector salta a otra posición.
  */
-export function prepareSystemMessageRemoval(container, item) {
+export function prepareSystemMessageRemoval(container, item, { deferReanchor = false } = {}) {
   if (!container || !item?.classList.contains("system")) return null;
 
   const header = findGroupToggle(getContiguousSystemItems(item));
   if (!header) return null;
+
+  // En un grupo contraído el selector vive en la última fila visible, no en
+  // el mensaje más antiguo que está por salir (que permanece oculto). En ese
+  // caso no hay que moverlo a la siguiente fila oculta: hacerlo provoca el
+  // parpadeo que se ve durante la limpieza del grupo.
+  if (header.closest(".message.system") !== item) return header;
 
   const nextItem = item.nextElementSibling;
   if (!nextItem?.classList.contains("message") || !nextItem.classList.contains("system")) {
@@ -42,7 +79,7 @@ export function prepareSystemMessageRemoval(container, item) {
     return null;
   }
 
-  moveGroupToggle(header, nextItem);
+  if (!deferReanchor) moveGroupToggle(header, nextItem);
   return header;
 }
 
@@ -51,6 +88,94 @@ export function refreshSystemMessageGroup(header) {
   if (!header?.isConnected) return;
   const state = getGroupState(header);
   applyGroupState(header, state?.expanded ?? header.getAttribute("aria-expanded") === "true");
+}
+
+/** Captura las posiciones del resto del grupo antes de retirar una fila expandida. */
+export function captureExpandedSystemMessageRemoval(item, header) {
+  if (
+    !item?.classList.contains("message")
+    || !item.classList.contains("system")
+    || header?.getAttribute("aria-expanded") !== "true"
+  ) return null;
+
+  const entries = getContiguousSystemItems(item)
+    .filter((groupItem) => groupItem !== item)
+    .map((groupItem) => {
+      const target = getGroupTransitionTarget(groupItem);
+      return target
+        ? { target, rect: target.getBoundingClientRect() }
+        : null;
+    })
+    .filter(Boolean);
+
+  if (!entries.length) return null;
+
+  return {
+    entries,
+  };
+}
+
+/** Anima la salida lateral y el reacomodo vertical de un grupo expandido. */
+export function animateExpandedSystemMessageRemoval(visualState) {
+  if (!visualState || window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) return;
+
+  const animations = [];
+  visualState.entries.forEach((entry) => {
+    if (!entry.target.isConnected) return;
+
+    const finalRect = entry.target.getBoundingClientRect();
+    const deltaY = entry.rect.top - finalRect.top;
+    if (Math.abs(deltaY) < 0.5) return;
+
+    const animation = entry.target.animate(
+      [
+        {
+          transform: `translate3d(0, ${deltaY}px, 0)`,
+        },
+        {
+          transform: "translate3d(0, 0, 0)",
+        },
+      ],
+      {
+        duration: SYSTEM_GROUP_REMOVAL_MS,
+        easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+        fill: "both",
+      },
+    );
+    animations.push(animation);
+  });
+
+  animations.forEach((animation) => {
+    animation.finished.then(() => animation.cancel(), () => animation.cancel());
+  });
+}
+
+/** Hace entrar desde el lateral el mensaje nuevo de un grupo expandido. */
+export function animateExpandedSystemMessageEntry(item) {
+  if (!item?.isConnected || window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) return;
+
+  const target = getGroupTransitionTarget(item);
+  if (!target) return;
+
+  const animation = target.animate(
+    [
+      {
+        opacity: 0,
+        transform: `translate3d(${SYSTEM_GROUP_ENTRY_OFFSET_X}px, 0, 0) rotate(${SYSTEM_GROUP_ENTRY_ROTATION}deg)`,
+      },
+      {
+        opacity: 1,
+        transform: "translate3d(0, 0, 0) rotate(0deg)",
+      },
+    ],
+    {
+      duration: SYSTEM_GROUP_REMOVAL_MS,
+      easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+      fill: "both",
+    },
+  );
+
+  animation.finished.then(() => animation.cancel(), () => animation.cancel());
 }
 
 /** Expande el grupo solo cuando el mensaje objetivo está oculto. */
@@ -125,8 +250,17 @@ function ensureGroupHeader(items) {
     groupStates.set(header, { expanded: false });
   }
   bindGroupHeader(header, items);
-  moveGroupToggle(header, first);
+  if (!header.isConnected) moveGroupToggle(header, first);
   return header;
+}
+
+function captureSystemTextSnapshot(item) {
+  const target = item?.querySelector(".message-system-text");
+  if (!target) return null;
+  return {
+    markup: target.cloneNode(true),
+    rect: target.getBoundingClientRect(),
+  };
 }
 
 function bindGroupHeader(header, items = getGroupItems(header)) {
@@ -177,19 +311,31 @@ function applyGroupState(
       ? prepareExpansionVisualTransition(lastItem, items)
       : prepareCollapseVisualTransition(items)
     : null;
+  // Medir antes de ocultar o mostrar filas conserva la posición visual real
+  // del selector. Si se mide después, una fila que acaba de ocultarse devuelve
+  // un rectángulo vacío y la animación arranca desde un punto incorrecto.
+  const selectorRect = header.isConnected ? header.getBoundingClientRect() : null;
 
   const state = getGroupState(header) || {};
   state.expanded = Boolean(expanded);
   groupStates.set(header, state);
 
-  applyStructuralGroupState(header, items, expanded);
+  applyStructuralGroupState(header, items, expanded, {
+    animateSelector: true,
+    selectorRect,
+  });
 
   if (animate) {
     animateGroupTransition(items, header, visualState, expanded);
   }
 }
 
-function applyStructuralGroupState(header, items, expanded) {
+function applyStructuralGroupState(
+  header,
+  items,
+  expanded,
+  { animateSelector = false, selectorRect = null } = {},
+) {
   const firstItem = items[0];
   const lastItem = items.at(-1);
   const visibleItem = expanded ? null : items.at(-1);
@@ -205,7 +351,10 @@ function applyStructuralGroupState(header, items, expanded) {
   header.setAttribute("aria-expanded", String(Boolean(expanded)));
   updateHeader(header, items.length - 1, Boolean(expanded));
 
-  moveGroupToggle(header, expanded ? firstItem : lastItem);
+  moveGroupToggle(header, expanded ? firstItem : lastItem, {
+    animate: animateSelector,
+    previousRect: selectorRect,
+  });
 }
 
 function prepareExpansionVisualTransition(anchor, items) {
@@ -518,18 +667,55 @@ function cancelGroupTransition(header) {
   groupTransitions.delete(header);
 }
 
-function moveGroupToggle(header, anchor) {
+function moveGroupToggle(header, anchor, { animate = false, previousRect = null } = {}) {
   if (!header || !anchor?.isConnected) return;
 
+  const fromRect = animate
+    ? previousRect || (header.isConnected ? header.getBoundingClientRect() : null)
+    : null;
+  cancelGroupToggleAnimation(header);
   const row = anchor.querySelector(".system-message-row") || anchor;
   if (header.parentElement !== row) row.append(header);
   header.style.removeProperty("top");
   header.style.removeProperty("left");
   header.style.removeProperty("right");
+
+  if (!fromRect || window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) return;
+
+  const nextRect = header.getBoundingClientRect();
+  const deltaY = fromRect.top - nextRect.top;
+  if (Math.abs(deltaY) < 0.5) return;
+
+  const animation = header.animate(
+    [
+      { transform: `translateY(calc(-50% + ${deltaY}px))` },
+      { transform: "translateY(-50%)" },
+    ],
+    {
+      duration: SYSTEM_GROUP_TOGGLE_TRANSITION_MS,
+      easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+      fill: "both",
+    },
+  );
+  groupToggleAnimations.set(header, animation);
+  const cleanup = () => {
+    if (groupToggleAnimations.get(header) !== animation) return;
+    animation.cancel();
+    groupToggleAnimations.delete(header);
+  };
+  animation.finished.then(cleanup, cleanup);
+}
+
+function cancelGroupToggleAnimation(header) {
+  const animation = groupToggleAnimations.get(header);
+  if (!animation) return;
+  animation.cancel();
+  groupToggleAnimations.delete(header);
 }
 
 function removeGroupHeader(header) {
   if (!header) return;
+  cancelGroupToggleAnimation(header);
   cancelGroupTransition(header);
   window.clearTimeout(getGroupState(header)?.timer);
   groupStates.delete(header);

@@ -37,7 +37,7 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js?v=20260812-image-media-10";
+} from "./features/chat/index.js?v=20260823-system-message-drum-09";
 import {
   initializePlayer,
   wirePlayerEvents,

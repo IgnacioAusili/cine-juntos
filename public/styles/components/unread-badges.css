@@ -26,8 +26,28 @@
   display: none !important;
 }
 
-#playerChatToggleButton .player-chat-unread-badge {
+.player-chat-unread-badge {
+  top: 4px;
+  right: 4px;
+  width: 16px;
+  min-width: 14px;
+  height: 16px;
+  border-width: 1.5px;
+  font-size: 0.48rem;
+  line-height: 1;
+  padding: 0;
+  place-items: center;
+  align-content: center;
+  justify-content: center;
+  text-indent: 0;
+}
+
+.player-chat-unread-count {
+  position: relative;
   top: 1px;
-  right: 1px;
+  left: -0.5px;
+}
+
+#playerChatToggleButton .player-chat-unread-badge {
   z-index: 2;
 }

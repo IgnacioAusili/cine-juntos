@@ -128,7 +128,7 @@ function syncNameInputWidth() {
 
   const isEditing = dom.chatNameField.dataset.editing === "true";
   const text = input.value || (!isEditing ? getDisplayName() : "") || "";
-  const measuredWidth = context ? Math.ceil(context.measureText(text || " ").width) : 24;
+   const measuredWidth = context ? context.measureText(text || " ").width : 24;
   const textWidth = Math.max(24, measuredWidth);
   const availableWidth = getNameInputAvailableWidth();
   const maxWidth = availableWidth;
@@ -229,11 +229,19 @@ export function markParticipantActive(participantId, participantName = "") {
   renderPresence();
 }
 
-function setIdentityEditing(isEditing) {
+function setIdentityEditing(isEditing, { animateReveal = false } = {}) {
   if (!dom.chatNameField) return;
   if (isEditing && state.chat.nameChangeCount >= NAME_CHANGE_LIMIT) return;
+  dom.chatNameField.classList.remove("name-commit-reveal");
   dom.chatNameField.dataset.editing = isEditing ? "true" : "false";
   dom.chatNameField.parentElement?.setAttribute("data-editing", isEditing ? "true" : "false");
+
+  if (!isEditing && animateReveal) {
+    dom.chatNameField.classList.add("name-commit-reveal");
+    window.setTimeout(() => {
+      dom.chatNameField?.classList.remove("name-commit-reveal");
+    }, 260);
+  }
 
   if (!isEditing) {
     dom.nameInput.value = getDisplayName();
@@ -298,7 +306,7 @@ function commitDisplayNameChange() {
   }
   syncEditNameButtonState();
   syncConfirmNameButtonState();
-  setIdentityEditing(false);
+  setIdentityEditing(false, { animateReveal: true });
 }
 
 export function renderMembers(members) {

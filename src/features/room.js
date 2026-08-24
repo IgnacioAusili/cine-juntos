@@ -20,7 +20,7 @@ import {
   renderMembers,
   renderPresence,
   updateDisplayName,
-} from "./presence.js?v=20260823-name-input-bounds-04";
+} from "./presence.js?v=20260824-name-commit-reveal-02";
 import { setConnection } from "./icons-tooltips.js";
 import {
   focusMainWorkspace,

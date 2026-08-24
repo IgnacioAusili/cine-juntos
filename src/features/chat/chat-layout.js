@@ -4,7 +4,7 @@ import { state, logEvent } from "../../core/state.js";
 import { CHAT_DOCKS, CHAT_DOCK_META, withShortcutHint } from "../../core/utils.js";
 import { hydrateIcons, refreshTooltipForTarget } from "../icons-tooltips.js";
 import { focusFullscreenWorkspace } from "../session-ui.js";
-import { cancelIdentityEditing } from "../presence.js?v=20260818-presence-window-01";
+import { cancelIdentityEditing } from "../presence.js?v=20260824-name-commit-reveal-02";
 import {
   isExternalChatVisibleToUser,
   isInsideChatVisibleToUser,

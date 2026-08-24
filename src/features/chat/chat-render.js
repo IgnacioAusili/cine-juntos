@@ -1,7 +1,7 @@
 import { dom } from "../../core/dom.js";
 import { state, logEvent } from "../../core/state.js";
 import { MAX_RENDERED_MESSAGES, formatTime, formatClockTime } from "../../core/utils.js";
-import { markParticipantActive, rememberParticipant } from "../presence.js?v=20260818-presence-window-01";
+import { markParticipantActive, rememberParticipant } from "../presence.js?v=20260824-name-commit-reveal-02";
 import { wireMessageInteractions } from "./chat-message-interactions.js";
 import { appendMessageContent, truncateText } from "./chat-content-parser.js?v=20260810-chat-fixes-02";
 import { getParticipantAccent } from "./chat-participant-color.js";
@@ -308,10 +308,7 @@ function appendMessageNow(container, message) {
   const threshold = 120;
   const distanceFromBottom =
     container.scrollHeight - container.scrollTop - container.clientHeight;
-  if (
-    distanceFromBottom <= threshold ||
-    message.from === state.session.clientId
-  ) {
+  if (distanceFromBottom <= threshold || message.from === state.session.clientId) {
     container.scrollTop = container.scrollHeight;
   } else if (message.from !== state.session.clientId) {
     incrementScrollIndicator(isOverlay);

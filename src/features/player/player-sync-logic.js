@@ -12,7 +12,7 @@ import {
   SEND_THROTTLE_MS,
   formatSeconds,
 } from "../../core/utils.js";
-import { markParticipantActive, rememberParticipant } from "../presence.js?v=20260818-presence-window-01";
+import { markParticipantActive, rememberParticipant } from "../presence.js?v=20260824-name-commit-reveal-02";
 import { setSyncStatus } from "../session-ui.js";
 import { sendVideoEventMessage, renderMessage } from "../chat/index.js?v=20260823-system-message-drum-09";
 // Import circular intencional y seguro: estas funciones se invocan en runtime,

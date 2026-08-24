@@ -79,9 +79,6 @@
   max-width: 100%;
   align-items: center;
   gap: 6px;
-  transition:
-    opacity 180ms ease,
-    transform 180ms ease;
 }
 
 .chat-name-display-row {
@@ -94,6 +91,7 @@
   color: var(--text);
   font-size: 0.82rem;
   font-weight: 600;
+  line-height: 1;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -102,7 +100,7 @@
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transform: translateY(-6px);
+  clip-path: inset(0 100% 0 0);
   padding: 0;
   width: fit-content;
   max-width: 100%;
@@ -111,14 +109,19 @@
 .chat-name-editor:not([data-editing="true"]) .chat-name-edit-row,
 .chat-name-editor[data-editing="true"] .chat-name-display-row {
   position: absolute;
-  inset: 0 auto auto 0;
+  inset-block-start: 0;
+  inset-inline-start: 50%;
+  translate: -50% 0;
 }
 
 .chat-name-edit-row input[type="text"] {
+  appearance: none;
+  display: block;
   min-width: 0;
   flex: 0 1 auto;
   field-sizing: fixed;
   width: 0;
+  height: 1em;
   max-width: none;
   min-height: 0;
   border: 0 !important;
@@ -130,8 +133,11 @@
   font-size: 0.82rem;
   font-weight: 600;
   box-sizing: border-box;
+  align-self: center;
   overflow-x: auto;
+  line-height: 1;
   white-space: nowrap;
+  transform: translateY(-1px);
   transition: width 180ms ease, max-width 180ms ease;
 }
 
@@ -194,18 +200,41 @@
   height: 14px;
 }
 
+.chat-name-confirm-button svg {
+  width: 16px;
+  height: 16px;
+}
+
 .chat-name-editor[data-editing="true"] .chat-name-display-row {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transform: translateY(-6px);
+  clip-path: inset(0 100% 0 0);
 }
 
 .chat-name-editor[data-editing="true"] .chat-name-edit-row {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
-  transform: translateY(0);
+  clip-path: inset(0 0 0 0);
+  translate: none;
+  transition-delay: 0s;
+}
+
+@keyframes chat-name-commit-reveal {
+  from {
+    clip-path: inset(0 100% 0 0);
+    opacity: 0;
+  }
+
+  to {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+}
+
+.chat-name-editor.name-commit-reveal .chat-name-display {
+  animation: chat-name-commit-reveal 240ms ease both;
 }
 
 .source-strip {

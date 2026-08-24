@@ -22,7 +22,7 @@ import {
 import {
   renderPresence,
   wireIdentityEvents,
-} from "./features/presence.js?v=20260823-name-input-bounds-04";
+} from "./features/presence.js?v=20260824-name-commit-reveal-02";
 import {
   showLobby,
   initializeAboutDialog,

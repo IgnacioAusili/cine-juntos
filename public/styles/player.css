@@ -402,6 +402,7 @@ video::-webkit-media-controls-fullscreen-button {
   background: transparent;
   box-shadow: none;
   backdrop-filter: none;
+  color: rgba(255, 255, 255, 0.74);
 }
 
 .player-frame[data-control-style="line"] .player-controls-bar .player-select:hover,
@@ -799,7 +800,7 @@ video::-webkit-media-controls-fullscreen-button {
   padding: 0 16px 0 6px;
   font: inherit;
   font-family: "Arial Rounded MT Bold", "Trebuchet MS", sans-serif;
-  font-size: 0.86rem;
+  font-size: 0.92rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   text-align: right;
@@ -811,8 +812,8 @@ video::-webkit-media-controls-fullscreen-button {
 }
 
 .player-controls-bar .player-rate-select::after {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
   border-right-width: 1.5px;
   border-bottom-width: 1.5px;
 }
@@ -841,7 +842,7 @@ video::-webkit-media-controls-fullscreen-button {
   -webkit-backdrop-filter: blur(14px) saturate(1.08);
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.38);
   padding: 4px;
-  transform: translateX(calc(-50% + 6px));
+  translate: calc(-50% + 6px) 0;
 }
 
 .player-frame:not(.player-overlay-visible) .player-rate-menu,

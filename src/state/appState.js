@@ -9,6 +9,15 @@ import {
 export const firebaseConfig = window.CINE_JUNTOS_FIREBASE_CONFIG || {};
 const SESSION_NAME_KEY = "cine-juntos-name";
 export const LAST_ROOM_KEY = "cine-juntos-last-room";
+export const NAME_CHANGE_LIMIT = 3;
+
+function getInitialNameChangeCount() {
+  const storedCount = Number.parseInt(sessionStorage.getItem("cine-juntos-name-change-count"), 10);
+  if (Number.isFinite(storedCount)) return Math.min(NAME_CHANGE_LIMIT, Math.max(0, storedCount));
+
+  // Compatibilidad con la marca booleana usada por versiones anteriores.
+  return sessionStorage.getItem("cine-juntos-name-change-used") === "1" ? 1 : 0;
+}
 
 function isLegacyAutomaticName(value) {
   return /^Usuario [A-Z0-9]{4}$/i.test(String(value || "").trim());
@@ -117,7 +126,7 @@ export const chatState = {
   longPressStart: null,
   mainScrollUnread: 0,
   overlayScrollUnread: 0,
-  nameChangeUsed: sessionStorage.getItem("cine-juntos-name-change-used") === "1",
+  nameChangeCount: getInitialNameChangeCount(),
 };
 
 export const uiState = {

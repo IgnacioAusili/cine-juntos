@@ -3,4 +3,5 @@
 @import url("./chat-overlay/messages.css?v=20260818-emoji-time-contrast-01");
 @import url("./chat-overlay/composer.css?v=20260819-emoji-fallback-01");
 @import url("./chat-overlay/sync-status.css");
-@import url("./chat/system-message-groups.css?v=20260820-system-lines-01");
+@import url("./chat/system-message-groups.css?v=20260823-system-message-drum-04");
+@import url("./chat/system-message-roll.css?v=20260823-system-message-drum-05");

@@ -412,6 +412,13 @@
 .lobby-fields .label-row {
   padding-inline-start: 0;
   gap: 4px;
+  width: max-content;
+  justify-self: start;
+  pointer-events: none;
+}
+
+.lobby-fields .label-row .help-button {
+  pointer-events: auto;
 }
 
 .lobby-actions {
@@ -601,6 +608,12 @@ body:not(.is-lobby) .live-badge {
   .lobby-fields .help-button svg {
     width: 14px;
     height: 14px;
+  }
+
+  .lobby-fields .help-button:hover,
+  .lobby-fields .help-button:focus-visible {
+    background: rgba(255, 255, 255, 0.07);
+    color: var(--text);
   }
 
   .lobby-ticket {

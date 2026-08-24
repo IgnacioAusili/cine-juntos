@@ -119,7 +119,7 @@ export function showErrorDialog(message) {
   dom.errorDialog.showModal();
 }
 
-export function showLoadReplaceDialog(message) {
+export function showLoadReplaceDialog(message, options = {}) {
   if (!dom.confirmLoadDialog) {
     return Promise.resolve({ confirmed: true, skipFutureWarnings: false });
   }
@@ -135,6 +135,15 @@ export function showLoadReplaceDialog(message) {
 
   if (dom.confirmLoadDialogMessage && message) {
     dom.confirmLoadDialogMessage.textContent = message;
+  }
+  const isRemoveAction = options.action === "remove";
+  if (dom.confirmLoadDialogTitle) {
+    dom.confirmLoadDialogTitle.textContent = isRemoveAction ? "Quitar el video" : "Cargar otro video";
+  }
+  if (dom.confirmLoadDialogButton) {
+    dom.confirmLoadDialogButton.textContent = isRemoveAction ? "Quitar" : "Cargar";
+    dom.confirmLoadDialogButton.classList.toggle("warning", isRemoveAction);
+    dom.confirmLoadDialogButton.classList.toggle("primary", !isRemoveAction);
   }
   if (dom.skipLoadConfirmCheckbox) {
     dom.skipLoadConfirmCheckbox.checked = false;

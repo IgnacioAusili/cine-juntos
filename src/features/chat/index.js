@@ -12,8 +12,8 @@ import {
   updateCharCounter,
   wireFloatingComposerLayout,
   wireComposerScrollbar,
-} from "./chat-input.js?v=20260812-image-media-02";
-import { setReplyTarget } from "./chat-reply.js?v=20260814-reply-preview-sharp-01";
+} from "./chat-input.js?v=20260823-system-message-drum-09";
+import { setReplyTarget } from "./chat-reply.js?v=20260823-system-message-drum-09";
 import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js";
 import {
   copyMessageText,
@@ -171,15 +171,15 @@ export {
   buildEmojiPicker,
   updateCharCounter,
   sendMessage,
-} from "./chat-input.js?v=20260812-image-media-02";
-export { renderMessage } from "./chat-render.js?v=20260812-overlay-selector-reply-14";
+} from "./chat-input.js?v=20260823-system-message-drum-09";
+export { renderMessage } from "./chat-render.js?v=20260823-system-message-drum-09";
 export {
   clearReplyTarget,
   renderReplyPreview,
   scrollToMessage,
   setReplyTarget,
-} from "./chat-reply.js?v=20260814-reply-preview-sharp-01";
-export { sendVideoEventMessage } from "./chat-system-messages.js?v=20260812-image-media-02";
+} from "./chat-reply.js?v=20260823-system-message-drum-09";
+export { sendVideoEventMessage } from "./chat-system-messages.js?v=20260823-system-message-drum-09";
 export {
   checkScrollPosition,
   resetInsideUnread,

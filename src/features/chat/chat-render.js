@@ -13,15 +13,17 @@ import {
 } from "./unread-counters.js";
 import { setReplyTarget, scrollToMessage } from "./chat-reply.js?v=20260814-reply-preview-sharp-01";
 import {
+  animateExpandedSystemMessageRemoval,
+  captureExpandedSystemMessageRemoval,
   prepareSystemMessageRemoval,
   refreshSystemMessageGroup,
   scheduleSystemMessageCollapse,
-} from "./system-message-groups.js?v=20260821-system-group-collapse-cleanup-01";
+} from "./system-message-groups.js?v=20260823-system-message-drum-09";
 
 const EMOJI_ONLY_PATTERN = /^(?:[\s\p{Extended_Pictographic}\p{Emoji_Presentation}\p{Emoji_Modifier}\uFE0F\u200D\u20E3])+$/u;
 const EMOJI_GLYPH_PATTERN = /[\p{Extended_Pictographic}\p{Emoji_Presentation}]/u;
 const SYSTEM_MESSAGE_STREAK_LIMIT = 10;
-const SYSTEM_MESSAGE_EXIT_MS = 220;
+const SYSTEM_MESSAGE_EXIT_MS = 380;
 const messageRenderQueues = new WeakMap();
 
 /**
@@ -300,7 +302,7 @@ function appendMessageNow(container, message) {
   }
   container.append(item);
   trimRenderedMessages(container);
-  scheduleSystemMessageCollapse(container);
+  scheduleSystemMessageCollapse(container, { animateIncoming: Boolean(message.system) });
 
   const isOverlay = container === dom.overlayMessages;
   const threshold = 120;
@@ -419,17 +421,49 @@ function removeOldestSystemMessage(container) {
 
   const wasNearBottom =
     container.scrollHeight - container.scrollTop - container.clientHeight <= 120;
-  const groupHeader = prepareSystemMessageRemoval(container, oldest);
+  const groupHeader = prepareSystemMessageRemoval(container, oldest, { deferReanchor: true });
+  const expandedRemoval = groupHeader?.getAttribute("aria-expanded") === "true";
   oldest.classList.add("message-system-exit");
+  if (expandedRemoval) oldest.classList.add("message-system-exit-expanded");
 
   return new Promise((resolve) => {
-    window.setTimeout(() => {
+    let removalFinished = false;
+    const exitTarget = expandedRemoval
+      ? oldest.querySelector(".message-system-bubble")
+      : null;
+    let fallbackTimer = 0;
+
+    const finishRemoval = () => {
+      if (removalFinished) return;
+      removalFinished = true;
+      if (exitTarget) exitTarget.removeEventListener("animationend", handleExitAnimationEnd);
+      window.clearTimeout(fallbackTimer);
+
+      // Reanclar y retirar en la misma tarea evita que el selector se pinte
+      // una fila más abajo antes de que el resto del grupo suba.
+      prepareSystemMessageRemoval(container, oldest);
+      const removalVisualState = expandedRemoval
+        ? captureExpandedSystemMessageRemoval(oldest, groupHeader)
+        : null;
       oldest.remove();
       refreshSystemMessageGroup(groupHeader);
       scheduleSystemMessageCollapse(container);
+      animateExpandedSystemMessageRemoval(removalVisualState);
       if (wasNearBottom) container.scrollTop = container.scrollHeight;
       window.requestAnimationFrame(resolve);
-    }, SYSTEM_MESSAGE_EXIT_MS);
+    };
+
+    const handleExitAnimationEnd = (event) => {
+      if (event.animationName !== "systemMessageExitExpandedBubble") return;
+      finishRemoval();
+    };
+
+    if (exitTarget) {
+      exitTarget.addEventListener("animationend", handleExitAnimationEnd);
+      fallbackTimer = window.setTimeout(finishRemoval, SYSTEM_MESSAGE_EXIT_MS + 50);
+    } else {
+      fallbackTimer = window.setTimeout(finishRemoval, SYSTEM_MESSAGE_EXIT_MS);
+    }
   });
 }
 

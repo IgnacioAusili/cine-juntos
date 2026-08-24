@@ -5,11 +5,11 @@ import {
   logEvent,
 } from "../../core/state.js";
 import { formatClockTime } from "../../core/utils.js";
-import { renderMessage } from "./chat-render.js?v=20260812-overlay-selector-reply-14";
+import { renderMessage } from "./chat-render.js?v=20260823-system-message-drum-09";
 
 /**
  * Genera y envía un mensaje de sistema al chat describiendo un evento de video.
- * @param {string} action - El tipo de evento ('play', 'pause', 'seek', 'rate', 'video', 'video-ready', 'hold').
+ * @param {string} action - El tipo de evento ('play', 'pause', 'seek', 'rate', 'video', 'video-ready', 'video-removed', 'hold').
  * @param {Object} currentState - El estado actual del reproductor.
  */
 export function sendVideoEventMessage(action, currentState) {
@@ -63,6 +63,11 @@ function describeVideoEvent(action, currentState) {
     return `${name} cambió la velocidad a ${currentState.rate}x`;
   if (action === "video") {
     return `${name} ingresó un video`;
+  }
+  if (action === "video-removed") {
+    return currentState.from === state.session.clientId
+      ? "Quitaste el video"
+      : `${name} ha quitado el video`;
   }
   if (action === "video-ready") {
     return currentState.isReload

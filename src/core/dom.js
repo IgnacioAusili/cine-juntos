@@ -97,6 +97,7 @@ export const dom = {
   closeResumeVideoDialogButton: document.querySelector("#closeResumeVideoDialogButton"),
   confirmLoadDialog: document.querySelector("#confirmLoadDialog"),
   closeConfirmLoadDialogButton: document.querySelector("#closeConfirmLoadDialogButton"),
+  confirmLoadDialogTitle: document.querySelector("#confirmLoadDialogTitle"),
   confirmLoadDialogMessage: document.querySelector("#confirmLoadDialogMessage"),
   confirmLoadDialogButton: document.querySelector("#confirmLoadDialogButton"),
   cancelLoadDialogButton: document.querySelector("#cancelLoadDialogButton"),

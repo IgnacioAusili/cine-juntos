@@ -15,14 +15,14 @@ import {
   hydrateIcons,
   initializeUi,
   setConnection,
-} from "./features/icons-tooltips.js?v=20260820-tooltip-copy-01";
+} from "./features/icons-tooltips.js?v=20260823-lobby-help-name-01";
 import {
   wireLayoutMetrics,
 } from "./features/layout-metrics.js";
 import {
   renderPresence,
   wireIdentityEvents,
-} from "./features/presence.js?v=20260818-presence-window-01";
+} from "./features/presence.js?v=20260823-name-input-bounds-04";
 import {
   showLobby,
   initializeAboutDialog,
@@ -37,12 +37,12 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js?v=20260812-image-media-10";
+} from "./features/chat/index.js?v=20260823-system-message-drum-09";
 import {
   initializePlayer,
   wirePlayerEvents,
 } from "./features/player/index.js?v=20260819-chat-overlay-controls-01";
-import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260811-layout-motion-01";
+import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260823-lobby-name-01";
 import {
   showSlowLoadDialog,
 } from "./features/session-ui.js";

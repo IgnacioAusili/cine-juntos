@@ -1,4 +1,4 @@
-@import url("./chat/messages.css?v=20260812-image-media-07");
+@import url("./chat/messages.css?v=20260823-system-message-drum-05");
 @import url("./chat/message-media.css?v=20260812-image-media-02");
 @import url("./chat/composer.css?v=20260819-emoji-fallback-01");
 @import url("./chat/message-menu.css");
@@ -9,5 +9,6 @@
 @import url("./chat/message-reply.css");
 @import url("./chat/message-highlight.css?v=20260812-image-highlight-01");
 @import url("./chat/swipe-reply.css");
-@import url("./chat/system-message-groups.css?v=20260820-system-lines-01");
+@import url("./chat/system-message-groups.css?v=20260823-system-message-drum-04");
+@import url("./chat/system-message-roll.css?v=20260823-system-message-drum-05");
 @import url("./chat/char-counter.css");

@@ -451,7 +451,7 @@ function setInviteCopyFeedback(active) {
     if (dom.copyInviteButton) {
       dom.copyInviteButton.dataset.copied = "false";
     }
-  }, 2400);
+  }, 1600);
 }
 
 function updateUrlRoom(roomCode) {

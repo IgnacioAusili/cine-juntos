@@ -23,6 +23,7 @@ import {
 import {
   setChatDock,
   setExternalChatCollapsed,
+  restoreExternalChatCollapsed,
   setExternalChatAutoExpandEnabled,
   setInsideChatAutoExpandEnabled,
   setInsideChatStyle,
@@ -192,6 +193,7 @@ export {
 } from "./message-menu.js";
 export {
   getPersistedInsideChatStyle,
+  restoreExternalChatCollapsed,
   scrollToVideoPosition,
   setChatDock,
   setExternalChatAutoExpandEnabled,

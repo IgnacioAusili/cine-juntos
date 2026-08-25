@@ -1136,7 +1136,7 @@ function armSlowLoadPrompt(source) {
 
     clearSlowLoadPromptTracking();
     const confirmed = await showSlowLoadDialog(
-      "Vaya, parece que esta tardando en cargar. ¿Quieres intentar recargar el video solo para ti?",
+      "Vaya... el video está tardando en cargar. ¿Quieres recargarlo solo para ti?",
     );
     if (confirmed && getCurrentVideoSourceKey() === sourceKey) {
       reloadVideoLocally();

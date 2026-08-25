@@ -33,6 +33,7 @@ import {
   setInsideChatStyle,
   setInsideChatVisible,
   setChatDock,
+  restoreExternalChatCollapsed,
   syncChatAutoExpandControls,
   updateCollapseButton,
   updateCharCounter,
@@ -43,15 +44,8 @@ import {
   wirePlayerEvents,
 } from "./features/player/index.js?v=20260824-volume-unmute-02";
 import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260823-lobby-name-01";
-import {
-  showSlowLoadDialog,
-} from "./features/session-ui.js";
-import {
-  EXAMPLE_VIDEO_URL,
-} from "./core/utils.js";
 
 const requestedRoom = normalizeRoomCode(new URLSearchParams(window.location.search).get("room") || "");
-const isSlowLoadDialogTest = new URLSearchParams(window.location.search).get("slowLoadDialogTest") === "1";
 
 document.body.classList.remove("app-ready");
 applyInitialDefaults();
@@ -68,6 +62,7 @@ initializePlayer();
 setInsideChatStyle(getPersistedInsideChatStyle());
 setInsideChatVisible(false);
 setChatDock(localStorage.getItem("cine-juntos-chat-dock") || "right");
+restoreExternalChatCollapsed();
 syncChatAutoExpandControls();
 updateCollapseButton();
 updateCharCounter(dom.messageInput, false);
@@ -103,19 +98,6 @@ if (requestedRoom) {
     "load",
     () => {
       void joinRoom(requestedRoom);
-    },
-    { once: true },
-  );
-}
-
-if (isSlowLoadDialogTest) {
-  window.addEventListener(
-    "load",
-    () => {
-      dom.videoUrlInput.value = EXAMPLE_VIDEO_URL;
-      void showSlowLoadDialog(
-        "Escenario de prueba: el video parece estar tardando en cargar. ¿Quieres intentar recargarlo solo para ti?",
-      );
     },
     { once: true },
   );

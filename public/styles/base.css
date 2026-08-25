@@ -90,8 +90,8 @@ button {
   cursor: pointer;
 }
 
-/* Evita el resaltado azul nativo al tocar componentes interactivos en móvil.
-   Los estados :focus-visible propios siguen disponibles para teclado. */
+/* Evita el resaltado nativo al tocar componentes interactivos y el contorno
+   brillante del foco en toda la interfaz. */
 button,
 input,
 select,
@@ -99,6 +99,11 @@ textarea,
 a,
 [role="button"] {
   -webkit-tap-highlight-color: transparent;
+}
+
+*:focus,
+*:focus-visible {
+  outline: none !important;
 }
 
 /* h1 con halo cinematografico (ambar tenue) */

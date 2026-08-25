@@ -110,7 +110,26 @@ function getNameInputAvailableWidth() {
   const rowStyle = editRow ? window.getComputedStyle(editRow) : null;
   const rowGap = Number.parseFloat(rowStyle?.columnGap || rowStyle?.gap || "0") || 0;
   const confirmWidth = dom.confirmNameButton?.getBoundingClientRect().width || 0;
-  return Math.max(0, Math.floor(availableWidth - confirmWidth - rowGap));
+  let nameInputWidth = availableWidth - confirmWidth - rowGap;
+
+  const sessionView = tools.closest(".session-view");
+  const collapseAnchor = dom.collapseChatButton?.querySelector(".chat-collapse-icon-anchor");
+  if (sessionView?.dataset.chatDock === "bottom" && collapseAnchor) {
+    const anchorRect = collapseAnchor.getBoundingClientRect();
+    const fieldRect = dom.chatNameField.getBoundingClientRect();
+    const fieldCenter = fieldRect.left + (fieldRect.width / 2);
+    const gapBeforeArrow = 8;
+    const editRowWidth = Math.max(
+      0,
+      Math.floor((anchorRect.left - gapBeforeArrow - fieldCenter) * 2),
+    );
+    nameInputWidth = Math.min(
+      nameInputWidth,
+      editRowWidth - confirmWidth - rowGap,
+    );
+  }
+
+  return Math.max(0, Math.floor(nameInputWidth));
 }
 
 function syncNameInputWidth() {

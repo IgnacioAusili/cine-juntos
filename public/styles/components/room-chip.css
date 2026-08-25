@@ -194,15 +194,19 @@
   width: 0;
   overflow: hidden;
   transition:
-    opacity 160ms ease,
-    transform 160ms ease,
-    width 160ms ease;
+    opacity 260ms ease,
+    transform 260ms ease,
+    width 380ms ease;
 }
 
 .room-chip-copy[data-copied="true"] .room-chip-copy-confirm {
   opacity: 1;
   transform: scale(1);
   width: 18px;
+}
+
+.room-chip-copy[data-copied="false"] .room-chip-copy-confirm {
+  transition-delay: 0ms, 0ms, 120ms;
 }
 
 .room-chip-copy-confirm svg {

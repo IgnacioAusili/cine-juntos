@@ -17,6 +17,7 @@ import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=202608
 const AUTO_COLLAPSE_DELAY_MS = 5000;
 const AUTO_EXPAND_INSIDE_KEY = "cine-juntos-chat-auto-expand-inside";
 const AUTO_EXPAND_EXTERNAL_KEY = "cine-juntos-chat-auto-expand-external";
+const EXTERNAL_CHAT_COLLAPSED_KEY = "cine-juntos-chat-collapsed";
 const CHAT_STYLE_KEY = "cine-juntos-chat-style";
 const CHAT_LAYOUT_SETTLE_MS = 280;
 const COLLAPSE_HANDLE_HIDE_MS = CHAT_LAYOUT_SETTLE_MS + 40;
@@ -668,6 +669,7 @@ function applyExternalChatCollapsed(collapsed) {
   lockChatScrollSnapDuringProgrammaticScroll();
   setCollapseHandleTransitioning(true);
   dom.sessionView.classList.toggle("chat-collapsed", collapsed);
+  localStorage.setItem(EXTERNAL_CHAT_COLLAPSED_KEY, collapsed ? "1" : "0");
   if (!collapsed) dom.sessionView.classList.remove("chat-header-collapsed");
   animateExternalChatLayoutFrom(previousVideoRect);
 
@@ -715,6 +717,17 @@ function applyExternalChatCollapsed(collapsed) {
   if (isFullscreen) {
     focusFullscreenWorkspace();
   }
+}
+
+export function restoreExternalChatCollapsed() {
+  if (localStorage.getItem(EXTERNAL_CHAT_COLLAPSED_KEY) !== "1") return;
+
+  dom.sessionView.classList.add("chat-collapsed");
+  dom.chatArea?.setAttribute("aria-hidden", "true");
+  dom.chatArea?.setAttribute("inert", "");
+  updateCollapseButton();
+  syncUnreadBadgesWithVisibility();
+  scheduleExternalChatCollapseHandleOffset();
 }
 
 export function setInsideChatAutoExpandEnabled(enabled) {

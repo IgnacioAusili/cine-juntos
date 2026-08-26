@@ -38,11 +38,11 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js?v=20260825-history-system-no-entry-animation-04";
+} from "./features/chat/index.js?v=20260826-system-line-spacing-01";
 import {
   initializePlayer,
   wirePlayerEvents,
-} from "./features/player/index.js?v=20260825-entry-system-message-animation-01";
+} from "./features/player/index.js?v=20260825-video-remove-ready-02";
 import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260825-chat-hydration-no-system-roll-07";
 
 const requestedRoom = normalizeRoomCode(new URLSearchParams(window.location.search).get("room") || "");

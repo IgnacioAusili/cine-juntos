@@ -1,5 +1,6 @@
 import { dom } from "../../core/dom.js";
 import { state } from "../../core/state.js";
+import { hideTooltip } from "../icons-tooltips.js";
 import { truncateText } from "./chat-content-parser.js?v=20260810-chat-fixes-02";
 import { getParticipantAccent } from "./chat-participant-color.js";
 import { expandSystemMessageGroupForItem } from "./system-message-groups.js?v=20260823-system-message-drum-09";
@@ -32,6 +33,9 @@ export function setReplyTarget(message, focusInput = dom.messageInput) {
     preserveHeight: hadReplyTarget && !isSameReplyTarget,
   });
   focusInput?.focus({ preventScroll: true });
+  // El foco es necesario para empezar a escribir, pero no debe abrir el
+  // tooltip del title del textarea al seleccionar una respuesta.
+  hideTooltip();
 }
 
 function getReplyLabel(message) {

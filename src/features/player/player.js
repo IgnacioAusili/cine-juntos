@@ -17,7 +17,7 @@ import {
   hideTooltip,
   setControlIcon,
 } from "../icons-tooltips.js";
-import { scrollToVideoPosition, sendVideoEventMessage, setInsideChatVisible } from "../chat/index.js?v=20260825-history-system-no-entry-animation-04";
+import { scrollToVideoPosition, sendVideoEventMessage, setInsideChatVisible } from "../chat/index.js?v=20260826-system-line-spacing-01";
 // Import circular intencional y seguro: estas funciones se invocan en runtime,
 // no durante la carga del modulo, y player-sync-logic.js a su vez importa
 // setVideoSource y waitForVideoMetadata desde aqui.
@@ -453,6 +453,14 @@ export function clearVideoSource(shouldAnnounce = false) {
 
 function announceVideoLoadCompletion() {
   if (!pendingLoadCompletionAnnouncement) return;
+  // loadedmetadata puede llegar después de que se haya quitado la fuente
+  // anterior. En ese caso no corresponde anunciar que el video terminó de
+  // cargarse para los demás.
+  if (!hasLoadedMediaSource()) {
+    pendingLoadCompletionAnnouncement = false;
+    pendingLoadCompletionAnimateSystemGroups = true;
+    return;
+  }
   pendingLoadCompletionAnnouncement = false;
   const animateSystemGroups = pendingLoadCompletionAnimateSystemGroups;
   pendingLoadCompletionAnimateSystemGroups = true;

@@ -38,7 +38,7 @@ import {
   resetInsideUnread,
   resetPageUnread,
   renderReplyPreview,
-} from "./chat/index.js?v=20260825-history-system-no-entry-animation-04";
+} from "./chat/index.js?v=20260826-system-line-spacing-01";
 
 const ACTIVE_TAB_KEY = "cine-juntos-active-tab";
 const ACTIVE_TAB_TTL_MS = 30000;

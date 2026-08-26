@@ -1,4 +1,4 @@
-import { clearReplyTarget, setReplyTarget } from "../chat/chat-reply.js?v=20260814-reply-preview-sharp-01";
+import { clearReplyTarget, setReplyTarget } from "../chat/chat-reply.js?v=20260826-reply-tooltip-01";
 import { wireMessageInteractions } from "../chat/chat-message-interactions.js";
 import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js";
 import { state } from "../../core/state.js";

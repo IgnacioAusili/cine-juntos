@@ -18,8 +18,8 @@ import {
 } from "../session-ui.js";
 import { refreshTooltipForTarget } from "../icons-tooltips.js";
 import { markParticipantActive } from "../presence.js?v=20260824-name-commit-reveal-02";
-import { clearReplyTarget } from "./chat-reply.js?v=20260814-reply-preview-sharp-01";
-import { renderMessage } from "./chat-render.js?v=20260825-history-system-no-entry-animation-04";
+import { clearReplyTarget } from "./chat-reply.js?v=20260826-reply-tooltip-01";
+import { renderMessage } from "./chat-render.js?v=20260826-system-line-spacing-01";
 import {
   completeAutoOpenedChatResponse,
 } from "./chat-layout.js?v=20260811-text-stable-motion-01";
@@ -593,7 +593,8 @@ export function wireFloatingComposerLayout() {
 
     const updateReserve = () => {
       const wasPinnedToBottom = isPinnedToBottom(messagesContainer);
-      const reserve = Math.ceil(form.getBoundingClientRect().height);
+      const formRect = form.getBoundingClientRect();
+      const reserve = Math.ceil(formRect.height);
       const computedStyle = window.getComputedStyle(form);
       const bottomGap = Math.max(0, Math.round(Number.parseFloat(computedStyle.bottom) || 0));
       const messageGap = form === dom.overlayMessageForm
@@ -603,6 +604,14 @@ export function wireFloatingComposerLayout() {
       if (messagesWrap && inputWrapper) {
         const messagesWrapRect = messagesWrap.getBoundingClientRect();
         const inputRect = inputWrapper.getBoundingClientRect();
+        const replyPreviewOffset = Math.max(
+          6,
+          Math.ceil(formRect.bottom - inputRect.top + 6),
+        );
+        form.style.setProperty(
+          "--reply-preview-offset",
+          `${replyPreviewOffset}px`,
+        );
         const visualEnd = Math.max(0, Math.round(inputRect.top - messagesWrapRect.top));
         messagesWrap.style.setProperty("--chat-scrollbar-visual-end", `${visualEnd}px`);
         syncChatScrollbar(messagesContainer);

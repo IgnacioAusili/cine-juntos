@@ -382,7 +382,9 @@ video::-webkit-media-controls-fullscreen-button {
 
 .player-frame[data-control-style="line"] .player-progress-group::before {
   position: absolute;
-  top: 50%;
+  /* El input de 14px queda un pixel por encima del centro del contenedor de
+     16px; alineamos la barra con el centro real del thumb. */
+  top: calc(50% - 1px);
   right: 0;
   left: 0;
   z-index: 0;

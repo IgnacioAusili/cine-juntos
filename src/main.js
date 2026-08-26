@@ -42,7 +42,7 @@ import {
 import {
   initializePlayer,
   wirePlayerEvents,
-} from "./features/player/index.js?v=20260825-video-remove-ready-02";
+} from "./features/player/index.js?v=20260826-seek-overlay-hold-01";
 import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260825-chat-hydration-no-system-roll-07";
 
 const requestedRoom = normalizeRoomCode(new URLSearchParams(window.location.search).get("room") || "");

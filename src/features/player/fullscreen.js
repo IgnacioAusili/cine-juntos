@@ -13,14 +13,15 @@ import {
 import { focusFullscreenWorkspace, setSyncStatus } from "../session-ui.js";
 import {
   logEvent,
+  state,
 } from "../../core/state.js";
 import { isMiniPlayerActive } from "./mini-player.js?v=20260815-seek-tooltip-01";
 import { syncInsideChatPanelOffset } from "../chat/chat-layout.js?v=20260811-text-stable-motion-01";
 import { withShortcutHint } from "../../core/utils.js";
 import { wireTouchHover } from "../../core/touch-interactions.js";
 
-const PLAYER_OVERLAY_IDLE_MS = 2200;
-const PLAYER_OVERLAY_LEAVE_HIDE_DELAY_MS = 650;
+const PLAYER_OVERLAY_IDLE_MS = 3000;
+const PLAYER_OVERLAY_LEAVE_HIDE_DELAY_MS = 800;
 let fallbackFullscreenActive = false;
 
 const USE_NATIVE_FULLSCREEN = true;
@@ -128,14 +129,20 @@ function wirePlayerOverlayControls() {
 
   const scheduleHide = (delay = PLAYER_OVERLAY_IDLE_MS) => {
     clearHideTimer();
+    const safeDelay = delay > 0 ? delay : PLAYER_OVERLAY_IDLE_MS;
     hideTimer = window.setTimeout(() => {
+      hideTimer = null;
+      if (state.ui.seekDragActive) {
+        scheduleHide(safeDelay);
+        return;
+      }
       hideTooltip();
       if (document.activeElement === dom.playerRateSelect) {
         dom.playerRateSelect.blur();
       }
       setOverlayVisible(false);
       dom.playerFrame.classList.add("player-cursor-hidden");
-    }, delay);
+    }, safeDelay);
   };
 
   const revealOverlayFromChatHandle = () => {

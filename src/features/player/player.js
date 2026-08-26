@@ -27,7 +27,7 @@ import {
   clearPlaybackRecoveryTracking,
   pauseRoomForPlaybackIssue,
   publishState,
-} from "./player-sync-logic.js?v=20260825-entry-system-message-animation-01";
+} from "./player-sync-logic.js?v=20260826-seek-tooltip-vertical-02";
 
 import {
   showErrorDialog,
@@ -51,8 +51,9 @@ const VIDEO_FINGERPRINT_WIDTH = 32;
 const VIDEO_FINGERPRINT_HEIGHT = 18;
 const KEYBOARD_SEEK_STEP_SECONDS = 10;
 const KEYBOARD_VOLUME_STEP = 0.05;
-const SEEK_TOOLTIP_GAP = 14;
+const SEEK_TOOLTIP_GAP = 10;
 const SEEK_TOOLTIP_VIEWPORT_PADDING = 8;
+const SEEK_THUMB_WIDTH = 14;
 const VIDEO_STATUS_TOOLTIPS = Object.freeze({
   empty: "Todavía no hay un video cargado en la sala",
   loading: "El video se está cargando. Los controles se habilitarán cuando esté listo",
@@ -68,6 +69,7 @@ let pendingVideoActivityAnnouncement = false;
 let seekTooltipFrame = 0;
 let seekTooltipPoint = null;
 let seekTooltipRect = null;
+let seekPointerId = null;
 let rateMenuCloseTimer = null;
 let lastAudibleVolume = 1;
 let videoClickTimer = null;
@@ -78,6 +80,8 @@ export function initializePlayer() {
   pendingLoadCompletionAnnouncement = false;
   pendingLoadCompletionAnimateSystemGroups = true;
   pendingVideoActivityAnnouncement = false;
+  state.ui.seekDragActive = false;
+  seekPointerId = null;
   hideSeekTooltip();
   applyPlayerControlStyle("line");
   clearSlowLoadPromptTracking();
@@ -760,7 +764,11 @@ function syncPlayerControls(forceSliderSync = false) {
       dom.playerSeekInput.value = String(seekValue);
     }
     updateSeekVisuals(Number(dom.playerSeekInput.value || 0), duration, isEnded);
-    if (dom.playerSeekInput.disabled) hideSeekTooltip();
+    if (dom.playerSeekInput.disabled) {
+      state.ui.seekDragActive = false;
+      seekPointerId = null;
+      hideSeekTooltip();
+    }
   }
 
   if (dom.playerPlayButton) {
@@ -1036,19 +1044,62 @@ function wireSeekTooltipEvents() {
   if (!dom.playerSeekInput || !dom.tooltipLayer) return;
 
   const handlePointerMove = (event) => {
+    if (seekPointerId !== null && event.pointerId !== seekPointerId) return;
     if (dom.playerSeekInput.disabled) {
+      state.ui.seekDragActive = false;
+      seekPointerId = null;
       hideSeekTooltip();
       return;
     }
     updateSeekTooltipFromPointer(event);
   };
 
+  const handlePointerDown = (event) => {
+    if (dom.playerSeekInput.disabled) {
+      state.ui.seekDragActive = false;
+      hideSeekTooltip();
+      return;
+    }
+    if (seekPointerId !== null && seekPointerId !== event.pointerId) return;
+
+    hideTooltip(true);
+    state.ui.seekDragActive = true;
+    seekPointerId = event.pointerId;
+    try {
+      dom.playerSeekInput.setPointerCapture?.(event.pointerId);
+    } catch {
+      // Algunos eventos sintéticos o punteros que ya perdieron captura no
+      // permiten reclamarla; el listener de window mantiene el arrastre.
+    }
+    handlePointerMove(event);
+  };
+
+  const stopPointerTracking = (event) => {
+    if (seekPointerId === null || event.pointerId !== seekPointerId) return;
+    state.ui.seekDragActive = false;
+    seekPointerId = null;
+    hideSeekTooltip();
+  };
+
+  const handlePointerLeave = () => {
+    if (seekPointerId === null) hideSeekTooltip();
+  };
+
+  const handleWindowPointerMove = (event) => {
+    if (seekPointerId !== null) handlePointerMove(event);
+  };
+
   dom.playerSeekInput.addEventListener("pointerenter", handlePointerMove);
   dom.playerSeekInput.addEventListener("pointermove", handlePointerMove);
-  dom.playerSeekInput.addEventListener("pointerdown", handlePointerMove);
-  dom.playerSeekInput.addEventListener("pointerleave", hideSeekTooltip);
-  dom.playerSeekInput.addEventListener("pointercancel", hideSeekTooltip);
-  dom.playerSeekInput.addEventListener("blur", hideSeekTooltip);
+  dom.playerSeekInput.addEventListener("pointerdown", handlePointerDown);
+  dom.playerSeekInput.addEventListener("pointerleave", handlePointerLeave);
+  dom.playerSeekInput.addEventListener("lostpointercapture", stopPointerTracking);
+  dom.playerSeekInput.addEventListener("blur", () => {
+    if (seekPointerId === null) hideSeekTooltip();
+  });
+  window.addEventListener("pointermove", handleWindowPointerMove);
+  window.addEventListener("pointerup", stopPointerTracking);
+  window.addEventListener("pointercancel", stopPointerTracking);
 }
 
 function updateSeekTooltipFromPointer(event) {
@@ -1067,10 +1118,17 @@ function updateSeekTooltipFromPointer(event) {
   const clientX = Number.isFinite(event?.clientX)
     ? event.clientX
     : rect.left + rect.width / 2;
-  const ratio = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+  // El centro del thumb no recorre todo el ancho del input: queda insetado
+  // medio thumb en cada extremo. Usar ese recorrido evita que el tooltip se
+  // despegue del thumb cuando el valor está en 0 o en la duración máxima.
+  const thumbInset = Math.min(rect.width / 2, SEEK_THUMB_WIDTH / 2);
+  const minThumbX = rect.left + thumbInset;
+  const maxThumbX = rect.right - thumbInset;
+  const clampedClientX = Math.min(maxThumbX, Math.max(minThumbX, clientX));
+  const ratio = (clampedClientX - minThumbX) / (maxThumbX - minThumbX);
   const nextTime = duration * ratio;
 
-  showSeekTooltip(nextTime, clientX, rect);
+  showSeekTooltip(nextTime, clampedClientX, rect);
 }
 
 function updateSeekTooltipForValue(value) {
@@ -1082,7 +1140,7 @@ function showSeekTooltip(value, clientX, rect) {
   if (!dom.tooltipLayer) return;
 
   const isVisibleSeekTooltip = Boolean(seekTooltipPoint && !dom.tooltipLayer.hidden);
-  if (!isVisibleSeekTooltip) hideTooltip();
+  if (!isVisibleSeekTooltip) hideTooltip(true);
 
   seekTooltipPoint = { x: clientX };
   seekTooltipRect = rect || null;

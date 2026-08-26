@@ -1,7 +1,7 @@
 // Coordinacion general del player: reexporta sync de video y fullscreen sin romper imports existentes.
-import { wireFullscreenEvents } from "./fullscreen.js?v=20260819-chat-overlay-controls-01";
+import { wireFullscreenEvents } from "./fullscreen.js?v=20260826-seek-overlay-hold-01";
 import { wireMiniPlayerEvents } from "./mini-player.js?v=20260815-seek-tooltip-01";
-import { wirePlayerCoreEvents } from "./player.js?v=20260825-video-remove-ready-02";
+import { wirePlayerCoreEvents } from "./player.js?v=20260826-seek-tooltip-vertical-02";
 
 export {
   initializePlayer,
@@ -10,16 +10,16 @@ export {
   setVideoSource,
   setVideoStatus,
   waitForVideoMetadata,
-} from "./player.js?v=20260825-video-remove-ready-02";
+} from "./player.js?v=20260826-seek-tooltip-vertical-02";
 export {
   handleRemoteState,
   publishState,
-} from "./player-sync-logic.js?v=20260825-entry-system-message-animation-01";
+} from "./player-sync-logic.js?v=20260826-seek-tooltip-vertical-02";
 export {
   handleFullscreenChange,
   snapFullscreenScroll,
   togglePageFullscreen,
-} from "./fullscreen.js?v=20260819-chat-overlay-controls-01";
+} from "./fullscreen.js?v=20260826-seek-overlay-hold-01";
 
 export function wirePlayerEvents() {
   wirePlayerCoreEvents();

@@ -135,6 +135,7 @@ export const uiState = {
   activeEmojiInput: null,
   tooltipTarget: null,
   tooltipPressTimer: null,
+  seekDragActive: false,
 };
 
 export const state = {

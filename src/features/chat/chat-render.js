@@ -24,12 +24,36 @@ const EMOJI_ONLY_PATTERN = /^(?:[\s\p{Extended_Pictographic}\p{Emoji_Presentatio
 const EMOJI_GLYPH_PATTERN = /[\p{Extended_Pictographic}\p{Emoji_Presentation}]/u;
 const SYSTEM_MESSAGE_STREAK_LIMIT = 10;
 const SYSTEM_MESSAGE_EXIT_MS = 380;
+const SYSTEM_GROUP_HYDRATION_MAX_MS = 8000;
 const messageRenderQueues = new WeakMap();
+
+export function beginSystemMessageHydration() {
+  finishSystemMessageHydration();
+  state.chat.systemGroupAnimationSuppressed = true;
+  state.chat.systemGroupAnimationMaxTimer = window.setTimeout(
+    finishSystemMessageHydration,
+    SYSTEM_GROUP_HYDRATION_MAX_MS,
+  );
+}
+
+export function finishSystemMessageHydration() {
+  if (state.chat.systemGroupAnimationMaxTimer) {
+    window.clearTimeout(state.chat.systemGroupAnimationMaxTimer);
+    state.chat.systemGroupAnimationMaxTimer = null;
+  }
+  state.chat.systemGroupAnimationSuppressed = false;
+}
 
 /**
  * Renderiza un mensaje en los contenedores de chat.
  */
-export function renderMessage(message) {
+export function renderMessage(message, options = {}) {
+  const requestedSystemGroupAnimation = options.animateSystemGroups
+    ?? message?.animateSystemGroups
+    ?? (message?.videoEvent?.action === "video-ready" ? false : null)
+    ?? true;
+  const animateSystemGroups = requestedSystemGroupAnimation
+    && !state.chat.systemGroupAnimationSuppressed;
   const messageText = String(message?.text || "").trim();
   const messageImages = getRenderableMessageImages(message, messageText);
   if (
@@ -41,8 +65,8 @@ export function renderMessage(message) {
   rememberParticipant(message.from, message.name);
   markParticipantActive(message.from, message.name);
 
-  const mainItem = appendMessageTo(dom.messages, message);
-  const overlayItem = appendMessageTo(dom.overlayMessages, message);
+  const mainItem = appendMessageTo(dom.messages, message, { animateSystemGroups });
+  const overlayItem = appendMessageTo(dom.overlayMessages, message, { animateSystemGroups });
 
   if (message.from !== state.session.clientId) {
     handleIncomingUnread();
@@ -60,21 +84,21 @@ export function renderMessage(message) {
 /**
  * Crea y añade el elemento DOM del mensaje al contenedor.
  */
-function appendMessageTo(container, message) {
+function appendMessageTo(container, message, options = {}) {
   const previousTask = messageRenderQueues.get(container);
-  if (!message.system && !previousTask) return appendMessageNow(container, message);
+  if (!message.system && !previousTask) return appendMessageNow(container, message, options);
 
   const task = (previousTask || Promise.resolve())
     .catch(() => null)
     .then(async () => {
-      if (message.system) await makeRoomForSystemMessage(container);
-      return appendMessageNow(container, message);
+      if (message.system) await makeRoomForSystemMessage(container, options);
+      return appendMessageNow(container, message, options);
     });
   messageRenderQueues.set(container, task);
   return task;
 }
 
-function appendMessageNow(container, message) {
+function appendMessageNow(container, message, { animateSystemGroups = true } = {}) {
   const isMine = message.from === state.session.clientId;
   const authorKey = String(message.from || message.name || "").trim();
   const previousMessage = getPreviousRenderableMessage(container);
@@ -304,7 +328,9 @@ function appendMessageNow(container, message) {
   }
   container.append(item);
   trimRenderedMessages(container);
-  scheduleSystemMessageCollapse(container, { animateIncoming: Boolean(message.system) });
+  scheduleSystemMessageCollapse(container, {
+    animateIncoming: Boolean(message.system) && animateSystemGroups,
+  });
 
   const isOverlay = container === dom.overlayMessages;
   const threshold = 120;
@@ -407,13 +433,13 @@ function getTrailingSystemStreak(container) {
   return children.slice(streakStart);
 }
 
-async function makeRoomForSystemMessage(container) {
+async function makeRoomForSystemMessage(container, { animateSystemGroups = true } = {}) {
   while (getTrailingSystemStreak(container).length >= SYSTEM_MESSAGE_STREAK_LIMIT) {
-    await removeOldestSystemMessage(container);
+    await removeOldestSystemMessage(container, { animateSystemGroups });
   }
 }
 
-function removeOldestSystemMessage(container) {
+function removeOldestSystemMessage(container, { animateSystemGroups = true } = {}) {
   const streak = getTrailingSystemStreak(container);
   const oldest = streak[0];
   if (!oldest) return Promise.resolve();
@@ -422,6 +448,16 @@ function removeOldestSystemMessage(container) {
     container.scrollHeight - container.scrollTop - container.clientHeight <= 120;
   const groupHeader = prepareSystemMessageRemoval(container, oldest, { deferReanchor: true });
   const expandedRemoval = groupHeader?.getAttribute("aria-expanded") === "true";
+
+  if (!animateSystemGroups) {
+    prepareSystemMessageRemoval(container, oldest);
+    oldest.remove();
+    refreshSystemMessageGroup(groupHeader);
+    scheduleSystemMessageCollapse(container);
+    if (wasNearBottom) container.scrollTop = container.scrollHeight;
+    return Promise.resolve();
+  }
+
   oldest.classList.add("message-system-exit");
   if (expandedRemoval) oldest.classList.add("message-system-exit-expanded");
 

@@ -154,6 +154,22 @@ function wirePlayerOverlayControls() {
     }
 
     const target = event?.target instanceof Element ? event.target : null;
+    if (
+      target === dom.videoPlayer
+      && dom.playerFrame.classList.contains("player-overlay-suppressed")
+    ) return;
+    // Un clic simple sobre el video alterna play/pausa, pero no debe revelar
+    // la barra: el indicador central es la única respuesta visual inmediata.
+    if (event?.type === "mousedown" && target === dom.videoPlayer) {
+      if (!dom.videoPlayer.paused && !dom.videoPlayer.ended) return;
+      clearHideTimer();
+      setOverlayVisible(false);
+      dom.playerFrame.classList.add("player-overlay-suppressed");
+      window.setTimeout(() => {
+        dom.playerFrame.classList.remove("player-overlay-suppressed");
+      }, 700);
+      return;
+    }
     const isChatToggle = target?.closest("#playerChatToggleButton");
     if (event?.type === "focusin" && dom.playerFrame.dataset.suppressOverlayFocus === "chat-toggle") {
       return;
@@ -200,6 +216,8 @@ function wirePlayerOverlayControls() {
         setOverlayVisible(false);
         return;
       }
+
+      if (event?.target === dom.videoPlayer) return;
 
       clearHideTimer();
       dom.playerFrame.classList.remove("player-cursor-hidden");

@@ -112,6 +112,7 @@ async function openDocumentPictureInPicture(chatWasOpen) {
     pipWindow.document,
     dom.playerFrame.dataset.chatStyle,
     chatWasOpen,
+    dom.playerFrame.dataset.controlStyle,
   );
   pipWindow.document.body.append(miniSurface);
   miniPlayerInterface = movePlayerInterface(miniSurface);
@@ -128,7 +129,12 @@ async function openNativePictureInPicture() {
 }
 
 function openInlineMiniPlayer(chatWasOpen) {
-  miniSurface = createMiniPlayerSurface(document, dom.playerFrame.dataset.chatStyle, chatWasOpen);
+  miniSurface = createMiniPlayerSurface(
+    document,
+    dom.playerFrame.dataset.chatStyle,
+    chatWasOpen,
+    dom.playerFrame.dataset.controlStyle,
+  );
   miniSurface.classList.add("mini-player-inline");
   dom.playerFrame.append(miniSurface);
   miniPlayerInterface = movePlayerInterface(miniSurface);
@@ -142,6 +148,7 @@ function openScrollMiniPlayer() {
     document,
     dom.playerFrame.dataset.chatStyle,
     dom.playerFrame.classList.contains("chat-inside-open"),
+    dom.playerFrame.dataset.controlStyle,
   );
   miniSurface.classList.add("mini-player-inline", "mini-player-scroll");
   miniSurface.classList.remove("player-overlay-visible");
@@ -229,12 +236,14 @@ function wireMiniPlayerOverlayControls(surface, ownerWindow) {
     surface.classList.remove("player-overlay-visible");
   };
   const reveal = () => {
+    if (surface.classList.contains("player-overlay-suppressed")) return;
     clearHideTimer();
     surface.classList.add("player-overlay-visible");
     hideTimer = ownerWindow.setTimeout(hide, 2200);
   };
 
   const revealForTouch = () => {
+    if (surface.classList.contains("player-overlay-suppressed")) return;
     clearHideTimer();
     surface.classList.add("player-overlay-visible");
   };
@@ -242,6 +251,27 @@ function wireMiniPlayerOverlayControls(surface, ownerWindow) {
   const handlePointerMove = (event) => {
     if (event.pointerType === "mouse") reveal();
   };
+  const handleVideoPointerDown = (event) => {
+    if (event.target !== dom.videoPlayer) return;
+    if (!dom.videoPlayer.paused && !dom.videoPlayer.ended) return;
+    clearHideTimer();
+    surface.classList.remove("player-overlay-visible");
+    surface.classList.add("player-overlay-suppressed");
+    ownerWindow.setTimeout(() => {
+      surface.classList.remove("player-overlay-suppressed");
+    }, 700);
+  };
+  const handleMiniPlayerClose = (event) => {
+    const button = event.target.closest?.(
+      "#playerMiniPlayerButton, [data-proxy-for=\"playerMiniPlayerButton\"]",
+    );
+    if (!button || button.disabled) return;
+    event.preventDefault();
+    event.stopPropagation();
+    void toggleMiniPlayer();
+  };
+  surface.addEventListener("click", handleMiniPlayerClose, true);
+  surface.addEventListener("pointerdown", handleVideoPointerDown, true);
   surface.addEventListener("pointermove", handlePointerMove, { passive: true });
   surface.addEventListener("mouseenter", reveal);
   surface.addEventListener("mouseleave", hide);
@@ -254,6 +284,8 @@ function wireMiniPlayerOverlayControls(surface, ownerWindow) {
 
   return () => {
     clearHideTimer();
+    surface.removeEventListener("click", handleMiniPlayerClose, true);
+    surface.removeEventListener("pointerdown", handleVideoPointerDown, true);
     surface.removeEventListener("pointermove", handlePointerMove);
     surface.removeEventListener("mouseenter", reveal);
     surface.removeEventListener("mouseleave", hide);

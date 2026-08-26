@@ -19,7 +19,7 @@ import {
 import { refreshTooltipForTarget } from "../icons-tooltips.js";
 import { markParticipantActive } from "../presence.js?v=20260824-name-commit-reveal-02";
 import { clearReplyTarget } from "./chat-reply.js?v=20260814-reply-preview-sharp-01";
-import { renderMessage } from "./chat-render.js?v=20260823-system-message-drum-09";
+import { renderMessage } from "./chat-render.js?v=20260825-history-system-no-entry-animation-04";
 import {
   completeAutoOpenedChatResponse,
 } from "./chat-layout.js?v=20260811-text-stable-motion-01";

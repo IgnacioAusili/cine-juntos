@@ -14,10 +14,10 @@ import {
 } from "../../core/utils.js";
 import { markParticipantActive, rememberParticipant } from "../presence.js?v=20260824-name-commit-reveal-02";
 import { setSyncStatus } from "../session-ui.js";
-import { sendVideoEventMessage, renderMessage } from "../chat/index.js?v=20260823-system-message-drum-09";
+import { sendVideoEventMessage, renderMessage } from "../chat/index.js?v=20260825-history-system-no-entry-animation-04";
 // Import circular intencional y seguro: estas funciones se invocan en runtime,
 // no durante la carga del modulo, y player.js a su vez importa publishState.
-import { clearVideoSource, setVideoSource, waitForVideoMetadata } from "./player.js?v=20260824-volume-unmute-01";
+import { clearVideoSource, setVideoSource, waitForVideoMetadata } from "./player.js?v=20260825-entry-system-message-animation-01";
 
 const PLAYBACK_ISSUE_SYNC_COOLDOWN_MS = 2200;
 // Los eventos waiting/stalled también se disparan por pequeños saltos de red.
@@ -80,6 +80,7 @@ async function applyRemoteState(statePayload, force = false) {
         // Cada participante anuncia su propia finalizacion de carga, porque
         // los tiempos pueden ser diferentes en cada navegador.
         announceLoadCompletion: true,
+        animateSystemGroups: false,
       });
       await waitForVideoMetadata().catch(() => {});
     }

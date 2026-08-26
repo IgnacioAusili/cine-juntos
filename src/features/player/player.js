@@ -17,7 +17,7 @@ import {
   hideTooltip,
   setControlIcon,
 } from "../icons-tooltips.js";
-import { scrollToVideoPosition, sendVideoEventMessage, setInsideChatVisible } from "../chat/index.js?v=20260823-system-message-drum-09";
+import { scrollToVideoPosition, sendVideoEventMessage, setInsideChatVisible } from "../chat/index.js?v=20260825-history-system-no-entry-animation-04";
 // Import circular intencional y seguro: estas funciones se invocan en runtime,
 // no durante la carga del modulo, y player-sync-logic.js a su vez importa
 // setVideoSource y waitForVideoMetadata desde aqui.
@@ -27,7 +27,7 @@ import {
   clearPlaybackRecoveryTracking,
   pauseRoomForPlaybackIssue,
   publishState,
-} from "./player-sync-logic.js?v=20260818-playback-issue-threshold-01";
+} from "./player-sync-logic.js?v=20260825-entry-system-message-animation-01";
 
 import {
   showErrorDialog,
@@ -63,16 +63,20 @@ const VIDEO_STATUS_TOOLTIPS = Object.freeze({
 const PLAYER_CONTROL_STYLES = new Set(["line"]);
 let isDurationShowingRemaining = false;
 let pendingLoadCompletionAnnouncement = false;
+let pendingLoadCompletionAnimateSystemGroups = true;
 let pendingVideoActivityAnnouncement = false;
 let seekTooltipFrame = 0;
 let seekTooltipPoint = null;
 let seekTooltipRect = null;
 let rateMenuCloseTimer = null;
 let lastAudibleVolume = 1;
+let videoClickTimer = null;
+let videoClickOverlayTimer = null;
 
 export function initializePlayer() {
   isDurationShowingRemaining = false;
   pendingLoadCompletionAnnouncement = false;
+  pendingLoadCompletionAnimateSystemGroups = true;
   pendingVideoActivityAnnouncement = false;
   hideSeekTooltip();
   applyPlayerControlStyle("line");
@@ -180,6 +184,8 @@ export function wirePlayerCoreEvents() {
     persistVolume(dom.videoPlayer.volume);
     syncPlayerControls();
   });
+
+  wireVideoClickToggle();
 
   dom.videoPlayer.addEventListener("play", () => {
     rememberPlaybackPosition();
@@ -308,6 +314,7 @@ export function loadVideoFromUrl(source, origin) {
   if (!source) {
     setVideoStatus("empty", "Sin contenido");
     pendingLoadCompletionAnnouncement = false;
+    pendingLoadCompletionAnimateSystemGroups = true;
     pendingVideoActivityAnnouncement = false;
     state.player.resumePromptSource = "";
     clearSlowLoadPromptTracking();
@@ -382,6 +389,8 @@ export function setVideoSource(source, shouldAnnounce, options = {}) {
   pendingLoadCompletionAnnouncement = Boolean(
     options.announceLoadCompletion ?? shouldAnnounce,
   );
+  pendingLoadCompletionAnimateSystemGroups = options.animateSystemGroups
+    ?? shouldAnnounce;
   const isReload = Boolean(options.isReload);
   state.player.lastVideoLoadWasReload = isReload;
   const nextSourceKey = getVideoSourceKey(source);
@@ -416,6 +425,7 @@ export function setVideoSource(source, shouldAnnounce, options = {}) {
 export function clearVideoSource(shouldAnnounce = false) {
   isDurationShowingRemaining = false;
   pendingLoadCompletionAnnouncement = false;
+  pendingLoadCompletionAnimateSystemGroups = true;
   pendingVideoActivityAnnouncement = false;
   state.player.hasPlayableVideo = false;
   state.player.videoFingerprint = "";
@@ -444,6 +454,8 @@ export function clearVideoSource(shouldAnnounce = false) {
 function announceVideoLoadCompletion() {
   if (!pendingLoadCompletionAnnouncement) return;
   pendingLoadCompletionAnnouncement = false;
+  const animateSystemGroups = pendingLoadCompletionAnimateSystemGroups;
+  pendingLoadCompletionAnimateSystemGroups = true;
   if (!state.session.activeRoom || !state.session.transport) return;
 
   sendVideoEventMessage("video-ready", {
@@ -452,6 +464,7 @@ function announceVideoLoadCompletion() {
     isReload: Boolean(state.player.lastVideoLoadWasReload),
     time: Number(dom.videoPlayer.currentTime) || 0,
     rate: Number(dom.videoPlayer.playbackRate || 1),
+    animateSystemGroups,
   });
 }
 
@@ -494,7 +507,7 @@ function togglePlaybackFromControls(source = "keyboard") {
   if (!hasMedia) return;
 
   const now = Date.now();
-  const isUserToggle = source === "button" || source === "keyboard";
+  const isUserToggle = source === "button" || source === "keyboard" || source === "video";
   if (isUserToggle) {
     if (isPlayButtonCoolingDown(now)) return;
     state.player.playButtonPressTimes = (state.player.playButtonPressTimes || [])
@@ -510,8 +523,10 @@ function togglePlaybackFromControls(source = "keyboard") {
 
   if (dom.videoPlayer.paused || dom.videoPlayer.ended) {
     dom.videoPlayer.play().catch(() => {});
+    showPlaybackGestureIndicator("pause");
   } else {
     dom.videoPlayer.pause();
+    showPlaybackGestureIndicator("play");
   }
 
   if (
@@ -959,6 +974,54 @@ function updateSeekVisuals(currentTime, duration, forceEnd = false) {
     ? 100
     : duration > 0 ? Math.min(100, Math.max(0, (currentTime / duration) * 100)) : 0;
   dom.playerSeekInput.style.setProperty("--player-progress", `${progress}%`);
+  dom.playerSeekInput.closest(".player-progress-group")?.style.setProperty(
+    "--player-progress",
+    `${progress}%`,
+  );
+}
+
+function wireVideoClickToggle() {
+  dom.videoPlayer.addEventListener("click", () => {
+    if (videoClickTimer) window.clearTimeout(videoClickTimer);
+    videoClickTimer = window.setTimeout(() => {
+      videoClickTimer = null;
+      if (dom.videoPlayer.paused || dom.videoPlayer.ended) {
+        suppressVideoClickOverlay();
+      }
+      togglePlaybackFromControls("video");
+    }, 220);
+  });
+
+  dom.videoPlayer.addEventListener("dblclick", () => {
+    if (!videoClickTimer) return;
+    window.clearTimeout(videoClickTimer);
+    videoClickTimer = null;
+  });
+}
+
+function suppressVideoClickOverlay() {
+  const surface = dom.videoPlayer.closest(".mini-player-surface") || dom.playerFrame;
+  if (!surface) return;
+  if (videoClickOverlayTimer) window.clearTimeout(videoClickOverlayTimer);
+  surface.classList.remove("player-overlay-visible");
+  surface.classList.add("player-overlay-suppressed");
+  videoClickOverlayTimer = window.setTimeout(() => {
+    surface.classList.remove("player-overlay-suppressed");
+    videoClickOverlayTimer = null;
+  }, 700);
+}
+
+function showPlaybackGestureIndicator(action) {
+  const indicator = dom.playbackGestureIndicator;
+  if (!indicator) return;
+  indicator.dataset.action = action;
+  indicator.classList.remove("is-visible");
+  // Reiniciar la animacion incluso cuando se pulsa varias veces seguidas.
+  void indicator.offsetWidth;
+  indicator.classList.add("is-visible");
+  window.setTimeout(() => {
+    indicator.classList.remove("is-visible");
+  }, 720);
 }
 
 function wireSeekTooltipEvents() {

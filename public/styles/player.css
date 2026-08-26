@@ -336,15 +336,75 @@ video::-webkit-media-controls-fullscreen-button {
 }
 
 .player-frame[data-control-style="line"] .player-seek-input {
+  position: relative;
+  z-index: 1;
   height: 14px;
-  background-size: 100% 3px;
-  background-position: center;
-  background-repeat: no-repeat;
-  transition: background-size 280ms ease-in-out;
+  background: transparent;
 }
 
-.player-frame[data-control-style="line"]:not(.player-no-content) .player-seek-input:hover {
-  background-size: 100% 5px;
+.playback-gesture-indicator {
+  position: absolute;
+  z-index: 6;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  width: 76px;
+  height: 76px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  background: rgba(8, 11, 13, 0.48);
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.28);
+  color: rgba(255, 255, 255, 0.94);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0.72);
+  transition: opacity 160ms ease, transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.playback-gesture-indicator.is-visible {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.playback-gesture-icon {
+  display: none;
+  width: 34px;
+  height: 34px;
+  fill: currentColor;
+  stroke-width: 1.8;
+}
+
+.playback-gesture-indicator[data-action="play"] .playback-gesture-icon-play,
+.playback-gesture-indicator[data-action="pause"] .playback-gesture-icon-pause {
+  display: block;
+}
+
+.player-frame[data-control-style="line"] .player-progress-group::before {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  left: 0;
+  z-index: 0;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--amber) 0,
+    var(--accent) var(--player-progress, 0%),
+    rgba(255, 255, 255, 0.22) var(--player-progress, 0%),
+    rgba(255, 255, 255, 0.22) 100%
+  );
+  content: "";
+  pointer-events: none;
+  transform: translateY(-50%) scaleY(1);
+  transform-origin: center;
+  transition: transform 180ms ease-out;
+}
+
+.player-frame[data-control-style="line"] .player-progress-group:hover::before,
+.player-frame[data-control-style="line"] .player-progress-group:focus-within::before {
+  transform: translateY(-50%) scaleY(1.67);
 }
 
 .player-frame[data-control-style="line"] .player-volume-group {

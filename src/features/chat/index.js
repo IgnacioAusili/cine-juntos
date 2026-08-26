@@ -12,7 +12,7 @@ import {
   updateCharCounter,
   wireFloatingComposerLayout,
   wireComposerScrollbar,
-} from "./chat-input.js?v=20260823-system-message-drum-09";
+} from "./chat-input.js?v=20260825-history-system-no-entry-animation-04";
 import { setReplyTarget } from "./chat-reply.js?v=20260823-system-message-drum-09";
 import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js";
 import {
@@ -172,15 +172,19 @@ export {
   buildEmojiPicker,
   updateCharCounter,
   sendMessage,
-} from "./chat-input.js?v=20260823-system-message-drum-09";
-export { renderMessage } from "./chat-render.js?v=20260823-system-message-drum-09";
+} from "./chat-input.js?v=20260825-history-system-no-entry-animation-04";
+export {
+  beginSystemMessageHydration,
+  finishSystemMessageHydration,
+  renderMessage,
+} from "./chat-render.js?v=20260825-history-system-no-entry-animation-04";
 export {
   clearReplyTarget,
   renderReplyPreview,
   scrollToMessage,
   setReplyTarget,
 } from "./chat-reply.js?v=20260823-system-message-drum-09";
-export { sendVideoEventMessage } from "./chat-system-messages.js?v=20260823-system-message-drum-09";
+export { sendVideoEventMessage } from "./chat-system-messages.js?v=20260825-history-system-no-entry-animation-04";
 export {
   checkScrollPosition,
   resetInsideUnread,

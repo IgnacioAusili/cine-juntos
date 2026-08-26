@@ -220,6 +220,19 @@
     transform: translateY(1px);
   }
 
+  /* Desplazamiento visual de las flechas del dock lateral. */
+  .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-icon-anchor {
+    transform: translateX(-8px);
+  }
+
+  .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-handle svg {
+    transform: translateX(-1px);
+  }
+
+  .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-handle svg {
+    transform: translateX(1px);
+  }
+
   .session-view:not(.chat-collapsed)[data-chat-dock="bottom"] .chat-name-field {
     transform: none;
   }

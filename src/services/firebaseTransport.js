@@ -2,13 +2,20 @@ import { FIREBASE_VERSION, MAX_ROOM_PARTICIPANTS, STALE_MEMBER_TIMEOUT_MS } from
 import { state, makeMemberPayload, logEvent } from "../core/state.js";
 
 export async function createFirebaseTransport(roomCode, config) {
-  const appModule = await import(`https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}/firebase-app.js`);
-  const authModule = await import(`https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}/firebase-auth.js`);
-  const dbModule = await import(`https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}/firebase-database.js`);
+  const [appModule, authModule, dbModule] = await Promise.all([
+    import(`https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}/firebase-app.js`),
+    import(`https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}/firebase-auth.js`),
+    import(`https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}/firebase-database.js`),
+  ]);
 
   const app = appModule.getApps().length ? appModule.getApps()[0] : appModule.initializeApp(config);
   const auth = authModule.getAuth(app);
-  await authModule.signInAnonymously(auth);
+  if (!auth.currentUser) {
+    await auth.authStateReady?.();
+  }
+  if (!auth.currentUser) {
+    await authModule.signInAnonymously(auth);
+  }
 
   const db = dbModule.getDatabase(app);
   const roomPath = `rooms/${roomCode}`;
@@ -21,10 +28,25 @@ export async function createFirebaseTransport(roomCode, config) {
   const unsubscribers = [];
   let heartbeat = null;
   let serverTimeOffset = 0;
+  const latestMessagesQuery = dbModule.query(messagesRef, dbModule.limitToLast(100));
 
   return {
     mode: "firebase",
     async connect(handlers) {
+      // El historial del chat no debe esperar a que termine la transacción de
+      // presencia. Esa transacción puede tardar varios segundos al reconectar.
+      const deliverMessage = (snapshot) => {
+        const message = { id: snapshot.key, ...snapshot.val() };
+        handlers.onMessage?.(message);
+      };
+      unsubscribers.push(dbModule.onChildAdded(latestMessagesQuery, deliverMessage));
+      // En una conexión nueva, el primer evento del websocket puede tardar
+      // mientras se negocia la sesión de RTDB. La lectura paralela permite
+      // pintar el historial por la ruta HTTP disponible antes, y el Set de
+      // ids del render evita duplicados cuando llegue también onChildAdded.
+      void dbModule.get(latestMessagesQuery)
+        .then((snapshot) => snapshot.forEach((child) => deliverMessage(child)))
+        .catch(() => {});
       try {
         const existingMembersSnap = await dbModule.get(membersRef).catch(() => null);
         if (existingMembersSnap !== null && !existingMembersSnap.exists()) {
@@ -107,13 +129,6 @@ export async function createFirebaseTransport(roomCode, config) {
           }
 
           handlers.onMembers?.(activeMembers);
-        }),
-      );
-
-      const latestMessagesQuery = dbModule.query(messagesRef, dbModule.limitToLast(100));
-      unsubscribers.push(
-        dbModule.onChildAdded(latestMessagesQuery, (snapshot) => {
-          handlers.onMessage?.({ id: snapshot.key, ...snapshot.val() });
         }),
       );
 

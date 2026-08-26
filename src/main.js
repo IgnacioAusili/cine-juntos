@@ -38,12 +38,12 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js?v=20260823-system-message-drum-09";
+} from "./features/chat/index.js?v=20260825-history-system-no-entry-animation-04";
 import {
   initializePlayer,
   wirePlayerEvents,
-} from "./features/player/index.js?v=20260824-volume-unmute-02";
-import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260823-lobby-name-01";
+} from "./features/player/index.js?v=20260825-entry-system-message-animation-01";
+import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260825-chat-hydration-no-system-roll-07";
 
 const requestedRoom = normalizeRoomCode(new URLSearchParams(window.location.search).get("room") || "");
 

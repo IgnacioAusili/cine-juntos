@@ -10,6 +10,7 @@ import {
   syncMirroredChatMessages,
   setMiniSystemGroupVisibility,
   animateMiniSystemGroupTransition,
+  normalizeMiniSystemGroupState,
   syncMiniChatAutoExpand,
   wireMiniMessageReplies,
   toggleMiniEmojiPicker,
@@ -25,8 +26,14 @@ const PROXY_CONTROL_SELECTOR = "button, input, select, textarea";
 
 export function movePlayerInterface(surface) {
   const videoAnchor = document.createComment("mini-player-video-origin");
+  const gestureAnchor = document.createComment("mini-player-gesture-origin");
   dom.videoPlayer.parentNode?.insertBefore(videoAnchor, dom.videoPlayer);
+  dom.playbackGestureIndicator?.parentNode?.insertBefore(
+    gestureAnchor,
+    dom.playbackGestureIndicator,
+  );
   surface.append(dom.videoPlayer);
+  if (dom.playbackGestureIndicator) surface.append(dom.playbackGestureIndicator);
 
   const mirrors = [
     dom.playerActions,
@@ -67,7 +74,9 @@ export function movePlayerInterface(surface) {
       mirrors.forEach(({ restore }) => restore());
       playerChatMirror?.removeEventListener("click", handleMiniAutoExpandClick);
       removeShortcuts();
+      gestureAnchor.parentNode?.insertBefore(dom.playbackGestureIndicator, gestureAnchor);
       videoAnchor.parentNode?.insertBefore(dom.videoPlayer, videoAnchor);
+      gestureAnchor.remove();
       videoAnchor.remove();
     },
   };
@@ -92,6 +101,7 @@ function createInteractiveMirror(source, targetDocument) {
     sync();
   });
   let isSyncing = false;
+  let initialMiniSystemStateNormalized = false;
 
   // El overlay del mini reproductor es una superficie independiente. Se
   // clona al abrirse, pero no vuelve a copiar cambios del reproductor normal.
@@ -216,6 +226,10 @@ function createInteractiveMirror(source, targetDocument) {
     const draft = getMirrorChatDraft(source, element);
     element.className = source.className;
     element.innerHTML = source.innerHTML;
+    if (source === dom.playerChat && !initialMiniSystemStateNormalized) {
+      normalizeMiniSystemGroupState(element);
+      initialMiniSystemStateNormalized = true;
+    }
     markProxyControls(element, keepIds);
     copyControlState(source, element);
     if (source === dom.playerBottomActions) copyDynamicButtonPresentation(source, element);
@@ -245,6 +259,7 @@ function createInteractiveMirror(source, targetDocument) {
   function syncState() {
     copyControlState(source, element);
     copyPlayerTimeLabels(source, element);
+    copySeekProgressPresentation(source, element);
     if (source === dom.playerBottomActions) copyDynamicButtonPresentation(source, element);
   }
 }
@@ -291,6 +306,16 @@ function copyPlayerTimeLabels(source, element) {
     const mirrorLabel = element.querySelector(`#${id}, [data-proxy-for="${id}"]`);
     if (sourceLabel && mirrorLabel) mirrorLabel.textContent = sourceLabel.textContent;
   });
+}
+
+function copySeekProgressPresentation(source, element) {
+  const sourceGroup = source.querySelector(".player-progress-group");
+  const mirrorGroup = element.querySelector(".player-progress-group");
+  if (!sourceGroup || !mirrorGroup) return;
+  mirrorGroup.style.setProperty(
+    "--player-progress",
+    sourceGroup.style.getPropertyValue("--player-progress") || "0%",
+  );
 }
 
 function copyDynamicButtonPresentation(source, element) {

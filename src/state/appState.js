@@ -124,6 +124,8 @@ export const chatState = {
   messageMenuOpenedAt: 0,
   longPressTimer: null,
   longPressStart: null,
+  systemGroupAnimationSuppressed: false,
+  systemGroupAnimationMaxTimer: null,
   mainScrollUnread: 0,
   overlayScrollUnread: 0,
   nameChangeCount: getInitialNameChangeCount(),

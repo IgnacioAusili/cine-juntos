@@ -37,12 +37,12 @@
    mensajes recalcula su reserva; eso hace que el contenido de las burbujas
    parezca saltar, especialmente en los mensajes alineados a la izquierda. */
 @media (min-width: 769px) {
-  .message-form:has(> .reply-preview:not([hidden])) {
+  .message-form:has(> .reply-preview:not([hidden])):not(.reply-preview-closing) {
     min-height: 86px;
     justify-content: flex-end;
   }
 
-  .overlay-message-form:has(> .reply-preview:not([hidden])) {
+  .overlay-message-form:has(> .reply-preview:not([hidden])):not(.reply-preview-closing) {
     min-height: 94px;
   }
 

@@ -18,7 +18,7 @@ import {
 } from "../session-ui.js";
 import { refreshTooltipForTarget } from "../icons-tooltips.js";
 import { markParticipantActive } from "../presence.js?v=20260824-name-commit-reveal-02";
-import { clearReplyTarget } from "./chat-reply.js?v=20260826-reply-tooltip-01";
+import { clearReplyTarget } from "./chat-reply.js?v=20260826-reply-sync-close-03";
 import { renderMessage } from "./chat-render.js?v=20260826-system-line-spacing-01";
 import {
   completeAutoOpenedChatResponse,
@@ -34,6 +34,7 @@ const floatingComposerObservers = new WeakMap();
 const scrollbarDragState = new WeakMap();
 const CHAT_MESSAGE_BOTTOM_GAP = 12;
 const CHAT_OVERLAY_MESSAGE_BOTTOM_GAP = 4;
+const CHAT_RESERVE_TRANSITION_MS = 180;
 const sendButtonMarkup = new WeakMap();
 const SAME_MESSAGE_LIMIT = 4;
 const SAME_MESSAGE_WINDOW_MS = 2500;
@@ -590,6 +591,49 @@ export function wireFloatingComposerLayout() {
     const messagesWrap = messagesContainer?.closest(".messages-wrap");
     const inputWrapper = form.querySelector(".input-wrapper");
     wireChatScrollbar(messagesContainer);
+    let reserveAnimationFrame = 0;
+    let currentMessageReserve = null;
+
+    const setMessageReserve = (value, keepAtBottom) => {
+      const nextValue = Math.max(0, value);
+      currentMessageReserve = nextValue;
+      container.style.setProperty("--chat-message-bottom-reserve", `${nextValue}px`);
+      if (keepAtBottom) {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      }
+    };
+
+    const animateMessageReserve = (targetValue, keepAtBottom, startValueOverride = null) => {
+      if (reserveAnimationFrame) {
+        window.cancelAnimationFrame(reserveAnimationFrame);
+        reserveAnimationFrame = 0;
+      }
+
+      const startValue = startValueOverride ?? currentMessageReserve;
+      const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+      if (
+        startValue == null
+        || Math.abs(startValue - targetValue) < 0.5
+        || reducedMotion
+      ) {
+        setMessageReserve(targetValue, keepAtBottom);
+        return;
+      }
+
+      const startedAt = performance.now();
+      const tick = (now) => {
+        const progress = Math.min(1, (now - startedAt) / CHAT_RESERVE_TRANSITION_MS);
+        const easedProgress = 1 - ((1 - progress) ** 3);
+        const value = startValue + ((targetValue - startValue) * easedProgress);
+        setMessageReserve(value, keepAtBottom);
+        if (progress < 1) {
+          reserveAnimationFrame = window.requestAnimationFrame(tick);
+        } else {
+          reserveAnimationFrame = 0;
+        }
+      };
+      reserveAnimationFrame = window.requestAnimationFrame(tick);
+    };
 
     const updateReserve = () => {
       const wasPinnedToBottom = isPinnedToBottom(messagesContainer);
@@ -617,10 +661,14 @@ export function wireFloatingComposerLayout() {
         syncChatScrollbar(messagesContainer);
       }
       container.style.setProperty("--chat-composer-reserve", `${reserve}px`);
-      container.style.setProperty("--chat-message-bottom-reserve", `${messageReserve}px`);
-      if (wasPinnedToBottom) {
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-      }
+      const inlineMessageReserve = Number.parseFloat(
+        container.style.getPropertyValue("--chat-message-bottom-reserve"),
+      );
+      animateMessageReserve(
+        messageReserve,
+        wasPinnedToBottom,
+        Number.isFinite(inlineMessageReserve) ? inlineMessageReserve : null,
+      );
     };
 
     let reserveFrame = 0;
@@ -633,10 +681,18 @@ export function wireFloatingComposerLayout() {
       });
     };
     const observer = new ResizeObserver(scheduleReserveUpdate);
+    const syncReplyPreviewReserve = () => {
+      if (reserveFrame) {
+        window.cancelAnimationFrame(reserveFrame);
+        reserveFrame = 0;
+      }
+      updateReserve();
+    };
 
     floatingComposerObservers.set(form, observer);
     observer.observe(form);
     window.addEventListener("resize", scheduleReserveUpdate, { passive: true });
+    window.addEventListener("chat-reply-preview-layout", syncReplyPreviewReserve, { passive: true });
     if (form === dom.messageForm) {
       window.addEventListener("chat-layout-settled", scheduleReserveUpdate, { passive: true });
     }

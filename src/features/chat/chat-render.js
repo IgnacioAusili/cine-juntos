@@ -11,7 +11,7 @@ import {
   handleIncomingPageUnread,
   incrementScrollIndicator,
 } from "./unread-counters.js";
-import { setReplyTarget, scrollToMessage } from "./chat-reply.js?v=20260826-reply-tooltip-01";
+import { setReplyTarget, scrollToMessage } from "./chat-reply.js?v=20260826-reply-sync-close-03";
 import {
   animateExpandedSystemMessageRemoval,
   captureExpandedSystemMessageRemoval,

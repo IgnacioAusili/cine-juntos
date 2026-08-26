@@ -337,7 +337,7 @@ video::-webkit-media-controls-fullscreen-button {
 
 .player-frame[data-control-style="line"] .player-seek-input {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   height: 14px;
   background: transparent;
 }
@@ -598,7 +598,26 @@ video::-webkit-media-controls-fullscreen-button {
 
 .player-seek-input:disabled {
   cursor: not-allowed;
-  opacity: 0.45;
+  opacity: 1;
+  filter: none;
+}
+
+.player-seek-input:disabled::-webkit-slider-thumb {
+  opacity: 1;
+  border-color: #7a7b7c;
+  border-color: color-mix(in srgb, #ffffff 45%, #0b0d0f);
+  background: #744f31;
+  background: color-mix(in srgb, var(--amber) 45%, #0b0d0f);
+  box-shadow: 0 0 0 1px #0b0d0f;
+}
+
+.player-seek-input:disabled::-moz-range-thumb {
+  opacity: 1;
+  border-color: #7a7b7c;
+  border-color: color-mix(in srgb, #ffffff 45%, #0b0d0f);
+  background: #744f31;
+  background: color-mix(in srgb, var(--amber) 45%, #0b0d0f);
+  box-shadow: 0 0 0 1px #0b0d0f;
 }
 
 .video-control-button {

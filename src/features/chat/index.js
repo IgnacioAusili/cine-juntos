@@ -12,8 +12,8 @@ import {
   updateCharCounter,
   wireFloatingComposerLayout,
   wireComposerScrollbar,
-} from "./chat-input.js?v=20260826-system-line-spacing-01";
-import { setReplyTarget } from "./chat-reply.js?v=20260826-reply-tooltip-01";
+} from "./chat-input.js?v=20260826-reply-reserve-sync-03";
+import { setReplyTarget } from "./chat-reply.js?v=20260826-reply-sync-close-03";
 import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js";
 import {
   copyMessageText,
@@ -172,7 +172,7 @@ export {
   buildEmojiPicker,
   updateCharCounter,
   sendMessage,
-} from "./chat-input.js?v=20260826-system-line-spacing-01";
+} from "./chat-input.js?v=20260826-reply-reserve-sync-03";
 export {
   beginSystemMessageHydration,
   finishSystemMessageHydration,
@@ -183,7 +183,7 @@ export {
   renderReplyPreview,
   scrollToMessage,
   setReplyTarget,
-} from "./chat-reply.js?v=20260826-reply-tooltip-01";
+} from "./chat-reply.js?v=20260826-reply-sync-close-03";
 export { sendVideoEventMessage } from "./chat-system-messages.js?v=20260826-system-line-spacing-01";
 export {
   checkScrollPosition,

@@ -30,7 +30,7 @@ import {
   setInsideChatVisible,
   syncExternalChatCollapseHandleOffset,
   syncChatAutoExpandControls,
-} from "./chat-layout.js?v=20260811-text-stable-motion-01";
+} from "./chat-layout.js?v=20260827-entry-scroll-fix-01";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 
 const CHAT_SCROLL_WHEEL_MULTIPLIER = 0.35;
@@ -207,7 +207,7 @@ export {
   setInsideChatVisible,
   syncChatAutoExpandControls,
   updateCollapseButton,
-} from "./chat-layout.js?v=20260811-text-stable-motion-01";
+} from "./chat-layout.js?v=20260827-entry-scroll-fix-01";
 
 export function wireChatEvents() {
   syncChatAutoExpandControls();

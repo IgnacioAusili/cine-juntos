@@ -3,7 +3,7 @@ import { state } from "../../core/state.js";
 import {
   setExternalChatCollapsed,
   setInsideChatVisible,
-} from "./chat-layout.js?v=20260811-text-stable-motion-01";
+} from "./chat-layout.js?v=20260827-entry-scroll-fix-01";
 
 function isElementVisibleInViewport(element) {
   if (!element || document.hidden) return false;

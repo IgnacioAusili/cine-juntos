@@ -3,8 +3,11 @@ import { dom } from "../../core/dom.js";
 import { state, logEvent } from "../../core/state.js";
 import { CHAT_DOCKS, CHAT_DOCK_META, withShortcutHint } from "../../core/utils.js";
 import { hydrateIcons, refreshTooltipForTarget } from "../icons-tooltips.js";
-import { focusFullscreenWorkspace } from "../session-ui.js";
-import { cancelIdentityEditing } from "../presence.js?v=20260824-name-commit-reveal-02";
+import { focusFullscreenWorkspace } from "../session-ui.js?v=20260827-entry-scroll-fix-01";
+import {
+  cancelIdentityEditing,
+  syncNameInputWidth,
+} from "../presence.js?v=20260826-bottom-name-input-05";
 import {
   isExternalChatVisibleToUser,
   isInsideChatVisibleToUser,
@@ -23,6 +26,8 @@ const CHAT_LAYOUT_SETTLE_MS = 280;
 const COLLAPSE_HANDLE_HIDE_MS = CHAT_LAYOUT_SETTLE_MS + 40;
 const CHAT_SCROLL_SNAP_LOCK_MS = 900;
 const CHAT_USER_SCROLL_LOCK_MS = 900;
+const BOTTOM_CHAT_CURTAIN_MS = 320;
+const BOTTOM_CHAT_SCROLL_TIMEOUT_MS = 1200;
 const BOTTOM_DOCK_UNION_REVEAL_PX = 0;
 const BOTTOM_TO_RIGHT_SCROLL_TIMEOUT_MS = 1200;
 const BOTTOM_TO_RIGHT_LAYOUT_MS = 280;
@@ -32,9 +37,9 @@ let collapseHandleOffsetTimer = 0;
 let expandScrollTimer = 0;
 let chatScrollSnapLockTimer = 0;
 let chatUserScrollUnlockTimer = 0;
-let pendingCollapseScrollFinish = null;
 let pendingBottomToRightSwitch = null;
 let externalChatVisualMotionTimer = 0;
+let bottomChatTransition = null;
 
 function getVideoAreaRect() {
   if (!dom.videoArea) return null;
@@ -235,9 +240,15 @@ export function revealBottomDockUnion(behavior = "smooth") {
 
   syncExternalChatCollapseHandleOffset();
   const nextBehavior = isFullscreenPageActive() ? "auto" : behavior;
-  const chatTop = getElementPageTop(dom.chatArea);
+  const chatTop = getBottomDockChatScrollTop();
   scrollPageTo(Math.max(0, Math.round(chatTop - BOTTOM_DOCK_UNION_REVEAL_PX)), nextBehavior);
   window.requestAnimationFrame(syncExternalChatCollapseHandleOffset);
+}
+
+function getBottomDockChatScrollTop() {
+  if (!dom.chatArea) return 0;
+  const chatTop = Math.max(0, Math.round(getElementPageTop(dom.chatArea)));
+  return Math.min(getPageScrollMax(), chatTop);
 }
 
 export function scrollToVideoPosition(behavior = "smooth") {
@@ -275,7 +286,7 @@ function setCollapseHandleTransitioning(
   collapseHandleZone?.classList.toggle("is-transitioning", isTransitioning);
   dom.sessionView?.classList.toggle("chat-layout-transitioning", isTransitioning);
   const messageForm = dom.chatArea?.querySelector(".message-form");
-  if (isTransitioning) {
+  if (isTransitioning && dom.sessionView?.dataset.chatDock === "right") {
     messageForm?.style.setProperty("width", "calc(var(--chat-panel-width) - 37px)");
   }
   if (!isTransitioning) return;
@@ -315,7 +326,7 @@ function scheduleAutoCollapse(isOverlay) {
 export function setInsideChatVisible(visible, options = {}) {
   const source = options.source || "user";
   const wasVisible = dom.playerFrame.classList.contains("chat-inside-open");
-  if (wasVisible !== visible) lockUserScrollDuringChatTransition();
+  if (wasVisible !== visible && !options.skipScrollLock) lockUserScrollDuringChatTransition();
   clearAutoCollapseTimer(true);
   if (visible) {
     state.chat.autoOpenedInside = source === "auto";
@@ -502,10 +513,23 @@ export function setChatDock(dock, options = {}) {
   localStorage.setItem("cine-juntos-chat-dock", nextDock);
   hydrateIcons();
   updateCollapseButton();
+  // La presencia se inicializa antes de establecer el dock; sincronizar aquí
+  // garantiza que la geometría use la flecha inferior ya montada, sin moverla.
+  syncNameInputWidth();
+  window.requestAnimationFrame(() => {
+    if (dom.sessionView?.dataset.chatDock === nextDock) syncNameInputWidth();
+  });
   syncUnreadBadgesWithVisibility();
   scheduleExternalChatCollapseHandleOffset();
 
-  if (nextDock === "bottom" && !dom.sessionView.classList.contains("chat-collapsed")) {
+  // Al hidratar la sala no debemos corregir el scroll que ya eligió el
+  // navegador o el usuario. La revelación suave solo corresponde al cambio
+  // manual hacia el dock inferior.
+  if (
+    nextDock === "bottom"
+    && !options.preserveScroll
+    && !dom.sessionView.classList.contains("chat-collapsed")
+  ) {
     lockChatScrollSnapDuringProgrammaticScroll();
     window.requestAnimationFrame(() => revealBottomDockUnion());
   }
@@ -593,10 +617,257 @@ function scheduleBottomToRightSwitch(nextDock, targetScrollTop) {
   transition.timeoutId = window.setTimeout(finish, BOTTOM_TO_RIGHT_SCROLL_TIMEOUT_MS + 80);
 }
 
-function clearPendingCollapseScroll() {
-  if (!pendingCollapseScrollFinish) return;
-  pendingCollapseScrollFinish.cancel();
-  pendingCollapseScrollFinish = null;
+function clearBottomChatTransitionVisuals() {
+  dom.sessionView?.classList.remove(
+    "chat-bottom-collapse-visual",
+    "chat-bottom-expand-visual",
+    "chat-bottom-pc-collapse-visual",
+    "chat-bottom-pc-expand-visual",
+    "chat-bottom-curtain-active",
+  );
+  dom.sessionView?.style.removeProperty("--chat-bottom-curtain-clip");
+}
+
+function cancelBottomChatTransition() {
+  if (bottomChatTransition) {
+    window.cancelAnimationFrame(bottomChatTransition.frameId);
+    window.clearTimeout(bottomChatTransition.timeoutId);
+    bottomChatTransition = null;
+  }
+  clearBottomChatTransitionVisuals();
+}
+
+function finishBottomChatTransition(transition, force = false) {
+  if (bottomChatTransition !== transition) return;
+
+  const elapsed = performance.now() - transition.startedAt;
+  const curtainFinished = elapsed >= BOTTOM_CHAT_CURTAIN_MS;
+  const scrollFinished =
+    Math.abs(getPageScrollTop() - transition.targetScrollTop) <= 2
+    || elapsed >= BOTTOM_CHAT_SCROLL_TIMEOUT_MS;
+  if (!force && (!curtainFinished || !scrollFinished)) {
+    transition.frameId = window.requestAnimationFrame(() => {
+      finishBottomChatTransition(transition);
+    });
+    return;
+  }
+
+  window.cancelAnimationFrame(transition.frameId);
+  window.clearTimeout(transition.timeoutId);
+  bottomChatTransition = null;
+
+  if (transition.collapsed) {
+    // Aplicar el estado final mientras la cortina sigue montada evita que el
+    // panel vuelva a pintarse completo entre ambos estados.
+    applyExternalChatCollapsed(true);
+  } else {
+    setCollapseHandleTransitioning(false);
+    scheduleExternalChatCollapseHandleOffset();
+  }
+  clearBottomChatTransitionVisuals();
+}
+
+function watchBottomChatTransition(transition) {
+  transition.frameId = window.requestAnimationFrame(() => {
+    finishBottomChatTransition(transition);
+  });
+  transition.timeoutId = window.setTimeout(() => {
+    finishBottomChatTransition(transition, true);
+  }, BOTTOM_CHAT_CURTAIN_MS + BOTTOM_CHAT_SCROLL_TIMEOUT_MS + 80);
+}
+
+function isDesktopBottomDock() {
+  return dom.sessionView?.dataset.chatDock === "bottom"
+    && window.matchMedia("(min-width: 681px)").matches;
+}
+
+function completeDesktopBottomChatTransition(transition) {
+  if (bottomChatTransition !== transition) return;
+
+  window.cancelAnimationFrame(transition.frameId);
+  window.clearTimeout(transition.timeoutId);
+  bottomChatTransition = null;
+  setCollapseHandleTransitioning(false);
+  scheduleExternalChatCollapseHandleOffset();
+  clearBottomChatTransitionVisuals();
+}
+
+function easeBottomChatCurtainProgress(progress) {
+  // Curva de salida equivalente a la que usa la cortina lateral:
+  // arranca decidida y desacelera al llegar al borde final.
+  return 1 - ((1 - progress) ** 3);
+}
+
+function setDesktopBottomChatCurtainProgress(progress) {
+  const clip = Math.max(0, Math.min(100, progress));
+  dom.sessionView?.style.setProperty("--chat-bottom-curtain-clip", `${clip}%`);
+}
+
+function stepDesktopBottomChatTransition(transition, force = false) {
+  if (bottomChatTransition !== transition) return;
+
+  const elapsed = performance.now() - transition.startedAt;
+  const linearProgress = force
+    ? 1
+    : Math.min(1, Math.max(0, elapsed / BOTTOM_CHAT_CURTAIN_MS));
+  const progress = easeBottomChatCurtainProgress(linearProgress);
+  const clipProgress = transition.collapsed ? progress : 1 - progress;
+  setDesktopBottomChatCurtainProgress(clipProgress * 100);
+
+  const scrollProgress = transition.startScrollTop
+    + ((transition.targetScrollTop - transition.startScrollTop) * progress);
+  scrollPageTo(Math.round(scrollProgress), "auto");
+
+  if (linearProgress < 1) {
+    transition.frameId = window.requestAnimationFrame(() => {
+      stepDesktopBottomChatTransition(transition);
+    });
+    return;
+  }
+
+  if (transition.collapsed) {
+    // El último frame ya dejó el panel cerrado y el scroll en el destino; al
+    // reducir ahora la fila no se produce un salto ni se pierde la cortina.
+    applyExternalChatCollapsed(true);
+    setCollapseHandleTransitioning(
+      true,
+      BOTTOM_CHAT_CURTAIN_MS + BOTTOM_CHAT_SCROLL_TIMEOUT_MS + 80,
+    );
+    scrollPageTo(transition.targetScrollTop, "auto");
+  }
+  completeDesktopBottomChatTransition(transition);
+}
+
+function animateDesktopBottomChatCollapse(targetScrollTop) {
+  if (!dom.sessionView || !dom.chatArea) {
+    applyExternalChatCollapsed(true);
+    return;
+  }
+
+  const transition = {
+    collapsed: true,
+    frameId: 0,
+    timeoutId: 0,
+    startedAt: performance.now(),
+    startScrollTop: getPageScrollTop(),
+    targetScrollTop,
+  };
+  bottomChatTransition = transition;
+  setCollapseHandleTransitioning(
+    true,
+    BOTTOM_CHAT_CURTAIN_MS + BOTTOM_CHAT_SCROLL_TIMEOUT_MS + 80,
+  );
+  dom.sessionView.classList.add("chat-bottom-pc-collapse-visual");
+  setDesktopBottomChatCurtainProgress(0);
+  void dom.chatArea.offsetWidth;
+  transition.frameId = window.requestAnimationFrame(() => {
+    if (bottomChatTransition !== transition) return;
+    stepDesktopBottomChatTransition(transition);
+  });
+  transition.timeoutId = window.setTimeout(() => {
+    stepDesktopBottomChatTransition(transition, true);
+  }, BOTTOM_CHAT_CURTAIN_MS + 80);
+}
+
+function animateDesktopBottomChatExpand() {
+  if (!dom.sessionView || !dom.chatArea) {
+    applyExternalChatCollapsed(false);
+    return;
+  }
+
+  const transition = {
+    collapsed: false,
+    frameId: 0,
+    timeoutId: 0,
+    startedAt: performance.now(),
+    startScrollTop: 0,
+    targetScrollTop: 0,
+  };
+  bottomChatTransition = transition;
+  dom.sessionView.classList.add("chat-bottom-pc-expand-visual");
+  setDesktopBottomChatCurtainProgress(100);
+  // Se reserva la fila completa con la cortina cerrada. Desde el primer frame
+  // el scroll y la apertura recorren juntos la distancia hasta la unión.
+  applyExternalChatCollapsed(false);
+  setCollapseHandleTransitioning(
+    true,
+    BOTTOM_CHAT_CURTAIN_MS + BOTTOM_CHAT_SCROLL_TIMEOUT_MS + 80,
+  );
+  transition.startScrollTop = getPageScrollTop();
+  transition.targetScrollTop = getBottomDockChatScrollTop();
+  void dom.chatArea.offsetWidth;
+  transition.startedAt = performance.now();
+  transition.frameId = window.requestAnimationFrame(() => {
+    stepDesktopBottomChatTransition(transition);
+  });
+  transition.timeoutId = window.setTimeout(() => {
+    stepDesktopBottomChatTransition(transition, true);
+  }, BOTTOM_CHAT_CURTAIN_MS + 80);
+}
+
+function animateBottomChatCollapse(targetScrollTop) {
+  if (!dom.sessionView || !dom.chatArea) {
+    applyExternalChatCollapsed(true);
+    return;
+  }
+
+  const transition = {
+    collapsed: true,
+    frameId: 0,
+    timeoutId: 0,
+    startedAt: performance.now(),
+    targetScrollTop,
+  };
+  bottomChatTransition = transition;
+  setCollapseHandleTransitioning(
+    true,
+    BOTTOM_CHAT_CURTAIN_MS + BOTTOM_CHAT_SCROLL_TIMEOUT_MS + 80,
+  );
+  dom.sessionView.classList.add("chat-bottom-collapse-visual");
+  // El viewport acompaña la cortina desde el primer frame: al terminar el
+  // reproductor queda alineado en la posición superior de la página.
+  scrollPageTo(targetScrollTop, isFullscreenPageActive() ? "auto" : "smooth");
+  void dom.chatArea.offsetWidth;
+  window.requestAnimationFrame(() => {
+    if (bottomChatTransition !== transition) return;
+    dom.sessionView.classList.add("chat-bottom-curtain-active");
+    watchBottomChatTransition(transition);
+  });
+}
+
+function animateBottomChatExpand() {
+  if (!dom.sessionView || !dom.chatArea) {
+    applyExternalChatCollapsed(false);
+    return;
+  }
+
+  const transition = {
+    collapsed: false,
+    frameId: 0,
+    timeoutId: 0,
+    startedAt: performance.now(),
+    targetScrollTop: 0,
+  };
+  bottomChatTransition = transition;
+  dom.sessionView.classList.add("chat-bottom-expand-visual");
+  // Primero se reserva la fila completa con el contenido todavía oculto;
+  // después se revela desde la unión superior hacia abajo.
+  applyExternalChatCollapsed(false);
+  setCollapseHandleTransitioning(
+    true,
+    BOTTOM_CHAT_CURTAIN_MS + BOTTOM_CHAT_SCROLL_TIMEOUT_MS + 80,
+  );
+  transition.targetScrollTop = getBottomDockChatScrollTop();
+  scrollPageTo(
+    transition.targetScrollTop,
+    isFullscreenPageActive() ? "auto" : "smooth",
+  );
+  void dom.chatArea.offsetWidth;
+  window.requestAnimationFrame(() => {
+    if (bottomChatTransition !== transition) return;
+    dom.sessionView.classList.add("chat-bottom-curtain-active");
+    watchBottomChatTransition(transition);
+  });
 }
 
 function getBottomDockVideoScrollTop() {
@@ -609,7 +880,7 @@ function getBottomDockVideoScrollTop() {
   // borde superior del viewport. El gutter ya no forma parte del espacio
   // visible, por lo que restarlo deja el reproductor desplazado al contraer.
   const mobileViewport = window.matchMedia("(max-width: 680px)").matches;
-  const topOffset = mobileViewport ? 0 : gutter;
+  const topOffset = isFullscreenPageActive() || mobileViewport ? 0 : gutter;
   return Math.max(0, Math.round(getElementPageTop(dom.videoArea) - topOffset));
 }
 
@@ -622,7 +893,7 @@ export function setExternalChatCollapsed(collapsed, options = {}) {
   }
   const wasCollapsed = dom.sessionView.classList.contains("chat-collapsed");
   if (wasCollapsed !== collapsed) lockUserScrollDuringChatTransition();
-  clearPendingCollapseScroll();
+  cancelBottomChatTransition();
 
   if (
     collapsed
@@ -630,22 +901,33 @@ export function setExternalChatCollapsed(collapsed, options = {}) {
     && dom.videoArea
   ) {
     const targetTop = getBottomDockVideoScrollTop();
-    if (Math.abs(window.scrollY - targetTop) > 2) {
+    if (!wasCollapsed) {
       lockChatScrollSnapDuringProgrammaticScroll();
-      setCollapseHandleTransitioning(true);
-      window.scrollTo({ top: targetTop, behavior: "smooth" });
-
-      // Mantener la fila visible durante toda la animación evita que el
-      // navegador recorte el scroll de golpe antes de que termine el viaje.
-      const collapseTimer = window.setTimeout(() => {
-        pendingCollapseScrollFinish = null;
-        applyExternalChatCollapsed(true);
-      }, CHAT_LAYOUT_SETTLE_MS + 220);
-      pendingCollapseScrollFinish = {
-        cancel: () => window.clearTimeout(collapseTimer),
-      };
+      if (isDesktopBottomDock()) {
+        animateDesktopBottomChatCollapse(targetTop);
+      } else {
+        animateBottomChatCollapse(targetTop);
+      }
       return;
     }
+    if (Math.abs(getPageScrollTop() - targetTop) > 2) {
+      lockChatScrollSnapDuringProgrammaticScroll();
+      scrollPageTo(targetTop, isFullscreenPageActive() ? "auto" : "smooth");
+    }
+  }
+
+  if (
+    !collapsed
+    && wasCollapsed
+    && dom.sessionView?.dataset.chatDock === "bottom"
+  ) {
+    lockChatScrollSnapDuringProgrammaticScroll();
+    if (isDesktopBottomDock()) {
+      animateDesktopBottomChatExpand();
+    } else {
+      animateBottomChatExpand();
+    }
+    return;
   }
 
   applyExternalChatCollapsed(collapsed);
@@ -695,6 +977,7 @@ function applyExternalChatCollapsed(collapsed) {
   if (!collapsed && state.chat.autoOpenedExternal) scheduleAutoCollapse(false);
 
   if (!collapsed) {
+    if (dom.sessionView.dataset.chatDock === "bottom") return;
     expandScrollTimer = window.setTimeout(() => {
       expandScrollTimer = 0;
       window.requestAnimationFrame(() => {

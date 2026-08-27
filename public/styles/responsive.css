@@ -257,12 +257,32 @@
   }
 
   .session-view[data-chat-dock="bottom"] .chat-name-edit-row {
-    width: 120px;
-    max-width: 120px;
+    width: 100%;
+    max-width: 100%;
+    justify-content: flex-end;
+    position: relative;
+    box-sizing: border-box;
+    padding-inline-end: 26px;
   }
 
   .session-view[data-chat-dock="bottom"] .chat-name-field {
-    max-width: 140px;
+    max-width: 100%;
+  }
+
+  .session-view[data-chat-dock="bottom"] .chat-name-edit-row .chat-name-confirm-button {
+    position: absolute;
+    inset-inline-end: 0;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  /* En la edición inferior de PC el botón queda anclado; el cambio de
+     texto no debe animar el ancho ni provocar reflow visible del control. */
+  .session-view[data-chat-dock="bottom"] .chat-name-field,
+  .session-view[data-chat-dock="bottom"] .chat-name-edit-row,
+  .session-view[data-chat-dock="bottom"] .chat-name-edit-row input[type="text"],
+  .session-view[data-chat-dock="bottom"] .chat-name-confirm-button {
+    transition: none !important;
   }
 
   /* La flecha de PC comparte el botón circular de la vista móvil. */

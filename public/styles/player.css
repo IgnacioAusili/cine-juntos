@@ -447,6 +447,14 @@ video::-webkit-media-controls-fullscreen-button {
   stroke-width: 2.45;
 }
 
+/* El contador de cooldown es absoluto y no aporta ancho al botón. Reservar
+   el mismo espacio que ocupa el ícono evita que el número se desplace. */
+.player-frame[data-control-style="line"] .player-controls-bar .primary-video-control[data-play-button-cooldown="true"] {
+  width: 22px;
+  min-width: 22px;
+  flex: 0 0 22px;
+}
+
 .player-frame[data-control-style="line"] .player-controls-bar .video-control-button:not(:disabled):hover,
 .player-frame[data-control-style="line"] .player-controls-bar .video-control-button:not(:disabled):focus-visible,
 .player-frame[data-control-style="line"] .player-controls-bar .video-control-button.active:not(:disabled) {
@@ -478,6 +486,19 @@ video::-webkit-media-controls-fullscreen-button {
 .player-frame[data-control-style="line"] .player-controls-bar .player-select:focus-within {
   border: 0;
   background: transparent;
+}
+
+.player-frame[data-control-style="line"] .player-controls-bar .player-select:not([data-disabled="true"]):hover,
+.player-frame[data-control-style="line"] .player-controls-bar .player-select:not([data-disabled="true"]):focus-within {
+  color: var(--accent-soft, #d8fff9);
+  transform: translateY(-1px);
+}
+
+.player-frame[data-control-style="line"] .player-controls-bar .player-select:not([data-disabled="true"]):hover::after,
+.player-frame[data-control-style="line"] .player-controls-bar .player-select:not([data-disabled="true"]):focus-within::after {
+  color: var(--accent-soft, #d8fff9);
+  border-right-color: var(--accent-soft, #d8fff9);
+  border-bottom-color: var(--accent-soft, #d8fff9);
 }
 
 .player-frame[data-control-style="line"] .player-controls-bar .player-select::after {
@@ -673,7 +694,6 @@ video::-webkit-media-controls-fullscreen-button {
   line-height: 1;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
   filter: grayscale(0.7);
-  transform: translateY(1px);
 }
 
 .video-control-button:not(.primary-video-control) {

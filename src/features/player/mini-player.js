@@ -2,7 +2,7 @@ import { dom } from "../../core/dom.js";
 import { state, logEvent } from "../../core/state.js";
 import { wireTouchHover } from "../../core/touch-interactions.js";
 import { setControlIcon } from "../icons-tooltips.js";
-import { setSyncStatus } from "../session-ui.js";
+import { setSyncStatus } from "../session-ui.js?v=20260827-entry-scroll-fix-01";
 import {
   createMiniPlayerSurface,
   installMiniPlayerWindowStyles,

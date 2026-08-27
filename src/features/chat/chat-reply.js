@@ -3,7 +3,7 @@ import { state } from "../../core/state.js";
 import { hideTooltip } from "../icons-tooltips.js";
 import { truncateText } from "./chat-content-parser.js?v=20260810-chat-fixes-02";
 import { getParticipantAccent } from "./chat-participant-color.js";
-import { expandSystemMessageGroupForItem } from "./system-message-groups.js?v=20260823-system-message-drum-09";
+import { expandSystemMessageGroupForItem } from "./system-message-groups.js?v=20260826-overlay-system-layout-01";
 
 const pendingReplyPreviewHides = new WeakMap();
 const pendingReplyPreviewShow = new WeakMap();

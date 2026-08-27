@@ -27,14 +27,14 @@ import {
   clearPlaybackRecoveryTracking,
   pauseRoomForPlaybackIssue,
   publishState,
-} from "./player-sync-logic.js?v=20260826-seek-tooltip-vertical-02";
+} from "./player-sync-logic.js?v=20260827-entry-scroll-fix-01";
 
 import {
   showErrorDialog,
   showLoadReplaceDialog,
   showResumeVideoDialog,
   showSlowLoadDialog,
-} from "../session-ui.js";
+} from "../session-ui.js?v=20260827-entry-scroll-fix-01";
 import { togglePageFullscreen } from "./fullscreen.js";
 import { syncMiniPlayerButton } from "./mini-player.js?v=20260815-seek-tooltip-01";
 
@@ -46,6 +46,10 @@ const VIDEO_LOAD_COOLDOWN_MS = 3000;
 const PLAY_BUTTON_BURST_WINDOW_MS = 1000;
 const PLAY_BUTTON_BURST_LIMIT = 4;
 const PLAY_BUTTON_COOLDOWN_MS = 30000;
+const SYNC_CONTROL_BURST_WINDOW_MS = PLAY_BUTTON_BURST_WINDOW_MS;
+const SYNC_CONTROL_BURST_LIMIT = PLAY_BUTTON_BURST_LIMIT;
+const RATE_CONTROL_BURST_LIMIT = 3;
+const SYNC_CONTROL_COOLDOWN_MS = PLAY_BUTTON_COOLDOWN_MS;
 const MIN_RESUME_PROMPT_SECONDS = 5;
 const VIDEO_FINGERPRINT_WIDTH = 32;
 const VIDEO_FINGERPRINT_HEIGHT = 18;
@@ -81,6 +85,8 @@ export function initializePlayer() {
   pendingLoadCompletionAnimateSystemGroups = true;
   pendingVideoActivityAnnouncement = false;
   state.ui.seekDragActive = false;
+  resetSyncControlCooldown("seek");
+  resetSyncControlCooldown("rate");
   seekPointerId = null;
   hideSeekTooltip();
   applyPlayerControlStyle("line");
@@ -109,11 +115,11 @@ export function wirePlayerCoreEvents() {
   });
 
   dom.playerBackButton?.addEventListener("click", () => {
-    seekVideoBy(-10);
+    seekVideoBy(-10, "control");
   });
 
   dom.playerForwardButton?.addEventListener("click", () => {
-    seekVideoBy(10);
+    seekVideoBy(10, "control");
   });
 
   dom.playerSeekInput?.addEventListener("input", () => {
@@ -137,6 +143,11 @@ export function wirePlayerCoreEvents() {
   dom.playerRateSelect?.addEventListener("change", () => {
     const nextRate = Number(dom.playerRateSelect.value);
     if (!Number.isFinite(nextRate) || nextRate <= 0) return;
+    if (!hasLoadedMediaSource() || isSyncControlCoolingDown("rate")) {
+      syncPlayerControls();
+      return;
+    }
+    registerSyncControlPress("rate");
     dom.videoPlayer.playbackRate = nextRate;
     syncPlayerControls();
   });
@@ -569,6 +580,61 @@ function activatePlayButtonCooldown(now = Date.now()) {
   syncPlayerControls();
 }
 
+function getSyncControlCooldownState(kind) {
+  const prefix = kind === "rate" ? "rateControl" : "seekControl";
+  return {
+    pressTimesKey: `${prefix}PressTimes`,
+    untilKey: `${prefix}CooldownUntil`,
+    timeoutKey: `${prefix}CooldownTimeoutId`,
+  };
+}
+
+function isSyncControlCoolingDown(kind, now = Date.now()) {
+  const { untilKey } = getSyncControlCooldownState(kind);
+  return now < Number(state.player[untilKey] || 0);
+}
+
+function getSyncControlCooldownSeconds(kind, now = Date.now()) {
+  const { untilKey } = getSyncControlCooldownState(kind);
+  return Math.max(1, Math.ceil((Number(state.player[untilKey] || 0) - now) / 1000));
+}
+
+function registerSyncControlPress(kind, now = Date.now()) {
+  const { pressTimesKey } = getSyncControlCooldownState(kind);
+  const pressTimes = (state.player[pressTimesKey] || [])
+    .filter((pressedAt) => now - pressedAt <= SYNC_CONTROL_BURST_WINDOW_MS);
+  pressTimes.push(now);
+  state.player[pressTimesKey] = pressTimes;
+  const burstLimit = kind === "rate" ? RATE_CONTROL_BURST_LIMIT : SYNC_CONTROL_BURST_LIMIT;
+  if (pressTimes.length >= burstLimit) {
+    activateSyncControlCooldown(kind, now);
+  }
+}
+
+function activateSyncControlCooldown(kind, now = Date.now()) {
+  const { pressTimesKey, untilKey, timeoutKey } = getSyncControlCooldownState(kind);
+  state.player[untilKey] = now + SYNC_CONTROL_COOLDOWN_MS;
+  state.player[pressTimesKey] = [];
+  window.clearInterval(state.player[timeoutKey]);
+  state.player[timeoutKey] = window.setInterval(() => {
+    if (!isSyncControlCoolingDown(kind)) {
+      state.player[untilKey] = 0;
+      window.clearInterval(state.player[timeoutKey]);
+      state.player[timeoutKey] = null;
+    }
+    syncPlayerControls();
+  }, 1000);
+  syncPlayerControls();
+}
+
+function resetSyncControlCooldown(kind) {
+  const { pressTimesKey, untilKey, timeoutKey } = getSyncControlCooldownState(kind);
+  window.clearInterval(state.player[timeoutKey]);
+  state.player[pressTimesKey] = [];
+  state.player[untilKey] = 0;
+  state.player[timeoutKey] = null;
+}
+
 function handleGlobalPlayerKeydown(event) {
   if (event.defaultPrevented) return;
   if (event.repeat) return;
@@ -609,13 +675,13 @@ function handleGlobalPlayerKeydown(event) {
 
   if (key === "ArrowLeft") {
     event.preventDefault();
-    seekVideoBy(-KEYBOARD_SEEK_STEP_SECONDS);
+    seekVideoBy(-KEYBOARD_SEEK_STEP_SECONDS, "keyboard");
     return;
   }
 
   if (key === "ArrowRight") {
     event.preventDefault();
-    seekVideoBy(KEYBOARD_SEEK_STEP_SECONDS);
+    seekVideoBy(KEYBOARD_SEEK_STEP_SECONDS, "keyboard");
     return;
   }
 
@@ -638,7 +704,11 @@ function isEditableTarget(element) {
   );
 }
 
-function seekVideoBy(deltaSeconds) {
+function seekVideoBy(deltaSeconds, source = "control") {
+  if (source === "control" || source === "keyboard") {
+    if (isSyncControlCoolingDown("seek")) return;
+    registerSyncControlPress("seek");
+  }
   const duration = getFiniteDuration();
   const currentTime = Number.isFinite(dom.videoPlayer.currentTime)
     ? Math.max(0, dom.videoPlayer.currentTime)
@@ -807,18 +877,37 @@ function syncPlayerControls(forceSliderSync = false) {
   }
 
   const skipControlsDisabled = !hasMedia || duration <= 0;
+  const skipCoolingDown = isSyncControlCoolingDown("seek");
+  const skipCooldownSeconds = getSyncControlCooldownSeconds("seek");
   for (const control of [dom.playerBackButton, dom.playerForwardButton]) {
-    if (control) control.disabled = skipControlsDisabled;
+    if (!control) continue;
+    control.disabled = skipControlsDisabled || skipCoolingDown;
+    const direction = control === dom.playerBackButton ? "Retroceder 10 segundos" : "Avanzar 10 segundos";
+    const shortcut = control === dom.playerBackButton ? "←" : "→";
+    const tooltip = skipCoolingDown
+      ? `Espera ${skipCooldownSeconds}s para usar este control`
+      : `${direction} (${shortcut})`;
+    control.dataset.tooltip = tooltip;
+    control.setAttribute("aria-label", tooltip);
+    control.removeAttribute("title");
   }
 
   if (dom.playerRateSelect) {
-    dom.playerRateSelect.disabled = !hasMedia;
+    const rateCoolingDown = isSyncControlCoolingDown("rate");
+    const rateCooldownSeconds = getSyncControlCooldownSeconds("rate");
+    dom.playerRateSelect.disabled = !hasMedia || rateCoolingDown;
     dom.playerRateSelect.value = String(Number(dom.videoPlayer.playbackRate || 1));
     const rateSelectWrap = dom.playerRateSelect.closest(".player-select");
     if (rateSelectWrap) {
       rateSelectWrap.dataset.disabled = dom.playerRateSelect.disabled ? "true" : "false";
+      const rateTooltip = rateCoolingDown
+        ? `Espera ${rateCooldownSeconds}s para cambiar la velocidad`
+        : "Velocidad de reproduccion";
+      rateSelectWrap.dataset.tooltip = rateTooltip;
+      rateSelectWrap.setAttribute("aria-label", rateTooltip);
       syncRateSelectWidth(rateSelectWrap);
       syncRateSelectMenu(rateSelectWrap);
+      if (rateCoolingDown) closeRateSelectMenu(rateSelectWrap);
     }
   }
 
@@ -862,6 +951,8 @@ function initializeRateSelectMenu() {
   menu.className = "player-rate-menu";
   menu.hidden = true;
   menu.setAttribute("role", "listbox");
+  menu.addEventListener("pointerenter", hideSeekTooltip);
+  menu.addEventListener("pointermove", hideSeekTooltip);
 
   [...select.options].forEach((option) => {
     const item = document.createElement("button");
@@ -915,6 +1006,7 @@ function syncRateSelectMenu(rateSelectWrap) {
   const selectedValue = select.value;
   trigger.textContent = select.selectedOptions?.[0]?.textContent || "";
   trigger.disabled = select.disabled;
+  trigger.setAttribute("aria-label", rateSelectWrap.dataset.tooltip || "Velocidad de reproduccion");
   menu.querySelectorAll(".player-rate-option").forEach((option) => {
     const selected = option.dataset.value === selectedValue;
     option.classList.toggle("selected", selected);
@@ -924,6 +1016,7 @@ function syncRateSelectMenu(rateSelectWrap) {
 
 function openRateSelectMenu(rateSelectWrap) {
   clearRateSelectCloseTimer();
+  hideSeekTooltip();
   const trigger = rateSelectWrap.querySelector(".player-rate-trigger");
   const menu = rateSelectWrap.querySelector(".player-rate-menu");
   if (!trigger || !menu) return;
@@ -1103,6 +1196,10 @@ function wireSeekTooltipEvents() {
 }
 
 function updateSeekTooltipFromPointer(event) {
+  if (isPointerOverRateMenu(event)) {
+    hideSeekTooltip();
+    return;
+  }
   const duration = getFiniteDuration();
   if (!dom.playerSeekInput || !dom.tooltipLayer || !hasLoadedMediaSource() || duration <= 0) {
     hideSeekTooltip();
@@ -1129,6 +1226,29 @@ function updateSeekTooltipFromPointer(event) {
   const nextTime = duration * ratio;
 
   showSeekTooltip(nextTime, clampedClientX, rect);
+}
+
+function isPointerOverRateMenu(event) {
+  const clientX = Number(event?.clientX);
+  const clientY = Number(event?.clientY);
+  if (!Number.isFinite(clientX) || !Number.isFinite(clientY)) return false;
+
+  const openMenu = dom.playerRateSelect
+    ?.closest(".player-rate-select")
+    ?.querySelector(".player-rate-menu:not([hidden])");
+  const menuRect = openMenu?.getBoundingClientRect();
+  if (
+    menuRect
+    && clientX >= menuRect.left
+    && clientX <= menuRect.right
+    && clientY >= menuRect.top
+    && clientY <= menuRect.bottom
+  ) {
+    return true;
+  }
+
+  const elementUnderPointer = document.elementFromPoint(clientX, clientY);
+  return Boolean(elementUnderPointer?.closest?.(".player-rate-menu"));
 }
 
 function updateSeekTooltipForValue(value) {
@@ -1161,6 +1281,7 @@ function showSeekTooltip(value, clientX, rect) {
     dom.tooltipLayer.style.visibility = "";
   });
 }
+
 
 function positionSeekTooltip() {
   if (!dom.tooltipLayer || !seekTooltipPoint || !seekTooltipRect) return;

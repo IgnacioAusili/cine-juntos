@@ -20,16 +20,17 @@ import {
   renderMembers,
   renderPresence,
   updateDisplayName,
-} from "./presence.js?v=20260824-name-commit-reveal-02";
+} from "./presence.js?v=20260826-bottom-name-input-05";
 import { setConnection } from "./icons-tooltips.js";
 import {
-  focusMainWorkspace,
+  getUserScrollIntentVersion,
   setHostBadge,
   setSyncStatus,
   showLobby,
   showSession,
-} from "./session-ui.js";
-import { handleRemoteState } from "./player/index.js";
+  watchRoomEntryVideoFocus,
+} from "./session-ui.js?v=20260827-entry-scroll-fix-01";
+import { handleRemoteState } from "./player/index.js?v=20260827-sync-control-cooldown-01";
 import {
   renderMessage,
   beginSystemMessageHydration,
@@ -255,6 +256,7 @@ export async function joinRoom(rawRoomCode, sourceButton = "join") {
     return;
   }
   rememberLastRoom(roomCode);
+  const userScrollIntentAtEntry = getUserScrollIntentVersion();
 
   const activeTabs = readActiveTabs();
   const isCurrentTabAlreadyActive = activeTabs.some((record) => record.tabId === getTabId());
@@ -286,6 +288,7 @@ export async function joinRoom(rawRoomCode, sourceButton = "join") {
 
   logEvent("room", `Entrando a sala ${roomCode}.`);
 
+  let roomEntryVideoFocus = null;
   try {
     beginSystemMessageHydration();
     const previousTransport = state.session.transport;
@@ -314,10 +317,11 @@ export async function joinRoom(rawRoomCode, sourceButton = "join") {
     // detrás de la transacción de members.
     dom.roomBadge.textContent = roomCode;
     showSession();
+    roomEntryVideoFocus = watchRoomEntryVideoFocus(userScrollIntentAtEntry);
     await nextTransport.connect(connectionHandlers);
     const activeTransport = nextTransport;
 
-    await previousTransport?.close?.().catch(() => {});
+    await Promise.resolve(previousTransport?.close?.()).catch(() => {});
     state.session.transport = activeTransport;
     writeActiveTabRecord(roomCode);
 
@@ -359,13 +363,14 @@ export async function joinRoom(rawRoomCode, sourceButton = "join") {
 
     showSession();
     setHostBadge(state.session.hostRoomCode === roomCode);
-    setInsideChatVisible(false);
+    setInsideChatVisible(false, { source: "room-entry", skipScrollLock: true });
     resetInsideUnread();
     renderReplyPreview();
-    focusMainWorkspace();
+    roomEntryVideoFocus.activate();
     setSyncStatus("Sala activa.");
     logEvent("room", `Sala ${roomCode} activa.`);
   } catch (error) {
+    roomEntryVideoFocus?.cancel();
     finishSystemMessageHydration();
     showLobby();
     console.error(error);
@@ -443,7 +448,7 @@ export async function leaveRoom() {
   dom.overlayMessages.innerHTML = "";
   renderPresence();
   setHostBadge(false);
-  setInsideChatVisible(false);
+  setInsideChatVisible(false, { source: "leave-room", skipScrollLock: true });
   resetInsideUnread();
   renderReplyPreview();
   clearUrlRoom();

@@ -12,12 +12,12 @@ import {
   SEND_THROTTLE_MS,
   formatSeconds,
 } from "../../core/utils.js";
-import { markParticipantActive, rememberParticipant } from "../presence.js?v=20260824-name-commit-reveal-02";
-import { setSyncStatus } from "../session-ui.js";
+import { markParticipantActive, rememberParticipant } from "../presence.js?v=20260826-bottom-name-input-05";
+import { setSyncStatus } from "../session-ui.js?v=20260827-entry-scroll-fix-01";
 import { sendVideoEventMessage, renderMessage } from "../chat/index.js?v=20260826-system-line-spacing-01";
 // Import circular intencional y seguro: estas funciones se invocan en runtime,
 // no durante la carga del modulo, y player.js a su vez importa publishState.
-import { clearVideoSource, setVideoSource, waitForVideoMetadata } from "./player.js?v=20260826-seek-tooltip-vertical-02";
+import { clearVideoSource, setVideoSource, waitForVideoMetadata } from "./player.js?v=20260827-sync-control-cooldown-01";
 
 const PLAYBACK_ISSUE_SYNC_COOLDOWN_MS = 2200;
 // Los eventos waiting/stalled también se disparan por pequeños saltos de red.
@@ -43,6 +43,7 @@ export function handleRemoteState(statePayload) {
   if (!statePayload || statePayload.from === state.session.clientId) return;
   rememberParticipant(statePayload.from, statePayload.name);
   markParticipantActive(statePayload.from, statePayload.name);
+  const isInitialRemoteState = !state.player.lastRemoteState;
   state.player.lastRemoteState = statePayload;
   logEvent(
     "sync:recv",
@@ -52,10 +53,10 @@ export function handleRemoteState(statePayload) {
   state.player.lastActionAt = Date.now();
   state.player.lastActionAuthor = statePayload.from;
 
-  applyRemoteState(statePayload, statePayload.action === "hold");
+  applyRemoteState(statePayload, statePayload.action === "hold", { isInitialRemoteState });
 }
 
-async function applyRemoteState(statePayload, force = false) {
+async function applyRemoteState(statePayload, force = false, { isInitialRemoteState = false } = {}) {
   if (!statePayload.src && !dom.videoPlayer.currentSrc && !dom.videoPlayer.getAttribute("src")) return;
 
   state.player.suppressVideoEvents = true;
@@ -74,7 +75,11 @@ async function applyRemoteState(statePayload, force = false) {
       statePayload.src &&
       statePayload.src !== dom.videoPlayer.currentSrc &&
       statePayload.src !== dom.videoPlayer.src;
-    const isNewVideoEvent = statePayload.action === "video";
+    // El primer estado remoto describe el contenido actual de la sala; si la
+    // fuente ya coincide con la que está cargada localmente, no hay que
+    // reiniciar el reproductor al entrar. Las recargas posteriores siguen
+    // aplicándose como antes.
+    const isNewVideoEvent = statePayload.action === "video" && !isInitialRemoteState;
     if (statePayload.src && (sourceIsDifferent || isNewVideoEvent)) {
       setVideoSource(statePayload.src, false, {
         // Cada participante anuncia su propia finalizacion de carga, porque

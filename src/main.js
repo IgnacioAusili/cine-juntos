@@ -22,11 +22,11 @@ import {
 import {
   renderPresence,
   wireIdentityEvents,
-} from "./features/presence.js?v=20260824-name-commit-reveal-02";
+} from "./features/presence.js?v=20260826-bottom-name-input-05";
 import {
   showLobby,
   initializeAboutDialog,
-} from "./features/session-ui.js";
+} from "./features/session-ui.js?v=20260827-entry-scroll-fix-01";
 import {
   buildEmojiPicker,
   getPersistedInsideChatStyle,
@@ -42,8 +42,8 @@ import {
 import {
   initializePlayer,
   wirePlayerEvents,
-} from "./features/player/index.js?v=20260826-seek-overlay-hold-01";
-import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260825-chat-hydration-no-system-roll-07";
+} from "./features/player/index.js?v=20260827-sync-control-cooldown-01";
+import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260827-entry-video-focus-02";
 
 const requestedRoom = normalizeRoomCode(new URLSearchParams(window.location.search).get("room") || "");
 
@@ -61,7 +61,10 @@ buildEmojiPicker();
 initializePlayer();
 setInsideChatStyle(getPersistedInsideChatStyle());
 setInsideChatVisible(false);
-setChatDock(localStorage.getItem("cine-juntos-chat-dock") || "right");
+setChatDock(localStorage.getItem("cine-juntos-chat-dock") || "right", {
+  skipTransition: true,
+  preserveScroll: true,
+});
 restoreExternalChatCollapsed();
 syncChatAutoExpandControls();
 updateCollapseButton();

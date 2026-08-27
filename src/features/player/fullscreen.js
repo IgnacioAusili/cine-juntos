@@ -10,13 +10,13 @@ import {
   hideTooltip,
   hydrateIcons,
 } from "../icons-tooltips.js";
-import { focusFullscreenWorkspace, setSyncStatus } from "../session-ui.js";
+import { focusFullscreenWorkspace, setSyncStatus } from "../session-ui.js?v=20260827-entry-scroll-fix-01";
 import {
   logEvent,
   state,
 } from "../../core/state.js";
 import { isMiniPlayerActive } from "./mini-player.js?v=20260815-seek-tooltip-01";
-import { syncInsideChatPanelOffset } from "../chat/chat-layout.js?v=20260811-text-stable-motion-01";
+import { syncInsideChatPanelOffset } from "../chat/chat-layout.js?v=20260827-entry-scroll-fix-01";
 import { withShortcutHint } from "../../core/utils.js";
 import { wireTouchHover } from "../../core/touch-interactions.js";
 
@@ -383,19 +383,19 @@ export function snapFullscreenScroll() {
     return;
   }
 
-  // El snap conserva el anclaje, pero no agrega otra animación a la rueda.
-  // El desplazamiento explícito de expandir el chat sí usa smooth más abajo.
+  // El snap conserva el anclaje y acompaña suavemente el desplazamiento de la
+  // rueda, igual que los demás movimientos programáticos de la interfaz.
   if (isPageFullscreenActive()) {
     getFullscreenScrollContainer().scrollTo({
       top: closestPoint,
-      behavior: "auto",
+      behavior: "smooth",
     });
     return;
   }
 
   window.scrollTo({
     top: closestPoint,
-    behavior: "auto",
+    behavior: "smooth",
   });
 }
 

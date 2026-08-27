@@ -95,3 +95,76 @@
   transform: translateY(18px) scale(0.985);
   transform-origin: center bottom;
 }
+
+/* El dock inferior usa la misma estrategia por fases que el lateral: el
+   estado de la grilla cambia fuera de la cortina y el contenido se mantiene
+   estable mientras el panel se revela o se oculta. Como la unión con el
+   video está arriba, ambas direcciones usan ese borde como ancla. */
+.session-view[data-chat-dock="bottom"].chat-bottom-collapse-visual .chat-area {
+  clip-path: inset(0 0 0 0);
+  opacity: 1;
+  transform: none;
+  transition:
+    clip-path 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 220ms ease;
+  will-change: clip-path, opacity;
+}
+
+/* Al contraer, la cortina sube desde el borde inferior hacia la unión. */
+.session-view[data-chat-dock="bottom"].chat-bottom-collapse-visual.chat-bottom-curtain-active .chat-area {
+  clip-path: inset(0 0 100% 0);
+  opacity: 0;
+}
+
+/* Al expandir, la fila ya está reservada pero permanece oculta hasta que la
+   cortina baje desde la unión superior. */
+.session-view[data-chat-dock="bottom"].chat-bottom-expand-visual .chat-area {
+  clip-path: inset(0 0 100% 0);
+  opacity: 0;
+  transform: none;
+  transition:
+    clip-path 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 220ms ease 60ms;
+  will-change: clip-path, opacity;
+}
+
+.session-view[data-chat-dock="bottom"].chat-bottom-expand-visual.chat-bottom-curtain-active .chat-area {
+  clip-path: inset(0 0 0 0);
+  opacity: 1;
+}
+
+/* En PC el scroll y la cortina son fases consecutivas: el panel debe seguir
+   siendo completamente opaco mientras se comprime visualmente. La opacidad
+   pertenece sólo al estado final de la grilla, no a la animación vertical. */
+@media (min-width: 681px) {
+  .session-view.chat-collapsed[data-chat-dock="bottom"] .chat-area {
+    opacity: 0;
+    transition: none;
+  }
+
+  .session-view[data-chat-dock="bottom"].chat-bottom-pc-collapse-visual .chat-area {
+    clip-path: inset(0 0 var(--chat-bottom-curtain-clip, 0%) 0);
+    opacity: 1;
+    transform: none;
+    transition: none;
+    will-change: clip-path;
+  }
+
+  .session-view[data-chat-dock="bottom"].chat-bottom-pc-collapse-visual.chat-bottom-curtain-active .chat-area {
+    clip-path: inset(0 0 var(--chat-bottom-curtain-clip, 100%) 0);
+    opacity: 1;
+  }
+
+  .session-view[data-chat-dock="bottom"].chat-bottom-pc-expand-visual .chat-area {
+    clip-path: inset(0 0 var(--chat-bottom-curtain-clip, 100%) 0);
+    opacity: 1;
+    transform: none;
+    transition: none;
+    will-change: clip-path;
+  }
+
+  .session-view[data-chat-dock="bottom"].chat-bottom-pc-expand-visual.chat-bottom-curtain-active .chat-area {
+    clip-path: inset(0 0 var(--chat-bottom-curtain-clip, 0%) 0);
+    opacity: 1;
+  }
+}

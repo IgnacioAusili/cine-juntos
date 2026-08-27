@@ -1,7 +1,7 @@
 import { dom } from "../../core/dom.js";
 import { state, logEvent } from "../../core/state.js";
 import { MAX_RENDERED_MESSAGES, formatTime, formatClockTime } from "../../core/utils.js";
-import { markParticipantActive, rememberParticipant } from "../presence.js?v=20260824-name-commit-reveal-02";
+import { markParticipantActive, rememberParticipant } from "../presence.js?v=20260826-bottom-name-input-05";
 import { wireMessageInteractions } from "./chat-message-interactions.js";
 import { appendMessageContent, truncateText } from "./chat-content-parser.js?v=20260810-chat-fixes-02";
 import { getParticipantAccent } from "./chat-participant-color.js";
@@ -18,7 +18,7 @@ import {
   prepareSystemMessageRemoval,
   refreshSystemMessageGroup,
   scheduleSystemMessageCollapse,
-} from "./system-message-groups.js?v=20260823-system-message-drum-09";
+} from "./system-message-groups.js?v=20260826-overlay-system-layout-01";
 
 const EMOJI_ONLY_PATTERN = /^(?:[\s\p{Extended_Pictographic}\p{Emoji_Presentation}\p{Emoji_Modifier}\uFE0F\u200D\u20E3])+$/u;
 const EMOJI_GLYPH_PATTERN = /[\p{Extended_Pictographic}\p{Emoji_Presentation}]/u;

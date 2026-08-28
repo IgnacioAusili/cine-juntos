@@ -8,7 +8,7 @@ export function createSwipeReply(
   const swipeTargets = [bubble, ...companions].filter(Boolean);
   const captureTarget = pointerCaptureTarget || bubble;
   // El rail reservado por el layout permite deslizar sin que la burbuja toque el borde.
-  const THRESHOLD = 34, MAX_DRAG = 48, LOCK_DIST = 10, V_BIAS = 6;
+  const THRESHOLD = 34, MAX_DRAG = 48, LOCK_DIST = 10, V_BIAS = 12;
   const RESTORE_MS = 340, EPS = 2;
   const EASING = "cubic-bezier(0.22, 1, 0.36, 1)", OPACITY = "opacity 160ms ease";
   // El reply se activa deslizando de izquierda a derecha en ambos tipos de

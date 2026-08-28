@@ -78,6 +78,11 @@ let rateMenuCloseTimer = null;
 let lastAudibleVolume = 1;
 let videoClickTimer = null;
 let videoClickOverlayTimer = null;
+let volumeGestureConsumed = false;
+let mobileRevealOnlyTapPending = false;
+let mobileRevealOnlyTapTimer = null;
+let mobileTouchTogglePending = false;
+let mobileTouchClickHandledUntil = 0;
 
 export function initializePlayer() {
   isDurationShowingRemaining = false;
@@ -179,7 +184,18 @@ export function wirePlayerCoreEvents() {
 
   dom.playerVolumeInput?.addEventListener("pointerup", () => {
     // Quitar el foco despues de ajustar para que la barra se cierre al alejar el cursor
+    dom.playerVolumeGroup?.classList.remove("is-dragging");
+    dom.playerFrame?.classList.remove("player-volume-control-dragging");
     dom.playerVolumeInput.blur();
+  });
+
+  dom.playerVolumeInput?.addEventListener("pointerdown", () => {
+    dom.playerVolumeGroup?.classList.add("is-dragging");
+    dom.playerFrame?.classList.add("player-volume-control-dragging");
+  });
+  dom.playerVolumeInput?.addEventListener("pointercancel", () => {
+    dom.playerVolumeGroup?.classList.remove("is-dragging");
+    dom.playerFrame?.classList.remove("player-volume-control-dragging");
   });
 
   dom.playerVolumeGroup?.addEventListener("wheel", (e) => {
@@ -201,6 +217,7 @@ export function wirePlayerCoreEvents() {
   });
 
   wireVideoClickToggle();
+  wireFullscreenVolumeGesture();
 
   dom.videoPlayer.addEventListener("play", () => {
     rememberPlaybackPosition();
@@ -733,6 +750,74 @@ function adjustVolumeBy(delta) {
   syncPlayerControls();
 }
 
+function wireFullscreenVolumeGesture() {
+  let press = null;
+  let longPressTimer = null;
+
+  const clearPress = () => {
+    window.clearTimeout(longPressTimer);
+    longPressTimer = null;
+    dom.playerFrame?.classList.remove("player-volume-gesture-active");
+    if (press?.active && press.pointerId != null && dom.videoPlayer.hasPointerCapture?.(press.pointerId)) {
+      try { dom.videoPlayer.releasePointerCapture(press.pointerId); } catch { /* ya liberado */ }
+    }
+    press = null;
+  };
+
+  dom.videoPlayer.addEventListener("pointerdown", (event) => {
+    if (
+      !window.matchMedia("(max-width: 680px)").matches
+      || !(event.pointerType === "touch" || event.pointerType === "pen")
+      || !(document.fullscreenElement || document.body.classList.contains("fullscreen-mode"))
+      || dom.videoPlayer.paused
+      || dom.videoPlayer.ended
+    ) return;
+
+    clearPress();
+    press = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      lastY: event.clientY,
+      active: false,
+    };
+    longPressTimer = window.setTimeout(() => {
+      if (!press || press.pointerId !== event.pointerId || dom.videoPlayer.paused) return;
+      press.active = true;
+      dom.playerFrame?.classList.add("player-volume-gesture-active");
+      try { dom.videoPlayer.setPointerCapture(event.pointerId); } catch { /* no disponible */ }
+    }, 520);
+  });
+
+  document.addEventListener("pointermove", (event) => {
+    if (!press || event.pointerId !== press.pointerId) return;
+    if (!press.active) {
+      if (Math.hypot(event.clientX - press.startX, event.clientY - press.startY) > 10) clearPress();
+      return;
+    }
+
+    event.preventDefault();
+    const deltaY = press.lastY - event.clientY;
+    if (Math.abs(deltaY) >= 2) {
+      adjustVolumeBy(deltaY * 0.005);
+      const action = deltaY > 0 ? "volume-up" : "volume-down";
+      showPlaybackGestureIndicator(action, `${Math.round(dom.videoPlayer.volume * 100)}%`);
+      press.lastY = event.clientY;
+    }
+  }, { passive: false });
+
+  const endGesture = (event) => {
+    if (!press || event.pointerId !== press.pointerId) return;
+    if (press.active) {
+      event.preventDefault();
+      volumeGestureConsumed = true;
+    }
+    clearPress();
+  };
+  document.addEventListener("pointerup", endGesture, { passive: false });
+  document.addEventListener("pointercancel", endGesture, { passive: false });
+}
+
 function readPersistedVolume() {
   try {
     const storedVolume = Number(localStorage.getItem(PLAYER_VOLUME_STORAGE_KEY));
@@ -1090,10 +1175,82 @@ function updateSeekVisuals(currentTime, duration, forceEnd = false) {
 }
 
 function wireVideoClickToggle() {
-  dom.videoPlayer.addEventListener("click", () => {
+  const revealControlsOnFirstMobileTouch = (event) => {
+    if (
+      !window.matchMedia("(max-width: 680px)").matches
+      || (event.type === "pointerdown"
+        && !(event.pointerType === "touch" || event.pointerType === "pen"))
+    ) return;
+
+    const surface = dom.videoPlayer.closest(".mini-player-surface") || dom.playerFrame;
+    if (event.type === "touchstart" && surface?.classList.contains("player-overlay-visible")) {
+      // Cuando los controles ya están visibles, el segundo toque se resuelve
+      // aquí para no depender del click sintético del navegador móvil.
+      event.preventDefault();
+      mobileTouchTogglePending = true;
+      return;
+    }
+    if (surface?.classList.contains("player-overlay-visible")) return;
+
+    // En algunos navegadores móviles la acción de play/pausa del video se
+    // dispara antes de `click`. Interceptar el primer pointerdown evita esa
+    // pausa y permite mostrar los controles sin cambiar la reproducción.
+    event.preventDefault();
+    mobileRevealOnlyTapPending = true;
+    if (mobileRevealOnlyTapTimer) window.clearTimeout(mobileRevealOnlyTapTimer);
+    mobileRevealOnlyTapTimer = window.setTimeout(() => {
+      mobileRevealOnlyTapPending = false;
+      mobileRevealOnlyTapTimer = null;
+    }, 700);
+    suppressVideoClickOverlay();
+  };
+
+  // touchstart es el punto donde algunos navegadores móviles ejecutan la
+  // acción nativa del elemento multimedia, antes de emitir pointer/click.
+  dom.videoPlayer.addEventListener("touchstart", revealControlsOnFirstMobileTouch, { passive: false });
+  dom.videoPlayer.addEventListener("pointerdown", revealControlsOnFirstMobileTouch, { passive: false });
+  dom.videoPlayer.addEventListener("touchend", (event) => {
+    if (!mobileTouchTogglePending) return;
+    event.preventDefault();
+    mobileTouchTogglePending = false;
+    mobileTouchClickHandledUntil = Date.now() + 500;
+    togglePlaybackFromControls("video");
+  }, { passive: false });
+
+  dom.videoPlayer.addEventListener("click", (event) => {
+    if (volumeGestureConsumed) {
+      volumeGestureConsumed = false;
+      return;
+    }
+    if (Date.now() < mobileTouchClickHandledUntil) {
+      event.preventDefault();
+      return;
+    }
+    if (mobileRevealOnlyTapPending) {
+      mobileRevealOnlyTapPending = false;
+      if (mobileRevealOnlyTapTimer) window.clearTimeout(mobileRevealOnlyTapTimer);
+      mobileRevealOnlyTapTimer = null;
+      event.preventDefault();
+      return;
+    }
+    const surface = dom.videoPlayer.closest(".mini-player-surface") || dom.playerFrame;
+    const isMobile = window.matchMedia("(max-width: 680px)").matches;
+    const isFirstMobileTap = isMobile && !surface?.classList.contains("player-overlay-visible");
+
+    // El navegador puede alternar play/pausa como acción por defecto del
+    // elemento video. En móvil la reproducción queda a cargo de este handler:
+    // el primer toque revela controles y el segundo alterna play/pausa.
+    if (isMobile) event.preventDefault();
+
     if (videoClickTimer) window.clearTimeout(videoClickTimer);
     videoClickTimer = window.setTimeout(() => {
       videoClickTimer = null;
+      if (isFirstMobileTap) {
+        // En móvil el primer toque sólo descubre los controles; el siguiente
+        // toque, con la barra visible, es el que cambia play/pausa.
+        suppressVideoClickOverlay();
+        return;
+      }
       if (dom.videoPlayer.paused || dom.videoPlayer.ended) {
         suppressVideoClickOverlay();
       }
@@ -1112,6 +1269,15 @@ function suppressVideoClickOverlay() {
   const surface = dom.videoPlayer.closest(".mini-player-surface") || dom.playerFrame;
   if (!surface) return;
   if (videoClickOverlayTimer) window.clearTimeout(videoClickOverlayTimer);
+  if (window.matchMedia("(max-width: 680px)").matches) {
+    surface.classList.remove("player-overlay-suppressed");
+    surface.classList.add("player-overlay-visible");
+    videoClickOverlayTimer = window.setTimeout(() => {
+      surface.classList.remove("player-overlay-visible");
+      videoClickOverlayTimer = null;
+    }, 3000);
+    return;
+  }
   surface.classList.remove("player-overlay-visible");
   surface.classList.add("player-overlay-suppressed");
   videoClickOverlayTimer = window.setTimeout(() => {
@@ -1120,10 +1286,11 @@ function suppressVideoClickOverlay() {
   }, 700);
 }
 
-function showPlaybackGestureIndicator(action) {
+function showPlaybackGestureIndicator(action, volumeLabel = "") {
   const indicator = dom.playbackGestureIndicator;
   if (!indicator) return;
   indicator.dataset.action = action;
+  indicator.dataset.volumeLabel = volumeLabel;
   indicator.classList.remove("is-visible");
   // Reiniciar la animacion incluso cuando se pulsa varias veces seguidas.
   void indicator.offsetWidth;

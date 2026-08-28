@@ -23,6 +23,7 @@ let tooltipShowContext = null;
 let suppressFocusTooltipUntil = 0;
 let touchTooltipPress = null;
 let touchTooltipTimer = null;
+let suppressNextTouchTooltipClick = false;
 
 export function initializeUi() {
   hydrateIcons();
@@ -121,6 +122,7 @@ export function wireTooltipEvents() {
       && !dom.tooltipLayer.hidden;
     clearTouchTooltipPress();
     if (shouldToggleOff) {
+      suppressNextTouchTooltipClick = true;
       hideTooltip();
       return;
     }
@@ -132,6 +134,7 @@ export function wireTooltipEvents() {
       y: event.clientY,
       context,
       isHelpButton,
+      longPress: false,
     };
     touchTooltipTimer = window.setTimeout(() => {
       if (
@@ -140,8 +143,8 @@ export function wireTooltipEvents() {
         || !touchTooltipPress.context.anchor.isConnected
       ) return;
 
+      touchTooltipPress.longPress = true;
       showTooltip(touchTooltipPress.context);
-      state.ui.tooltipPressTimer = window.setTimeout(hideTooltip, TOUCH_TOOLTIP_MAX_VISIBLE_MS);
     }, TOUCH_LONG_PRESS_DELAY_MS);
   });
 
@@ -162,7 +165,14 @@ export function wireTooltipEvents() {
       && press.isHelpButton
       && press.context.anchor.isConnected
     ) {
+      if (press.longPress) {
+        suppressNextTouchTooltipClick = true;
+        clearTouchTooltipPress();
+        hideTooltip();
+        return;
+      }
       clearTouchTooltipPress();
+      suppressNextTouchTooltipClick = true;
       showTooltip(press.context);
       state.ui.tooltipPressTimer = window.setTimeout(hideTooltip, TOUCH_TOOLTIP_MAX_VISIBLE_MS);
       return;
@@ -175,6 +185,21 @@ export function wireTooltipEvents() {
   document.addEventListener("click", (event) => {
     const context = getTooltipContext(event.target);
     if (!isPresenceTooltipContext(context) && !context?.anchor?.classList?.contains("help-button")) return;
+    if (suppressNextTouchTooltipClick) {
+      suppressNextTouchTooltipClick = false;
+      return;
+    }
+    if (
+      window.matchMedia("(max-width: 680px)").matches
+      && context.anchor.classList?.contains("help-button")
+    ) {
+      if (state.ui.tooltipTarget === context.anchor && !dom.tooltipLayer.hidden) {
+        hideTooltip();
+      } else {
+        showTooltip(context);
+      }
+      return;
+    }
     if (state.ui.tooltipTarget === context.anchor && !dom.tooltipLayer.hidden) return;
     showTooltip(context);
   });

@@ -261,6 +261,22 @@ video::-webkit-media-controls-fullscreen-button {
   pointer-events: none;
 }
 
+/* El arrastre del volumen mantiene visibles los controles aunque otro evento
+   del reproductor intente ocultar el overlay durante el movimiento. */
+.player-frame.player-volume-control-dragging .player-bottom-actions {
+  opacity: 1 !important;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* El range nativo puede conservar :active aunque se pierda la captura del
+   puntero; mientras ese estado exista, la barra tampoco debe desaparecer. */
+.player-frame:has(.player-volume-input:active) .player-bottom-actions {
+  opacity: 1 !important;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
 .player-frame.player-no-content .player-seek-input {
   transition: none;
 }
@@ -378,8 +394,17 @@ video::-webkit-media-controls-fullscreen-button {
 }
 
 .playback-gesture-indicator[data-action="play"] .playback-gesture-icon-play,
-.playback-gesture-indicator[data-action="pause"] .playback-gesture-icon-pause {
+.playback-gesture-indicator[data-action="pause"] .playback-gesture-icon-pause,
+.playback-gesture-indicator[data-action^="volume-"] .playback-gesture-icon-volume {
   display: block;
+}
+
+.playback-gesture-indicator[data-action^="volume-"]::after {
+  position: absolute;
+  bottom: 12px;
+  content: attr(data-volume-label);
+  font-size: 0.78rem;
+  font-weight: 750;
 }
 
 .player-frame[data-control-style="line"] .player-progress-group::before {

@@ -30,7 +30,7 @@ import {
   showSession,
   watchRoomEntryVideoFocus,
 } from "./session-ui.js?v=20260827-entry-scroll-fix-01";
-import { handleRemoteState } from "./player/index.js?v=20260827-sync-control-cooldown-01";
+import { handleRemoteState } from "./player/index.js?v=20260828-mobile-volume-drag-07";
 import {
   renderMessage,
   beginSystemMessageHydration,

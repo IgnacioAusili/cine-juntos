@@ -978,6 +978,20 @@ function applyExternalChatCollapsed(collapsed) {
 
   if (!collapsed) {
     if (dom.sessionView.dataset.chatDock === "bottom") return;
+
+    // En móvil el dock lateral ocupa una pantalla completa. Llevarlo al
+    // viewport antes del primer repintado evita que se vea durante unos
+    // instantes el espacio superior de la barra de sesión antes del chat.
+    if (
+      dom.sessionView.dataset.chatDock === "right"
+      && window.matchMedia("(max-width: 680px)").matches
+      && dom.workspace
+    ) {
+      const targetTop = Math.min(getPageScrollMax(), Math.max(0, Math.round(getElementPageTop(dom.workspace))));
+      scrollPageTo(targetTop, "auto");
+      return;
+    }
+
     expandScrollTimer = window.setTimeout(() => {
       expandScrollTimer = 0;
       window.requestAnimationFrame(() => {

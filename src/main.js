@@ -15,7 +15,7 @@ import {
   hydrateIcons,
   initializeUi,
   setConnection,
-} from "./features/icons-tooltips.js?v=20260823-lobby-help-name-01";
+} from "./features/icons-tooltips.js?v=20260828-mobile-help-tooltip-01";
 import {
   wireLayoutMetrics,
 } from "./features/layout-metrics.js";
@@ -38,11 +38,11 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js?v=20260826-system-line-spacing-01";
+} from "./features/chat/index.js?v=20260828-mobile-chat-expand-fix-01";
 import {
   initializePlayer,
   wirePlayerEvents,
-} from "./features/player/index.js?v=20260827-sync-control-cooldown-01";
+} from "./features/player/index.js?v=20260828-mobile-volume-drag-07";
 import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260827-entry-video-focus-02";
 
 const requestedRoom = normalizeRoomCode(new URLSearchParams(window.location.search).get("room") || "");

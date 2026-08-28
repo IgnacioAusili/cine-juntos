@@ -293,15 +293,73 @@
     border-bottom-right-radius: 0;
   }
 
+  /* Reservar el alto del header evita que se comprima mientras el panel
+     lateral pasa de ancho cero a su ancho final durante la expansión. */
+  body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-tools {
+    height: 40px;
+    min-height: 40px;
+    max-height: 40px;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+
+  /* La flecha de contraer debe acompañar al header desde el primer frame de
+     la expansión; sólo se oculta la flecha del estado lateral contraído. */
+  body:not(.is-lobby) .session-view.chat-layout-transitioning:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone.is-transitioning .chat-collapse-handle,
+  body:not(.is-lobby) .session-view.chat-layout-transitioning:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone.is-transitioning .chat-collapse-icon-anchor {
+    visibility: visible;
+    opacity: 1 !important;
+    transition: none;
+  }
+
+  body:not(.is-lobby) .player-volume-group {
+    gap: 6px;
+  }
+
+  body:not(.is-lobby) .player-volume-slider-wrap {
+    display: flex;
+    width: 60px;
+    height: 28px;
+    align-items: center;
+    max-width: 60px;
+  }
+
+  body:not(.is-lobby) .player-volume-input {
+    width: 60px;
+    height: 28px;
+    background-size: 100% 3px;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  body:not(.is-lobby) .player-volume-input::-webkit-slider-runnable-track {
+    height: 3px;
+  }
+
+  body:not(.is-lobby) .player-volume-input::-moz-range-track {
+    height: 3px;
+  }
+
+  body:not(.is-lobby) .player-volume-input::-webkit-slider-thumb {
+    width: 8px;
+    height: 8px;
+    margin-top: -2.5px;
+  }
+
+  body:not(.is-lobby) .player-volume-input::-moz-range-thumb {
+    width: 8px;
+    height: 8px;
+  }
+
   /* En el dock lateral la flecha de contraer se convierte en una pestaña
      semicircular integrada al borde izquierdo del panel. */
   body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone {
-    top: 14px;
+    top: 0;
     right: auto;
     bottom: auto;
     left: 0;
     width: 22px;
-    height: 32px;
+    height: 40px;
     transform: none;
   }
 
@@ -324,7 +382,7 @@
 
   body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-handle {
     width: 22px;
-    height: 32px;
+    height: 40px;
   }
 
   body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-icon-anchor {
@@ -339,7 +397,7 @@
   /* La pestaña entra en la cabecera; el indicador de usuarios se corre para
      dejarle espacio sin alterar el centrado del nombre. */
   body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-tools > .presence-pill {
-    transform: translateX(20px);
+    transform: translateX(26px);
     position: relative;
     z-index: 13;
   }
@@ -494,6 +552,12 @@
      la de expandir conserva su anclaje propio cuando el chat está cerrado. */
   body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"] .chat-collapse-hover-zone {
     transform: translate(-50%, calc(-50% - 5px));
+  }
+
+  /* La flecha de expandir debe quedar separada de la barra de controles del
+     reproductor; elevar su anclaje evita que ambas superficies se monten. */
+  body:not(.is-lobby) .session-view.chat-collapsed[data-chat-dock="bottom"] .chat-collapse-hover-zone {
+    top: calc(var(--chat-bottom-dock-collapsed-handle-top, calc(100dvh - 16px)) - 22px);
   }
 
   /* Compactar el estado del reproductor libera espacio visual en pantallas

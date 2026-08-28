@@ -7,6 +7,13 @@
   outline: none;
 }
 
+/* El overlay inline vive dentro del frame, mientras que la flecha es su
+   hermano en el layout. Elevar el frame completo conserva la flecha visible
+   y hace que el overlay la pinte por delante cuando ambos se superponen. */
+.session-view:has(.player-inline-dialog:not([hidden])) .player-frame {
+  z-index: 13;
+}
+
 .chat-collapse-handle {
   position: relative;
   z-index: auto;

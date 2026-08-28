@@ -118,6 +118,9 @@ export function wireMessageInteractions(
     }
     if (!swipe.tracking || event.pointerId !== swipe.pointerId) return;
     swipe.updateSwipe(event.clientX, event.clientY);
+    // Una vez confirmado el eje horizontal, impedir que el desplazamiento
+    // diagonal siga propagándose al scroll de la página.
+    if (swipe.directionLocked) event.preventDefault();
   });
 
   interactionTarget.addEventListener("pointerup", (event) => {

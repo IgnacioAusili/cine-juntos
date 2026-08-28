@@ -141,6 +141,18 @@ function wirePlayerOverlayControls() {
         scheduleHide(safeDelay);
         return;
       }
+      if (dom.playerFrame.classList.contains("player-volume-gesture-active")) {
+        scheduleHide(safeDelay);
+        return;
+      }
+      if (
+        dom.playerVolumeGroup?.classList.contains("is-dragging")
+        || volumeControlPointerActive
+        || dom.playerVolumeInput?.matches(":active")
+      ) {
+        scheduleHide(safeDelay);
+        return;
+      }
       hideTooltip();
       if (document.activeElement === dom.playerRateSelect) {
         dom.playerRateSelect.blur();
@@ -149,6 +161,42 @@ function wirePlayerOverlayControls() {
       dom.playerFrame.classList.add("player-cursor-hidden");
     }, safeDelay);
   };
+
+  // El input range puede perder la captura al salir de la barra durante el
+  // arrastre. Mantener este estado en captura evita que ese detalle del
+  // navegador permita ocultar los controles antes de soltar el volumen.
+  let volumeControlPointerActive = false;
+  let suppressChatToggleOverlayUntil = 0;
+  const isVolumeControlTarget = (target) =>
+    target instanceof Element && Boolean(target.closest(".player-volume-slider-wrap"));
+  const keepVolumeControlsDuringDrag = (event) => {
+    if (!isVolumeControlTarget(event.target)) return;
+    volumeControlPointerActive = true;
+    clearHideTimer();
+    dom.playerFrame.classList.remove("player-cursor-hidden");
+    dom.playerFrame.classList.add("player-volume-control-dragging");
+    setOverlayVisible(true);
+  };
+  const finishVolumeControlDrag = (event) => {
+    if (!volumeControlPointerActive) return;
+    volumeControlPointerActive = false;
+    dom.playerVolumeGroup?.classList.remove("is-dragging");
+    dom.playerFrame.classList.remove("player-volume-control-dragging");
+    scheduleHide();
+  };
+  document.addEventListener("pointerdown", keepVolumeControlsDuringDrag, true);
+  document.addEventListener("pointerup", finishVolumeControlDrag, true);
+  document.addEventListener("pointercancel", finishVolumeControlDrag, true);
+  document.addEventListener("pointerdown", (event) => {
+    if (
+      event.pointerType !== "mouse"
+      && event.target instanceof Element
+      && event.target.closest("#playerChatToggleButton")
+    ) {
+      suppressChatToggleOverlayUntil = Date.now() + 600;
+      clearHideTimer();
+    }
+  }, true);
 
   const revealOverlayFromChatHandle = () => {
     if (isInlinePlayerDialogVisible()) return;
@@ -160,7 +208,6 @@ function wirePlayerOverlayControls() {
 
   const revealOverlay = (event) => {
     if (isInlinePlayerDialogVisible()) return;
-    dom.playerFrame.classList.remove("player-cursor-hidden");
 
     if (event?.type === "focusin" && dom.playerFrame.dataset.suppressOverlayFocus === "1") {
       delete dom.playerFrame.dataset.suppressOverlayFocus;
@@ -168,13 +215,22 @@ function wirePlayerOverlayControls() {
     }
 
     const target = event?.target instanceof Element ? event.target : null;
+    const isChatToggle = target?.closest("#playerChatToggleButton");
+    // El botón del chat es una acción independiente del reproductor: no debe
+    // cambiar la visibilidad de la barra ni provocar el estado suprimido.
+    if (isChatToggle || Date.now() < suppressChatToggleOverlayUntil) return;
+    dom.playerFrame.classList.remove("player-cursor-hidden");
     if (
       target === dom.videoPlayer
       && dom.playerFrame.classList.contains("player-overlay-suppressed")
     ) return;
     // Un clic simple sobre el video alterna play/pausa, pero no debe revelar
     // la barra: el indicador central es la única respuesta visual inmediata.
-    if (event?.type === "mousedown" && target === dom.videoPlayer) {
+    if (
+      event?.type === "mousedown"
+      && target === dom.videoPlayer
+      && !window.matchMedia("(max-width: 680px)").matches
+    ) {
       if (!dom.videoPlayer.paused && !dom.videoPlayer.ended) return;
       clearHideTimer();
       setOverlayVisible(false);
@@ -182,20 +238,6 @@ function wirePlayerOverlayControls() {
       window.setTimeout(() => {
         dom.playerFrame.classList.remove("player-overlay-suppressed");
       }, 700);
-      return;
-    }
-    const isChatToggle = target?.closest("#playerChatToggleButton");
-    if (event?.type === "focusin" && dom.playerFrame.dataset.suppressOverlayFocus === "chat-toggle") {
-      return;
-    }
-    if (event?.type === "mousedown" && isChatToggle
-      && !dom.playerFrame.classList.contains("player-overlay-visible")) {
-      dom.playerFrame.dataset.suppressOverlayFocus = "chat-toggle";
-      window.setTimeout(() => {
-        if (dom.playerFrame?.dataset.suppressOverlayFocus === "chat-toggle") {
-          delete dom.playerFrame.dataset.suppressOverlayFocus;
-        }
-      }, 500);
       return;
     }
     const isChatInteraction = target?.closest(".player-chat")
@@ -219,8 +261,13 @@ function wirePlayerOverlayControls() {
 
   // En táctil, la barra del reproductor se comporta como un hover: aparece
   // solo mientras se mantiene la pulsación y se limpia al soltar.
+  let ignoredChatToggleTouch = false;
   wireTouchHover(dom.playerFrame, {
     onActivate: (event) => {
+      if (event?.target?.closest?.("#playerChatToggleButton")) {
+        ignoredChatToggleTouch = true;
+        return;
+      }
       // El chat vive dentro del playerFrame, pero sus pulsaciones no son una
       // interacción con el video. En móvil no revelar la barra al mantener
       // presionado un mensaje, el input o cualquier control del overlay.
@@ -238,7 +285,22 @@ function wirePlayerOverlayControls() {
       dom.playerFrame.classList.remove("player-overlay-suppressed");
       setOverlayVisible(true);
     },
-    onDeactivate: () => scheduleHide(0),
+    onDeactivate: () => {
+      if (ignoredChatToggleTouch) {
+        ignoredChatToggleTouch = false;
+        return;
+      }
+      // El movimiento normal del dedo sobre el range de volumen también
+      // termina el hover táctil del player. No ocultar los controles en ese
+      // punto: el arrastre sigue activo y se libera desde su pointerup.
+      if (
+        volumeControlPointerActive
+        || dom.playerVolumeGroup?.classList.contains("is-dragging")
+      ) {
+        return;
+      }
+      scheduleHide(0);
+    },
   });
 
   // Al mover o clickear el mouse en el player frame, se muestra el overlay

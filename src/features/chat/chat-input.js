@@ -15,14 +15,14 @@ import {
 } from "../../core/utils.js";
 import {
   setSyncStatus,
-} from "../session-ui.js";
+} from "../session-ui.js?v=20260827-entry-scroll-fix-01";
 import { refreshTooltipForTarget } from "../icons-tooltips.js";
-import { markParticipantActive } from "../presence.js?v=20260824-name-commit-reveal-02";
-import { clearReplyTarget } from "./chat-reply.js?v=20260814-reply-preview-sharp-01";
-import { renderMessage } from "./chat-render.js?v=20260823-system-message-drum-09";
+import { markParticipantActive } from "../presence.js?v=20260826-bottom-name-input-05";
+import { clearReplyTarget } from "./chat-reply.js?v=20260826-reply-sync-close-03";
+import { renderMessage } from "./chat-render.js?v=20260826-system-line-spacing-01";
 import {
   completeAutoOpenedChatResponse,
-} from "./chat-layout.js?v=20260811-text-stable-motion-01";
+} from "./chat-layout.js?v=20260827-entry-scroll-fix-01";
 import { queuePinnedChatScrollSync, isPinnedToBottom } from "./chat-scroll-sync.js?v=20260810-chat-fixes-01";
 import {
   compressImageBase64,
@@ -34,6 +34,7 @@ const floatingComposerObservers = new WeakMap();
 const scrollbarDragState = new WeakMap();
 const CHAT_MESSAGE_BOTTOM_GAP = 12;
 const CHAT_OVERLAY_MESSAGE_BOTTOM_GAP = 4;
+const CHAT_RESERVE_TRANSITION_MS = 180;
 const sendButtonMarkup = new WeakMap();
 const SAME_MESSAGE_LIMIT = 4;
 const SAME_MESSAGE_WINDOW_MS = 2500;
@@ -590,10 +591,54 @@ export function wireFloatingComposerLayout() {
     const messagesWrap = messagesContainer?.closest(".messages-wrap");
     const inputWrapper = form.querySelector(".input-wrapper");
     wireChatScrollbar(messagesContainer);
+    let reserveAnimationFrame = 0;
+    let currentMessageReserve = null;
+
+    const setMessageReserve = (value, keepAtBottom) => {
+      const nextValue = Math.max(0, value);
+      currentMessageReserve = nextValue;
+      container.style.setProperty("--chat-message-bottom-reserve", `${nextValue}px`);
+      if (keepAtBottom) {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      }
+    };
+
+    const animateMessageReserve = (targetValue, keepAtBottom, startValueOverride = null) => {
+      if (reserveAnimationFrame) {
+        window.cancelAnimationFrame(reserveAnimationFrame);
+        reserveAnimationFrame = 0;
+      }
+
+      const startValue = startValueOverride ?? currentMessageReserve;
+      const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+      if (
+        startValue == null
+        || Math.abs(startValue - targetValue) < 0.5
+        || reducedMotion
+      ) {
+        setMessageReserve(targetValue, keepAtBottom);
+        return;
+      }
+
+      const startedAt = performance.now();
+      const tick = (now) => {
+        const progress = Math.min(1, (now - startedAt) / CHAT_RESERVE_TRANSITION_MS);
+        const easedProgress = 1 - ((1 - progress) ** 3);
+        const value = startValue + ((targetValue - startValue) * easedProgress);
+        setMessageReserve(value, keepAtBottom);
+        if (progress < 1) {
+          reserveAnimationFrame = window.requestAnimationFrame(tick);
+        } else {
+          reserveAnimationFrame = 0;
+        }
+      };
+      reserveAnimationFrame = window.requestAnimationFrame(tick);
+    };
 
     const updateReserve = () => {
       const wasPinnedToBottom = isPinnedToBottom(messagesContainer);
-      const reserve = Math.ceil(form.getBoundingClientRect().height);
+      const formRect = form.getBoundingClientRect();
+      const reserve = Math.ceil(formRect.height);
       const computedStyle = window.getComputedStyle(form);
       const bottomGap = Math.max(0, Math.round(Number.parseFloat(computedStyle.bottom) || 0));
       const messageGap = form === dom.overlayMessageForm
@@ -603,15 +648,27 @@ export function wireFloatingComposerLayout() {
       if (messagesWrap && inputWrapper) {
         const messagesWrapRect = messagesWrap.getBoundingClientRect();
         const inputRect = inputWrapper.getBoundingClientRect();
+        const replyPreviewOffset = Math.max(
+          6,
+          Math.ceil(formRect.bottom - inputRect.top + 6),
+        );
+        form.style.setProperty(
+          "--reply-preview-offset",
+          `${replyPreviewOffset}px`,
+        );
         const visualEnd = Math.max(0, Math.round(inputRect.top - messagesWrapRect.top));
         messagesWrap.style.setProperty("--chat-scrollbar-visual-end", `${visualEnd}px`);
         syncChatScrollbar(messagesContainer);
       }
       container.style.setProperty("--chat-composer-reserve", `${reserve}px`);
-      container.style.setProperty("--chat-message-bottom-reserve", `${messageReserve}px`);
-      if (wasPinnedToBottom) {
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-      }
+      const inlineMessageReserve = Number.parseFloat(
+        container.style.getPropertyValue("--chat-message-bottom-reserve"),
+      );
+      animateMessageReserve(
+        messageReserve,
+        wasPinnedToBottom,
+        Number.isFinite(inlineMessageReserve) ? inlineMessageReserve : null,
+      );
     };
 
     let reserveFrame = 0;
@@ -624,10 +681,18 @@ export function wireFloatingComposerLayout() {
       });
     };
     const observer = new ResizeObserver(scheduleReserveUpdate);
+    const syncReplyPreviewReserve = () => {
+      if (reserveFrame) {
+        window.cancelAnimationFrame(reserveFrame);
+        reserveFrame = 0;
+      }
+      updateReserve();
+    };
 
     floatingComposerObservers.set(form, observer);
     observer.observe(form);
     window.addEventListener("resize", scheduleReserveUpdate, { passive: true });
+    window.addEventListener("chat-reply-preview-layout", syncReplyPreviewReserve, { passive: true });
     if (form === dom.messageForm) {
       window.addEventListener("chat-layout-settled", scheduleReserveUpdate, { passive: true });
     }

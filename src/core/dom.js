@@ -22,6 +22,7 @@ export const dom = {
   playerActions: document.querySelector(".player-actions"),
   playerBottomActions: document.querySelector(".player-bottom-actions"),
   videoPlayer: document.querySelector("#videoPlayer"),
+  playbackGestureIndicator: document.querySelector("#playbackGestureIndicator"),
   emptyPlayer: document.querySelector("#emptyPlayer"),
   playerChatToggleButton: document.querySelector("#playerChatToggleButton"),
   playerBackButton: document.querySelector("#playerBackButton"),

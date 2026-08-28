@@ -5,7 +5,7 @@ import {
   logEvent,
 } from "../../core/state.js";
 import { formatClockTime } from "../../core/utils.js";
-import { renderMessage } from "./chat-render.js?v=20260823-system-message-drum-09";
+import { renderMessage } from "./chat-render.js?v=20260826-system-line-spacing-01";
 
 /**
  * Genera y envía un mensaje de sistema al chat describiendo un evento de video.
@@ -29,6 +29,9 @@ export function sendVideoEventMessage(action, currentState) {
       action,
       isReload: Boolean(currentState.isReload),
     };
+  }
+  if (typeof currentState.animateSystemGroups === "boolean") {
+    message.animateSystemGroups = currentState.animateSystemGroups;
   }
 
   state.session.transport.sendMessage(message).catch((error) => {

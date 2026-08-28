@@ -23,7 +23,12 @@ export function installMiniPlayerWindowStyles(targetDocument) {
   return Promise.all(stylesheets);
 }
 
-export function createMiniPlayerSurface(targetDocument, chatStyle, chatVisible = false) {
+export function createMiniPlayerSurface(
+  targetDocument,
+  chatStyle,
+  chatVisible = false,
+  controlStyle = "line",
+) {
   const surface = targetDocument.createElement("section");
   surface.className = "mini-player-surface player-frame player-overlay-visible";
   surface.classList.toggle("chat-inside-open", Boolean(chatVisible));
@@ -31,6 +36,7 @@ export function createMiniPlayerSurface(targetDocument, chatStyle, chatVisible =
   surface.style.visibility = "hidden";
   surface.style.opacity = "0";
   surface.dataset.chatStyle = chatStyle || "float";
+  surface.dataset.controlStyle = controlStyle || "line";
   surface.setAttribute("aria-label", "Mini-reproductor");
   return surface;
 }

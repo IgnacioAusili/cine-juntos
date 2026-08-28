@@ -1,3 +1,7 @@
+.mini-player-surface {
+  container: mini-player / size;
+}
+
 .mini-player-inline {
   position: absolute;
   z-index: 32;
@@ -57,8 +61,7 @@
   pointer-events: none;
 }
 
-.mini-player-surface.mini-player-scroll:hover .player-bottom-actions,
-.mini-player-surface.mini-player-scroll:focus-within .player-bottom-actions {
+.mini-player-surface.mini-player-scroll:hover .player-bottom-actions {
   opacity: 1;
   transform: translateY(0);
   pointer-events: auto;
@@ -108,6 +111,119 @@
 
 .mini-player-surface .player-bottom-actions {
   padding: 6px 8px 8px;
+}
+
+/* En la miniatura el chat conserva la proporcion del overlay normal y queda
+   por encima de la barra de controles cuando ambas superficies coinciden. */
+.mini-player-surface .player-chat {
+  top: auto;
+  right: 8px;
+  bottom: 8px;
+  z-index: 10;
+  width: min(280px, calc(100% - 16px));
+  height: min(62%, 330px);
+  max-height: calc(100% - 56px);
+  padding-inline: 3px;
+  --chat-composer-reserve: 62px;
+  transform: translateY(7px);
+  transition: opacity 160ms ease, transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.mini-player-surface.chat-inside-open .player-chat {
+  transform: translateY(0);
+}
+
+/* Cuando la ventana mini es baja, el botón de chat ocupa la esquina superior
+   derecha y el overlay se despliega a su izquierda para no quedar cortado por
+   el borde inferior. */
+@container mini-player (max-height: 250px) {
+  .mini-player-surface .player-chat {
+    top: 8px;
+    right: 42px;
+    bottom: auto;
+    width: min(280px, calc(100% - 52px));
+    height: min(62%, 190px);
+    max-height: calc(100% - 16px);
+  }
+}
+
+.mini-player-surface .overlay-messages {
+  padding-right: 6px;
+  padding-bottom: var(--chat-composer-reserve, 62px);
+  padding-left: 18px;
+}
+
+/* El selector de grupos del overlay principal sale hacia afuera para no
+   ocupar espacio en un chat grande. En el mini reproductor debe quedar
+   dentro del panel para que no se recorte. */
+.mini-player-surface #overlayMessages .message.system .system-group-toggle {
+  left: -4px;
+  min-width: 22px;
+  width: 22px;
+  height: 16px;
+}
+
+.mini-player-surface .overlay-message-form {
+  z-index: 12;
+  padding: 0 6px 6px;
+}
+
+.mini-player-surface .overlay-message-form .input-wrapper {
+  min-height: 32px;
+  width: 100%;
+  border-radius: 18px;
+}
+
+.mini-player-surface .overlay-message-form .input-wrapper[data-expanded="true"] {
+  border-radius: 17px;
+}
+
+.mini-player-surface .overlay-message-form .input-wrapper textarea {
+  min-height: 27px;
+  max-height: 48px;
+  padding: 5px 6px;
+  padding-right: 52px;
+  font-size: 0.68rem;
+  line-height: 1.2;
+}
+
+.mini-player-surface .overlay-message-form .input-wrapper .icon-button,
+.mini-player-surface .overlay-message-form .input-wrapper .emoji-trigger,
+.mini-player-surface .overlay-message-form .input-wrapper .send {
+  width: 24px;
+  min-height: 24px;
+  height: 24px;
+  flex-basis: 24px;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.mini-player-surface .overlay-message-form .input-wrapper .emoji-trigger {
+  right: 28px;
+  top: 50%;
+  bottom: auto;
+  transform: translateY(-50%) !important;
+  color: rgba(255, 255, 255, 0.68);
+}
+
+.mini-player-surface .overlay-message-form .input-wrapper .send {
+  right: 3px;
+  top: 50%;
+  bottom: auto;
+  transform: translateY(-50%) !important;
+  color: var(--accent-2);
+}
+
+.mini-player-surface .overlay-message-form .input-wrapper .emoji-trigger > svg,
+.mini-player-surface .overlay-message-form .input-wrapper .send > svg:not(.composer-progress-ring) {
+  width: 15px;
+  height: 15px;
+}
+
+.mini-player-surface .overlay-message-form .input-wrapper .send > svg.composer-progress-ring {
+  width: 25px;
+  height: 25px;
 }
 
 /* Evita mostrar durante un instante el estado copiado del reproductor
@@ -339,19 +455,6 @@
   border-color: rgba(255, 255, 255, 0.14);
 }
 
-.mini-player-surface .overlay-messages .message.system,
-.mini-player-surface .overlay-messages .message.system .message-bubble-row,
-.mini-player-surface .overlay-messages .message.system .message-bubble,
-.mini-player-surface .overlay-messages .message.system .message-system-bubble {
-  border: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
-}
-
-.mini-player-surface .overlay-messages .message.system .message-bubble {
-  padding: 2px 0 !important;
-}
-
 .mini-player-surface .player-progress-group {
   order: initial;
   width: auto;
@@ -385,9 +488,30 @@
 .player-frame.mini-player-active #playerMiniPlayerButton.active,
 .mini-player-surface #playerMiniPlayerButton.active,
 .mini-player-surface [data-proxy-for="playerMiniPlayerButton"].active {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.14);
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
   color: rgba(255, 255, 255, 0.82);
+}
+
+/* La salida del mini reproductor sigue la barra Linea y conserva un area de
+   toque comoda, sin la capsula rectangular del estilo anterior. */
+.player-frame[data-control-style="line"] #playerMiniPlayerButton.active,
+.mini-player-surface[data-control-style="line"] [data-proxy-for="playerMiniPlayerButton"].active {
+  margin-left: auto;
+  width: 34px;
+  min-height: 34px;
+  flex-basis: 34px;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.player-frame[data-control-style="line"] #playerMiniPlayerButton.active svg,
+.mini-player-surface[data-control-style="line"] [data-proxy-for="playerMiniPlayerButton"].active svg {
+  width: 22px;
+  height: 22px;
+  stroke-width: 2.45;
 }
 
 .player-frame.mini-player-active #playerMiniPlayerButton.active:hover svg,

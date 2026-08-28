@@ -12,8 +12,8 @@ import {
   updateCharCounter,
   wireFloatingComposerLayout,
   wireComposerScrollbar,
-} from "./chat-input.js?v=20260823-system-message-drum-09";
-import { setReplyTarget } from "./chat-reply.js?v=20260823-system-message-drum-09";
+} from "./chat-input.js?v=20260826-reply-reserve-sync-03";
+import { setReplyTarget } from "./chat-reply.js?v=20260826-reply-sync-close-03";
 import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js";
 import {
   copyMessageText,
@@ -23,13 +23,14 @@ import {
 import {
   setChatDock,
   setExternalChatCollapsed,
+  restoreExternalChatCollapsed,
   setExternalChatAutoExpandEnabled,
   setInsideChatAutoExpandEnabled,
   setInsideChatStyle,
   setInsideChatVisible,
   syncExternalChatCollapseHandleOffset,
   syncChatAutoExpandControls,
-} from "./chat-layout.js?v=20260811-text-stable-motion-01";
+} from "./chat-layout.js?v=20260827-entry-scroll-fix-01";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 
 const CHAT_SCROLL_WHEEL_MULTIPLIER = 0.35;
@@ -171,15 +172,19 @@ export {
   buildEmojiPicker,
   updateCharCounter,
   sendMessage,
-} from "./chat-input.js?v=20260823-system-message-drum-09";
-export { renderMessage } from "./chat-render.js?v=20260823-system-message-drum-09";
+} from "./chat-input.js?v=20260826-reply-reserve-sync-03";
+export {
+  beginSystemMessageHydration,
+  finishSystemMessageHydration,
+  renderMessage,
+} from "./chat-render.js?v=20260826-system-line-spacing-01";
 export {
   clearReplyTarget,
   renderReplyPreview,
   scrollToMessage,
   setReplyTarget,
-} from "./chat-reply.js?v=20260823-system-message-drum-09";
-export { sendVideoEventMessage } from "./chat-system-messages.js?v=20260823-system-message-drum-09";
+} from "./chat-reply.js?v=20260826-reply-sync-close-03";
+export { sendVideoEventMessage } from "./chat-system-messages.js?v=20260826-system-line-spacing-01";
 export {
   checkScrollPosition,
   resetInsideUnread,
@@ -192,6 +197,7 @@ export {
 } from "./message-menu.js";
 export {
   getPersistedInsideChatStyle,
+  restoreExternalChatCollapsed,
   scrollToVideoPosition,
   setChatDock,
   setExternalChatAutoExpandEnabled,
@@ -201,7 +207,7 @@ export {
   setInsideChatVisible,
   syncChatAutoExpandControls,
   updateCollapseButton,
-} from "./chat-layout.js?v=20260811-text-stable-motion-01";
+} from "./chat-layout.js?v=20260827-entry-scroll-fix-01";
 
 export function wireChatEvents() {
   syncChatAutoExpandControls();

@@ -10,17 +10,18 @@ import {
   hideTooltip,
   hydrateIcons,
 } from "../icons-tooltips.js";
-import { focusFullscreenWorkspace, setSyncStatus } from "../session-ui.js";
+import { focusFullscreenWorkspace, setSyncStatus } from "../session-ui.js?v=20260827-entry-scroll-fix-01";
 import {
   logEvent,
+  state,
 } from "../../core/state.js";
 import { isMiniPlayerActive } from "./mini-player.js?v=20260815-seek-tooltip-01";
-import { syncInsideChatPanelOffset } from "../chat/chat-layout.js?v=20260811-text-stable-motion-01";
+import { syncInsideChatPanelOffset } from "../chat/chat-layout.js?v=20260827-entry-scroll-fix-01";
 import { withShortcutHint } from "../../core/utils.js";
 import { wireTouchHover } from "../../core/touch-interactions.js";
 
-const PLAYER_OVERLAY_IDLE_MS = 2200;
-const PLAYER_OVERLAY_LEAVE_HIDE_DELAY_MS = 650;
+const PLAYER_OVERLAY_IDLE_MS = 3000;
+const PLAYER_OVERLAY_LEAVE_HIDE_DELAY_MS = 800;
 let fallbackFullscreenActive = false;
 
 const USE_NATIVE_FULLSCREEN = true;
@@ -115,6 +116,10 @@ function wirePlayerOverlayControls() {
 
   const chatCollapseHoverZone = dom.collapseChatButton?.closest(".chat-collapse-hover-zone");
 
+  const isInlinePlayerDialogVisible = () => Boolean(
+    dom.resumeVideoPopup && !dom.resumeVideoPopup.hidden,
+  );
+
   const setOverlayVisible = (isVisible) => {
     dom.playerFrame.classList.toggle("player-overlay-visible", isVisible);
   };
@@ -128,17 +133,25 @@ function wirePlayerOverlayControls() {
 
   const scheduleHide = (delay = PLAYER_OVERLAY_IDLE_MS) => {
     clearHideTimer();
+    const safeDelay = delay > 0 ? delay : PLAYER_OVERLAY_IDLE_MS;
     hideTimer = window.setTimeout(() => {
+      hideTimer = null;
+      if (isInlinePlayerDialogVisible()) return;
+      if (state.ui.seekDragActive) {
+        scheduleHide(safeDelay);
+        return;
+      }
       hideTooltip();
       if (document.activeElement === dom.playerRateSelect) {
         dom.playerRateSelect.blur();
       }
       setOverlayVisible(false);
       dom.playerFrame.classList.add("player-cursor-hidden");
-    }, delay);
+    }, safeDelay);
   };
 
   const revealOverlayFromChatHandle = () => {
+    if (isInlinePlayerDialogVisible()) return;
     clearHideTimer();
     dom.playerFrame.classList.remove("player-cursor-hidden");
     setOverlayVisible(true);
@@ -146,6 +159,7 @@ function wirePlayerOverlayControls() {
   };
 
   const revealOverlay = (event) => {
+    if (isInlinePlayerDialogVisible()) return;
     dom.playerFrame.classList.remove("player-cursor-hidden");
 
     if (event?.type === "focusin" && dom.playerFrame.dataset.suppressOverlayFocus === "1") {
@@ -154,6 +168,22 @@ function wirePlayerOverlayControls() {
     }
 
     const target = event?.target instanceof Element ? event.target : null;
+    if (
+      target === dom.videoPlayer
+      && dom.playerFrame.classList.contains("player-overlay-suppressed")
+    ) return;
+    // Un clic simple sobre el video alterna play/pausa, pero no debe revelar
+    // la barra: el indicador central es la única respuesta visual inmediata.
+    if (event?.type === "mousedown" && target === dom.videoPlayer) {
+      if (!dom.videoPlayer.paused && !dom.videoPlayer.ended) return;
+      clearHideTimer();
+      setOverlayVisible(false);
+      dom.playerFrame.classList.add("player-overlay-suppressed");
+      window.setTimeout(() => {
+        dom.playerFrame.classList.remove("player-overlay-suppressed");
+      }, 700);
+      return;
+    }
     const isChatToggle = target?.closest("#playerChatToggleButton");
     if (event?.type === "focusin" && dom.playerFrame.dataset.suppressOverlayFocus === "chat-toggle") {
       return;
@@ -200,6 +230,8 @@ function wirePlayerOverlayControls() {
         setOverlayVisible(false);
         return;
       }
+
+      if (event?.target === dom.videoPlayer) return;
 
       clearHideTimer();
       dom.playerFrame.classList.remove("player-cursor-hidden");
@@ -358,19 +390,19 @@ export function snapFullscreenScroll() {
     return;
   }
 
-  // El snap conserva el anclaje, pero no agrega otra animación a la rueda.
-  // El desplazamiento explícito de expandir el chat sí usa smooth más abajo.
+  // El snap conserva el anclaje y acompaña suavemente el desplazamiento de la
+  // rueda, igual que los demás movimientos programáticos de la interfaz.
   if (isPageFullscreenActive()) {
     getFullscreenScrollContainer().scrollTo({
       top: closestPoint,
-      behavior: "auto",
+      behavior: "smooth",
     });
     return;
   }
 
   window.scrollTo({
     top: closestPoint,
-    behavior: "auto",
+    behavior: "smooth",
   });
 }
 

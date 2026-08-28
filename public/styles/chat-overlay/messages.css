@@ -6,6 +6,9 @@
   justify-content: flex-start;
   overflow-x: hidden;
   overflow-y: auto;
+  /* El navegador no debe reanclar el scroll mientras el grupo cambia sus
+     filas visibles; la transición calcula y anima esa corrección. */
+  overflow-anchor: none;
   overscroll-behavior: auto;
   scroll-padding-bottom: var(--chat-message-bottom-reserve, 132px);
   pointer-events: auto;
@@ -404,6 +407,40 @@
   margin: 3px auto 6px;
 }
 
+/* La fila ocupa el ancho del mensaje y el texto se centra respecto del
+   overlay completo. El control de respuesta queda fuera del flujo para no
+   reservar espacio lateral que desplace el aviso. */
+.overlay-messages .message.system .system-message-row {
+  align-self: stretch;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  justify-content: center;
+}
+
+#overlayMessages .message.system .system-message-row .swipe-reply-hint-wrapper {
+  position: absolute;
+  top: 50%;
+  right: -15px;
+  left: auto;
+  width: 0;
+  height: 0;
+  margin: 0;
+  flex: 0 0 auto;
+  align-self: auto;
+}
+
+#overlayMessages .message.system:not(.mine) .system-message-row .swipe-reply-hint-wrapper {
+  right: auto;
+  left: -15px;
+}
+
+/* El viewport del texto ya recorta la rueda 3D. La fila debe seguir siendo
+   visible para que el selector lateral no quede cortado durante el giro. */
+#overlayMessages .message.system .system-message-row.system-message-rolling {
+  overflow: visible;
+}
+
 .overlay-messages .message.system .message-bubble {
   width: fit-content;
   max-width: min(100%, 420px);
@@ -528,4 +565,35 @@
 .player-frame[data-chat-style="float"] .overlay-messages .message:not(.mine) .message-bubble--emoji-only .message-time-anchor {
   border-color: rgba(255, 255, 255, 0.08);
   background: rgba(240, 140, 58, 0.2);
+}
+
+/* Contraste del selector según el fondo real del chat-overlay. */
+.player-frame[data-chat-style="panel"] #overlayMessages .system-group-toggle {
+  border-color: rgba(215, 229, 232, 0.3);
+  background: rgba(24, 34, 38, 0.44);
+  color: rgba(235, 247, 247, 0.94);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.16);
+}
+
+.player-frame[data-chat-style="panel"] #overlayMessages .system-group-toggle:hover,
+.player-frame[data-chat-style="panel"] #overlayMessages .system-group-toggle:focus-visible,
+.player-frame[data-chat-style="panel"] #overlayMessages .system-group-toggle.system-group-transitioning {
+  border-color: var(--accent-2);
+  background: rgba(24, 73, 70, 0.92);
+  color: var(--text);
+}
+
+.player-frame[data-chat-style="float"] #overlayMessages .system-group-toggle {
+  border-color: rgba(215, 229, 232, 0.46);
+  background: rgba(24, 34, 38, 0.28);
+  color: rgba(235, 247, 247, 0.92);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.player-frame[data-chat-style="float"] #overlayMessages .system-group-toggle:hover,
+.player-frame[data-chat-style="float"] #overlayMessages .system-group-toggle:focus-visible,
+.player-frame[data-chat-style="float"] #overlayMessages .system-group-toggle.system-group-transitioning {
+  border-color: var(--accent-2);
+  background: rgba(47, 184, 164, 0.16);
+  color: var(--text);
 }

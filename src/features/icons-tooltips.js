@@ -1,6 +1,6 @@
 import { dom } from "../core/dom.js";
 import { state } from "../core/state.js";
-import { setConnection } from "./session-ui.js";
+import { setConnection } from "./session-ui.js?v=20260827-entry-scroll-fix-01";
 import { createForeignDocumentIcon } from "./foreign-lucide-icon.js";
 import {
   isTouchPointer,
@@ -210,6 +210,7 @@ export function wireTooltipEvents() {
   });
 
   document.addEventListener("input", (event) => {
+    if (event.target === dom.playerSeekInput && state.ui.seekDragActive) return;
     if (event.target.matches?.("input, textarea, [contenteditable='true']")) hideTooltip();
   });
 
@@ -277,6 +278,7 @@ function isPresenceTooltipContext(context) {
 }
 
 function scheduleTooltip(context) {
+  if (state.ui.seekDragActive) return;
   if (state.ui.tooltipTarget === context.anchor && !dom.tooltipLayer.hidden) return;
   if (tooltipShowContext?.anchor === context.anchor) return;
 
@@ -292,6 +294,7 @@ function scheduleTooltip(context) {
     tooltipShowTimer = null;
     tooltipShowContext = null;
     if (!pendingContext?.anchor?.isConnected) return;
+    if (state.ui.seekDragActive) return;
     showTooltip(pendingContext);
   }, showDelay);
 }
@@ -303,6 +306,7 @@ function cancelScheduledTooltip() {
 }
 
 function showTooltip(context) {
+  if (state.ui.seekDragActive) return;
   const text = context?.source?.dataset?.tooltip;
   if (!text) return;
   cancelScheduledTooltip();
@@ -350,7 +354,8 @@ function positionTooltip(anchor) {
   dom.tooltipLayer.dataset.placement = top > rect.bottom ? "bottom" : "top";
 }
 
-export function hideTooltip() {
+export function hideTooltip(force = false) {
+  if (state.ui.seekDragActive && !force) return;
   cancelScheduledTooltip();
   clearTouchTooltipPress();
   state.ui.tooltipTarget = null;

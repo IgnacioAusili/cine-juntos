@@ -15,28 +15,31 @@ import {
   generateRoomCode,
   normalizeRoomCode,
 } from "../core/utils.js";
-import { createTransport, createLocalTransport } from "../services/transport.js";
+import { createTransport, createLocalTransport } from "../services/transport.js?v=20260825-chat-history-fast-05";
 import {
   renderMembers,
   renderPresence,
   updateDisplayName,
-} from "./presence.js?v=20260824-name-commit-reveal-02";
+} from "./presence.js?v=20260826-bottom-name-input-05";
 import { setConnection } from "./icons-tooltips.js";
 import {
-  focusMainWorkspace,
+  getUserScrollIntentVersion,
   setHostBadge,
   setSyncStatus,
   showLobby,
   showSession,
-} from "./session-ui.js";
-import { handleRemoteState } from "./player/index.js";
+  watchRoomEntryVideoFocus,
+} from "./session-ui.js?v=20260827-entry-scroll-fix-01";
+import { handleRemoteState } from "./player/index.js?v=20260827-sync-control-cooldown-01";
 import {
   renderMessage,
+  beginSystemMessageHydration,
+  finishSystemMessageHydration,
   setInsideChatVisible,
   resetInsideUnread,
   resetPageUnread,
   renderReplyPreview,
-} from "./chat/index.js?v=20260823-system-message-drum-09";
+} from "./chat/index.js?v=20260826-system-line-spacing-01";
 
 const ACTIVE_TAB_KEY = "cine-juntos-active-tab";
 const ACTIVE_TAB_TTL_MS = 30000;
@@ -253,6 +256,7 @@ export async function joinRoom(rawRoomCode, sourceButton = "join") {
     return;
   }
   rememberLastRoom(roomCode);
+  const userScrollIntentAtEntry = getUserScrollIntentVersion();
 
   const activeTabs = readActiveTabs();
   const isCurrentTabAlreadyActive = activeTabs.some((record) => record.tabId === getTabId());
@@ -284,8 +288,15 @@ export async function joinRoom(rawRoomCode, sourceButton = "join") {
 
   logEvent("room", `Entrando a sala ${roomCode}.`);
 
+  let roomEntryVideoFocus = null;
   try {
+    beginSystemMessageHydration();
     const previousTransport = state.session.transport;
+    dom.messages.innerHTML = "";
+    dom.overlayMessages.innerHTML = "";
+    state.chat.lastMessageIds = new Set();
+    resetPageUnread();
+    state.chat.replyTarget = null;
     const nextTransport = await createTransport(roomCode);
 
     // Resetear el estado de sesión ANTES de conectar para que el
@@ -301,10 +312,16 @@ export async function joinRoom(rawRoomCode, sourceButton = "join") {
       onStatus: setSyncStatus,
     };
 
+    // Mostrar la sala mientras termina la sincronización de presencia. El
+    // historial ya tiene sus listeners registrados y no debe quedar oculto
+    // detrás de la transacción de members.
+    dom.roomBadge.textContent = roomCode;
+    showSession();
+    roomEntryVideoFocus = watchRoomEntryVideoFocus(userScrollIntentAtEntry);
     await nextTransport.connect(connectionHandlers);
     const activeTransport = nextTransport;
 
-    await previousTransport?.close?.().catch(() => {});
+    await Promise.resolve(previousTransport?.close?.()).catch(() => {});
     state.session.transport = activeTransport;
     writeActiveTabRecord(roomCode);
 
@@ -314,11 +331,6 @@ export async function joinRoom(rawRoomCode, sourceButton = "join") {
     syncJoinRoomButtonState();
     dom.roomBadge.textContent = roomCode;
     setInviteCopyFeedback(false);
-    dom.messages.innerHTML = "";
-    dom.overlayMessages.innerHTML = "";
-    state.chat.lastMessageIds = new Set();
-    resetPageUnread();
-    state.chat.replyTarget = null;
     renderPresence();
     state.player.lastRemoteState = null;
     state.player.lastStateSentAt = 0;
@@ -351,13 +363,16 @@ export async function joinRoom(rawRoomCode, sourceButton = "join") {
 
     showSession();
     setHostBadge(state.session.hostRoomCode === roomCode);
-    setInsideChatVisible(false);
+    setInsideChatVisible(false, { source: "room-entry", skipScrollLock: true });
     resetInsideUnread();
     renderReplyPreview();
-    focusMainWorkspace();
+    roomEntryVideoFocus.activate();
     setSyncStatus("Sala activa.");
     logEvent("room", `Sala ${roomCode} activa.`);
   } catch (error) {
+    roomEntryVideoFocus?.cancel();
+    finishSystemMessageHydration();
+    showLobby();
     console.error(error);
     if (error?.code === "ROOM_FULL") {
       setSyncStatus(`La sala ${roomCode} ya alcanzó el máximo de ${MAX_ROOM_PARTICIPANTS} participantes.`);
@@ -398,6 +413,7 @@ export async function copyInvite() {
 }
 
 export async function leaveRoom() {
+  finishSystemMessageHydration();
   const activeTransport = state.session.transport;
   const activeRoom = state.session.activeRoom;
 
@@ -432,7 +448,7 @@ export async function leaveRoom() {
   dom.overlayMessages.innerHTML = "";
   renderPresence();
   setHostBadge(false);
-  setInsideChatVisible(false);
+  setInsideChatVisible(false, { source: "leave-room", skipScrollLock: true });
   resetInsideUnread();
   renderReplyPreview();
   clearUrlRoom();
@@ -451,7 +467,7 @@ function setInviteCopyFeedback(active) {
     if (dom.copyInviteButton) {
       dom.copyInviteButton.dataset.copied = "false";
     }
-  }, 2400);
+  }, 1600);
 }
 
 function updateUrlRoom(roomCode) {

@@ -336,15 +336,84 @@ video::-webkit-media-controls-fullscreen-button {
 }
 
 .player-frame[data-control-style="line"] .player-seek-input {
+  position: relative;
+  z-index: 2;
   height: 14px;
-  background-size: 100% 3px;
-  background-position: center;
-  background-repeat: no-repeat;
-  transition: background-size 280ms ease-in-out;
+  width: calc(100% + 14px);
+  margin-left: -7px;
+  background: transparent;
 }
 
-.player-frame[data-control-style="line"]:not(.player-no-content) .player-seek-input:hover {
-  background-size: 100% 5px;
+.playback-gesture-indicator {
+  position: absolute;
+  z-index: 6;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  width: 76px;
+  height: 76px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  background: rgba(8, 11, 13, 0.48);
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.28);
+  color: rgba(255, 255, 255, 0.94);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0.72);
+  transition: opacity 160ms ease, transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.playback-gesture-indicator.is-visible {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.playback-gesture-icon {
+  display: none;
+  width: 34px;
+  height: 34px;
+  fill: currentColor;
+  stroke-width: 1.8;
+}
+
+.playback-gesture-indicator[data-action="play"] .playback-gesture-icon-play,
+.playback-gesture-indicator[data-action="pause"] .playback-gesture-icon-pause {
+  display: block;
+}
+
+.player-frame[data-control-style="line"] .player-progress-group::before {
+  position: absolute;
+  /* El input de 14px queda un pixel por encima del centro del contenedor de
+     16px; alineamos la barra con el centro real del thumb. */
+  top: calc(50% - 1px);
+  right: 0;
+  left: 0;
+  z-index: 0;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--amber) 0,
+    var(--accent) var(--player-progress, 0%),
+    rgba(255, 255, 255, 0.22) var(--player-progress, 0%),
+    rgba(255, 255, 255, 0.22) 100%
+  );
+  content: "";
+  pointer-events: none;
+  transform: translateY(-50%) scaleY(1);
+  transform-origin: center;
+  transition: transform 180ms ease-out;
+}
+
+.player-frame[data-control-style="line"] .player-progress-group:has(.player-seek-input:not(:disabled)):hover::before,
+.player-frame[data-control-style="line"] .player-progress-group:has(.player-seek-input:not(:disabled)):focus-within::before {
+  transform: translateY(-50%) scaleY(1.67);
+}
+
+.player-frame[data-control-style="line"] .player-progress-group:has(.player-seek-input:disabled)::before {
+  transform: translateY(-50%) scaleY(1);
+  transition: none;
 }
 
 .player-frame[data-control-style="line"] .player-volume-group {
@@ -378,6 +447,14 @@ video::-webkit-media-controls-fullscreen-button {
   stroke-width: 2.45;
 }
 
+/* El contador de cooldown es absoluto y no aporta ancho al botón. Reservar
+   el mismo espacio que ocupa el ícono evita que el número se desplace. */
+.player-frame[data-control-style="line"] .player-controls-bar .primary-video-control[data-play-button-cooldown="true"] {
+  width: 22px;
+  min-width: 22px;
+  flex: 0 0 22px;
+}
+
 .player-frame[data-control-style="line"] .player-controls-bar .video-control-button:not(:disabled):hover,
 .player-frame[data-control-style="line"] .player-controls-bar .video-control-button:not(:disabled):focus-visible,
 .player-frame[data-control-style="line"] .player-controls-bar .video-control-button.active:not(:disabled) {
@@ -409,6 +486,19 @@ video::-webkit-media-controls-fullscreen-button {
 .player-frame[data-control-style="line"] .player-controls-bar .player-select:focus-within {
   border: 0;
   background: transparent;
+}
+
+.player-frame[data-control-style="line"] .player-controls-bar .player-select:not([data-disabled="true"]):hover,
+.player-frame[data-control-style="line"] .player-controls-bar .player-select:not([data-disabled="true"]):focus-within {
+  color: var(--accent-soft, #d8fff9);
+  transform: translateY(-1px);
+}
+
+.player-frame[data-control-style="line"] .player-controls-bar .player-select:not([data-disabled="true"]):hover::after,
+.player-frame[data-control-style="line"] .player-controls-bar .player-select:not([data-disabled="true"]):focus-within::after {
+  color: var(--accent-soft, #d8fff9);
+  border-right-color: var(--accent-soft, #d8fff9);
+  border-bottom-color: var(--accent-soft, #d8fff9);
 }
 
 .player-frame[data-control-style="line"] .player-controls-bar .player-select::after {
@@ -536,7 +626,26 @@ video::-webkit-media-controls-fullscreen-button {
 
 .player-seek-input:disabled {
   cursor: not-allowed;
-  opacity: 0.45;
+  opacity: 1;
+  filter: none;
+}
+
+.player-seek-input:disabled::-webkit-slider-thumb {
+  opacity: 1;
+  border-color: #7a7b7c;
+  border-color: color-mix(in srgb, #ffffff 45%, #0b0d0f);
+  background: #744f31;
+  background: color-mix(in srgb, var(--amber) 45%, #0b0d0f);
+  box-shadow: 0 0 0 1px #0b0d0f;
+}
+
+.player-seek-input:disabled::-moz-range-thumb {
+  opacity: 1;
+  border-color: #7a7b7c;
+  border-color: color-mix(in srgb, #ffffff 45%, #0b0d0f);
+  background: #744f31;
+  background: color-mix(in srgb, var(--amber) 45%, #0b0d0f);
+  box-shadow: 0 0 0 1px #0b0d0f;
 }
 
 .video-control-button {
@@ -585,7 +694,6 @@ video::-webkit-media-controls-fullscreen-button {
   line-height: 1;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
   filter: grayscale(0.7);
-  transform: translateY(1px);
 }
 
 .video-control-button:not(.primary-video-control) {

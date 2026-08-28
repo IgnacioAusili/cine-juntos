@@ -1,14 +1,22 @@
 import { dom } from "../../core/dom.js";
 import { state } from "../../core/state.js";
+import { hideTooltip } from "../icons-tooltips.js";
 import { truncateText } from "./chat-content-parser.js?v=20260810-chat-fixes-02";
 import { getParticipantAccent } from "./chat-participant-color.js";
-import { expandSystemMessageGroupForItem } from "./system-message-groups.js?v=20260823-system-message-drum-09";
+import { expandSystemMessageGroupForItem } from "./system-message-groups.js?v=20260826-overlay-system-layout-01";
 
 const pendingReplyPreviewHides = new WeakMap();
 const pendingReplyPreviewShow = new WeakMap();
 const pendingReplyPreviewAnimations = new WeakMap();
 const pendingOverlayHighlights = new WeakMap();
 const pendingOverlayHighlightTimers = new WeakMap();
+
+function setReplyPreviewClosing(container, isClosing) {
+  const form = container.closest(".message-form");
+  if (!form || form.classList.contains("reply-preview-closing") === isClosing) return;
+  form.classList.toggle("reply-preview-closing", isClosing);
+  window.dispatchEvent(new Event("chat-reply-preview-layout"));
+}
 
 /**
  * Establece el mensaje al que se está respondiendo y actualiza la vista previa.
@@ -32,6 +40,9 @@ export function setReplyTarget(message, focusInput = dom.messageInput) {
     preserveHeight: hadReplyTarget && !isSameReplyTarget,
   });
   focusInput?.focus({ preventScroll: true });
+  // El foco es necesario para empezar a escribir, pero no debe abrir el
+  // tooltip del title del textarea al seleccionar una respuesta.
+  hideTooltip();
 }
 
 function getReplyLabel(message) {
@@ -53,8 +64,9 @@ export function clearReplyTarget() {
 }
 
 function hideReplyPreviewContainer(container) {
-  container.classList.remove("reply-preview--visible");
   container.hidden = true;
+  setReplyPreviewClosing(container, false);
+  container.classList.remove("reply-preview--visible");
   container.innerHTML = "";
   container.style.removeProperty("height");
   container.style.removeProperty("transition");
@@ -106,6 +118,7 @@ export function renderReplyPreview({ animate = true, preserveHeight = false } = 
     }
   };
   const showReplyPreview = (container, replyContent) => {
+    setReplyPreviewClosing(container, false);
     container.innerHTML = "";
     container.append(replyContent);
     container.style.height = "0px";
@@ -119,7 +132,7 @@ export function renderReplyPreview({ animate = true, preserveHeight = false } = 
           { height: `${targetHeight}px`, opacity: 1 },
         ],
         {
-          duration: 320,
+          duration: 180,
           easing: "cubic-bezier(0.22, 1, 0.36, 1)",
           fill: "forwards",
         },
@@ -173,6 +186,7 @@ export function renderReplyPreview({ animate = true, preserveHeight = false } = 
       };
 
       if (container.hidden && !container.classList.contains("reply-preview--visible")) {
+        setReplyPreviewClosing(container, false);
         container.innerHTML = "";
         container.style.removeProperty("--reply-participant-accent");
         return;
@@ -184,6 +198,9 @@ export function renderReplyPreview({ animate = true, preserveHeight = false } = 
         return;
       }
 
+      // El formulario libera su reserva al mismo tiempo que empieza a
+      // contraerse el preview; no esperamos a ocultarlo por completo.
+      setReplyPreviewClosing(container, true);
       container.style.setProperty("transition", "none");
       const startHeight = container.getBoundingClientRect().height;
       const currentStyles = getComputedStyle(container);
@@ -206,7 +223,7 @@ export function renderReplyPreview({ animate = true, preserveHeight = false } = 
           },
         ],
         {
-          duration: 240,
+          duration: 180,
           easing: "cubic-bezier(0.22, 1, 0.36, 1)",
           fill: "forwards",
         },
@@ -233,7 +250,7 @@ export function renderReplyPreview({ animate = true, preserveHeight = false } = 
         if (pendingReplyPreviewAnimations.get(container) !== animation) return;
         pendingReplyPreviewAnimations.delete(container);
       };
-      hideTimer = window.setTimeout(finishClose, 260);
+      hideTimer = window.setTimeout(finishClose, 200);
       pendingReplyPreviewHides.set(container, hideTimer);
       return;
     }
@@ -270,7 +287,7 @@ export function renderReplyPreview({ animate = true, preserveHeight = false } = 
           { height: "0px", opacity: 0 },
         ],
         {
-          duration: 240,
+          duration: 180,
           easing: "cubic-bezier(0.22, 1, 0.36, 1)",
           fill: "forwards",
         },

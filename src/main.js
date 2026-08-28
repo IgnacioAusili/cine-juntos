@@ -22,36 +22,30 @@ import {
 import {
   renderPresence,
   wireIdentityEvents,
-} from "./features/presence.js?v=20260824-name-commit-reveal-02";
+} from "./features/presence.js?v=20260826-bottom-name-input-05";
 import {
   showLobby,
   initializeAboutDialog,
-} from "./features/session-ui.js";
+} from "./features/session-ui.js?v=20260827-entry-scroll-fix-01";
 import {
   buildEmojiPicker,
   getPersistedInsideChatStyle,
   setInsideChatStyle,
   setInsideChatVisible,
   setChatDock,
+  restoreExternalChatCollapsed,
   syncChatAutoExpandControls,
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js?v=20260823-system-message-drum-09";
+} from "./features/chat/index.js?v=20260826-system-line-spacing-01";
 import {
   initializePlayer,
   wirePlayerEvents,
-} from "./features/player/index.js?v=20260824-volume-unmute-02";
-import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260823-lobby-name-01";
-import {
-  showSlowLoadDialog,
-} from "./features/session-ui.js";
-import {
-  EXAMPLE_VIDEO_URL,
-} from "./core/utils.js";
+} from "./features/player/index.js?v=20260827-sync-control-cooldown-01";
+import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260827-entry-video-focus-02";
 
 const requestedRoom = normalizeRoomCode(new URLSearchParams(window.location.search).get("room") || "");
-const isSlowLoadDialogTest = new URLSearchParams(window.location.search).get("slowLoadDialogTest") === "1";
 
 document.body.classList.remove("app-ready");
 applyInitialDefaults();
@@ -67,7 +61,11 @@ buildEmojiPicker();
 initializePlayer();
 setInsideChatStyle(getPersistedInsideChatStyle());
 setInsideChatVisible(false);
-setChatDock(localStorage.getItem("cine-juntos-chat-dock") || "right");
+setChatDock(localStorage.getItem("cine-juntos-chat-dock") || "right", {
+  skipTransition: true,
+  preserveScroll: true,
+});
+restoreExternalChatCollapsed();
 syncChatAutoExpandControls();
 updateCollapseButton();
 updateCharCounter(dom.messageInput, false);
@@ -103,19 +101,6 @@ if (requestedRoom) {
     "load",
     () => {
       void joinRoom(requestedRoom);
-    },
-    { once: true },
-  );
-}
-
-if (isSlowLoadDialogTest) {
-  window.addEventListener(
-    "load",
-    () => {
-      dom.videoUrlInput.value = EXAMPLE_VIDEO_URL;
-      void showSlowLoadDialog(
-        "Escenario de prueba: el video parece estar tardando en cargar. ¿Quieres intentar recargarlo solo para ti?",
-      );
     },
     { once: true },
   );

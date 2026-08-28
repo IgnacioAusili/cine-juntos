@@ -10,6 +10,7 @@ import {
   syncMirroredChatMessages,
   setMiniSystemGroupVisibility,
   animateMiniSystemGroupTransition,
+  normalizeMiniSystemGroupState,
   syncMiniChatAutoExpand,
   wireMiniMessageReplies,
   toggleMiniEmojiPicker,
@@ -23,16 +24,26 @@ import { wireTouchHover } from "../../core/touch-interactions.js";
 const VIDEO_EVENTS = ["play", "pause", "timeupdate", "seeked", "ratechange", "volumechange"];
 const PROXY_CONTROL_SELECTOR = "button, input, select, textarea";
 
-export function movePlayerInterface(surface) {
+export function movePlayerInterface(surface, options = {}) {
+  const {
+    includeChat = true,
+    includeChatToggle = true,
+  } = options;
   const videoAnchor = document.createComment("mini-player-video-origin");
+  const gestureAnchor = document.createComment("mini-player-gesture-origin");
   dom.videoPlayer.parentNode?.insertBefore(videoAnchor, dom.videoPlayer);
+  dom.playbackGestureIndicator?.parentNode?.insertBefore(
+    gestureAnchor,
+    dom.playbackGestureIndicator,
+  );
   surface.append(dom.videoPlayer);
+  if (dom.playbackGestureIndicator) surface.append(dom.playbackGestureIndicator);
 
   const mirrors = [
-    dom.playerActions,
+    includeChatToggle ? dom.playerActions : null,
     dom.playerBottomActions,
     dom.resumeVideoPopup,
-    dom.playerChat,
+    includeChat ? dom.playerChat : null,
   ].filter(Boolean).map((source) => createInteractiveMirror(source, surface.ownerDocument));
   mirrors.forEach(({ element }) => surface.append(element));
   // Los espejos se sincronizan una primera vez antes de insertarse. Repetir
@@ -67,7 +78,9 @@ export function movePlayerInterface(surface) {
       mirrors.forEach(({ restore }) => restore());
       playerChatMirror?.removeEventListener("click", handleMiniAutoExpandClick);
       removeShortcuts();
+      gestureAnchor.parentNode?.insertBefore(dom.playbackGestureIndicator, gestureAnchor);
       videoAnchor.parentNode?.insertBefore(dom.videoPlayer, videoAnchor);
+      gestureAnchor.remove();
       videoAnchor.remove();
     },
   };
@@ -92,6 +105,7 @@ function createInteractiveMirror(source, targetDocument) {
     sync();
   });
   let isSyncing = false;
+  let initialMiniSystemStateNormalized = false;
 
   // El overlay del mini reproductor es una superficie independiente. Se
   // clona al abrirse, pero no vuelve a copiar cambios del reproductor normal.
@@ -216,6 +230,16 @@ function createInteractiveMirror(source, targetDocument) {
     const draft = getMirrorChatDraft(source, element);
     element.className = source.className;
     element.innerHTML = source.innerHTML;
+    element.hidden = source.hidden;
+    if (source.hasAttribute("aria-hidden")) {
+      element.setAttribute("aria-hidden", source.getAttribute("aria-hidden"));
+    } else {
+      element.removeAttribute("aria-hidden");
+    }
+    if (source === dom.playerChat && !initialMiniSystemStateNormalized) {
+      normalizeMiniSystemGroupState(element);
+      initialMiniSystemStateNormalized = true;
+    }
     markProxyControls(element, keepIds);
     copyControlState(source, element);
     if (source === dom.playerBottomActions) copyDynamicButtonPresentation(source, element);
@@ -245,6 +269,7 @@ function createInteractiveMirror(source, targetDocument) {
   function syncState() {
     copyControlState(source, element);
     copyPlayerTimeLabels(source, element);
+    copySeekProgressPresentation(source, element);
     if (source === dom.playerBottomActions) copyDynamicButtonPresentation(source, element);
   }
 }
@@ -293,6 +318,16 @@ function copyPlayerTimeLabels(source, element) {
   });
 }
 
+function copySeekProgressPresentation(source, element) {
+  const sourceGroup = source.querySelector(".player-progress-group");
+  const mirrorGroup = element.querySelector(".player-progress-group");
+  if (!sourceGroup || !mirrorGroup) return;
+  mirrorGroup.style.setProperty(
+    "--player-progress",
+    sourceGroup.style.getPropertyValue("--player-progress") || "0%",
+  );
+}
+
 function copyDynamicButtonPresentation(source, element) {
   ["playerPlayButton", "playerMuteButton", "playerMiniPlayerButton"].forEach((id) => {
     const sourceButton = source.querySelector(`#${id}`);
@@ -302,6 +337,11 @@ function copyDynamicButtonPresentation(source, element) {
     mirrorButton.innerHTML = sourceButton.innerHTML;
     mirrorButton.setAttribute("aria-label", sourceButton.getAttribute("aria-label") || "");
     mirrorButton.dataset.tooltip = sourceButton.dataset.tooltip || "";
+    if (sourceButton.hasAttribute("data-play-button-cooldown")) {
+      mirrorButton.setAttribute("data-play-button-cooldown", "true");
+    } else {
+      mirrorButton.removeAttribute("data-play-button-cooldown");
+    }
   });
 
 }

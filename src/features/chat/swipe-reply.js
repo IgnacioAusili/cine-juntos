@@ -113,8 +113,15 @@ export function createSwipeReply(
     bubble.classList.add("swipe-confirmed");
     window.clearTimeout(confirmPulseTimer);
     confirmPulseTimer = window.setTimeout(() => bubble.classList.remove("swipe-confirmed"), 180);
+    // El gesto ya fue confirmado al soltar; el preview puede empezar a cargar
+    // de inmediato mientras la burbuja vuelve visualmente a su posición.
     onReply?.();
-    animateTo(0, { onComplete: () => { resetVisuals(); finalize(); } });
+    animateTo(0, {
+      onComplete: () => {
+        resetVisuals();
+        finalize();
+      },
+    });
   }
   function beginSwipe(event) {
     cancelAnimation();

@@ -81,6 +81,12 @@ export const playerState = {
   playButtonPressTimes: [],
   playButtonCooldownUntil: 0,
   playButtonCooldownTimeoutId: null,
+  seekControlPressTimes: [],
+  seekControlCooldownUntil: 0,
+  seekControlCooldownTimeoutId: null,
+  rateControlPressTimes: [],
+  rateControlCooldownUntil: 0,
+  rateControlCooldownTimeoutId: null,
   lastManualSeekAt: 0,
   remoteSeekPending: false,
   remoteSeekTimeoutId: null,
@@ -124,6 +130,8 @@ export const chatState = {
   messageMenuOpenedAt: 0,
   longPressTimer: null,
   longPressStart: null,
+  systemGroupAnimationSuppressed: false,
+  systemGroupAnimationMaxTimer: null,
   mainScrollUnread: 0,
   overlayScrollUnread: 0,
   nameChangeCount: getInitialNameChangeCount(),
@@ -133,6 +141,7 @@ export const uiState = {
   activeEmojiInput: null,
   tooltipTarget: null,
   tooltipPressTimer: null,
+  seekDragActive: false,
 };
 
 export const state = {

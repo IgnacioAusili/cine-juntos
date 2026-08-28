@@ -270,7 +270,10 @@ function bindGroupHeader(header, items = getGroupItems(header)) {
     event.stopPropagation();
     const state = getGroupState(header) || { expanded: header.getAttribute("aria-expanded") === "true" };
     if (groupTransitions.has(header)) return;
-    applyGroupState(header, !state.expanded, { animate: true, preserveSelectorHighlight: true });
+    applyGroupState(header, !state.expanded, {
+      animate: true,
+      preserveSelectorHighlight: event.detail > 0 && header.matches(":hover"),
+    });
   };
 
   items.forEach((item) => {
@@ -476,7 +479,6 @@ function captureScrollState(items) {
 
   return {
     container,
-    initialScrollTop: container.scrollTop,
     lastBottom: lastRect.bottom,
   };
 }
@@ -598,16 +600,21 @@ function animateGroupTransition(items, header, visualState, expanded) {
 function createGroupScrollAnimation(scrollState, items, duration) {
   if (!scrollState?.container) return null;
 
-  const { container, initialScrollTop, lastBottom } = scrollState;
+  const { container, lastBottom } = scrollState;
   const lastRect = items.at(-1)?.getBoundingClientRect();
   if (!lastRect) return null;
 
+  // Ocultar filas puede hacer que el navegador ajuste scrollTop por su cuenta
+  // antes de este punto. Animar desde el valor capturado antes del reflow
+  // produciría un salto hacia abajo; el valor actual es la posición visual
+  // real desde la que debe continuar la transición.
+  const startScrollTop = container.scrollTop;
   const maxScrollTop = Math.max(0, container.scrollHeight - container.clientHeight);
   const targetScrollTop = Math.min(
     maxScrollTop,
-    Math.max(0, initialScrollTop + lastRect.bottom - lastBottom),
+    Math.max(0, startScrollTop + lastRect.bottom - lastBottom),
   );
-  if (Math.abs(targetScrollTop - initialScrollTop) < 0.5) return null;
+  if (Math.abs(targetScrollTop - startScrollTop) < 0.5) return null;
 
   let frameId = 0;
   let cancelled = false;
@@ -621,7 +628,7 @@ function createGroupScrollAnimation(scrollState, items, duration) {
     if (cancelled) return;
     const progress = Math.min(1, (now - startedAt) / duration);
     const eased = 1 - Math.pow(1 - progress, 3);
-    container.scrollTop = initialScrollTop + (targetScrollTop - initialScrollTop) * eased;
+    container.scrollTop = startScrollTop + (targetScrollTop - startScrollTop) * eased;
     if (progress < 1) {
       frameId = window.requestAnimationFrame(tick);
     } else {

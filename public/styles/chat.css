@@ -6,7 +6,7 @@
 @import url("./chat/messages-wrap.css?v=20260811-chat-scrollbar-hover-01");
 @import url("./chat/scroll-bottom.css?v=20260824-scroll-bottom-final-01");
 @import url("./chat/reply-preview.css?v=20260824-reply-preview-translucent-01");
-@import url("./chat/message-reply.css");
+@import url("./chat/message-reply.css?v=20260826-reply-bubble-05");
 @import url("./chat/message-highlight.css?v=20260812-image-highlight-01");
 @import url("./chat/swipe-reply.css?v=20260824-reply-direction-01");
 @import url("./chat/system-message-groups.css?v=20260824-reply-direction-01");

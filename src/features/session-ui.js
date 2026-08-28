@@ -2,6 +2,119 @@ import { dom } from "../core/dom.js";
 import { state, logEvent } from "../core/state.js";
 import { refreshLayoutMetrics } from "./layout-metrics.js";
 
+const ROOM_ENTRY_VIDEO_FOCUS_TIMEOUT_MS = 8000;
+let userScrollIntentVersion = 0;
+let pendingRoomEntryVideoFocusCleanup = null;
+let roomEntryFocusScrollActive = false;
+
+function markUserScrollIntent() {
+  userScrollIntentVersion += 1;
+  if (!roomEntryFocusScrollActive) return;
+  roomEntryFocusScrollActive = false;
+  window.scrollTo({ top: window.scrollY, behavior: "auto" });
+}
+
+function isEditableScrollTarget(target) {
+  return target instanceof HTMLElement && (
+    target.matches("input, textarea, select, [contenteditable='true']")
+    || Boolean(target.closest("input, textarea, select, [contenteditable='true']"))
+  );
+}
+
+window.addEventListener("wheel", markUserScrollIntent, { capture: true, passive: true });
+window.addEventListener("touchmove", markUserScrollIntent, { capture: true, passive: true });
+window.addEventListener("pointerdown", markUserScrollIntent, { capture: true, passive: true });
+window.addEventListener("keydown", (event) => {
+  if (
+    !isEditableScrollTarget(event.target)
+    && ["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End", " ", "Spacebar"].includes(event.key)
+  ) {
+    markUserScrollIntent();
+  }
+}, { capture: true, passive: true });
+
+export function getUserScrollIntentVersion() {
+  return userScrollIntentVersion;
+}
+
+function getPageScrollTop() {
+  return Math.max(
+    window.scrollY || 0,
+    document.scrollingElement?.scrollTop || 0,
+  );
+}
+
+function hasLoadedVideo() {
+  const video = dom.videoPlayer;
+  if (!video || !(video.currentSrc || video.getAttribute("src"))) return false;
+  return state.player.hasPlayableVideo && video.readyState >= HTMLMediaElement.HAVE_METADATA;
+}
+
+function focusMainWorkspace() {
+  const workspaceTop = dom.workspace?.offsetTop ?? 0;
+  roomEntryFocusScrollActive = true;
+  window.scrollTo({ top: workspaceTop, behavior: "smooth" });
+}
+
+export function watchRoomEntryVideoFocus(userScrollIntentAtEntry = userScrollIntentVersion) {
+  pendingRoomEntryVideoFocusCleanup?.();
+
+  const video = dom.videoPlayer;
+  if (!video) return { activate() {}, cancel() {} };
+
+  let isActive = false;
+  let settled = false;
+  let timeoutId = 0;
+  const videoEvents = ["loadedmetadata", "loadeddata", "canplay", "playing"];
+
+  const cleanup = () => {
+    if (settled) return;
+    settled = true;
+    videoEvents.forEach((eventName) => video.removeEventListener(eventName, tryFocus));
+    window.clearTimeout(timeoutId);
+    roomEntryFocusScrollActive = false;
+    if (pendingRoomEntryVideoFocusCleanup === cleanup) {
+      pendingRoomEntryVideoFocusCleanup = null;
+    }
+  };
+
+  const tryFocus = () => {
+    if (settled || !isActive) return;
+    if (
+      dom.sessionView?.hidden
+      || userScrollIntentVersion !== userScrollIntentAtEntry
+      || getPageScrollTop() > 2
+    ) {
+      cleanup();
+      return;
+    }
+    if (!hasLoadedVideo()) return;
+
+    cleanup();
+    window.requestAnimationFrame(() => {
+      if (
+        dom.sessionView?.hidden
+        || userScrollIntentVersion !== userScrollIntentAtEntry
+        || getPageScrollTop() > 2
+        || !hasLoadedVideo()
+      ) return;
+      focusMainWorkspace();
+    });
+  };
+
+  videoEvents.forEach((eventName) => video.addEventListener(eventName, tryFocus));
+  timeoutId = window.setTimeout(cleanup, ROOM_ENTRY_VIDEO_FOCUS_TIMEOUT_MS);
+  pendingRoomEntryVideoFocusCleanup = cleanup;
+
+  return {
+    activate() {
+      isActive = true;
+      tryFocus();
+    },
+    cancel: cleanup,
+  };
+}
+
 export function showLobby() {
   dom.lobbyScreen.hidden = false;
   dom.sessionView.hidden = true;
@@ -20,13 +133,6 @@ export function showSession() {
 export function setHostBadge(visible) {
   if (!dom.hostBadge) return;
   dom.hostBadge.hidden = !visible;
-}
-
-export function focusMainWorkspace() {
-  window.requestAnimationFrame(() => {
-    const workspaceTop = dom.workspace?.offsetTop ?? 0;
-    window.scrollTo({ top: workspaceTop, behavior: "auto" });
-  });
 }
 
 export function focusFullscreenWorkspace() {

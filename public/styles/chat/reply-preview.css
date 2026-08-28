@@ -32,6 +32,32 @@
   display: none !important;
 }
 
+/* En escritorio el preview flota sobre el compositor. Si participa del flujo
+   flex, el alto del formulario cambia durante la animación y el área de
+   mensajes recalcula su reserva; eso hace que el contenido de las burbujas
+   parezca saltar, especialmente en los mensajes alineados a la izquierda. */
+@media (min-width: 769px) {
+  .message-form:has(> .reply-preview:not([hidden])):not(.reply-preview-closing) {
+    min-height: 86px;
+    justify-content: flex-end;
+  }
+
+  .overlay-message-form:has(> .reply-preview:not([hidden])):not(.reply-preview-closing) {
+    min-height: 94px;
+  }
+
+  .message-form > .reply-preview {
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    bottom: var(--reply-preview-offset, 44px);
+    width: auto;
+    max-width: none;
+    align-self: auto;
+    z-index: 2;
+  }
+}
+
 /* El preview del chat externo deja ver sutilmente el panel que queda debajo. */
 #replyPreview.reply-preview {
   background: rgba(18, 24, 27, 0.72);

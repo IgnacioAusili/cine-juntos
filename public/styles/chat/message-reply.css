@@ -9,7 +9,7 @@
   margin-bottom: 5px;
   border: 0;
   border-left: 2px solid rgba(255, 255, 255, 0.28);
-  border-radius: 0 4px 4px 0;
+  border-radius: 5px 5px 0 5px;
   background: rgba(255, 255, 255, 0.04);
   color: inherit;
   font-family: inherit;
@@ -26,16 +26,15 @@
   border-left-color: var(--accent-2);
 }
 
-/* Para mensajes propios, la barra del reply va a la derecha */
+/* La marca del reply permanece a la izquierda también en mensajes propios. */
 .message.mine .message-reply {
-  border-left: 0;
-  border-right: 2px solid rgba(255, 255, 255, 0.28);
-  border-radius: 4px 0 0 4px;
-  text-align: right;
+  border-left: 2px solid rgba(255, 255, 255, 0.28);
+  border-radius: 5px 5px 0 5px;
+  text-align: left;
 }
 
 .message.mine .message-reply:hover {
-  border-right-color: var(--accent-2);
+  border-left-color: var(--accent-2);
 }
 
 .message-reply-name {

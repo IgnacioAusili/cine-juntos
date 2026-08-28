@@ -1,7 +1,22 @@
-import { clearReplyTarget, setReplyTarget } from "../chat/chat-reply.js?v=20260814-reply-preview-sharp-01";
+import { clearReplyTarget, setReplyTarget } from "../chat/chat-reply.js?v=20260826-reply-sync-close-03";
 import { wireMessageInteractions } from "../chat/chat-message-interactions.js";
 import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js";
 import { state } from "../../core/state.js";
+
+const mirroredSystemGroupStates = new WeakMap();
+const miniSystemGroupAnimations = new WeakMap();
+
+export function normalizeMiniSystemGroupState(container) {
+  container?.querySelectorAll(".message.system").forEach((systemMessage) => {
+    const targets = [systemMessage, ...systemMessage.querySelectorAll("*")];
+    targets.forEach((target) => {
+      target.classList.remove("system-group-transitioning");
+      target.getAnimations?.().forEach((animation) => animation.cancel());
+      target.style.removeProperty("opacity");
+      target.style.removeProperty("transform");
+    });
+  });
+}
 
 export function isOverlayMessageInput(source, target) {
   return source.id === "playerChat" && target.id === "overlayMessageInput";
@@ -65,9 +80,13 @@ export function syncMirroredChatMessages(source, element) {
   const sourceMessages = source.querySelector(".overlay-messages");
   const mirrorMessages = element.querySelector(".overlay-messages");
   if (!sourceMessages || !mirrorMessages) return;
+  const isInitialSync = !mirroredSystemGroupStates.has(element);
   const previousStates = [...mirrorMessages.querySelectorAll(".system-group-toggle")]
     .map((toggle) => toggle.getAttribute("aria-expanded"));
+  const previousSourceStates = mirroredSystemGroupStates.get(element) || [];
+  const nextSourceStates = [];
   mirrorMessages.innerHTML = sourceMessages.innerHTML;
+  if (isInitialSync) normalizeMiniSystemGroupState(mirrorMessages);
   wireMirrorChatScrollbar(element);
   wireMiniMessageReplies(sourceMessages, mirrorMessages, element);
 
@@ -77,12 +96,17 @@ export function syncMirroredChatMessages(source, element) {
     const expanded = previous == null
       ? sourceExpanded
       : previous === "true";
+    nextSourceStates[index] = String(sourceExpanded);
     toggle.setAttribute("aria-expanded", String(expanded));
     setMiniSystemGroupVisibility(toggle, expanded);
-    if (previous && previous !== String(sourceExpanded)) {
+    if (
+      previousSourceStates[index] != null
+      && previousSourceStates[index] !== String(sourceExpanded)
+    ) {
       animateMiniSystemGroupTransition(toggle, expanded);
     }
   });
+  mirroredSystemGroupStates.set(element, nextSourceStates);
 }
 
 export function setMiniSystemGroupVisibility(toggle, expanded) {
@@ -118,6 +142,9 @@ export function animateMiniSystemGroupTransition(toggle, expanded) {
   const anchor = toggle.closest(".message.system");
   if (!anchor) return;
 
+  const previousTransition = miniSystemGroupAnimations.get(anchor);
+  previousTransition?.animations.forEach((animation) => animation.cancel());
+
   const items = [anchor];
   let item = anchor.previousElementSibling;
   while (item?.classList.contains("message") && item.classList.contains("system")) {
@@ -150,8 +177,12 @@ export function animateMiniSystemGroupTransition(toggle, expanded) {
     );
     if (animation) animations.push(animation);
   });
+  const transition = { animations };
+  miniSystemGroupAnimations.set(anchor, transition);
   Promise.all(animations.map((animation) => animation.finished.catch(() => undefined))).then(() => {
+    if (miniSystemGroupAnimations.get(anchor) !== transition) return;
     items.forEach((systemItem) => systemItem.classList.remove("system-group-transitioning"));
+    miniSystemGroupAnimations.delete(anchor);
   });
 }
 

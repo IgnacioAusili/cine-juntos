@@ -116,6 +116,10 @@ function wirePlayerOverlayControls() {
 
   const chatCollapseHoverZone = dom.collapseChatButton?.closest(".chat-collapse-hover-zone");
 
+  const isInlinePlayerDialogVisible = () => Boolean(
+    dom.resumeVideoPopup && !dom.resumeVideoPopup.hidden,
+  );
+
   const setOverlayVisible = (isVisible) => {
     dom.playerFrame.classList.toggle("player-overlay-visible", isVisible);
   };
@@ -132,6 +136,7 @@ function wirePlayerOverlayControls() {
     const safeDelay = delay > 0 ? delay : PLAYER_OVERLAY_IDLE_MS;
     hideTimer = window.setTimeout(() => {
       hideTimer = null;
+      if (isInlinePlayerDialogVisible()) return;
       if (state.ui.seekDragActive) {
         scheduleHide(safeDelay);
         return;
@@ -146,6 +151,7 @@ function wirePlayerOverlayControls() {
   };
 
   const revealOverlayFromChatHandle = () => {
+    if (isInlinePlayerDialogVisible()) return;
     clearHideTimer();
     dom.playerFrame.classList.remove("player-cursor-hidden");
     setOverlayVisible(true);
@@ -153,6 +159,7 @@ function wirePlayerOverlayControls() {
   };
 
   const revealOverlay = (event) => {
+    if (isInlinePlayerDialogVisible()) return;
     dom.playerFrame.classList.remove("player-cursor-hidden");
 
     if (event?.type === "focusin" && dom.playerFrame.dataset.suppressOverlayFocus === "1") {

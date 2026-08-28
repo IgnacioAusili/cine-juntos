@@ -24,7 +24,11 @@ import { wireTouchHover } from "../../core/touch-interactions.js";
 const VIDEO_EVENTS = ["play", "pause", "timeupdate", "seeked", "ratechange", "volumechange"];
 const PROXY_CONTROL_SELECTOR = "button, input, select, textarea";
 
-export function movePlayerInterface(surface) {
+export function movePlayerInterface(surface, options = {}) {
+  const {
+    includeChat = true,
+    includeChatToggle = true,
+  } = options;
   const videoAnchor = document.createComment("mini-player-video-origin");
   const gestureAnchor = document.createComment("mini-player-gesture-origin");
   dom.videoPlayer.parentNode?.insertBefore(videoAnchor, dom.videoPlayer);
@@ -36,10 +40,10 @@ export function movePlayerInterface(surface) {
   if (dom.playbackGestureIndicator) surface.append(dom.playbackGestureIndicator);
 
   const mirrors = [
-    dom.playerActions,
+    includeChatToggle ? dom.playerActions : null,
     dom.playerBottomActions,
     dom.resumeVideoPopup,
-    dom.playerChat,
+    includeChat ? dom.playerChat : null,
   ].filter(Boolean).map((source) => createInteractiveMirror(source, surface.ownerDocument));
   mirrors.forEach(({ element }) => surface.append(element));
   // Los espejos se sincronizan una primera vez antes de insertarse. Repetir
@@ -226,6 +230,12 @@ function createInteractiveMirror(source, targetDocument) {
     const draft = getMirrorChatDraft(source, element);
     element.className = source.className;
     element.innerHTML = source.innerHTML;
+    element.hidden = source.hidden;
+    if (source.hasAttribute("aria-hidden")) {
+      element.setAttribute("aria-hidden", source.getAttribute("aria-hidden"));
+    } else {
+      element.removeAttribute("aria-hidden");
+    }
     if (source === dom.playerChat && !initialMiniSystemStateNormalized) {
       normalizeMiniSystemGroupState(element);
       initialMiniSystemStateNormalized = true;
@@ -327,6 +337,11 @@ function copyDynamicButtonPresentation(source, element) {
     mirrorButton.innerHTML = sourceButton.innerHTML;
     mirrorButton.setAttribute("aria-label", sourceButton.getAttribute("aria-label") || "");
     mirrorButton.dataset.tooltip = sourceButton.dataset.tooltip || "";
+    if (sourceButton.hasAttribute("data-play-button-cooldown")) {
+      mirrorButton.setAttribute("data-play-button-cooldown", "true");
+    } else {
+      mirrorButton.removeAttribute("data-play-button-cooldown");
+    }
   });
 
 }

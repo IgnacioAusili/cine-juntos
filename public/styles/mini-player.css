@@ -61,8 +61,7 @@
   pointer-events: none;
 }
 
-.mini-player-surface.mini-player-scroll:hover .player-bottom-actions,
-.mini-player-surface.mini-player-scroll:focus-within .player-bottom-actions {
+.mini-player-surface.mini-player-scroll:hover .player-bottom-actions {
   opacity: 1;
   transform: translateY(0);
   pointer-events: auto;

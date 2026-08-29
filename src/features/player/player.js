@@ -27,7 +27,7 @@ import {
   clearPlaybackRecoveryTracking,
   pauseRoomForPlaybackIssue,
   publishState,
-} from "./player-sync-logic.js?v=20260827-entry-scroll-fix-01";
+} from "./player-sync-logic.js?v=20260829-video-source-sync-01";
 
 import {
   showErrorDialog,
@@ -1790,15 +1790,15 @@ async function getCurrentVideoFingerprint(sourceKey) {
 
 function getCurrentVideoSourceKey() {
   return getVideoSourceKey(
-    dom.videoPlayer.currentSrc ||
     dom.videoPlayer.getAttribute("src") ||
+    dom.videoPlayer.src ||
     dom.videoUrlInput.value.trim(),
   );
 }
 
 function getLoadedVideoSourceKey() {
   return getVideoSourceKey(
-    dom.videoPlayer.currentSrc || dom.videoPlayer.getAttribute("src") || "",
+    dom.videoPlayer.getAttribute("src") || dom.videoPlayer.src || "",
   );
 }
 

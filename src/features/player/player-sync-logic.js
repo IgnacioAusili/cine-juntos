@@ -17,7 +17,7 @@ import { setSyncStatus } from "../session-ui.js?v=20260827-entry-scroll-fix-01";
 import { sendVideoEventMessage, renderMessage } from "../chat/index.js?v=20260826-system-line-spacing-01";
 // Import circular intencional y seguro: estas funciones se invocan en runtime,
 // no durante la carga del modulo, y player.js a su vez importa publishState.
-import { clearVideoSource, setVideoSource, waitForVideoMetadata } from "./player.js?v=20260828-mobile-volume-drag-07";
+import { clearVideoSource, setVideoSource, waitForVideoMetadata } from "./player.js?v=20260829-video-source-sync-01";
 
 const PLAYBACK_ISSUE_SYNC_COOLDOWN_MS = 2200;
 // Los eventos waiting/stalled también se disparan por pequeños saltos de red.
@@ -408,7 +408,10 @@ export function publishState(action, overrides = {}) {
     action,
     from: state.session.clientId,
     name: getDisplayName(),
-    src: dom.videoPlayer.currentSrc || dom.videoPlayer.src || dom.videoUrlInput.value.trim(),
+    // currentSrc puede conservar brevemente la fuente anterior durante un
+    // cambio de video. La fuente declarada es la intención actual del usuario
+    // y evita publicar nuevamente el video de prueba.
+    src: getSyncVideoSource(),
     time: payloadTime,
     paused: dom.videoPlayer.paused,
     rate: Number(dom.videoPlayer.playbackRate || 1),
@@ -464,9 +467,13 @@ function getPlaybackIssueAnnouncementKey(reason) {
 }
 
 function getCurrentVideoSourceKey() {
+  return getSyncVideoSource();
+}
+
+function getSyncVideoSource() {
   return String(
-    dom.videoPlayer.currentSrc ||
     dom.videoPlayer.getAttribute("src") ||
+    dom.videoPlayer.src ||
     dom.videoUrlInput.value.trim() ||
     "",
   );

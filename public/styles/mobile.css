@@ -225,6 +225,37 @@
     transform: translate(14px, -2px);
   }
 
+  .lobby-about-button.is-touch-hover,
+  .lobby-about-button.is-touch-hover:hover {
+    transform: translate(14px, -2px);
+  }
+
+  /* Cargar usa el estado nativo de presión: evita que JS y :hover compitan
+     durante una pulsación táctil prolongada. */
+  .session-toolbar-body .button.primary:hover:not(:active):not(:disabled) {
+    background: #d4762a;
+    border-color: rgba(240, 140, 58, 0.3);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+    transform: none;
+  }
+
+  .session-toolbar-body .button.primary {
+    /* Al liberar fuera del botón no debe interpolar un frame oscuro entre
+       :active y el estado normal. */
+    transition: none;
+  }
+
+  .session-toolbar-body .button.primary:active,
+  .session-toolbar-body .button.primary:active:hover {
+    background: linear-gradient(180deg, #ffb070, var(--amber));
+    border-color: rgba(240, 140, 58, 0.32);
+    box-shadow:
+      0 0 0 1px rgba(240, 140, 58, 0.32),
+      0 12px 30px rgba(240, 140, 58, 0.42),
+      inset 0 1px 0 rgba(255, 255, 255, 0.42);
+    transform: none;
+  }
+
   /* La toolbar es absoluta sobre el video y en una pantalla angosta crece a
      dos filas. Reservamos su alto real para que no tape las acciones de sala. */
   body:not(.is-lobby) .session-view .workspace {
@@ -293,15 +324,75 @@
     border-bottom-right-radius: 0;
   }
 
+  /* Reservar el alto del header evita que se comprima mientras el panel
+     lateral pasa de ancho cero a su ancho final durante la expansión. */
+  body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-tools {
+    height: 40px;
+    min-height: 40px;
+    max-height: 40px;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+
+  /* La flecha de contraer debe acompañar al header desde el primer frame de
+     la expansión; sólo se oculta la flecha del estado lateral contraído. */
+  body:not(.is-lobby) .session-view.chat-layout-transitioning:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone.is-transitioning .chat-collapse-handle,
+  body:not(.is-lobby) .session-view.chat-layout-transitioning:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone.is-transitioning .chat-collapse-icon-anchor {
+    visibility: visible;
+    opacity: 1 !important;
+    transition: none;
+  }
+
+  body:not(.is-lobby) .player-volume-group {
+    gap: 6px;
+    transition: none;
+  }
+
+  body:not(.is-lobby) .player-volume-slider-wrap {
+    display: flex;
+    width: 60px;
+    height: 28px;
+    align-items: center;
+    max-width: 60px;
+    transition: none;
+  }
+
+  body:not(.is-lobby) .player-volume-input {
+    width: 60px;
+    height: 28px;
+    background-size: 100% 3px;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  body:not(.is-lobby) .player-volume-input::-webkit-slider-runnable-track {
+    height: 3px;
+  }
+
+  body:not(.is-lobby) .player-volume-input::-moz-range-track {
+    height: 3px;
+  }
+
+  body:not(.is-lobby) .player-volume-input::-webkit-slider-thumb {
+    width: 8px;
+    height: 8px;
+    margin-top: -2.5px;
+  }
+
+  body:not(.is-lobby) .player-volume-input::-moz-range-thumb {
+    width: 8px;
+    height: 8px;
+  }
+
   /* En el dock lateral la flecha de contraer se convierte en una pestaña
      semicircular integrada al borde izquierdo del panel. */
   body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone {
-    top: 14px;
+    top: 0;
     right: auto;
     bottom: auto;
     left: 0;
     width: 22px;
-    height: 32px;
+    height: 40px;
     transform: none;
   }
 
@@ -324,7 +415,7 @@
 
   body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-handle {
     width: 22px;
-    height: 32px;
+    height: 40px;
   }
 
   body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-icon-anchor {
@@ -339,7 +430,7 @@
   /* La pestaña entra en la cabecera; el indicador de usuarios se corre para
      dejarle espacio sin alterar el centrado del nombre. */
   body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-tools > .presence-pill {
-    transform: translateX(20px);
+    transform: translateX(26px);
     position: relative;
     z-index: 13;
   }
@@ -496,13 +587,18 @@
     transform: translate(-50%, calc(-50% - 5px));
   }
 
+  /* La flecha de expandir debe quedar separada de la barra de controles del
+     reproductor; elevar su anclaje evita que ambas superficies se monten. */
+  body:not(.is-lobby) .session-view.chat-collapsed[data-chat-dock="bottom"] .chat-collapse-hover-zone {
+    top: calc(var(--chat-bottom-dock-collapsed-handle-top, calc(100dvh - 16px)) - 22px);
+  }
+
   /* Compactar el estado del reproductor libera espacio visual en pantallas
      angostas sin perder la lectura de "Sin contenido". */
   body:not(.is-lobby) .player-status-badge {
     height: auto;
     min-height: 24px;
     max-width: min(200px, calc(100% - 72px));
-    gap: 6px;
     padding: 0;
     font-size: 0.66rem;
   }

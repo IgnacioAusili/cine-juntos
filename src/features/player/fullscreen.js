@@ -10,7 +10,7 @@ import {
   hideTooltip,
   hydrateIcons,
 } from "../icons-tooltips.js";
-import { focusFullscreenWorkspace, setSyncStatus } from "../session-ui.js?v=20260827-entry-scroll-fix-01";
+import { setSyncStatus } from "../session-ui.js?v=20260827-entry-scroll-fix-01";
 import {
   logEvent,
   state,
@@ -19,6 +19,10 @@ import { isMiniPlayerActive } from "./mini-player.js?v=20260815-seek-tooltip-01"
 import { syncInsideChatPanelOffset } from "../chat/chat-layout.js?v=20260827-entry-scroll-fix-01";
 import { withShortcutHint } from "../../core/utils.js";
 import { wireTouchHover } from "../../core/touch-interactions.js";
+import {
+  captureFullscreenScroll,
+  restoreFullscreenScroll,
+} from "./fullscreen-scroll.js";
 
 const PLAYER_OVERLAY_IDLE_MS = 3000;
 const PLAYER_OVERLAY_LEAVE_HIDE_DELAY_MS = 800;
@@ -83,6 +87,7 @@ export function wireFullscreenEvents() {
 
   let scrollSnapTimer = null;
   const handleFullscreenScroll = () => {
+    if (fullscreenScrollPreservationUntil > performance.now()) return;
     const isBottomDock = dom.sessionView?.dataset.chatDock === "bottom";
     if (!isBottomDock) {
       if (!isBottomDock && scrollSnapTimer) {
@@ -95,6 +100,7 @@ export function wireFullscreenEvents() {
     if (scrollSnapTimer) window.clearTimeout(scrollSnapTimer);
     scrollSnapTimer = window.setTimeout(() => {
       scrollSnapTimer = null;
+      if (fullscreenScrollPreservationUntil > performance.now()) return;
       if (
         dom.sessionView?.dataset.chatDock !== "bottom"
         || dom.sessionView?.classList.contains("chat-scroll-snap-locked")
@@ -110,6 +116,7 @@ export function wireFullscreenEvents() {
 }
 
 let hideTimer = null;
+let fullscreenScrollPreservationUntil = 0;
 
 function wirePlayerOverlayControls() {
   if (!dom.playerFrame || !dom.pageFullscreenButton) return;
@@ -141,6 +148,22 @@ function wirePlayerOverlayControls() {
         scheduleHide(safeDelay);
         return;
       }
+      if (dom.playerFrame.classList.contains("player-seek-control-dragging")) {
+        scheduleHide(safeDelay);
+        return;
+      }
+      if (dom.playerFrame.classList.contains("player-volume-gesture-active")) {
+        scheduleHide(safeDelay);
+        return;
+      }
+      if (
+        dom.playerVolumeGroup?.classList.contains("is-dragging")
+        || volumeControlPointerActive
+        || dom.playerVolumeInput?.matches(":active")
+      ) {
+        scheduleHide(safeDelay);
+        return;
+      }
       hideTooltip();
       if (document.activeElement === dom.playerRateSelect) {
         dom.playerRateSelect.blur();
@@ -149,6 +172,42 @@ function wirePlayerOverlayControls() {
       dom.playerFrame.classList.add("player-cursor-hidden");
     }, safeDelay);
   };
+
+  // El input range puede perder la captura al salir de la barra durante el
+  // arrastre. Mantener este estado en captura evita que ese detalle del
+  // navegador permita ocultar los controles antes de soltar el volumen.
+  let volumeControlPointerActive = false;
+  let suppressChatToggleOverlayUntil = 0;
+  const isVolumeControlTarget = (target) =>
+    target instanceof Element && Boolean(target.closest(".player-volume-slider-wrap"));
+  const keepVolumeControlsDuringDrag = (event) => {
+    if (!isVolumeControlTarget(event.target)) return;
+    volumeControlPointerActive = true;
+    clearHideTimer();
+    dom.playerFrame.classList.remove("player-cursor-hidden");
+    dom.playerFrame.classList.add("player-volume-control-dragging");
+    setOverlayVisible(true);
+  };
+  const finishVolumeControlDrag = (event) => {
+    if (!volumeControlPointerActive) return;
+    volumeControlPointerActive = false;
+    dom.playerVolumeGroup?.classList.remove("is-dragging");
+    dom.playerFrame.classList.remove("player-volume-control-dragging");
+    scheduleHide();
+  };
+  document.addEventListener("pointerdown", keepVolumeControlsDuringDrag, true);
+  document.addEventListener("pointerup", finishVolumeControlDrag, true);
+  document.addEventListener("pointercancel", finishVolumeControlDrag, true);
+  document.addEventListener("pointerdown", (event) => {
+    if (
+      event.pointerType !== "mouse"
+      && event.target instanceof Element
+      && event.target.closest("#playerChatToggleButton")
+    ) {
+      suppressChatToggleOverlayUntil = Date.now() + 600;
+      clearHideTimer();
+    }
+  }, true);
 
   const revealOverlayFromChatHandle = () => {
     if (isInlinePlayerDialogVisible()) return;
@@ -160,7 +219,6 @@ function wirePlayerOverlayControls() {
 
   const revealOverlay = (event) => {
     if (isInlinePlayerDialogVisible()) return;
-    dom.playerFrame.classList.remove("player-cursor-hidden");
 
     if (event?.type === "focusin" && dom.playerFrame.dataset.suppressOverlayFocus === "1") {
       delete dom.playerFrame.dataset.suppressOverlayFocus;
@@ -168,13 +226,22 @@ function wirePlayerOverlayControls() {
     }
 
     const target = event?.target instanceof Element ? event.target : null;
+    const isChatToggle = target?.closest("#playerChatToggleButton");
+    // El botón del chat es una acción independiente del reproductor: no debe
+    // cambiar la visibilidad de la barra ni provocar el estado suprimido.
+    if (isChatToggle || Date.now() < suppressChatToggleOverlayUntil) return;
+    dom.playerFrame.classList.remove("player-cursor-hidden");
     if (
       target === dom.videoPlayer
       && dom.playerFrame.classList.contains("player-overlay-suppressed")
     ) return;
     // Un clic simple sobre el video alterna play/pausa, pero no debe revelar
     // la barra: el indicador central es la única respuesta visual inmediata.
-    if (event?.type === "mousedown" && target === dom.videoPlayer) {
+    if (
+      event?.type === "mousedown"
+      && target === dom.videoPlayer
+      && !window.matchMedia("(max-width: 680px)").matches
+    ) {
       if (!dom.videoPlayer.paused && !dom.videoPlayer.ended) return;
       clearHideTimer();
       setOverlayVisible(false);
@@ -182,20 +249,6 @@ function wirePlayerOverlayControls() {
       window.setTimeout(() => {
         dom.playerFrame.classList.remove("player-overlay-suppressed");
       }, 700);
-      return;
-    }
-    const isChatToggle = target?.closest("#playerChatToggleButton");
-    if (event?.type === "focusin" && dom.playerFrame.dataset.suppressOverlayFocus === "chat-toggle") {
-      return;
-    }
-    if (event?.type === "mousedown" && isChatToggle
-      && !dom.playerFrame.classList.contains("player-overlay-visible")) {
-      dom.playerFrame.dataset.suppressOverlayFocus = "chat-toggle";
-      window.setTimeout(() => {
-        if (dom.playerFrame?.dataset.suppressOverlayFocus === "chat-toggle") {
-          delete dom.playerFrame.dataset.suppressOverlayFocus;
-        }
-      }, 500);
       return;
     }
     const isChatInteraction = target?.closest(".player-chat")
@@ -219,8 +272,13 @@ function wirePlayerOverlayControls() {
 
   // En táctil, la barra del reproductor se comporta como un hover: aparece
   // solo mientras se mantiene la pulsación y se limpia al soltar.
+  let ignoredChatToggleTouch = false;
   wireTouchHover(dom.playerFrame, {
     onActivate: (event) => {
+      if (event?.target?.closest?.("#playerChatToggleButton")) {
+        ignoredChatToggleTouch = true;
+        return;
+      }
       // El chat vive dentro del playerFrame, pero sus pulsaciones no son una
       // interacción con el video. En móvil no revelar la barra al mantener
       // presionado un mensaje, el input o cualquier control del overlay.
@@ -238,7 +296,23 @@ function wirePlayerOverlayControls() {
       dom.playerFrame.classList.remove("player-overlay-suppressed");
       setOverlayVisible(true);
     },
-    onDeactivate: () => scheduleHide(0),
+    onDeactivate: () => {
+      if (ignoredChatToggleTouch) {
+        ignoredChatToggleTouch = false;
+        return;
+      }
+      // El movimiento normal del dedo sobre un range termina el hover táctil
+      // del player. No ocultar los controles mientras el arrastre siga activo.
+      if (
+        state.ui.seekDragActive
+        || dom.playerFrame.classList.contains("player-seek-control-dragging")
+        || volumeControlPointerActive
+        || dom.playerVolumeGroup?.classList.contains("is-dragging")
+      ) {
+        return;
+      }
+      scheduleHide(0);
+    },
   });
 
   // Al mover o clickear el mouse en el player frame, se muestra el overlay
@@ -409,11 +483,13 @@ export function snapFullscreenScroll() {
 export async function togglePageFullscreen() {
   try {
     if (document.fullscreenElement) {
+      captureFullscreenScroll(false);
       await document.exitFullscreen();
       return;
     }
 
     if (fallbackFullscreenActive) {
+      captureFullscreenScroll(false);
       fallbackFullscreenActive = false;
       handleFullscreenChange();
       return;
@@ -423,11 +499,13 @@ export async function togglePageFullscreen() {
       || dom.sessionView
       || document.documentElement;
     if (USE_NATIVE_FULLSCREEN && document.fullscreenEnabled && typeof fullscreenTarget?.requestFullscreen === "function") {
+      captureFullscreenScroll(true);
       // La app completa conserva la cabecera de la sala dentro del fullscreen,
       // pero el contenedor se ajusta por inset en lugar de heredar el alto
       // previo del <html> durante la transicion de Chrome.
       await fullscreenTarget.requestFullscreen({ navigationUI: "hide" });
     } else {
+      captureFullscreenScroll(true);
       fallbackFullscreenActive = true;
       handleFullscreenChange();
     }
@@ -442,6 +520,8 @@ export async function togglePageFullscreen() {
 
 export function handleFullscreenChange() {
   const isFullscreen = Boolean(document.fullscreenElement) || fallbackFullscreenActive;
+  captureFullscreenScroll(isFullscreen);
+  fullscreenScrollPreservationUntil = performance.now() + FULLSCREEN_SNAP_DELAY_MS + 80;
   const icon = dom.pageFullscreenButton.querySelector("[data-lucide]");
   const tooltip = withShortcutHint(
     isFullscreen ? "Salir de pantalla completa" : "Pantalla completa",
@@ -459,7 +539,7 @@ export function handleFullscreenChange() {
     icon.innerHTML = "";
   }
   hydrateIcons();
-  if (isFullscreen) focusFullscreenWorkspace();
+  restoreFullscreenScroll(isFullscreen);
   syncInsideChatPanelOffset();
   logEvent("ui", isFullscreen ? "Pantalla completa de pagina activada." : "Pantalla completa desactivada.");
 }

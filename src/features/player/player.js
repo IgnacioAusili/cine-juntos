@@ -27,7 +27,7 @@ import {
   clearPlaybackRecoveryTracking,
   pauseRoomForPlaybackIssue,
   publishState,
-} from "./player-sync-logic.js?v=20260827-entry-scroll-fix-01";
+} from "./player-sync-logic.js?v=20260830-mobile-seek-fix-01";
 
 import {
   showErrorDialog,
@@ -37,6 +37,7 @@ import {
 } from "../session-ui.js?v=20260827-entry-scroll-fix-01";
 import { togglePageFullscreen } from "./fullscreen.js";
 import { syncMiniPlayerButton } from "./mini-player.js?v=20260815-seek-tooltip-01";
+import { wireVideoClickToggle } from "./video-click-toggle.js?v=20260830-mobile-video-tap-01";
 
 const SKIP_LOAD_REPLACE_DIALOG_KEY = "cine-juntos-skip-load-replace-dialog";
 const VIDEO_RESUME_STORAGE_KEY = "cine-juntos-video-resume-times";
@@ -76,8 +77,7 @@ let seekTooltipRect = null;
 let seekPointerId = null;
 let rateMenuCloseTimer = null;
 let lastAudibleVolume = 1;
-let videoClickTimer = null;
-let videoClickOverlayTimer = null;
+let volumeGestureConsumed = false;
 
 export function initializePlayer() {
   isDurationShowingRemaining = false;
@@ -85,6 +85,7 @@ export function initializePlayer() {
   pendingLoadCompletionAnimateSystemGroups = true;
   pendingVideoActivityAnnouncement = false;
   state.ui.seekDragActive = false;
+  dom.playerFrame?.classList.remove("player-seek-control-dragging");
   resetSyncControlCooldown("seek");
   resetSyncControlCooldown("rate");
   seekPointerId = null;
@@ -179,7 +180,18 @@ export function wirePlayerCoreEvents() {
 
   dom.playerVolumeInput?.addEventListener("pointerup", () => {
     // Quitar el foco despues de ajustar para que la barra se cierre al alejar el cursor
+    dom.playerVolumeGroup?.classList.remove("is-dragging");
+    dom.playerFrame?.classList.remove("player-volume-control-dragging");
     dom.playerVolumeInput.blur();
+  });
+
+  dom.playerVolumeInput?.addEventListener("pointerdown", () => {
+    dom.playerVolumeGroup?.classList.add("is-dragging");
+    dom.playerFrame?.classList.add("player-volume-control-dragging");
+  });
+  dom.playerVolumeInput?.addEventListener("pointercancel", () => {
+    dom.playerVolumeGroup?.classList.remove("is-dragging");
+    dom.playerFrame?.classList.remove("player-volume-control-dragging");
   });
 
   dom.playerVolumeGroup?.addEventListener("wheel", (e) => {
@@ -200,7 +212,15 @@ export function wirePlayerCoreEvents() {
     syncPlayerControls();
   });
 
-  wireVideoClickToggle();
+  wireVideoClickToggle({
+    togglePlayback: () => togglePlaybackFromControls("video"),
+    consumeVolumeGesture: () => {
+      if (!volumeGestureConsumed) return false;
+      volumeGestureConsumed = false;
+      return true;
+    },
+  });
+  wireFullscreenVolumeGesture();
 
   dom.videoPlayer.addEventListener("play", () => {
     rememberPlaybackPosition();
@@ -733,6 +753,74 @@ function adjustVolumeBy(delta) {
   syncPlayerControls();
 }
 
+function wireFullscreenVolumeGesture() {
+  let press = null;
+  let longPressTimer = null;
+
+  const clearPress = () => {
+    window.clearTimeout(longPressTimer);
+    longPressTimer = null;
+    dom.playerFrame?.classList.remove("player-volume-gesture-active");
+    if (press?.active && press.pointerId != null && dom.videoPlayer.hasPointerCapture?.(press.pointerId)) {
+      try { dom.videoPlayer.releasePointerCapture(press.pointerId); } catch { /* ya liberado */ }
+    }
+    press = null;
+  };
+
+  dom.videoPlayer.addEventListener("pointerdown", (event) => {
+    if (
+      !window.matchMedia("(max-width: 680px)").matches
+      || !(event.pointerType === "touch" || event.pointerType === "pen")
+      || !(document.fullscreenElement || document.body.classList.contains("fullscreen-mode"))
+      || dom.videoPlayer.paused
+      || dom.videoPlayer.ended
+    ) return;
+
+    clearPress();
+    press = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      lastY: event.clientY,
+      active: false,
+    };
+    longPressTimer = window.setTimeout(() => {
+      if (!press || press.pointerId !== event.pointerId || dom.videoPlayer.paused) return;
+      press.active = true;
+      dom.playerFrame?.classList.add("player-volume-gesture-active");
+      try { dom.videoPlayer.setPointerCapture(event.pointerId); } catch { /* no disponible */ }
+    }, 520);
+  });
+
+  document.addEventListener("pointermove", (event) => {
+    if (!press || event.pointerId !== press.pointerId) return;
+    if (!press.active) {
+      if (Math.hypot(event.clientX - press.startX, event.clientY - press.startY) > 10) clearPress();
+      return;
+    }
+
+    event.preventDefault();
+    const deltaY = press.lastY - event.clientY;
+    if (Math.abs(deltaY) >= 2) {
+      adjustVolumeBy(deltaY * 0.005);
+      const action = deltaY > 0 ? "volume-up" : "volume-down";
+      showPlaybackGestureIndicator(action, `${Math.round(dom.videoPlayer.volume * 100)}%`);
+      press.lastY = event.clientY;
+    }
+  }, { passive: false });
+
+  const endGesture = (event) => {
+    if (!press || event.pointerId !== press.pointerId) return;
+    if (press.active) {
+      event.preventDefault();
+      volumeGestureConsumed = true;
+    }
+    clearPress();
+  };
+  document.addEventListener("pointerup", endGesture, { passive: false });
+  document.addEventListener("pointercancel", endGesture, { passive: false });
+}
+
 function readPersistedVolume() {
   try {
     const storedVolume = Number(localStorage.getItem(PLAYER_VOLUME_STORAGE_KEY));
@@ -784,10 +872,16 @@ function commitSeekPosition() {
 function syncPlayerControls(forceSliderSync = false) {
   const duration = getFiniteDuration();
   const isEnded = dom.videoPlayer.ended;
-  const currentTime = isEnded && duration > 0 
+  const videoCurrentTime = isEnded && duration > 0
     ? duration 
     : Number.isFinite(dom.videoPlayer.currentTime) ? Math.max(0, dom.videoPlayer.currentTime) : 0;
   const hasMedia = hasLoadedMediaSource();
+  const seekInputTime = Number(dom.playerSeekInput?.value);
+  // En táctil el range puede no recibir foco. Mientras el dedo lo arrastra,
+  // su valor es la previsualización y no debe ser pisado por `timeupdate`.
+  const currentTime = state.ui.seekDragActive && hasMedia && duration > 0 && Number.isFinite(seekInputTime)
+    ? Math.max(0, Math.min(seekInputTime, duration || seekInputTime))
+    : videoCurrentTime;
   const isSeekingElementFocused = document.activeElement === dom.playerSeekInput;
   const remainingTime = Math.max(0, duration - currentTime);
   const showRemainingDuration = isDurationShowingRemaining && hasMedia && duration > 0;
@@ -828,7 +922,7 @@ function syncPlayerControls(forceSliderSync = false) {
   if (dom.playerSeekInput) {
     dom.playerSeekInput.max = String(duration || 0);
     dom.playerSeekInput.disabled = !hasMedia || duration <= 0;
-    if (forceSliderSync || !isSeekingElementFocused) {
+    if (!state.ui.seekDragActive && (forceSliderSync || !isSeekingElementFocused)) {
       // Si el video terminó, forzar el value al máximo exacto para que el thumb llegue hasta el final
       const seekValue = isEnded && duration > 0 ? duration : Math.min(currentTime, duration || 0);
       dom.playerSeekInput.value = String(seekValue);
@@ -836,6 +930,7 @@ function syncPlayerControls(forceSliderSync = false) {
     updateSeekVisuals(Number(dom.playerSeekInput.value || 0), duration, isEnded);
     if (dom.playerSeekInput.disabled) {
       state.ui.seekDragActive = false;
+      dom.playerFrame?.classList.remove("player-seek-control-dragging");
       seekPointerId = null;
       hideSeekTooltip();
     }
@@ -1089,41 +1184,11 @@ function updateSeekVisuals(currentTime, duration, forceEnd = false) {
   );
 }
 
-function wireVideoClickToggle() {
-  dom.videoPlayer.addEventListener("click", () => {
-    if (videoClickTimer) window.clearTimeout(videoClickTimer);
-    videoClickTimer = window.setTimeout(() => {
-      videoClickTimer = null;
-      if (dom.videoPlayer.paused || dom.videoPlayer.ended) {
-        suppressVideoClickOverlay();
-      }
-      togglePlaybackFromControls("video");
-    }, 220);
-  });
-
-  dom.videoPlayer.addEventListener("dblclick", () => {
-    if (!videoClickTimer) return;
-    window.clearTimeout(videoClickTimer);
-    videoClickTimer = null;
-  });
-}
-
-function suppressVideoClickOverlay() {
-  const surface = dom.videoPlayer.closest(".mini-player-surface") || dom.playerFrame;
-  if (!surface) return;
-  if (videoClickOverlayTimer) window.clearTimeout(videoClickOverlayTimer);
-  surface.classList.remove("player-overlay-visible");
-  surface.classList.add("player-overlay-suppressed");
-  videoClickOverlayTimer = window.setTimeout(() => {
-    surface.classList.remove("player-overlay-suppressed");
-    videoClickOverlayTimer = null;
-  }, 700);
-}
-
-function showPlaybackGestureIndicator(action) {
+function showPlaybackGestureIndicator(action, volumeLabel = "") {
   const indicator = dom.playbackGestureIndicator;
   if (!indicator) return;
   indicator.dataset.action = action;
+  indicator.dataset.volumeLabel = volumeLabel;
   indicator.classList.remove("is-visible");
   // Reiniciar la animacion incluso cuando se pulsa varias veces seguidas.
   void indicator.offsetWidth;
@@ -1136,10 +1201,15 @@ function showPlaybackGestureIndicator(action) {
 function wireSeekTooltipEvents() {
   if (!dom.playerSeekInput || !dom.tooltipLayer) return;
 
+  const setSeekDragActive = (active) => {
+    state.ui.seekDragActive = active;
+    dom.playerFrame?.classList.toggle("player-seek-control-dragging", active);
+  };
+
   const handlePointerMove = (event) => {
     if (seekPointerId !== null && event.pointerId !== seekPointerId) return;
     if (dom.playerSeekInput.disabled) {
-      state.ui.seekDragActive = false;
+      setSeekDragActive(false);
       seekPointerId = null;
       hideSeekTooltip();
       return;
@@ -1149,14 +1219,14 @@ function wireSeekTooltipEvents() {
 
   const handlePointerDown = (event) => {
     if (dom.playerSeekInput.disabled) {
-      state.ui.seekDragActive = false;
+      setSeekDragActive(false);
       hideSeekTooltip();
       return;
     }
     if (seekPointerId !== null && seekPointerId !== event.pointerId) return;
 
     hideTooltip(true);
-    state.ui.seekDragActive = true;
+    setSeekDragActive(true);
     seekPointerId = event.pointerId;
     try {
       dom.playerSeekInput.setPointerCapture?.(event.pointerId);
@@ -1169,7 +1239,7 @@ function wireSeekTooltipEvents() {
 
   const stopPointerTracking = (event) => {
     if (seekPointerId === null || event.pointerId !== seekPointerId) return;
-    state.ui.seekDragActive = false;
+    setSeekDragActive(false);
     seekPointerId = null;
     hideSeekTooltip();
   };
@@ -1186,7 +1256,9 @@ function wireSeekTooltipEvents() {
   dom.playerSeekInput.addEventListener("pointermove", handlePointerMove);
   dom.playerSeekInput.addEventListener("pointerdown", handlePointerDown);
   dom.playerSeekInput.addEventListener("pointerleave", handlePointerLeave);
-  dom.playerSeekInput.addEventListener("lostpointercapture", stopPointerTracking);
+  // Perder la captura no siempre significa que terminó el gesto: algunos
+  // navegadores móviles la liberan al sacar el dedo del track. Los listeners
+  // globales de pointerup/pointercancel siguen el arrastre hasta su final real.
   dom.playerSeekInput.addEventListener("blur", () => {
     if (seekPointerId === null) hideSeekTooltip();
   });
@@ -1623,15 +1695,15 @@ async function getCurrentVideoFingerprint(sourceKey) {
 
 function getCurrentVideoSourceKey() {
   return getVideoSourceKey(
-    dom.videoPlayer.currentSrc ||
     dom.videoPlayer.getAttribute("src") ||
+    dom.videoPlayer.src ||
     dom.videoUrlInput.value.trim(),
   );
 }
 
 function getLoadedVideoSourceKey() {
   return getVideoSourceKey(
-    dom.videoPlayer.currentSrc || dom.videoPlayer.getAttribute("src") || "",
+    dom.videoPlayer.getAttribute("src") || dom.videoPlayer.src || "",
   );
 }
 

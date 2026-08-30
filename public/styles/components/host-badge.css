@@ -44,8 +44,19 @@
   cursor: default;
 }
 
-.help-button:hover,
 .help-button:focus-visible {
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--text);
+}
+
+@media (hover: hover) {
+  .help-button:hover {
+    background: rgba(255, 255, 255, 0.07);
+    color: var(--text);
+  }
+}
+
+.help-button.is-touch-hover {
   background: rgba(255, 255, 255, 0.07);
   color: var(--text);
 }

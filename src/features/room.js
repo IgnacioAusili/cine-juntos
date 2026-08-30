@@ -30,7 +30,7 @@ import {
   showSession,
   watchRoomEntryVideoFocus,
 } from "./session-ui.js?v=20260827-entry-scroll-fix-01";
-import { handleRemoteState } from "./player/index.js?v=20260827-sync-control-cooldown-01";
+import { handleRemoteState } from "./player/index.js?v=20260828-mobile-volume-drag-07";
 import {
   renderMessage,
   beginSystemMessageHydration,
@@ -46,6 +46,7 @@ const ACTIVE_TAB_TTL_MS = 30000;
 const MAX_OPEN_TABS = 1;
 const ROOM_CREATE_ATTEMPTS_KEY = "cine-juntos-room-create-attempts";
 let inviteCopyFeedbackTimer = 0;
+let inviteCopyAnimationTimer = 0;
 
 function getTabId() {
   const stored = sessionStorage.getItem("cine-juntos-tab-id");
@@ -461,13 +462,23 @@ export async function leaveRoom() {
 function setInviteCopyFeedback(active) {
   if (!dom.copyInviteButton) return;
   window.clearTimeout(inviteCopyFeedbackTimer);
+  window.clearTimeout(inviteCopyAnimationTimer);
   dom.copyInviteButton.dataset.copied = active ? "true" : "false";
+  dom.copyInviteButton.classList.remove("is-copy-animating");
   if (!active) return;
+
+  // Reinicia la animación incluso si se copia otra vez antes de que termine
+  // el feedback anterior.
+  void dom.copyInviteButton.offsetWidth;
+  dom.copyInviteButton.classList.add("is-copy-animating");
+  inviteCopyAnimationTimer = window.setTimeout(() => {
+    dom.copyInviteButton?.classList.remove("is-copy-animating");
+  }, 800);
   inviteCopyFeedbackTimer = window.setTimeout(() => {
     if (dom.copyInviteButton) {
       dom.copyInviteButton.dataset.copied = "false";
     }
-  }, 1600);
+  }, 950);
 }
 
 function updateUrlRoom(roomCode) {

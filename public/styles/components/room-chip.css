@@ -18,6 +18,7 @@
   text-transform: uppercase;
   line-height: 1;
   white-space: nowrap;
+  text-shadow: 0 0 7px rgba(255, 255, 255, 0.16);
 }
 
 .room-chip-heading {
@@ -115,6 +116,47 @@
   outline: none;
 }
 
+@media (hover: none) {
+  .room-chip-code-button:hover:not(.is-touch-hover):not(:focus-visible),
+  .room-chip-code-button:focus-visible:not(.is-touch-hover) {
+    filter: none;
+    text-shadow: none;
+    transform: none;
+  }
+
+  .room-chip-code-button.is-touch-hover,
+  .room-chip-code-button.is-touch-hover:hover,
+  .room-chip-code-button.is-touch-hover:focus-visible {
+    filter: brightness(1.15) saturate(1.05);
+    text-shadow:
+      0 0 6px rgba(255, 255, 255, 0.22),
+      0 0 14px rgba(255, 188, 120, 0.24),
+      0 0 24px rgba(240, 140, 58, 0.16);
+    transform: none;
+  }
+
+  .room-chip-code-button.is-touch-hover .room-chip-copy-main {
+    transform: translateY(-2px);
+  }
+
+  .room-chip-back-button:hover:not(.is-touch-hover):not(:focus-visible),
+  .room-chip-back-button:focus-visible:not(.is-touch-hover) {
+    background: transparent;
+    color: var(--text-soft);
+    box-shadow: none;
+    transform: none;
+  }
+
+  .room-chip-back-button.is-touch-hover,
+  .room-chip-back-button.is-touch-hover:hover,
+  .room-chip-back-button.is-touch-hover:focus-visible {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    box-shadow: none;
+    transform: none;
+  }
+}
+
 .room-chip-code-text {
   display: inline-flex;
   align-items: center;
@@ -177,6 +219,25 @@
   gap: 6px;
   white-space: nowrap;
   transition: transform 160ms ease;
+}
+
+.room-chip-copy.is-copy-animating .room-chip-copy-main {
+  animation: roomChipCopyLift 760ms cubic-bezier(0.4, 0, 0.2, 1) both;
+  will-change: transform;
+}
+
+@keyframes roomChipCopyLift {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  34% {
+    transform: translate3d(0, -5px, 0);
+  }
+
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
 }
 
 .room-chip-copy svg {

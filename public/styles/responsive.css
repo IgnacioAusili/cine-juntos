@@ -325,7 +325,6 @@
     top: 9px;
     left: 20px;
     min-height: 28px;
-    gap: 8px;
     font-size: 0.82rem;
   }
 
@@ -336,7 +335,6 @@
   }
 
   .player-status-badge.video-status.empty {
-    color: rgba(255, 255, 255, 0.76);
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.78), 0 0 8px rgba(0, 0, 0, 0.3);
   }
 

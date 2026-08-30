@@ -531,6 +531,7 @@
   /* El chat inferior gana espacio útil: la cabecera se pliega al recorrer
      mensajes y vuelve a entrar cuando el gesto va hacia arriba. */
   body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-tools {
+    box-sizing: border-box;
     min-height: 42px;
     height: 42px;
     max-height: 42px;
@@ -541,7 +542,6 @@
       height 220ms ease,
       max-height 180ms ease,
       min-height 220ms ease,
-      transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
       opacity 160ms ease,
       padding 180ms ease;
     transform: translateY(0);
@@ -549,6 +549,8 @@
 
   body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-area {
     gap: 3px;
+    grid-template-rows: minmax(0, 42px) minmax(0, 1fr);
+    transition: grid-template-rows 220ms ease;
   }
 
   body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-tools > * {
@@ -573,12 +575,12 @@
     padding-bottom: 0;
     opacity: 0;
     pointer-events: none;
-    transform: translateY(-100%);
+    transform: translateY(0);
   }
 
   body:not(.is-lobby) .session-view.chat-header-collapsed[data-chat-dock="bottom"] .chat-area {
     gap: 3px;
-    grid-template-rows: 0 minmax(0, 1fr);
+    grid-template-rows: minmax(0, 0px) minmax(0, 1fr);
   }
 
   /* La flecha de contraer queda apenas por encima de la unión video/chat;

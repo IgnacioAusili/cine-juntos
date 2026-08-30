@@ -1,0 +1,44 @@
+/* El fullscreen movil debe resolver video y chat contra el viewport visual. */
+@media (max-width: 980px) {
+  body.fullscreen-mode .app-shell {
+    width: var(--app-viewport-width, 100vw) !important;
+    height: var(--app-viewport-height) !important;
+    max-height: var(--app-viewport-height) !important;
+  }
+
+  body.fullscreen-mode .session-view[data-chat-dock="right"] {
+    width: 100% !important;
+    margin-inline: 0 !important;
+  }
+
+  body.fullscreen-mode .session-view[data-chat-dock="right"] .workspace {
+    width: 100% !important;
+    height: var(--app-viewport-height) !important;
+    max-height: var(--app-viewport-height) !important;
+    min-height: 0 !important;
+    margin-top: 0 !important;
+  }
+
+  body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="right"] .workspace {
+    grid-template-columns: minmax(0, 1fr) 0 !important;
+    grid-template-rows: minmax(0, 1fr) 0 !important;
+    grid-template-areas: "video" "chat" !important;
+  }
+
+  body.fullscreen-mode .session-view:not(.chat-collapsed)[data-chat-dock="right"] .workspace {
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: 0 minmax(0, 1fr) !important;
+    grid-template-areas: "video" "chat" !important;
+  }
+
+  html.viewport-landscape body.fullscreen-mode .session-view[data-chat-dock="right"] .workspace {
+    grid-template-columns: minmax(0, 1fr) var(--chat-panel-width) !important;
+    grid-template-rows: minmax(0, 1fr) !important;
+    grid-template-areas: "video chat" !important;
+  }
+
+  html.viewport-landscape body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="right"] .workspace {
+    grid-template-columns: minmax(0, 1fr) 0 !important;
+    grid-template-areas: "video chat" !important;
+  }
+}

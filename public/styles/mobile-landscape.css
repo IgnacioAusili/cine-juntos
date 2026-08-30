@@ -1,0 +1,169 @@
+/* En landscape angosto el chat lateral conserva la composicion de escritorio.
+   El modo vertical sigue usando la navegacion apilada definida en mobile.css. */
+@media (max-width: 980px) {
+  body.fullscreen-mode {
+    width: var(--app-viewport-width, 100vw);
+    height: var(--app-viewport-height);
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  body.fullscreen-mode .app-shell {
+    position: fixed;
+    inset: var(--app-viewport-offset-top, 0px) auto auto var(--app-viewport-offset-left, 0px);
+    display: grid;
+    width: var(--app-viewport-width, 100vw);
+    height: var(--app-viewport-height);
+    min-width: 0;
+    min-height: 0;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    gap: 0;
+    overflow: hidden;
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  body.fullscreen-mode .topbar {
+    display: none;
+  }
+
+  body.fullscreen-mode .session-view {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    margin: 0;
+  }
+
+  body.fullscreen-mode .session-view[data-chat-dock="right"] .workspace {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    margin: 0;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) 0;
+    grid-template-areas:
+      "video"
+      "chat";
+  }
+
+  body.fullscreen-mode .session-view:not(.chat-collapsed)[data-chat-dock="right"] .workspace {
+    grid-template-rows: 0 minmax(0, 1fr);
+  }
+
+  body.fullscreen-mode .session-view[data-chat-dock="right"] .video-area,
+  body.fullscreen-mode .session-view[data-chat-dock="right"] .chat-area {
+    height: auto;
+    min-height: 0;
+  }
+
+  body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="right"] .video-area,
+  body.fullscreen-mode .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-area {
+    height: 100%;
+  }
+
+  body.fullscreen-mode .session-view[data-chat-dock="right"] .session-toolbar {
+    display: none;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] {
+    --chat-panel-width: clamp(250px, 40vw, 280px);
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .workspace {
+    display: grid;
+    width: 100%;
+    height: var(--app-viewport-height);
+    min-height: 0;
+    margin-top: var(--session-toolbar-height);
+    gap: 0;
+    grid-template-columns: minmax(0, 1fr) var(--chat-panel-width);
+    grid-template-rows: minmax(0, 1fr);
+    grid-template-areas: "video chat";
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view.chat-collapsed[data-chat-dock="right"] .workspace {
+    grid-template-columns: minmax(0, 1fr) 0;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-area {
+    flex: 0 0 var(--chat-panel-width);
+    width: var(--chat-panel-width);
+    height: 100%;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view.chat-collapsed[data-chat-dock="right"] .chat-area {
+    flex-basis: 0;
+    width: 0;
+  }
+
+  /* Fullscreen debe ser una superficie fija del viewport visible. El topbar y
+     la toolbar siguen disponibles fuera de fullscreen, pero no consumen alto
+     del video cuando la pantalla apaisada queda limitada por el teclado. */
+  html.viewport-landscape body.fullscreen-mode {
+    width: var(--app-viewport-width, 100vw);
+    height: var(--app-viewport-height);
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  html.viewport-landscape body.fullscreen-mode .app-shell {
+    position: fixed;
+    inset: var(--app-viewport-offset-top, 0px) auto auto var(--app-viewport-offset-left, 0px);
+    display: grid;
+    width: var(--app-viewport-width, 100vw);
+    height: var(--app-viewport-height);
+    min-width: 0;
+    min-height: 0;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    gap: 0;
+    overflow: hidden;
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  html.viewport-landscape body.fullscreen-mode .topbar {
+    display: none;
+  }
+
+  html.viewport-landscape body.fullscreen-mode .session-view[data-chat-dock="right"] {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    margin: 0;
+  }
+
+  html.viewport-landscape body.fullscreen-mode .session-view[data-chat-dock="right"] .workspace {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    margin: 0;
+    flex: 1 1 auto;
+    grid-template-columns: minmax(0, 1fr) var(--chat-panel-width);
+    grid-template-rows: minmax(0, 1fr);
+    grid-template-areas: "video chat";
+  }
+
+  html.viewport-landscape body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="right"] .workspace {
+    grid-template-columns: minmax(0, 1fr) 0;
+  }
+
+  html.viewport-landscape body.fullscreen-mode .session-view[data-chat-dock="right"] .video-area,
+  html.viewport-landscape body.fullscreen-mode .session-view[data-chat-dock="right"] .player-frame,
+  html.viewport-landscape body.fullscreen-mode .session-view[data-chat-dock="right"] .chat-area {
+    height: 100%;
+    min-height: 0;
+  }
+
+  html.viewport-landscape body.fullscreen-mode .session-view[data-chat-dock="right"] .session-toolbar {
+    display: none;
+  }
+
+}

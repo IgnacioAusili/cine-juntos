@@ -38,11 +38,13 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js?v=20260828-mobile-chat-expand-fix-01";
+} from "./features/chat/index.js?v=20260830-mobile-chat-header-fix-01";
 import {
   initializePlayer,
   wirePlayerEvents,
 } from "./features/player/index.js?v=20260830-mobile-video-tap-01";
+import { wireMobileFullscreenOrientation } from "./features/player/mobile-fullscreen-orientation.js";
+import { wireMobileKeyboardLayout } from "./features/chat/mobile-keyboard.js";
 import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260829-copy-animation-02";
 import { wireTouchHover } from "./core/touch-interactions.js?v=20260829-touch-hold-fix-01";
 
@@ -74,7 +76,9 @@ wireTouchHover(dom.aboutButton, {
 });
 wireIdentityEvents();
 wireChatEvents();
+wireMobileKeyboardLayout();
 wirePlayerEvents();
+wireMobileFullscreenOrientation();
 buildEmojiPicker();
 initializePlayer();
 setInsideChatStyle(getPersistedInsideChatStyle());

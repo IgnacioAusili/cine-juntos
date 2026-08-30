@@ -3,17 +3,37 @@ import { dom } from "../core/dom.js";
 let syncFrameId = 0;
 let toolbarObserver = null;
 
-function getViewportHeight() {
-  return Math.round(
-    window.visualViewport?.height ||
-      window.innerHeight ||
-      document.documentElement.clientHeight ||
-      0,
-  );
+function getViewportMetrics() {
+  const viewport = window.visualViewport;
+  return {
+    width: Math.round(
+      viewport?.width ||
+        window.innerWidth ||
+        document.documentElement.clientWidth ||
+        0,
+    ),
+    height: Math.round(
+      viewport?.height ||
+        window.innerHeight ||
+        document.documentElement.clientHeight ||
+        0,
+    ),
+    offsetLeft: Math.round(viewport?.offsetLeft || 0),
+    offsetTop: Math.round(viewport?.offsetTop || 0),
+  };
 }
 
-function syncViewportHeight() {
-  document.documentElement.style.setProperty("--app-viewport-height", `${getViewportHeight()}px`);
+function syncViewportMetrics() {
+  const metrics = getViewportMetrics();
+  document.documentElement.classList.toggle(
+    "viewport-landscape",
+    metrics.width > metrics.height,
+  );
+  const rootStyle = document.documentElement.style;
+  rootStyle.setProperty("--app-viewport-width", `${metrics.width}px`);
+  rootStyle.setProperty("--app-viewport-height", `${metrics.height}px`);
+  rootStyle.setProperty("--app-viewport-offset-left", `${metrics.offsetLeft}px`);
+  rootStyle.setProperty("--app-viewport-offset-top", `${metrics.offsetTop}px`);
 }
 
 function syncSessionToolbarHeight() {
@@ -22,7 +42,7 @@ function syncSessionToolbarHeight() {
 }
 
 function syncLayoutMetrics() {
-  syncViewportHeight();
+  syncViewportMetrics();
   syncSessionToolbarHeight();
 }
 
@@ -46,6 +66,11 @@ export function wireLayoutMetrics() {
   });
   window.visualViewport?.addEventListener(
     "resize",
+    scheduleLayoutMetricsSync,
+    { passive: true },
+  );
+  window.visualViewport?.addEventListener(
+    "scroll",
     scheduleLayoutMetricsSync,
     { passive: true },
   );

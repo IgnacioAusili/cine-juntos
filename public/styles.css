@@ -9,5 +9,8 @@
 @import url("./styles/states.css");
 @import url("./styles/responsive.css?v=20260826-bottom-name-input-08");
 @import url("./styles/mini-player.css?v=20260808-mini-player-13");
-@import url("./styles/mobile.css?v=20260829-load-active-fix-02");
+@import url("./styles/mobile.css?v=20260830-mobile-chat-header-fix-01");
+@import url("./styles/mobile-landscape.css?v=20260830-mobile-landscape-fullscreen-04");
+@import url("./styles/mobile-fullscreen-viewport.css?v=20260830-mobile-fullscreen-viewport-01");
+@import url("./styles/mobile-keyboard.css?v=20260830-mobile-keyboard-header-02");
 @import url("./styles/mini-player-adjustments.css?v=20260827-mini-player-dialog-01");

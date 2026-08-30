@@ -28,39 +28,124 @@ export async function createFirebaseTransport(roomCode, config) {
   const unsubscribers = [];
   let heartbeat = null;
   let serverTimeOffset = 0;
+  let lastMembers = {};
+  let roomDisconnectCleanupScheduled = false;
+  let roomDisconnectTask = Promise.resolve();
+  let closePromise = null;
+  let closed = false;
   const latestMessagesQuery = dbModule.query(messagesRef, dbModule.limitToLast(100));
+
+  const getActiveMembers = (members, now = Date.now() + serverTimeOffset) => {
+    const activeMembers = {};
+    Object.entries(members || {}).forEach(([memberId, member]) => {
+      if (Number.isFinite(member?.lastSeenAt) && now - member.lastSeenAt >= STALE_MEMBER_TIMEOUT_MS) return;
+      activeMembers[memberId] = member;
+    });
+    return activeMembers;
+  };
+
+  const configureRoomDisconnectCleanup = async (shouldSchedule) => {
+    if (roomDisconnectCleanupScheduled === shouldSchedule) return;
+
+    if (shouldSchedule) {
+      await dbModule.onDisconnect(roomRef).remove();
+    } else {
+      await dbModule.onDisconnect(roomRef).cancel();
+    }
+    roomDisconnectCleanupScheduled = shouldSchedule;
+  };
+
+  const queueRoomDisconnectCleanup = (members) => {
+    const shouldSchedule = Object.keys(members || {}).length === 1
+      && Boolean(members[state.session.clientId]);
+
+    roomDisconnectTask = roomDisconnectTask
+      .then(() => {
+        if (closed) return undefined;
+        return configureRoomDisconnectCleanup(shouldSchedule);
+      })
+      .catch(() => {});
+    return roomDisconnectTask;
+  };
+
+  const runRoomTransaction = async (update) => {
+    // Firebase puede invocar el callback con null antes de hidratar un nodo
+    // que no tiene un listener permanente. Mantener este listener durante la
+    // transacción garantiza que la decisión se tome sobre el valor real.
+    let unsubscribe = null;
+    const firstSnapshot = new Promise((resolve, reject) => {
+      unsubscribe = dbModule.onValue(roomRef, resolve, reject);
+    });
+
+    try {
+      await firstSnapshot;
+      return await dbModule.runTransaction(roomRef, update, { applyLocally: false });
+    } finally {
+      unsubscribe?.();
+    }
+  };
+
+  const removeRoomIfEmpty = async () => {
+    const result = await runRoomTransaction(
+      (currentRoom) => {
+        if (!currentRoom) return;
+
+        // La transacción vuelve a comprobar members al momento de confirmar.
+        // Así una entrada concurrente no puede quedar borrada por esta limpieza.
+        if (Object.keys(currentRoom.members || {}).length > 0) return;
+        return null;
+      },
+    );
+
+    if (result.committed) {
+      logEvent("firebase", "Sala vacia detectada. Limpiando datos residuales.");
+    }
+  };
+
+  const cleanupOrphanedRoom = async () => {
+    const roomSnapshot = await dbModule.get(roomRef).catch(() => null);
+    if (!roomSnapshot?.exists()) return;
+
+    const activeMembers = getActiveMembers(roomSnapshot.child("members").val());
+    if (Object.keys(activeMembers).length > 0) return;
+
+    const result = await runRoomTransaction(
+      (currentRoom) => {
+        if (!currentRoom) return;
+        if (Object.keys(getActiveMembers(currentRoom.members)).length > 0) return;
+        return null;
+      },
+    );
+
+    if (result.committed) {
+      logEvent("firebase", "Sala huerfana detectada al entrar. Limpiando datos residuales.");
+    }
+  };
 
   return {
     mode: "firebase",
     async connect(handlers) {
-      // El historial del chat no debe esperar a que termine la transacción de
-      // presencia. Esa transacción puede tardar varios segundos al reconectar.
       const deliverMessage = (snapshot) => {
         const message = { id: snapshot.key, ...snapshot.val() };
         handlers.onMessage?.(message);
       };
-      unsubscribers.push(dbModule.onChildAdded(latestMessagesQuery, deliverMessage));
-      // En una conexión nueva, el primer evento del websocket puede tardar
-      // mientras se negocia la sesión de RTDB. La lectura paralela permite
-      // pintar el historial por la ruta HTTP disponible antes, y el Set de
-      // ids del render evita duplicados cuando llegue también onChildAdded.
-      void dbModule.get(latestMessagesQuery)
-        .then((snapshot) => snapshot.forEach((child) => deliverMessage(child)))
-        .catch(() => {});
       try {
-        const existingMembersSnap = await dbModule.get(membersRef).catch(() => null);
-        if (existingMembersSnap !== null && !existingMembersSnap.exists()) {
-          const existingRoomSnap = await dbModule.get(roomRef).catch(() => null);
-          if (existingRoomSnap?.exists()) {
-            logEvent("firebase", "Sala huerfana detectada al entrar. Limpiando datos residuales.");
-            await dbModule.remove(roomRef).catch(() => {});
-          }
-        }
+        const serverTimeOffsetSnapshot = await dbModule.get(serverTimeOffsetRef).catch(() => null);
+        serverTimeOffset = Number(serverTimeOffsetSnapshot?.val()) || 0;
+        await cleanupOrphanedRoom();
+
+        // Registrar el historial después de limpiar una sala huérfana evita que
+        // mensajes de una sesión anterior lleguen a pintarse en el reingreso.
+        // Se registra antes de esperar la transacción de presencia.
+        unsubscribers.push(dbModule.onChildAdded(latestMessagesQuery, deliverMessage));
+        void dbModule.get(latestMessagesQuery)
+          .then((snapshot) => snapshot.forEach((child) => deliverMessage(child)))
+          .catch(() => {});
 
         const joinResult = await dbModule.runTransaction(
           membersRef,
           (currentMembers) => {
-            const members = currentMembers || {};
+            const members = getActiveMembers(currentMembers);
             const participantCount = Object.keys(members).length;
             if (!members[state.session.clientId] && participantCount >= MAX_ROOM_PARTICIPANTS) {
               return;
@@ -79,7 +164,13 @@ export async function createFirebaseTransport(roomCode, config) {
           throw roomFullError;
         }
 
-        dbModule.onDisconnect(memberRef).remove().catch(() => {});
+        lastMembers = getActiveMembers(joinResult.snapshot?.val() || {});
+        // Esperar esta operación es importante: si la pestaña se cierra justo
+        // después de entrar, Firebase debe alcanzar a registrar la limpieza.
+        await dbModule.onDisconnect(memberRef).remove();
+        await configureRoomDisconnectCleanup(
+          Object.keys(lastMembers).length === 1 && Boolean(lastMembers[state.session.clientId]),
+        ).catch(() => {});
       } catch (error) {
         const wrapped = new Error(error?.message || "No se pudo escribir en members.");
         wrapped.code = error?.code || "FIREBASE_PERMISSION_DENIED";
@@ -105,29 +196,24 @@ export async function createFirebaseTransport(roomCode, config) {
       unsubscribers.push(
         dbModule.onValue(membersRef, (snapshot) => {
           const val = snapshot.val() || {};
-          const now = Date.now() + serverTimeOffset;
-          const activeMembers = {};
+          const activeMembers = getActiveMembers(val);
           const staleMemberIds = [];
 
           Object.entries(val).forEach(([memberId, member]) => {
-            if (Number.isFinite(member?.lastSeenAt) && now - member.lastSeenAt >= STALE_MEMBER_TIMEOUT_MS) {
+            if (!activeMembers[memberId]) {
               staleMemberIds.push(memberId);
-              return;
             }
-            activeMembers[memberId] = member;
           });
 
           staleMemberIds.forEach((memberId) => {
             dbModule.remove(dbModule.ref(db, `${roomPath}/members/${memberId}`)).catch(() => {});
           });
 
-          const membersList = Object.keys(activeMembers);
-
-          if (!snapshot.exists() || membersList.length === 0) {
-            logEvent("firebase", "Sala vacia detectada. Limpiando datos residuales.");
-            dbModule.remove(roomRef).catch(() => {});
+          lastMembers = activeMembers;
+          void queueRoomDisconnectCleanup(activeMembers);
+          if (!snapshot.exists() || Object.keys(activeMembers).length === 0) {
+            void removeRoomIfEmpty().catch(() => {});
           }
-
           handlers.onMembers?.(activeMembers);
         }),
       );
@@ -157,19 +243,29 @@ export async function createFirebaseTransport(roomCode, config) {
       await dbModule.set(memberRef, makeMemberPayload());
     },
     close() {
+      if (closePromise) return closePromise;
+
+      const hasOtherMembers = Object.keys(lastMembers).some(
+        (memberId) => memberId !== state.session.clientId,
+      );
+      closed = true;
       if (heartbeat) window.clearInterval(heartbeat);
       unsubscribers.forEach((unsubscribe) => unsubscribe());
-      dbModule.remove(memberRef).then(async () => {
-        try {
-          const snap = await dbModule.get(membersRef);
-          if (!snap.exists() || Object.keys(snap.val() || {}).length === 0) {
-            logEvent("firebase", "Limpiando sala vacia al salir.");
-            await dbModule.remove(roomRef);
-          }
-        } catch (error) {
+
+      // Si había otro participante, no dejar una eliminación de sala pendiente
+      // para nuestro desconectado. Si éramos el último, mantenerla para que
+      // también cubra el cierre abrupto de la pestaña.
+      roomDisconnectTask = roomDisconnectTask
+        .then(() => configureRoomDisconnectCleanup(!hasOtherMembers))
+        .catch(() => {});
+
+      closePromise = roomDisconnectTask
+        .then(() => dbModule.remove(memberRef))
+        .then(() => removeRoomIfEmpty())
+        .catch((error) => {
           console.warn("Error al verificar limpieza al salir:", error);
-        }
-      }).catch(() => {});
+        });
+      return closePromise;
     },
   };
 }

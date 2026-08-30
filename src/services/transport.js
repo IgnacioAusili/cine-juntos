@@ -1,6 +1,6 @@
 import { firebaseConfig, logEvent } from "../core/state.js";
 import { hasFirebaseConfig } from "../core/utils.js";
-import { createFirebaseTransport } from "./firebaseTransport.js?v=20260825-chat-history-fast-05";
+import { createFirebaseTransport } from "./firebaseTransport.js?v=20260830-room-cleanup-01";
 import { createLocalTransport } from "./localTransport.js";
 
 export async function createTransport(roomCode) {

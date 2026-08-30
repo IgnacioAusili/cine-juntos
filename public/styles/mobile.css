@@ -225,6 +225,37 @@
     transform: translate(14px, -2px);
   }
 
+  .lobby-about-button.is-touch-hover,
+  .lobby-about-button.is-touch-hover:hover {
+    transform: translate(14px, -2px);
+  }
+
+  /* Cargar usa el estado nativo de presión: evita que JS y :hover compitan
+     durante una pulsación táctil prolongada. */
+  .session-toolbar-body .button.primary:hover:not(:active):not(:disabled) {
+    background: #d4762a;
+    border-color: rgba(240, 140, 58, 0.3);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+    transform: none;
+  }
+
+  .session-toolbar-body .button.primary {
+    /* Al liberar fuera del botón no debe interpolar un frame oscuro entre
+       :active y el estado normal. */
+    transition: none;
+  }
+
+  .session-toolbar-body .button.primary:active,
+  .session-toolbar-body .button.primary:active:hover {
+    background: linear-gradient(180deg, #ffb070, var(--amber));
+    border-color: rgba(240, 140, 58, 0.32);
+    box-shadow:
+      0 0 0 1px rgba(240, 140, 58, 0.32),
+      0 12px 30px rgba(240, 140, 58, 0.42),
+      inset 0 1px 0 rgba(255, 255, 255, 0.42);
+    transform: none;
+  }
+
   /* La toolbar es absoluta sobre el video y en una pantalla angosta crece a
      dos filas. Reservamos su alto real para que no tape las acciones de sala. */
   body:not(.is-lobby) .session-view .workspace {
@@ -314,6 +345,7 @@
 
   body:not(.is-lobby) .player-volume-group {
     gap: 6px;
+    transition: none;
   }
 
   body:not(.is-lobby) .player-volume-slider-wrap {
@@ -322,6 +354,7 @@
     height: 28px;
     align-items: center;
     max-width: 60px;
+    transition: none;
   }
 
   body:not(.is-lobby) .player-volume-input {
@@ -566,7 +599,6 @@
     height: auto;
     min-height: 24px;
     max-width: min(200px, calc(100% - 72px));
-    gap: 6px;
     padding: 0;
     font-size: 0.66rem;
   }

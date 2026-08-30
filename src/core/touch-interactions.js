@@ -16,6 +16,7 @@ export function wireTouchHover(
   {
     activeClass = "is-touch-hover",
     delay = TOUCH_LONG_PRESS_DELAY_MS,
+    cancelActiveOnMove = true,
     onActivate,
     onDeactivate,
     eventDocument = target?.ownerDocument || document,
@@ -65,7 +66,10 @@ export function wireTouchHover(
     if (!isTouchPointer(event) || pointerId !== event.pointerId || !startPoint) return;
     const movedX = event.clientX - startPoint.x;
     const movedY = event.clientY - startPoint.y;
-    if (Math.hypot(movedX, movedY) > TOUCH_MOVE_TOLERANCE_PX) deactivate(event);
+    if (
+      Math.hypot(movedX, movedY) > TOUCH_MOVE_TOLERANCE_PX
+      && (!active || cancelActiveOnMove)
+    ) deactivate(event);
   };
 
   const handlePointerEnd = (event) => {

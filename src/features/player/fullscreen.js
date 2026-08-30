@@ -10,7 +10,7 @@ import {
   hideTooltip,
   hydrateIcons,
 } from "../icons-tooltips.js";
-import { focusFullscreenWorkspace, setSyncStatus } from "../session-ui.js?v=20260827-entry-scroll-fix-01";
+import { setSyncStatus } from "../session-ui.js?v=20260827-entry-scroll-fix-01";
 import {
   logEvent,
   state,
@@ -19,6 +19,10 @@ import { isMiniPlayerActive } from "./mini-player.js?v=20260815-seek-tooltip-01"
 import { syncInsideChatPanelOffset } from "../chat/chat-layout.js?v=20260827-entry-scroll-fix-01";
 import { withShortcutHint } from "../../core/utils.js";
 import { wireTouchHover } from "../../core/touch-interactions.js";
+import {
+  captureFullscreenScroll,
+  restoreFullscreenScroll,
+} from "./fullscreen-scroll.js";
 
 const PLAYER_OVERLAY_IDLE_MS = 3000;
 const PLAYER_OVERLAY_LEAVE_HIDE_DELAY_MS = 800;
@@ -83,6 +87,7 @@ export function wireFullscreenEvents() {
 
   let scrollSnapTimer = null;
   const handleFullscreenScroll = () => {
+    if (fullscreenScrollPreservationUntil > performance.now()) return;
     const isBottomDock = dom.sessionView?.dataset.chatDock === "bottom";
     if (!isBottomDock) {
       if (!isBottomDock && scrollSnapTimer) {
@@ -95,6 +100,7 @@ export function wireFullscreenEvents() {
     if (scrollSnapTimer) window.clearTimeout(scrollSnapTimer);
     scrollSnapTimer = window.setTimeout(() => {
       scrollSnapTimer = null;
+      if (fullscreenScrollPreservationUntil > performance.now()) return;
       if (
         dom.sessionView?.dataset.chatDock !== "bottom"
         || dom.sessionView?.classList.contains("chat-scroll-snap-locked")
@@ -110,6 +116,7 @@ export function wireFullscreenEvents() {
 }
 
 let hideTimer = null;
+let fullscreenScrollPreservationUntil = 0;
 
 function wirePlayerOverlayControls() {
   if (!dom.playerFrame || !dom.pageFullscreenButton) return;
@@ -138,6 +145,10 @@ function wirePlayerOverlayControls() {
       hideTimer = null;
       if (isInlinePlayerDialogVisible()) return;
       if (state.ui.seekDragActive) {
+        scheduleHide(safeDelay);
+        return;
+      }
+      if (dom.playerFrame.classList.contains("player-seek-control-dragging")) {
         scheduleHide(safeDelay);
         return;
       }
@@ -290,11 +301,12 @@ function wirePlayerOverlayControls() {
         ignoredChatToggleTouch = false;
         return;
       }
-      // El movimiento normal del dedo sobre el range de volumen también
-      // termina el hover táctil del player. No ocultar los controles en ese
-      // punto: el arrastre sigue activo y se libera desde su pointerup.
+      // El movimiento normal del dedo sobre un range termina el hover táctil
+      // del player. No ocultar los controles mientras el arrastre siga activo.
       if (
-        volumeControlPointerActive
+        state.ui.seekDragActive
+        || dom.playerFrame.classList.contains("player-seek-control-dragging")
+        || volumeControlPointerActive
         || dom.playerVolumeGroup?.classList.contains("is-dragging")
       ) {
         return;
@@ -471,11 +483,13 @@ export function snapFullscreenScroll() {
 export async function togglePageFullscreen() {
   try {
     if (document.fullscreenElement) {
+      captureFullscreenScroll(false);
       await document.exitFullscreen();
       return;
     }
 
     if (fallbackFullscreenActive) {
+      captureFullscreenScroll(false);
       fallbackFullscreenActive = false;
       handleFullscreenChange();
       return;
@@ -485,11 +499,13 @@ export async function togglePageFullscreen() {
       || dom.sessionView
       || document.documentElement;
     if (USE_NATIVE_FULLSCREEN && document.fullscreenEnabled && typeof fullscreenTarget?.requestFullscreen === "function") {
+      captureFullscreenScroll(true);
       // La app completa conserva la cabecera de la sala dentro del fullscreen,
       // pero el contenedor se ajusta por inset en lugar de heredar el alto
       // previo del <html> durante la transicion de Chrome.
       await fullscreenTarget.requestFullscreen({ navigationUI: "hide" });
     } else {
+      captureFullscreenScroll(true);
       fallbackFullscreenActive = true;
       handleFullscreenChange();
     }
@@ -504,6 +520,8 @@ export async function togglePageFullscreen() {
 
 export function handleFullscreenChange() {
   const isFullscreen = Boolean(document.fullscreenElement) || fallbackFullscreenActive;
+  captureFullscreenScroll(isFullscreen);
+  fullscreenScrollPreservationUntil = performance.now() + FULLSCREEN_SNAP_DELAY_MS + 80;
   const icon = dom.pageFullscreenButton.querySelector("[data-lucide]");
   const tooltip = withShortcutHint(
     isFullscreen ? "Salir de pantalla completa" : "Pantalla completa",
@@ -521,7 +539,7 @@ export function handleFullscreenChange() {
     icon.innerHTML = "";
   }
   hydrateIcons();
-  if (isFullscreen) focusFullscreenWorkspace();
+  restoreFullscreenScroll(isFullscreen);
   syncInsideChatPanelOffset();
   logEvent("ui", isFullscreen ? "Pantalla completa de pagina activada." : "Pantalla completa desactivada.");
 }

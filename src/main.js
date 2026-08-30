@@ -15,7 +15,7 @@ import {
   hydrateIcons,
   initializeUi,
   setConnection,
-} from "./features/icons-tooltips.js?v=20260828-mobile-help-tooltip-01";
+} from "./features/icons-tooltips.js?v=20260829-touch-tooltip-fix-04";
 import {
   wireLayoutMetrics,
 } from "./features/layout-metrics.js";
@@ -42,8 +42,9 @@ import {
 import {
   initializePlayer,
   wirePlayerEvents,
-} from "./features/player/index.js?v=20260829-video-source-sync-01";
-import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260827-entry-video-focus-02";
+} from "./features/player/index.js?v=20260830-mobile-video-tap-01";
+import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260829-copy-animation-02";
+import { wireTouchHover } from "./core/touch-interactions.js?v=20260829-touch-hold-fix-01";
 
 const requestedRoom = normalizeRoomCode(new URLSearchParams(window.location.search).get("room") || "");
 
@@ -54,6 +55,23 @@ initializeUi();
 initializeAboutDialog();
 renderPresence();
 wireRoomEvents();
+wireTouchHover(dom.createRoomButton);
+wireTouchHover(dom.joinRoomButton);
+wireTouchHover(dom.copyInviteButton, {
+  onDeactivate: () => dom.copyInviteButton?.blur(),
+});
+wireTouchHover(dom.backToLobbyButton, {
+  delay: 0,
+  onDeactivate: () => dom.backToLobbyButton?.blur(),
+});
+wireTouchHover(dom.aboutButton, {
+  // Este botón debe reflejar el touch desde que comienza, no después de una
+  // pulsación larga; el estado se limpia al soltar.
+  delay: 0,
+  // En móvil el botón puede quedar enfocado tras tocarlo y conservar el
+  // estilo de :focus-visible aunque ya haya terminado la pulsación.
+  onDeactivate: () => dom.aboutButton?.blur(),
+});
 wireIdentityEvents();
 wireChatEvents();
 wirePlayerEvents();

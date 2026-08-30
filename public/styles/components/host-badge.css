@@ -56,6 +56,11 @@
   }
 }
 
+.help-button.is-touch-hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--text);
+}
+
 .help-button svg {
   width: 14px;
   height: 14px;

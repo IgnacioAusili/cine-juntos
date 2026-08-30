@@ -27,7 +27,7 @@ import {
   clearPlaybackRecoveryTracking,
   pauseRoomForPlaybackIssue,
   publishState,
-} from "./player-sync-logic.js?v=20260829-video-source-sync-01";
+} from "./player-sync-logic.js?v=20260830-mobile-seek-fix-01";
 
 import {
   showErrorDialog,
@@ -37,6 +37,7 @@ import {
 } from "../session-ui.js?v=20260827-entry-scroll-fix-01";
 import { togglePageFullscreen } from "./fullscreen.js";
 import { syncMiniPlayerButton } from "./mini-player.js?v=20260815-seek-tooltip-01";
+import { wireVideoClickToggle } from "./video-click-toggle.js?v=20260830-mobile-video-tap-01";
 
 const SKIP_LOAD_REPLACE_DIALOG_KEY = "cine-juntos-skip-load-replace-dialog";
 const VIDEO_RESUME_STORAGE_KEY = "cine-juntos-video-resume-times";
@@ -76,13 +77,7 @@ let seekTooltipRect = null;
 let seekPointerId = null;
 let rateMenuCloseTimer = null;
 let lastAudibleVolume = 1;
-let videoClickTimer = null;
-let videoClickOverlayTimer = null;
 let volumeGestureConsumed = false;
-let mobileRevealOnlyTapPending = false;
-let mobileRevealOnlyTapTimer = null;
-let mobileTouchTogglePending = false;
-let mobileTouchClickHandledUntil = 0;
 
 export function initializePlayer() {
   isDurationShowingRemaining = false;
@@ -90,6 +85,7 @@ export function initializePlayer() {
   pendingLoadCompletionAnimateSystemGroups = true;
   pendingVideoActivityAnnouncement = false;
   state.ui.seekDragActive = false;
+  dom.playerFrame?.classList.remove("player-seek-control-dragging");
   resetSyncControlCooldown("seek");
   resetSyncControlCooldown("rate");
   seekPointerId = null;
@@ -216,7 +212,14 @@ export function wirePlayerCoreEvents() {
     syncPlayerControls();
   });
 
-  wireVideoClickToggle();
+  wireVideoClickToggle({
+    togglePlayback: () => togglePlaybackFromControls("video"),
+    consumeVolumeGesture: () => {
+      if (!volumeGestureConsumed) return false;
+      volumeGestureConsumed = false;
+      return true;
+    },
+  });
   wireFullscreenVolumeGesture();
 
   dom.videoPlayer.addEventListener("play", () => {
@@ -869,10 +872,16 @@ function commitSeekPosition() {
 function syncPlayerControls(forceSliderSync = false) {
   const duration = getFiniteDuration();
   const isEnded = dom.videoPlayer.ended;
-  const currentTime = isEnded && duration > 0 
+  const videoCurrentTime = isEnded && duration > 0
     ? duration 
     : Number.isFinite(dom.videoPlayer.currentTime) ? Math.max(0, dom.videoPlayer.currentTime) : 0;
   const hasMedia = hasLoadedMediaSource();
+  const seekInputTime = Number(dom.playerSeekInput?.value);
+  // En táctil el range puede no recibir foco. Mientras el dedo lo arrastra,
+  // su valor es la previsualización y no debe ser pisado por `timeupdate`.
+  const currentTime = state.ui.seekDragActive && hasMedia && duration > 0 && Number.isFinite(seekInputTime)
+    ? Math.max(0, Math.min(seekInputTime, duration || seekInputTime))
+    : videoCurrentTime;
   const isSeekingElementFocused = document.activeElement === dom.playerSeekInput;
   const remainingTime = Math.max(0, duration - currentTime);
   const showRemainingDuration = isDurationShowingRemaining && hasMedia && duration > 0;
@@ -913,7 +922,7 @@ function syncPlayerControls(forceSliderSync = false) {
   if (dom.playerSeekInput) {
     dom.playerSeekInput.max = String(duration || 0);
     dom.playerSeekInput.disabled = !hasMedia || duration <= 0;
-    if (forceSliderSync || !isSeekingElementFocused) {
+    if (!state.ui.seekDragActive && (forceSliderSync || !isSeekingElementFocused)) {
       // Si el video terminó, forzar el value al máximo exacto para que el thumb llegue hasta el final
       const seekValue = isEnded && duration > 0 ? duration : Math.min(currentTime, duration || 0);
       dom.playerSeekInput.value = String(seekValue);
@@ -921,6 +930,7 @@ function syncPlayerControls(forceSliderSync = false) {
     updateSeekVisuals(Number(dom.playerSeekInput.value || 0), duration, isEnded);
     if (dom.playerSeekInput.disabled) {
       state.ui.seekDragActive = false;
+      dom.playerFrame?.classList.remove("player-seek-control-dragging");
       seekPointerId = null;
       hideSeekTooltip();
     }
@@ -1174,118 +1184,6 @@ function updateSeekVisuals(currentTime, duration, forceEnd = false) {
   );
 }
 
-function wireVideoClickToggle() {
-  const revealControlsOnFirstMobileTouch = (event) => {
-    if (
-      !window.matchMedia("(max-width: 680px)").matches
-      || (event.type === "pointerdown"
-        && !(event.pointerType === "touch" || event.pointerType === "pen"))
-    ) return;
-
-    const surface = dom.videoPlayer.closest(".mini-player-surface") || dom.playerFrame;
-    if (event.type === "touchstart" && surface?.classList.contains("player-overlay-visible")) {
-      // Cuando los controles ya están visibles, el segundo toque se resuelve
-      // aquí para no depender del click sintético del navegador móvil.
-      event.preventDefault();
-      mobileTouchTogglePending = true;
-      return;
-    }
-    if (surface?.classList.contains("player-overlay-visible")) return;
-
-    // En algunos navegadores móviles la acción de play/pausa del video se
-    // dispara antes de `click`. Interceptar el primer pointerdown evita esa
-    // pausa y permite mostrar los controles sin cambiar la reproducción.
-    event.preventDefault();
-    mobileRevealOnlyTapPending = true;
-    if (mobileRevealOnlyTapTimer) window.clearTimeout(mobileRevealOnlyTapTimer);
-    mobileRevealOnlyTapTimer = window.setTimeout(() => {
-      mobileRevealOnlyTapPending = false;
-      mobileRevealOnlyTapTimer = null;
-    }, 700);
-    suppressVideoClickOverlay();
-  };
-
-  // touchstart es el punto donde algunos navegadores móviles ejecutan la
-  // acción nativa del elemento multimedia, antes de emitir pointer/click.
-  dom.videoPlayer.addEventListener("touchstart", revealControlsOnFirstMobileTouch, { passive: false });
-  dom.videoPlayer.addEventListener("pointerdown", revealControlsOnFirstMobileTouch, { passive: false });
-  dom.videoPlayer.addEventListener("touchend", (event) => {
-    if (!mobileTouchTogglePending) return;
-    event.preventDefault();
-    mobileTouchTogglePending = false;
-    mobileTouchClickHandledUntil = Date.now() + 500;
-    togglePlaybackFromControls("video");
-  }, { passive: false });
-
-  dom.videoPlayer.addEventListener("click", (event) => {
-    if (volumeGestureConsumed) {
-      volumeGestureConsumed = false;
-      return;
-    }
-    if (Date.now() < mobileTouchClickHandledUntil) {
-      event.preventDefault();
-      return;
-    }
-    if (mobileRevealOnlyTapPending) {
-      mobileRevealOnlyTapPending = false;
-      if (mobileRevealOnlyTapTimer) window.clearTimeout(mobileRevealOnlyTapTimer);
-      mobileRevealOnlyTapTimer = null;
-      event.preventDefault();
-      return;
-    }
-    const surface = dom.videoPlayer.closest(".mini-player-surface") || dom.playerFrame;
-    const isMobile = window.matchMedia("(max-width: 680px)").matches;
-    const isFirstMobileTap = isMobile && !surface?.classList.contains("player-overlay-visible");
-
-    // El navegador puede alternar play/pausa como acción por defecto del
-    // elemento video. En móvil la reproducción queda a cargo de este handler:
-    // el primer toque revela controles y el segundo alterna play/pausa.
-    if (isMobile) event.preventDefault();
-
-    if (videoClickTimer) window.clearTimeout(videoClickTimer);
-    videoClickTimer = window.setTimeout(() => {
-      videoClickTimer = null;
-      if (isFirstMobileTap) {
-        // En móvil el primer toque sólo descubre los controles; el siguiente
-        // toque, con la barra visible, es el que cambia play/pausa.
-        suppressVideoClickOverlay();
-        return;
-      }
-      if (dom.videoPlayer.paused || dom.videoPlayer.ended) {
-        suppressVideoClickOverlay();
-      }
-      togglePlaybackFromControls("video");
-    }, 220);
-  });
-
-  dom.videoPlayer.addEventListener("dblclick", () => {
-    if (!videoClickTimer) return;
-    window.clearTimeout(videoClickTimer);
-    videoClickTimer = null;
-  });
-}
-
-function suppressVideoClickOverlay() {
-  const surface = dom.videoPlayer.closest(".mini-player-surface") || dom.playerFrame;
-  if (!surface) return;
-  if (videoClickOverlayTimer) window.clearTimeout(videoClickOverlayTimer);
-  if (window.matchMedia("(max-width: 680px)").matches) {
-    surface.classList.remove("player-overlay-suppressed");
-    surface.classList.add("player-overlay-visible");
-    videoClickOverlayTimer = window.setTimeout(() => {
-      surface.classList.remove("player-overlay-visible");
-      videoClickOverlayTimer = null;
-    }, 3000);
-    return;
-  }
-  surface.classList.remove("player-overlay-visible");
-  surface.classList.add("player-overlay-suppressed");
-  videoClickOverlayTimer = window.setTimeout(() => {
-    surface.classList.remove("player-overlay-suppressed");
-    videoClickOverlayTimer = null;
-  }, 700);
-}
-
 function showPlaybackGestureIndicator(action, volumeLabel = "") {
   const indicator = dom.playbackGestureIndicator;
   if (!indicator) return;
@@ -1303,10 +1201,15 @@ function showPlaybackGestureIndicator(action, volumeLabel = "") {
 function wireSeekTooltipEvents() {
   if (!dom.playerSeekInput || !dom.tooltipLayer) return;
 
+  const setSeekDragActive = (active) => {
+    state.ui.seekDragActive = active;
+    dom.playerFrame?.classList.toggle("player-seek-control-dragging", active);
+  };
+
   const handlePointerMove = (event) => {
     if (seekPointerId !== null && event.pointerId !== seekPointerId) return;
     if (dom.playerSeekInput.disabled) {
-      state.ui.seekDragActive = false;
+      setSeekDragActive(false);
       seekPointerId = null;
       hideSeekTooltip();
       return;
@@ -1316,14 +1219,14 @@ function wireSeekTooltipEvents() {
 
   const handlePointerDown = (event) => {
     if (dom.playerSeekInput.disabled) {
-      state.ui.seekDragActive = false;
+      setSeekDragActive(false);
       hideSeekTooltip();
       return;
     }
     if (seekPointerId !== null && seekPointerId !== event.pointerId) return;
 
     hideTooltip(true);
-    state.ui.seekDragActive = true;
+    setSeekDragActive(true);
     seekPointerId = event.pointerId;
     try {
       dom.playerSeekInput.setPointerCapture?.(event.pointerId);
@@ -1336,7 +1239,7 @@ function wireSeekTooltipEvents() {
 
   const stopPointerTracking = (event) => {
     if (seekPointerId === null || event.pointerId !== seekPointerId) return;
-    state.ui.seekDragActive = false;
+    setSeekDragActive(false);
     seekPointerId = null;
     hideSeekTooltip();
   };
@@ -1353,7 +1256,9 @@ function wireSeekTooltipEvents() {
   dom.playerSeekInput.addEventListener("pointermove", handlePointerMove);
   dom.playerSeekInput.addEventListener("pointerdown", handlePointerDown);
   dom.playerSeekInput.addEventListener("pointerleave", handlePointerLeave);
-  dom.playerSeekInput.addEventListener("lostpointercapture", stopPointerTracking);
+  // Perder la captura no siempre significa que terminó el gesto: algunos
+  // navegadores móviles la liberan al sacar el dedo del track. Los listeners
+  // globales de pointerup/pointercancel siguen el arrastre hasta su final real.
   dom.playerSeekInput.addEventListener("blur", () => {
     if (seekPointerId === null) hideSeekTooltip();
   });

@@ -15,7 +15,7 @@ const HELP_TOOLTIP_SHOW_DELAY_MS = 500;
 const PRESENCE_TOOLTIP_SHOW_DELAY_MS = 300;
 const TOUCH_FOCUS_SUPPRESSION_MS = 500;
 const TOUCH_TOOLTIP_MOVE_TOLERANCE_PX = 10;
-const TOUCH_TOOLTIP_MAX_VISIBLE_MS = 2200;
+const TOUCH_HELP_TOOLTIP_MAX_VISIBLE_MS = 1800;
 
 let tooltipFrame = 0;
 let tooltipShowTimer = null;
@@ -23,7 +23,16 @@ let tooltipShowContext = null;
 let suppressFocusTooltipUntil = 0;
 let touchTooltipPress = null;
 let touchTooltipTimer = null;
-let suppressNextTouchTooltipClick = false;
+const suppressedTouchTooltipClickTargets = new Set();
+
+function suppressTouchTooltipClick(anchor) {
+  if (anchor) suppressedTouchTooltipClickTargets.add(anchor);
+}
+
+function setTooltipTouchHover(anchor, active) {
+  if (!anchor?.classList?.contains("help-button")) return;
+  anchor.classList.toggle("is-touch-hover", active);
+}
 
 export function initializeUi() {
   hydrateIcons();
@@ -122,12 +131,18 @@ export function wireTooltipEvents() {
       && !dom.tooltipLayer.hidden;
     clearTouchTooltipPress();
     if (shouldToggleOff) {
-      suppressNextTouchTooltipClick = true;
+      suppressTouchTooltipClick(context.anchor);
       hideTooltip();
       return;
     }
 
-    hideTooltip();
+    // Un tooltip anterior de otra ancla no debe bloquear el nuevo toque.
+    if (state.ui.tooltipTarget && state.ui.tooltipTarget !== context.anchor) {
+      setTooltipTouchHover(state.ui.tooltipTarget, false);
+      cancelScheduledTooltip();
+    } else {
+      hideTooltip();
+    }
     touchTooltipPress = {
       pointerId: event.pointerId,
       x: event.clientX,
@@ -136,6 +151,7 @@ export function wireTooltipEvents() {
       isHelpButton,
       longPress: false,
     };
+    setTooltipTouchHover(context.anchor, true);
     touchTooltipTimer = window.setTimeout(() => {
       if (
         !touchTooltipPress
@@ -166,15 +182,18 @@ export function wireTooltipEvents() {
       && press.context.anchor.isConnected
     ) {
       if (press.longPress) {
-        suppressNextTouchTooltipClick = true;
+        suppressTouchTooltipClick(press.context.anchor);
         clearTouchTooltipPress();
         hideTooltip();
         return;
       }
+      const shortTapAnchor = press.context.anchor;
       clearTouchTooltipPress();
-      suppressNextTouchTooltipClick = true;
-      showTooltip(press.context);
-      state.ui.tooltipPressTimer = window.setTimeout(hideTooltip, TOUCH_TOOLTIP_MAX_VISIBLE_MS);
+      // En un toque corto el click nativo del botón es el que alterna el
+      // tooltip. Evitamos mostrarlo aquí y volver a procesar el mismo gesto.
+      // Conservamos el brillo durante el puente pointerup -> click para que
+      // no haya un parpadeo visible.
+      setTooltipTouchHover(shortTapAnchor, true);
       return;
     }
 
@@ -185,8 +204,7 @@ export function wireTooltipEvents() {
   document.addEventListener("click", (event) => {
     const context = getTooltipContext(event.target);
     if (!isPresenceTooltipContext(context) && !context?.anchor?.classList?.contains("help-button")) return;
-    if (suppressNextTouchTooltipClick) {
-      suppressNextTouchTooltipClick = false;
+    if (suppressedTouchTooltipClickTargets.delete(context.anchor)) {
       return;
     }
     if (
@@ -197,6 +215,10 @@ export function wireTooltipEvents() {
         hideTooltip();
       } else {
         showTooltip(context);
+        state.ui.tooltipPressTimer = window.setTimeout(
+          hideTooltip,
+          TOUCH_HELP_TOOLTIP_MAX_VISIBLE_MS,
+        );
       }
       return;
     }
@@ -335,7 +357,11 @@ function showTooltip(context) {
   const text = context?.source?.dataset?.tooltip;
   if (!text) return;
   cancelScheduledTooltip();
+  window.clearTimeout(state.ui.tooltipPressTimer);
+  state.ui.tooltipPressTimer = null;
+  setTooltipTouchHover(state.ui.tooltipTarget, false);
   state.ui.tooltipTarget = context.anchor;
+  setTooltipTouchHover(context.anchor, true);
   dom.tooltipLayer.textContent = text;
   dom.tooltipLayer.hidden = false;
   dom.tooltipLayer.style.visibility = "hidden";
@@ -383,8 +409,10 @@ export function hideTooltip(force = false) {
   if (state.ui.seekDragActive && !force) return;
   cancelScheduledTooltip();
   clearTouchTooltipPress();
+  setTooltipTouchHover(state.ui.tooltipTarget, false);
   state.ui.tooltipTarget = null;
   window.clearTimeout(state.ui.tooltipPressTimer);
+  state.ui.tooltipPressTimer = null;
   window.cancelAnimationFrame(tooltipFrame);
   tooltipFrame = 0;
   dom.tooltipLayer.hidden = true;
@@ -394,6 +422,7 @@ export function hideTooltip(force = false) {
 }
 
 function clearTouchTooltipPress() {
+  setTooltipTouchHover(touchTooltipPress?.context?.anchor, false);
   if (touchTooltipTimer !== null) window.clearTimeout(touchTooltipTimer);
   touchTooltipTimer = null;
   touchTooltipPress = null;

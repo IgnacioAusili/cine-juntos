@@ -494,6 +494,21 @@
   transform: translateY(-2px);
 }
 
+@media (hover: none) {
+  .lobby-about-button:hover:not(.is-touch-hover) {
+    border-color: rgba(47, 184, 164, 0.46);
+    background: rgba(20, 24, 28, 0.82);
+    transform: translateX(14px);
+  }
+
+  .lobby-about-button.is-touch-hover,
+  .lobby-about-button.is-touch-hover:hover {
+    border-color: var(--teal);
+    background: rgba(47, 184, 164, 0.16);
+    transform: translateY(-2px);
+  }
+}
+
 .lobby-about-button svg {
   width: 18px;
   height: 18px;

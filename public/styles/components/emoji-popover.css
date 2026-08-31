@@ -29,6 +29,7 @@
   background: transparent;
   color: var(--text);
   font-family: var(--emoji-font-family);
+  font-variant-emoji: emoji;
   font-size: 0.82rem;
   line-height: 1;
   padding: 0;

@@ -190,7 +190,7 @@
 
 @media (min-width: 981px) {
   .session-view[data-chat-dock="right"] .chat-tools {
-    padding-left: 30px;
+    padding-left: 8px;
   }
 }
 

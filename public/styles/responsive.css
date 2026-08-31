@@ -346,13 +346,13 @@
 
 @media (min-width: 981px) {
   .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone {
-    top: 1px;
+    top: 50%;
     right: auto;
     bottom: auto;
     left: calc(100% - var(--chat-panel-width));
     width: 30px;
     height: 40px;
-    transform: none;
+    transform: translate(-50%, -50%);
   }
 
   .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-handle {

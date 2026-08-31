@@ -536,8 +536,23 @@ video::-webkit-media-controls-fullscreen-button {
   border-bottom-color: var(--accent-soft, #d8fff9);
 }
 
+.player-frame[data-control-style="line"] .player-controls-bar .player-select.is-rate-changing,
+.player-frame[data-control-style="line"] .player-controls-bar .player-select.is-rate-changing:hover,
+.player-frame[data-control-style="line"] .player-controls-bar .player-select.is-rate-changing:focus-within {
+  color: rgba(255, 255, 255, 0.74);
+  transform: none !important;
+}
+
+.player-frame[data-control-style="line"] .player-controls-bar .player-select.is-rate-changing::after,
+.player-frame[data-control-style="line"] .player-controls-bar .player-select.is-rate-changing:hover::after,
+.player-frame[data-control-style="line"] .player-controls-bar .player-select.is-rate-changing:focus-within::after {
+  color: rgba(255, 255, 255, 0.74);
+  border-right-color: rgba(255, 255, 255, 0.74);
+  border-bottom-color: rgba(255, 255, 255, 0.74);
+}
+
 .player-frame[data-control-style="line"] .player-controls-bar .player-select::after {
-  right: 2px;
+  right: 4px;
 }
 
 .player-frame[data-control-style="line"] .player-controls-bar .player-select select {
@@ -880,9 +895,8 @@ video::-webkit-media-controls-fullscreen-button {
 
 .player-rate-select {
   flex: 0 0 auto;
-  width: var(--player-rate-select-width, 48px);
+  width: var(--player-rate-layout-width, 48px);
   min-width: 48px;
-  transition: width 180ms ease;
 }
 
 .player-tool {
@@ -905,6 +919,10 @@ video::-webkit-media-controls-fullscreen-button {
   backdrop-filter: blur(12px);
   cursor: pointer;
   transition: width 180ms ease, border-color 150ms ease, background 150ms ease;
+}
+
+.player-rate-select {
+  transition: width 320ms ease-in-out;
 }
 
 .player-select::after {
@@ -933,6 +951,8 @@ video::-webkit-media-controls-fullscreen-button {
 }
 
 .player-rate-trigger {
+  --player-rate-trigger-padding-left: 6px;
+  --player-rate-trigger-padding-right: 22px;
   position: relative;
   z-index: 1;
   width: 100%;
@@ -940,14 +960,15 @@ video::-webkit-media-controls-fullscreen-button {
   border: 0;
   background: transparent;
   color: inherit;
-  padding: 0 16px 0 6px;
+  padding: 0 var(--player-rate-trigger-padding-right) 0 var(--player-rate-trigger-padding-left);
   font: inherit;
   font-family: "Arial Rounded MT Bold", "Trebuchet MS", sans-serif;
-  font-size: 0.92rem;
+  font-size: 0.8rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   text-align: right;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .player-rate-trigger:disabled {
@@ -974,12 +995,12 @@ video::-webkit-media-controls-fullscreen-button {
 
 .player-rate-menu {
   position: absolute;
-  right: auto;
   left: 50%;
   bottom: calc(100% + 6px);
   z-index: 20;
   display: grid;
-  min-width: 100%;
+  width: max-content;
+  min-width: 0;
   gap: 2px;
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 10px;
@@ -988,7 +1009,7 @@ video::-webkit-media-controls-fullscreen-button {
   -webkit-backdrop-filter: blur(14px) saturate(1.08);
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.38);
   padding: 4px;
-  translate: calc(-50% + 7px) 0;
+  transform: translateX(-50%);
 }
 
 .player-frame:not(.player-overlay-visible) .player-rate-menu,
@@ -1010,6 +1031,13 @@ video::-webkit-media-controls-fullscreen-button {
   text-align: center;
   white-space: nowrap;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.player-rate-select,
+.player-rate-select select,
+.player-rate-menu {
+  -webkit-tap-highlight-color: transparent;
 }
 
 .player-rate-option:hover,
@@ -1034,6 +1062,30 @@ video::-webkit-media-controls-fullscreen-button {
 .player-select[data-disabled="true"]:hover {
   border-color: rgba(255, 255, 255, 0.08);
   background: rgba(255, 255, 255, 0.04);
+}
+
+/* En pantallas táctiles algunos navegadores conservan :hover y :focus-within
+   después de seleccionar una velocidad. Mientras el menú está cerrado esos
+   estados no representan una interacción activa y no deben dejar el control
+   resaltado. */
+@media (hover: none) {
+  .player-rate-select:hover:not(.is-open) {
+    border-color: rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .player-frame[data-control-style="line"] .player-controls-bar .player-select:not([data-disabled="true"]):hover:not(.is-open),
+  .player-frame[data-control-style="line"] .player-controls-bar .player-select:not([data-disabled="true"]):focus-within:not(.is-open) {
+    color: rgba(255, 255, 255, 0.74);
+    transform: none;
+  }
+
+  .player-frame[data-control-style="line"] .player-controls-bar .player-select:not([data-disabled="true"]):hover:not(.is-open)::after,
+  .player-frame[data-control-style="line"] .player-controls-bar .player-select:not([data-disabled="true"]):focus-within:not(.is-open)::after {
+    color: rgba(255, 255, 255, 0.74);
+    border-right-color: rgba(255, 255, 255, 0.74);
+    border-bottom-color: rgba(255, 255, 255, 0.74);
+  }
 }
 
 .player-select select {
@@ -1163,21 +1215,4 @@ video::-webkit-media-controls-fullscreen-button {
 .bare-icon-button svg {
   width: 18px;
   height: 18px;
-}
-
-@media (max-width: 760px) {
-  .player-controls-bar {
-    flex-wrap: wrap;
-    gap: 6px;
-    padding: 8px;
-  }
-
-  .player-progress-group {
-    order: 10;
-    width: 100%;
-  }
-
-  .player-rate-select {
-    margin-left: auto;
-  }
 }

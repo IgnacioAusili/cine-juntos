@@ -22,7 +22,7 @@ import { wireMiniPlayerShortcuts } from "./mini-player-shortcuts.js?v=20260808-s
 import { wireTouchHover } from "../../core/touch-interactions.js";
 
 const VIDEO_EVENTS = ["play", "pause", "timeupdate", "seeked", "ratechange", "volumechange"];
-const PROXY_CONTROL_SELECTOR = "button, input, select, textarea";
+const PROXY_CONTROL_SELECTOR = "button, input:not([data-player-scroll-indicator]), select, textarea";
 
 export function movePlayerInterface(surface, options = {}) {
   const {

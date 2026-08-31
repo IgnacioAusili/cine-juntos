@@ -1,6 +1,9 @@
 import { dom } from "../../core/dom.js";
 
-const MOBILE_PLAYER_MEDIA_QUERY = "(max-width: 680px)";
+// En landscape un telefono sigue siendo tactil aunque su ancho supere el
+// breakpoint de la vista vertical. La interaccion del video debe seguir la
+// misma secuencia de revelar / reproducir en ambas orientaciones.
+const MOBILE_PLAYER_MEDIA_QUERY = "(max-width: 680px), (hover: none) and (pointer: coarse)";
 const MOBILE_CLICK_GUARD_MS = 600;
 const MOBILE_TOUCH_DEDUP_MS = 250;
 const MOBILE_REVEAL_PENDING_MS = 700;

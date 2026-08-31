@@ -1,3 +1,6 @@
+import { observePlayerControlLayouts } from "./player-controls-layout.js?v=20260831-player-controls-layout-04";
+import { observePlayerVolumeLayouts } from "./player-volume-layout.js?v=20260831-player-volume-layout-13";
+
 export function installMiniPlayerWindowStyles(targetDocument) {
   const emojiFont = targetDocument.createElement("link");
   emojiFont.rel = "stylesheet";
@@ -38,5 +41,7 @@ export function createMiniPlayerSurface(
   surface.dataset.chatStyle = chatStyle || "float";
   surface.dataset.controlStyle = controlStyle || "line";
   surface.setAttribute("aria-label", "Mini-reproductor");
+  observePlayerControlLayouts(surface);
+  observePlayerVolumeLayouts(surface);
   return surface;
 }

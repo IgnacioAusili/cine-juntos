@@ -1,4 +1,5 @@
 import { dom } from "../../core/dom.js";
+import { wireChatInputCorrections } from "./chat-input-focus.js";
 
 const MOBILE_WIDTH_QUERY = "(max-width: 980px)";
 const KEYBOARD_REDUCTION_PX = 80;
@@ -7,6 +8,8 @@ const TEXT_INPUTS = new Set();
 let baselineHeight = 0;
 let baselineWidth = 0;
 let syncFrameId = 0;
+let lockedPageScrollTop = 0;
+let keyboardWasOpen = false;
 
 function getViewportWidth() {
   return Math.round(
@@ -37,6 +40,24 @@ function isChatInputFocused() {
 function setKeyboardState(isOpen) {
   if (!dom.sessionView) return;
   dom.sessionView.classList.toggle("chat-keyboard-open", isOpen);
+  const rootStyle = document.documentElement.style;
+  if (isOpen) {
+    rootStyle.setProperty("--mobile-keyboard-layout-height", `${baselineHeight}px`);
+    rootStyle.setProperty(
+      "--mobile-keyboard-inset",
+      `${Math.max(0, baselineHeight - getViewportHeight())}px`,
+    );
+  } else {
+    rootStyle.setProperty("--mobile-keyboard-layout-height", `${getViewportHeight()}px`);
+    rootStyle.setProperty("--mobile-keyboard-inset", "0px");
+  }
+}
+
+function keepPageScrollLocked() {
+  if (!keyboardWasOpen) return;
+  const currentScrollTop = Math.round(window.scrollY || document.scrollingElement?.scrollTop || 0);
+  if (currentScrollTop === lockedPageScrollTop) return;
+  window.scrollTo({ top: lockedPageScrollTop, behavior: "auto" });
 }
 
 function syncKeyboardState() {
@@ -57,7 +78,12 @@ function syncKeyboardState() {
   const isKeyboardOpen = isMobileLayout()
     && focused
     && baselineHeight - currentHeight >= KEYBOARD_REDUCTION_PX;
+  if (isKeyboardOpen && !keyboardWasOpen) {
+    lockedPageScrollTop = Math.round(window.scrollY || document.scrollingElement?.scrollTop || 0);
+  }
+  keyboardWasOpen = isKeyboardOpen;
   setKeyboardState(isKeyboardOpen);
+  keepPageScrollLocked();
 }
 
 function scheduleKeyboardSync() {
@@ -67,6 +93,7 @@ function scheduleKeyboardSync() {
 
 function handleFocusIn(event) {
   if (!TEXT_INPUTS.has(event.target)) return;
+  lockedPageScrollTop = Math.round(window.scrollY || document.scrollingElement?.scrollTop || 0);
   scheduleKeyboardSync();
 }
 
@@ -79,7 +106,9 @@ function handleFocusOut(event) {
 export function wireMobileKeyboardLayout() {
   if (!dom.sessionView) return;
 
-  [dom.messageInput, dom.overlayMessageInput].forEach((input) => {
+  const chatInputs = [dom.messageInput, dom.overlayMessageInput];
+  wireChatInputCorrections(chatInputs);
+  chatInputs.forEach((input) => {
     if (input) TEXT_INPUTS.add(input);
   });
   baselineHeight = getViewportHeight();
@@ -88,6 +117,7 @@ export function wireMobileKeyboardLayout() {
   document.addEventListener("focusin", handleFocusIn, { passive: true });
   document.addEventListener("focusout", handleFocusOut, { passive: true });
   window.addEventListener("resize", scheduleKeyboardSync, { passive: true });
+  window.addEventListener("scroll", keepPageScrollLocked, { passive: true });
   window.addEventListener("orientationchange", scheduleKeyboardSync, { passive: true });
   window.visualViewport?.addEventListener("resize", scheduleKeyboardSync, { passive: true });
   window.visualViewport?.addEventListener("scroll", scheduleKeyboardSync, { passive: true });

@@ -16,6 +16,7 @@ import {
   syncUnreadBadgesWithVisibility,
 } from "./unread-counters.js";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
+import { focusChatInput } from "./chat-input-focus.js";
 
 const AUTO_COLLAPSE_DELAY_MS = 5000;
 const AUTO_EXPAND_INSIDE_KEY = "cine-juntos-chat-auto-expand-inside";
@@ -353,7 +354,7 @@ export function setInsideChatVisible(visible, options = {}) {
   syncInsideChatPanelOffset();
   if (visible) {
     window.requestAnimationFrame(() => {
-      dom.overlayMessageInput?.focus({ preventScroll: true });
+      focusChatInput(dom.overlayMessageInput);
     });
   } else if (document.activeElement && dom.playerFrame.contains(document.activeElement)) {
     window.requestAnimationFrame(() => {

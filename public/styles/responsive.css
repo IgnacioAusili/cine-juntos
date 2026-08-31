@@ -343,3 +343,20 @@
     box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.13);
   }
 }
+
+@media (min-width: 981px) {
+  .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone {
+    top: 1px;
+    right: auto;
+    bottom: auto;
+    left: calc(100% - var(--chat-panel-width));
+    width: 30px;
+    height: 40px;
+    transform: none;
+  }
+
+  .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-handle {
+    width: 30px;
+    height: 40px;
+  }
+}

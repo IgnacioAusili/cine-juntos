@@ -2,6 +2,7 @@ import { clearReplyTarget, setReplyTarget } from "../chat/chat-reply.js?v=202608
 import { wireMessageInteractions } from "../chat/chat-message-interactions.js";
 import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js";
 import { state } from "../../core/state.js";
+import { focusChatInput } from "../chat/chat-input-focus.js";
 
 const mirroredSystemGroupStates = new WeakMap();
 const miniSystemGroupAnimations = new WeakMap();
@@ -345,8 +346,10 @@ export function toggleMiniEmojiPicker(element) {
     return;
   }
 
+  const selectionStart = input.selectionStart ?? input.value.length;
+  const selectionEnd = input.selectionEnd ?? input.value.length;
   popover.hidden = false;
-  requestAnimationFrame(() => input.focus({ preventScroll: true }));
+  requestAnimationFrame(() => focusChatInput(input, selectionStart, selectionEnd));
 }
 
 export function toggleMiniChatOverlay(
@@ -405,7 +408,6 @@ function insertMiniEmoji(surface, target) {
   input.value = `${input.value.slice(0, start)}${option.textContent}${input.value.slice(end)}`;
   const position = start + option.textContent.length;
   input.dispatchEvent(new Event("input", { bubbles: true }));
-  input.focus({ preventScroll: true });
-  input.setSelectionRange?.(position, position);
+  focusChatInput(input, position, position);
   surface.querySelector(".mini-emoji-popover").hidden = true;
 }

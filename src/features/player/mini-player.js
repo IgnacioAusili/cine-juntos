@@ -25,7 +25,7 @@ let scrollMiniPlayerFrame = 0;
 let scrollMiniPlayerDismissedRoom = "";
 
 const SCROLL_MINI_PLAYER_DISMISSED_KEY = "cine-juntos-scroll-mini-player-dismissed";
-const MOBILE_VIEWPORT_QUERY = "(max-width: 680px)";
+const MOBILE_VIEWPORT_QUERY = "(max-width: 680px), (hover: none) and (pointer: coarse)";
 const MINI_PLAYER_OVERLAY_IDLE_MS = 3000;
 const MINI_PLAYER_OVERLAY_LEAVE_HIDE_DELAY_MS = 800;
 

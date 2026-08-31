@@ -15,7 +15,7 @@ import {
   logEvent,
   state,
 } from "../../core/state.js";
-import { isMiniPlayerActive } from "./mini-player.js?v=20260815-seek-tooltip-01";
+import { isMiniPlayerActive } from "./mini-player.js?v=20260831-mobile-landscape-tap-01";
 import { syncInsideChatPanelOffset } from "../chat/chat-layout.js?v=20260827-entry-scroll-fix-01";
 import { withShortcutHint } from "../../core/utils.js";
 import { wireTouchHover } from "../../core/touch-interactions.js";
@@ -26,6 +26,7 @@ import {
 
 const PLAYER_OVERLAY_IDLE_MS = 3000;
 const PLAYER_OVERLAY_LEAVE_HIDE_DELAY_MS = 800;
+const MOBILE_PLAYER_MEDIA_QUERY = "(max-width: 680px), (hover: none) and (pointer: coarse)";
 let fallbackFullscreenActive = false;
 
 const USE_NATIVE_FULLSCREEN = true;
@@ -240,7 +241,7 @@ function wirePlayerOverlayControls() {
     if (
       event?.type === "mousedown"
       && target === dom.videoPlayer
-      && !window.matchMedia("(max-width: 680px)").matches
+      && !window.matchMedia(MOBILE_PLAYER_MEDIA_QUERY).matches
     ) {
       if (!dom.videoPlayer.paused && !dom.videoPlayer.ended) return;
       clearHideTimer();

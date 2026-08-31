@@ -42,9 +42,10 @@ import {
 import {
   initializePlayer,
   wirePlayerEvents,
-} from "./features/player/index.js?v=20260830-mobile-video-tap-01";
+} from "./features/player/index.js?v=20260831-mobile-landscape-tap-01";
 import { wireMobileFullscreenOrientation } from "./features/player/mobile-fullscreen-orientation.js";
 import { wireMobileKeyboardLayout } from "./features/chat/mobile-keyboard.js";
+import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20260830-mobile-chat-header-fix-04";
 import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260830-room-cleanup-01";
 import { wireTouchHover } from "./core/touch-interactions.js?v=20260829-touch-hold-fix-01";
 
@@ -88,6 +89,7 @@ setChatDock(localStorage.getItem("cine-juntos-chat-dock") || "right", {
   preserveScroll: true,
 });
 restoreExternalChatCollapsed();
+wireMobileBottomChatHeader();
 syncChatAutoExpandControls();
 updateCollapseButton();
 updateCharCounter(dom.messageInput, false);

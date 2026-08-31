@@ -1,0 +1,44 @@
+/* La fila conserva su forma normal mientras haya espacio suficiente. */
+.player-frame .player-controls-bar[data-control-density="close"] {
+  --player-controls-item-gap: 7px;
+}
+
+/* El popup de volumen conserva la separación de close; el siguiente escalón
+   recién vuelve a reducir el gap. */
+.player-frame .player-controls-bar[data-control-density="volume"] {
+  --player-controls-item-gap: 7px;
+}
+
+/* Segundo ajuste: se acercan más, pero queda una separación cómoda. */
+.player-frame .player-controls-bar[data-control-density="tight"] {
+  --player-controls-item-gap: 4px;
+}
+
+/* Último ajuste antes del desplazamiento: los controles se reducen un poco
+   y nunca se elimina por completo el espacio entre ellos. */
+.player-frame .player-controls-bar:is([data-control-density="compact"], [data-control-density="scroll"]) {
+  --player-controls-item-gap: 3px;
+}
+
+.player-frame .player-controls-bar:is([data-control-density="compact"], [data-control-density="scroll"]) > .video-control-button,
+.player-frame .player-controls-bar:is([data-control-density="compact"], [data-control-density="scroll"]) > .player-volume-group > .video-control-button {
+  width: 28px;
+  min-width: 28px;
+  min-height: 28px;
+  flex-basis: 28px;
+}
+
+.player-frame .player-controls-bar:is([data-control-density="compact"], [data-control-density="scroll"]) .video-control-button svg {
+  width: 17px;
+  height: 17px;
+}
+
+.player-frame .player-controls-bar:is([data-control-density="compact"], [data-control-density="scroll"]) .primary-video-control svg {
+  width: 20px;
+  height: 20px;
+}
+
+.player-frame .player-controls-bar:is([data-control-density="compact"], [data-control-density="scroll"]) .player-rate-select {
+  width: max(42px, var(--player-rate-layout-width, 48px));
+  min-width: 42px;
+}

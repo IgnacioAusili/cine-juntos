@@ -9,7 +9,10 @@ let baselineHeight = 0;
 let baselineWidth = 0;
 let syncFrameId = 0;
 let lockedPageScrollTop = 0;
+let lockedScrollContainer = null;
+let lockedScrollContainerTop = 0;
 let keyboardWasOpen = false;
+let overlayInputFocused = false;
 
 function getViewportWidth() {
   return Math.round(
@@ -37,6 +40,32 @@ function isChatInputFocused() {
   return TEXT_INPUTS.has(document.activeElement);
 }
 
+function isOverlayChatInput(target) {
+  return target === dom.overlayMessageInput
+    || target?.matches?.('[data-proxy-for="overlayMessageInput"]');
+}
+
+function isFullscreenActive() {
+  return Boolean(document.fullscreenElement)
+    || document.body.classList.contains("fullscreen-mode");
+}
+
+function getScrollContainer() {
+  if (!isFullscreenActive()) return null;
+  return dom.sessionView?.closest(".app-shell") || null;
+}
+
+function capturePageScrollPosition() {
+  lockedPageScrollTop = Math.round(window.scrollY || document.scrollingElement?.scrollTop || 0);
+  lockedScrollContainer = getScrollContainer();
+  lockedScrollContainerTop = Math.round(lockedScrollContainer?.scrollTop || 0);
+}
+
+function handlePointerDown(event) {
+  if (!isOverlayChatInput(event.target)) return;
+  capturePageScrollPosition();
+}
+
 function setKeyboardState(isOpen) {
   if (!dom.sessionView) return;
   dom.sessionView.classList.toggle("chat-keyboard-open", isOpen);
@@ -54,10 +83,20 @@ function setKeyboardState(isOpen) {
 }
 
 function keepPageScrollLocked() {
-  if (!keyboardWasOpen) return;
+  if (!keyboardWasOpen && !overlayInputFocused) return;
   const currentScrollTop = Math.round(window.scrollY || document.scrollingElement?.scrollTop || 0);
-  if (currentScrollTop === lockedPageScrollTop) return;
-  window.scrollTo({ top: lockedPageScrollTop, behavior: "auto" });
+  if (currentScrollTop !== lockedPageScrollTop) {
+    window.scrollTo({ top: lockedPageScrollTop, behavior: "auto" });
+  }
+
+  const currentContainer = getScrollContainer();
+  if (
+    currentContainer
+    && currentContainer === lockedScrollContainer
+    && Math.round(currentContainer.scrollTop || 0) !== lockedScrollContainerTop
+  ) {
+    currentContainer.scrollTo({ top: lockedScrollContainerTop, behavior: "auto" });
+  }
 }
 
 function syncKeyboardState() {
@@ -92,12 +131,23 @@ function scheduleKeyboardSync() {
 }
 
 function handleFocusIn(event) {
+  if (isOverlayChatInput(event.target)) {
+    overlayInputFocused = true;
+    capturePageScrollPosition();
+    scheduleKeyboardSync();
+    return;
+  }
   if (!TEXT_INPUTS.has(event.target)) return;
-  lockedPageScrollTop = Math.round(window.scrollY || document.scrollingElement?.scrollTop || 0);
+  capturePageScrollPosition();
   scheduleKeyboardSync();
 }
 
 function handleFocusOut(event) {
+  if (isOverlayChatInput(event.target)) {
+    overlayInputFocused = false;
+    scheduleKeyboardSync();
+    return;
+  }
   if (!TEXT_INPUTS.has(event.target)) return;
   setKeyboardState(false);
   scheduleKeyboardSync();
@@ -108,16 +158,22 @@ export function wireMobileKeyboardLayout() {
 
   const chatInputs = [dom.messageInput, dom.overlayMessageInput];
   wireChatInputCorrections(chatInputs);
-  chatInputs.forEach((input) => {
-    if (input) TEXT_INPUTS.add(input);
-  });
+  if (dom.messageInput) TEXT_INPUTS.add(dom.messageInput);
   baselineHeight = getViewportHeight();
   baselineWidth = getViewportWidth();
 
+  document.addEventListener("pointerdown", handlePointerDown, {
+    capture: true,
+    passive: true,
+  });
   document.addEventListener("focusin", handleFocusIn, { passive: true });
   document.addEventListener("focusout", handleFocusOut, { passive: true });
   window.addEventListener("resize", scheduleKeyboardSync, { passive: true });
   window.addEventListener("scroll", keepPageScrollLocked, { passive: true });
+  document.addEventListener("scroll", keepPageScrollLocked, {
+    capture: true,
+    passive: true,
+  });
   window.addEventListener("orientationchange", scheduleKeyboardSync, { passive: true });
   window.visualViewport?.addEventListener("resize", scheduleKeyboardSync, { passive: true });
   window.visualViewport?.addEventListener("scroll", scheduleKeyboardSync, { passive: true });

@@ -1,7 +1,7 @@
-@import url("./styles/tokens.css?v=20260819-emoji-fallback-01");
+@import url("./styles/tokens.css?v=20260831-emoji-presentation-01");
 @import url("./styles/base.css");
 @import url("./styles/layout.css?v=20260831-chat-header-layout-01");
-@import url("./styles/components.css?v=20260831-chat-header-layout-02");
+@import url("./styles/components.css?v=20260831-emoji-presentation-01");
 @import url("./styles/lobby.css?v=20260828-help-hover-touch-02");
 @import url("./styles/player.css?v=20260831-rate-select-04");
 @import url("./styles/chat.css?v=20260824-reply-direction-01");

@@ -2,10 +2,20 @@ import { dom } from "../core/dom.js";
 
 let syncFrameId = 0;
 let toolbarObserver = null;
+let lastViewportMetrics = null;
+
+function isOverlayChatInput(target) {
+  return target?.id === "overlayMessageInput"
+    || target?.matches?.('[data-proxy-for="overlayMessageInput"]');
+}
+
+function isOverlayChatInputFocused() {
+  return isOverlayChatInput(document.activeElement);
+}
 
 function getViewportMetrics() {
   const viewport = window.visualViewport;
-  return {
+  const metrics = {
     width: Math.round(
       viewport?.width ||
         window.innerWidth ||
@@ -21,10 +31,20 @@ function getViewportMetrics() {
     offsetLeft: Math.round(viewport?.offsetLeft || 0),
     offsetTop: Math.round(viewport?.offsetTop || 0),
   };
+
+  // El teclado del overlay se superpone al reproductor. Mantener las últimas
+  // métricas completas evita que el visualViewport reducido refluya toda la
+  // sesión o que una pantalla vertical sea interpretada como apaisada.
+  if (isOverlayChatInputFocused() && lastViewportMetrics) {
+    return lastViewportMetrics;
+  }
+
+  return metrics;
 }
 
 function syncViewportMetrics() {
   const metrics = getViewportMetrics();
+  if (!isOverlayChatInputFocused()) lastViewportMetrics = metrics;
   document.documentElement.classList.toggle(
     "viewport-landscape",
     metrics.width > metrics.height,

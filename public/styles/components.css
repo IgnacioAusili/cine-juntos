@@ -7,6 +7,6 @@
 @import url("./components/presence.css");
 @import url("./components/icon-fallbacks.css");
 @import url("./components/unread-badges.css");
-@import url("./components/emoji-popover.css");
+@import url("./components/emoji-popover.css?v=20260831-emoji-presentation-01");
 @import url("./components/tooltip-layer.css");
 @import url("./components/dialogs.css?v=20260822-confirm-dialog-layout-01");

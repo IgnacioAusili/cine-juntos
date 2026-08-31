@@ -15,7 +15,7 @@ import {
   generateRoomCode,
   normalizeRoomCode,
 } from "../core/utils.js";
-import { createTransport, createLocalTransport } from "../services/transport.js?v=20260825-chat-history-fast-05";
+import { createTransport, createLocalTransport } from "../services/transport.js?v=20260830-room-cleanup-01";
 import {
   renderMembers,
   renderPresence,

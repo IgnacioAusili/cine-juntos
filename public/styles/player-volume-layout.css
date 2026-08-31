@@ -1,0 +1,108 @@
+/* El slider horizontal vive dentro de la fila y solo ocupa ancho cuando se
+   abre. Esto permite que el layout se mida con el espacio real disponible. */
+.player-frame .player-controls-bar .player-volume-group {
+  gap: 0;
+}
+
+.player-frame .player-controls-bar .player-volume-slider-wrap {
+  position: static;
+  z-index: 31;
+  display: flex;
+  width: 60px;
+  height: 28px;
+  align-items: center;
+  flex: 0 1 60px;
+  max-width: 0;
+}
+
+.player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"]:is(:hover, :focus-within, .is-touch-hover, .volume-hovered) {
+  gap: var(--player-controls-item-gap);
+}
+
+.player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"]:hover .player-volume-slider-wrap,
+.player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"]:focus-within .player-volume-slider-wrap,
+.player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"].is-touch-hover .player-volume-slider-wrap,
+.player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"].volume-hovered .player-volume-slider-wrap {
+  max-width: 60px;
+}
+
+/* En barras muy estrechas el volumen se abre como un popup sobre la barra,
+   con el mismo lenguaje visual del menu de velocidad. El input conserva su
+   rango nativo, pero queda centrado dentro del panel despues de girarse. */
+.player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="vertical"] .player-volume-slider-wrap {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  width: 28px;
+  height: 0;
+  flex: 0 0 28px;
+  max-width: 28px;
+  max-height: 0;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  touch-action: none;
+  overscroll-behavior: contain;
+  user-select: none;
+  padding: 0;
+  border: 0 solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(43, 55, 59, 0.97), rgba(17, 23, 26, 0.97));
+  backdrop-filter: blur(14px) saturate(1.08);
+  -webkit-backdrop-filter: blur(14px) saturate(1.08);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.42), 0 0 0 1px rgba(216, 255, 249, 0.05);
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 4px);
+  transition: max-height 180ms ease, opacity 150ms ease, transform 180ms ease;
+}
+
+.player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="vertical"] .player-volume-input {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+  width: 46px;
+  min-width: 46px;
+  height: 5px;
+  min-height: 5px;
+  margin: 0 !important;
+  box-sizing: border-box;
+  touch-action: none;
+  cursor: ns-resize;
+  transform: translate(-50%, -50%) rotate(-90deg);
+  transform-origin: center;
+}
+
+.player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="vertical"].is-volume-slider-open .player-volume-slider-wrap {
+  height: 64px;
+  max-height: 64px;
+  padding: 6px 1px;
+  border-width: 1px;
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, 0);
+}
+
+.player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="vertical"] .player-volume-input::-webkit-slider-runnable-track {
+  height: 5px;
+}
+
+.player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="vertical"] .player-volume-input::-moz-range-track {
+  height: 5px;
+}
+
+.player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="vertical"] .player-volume-input::-webkit-slider-thumb {
+  width: 10px;
+  height: 10px;
+  margin-top: -2.5px;
+}
+
+.player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="vertical"] .player-volume-input::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+}

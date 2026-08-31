@@ -48,6 +48,7 @@
   min-width: 0;
   width: fit-content;
   max-width: 100%;
+  overflow: hidden;
   justify-self: center;
 }
 
@@ -61,6 +62,7 @@
   min-width: 0;
   width: fit-content;
   max-width: 100%;
+  overflow: hidden;
   align-items: center;
   justify-items: start;
 }
@@ -77,6 +79,7 @@
   min-width: 0;
   width: fit-content;
   max-width: 100%;
+  overflow: hidden;
   align-items: center;
   gap: 6px;
 }
@@ -86,7 +89,9 @@
 }
 
 .chat-name-display {
+  flex: 1 1 auto;
   min-width: 0;
+  max-width: 100%;
   overflow: hidden;
   color: var(--text);
   font-size: 0.82rem;
@@ -181,6 +186,12 @@
 .presence-pill {
   justify-self: start;
   align-self: center;
+}
+
+@media (min-width: 981px) {
+  .session-view[data-chat-dock="right"] .chat-tools {
+    padding-left: 30px;
+  }
 }
 
 .chat-name-edit-button:hover,

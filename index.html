@@ -21,7 +21,7 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap"
     />
     <link rel="icon" href="./public/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="./public/styles.css?v=20260830-mobile-landscape-keyboard-05" />
+    <link rel="stylesheet" href="./public/styles.css?v=20260830-mobile-chat-hit-area-01" />
   </head>
   <body class="is-lobby">
     <div class="app-shell">
@@ -389,6 +389,9 @@
                       id="playerMuteButton"
                       type="button"
                       aria-label="Silenciar"
+                      aria-controls="playerVolumeInput"
+                      aria-expanded="false"
+                      aria-haspopup="slider"
                       title="Silenciar"
                       data-tooltip="Silenciar (M)"
                     >
@@ -423,43 +426,72 @@
                     <button class="player-time player-time-total" id="playerDuration" type="button">0:00</button>
                   </div>
 
-                  <label
-                    class="player-select player-rate-select"
-                    for="playerRateSelect"
-                    data-tooltip="Velocidad de reproduccion"
+                  <div
+                    class="player-controls-scroll-zone"
+                    aria-label="Controles adicionales"
                   >
-                    <select id="playerRateSelect" aria-label="Velocidad de reproduccion">
-                      <option value="0.5">0.5x</option>
-                      <option value="0.75">0.75x</option>
-                      <option value="1" selected>1x</option>
-                      <option value="1.25">1.25x</option>
-                      <option value="1.5">1.5x</option>
-                      <option value="2">2x</option>
-                    </select>
-                  </label>
+                    <div
+                      class="player-controls-scroll-window"
+                      tabindex="0"
+                      role="region"
+                      aria-label="Deslizar controles adicionales"
+                    >
+                      <div class="player-controls-scroll-track">
+                        <label
+                          class="player-select player-rate-select"
+                          for="playerRateSelect"
+                          data-player-control="rate"
+                          data-tooltip="Velocidad de reproduccion"
+                        >
+                          <select id="playerRateSelect" aria-label="Velocidad de reproduccion">
+                            <option value="0.5">0.5x</option>
+                            <option value="0.75">0.75x</option>
+                            <option value="1" selected>1x</option>
+                            <option value="1.25">1.25x</option>
+                            <option value="1.5">1.5x</option>
+                            <option value="2">2x</option>
+                          </select>
+                        </label>
 
-                  <button
-                    class="video-control-button"
-                    id="playerMiniPlayerButton"
-                    type="button"
-                    aria-label="Abrir mini-reproductor"
-                    aria-pressed="false"
-                    title="Abrir mini-reproductor"
-                    data-tooltip="Mini-reproductor"
-                  >
-                    <span data-lucide="picture-in-picture-2"></span>
-                  </button>
+                        <button
+                          class="video-control-button"
+                          id="playerMiniPlayerButton"
+                          type="button"
+                          data-player-control="mini"
+                          aria-label="Abrir mini-reproductor"
+                          aria-pressed="false"
+                          title="Abrir mini-reproductor"
+                          data-tooltip="Mini-reproductor"
+                        >
+                          <span data-lucide="picture-in-picture-2"></span>
+                        </button>
 
-                  <button
-                    class="video-control-button"
-                    id="pageFullscreenButton"
-                    type="button"
-                    aria-label="Pantalla completa"
-                    title="Pantalla completa"
-                    data-tooltip="Pantalla completa (F)"
-                  >
-                    <span data-lucide="maximize"></span>
-                  </button>
+                        <button
+                          class="video-control-button"
+                          id="pageFullscreenButton"
+                          type="button"
+                          data-player-control="fullscreen"
+                          aria-label="Pantalla completa"
+                          title="Pantalla completa"
+                          data-tooltip="Pantalla completa (F)"
+                        >
+                          <span data-lucide="maximize"></span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <input
+                      class="player-controls-scroll-indicator"
+                      type="range"
+                      min="0"
+                      max="0"
+                      step="1"
+                      value="0"
+                      aria-label="Desplazar controles adicionales"
+                      data-player-scroll-indicator
+                      hidden
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -899,6 +931,6 @@
     <script src="./public/dev-runtime.js?v=20260715-02"></script>
     <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script src="./public/firebase-config.js"></script>
-    <script type="module" src="./src/main.js?v=20260830-mobile-seek-fix-01"></script>
+    <script type="module" src="./src/main.js?v=20260830-room-cleanup-01"></script>
   </body>
 </html>

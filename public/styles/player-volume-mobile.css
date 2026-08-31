@@ -1,0 +1,20 @@
+/* En móvil el slider horizontal ocupa menos espacio; el vertical conserva su
+   recorrido para que el ajuste siga siendo preciso cuando la fila no entra. */
+@media (max-width: 760px) {
+  .player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"] .player-volume-slider-wrap {
+    width: 48px;
+    flex-basis: 48px;
+  }
+
+  .player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"]:hover .player-volume-slider-wrap,
+  .player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"]:focus-within .player-volume-slider-wrap,
+  .player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"].is-touch-hover .player-volume-slider-wrap,
+  .player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"].volume-hovered .player-volume-slider-wrap {
+    max-width: 48px;
+  }
+
+  .player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"] .player-volume-input {
+    width: 48px;
+    min-width: 48px;
+  }
+}

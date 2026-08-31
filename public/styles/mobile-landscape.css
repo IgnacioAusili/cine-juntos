@@ -95,6 +95,134 @@
     height: 100%;
   }
 
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-tools {
+    gap: 4px;
+    padding-inline: 4px;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-tools-actions {
+    gap: 4px;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="bottom"] #dockChatButton {
+    width: 24px;
+    min-height: 24px;
+    height: 24px;
+    flex-basis: 24px;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .workspace {
+    height: var(--app-viewport-height);
+    min-height: 0;
+    grid-template-rows: minmax(220px, 40%) minmax(0, 1fr);
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-area {
+    gap: 3px;
+    grid-template-rows: 38px minmax(0, 1fr);
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"] .chat-collapse-hover-zone {
+    transform: translate(-50%, calc(-50% + 10px));
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-tools {
+    box-sizing: border-box;
+    min-height: 0;
+    height: auto;
+    max-height: none;
+    padding-top: 2px;
+    padding-bottom: 0;
+    padding-inline: 4px;
+    gap: 4px;
+    overflow: hidden;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-tools > * {
+    align-self: center;
+    transform: none;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-tools-actions {
+    gap: 4px;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-area > .message-form {
+    left: 32px;
+    right: 32px;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .message-form .input-wrapper {
+    min-height: 30px;
+    align-items: center;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .message-form .input-wrapper textarea {
+    min-height: 30px;
+    max-height: 66px;
+    padding-block: 5px;
+    padding-inline: 8px;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .message-form .input-wrapper .emoji-trigger,
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .message-form .input-wrapper .send {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-tools {
+    height: 38px;
+    min-height: 38px;
+    max-height: 38px;
+    gap: 4px;
+    padding-left: 30px;
+    padding-right: 4px;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-tools-actions {
+    gap: 4px;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone {
+    top: 1px;
+    right: auto;
+    bottom: auto;
+    left: calc(100% - var(--chat-panel-width));
+    width: 30px;
+    height: 38px;
+    transform: none;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-handle {
+    width: 30px;
+    height: 38px;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] #dockChatButton {
+    width: 24px;
+    min-height: 24px;
+    height: 24px;
+    flex-basis: 24px;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .message-form .input-wrapper {
+    min-height: 30px;
+    align-items: center;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .message-form .input-wrapper textarea {
+    min-height: 30px;
+    max-height: 66px;
+    padding-block: 5px;
+    padding-inline: 8px;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .message-form .input-wrapper .emoji-trigger,
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .message-form .input-wrapper .send {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
   html.viewport-landscape body:not(.is-lobby) .session-view.chat-collapsed[data-chat-dock="right"] .chat-area {
     flex-basis: 0;
     width: 0;

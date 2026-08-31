@@ -8,6 +8,58 @@
   display: none;
 }
 
+@media (max-width: 980px) {
+  /* Los botones conservan el alto de una línea aun cuando el textarea crece.
+     El ancho extra queda dentro del botón, por lo que también es táctil. */
+  body:not(.is-lobby) .chat-area > .message-form .input-wrapper .emoji-trigger {
+    align-self: flex-end;
+    flex: 0 0 24px;
+    width: 24px;
+    min-height: 36px;
+    height: 36px;
+    margin: 0;
+    padding: 0;
+  }
+
+  body:not(.is-lobby) .chat-area > .message-form .input-wrapper .send {
+    align-self: flex-end;
+    flex: 0 0 38px;
+    width: 38px;
+    min-height: 36px;
+    height: 36px;
+    margin: 0;
+    padding: 0;
+  }
+
+  body:not(.is-lobby) .chat-area > .message-form .input-wrapper .send > * {
+    left: calc(50% - 3px);
+  }
+
+  body:not(.is-lobby) .player-frame .overlay-message-form .input-wrapper .emoji-trigger {
+    right: 34px;
+    bottom: 0;
+    width: 24px;
+    min-height: 34px;
+    height: 34px;
+    flex-basis: 24px;
+    margin: 0;
+  }
+
+  body:not(.is-lobby) .player-frame .overlay-message-form .input-wrapper .send {
+    right: 0;
+    bottom: 0;
+    width: 34px;
+    min-height: 34px;
+    height: 34px;
+    flex-basis: 34px;
+    margin: 0;
+  }
+
+  body:not(.is-lobby) .player-frame .overlay-message-form .input-wrapper .send > * {
+    left: calc(50% - 3px);
+  }
+}
+
 @media (max-width: 680px) {
   /* En pantallas chicas la entrada usa una sola columna real: el contenido
      no hereda el padding lateral del grid de escritorio ni el desplazamiento
@@ -332,6 +384,9 @@
     max-height: 40px;
     overflow: hidden;
     box-sizing: border-box;
+    gap: 4px;
+    padding-left: 30px;
+    padding-right: 4px;
   }
 
   /* La flecha de contraer debe acompañar al header desde el primer frame de
@@ -387,7 +442,7 @@
   /* En el dock lateral la flecha de contraer se convierte en una pestaña
      semicircular integrada al borde izquierdo del panel. */
   body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone {
-    top: 0;
+    top: 1px;
     right: auto;
     bottom: auto;
     left: 0;
@@ -430,7 +485,7 @@
   /* La pestaña entra en la cabecera; el indicador de usuarios se corre para
      dejarle espacio sin alterar el centrado del nombre. */
   body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-tools > .presence-pill {
-    transform: translateX(26px);
+    transform: none;
     position: relative;
     z-index: 13;
   }
@@ -532,25 +587,152 @@
      mensajes y vuelve a entrar cuando el gesto va hacia arriba. */
   body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-tools {
     box-sizing: border-box;
-    min-height: 42px;
-    height: 42px;
-    max-height: 42px;
+    min-height: 0;
+    height: auto;
+    max-height: none;
     padding-top: 2px;
     padding-bottom: 0;
     overflow: hidden;
     transition:
-      height 220ms ease,
-      max-height 180ms ease,
-      min-height 220ms ease,
-      opacity 160ms ease,
-      padding 180ms ease;
+      opacity 220ms ease,
+      padding 220ms ease;
     transform: translateY(0);
+  }
+
+  /* El compositor queda más angosto y compacto en el dock inferior vertical,
+     sin reducir el área táctil del chat completo. */
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-area > .message-form {
+    left: 32px;
+    right: 32px;
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .message-form .input-wrapper {
+    min-height: 30px;
+    border-radius: 16px;
+    padding-left: 4px;
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .message-form .input-wrapper textarea {
+    min-height: 30px;
+    max-height: 66px;
+    padding-block: 5px;
+    padding-inline: 8px;
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-area .input-wrapper .emoji-trigger {
+    align-self: flex-end;
+    flex: 0 0 24px;
+    width: 24px;
+    min-height: 30px;
+    height: 30px;
+    margin: 0;
+    padding: 0;
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-area .input-wrapper .send {
+    align-self: flex-end;
+    flex: 0 0 34px;
+    width: 34px;
+    min-height: 30px;
+    height: 30px;
+    margin: 0;
+    padding: 0;
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-area .input-wrapper .send > * {
+    left: calc(50% - 3px);
+  }
+
+  body:not(.is-lobby) .overlay-message-form {
+    padding-inline: 18px;
+    padding-bottom: 8px;
+  }
+
+  body:not(.is-lobby) .overlay-message-form .input-wrapper {
+    width: calc(100% - 12px);
+    min-height: 30px;
+    border-radius: 16px;
+  }
+
+  body:not(.is-lobby) .overlay-message-form .input-wrapper textarea {
+    min-height: 30px;
+    max-height: 66px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 54px;
+  }
+
+  /* Los botones conservan la altura de una sola línea aunque el textarea se
+     expanda. El envío también toma el espacio libre hasta el borde derecho. */
+  body:not(.is-lobby) .player-frame .overlay-message-form .input-wrapper .emoji-trigger {
+    right: 34px;
+    bottom: 0;
+    width: 24px;
+    min-height: 30px;
+    height: 30px;
+    flex-basis: 24px;
+    margin: 0;
+  }
+
+  body:not(.is-lobby) .player-frame .overlay-message-form .input-wrapper .send {
+    right: 0;
+    bottom: 0;
+    width: 34px;
+    min-height: 30px;
+    height: 30px;
+    flex-basis: 34px;
+    margin: 0;
+  }
+
+  body:not(.is-lobby) .player-frame .overlay-message-form .input-wrapper .send > * {
+    left: calc(50% - 3px);
+  }
+
+  /* En el dock lateral el input de una línea conserva su altura de 36px. */
+  body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-area > .message-form .input-wrapper .emoji-trigger {
+    align-self: flex-end;
+    flex: 0 0 24px;
+    width: 24px;
+    min-height: 36px;
+    height: 36px;
+    margin: 0;
+    padding: 0;
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-area > .message-form .input-wrapper .send {
+    align-self: flex-end;
+    flex: 0 0 38px;
+    width: 38px;
+    min-height: 36px;
+    height: 36px;
+    margin: 0;
+    padding: 0;
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-area > .message-form .input-wrapper .send > * {
+    left: calc(50% - 3px);
   }
 
   body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-area {
     gap: 3px;
-    grid-template-rows: minmax(0, 42px) minmax(0, 1fr);
+    grid-template-rows: 38px minmax(0, 1fr);
     transition: grid-template-rows 220ms ease;
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-tools {
+    gap: 4px;
+    padding-inline: 4px;
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-tools-actions {
+    gap: 4px;
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] #dockChatButton {
+    width: 24px;
+    min-height: 24px;
+    height: 24px;
+    flex-basis: 24px;
   }
 
   body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-tools > * {
@@ -568,9 +750,9 @@
   }
 
   body:not(.is-lobby) .session-view.chat-header-collapsed[data-chat-dock="bottom"] .chat-tools {
-    height: 0;
     min-height: 0;
-    max-height: 0;
+    height: auto;
+    max-height: none;
     padding-top: 0;
     padding-bottom: 0;
     opacity: 0;
@@ -580,13 +762,13 @@
 
   body:not(.is-lobby) .session-view.chat-header-collapsed[data-chat-dock="bottom"] .chat-area {
     gap: 3px;
-    grid-template-rows: minmax(0, 0px) minmax(0, 1fr);
+    grid-template-rows: 0px minmax(0, 1fr);
   }
 
   /* La flecha de contraer queda apenas por encima de la unión video/chat;
      la de expandir conserva su anclaje propio cuando el chat está cerrado. */
   body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"] .chat-collapse-hover-zone {
-    transform: translate(-50%, calc(-50% - 5px));
+    transform: translate(-50%, calc(-50% + 12px));
   }
 
   /* La flecha de expandir debe quedar separada de la barra de controles del
@@ -751,5 +933,15 @@
 
   .lobby-actions {
     gap: 6px;
+  }
+}
+
+/* En vertical el video queda apenas por encima del chat; landscape conserva
+   la composición que ya define mobile-landscape.css. */
+@media (max-width: 680px) and (orientation: portrait) {
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .workspace {
+    grid-template-rows:
+      minmax(220px, 40%)
+      minmax(0, 1fr);
   }
 }

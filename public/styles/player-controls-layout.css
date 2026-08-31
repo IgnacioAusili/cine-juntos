@@ -1,0 +1,159 @@
+/* Los controles esenciales permanecen fijos; la pista adicional se desplaza
+   dentro de la misma fila cuando el ancho no alcanza. */
+.player-controls-bar {
+  --player-controls-item-gap: 8px;
+  position: relative;
+  min-width: 0;
+  box-sizing: border-box;
+  flex-wrap: nowrap !important;
+  gap: var(--player-controls-item-gap);
+  overflow: visible;
+}
+
+.player-frame[data-control-style="line"] .player-controls-bar {
+  --player-controls-item-gap: 10px;
+  gap: var(--player-controls-item-gap);
+}
+
+/* El boton central usa un icono mas ancho; igualar su caja a la de los otros
+   comandos evita que sus dos separaciones se perciban mas abiertas. */
+.player-frame[data-control-style="line"] .player-controls-bar .primary-video-control:not([data-play-button-cooldown="true"]) {
+  width: 27px;
+  min-width: 27px;
+  flex: 0 0 27px;
+  padding: 0;
+}
+
+.mini-player-surface .player-controls-bar {
+  --player-controls-item-gap: 6px;
+}
+
+.player-controls-bar > .video-control-button,
+.player-controls-bar > .player-volume-group {
+  flex-shrink: 0;
+  margin-inline: 0 !important;
+}
+
+.player-controls-bar > .player-progress-group {
+  min-width: 0;
+  flex: 1 1 0%;
+}
+
+.player-controls-scroll-zone {
+  position: relative;
+  min-width: 32px;
+  min-height: 34px;
+  flex: 1 1 auto;
+  overflow: visible;
+}
+
+.player-controls-scroll-window {
+  width: 100%;
+  height: 34px;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+  touch-action: pan-x;
+  outline: 0;
+}
+
+.player-controls-scroll-window::-webkit-scrollbar {
+  display: none;
+}
+
+.player-controls-scroll-window:focus-visible {
+  border-radius: 999px;
+  box-shadow: 0 0 0 2px rgba(216, 255, 249, 0.25);
+}
+
+/* El menu propio de velocidad debe poder salir por arriba de la pista sin
+   quedar recortado por el overflow horizontal. */
+.player-controls-scroll-window:has(.player-rate-select.is-open) {
+  overflow: visible;
+  position: relative;
+  z-index: 4;
+}
+
+.player-controls-scroll-track {
+  display: flex;
+  width: max-content;
+  min-width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: flex-end;
+  column-gap: var(--player-controls-item-gap);
+  row-gap: 0;
+}
+
+.player-controls-scroll-track > * {
+  flex: 0 0 auto;
+  margin-inline: 0 !important;
+}
+
+.player-controls-scroll-indicator {
+  position: absolute;
+  right: 1px;
+  bottom: 0;
+  z-index: 3;
+  display: block;
+  width: clamp(24px, 42%, 44px);
+  height: 7px;
+  margin: 0;
+  appearance: none;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2);
+  cursor: ew-resize;
+  opacity: 0.86;
+  transition: opacity 150ms ease;
+}
+
+.player-controls-scroll-indicator[hidden] {
+  display: none;
+}
+
+.player-controls-scroll-indicator::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--accent) 0,
+    var(--accent) var(--scroll-position, 0%),
+    rgba(255, 255, 255, 0.22) var(--scroll-position, 0%),
+    rgba(255, 255, 255, 0.22) 100%
+  );
+}
+
+.player-controls-scroll-indicator::-moz-range-track {
+  height: 4px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.player-controls-scroll-indicator::-webkit-slider-thumb {
+  width: 8px;
+  height: 8px;
+  margin-top: -2px;
+  appearance: none;
+  border: 0;
+  border-radius: 999px;
+  background: var(--accent-soft, #d8fff9);
+  box-shadow: 0 0 0 2px rgba(8, 11, 13, 0.55);
+}
+
+.player-controls-scroll-indicator::-moz-range-thumb {
+  width: 8px;
+  height: 8px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--accent-soft, #d8fff9);
+  box-shadow: 0 0 0 2px rgba(8, 11, 13, 0.55);
+}
+
+.player-controls-scroll-indicator:focus-visible {
+  outline: 2px solid rgba(216, 255, 249, 0.62);
+  outline-offset: 2px;
+}

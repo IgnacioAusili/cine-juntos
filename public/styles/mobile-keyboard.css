@@ -27,3 +27,47 @@
     display: none;
   }
 }
+
+@media (max-width: 680px) and (orientation: portrait) {
+  /* El teclado se superpone al layout: la página conserva su posición y solo
+     el compositor se eleva hasta el borde visible del viewport. */
+  body:not(.is-lobby) .session-view.chat-keyboard-open[data-chat-dock="bottom"] .workspace {
+    height: var(--mobile-keyboard-layout-height, var(--app-viewport-height));
+    min-height: 0;
+  }
+
+  body:not(.is-lobby) .session-view.chat-keyboard-open[data-chat-dock="bottom"] .chat-area > .message-form {
+    bottom: calc(20px + var(--mobile-keyboard-inset, 0px));
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .message-form .input-wrapper {
+    align-items: center;
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .message-form .input-wrapper .emoji-trigger,
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .message-form .input-wrapper .send {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 980px) and (min-width: 681px) and (orientation: landscape) {
+  body:not(.is-lobby) .session-view.chat-keyboard-open[data-chat-dock="bottom"] .workspace {
+    height: var(--mobile-keyboard-layout-height, var(--app-viewport-height));
+    min-height: 0;
+  }
+
+  body:not(.is-lobby) .session-view.chat-keyboard-open[data-chat-dock="bottom"] .chat-area > .message-form {
+    bottom: calc(20px + var(--mobile-keyboard-inset, 0px));
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .message-form .input-wrapper {
+    align-items: center;
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .message-form .input-wrapper .emoji-trigger,
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .message-form .input-wrapper .send {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+}

@@ -32,6 +32,7 @@ import {
   syncChatAutoExpandControls,
 } from "./chat-layout.js?v=20260827-entry-scroll-fix-01";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
+import { focusChatInput } from "./chat-input-focus.js";
 
 const CHAT_SCROLL_WHEEL_MULTIPLIER = 0.35;
 const DOM_DELTA_PIXEL = 0;
@@ -280,7 +281,7 @@ export function wireChatEvents() {
       hideEmojiPicker();
       if (activeEmojiInput) {
         window.requestAnimationFrame(() => {
-          activeEmojiInput.focus({ preventScroll: true });
+          focusChatInput(activeEmojiInput);
         });
       }
       event.preventDefault();

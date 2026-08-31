@@ -24,6 +24,7 @@ import {
   completeAutoOpenedChatResponse,
 } from "./chat-layout.js?v=20260827-entry-scroll-fix-01";
 import { queuePinnedChatScrollSync, isPinnedToBottom } from "./chat-scroll-sync.js?v=20260810-chat-fixes-01";
+import { focusChatInput } from "./chat-input-focus.js";
 import {
   compressImageBase64,
   renderImagePreview,
@@ -329,7 +330,7 @@ export function submitMessageFrom(input) {
 
   if (getSpamCooldownRemaining()) {
     updateSpamCooldownButtons();
-    input.focus({ preventScroll: true });
+    focusChatInput(input);
     return;
   }
 
@@ -338,7 +339,7 @@ export function submitMessageFrom(input) {
     state.session.transport &&
     !registerMessageForSpamCheck(text, img)
   ) {
-    input.focus({ preventScroll: true });
+    focusChatInput(input);
     return;
   }
 
@@ -354,7 +355,7 @@ export function submitMessageFrom(input) {
   }
   completeAutoOpenedChatResponse(isOverlay);
   autoResizeMessageInput(input);
-  input.focus({ preventScroll: true });
+  focusChatInput(input);
 }
 
 export function handlePasteEvent(event, isOverlay) {
@@ -460,10 +461,7 @@ export async function toggleEmojiPicker(input, anchor) {
   syncEmojiTriggerState(anchor);
 
   window.requestAnimationFrame(() => {
-    input?.focus({ preventScroll: true });
-    if (typeof input?.setSelectionRange === "function") {
-      input.setSelectionRange(selectionStart, selectionEnd);
-    }
+    focusChatInput(input, selectionStart, selectionEnd);
   });
 }
 
@@ -506,12 +504,12 @@ export function normalizeEmojiShortcodesInput(input) {
 
 function insertEmoji(emoji) {
   if (!state.ui.activeEmojiInput) return;
-  const start = state.ui.activeEmojiInput.selectionStart ?? state.ui.activeEmojiInput.value.length;
-  const end = state.ui.activeEmojiInput.selectionEnd ?? state.ui.activeEmojiInput.value.length;
-  state.ui.activeEmojiInput.value = `${state.ui.activeEmojiInput.value.slice(0, start)}${emoji}${state.ui.activeEmojiInput.value.slice(end)}`;
+  const input = state.ui.activeEmojiInput;
+  const start = input.selectionStart ?? input.value.length;
+  const end = input.selectionEnd ?? input.value.length;
+  input.value = `${input.value.slice(0, start)}${emoji}${input.value.slice(end)}`;
   const nextPosition = start + emoji.length;
-  state.ui.activeEmojiInput.focus();
-  state.ui.activeEmojiInput.setSelectionRange(nextPosition, nextPosition);
+  focusChatInput(input, nextPosition, nextPosition);
   hideEmojiPicker();
 }
 

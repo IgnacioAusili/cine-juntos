@@ -21,9 +21,12 @@
 }
 
 .player-frame .player-controls-bar:is([data-control-density="compact"], [data-control-density="scroll"]) > .video-control-button,
-.player-frame .player-controls-bar:is([data-control-density="compact"], [data-control-density="scroll"]) > .player-volume-group > .video-control-button {
-  width: 28px;
-  min-width: 28px;
+.player-frame .player-controls-bar:is([data-control-density="compact"], [data-control-density="scroll"]) > .player-volume-group > .video-control-button,
+.player-frame .player-controls-bar:is([data-control-density="compact"], [data-control-density="scroll"]) .player-controls-scroll-track > .video-control-button {
+  --player-control-button-size: 28px;
+  --player-control-layout-width: var(--player-control-button-size);
+  width: var(--player-control-button-size);
+  min-width: var(--player-control-button-size);
   min-height: 28px;
   flex-basis: 28px;
 }

@@ -254,6 +254,13 @@ function wireMiniPlayerOverlayControls(surface, ownerWindow) {
       hide();
     }, safeDelay);
   };
+  const resetHideTimerAfterControlClick = (event) => {
+    const control = event.target?.closest?.(".player-controls-bar button");
+    if (!control || control.disabled) return;
+
+    clearHideTimer();
+    scheduleHide();
+  };
   const reveal = (event) => {
     if (isChatInteractionTarget(event?.target)) return;
     if (surface.classList.contains("player-overlay-suppressed")) return;
@@ -318,6 +325,7 @@ function wireMiniPlayerOverlayControls(surface, ownerWindow) {
     void toggleMiniPlayer();
   };
   surface.addEventListener("click", handleMiniPlayerClose, true);
+  surface.addEventListener("click", resetHideTimerAfterControlClick);
   surface.addEventListener("pointerdown", handleVideoPointerDown, true);
   surface.addEventListener("pointermove", handlePointerMove, { passive: true });
   surface.addEventListener("mousedown", handleMouseDown);
@@ -334,6 +342,7 @@ function wireMiniPlayerOverlayControls(surface, ownerWindow) {
   return () => {
     clearHideTimer();
     surface.removeEventListener("click", handleMiniPlayerClose, true);
+    surface.removeEventListener("click", resetHideTimerAfterControlClick);
     surface.removeEventListener("pointerdown", handleVideoPointerDown, true);
     surface.removeEventListener("pointermove", handlePointerMove);
     surface.removeEventListener("mousedown", handleMouseDown);

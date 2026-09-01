@@ -2,6 +2,9 @@
    dentro de la misma fila cuando el ancho no alcanza. */
 .player-controls-bar {
   --player-controls-item-gap: 8px;
+  --player-controls-comfortable-gap: 8px;
+  --player-controls-default-button-size: 32px;
+  --player-control-button-size: var(--player-controls-default-button-size);
   position: relative;
   min-width: 0;
   box-sizing: border-box;
@@ -12,15 +15,18 @@
 
 .player-frame[data-control-style="line"] .player-controls-bar {
   --player-controls-item-gap: 10px;
+  --player-controls-comfortable-gap: 10px;
+  --player-controls-default-button-size: 27px;
+  --player-control-button-size: var(--player-controls-default-button-size);
   gap: var(--player-controls-item-gap);
 }
 
 /* El boton central usa un icono mas ancho; igualar su caja a la de los otros
    comandos evita que sus dos separaciones se perciban mas abiertas. */
 .player-frame[data-control-style="line"] .player-controls-bar .primary-video-control:not([data-play-button-cooldown="true"]) {
-  width: 27px;
-  min-width: 27px;
-  flex: 0 0 27px;
+  width: var(--player-control-button-size);
+  min-width: var(--player-control-button-size);
+  flex: 0 0 var(--player-control-button-size);
   padding: 0;
 }
 
@@ -32,6 +38,26 @@
 .player-controls-bar > .player-volume-group {
   flex-shrink: 0;
   margin-inline: 0 !important;
+}
+
+/* Cada boton tiene una reserva de layout independiente de su SVG actual.
+   Asi los estados normales (play/pause, volumen y sus variantes) no mueven
+   los controles vecinos mientras cambia el icono. */
+.player-controls-bar > .video-control-button,
+.player-controls-scroll-track > .video-control-button {
+  --player-control-layout-width: var(--player-control-button-size, 32px);
+  box-sizing: border-box;
+  flex: 0 0 var(--player-control-button-size, 32px);
+  width: var(--player-control-button-size, 32px);
+  min-width: var(--player-control-button-size, 32px);
+}
+
+.player-frame[data-control-style="line"] .player-controls-bar .video-control-button:not([data-play-button-cooldown="true"]) {
+  --player-control-layout-width: var(--player-control-button-size, 27px);
+  flex: 0 0 var(--player-control-button-size, 27px);
+  width: var(--player-control-button-size, 27px);
+  min-width: var(--player-control-button-size, 27px);
+  padding: 0;
 }
 
 .player-controls-bar > .player-progress-group {

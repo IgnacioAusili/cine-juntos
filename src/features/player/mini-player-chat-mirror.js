@@ -1,6 +1,6 @@
 import { clearReplyTarget, setReplyTarget } from "../chat/chat-reply.js?v=20260826-reply-sync-close-03";
 import { wireMessageInteractions } from "../chat/chat-message-interactions.js";
-import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js";
+import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js?v=20260901-chat-tooltip-fix-01";
 import { state } from "../../core/state.js";
 import { focusChatInput } from "../chat/chat-input-focus.js";
 

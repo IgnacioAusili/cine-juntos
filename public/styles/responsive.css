@@ -199,38 +199,19 @@
   .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone,
   .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-hover-zone {
     top: 50%;
+    right: 24px;
     bottom: auto;
     height: 72px;
     transform: translateY(-50%);
   }
 
-  .session-view:not(.chat-collapsed)[data-chat-dock="bottom"] .chat-collapse-hover-zone {
-    transform: translate(-50%, calc(-50% + 15px));
+  .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-hover-zone {
+    right: 9px;
+    width: 28px;
   }
 
   .session-view.chat-collapsed[data-chat-dock="bottom"] .chat-collapse-hover-zone {
-    top: calc(var(--chat-bottom-dock-collapsed-handle-top, calc(100dvh - 16px)) - 16px);
-  }
-
-  .session-view.chat-collapsed[data-chat-dock="bottom"] .chat-collapse-icon-anchor {
-    background: rgba(20, 24, 28, 0.72) !important;
-  }
-
-  .session-view.chat-collapsed[data-chat-dock="bottom"] .chat-collapse-handle svg {
-    transform: translateY(1px);
-  }
-
-  /* Desplazamiento visual de las flechas del dock lateral. */
-  .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-icon-anchor {
-    transform: translateX(-8px);
-  }
-
-  .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-handle svg {
-    transform: translateX(-1px);
-  }
-
-  .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-handle svg {
-    transform: translateX(1px);
+    top: var(--chat-bottom-dock-collapsed-handle-top, 0px);
   }
 
   .session-view:not(.chat-collapsed)[data-chat-dock="bottom"] .chat-name-field {
@@ -285,40 +266,9 @@
     transition: none !important;
   }
 
-  /* La flecha de PC comparte el botón circular de la vista móvil. */
-  .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-icon-anchor,
-  .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-icon-anchor,
-  .session-view:not(.chat-collapsed)[data-chat-dock="bottom"] .chat-collapse-icon-anchor,
-  .session-view.chat-collapsed[data-chat-dock="bottom"] .chat-collapse-icon-anchor {
-    width: 22px;
-    height: 22px;
-    flex-basis: 22px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 999px;
-    background: rgba(20, 24, 28, 0.9);
-    box-shadow:
-      0 4px 14px rgba(0, 0, 0, 0.35),
-      inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  }
-
-  .session-view[data-chat-dock] .chat-collapse-handle svg {
-    width: 18px;
-    height: 18px;
-    stroke-width: 2.2px;
-  }
-
-  .session-view[data-chat-dock] .chat-collapse-handle:hover .chat-collapse-icon-anchor,
-  .session-view[data-chat-dock] .chat-collapse-handle.is-touch-hover .chat-collapse-icon-anchor,
-  .session-view[data-chat-dock] .chat-collapse-hover-zone.is-touch-hover .chat-collapse-icon-anchor,
-  .session-view[data-chat-dock] .chat-collapse-handle:focus-visible .chat-collapse-icon-anchor {
-    border-color: rgba(255, 255, 255, 0.38);
-    background: rgba(32, 38, 43, 0.98);
-  }
-
-  .session-view.chat-collapsed[data-chat-dock="bottom"] .chat-collapse-hover-zone:hover .chat-collapse-icon-anchor,
-  .session-view.chat-collapsed[data-chat-dock="bottom"] .chat-collapse-hover-zone.is-touch-hover .chat-collapse-icon-anchor,
-  .session-view.chat-collapsed[data-chat-dock="bottom"] .chat-collapse-handle:focus-visible .chat-collapse-icon-anchor {
-    background: rgba(20, 24, 28, 0.72) !important;
+  .session-view[data-chat-dock="bottom"] .chat-collapse-handle {
+    width: 38px;
+    height: 28px;
   }
 
   .player-status-badge.empty {

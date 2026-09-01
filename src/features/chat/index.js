@@ -30,7 +30,7 @@ import {
   setInsideChatVisible,
   syncExternalChatCollapseHandleOffset,
   syncChatAutoExpandControls,
-} from "./chat-layout.js?v=20260827-entry-scroll-fix-01";
+} from "./chat-layout.js?v=20260901-chat-tooltip-fix-01";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 import { focusChatInput } from "./chat-input-focus.js";
 
@@ -169,7 +169,7 @@ export {
   setInsideChatVisible,
   syncChatAutoExpandControls,
   updateCollapseButton,
-} from "./chat-layout.js?v=20260827-entry-scroll-fix-01";
+} from "./chat-layout.js?v=20260901-chat-tooltip-fix-01";
 
 export function wireChatEvents() {
   syncChatAutoExpandControls();
@@ -185,8 +185,15 @@ export function wireChatEvents() {
       });
     });
     chatHandleResizeObserver.observe(dom.workspace);
+    if (dom.videoArea) {
+      chatHandleResizeObserver.observe(dom.videoArea);
+    }
+    if (dom.playerFrame) {
+      chatHandleResizeObserver.observe(dom.playerFrame);
+    }
   }
   window.addEventListener("chat-layout-settled", syncExternalChatCollapseHandleOffset, { passive: true });
+  window.addEventListener("scroll", syncExternalChatCollapseHandleOffset, { passive: true });
   window.requestAnimationFrame(syncExternalChatCollapseHandleOffset);
 
   dom.insideChatAutoExpandSwitch.addEventListener("click", () => {

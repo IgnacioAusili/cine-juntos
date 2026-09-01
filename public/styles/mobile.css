@@ -58,6 +58,70 @@
   body:not(.is-lobby) .player-frame .overlay-message-form .input-wrapper .send > * {
     left: calc(50% - 3px);
   }
+
+  /* El control móvil actual siempre lleva su flecha dentro del círculo. Esta
+     regla debe cubrir también landscape, cuyo ancho puede superar 680px. */
+  body:not(.is-lobby) .session-view[data-chat-dock] .chat-collapse-handle {
+    width: 32px;
+    height: 30px;
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock] .chat-collapse-icon-anchor {
+    width: 26px;
+    height: 26px;
+    flex-basis: 26px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+    background: rgba(20, 24, 28, 0.9);
+    box-shadow:
+      0 4px 14px rgba(0, 0, 0, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock] .chat-collapse-handle svg {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2.35px;
+  }
+}
+
+/* El dock inferior móvil cambia la altura del video y del chat en un único
+   movimiento. La fila se interpola al mismo tiempo que la cortina del chat;
+   así no queda una pausa entre ambos estados. */
+@media (max-width: 980px) {
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"].chat-bottom-mobile-collapse-visual .workspace,
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"].chat-bottom-mobile-expand-visual .workspace {
+    transition: none !important;
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"].chat-bottom-mobile-collapse-visual .chat-area,
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"].chat-bottom-mobile-expand-visual .chat-area {
+    height: 100%;
+    min-height: 0;
+    border-width: 1px;
+    opacity: 1;
+    transform: none;
+    transition: none;
+    will-change: clip-path, opacity;
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"].chat-bottom-mobile-collapse-visual .chat-area {
+    clip-path: inset(0 0 0 0);
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"].chat-bottom-mobile-expand-visual .chat-area {
+    clip-path: inset(0 0 100% 0);
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"].chat-bottom-mobile-collapse-visual.chat-bottom-mobile-curtain-active .chat-area {
+    clip-path: inset(0 0 100% 0);
+    opacity: 0;
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"].chat-bottom-mobile-expand-visual.chat-bottom-mobile-curtain-active .chat-area {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
 }
 
 @media (max-width: 680px) {
@@ -349,13 +413,16 @@
 
   /* El dock lateral móvil alterna entre dos pantallas dentro del mismo
      viewport: al contraer el chat queda visible el video completo y, al
-     expandirlo, el chat toma exactamente ese espacio. */
+     expandirlo, video y chat comparten la pantalla para conservar una unión
+     visible donde anclar el control de colapso. */
   body:not(.is-lobby) .session-view[data-chat-dock="right"] .workspace {
     height: var(--app-viewport-height);
     min-height: 0;
     padding-top: 0;
     gap: 0;
-    grid-template-rows: 0 minmax(0, 1fr);
+    grid-template-rows:
+      minmax(220px, 42%)
+      minmax(0, 1fr);
   }
 
   body:not(.is-lobby) .session-view.chat-collapsed[data-chat-dock="right"] .workspace {
@@ -376,8 +443,8 @@
     border-bottom-right-radius: 0;
   }
 
-  /* Reservar el alto del header evita que se comprima mientras el panel
-     lateral pasa de ancho cero a su ancho final durante la expansión. */
+  /* El header del chat ya no reserva espacio para una pestaña: la flecha vive
+     en la unión entre el video y el chat. */
   body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-tools {
     height: 40px;
     min-height: 40px;
@@ -385,7 +452,7 @@
     overflow: hidden;
     box-sizing: border-box;
     gap: 4px;
-    padding-left: 30px;
+    padding-left: 4px;
     padding-right: 4px;
   }
 
@@ -439,51 +506,32 @@
     height: 8px;
   }
 
-  /* En el dock lateral la flecha de contraer se convierte en una pestaña
-     semicircular integrada al borde izquierdo del panel. */
+  /* En vertical la flecha queda centrada sobre la unión entre las dos filas. */
   body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone {
-    top: 1px;
+    top: var(--chat-right-mobile-handle-top);
     right: auto;
     bottom: auto;
-    left: 0;
-    width: 22px;
-    height: 40px;
-    transform: none;
+    left: 50%;
+    width: 48px;
+    height: 30px;
+    transform: translate(-50%, -50%);
   }
 
-  body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-collapse-handle {
+  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-handle {
     width: 32px;
     height: 30px;
   }
 
-  body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-collapse-icon-anchor {
+  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-icon-anchor {
     width: 26px;
     height: 26px;
     flex-basis: 26px;
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 999px;
     background: rgba(20, 24, 28, 0.9);
-    box-shadow:
-      0 4px 14px rgba(0, 0, 0, 0.35),
-      inset 0 1px 0 rgba(255, 255, 255, 0.08);
   }
 
-  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-handle {
-    width: 22px;
-    height: 40px;
-  }
-
-  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-icon-anchor {
-    width: 22px;
-    height: 28px;
-    flex-basis: 22px;
-    border-left: 0;
-    border-radius: 0 999px 999px 0;
-    background: rgb(20, 24, 28);
-  }
-
-  /* La pestaña entra en la cabecera; el indicador de usuarios se corre para
-     dejarle espacio sin alterar el centrado del nombre. */
+  /* El indicador permanece en el header sin dejar un hueco para la flecha. */
   body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-tools > .presence-pill {
     transform: none;
     position: relative;
@@ -491,12 +539,11 @@
   }
 
   body:not(.is-lobby) .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-icon-anchor {
-    width: 22px;
-    height: 28px;
-    flex-basis: 22px;
+    width: 26px;
+    height: 26px;
+    flex-basis: 26px;
     border: 1px solid rgba(255, 255, 255, 0.2);
-    border-right: 0;
-    border-radius: 999px 0 0 999px;
+    border-radius: 999px;
     background: rgba(20, 24, 28, 0.72);
     box-shadow:
       0 4px 14px rgba(0, 0, 0, 0.35),
@@ -509,19 +556,19 @@
      superior derecha. El área táctil queda concentrada alrededor de la
      propia flecha. */
   body:not(.is-lobby) .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-hover-zone {
-    top: 50%;
+    top: var(--chat-right-mobile-collapsed-handle-top);
     right: 0;
     bottom: auto;
     left: auto;
     width: 44px;
-    height: 66px;
-    transform: translateY(-50%);
+    height: 44px;
+    transform: translateY(-100%);
     border-radius: 0;
   }
 
   body:not(.is-lobby) .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-handle {
     width: 44px;
-    height: 66px;
+    height: 44px;
   }
 
   /* Si la flecha de expandir está oculta, su área ampliada tampoco debe
@@ -539,12 +586,6 @@
     pointer-events: auto;
   }
 
-  body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-collapse-handle svg {
-    width: 18px;
-    height: 18px;
-    stroke-width: 2.35px;
-  }
-
   /* La expansión del reproductor no debe arrancar con la barra de controles
      oculta: el overlay puede estar entrando mediante el gesto de contraer. */
   body:not(.is-lobby) .session-view.chat-layout-transitioning .player-bottom-actions {
@@ -558,29 +599,6 @@
   body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-collapse-hover-zone {
     width: 44px;
     height: 34px;
-  }
-
-  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-collapse-handle {
-    width: 32px;
-    height: 30px;
-  }
-
-  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-collapse-icon-anchor {
-    width: 26px;
-    height: 26px;
-    flex-basis: 26px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 999px;
-    background: rgba(20, 24, 28, 0.9);
-    box-shadow:
-      0 4px 14px rgba(0, 0, 0, 0.35),
-      inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  }
-
-  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-collapse-handle svg {
-    width: 18px;
-    height: 18px;
-    stroke-width: 2.35px;
   }
 
   /* El chat inferior gana espacio útil: la cabecera se pliega al recorrer
@@ -943,5 +961,15 @@
     grid-template-rows:
       minmax(220px, 40%)
       minmax(0, 1fr);
+  }
+
+  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"] .chat-collapse-hover-zone {
+    transform: translate(-50%, -50%);
+  }
+
+  body:not(.is-lobby) .session-view.chat-collapsed[data-chat-dock="bottom"] .chat-collapse-hover-zone {
+    top: var(--chat-bottom-dock-collapsed-handle-top);
+    height: 30px;
+    transform: translate(-50%, -100%);
   }
 }

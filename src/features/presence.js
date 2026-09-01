@@ -16,7 +16,7 @@ import { hideTooltip } from "./icons-tooltips.js";
 // limpiándose por el timeout del transporte.
 const RECENT_ACTIVITY_WINDOW_MS = 30000;
 const DESKTOP_BOTTOM_NAME_GAP_PX = 8;
-const DESKTOP_BOTTOM_NAME_ARROW_GAP_PX = 30;
+const DESKTOP_BOTTOM_NAME_ARROW_GAP_PX = 120;
 const DESKTOP_BOTTOM_EDIT_MARGIN_PX = 12;
 
 let nameInputMeasureCanvas = null;

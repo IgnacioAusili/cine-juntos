@@ -15,8 +15,8 @@ import {
   logEvent,
   state,
 } from "../../core/state.js";
-import { isMiniPlayerActive } from "./mini-player.js?v=20260831-mobile-landscape-tap-01";
-import { syncInsideChatPanelOffset } from "../chat/chat-layout.js?v=20260827-entry-scroll-fix-01";
+import { isMiniPlayerActive } from "./mini-player.js?v=20260831-player-control-click-reset-02";
+import { syncInsideChatPanelOffset } from "../chat/chat-layout.js?v=20260901-chat-tooltip-fix-01";
 import { withShortcutHint } from "../../core/utils.js";
 import { wireTouchHover } from "../../core/touch-interactions.js";
 import {
@@ -122,8 +122,6 @@ let fullscreenScrollPreservationUntil = 0;
 function wirePlayerOverlayControls() {
   if (!dom.playerFrame || !dom.pageFullscreenButton) return;
 
-  const chatCollapseHoverZone = dom.collapseChatButton?.closest(".chat-collapse-hover-zone");
-
   const isInlinePlayerDialogVisible = () => Boolean(
     dom.resumeVideoPopup && !dom.resumeVideoPopup.hidden,
   );
@@ -174,6 +172,18 @@ function wirePlayerOverlayControls() {
     }, safeDelay);
   };
 
+  const resetHideTimerAfterControlClick = (event) => {
+    const control = event.target?.closest?.("button");
+    if (!control || !dom.playerBottomActions?.contains(control) || control.disabled) return;
+    if (isInlinePlayerDialogVisible()) return;
+
+    scheduleHide();
+  };
+
+  dom.playerBottomActions
+    ?.querySelector(".player-controls-bar")
+    ?.addEventListener("click", resetHideTimerAfterControlClick);
+
   // El input range puede perder la captura al salir de la barra durante el
   // arrastre. Mantener este estado en captura evita que ese detalle del
   // navegador permita ocultar los controles antes de soltar el volumen.
@@ -209,14 +219,6 @@ function wirePlayerOverlayControls() {
       clearHideTimer();
     }
   }, true);
-
-  const revealOverlayFromChatHandle = () => {
-    if (isInlinePlayerDialogVisible()) return;
-    clearHideTimer();
-    dom.playerFrame.classList.remove("player-cursor-hidden");
-    setOverlayVisible(true);
-    scheduleHide();
-  };
 
   const revealOverlay = (event) => {
     if (isInlinePlayerDialogVisible()) return;
@@ -331,18 +333,7 @@ function wirePlayerOverlayControls() {
   dom.playerFrame.addEventListener("mouseenter", revealOverlay);
   dom.playerFrame.addEventListener("focusin", revealOverlay);
 
-  dom.playerFrame.addEventListener("mouseleave", (event) => {
-    // El control de contraer/expandir queda visualmente en la union del video
-    // y el chat, aunque su nodo no sea hijo del player. Mientras el cursor
-    // entra en esa zona seguimos considerando activo el overlay del video.
-    if (
-      chatCollapseHoverZone?.matches(":hover")
-      || chatCollapseHoverZone?.contains(event.relatedTarget)
-    ) {
-      revealOverlayFromChatHandle();
-      return;
-    }
-
+  dom.playerFrame.addEventListener("mouseleave", () => {
     // El input del chat puede seguir enfocado aunque el cursor salga del video.
     // Solo quitamos el foco de controles del reproductor para no interrumpir la escritura.
     const activeElement = document.activeElement;
@@ -357,17 +348,6 @@ function wirePlayerOverlayControls() {
     // de este plazo, revealOverlay cancela este ocultamiento y reinicia el
     // contador normal de la barra.
     scheduleHide(PLAYER_OVERLAY_LEAVE_HIDE_DELAY_MS);
-  });
-
-  chatCollapseHoverZone?.addEventListener("mouseenter", revealOverlayFromChatHandle);
-  chatCollapseHoverZone?.addEventListener("mousemove", revealOverlayFromChatHandle, { passive: true });
-  chatCollapseHoverZone?.addEventListener("mousedown", revealOverlayFromChatHandle, { passive: true });
-  chatCollapseHoverZone?.addEventListener("mouseleave", () => {
-    scheduleHide(PLAYER_OVERLAY_LEAVE_HIDE_DELAY_MS);
-  });
-  wireTouchHover(chatCollapseHoverZone, {
-    onActivate: revealOverlayFromChatHandle,
-    onDeactivate: () => scheduleHide(0),
   });
 
   // Ajustar el volumen con la rueda tambien mantiene activa la barra. Se

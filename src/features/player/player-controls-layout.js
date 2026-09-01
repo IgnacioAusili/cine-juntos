@@ -97,15 +97,62 @@ function syncControlBar(bar, scrollZone, scrollWindow, indicator) {
   }
 
   let selectedDensity = DENSITIES[DENSITIES.length - 1];
-  for (const density of DENSITIES) {
-    applyControlDensity(bar, density);
-    if (density === "scroll" || canFitControlStage(bar, scrollWindow)) {
-      selectedDensity = density;
-      break;
+  const originalBarStyle = bar.getAttribute("style");
+  const measuredButtons = [...bar.querySelectorAll(
+    '.video-control-button:not([data-play-button-cooldown="true"])',
+  )];
+  const originalButtonStyles = measuredButtons.map((button) => button.getAttribute("style"));
+  try {
+    for (const density of DENSITIES) {
+      // La prueba usa variables temporales. No escribe data-control-density en
+      // cada candidato, porque ese atributo es observado por otros controles
+      // y podia reiniciar el popup aunque el resultado final no cambiara.
+      applyControlDensityMeasurement(bar, density, measuredButtons);
+      if (density === "scroll" || canFitControlStage(bar, scrollWindow, density)) {
+        selectedDensity = density;
+        break;
+      }
     }
+  } finally {
+    restoreStyleAttribute(bar, originalBarStyle);
+    measuredButtons.forEach((button, index) => restoreStyleAttribute(button, originalButtonStyles[index]));
   }
   applyControlDensity(bar, selectedDensity);
   syncScrollIndicator(scrollZone, scrollWindow, indicator);
+}
+
+function applyControlDensityMeasurement(bar, density, buttons) {
+  const baseGap = Number.parseFloat(
+    getComputedStyle(bar).getPropertyValue("--player-controls-comfortable-gap"),
+  ) || 8;
+  const gap = density === "comfortable"
+    ? baseGap
+    : ["close", "volume"].includes(density)
+      ? 7
+      : ["tight"].includes(density)
+        ? 4
+        : 3;
+  const defaultButtonSize = Number.parseFloat(
+    getComputedStyle(bar).getPropertyValue("--player-controls-default-button-size"),
+  ) || 32;
+  const buttonSize = ["compact", "scroll"].includes(density)
+    ? 28
+    : defaultButtonSize;
+  bar.style.setProperty("--player-controls-item-gap", `${gap}px`);
+  bar.style.setProperty("--player-control-button-size", `${buttonSize}px`);
+  buttons.forEach((button) => {
+    button.style.setProperty("--player-control-button-size", `${buttonSize}px`);
+    button.style.setProperty("--player-control-layout-width", `${buttonSize}px`);
+    button.style.setProperty("flex", `0 0 ${buttonSize}px`);
+    button.style.setProperty("width", `${buttonSize}px`);
+    button.style.setProperty("min-width", `${buttonSize}px`);
+    button.style.setProperty("flex-basis", `${buttonSize}px`);
+  });
+}
+
+function restoreStyleAttribute(element, value) {
+  if (value === null) element.removeAttribute("style");
+  else element.setAttribute("style", value);
 }
 
 function applyControlDensity(bar, density) {
@@ -125,9 +172,9 @@ function applyControlDensity(bar, density) {
   }
 }
 
-function canFitControlStage(bar, scrollWindow) {
+function canFitControlStage(bar, scrollWindow, density = bar.dataset.controlDensity) {
   if (isBarOverflowing(bar) || hasStableTrackOverflow(scrollWindow)) return false;
-  if (["comfortable", "close"].includes(bar.dataset.controlDensity)) {
+  if (["comfortable", "close"].includes(density)) {
     return canFitHorizontalVolume(bar, scrollWindow);
   }
   return true;
@@ -139,8 +186,16 @@ function canFitHorizontalVolume(bar, scrollWindow) {
   const wrap = group?.querySelector(".player-volume-slider-wrap");
   if (!group || !input || !wrap) return true;
 
-  const inputWidth = Number.parseFloat(getComputedStyle(input).width) || 60;
-  const wrapWidth = Number.parseFloat(getComputedStyle(wrap).width) || inputWidth;
+  const inputStyles = getComputedStyle(input);
+  const wrapStyles = getComputedStyle(wrap);
+  const view = bar.ownerDocument.defaultView || window;
+  const horizontalSliderWidth = view.matchMedia?.("(max-width: 760px)")?.matches ? 48 : 60;
+  const inputWidth = group.dataset.volumeSliderLayout === "vertical"
+    ? horizontalSliderWidth
+    : Number.parseFloat(inputStyles.width) || horizontalSliderWidth;
+  const wrapWidth = group.dataset.volumeSliderLayout === "vertical"
+    ? horizontalSliderWidth
+    : Number.parseFloat(wrapStyles.width) || inputWidth;
   const sliderWidth = Math.max(inputWidth, wrapWidth);
   const controlGap = Number.parseFloat(getComputedStyle(bar).columnGap) || 0;
   const volumeButton = group.querySelector(".video-control-button");
@@ -168,9 +223,11 @@ function getStableTrackMetrics(scrollWindow) {
   const trackChildren = [...track.children].filter((child) => !child.hidden);
   const requiredWidth = trackChildren.reduce((total, child) => {
     const currentWidth = child.getBoundingClientRect().width;
-    const reservedWidth = Number.parseFloat(
-      getComputedStyle(child).getPropertyValue("--player-rate-layout-width"),
-    ) || 0;
+    const styles = getComputedStyle(child);
+    const reservedWidth = Math.max(
+      Number.parseFloat(styles.getPropertyValue("--player-control-layout-width")) || 0,
+      Number.parseFloat(styles.getPropertyValue("--player-rate-layout-width")) || 0,
+    );
     return total + Math.max(currentWidth, reservedWidth);
   }, 0) + Math.max(0, trackChildren.length - 1) * trackGap;
 

@@ -1,6 +1,8 @@
 const VOLUME_OPEN_CLASS = "is-volume-slider-open";
 const VOLUME_LAYOUT_ATTRIBUTE = "data-volume-slider-layout";
-const VOLUME_HIDE_DELAY_MS = 3200;
+// El popup es una ayuda temporal: cada interaccion vuelve a contar este
+// segundo, pero sin actividad se oculta rapidamente para no tapar la barra.
+const VOLUME_HIDE_DELAY_MS = 1000;
 const VOLUME_VERTICAL_DENSITIES = new Set(["volume", "compact", "scroll"]);
 const MOBILE_VIEWPORT_QUERY = "(max-width: 680px), (hover: none) and (pointer: coarse)";
 const wiredGroups = new WeakSet();

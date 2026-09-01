@@ -96,20 +96,24 @@
   content: ">";
 }
 
-[data-lucide="chevron-right"]:empty::before {
-  content: ">";
+[data-lucide="arrow-right"]:empty::before {
+  content: "→";
 }
 
-[data-lucide="chevron-left"]:empty::before {
-  content: "<";
+[data-lucide="arrow-left"]:empty::before {
+  content: "←";
+}
+
+[data-lucide="arrow-down"]:empty::before {
+  content: "↓";
+}
+
+[data-lucide="arrow-up"]:empty::before {
+  content: "↑";
 }
 
 [data-lucide="chevron-down"]:empty::before {
   content: "v";
-}
-
-[data-lucide="chevron-up"]:empty::before {
-  content: "^";
 }
 
 [data-lucide="film"]:empty::before {

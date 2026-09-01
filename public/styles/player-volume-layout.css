@@ -4,6 +4,24 @@
   gap: 0;
 }
 
+/* El icono cambia entre volume-1, volume-2 y volume-x. La caja del boton no
+   debe depender del ancho natural de cada SVG porque forma parte del calculo
+   de la fila y sus cambios no son cambios de layout. */
+.player-frame .player-controls-bar > .player-volume-group > .video-control-button {
+  box-sizing: border-box;
+  --player-control-layout-width: var(--player-control-button-size, 32px);
+  flex: 0 0 var(--player-control-button-size, 32px);
+  width: var(--player-control-button-size, 32px);
+  min-width: var(--player-control-button-size, 32px);
+}
+
+.player-frame[data-control-style="line"] .player-controls-bar > .player-volume-group > .video-control-button {
+  flex-basis: var(--player-control-button-size, 27px);
+  width: var(--player-control-button-size, 27px);
+  min-width: var(--player-control-button-size, 27px);
+  padding: 0;
+}
+
 .player-frame .player-controls-bar .player-volume-slider-wrap {
   position: static;
   z-index: 31;
@@ -34,10 +52,10 @@
   bottom: calc(100% + 8px);
   left: 50%;
   width: 28px;
-  height: 0;
+  height: 64px;
   flex: 0 0 28px;
   max-width: 28px;
-  max-height: 0;
+  max-height: 64px;
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -46,8 +64,8 @@
   touch-action: none;
   overscroll-behavior: contain;
   user-select: none;
-  padding: 0;
-  border: 0 solid rgba(255, 255, 255, 0.16);
+  padding: 6px 1px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 999px;
   background: linear-gradient(180deg, rgba(43, 55, 59, 0.97), rgba(17, 23, 26, 0.97));
   backdrop-filter: blur(14px) saturate(1.08);
@@ -56,8 +74,11 @@
   visibility: hidden;
   opacity: 0;
   pointer-events: none;
-  transform: translate(-50%, 4px);
-  transition: max-height 180ms ease, opacity 150ms ease, transform 180ms ease;
+  transform: translateX(-50%);
+  /* La base del panel queda anclada a la barra: se revela desde abajo hacia
+     arriba, como una cortina, sin alterar su posicion horizontal. */
+  clip-path: inset(100% 0 0 0);
+  transition: clip-path 180ms ease, opacity 150ms ease;
 }
 
 .player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="vertical"] .player-volume-input {
@@ -78,14 +99,10 @@
 }
 
 .player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="vertical"].is-volume-slider-open .player-volume-slider-wrap {
-  height: 64px;
-  max-height: 64px;
-  padding: 6px 1px;
-  border-width: 1px;
   visibility: visible;
   opacity: 1;
   pointer-events: auto;
-  transform: translate(-50%, 0);
+  clip-path: inset(0);
 }
 
 .player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="vertical"] .player-volume-input::-webkit-slider-runnable-track {

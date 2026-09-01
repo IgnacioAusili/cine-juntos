@@ -44,7 +44,7 @@
   width: 22px;
   height: 22px;
   stroke-width: 2.2px;
-  transition: transform 0.2s ease, color 0.2s ease;
+  transition: color 0.2s ease;
 }
 
 .chat-collapse-handle.is-transitioning .chat-collapse-icon-anchor {
@@ -112,19 +112,6 @@
   transform: none;
 }
 
-.session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-icon-anchor {
-  opacity: 1;
-  border: 0;
-  border-radius: 999px;
-  background: transparent;
-  box-shadow: none;
-  transition: opacity 160ms ease;
-}
-
-.session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-handle:focus-visible .chat-collapse-icon-anchor {
-  opacity: 1;
-}
-
 .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-hover-zone {
   position: absolute;
   top: 0;
@@ -166,10 +153,6 @@
   cursor: pointer;
 }
 
-.session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-icon-anchor {
-  transform: translateX(-4px);
-}
-
 .session-view[data-chat-dock="bottom"] .chat-collapse-handle {
   width: 34px;
   height: 22px;
@@ -185,14 +168,6 @@
 .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]:has(.player-frame.player-overlay-visible) .chat-collapse-handle {
   opacity: 1;
   cursor: pointer;
-}
-
-.session-view:not(.chat-collapsed)[data-chat-dock="bottom"] .chat-collapse-icon-anchor {
-  opacity: 1;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
 }
 
 .session-view[data-chat-dock="bottom"] .chat-collapse-hover-zone {
@@ -232,4 +207,50 @@
 .session-view.chat-collapsed[data-chat-dock="bottom"]:has(.player-frame.player-overlay-visible) .chat-collapse-handle {
   opacity: 1;
   cursor: pointer;
+}
+
+/* En PC todas las variantes usan la misma pieza visual. El tamaño de la zona
+   interactiva se define arriba según el dock, pero el círculo y el icono
+   no cambian entre contraer/expandir ni entre lateral/inferior. */
+@media (min-width: 981px) {
+  .session-view[data-chat-dock] .chat-collapse-handle .chat-collapse-icon-anchor {
+    width: 28px;
+    height: 28px;
+    flex-basis: 28px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+    background: rgba(20, 24, 28, 0.9);
+    box-shadow:
+      0 4px 14px rgba(0, 0, 0, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+
+  .session-view[data-chat-dock] .chat-collapse-handle svg {
+    width: 20px;
+    height: 20px;
+    stroke-width: 2.2px;
+  }
+
+  .session-view[data-chat-dock] .chat-collapse-handle [data-lucide]:empty::before {
+    min-width: 20px;
+    font-size: 20px;
+  }
+
+  /* En lateral contraído la zona de hover es más angosta que el círculo.
+     Posicionarlo desde el centro evita que el navegador lo alinee al borde
+     por overflow y mantiene el mismo centrado que el dock inferior. */
+  .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-handle .chat-collapse-icon-anchor {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .session-view[data-chat-dock] .chat-collapse-handle:hover .chat-collapse-icon-anchor,
+  .session-view[data-chat-dock] .chat-collapse-handle.is-touch-hover .chat-collapse-icon-anchor,
+  .session-view[data-chat-dock] .chat-collapse-hover-zone.is-touch-hover .chat-collapse-icon-anchor,
+  .session-view[data-chat-dock] .chat-collapse-handle:focus-visible .chat-collapse-icon-anchor {
+    border-color: rgba(255, 255, 255, 0.38);
+    background: rgba(32, 38, 43, 0.98);
+  }
 }

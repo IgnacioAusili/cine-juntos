@@ -3,7 +3,7 @@ import { state } from "../../core/state.js";
 import {
   setExternalChatCollapsed,
   setInsideChatVisible,
-} from "./chat-layout.js?v=20260902-chat-right-landscape-scroll-fix-03";
+} from "./chat-layout.js?v=20260902-chat-landscape-handle-settle-01";
 
 function isElementVisibleInViewport(element) {
   if (!element || document.hidden) return false;

@@ -22,7 +22,7 @@ import { clearReplyTarget } from "./chat-reply.js?v=20260826-reply-sync-close-03
 import { renderMessage } from "./chat-render.js?v=20260826-system-line-spacing-01";
 import {
   completeAutoOpenedChatResponse,
-} from "./chat-layout.js?v=20260902-chat-right-landscape-scroll-fix-03";
+} from "./chat-layout.js?v=20260902-chat-landscape-handle-settle-01";
 import { queuePinnedChatScrollSync, isPinnedToBottom } from "./chat-scroll-sync.js?v=20260810-chat-fixes-01";
 import { focusChatInput } from "./chat-input-focus.js";
 import {

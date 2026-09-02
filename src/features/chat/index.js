@@ -31,7 +31,7 @@ import {
   setInsideChatVisible,
   syncExternalChatCollapseHandleOffset,
   syncChatAutoExpandControls,
-} from "./chat-layout.js?v=20260902-chat-right-landscape-scroll-fix-03";
+} from "./chat-layout.js?v=20260902-chat-landscape-handle-settle-01";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 import { focusChatInput } from "./chat-input-focus.js";
 
@@ -170,7 +170,7 @@ export {
   setInsideChatVisible,
   syncChatAutoExpandControls,
   updateCollapseButton,
-} from "./chat-layout.js?v=20260902-chat-right-landscape-scroll-fix-03";
+} from "./chat-layout.js?v=20260902-chat-landscape-handle-settle-01";
 
 export function wireChatEvents() {
   syncChatAutoExpandControls();

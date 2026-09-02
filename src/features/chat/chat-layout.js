@@ -17,7 +17,7 @@ import {
 } from "./unread-counters.js";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 import { focusChatInput } from "./chat-input-focus.js";
-import { restorePageScrollAfterRightChatCollapse } from "./chat-scroll-preservation.js?v=20260902-chat-right-landscape-scroll-fix-03";
+import { restorePageScrollAfterRightChatCollapse } from "./chat-scroll-preservation.js?v=20260902-chat-landscape-handle-settle-01";
 
 const AUTO_COLLAPSE_DELAY_MS = 5000;
 const AUTO_EXPAND_INSIDE_KEY = "cine-juntos-chat-auto-expand-inside";
@@ -26,6 +26,8 @@ const EXTERNAL_CHAT_COLLAPSED_KEY = "cine-juntos-chat-collapsed";
 const CHAT_STYLE_KEY = "cine-juntos-chat-style";
 const CHAT_LAYOUT_SETTLE_MS = 280;
 const COLLAPSE_HANDLE_HIDE_MS = CHAT_LAYOUT_SETTLE_MS + 40;
+// El dock lateral hereda esta duración de la transición flex de escritorio.
+const RIGHT_CHAT_LAYOUT_TRANSITION_MS = 350;
 const CHAT_SCROLL_SNAP_LOCK_MS = 900;
 const CHAT_USER_SCROLL_LOCK_MS = 900;
 const BOTTOM_CHAT_CURTAIN_MS = 320;
@@ -1129,7 +1131,10 @@ function applyExternalChatCollapsed(collapsed) {
   // La reducción del layout también genera un evento de scroll por el clamp
   // del viewport; evitar que el snap lo anime durante el reflow.
   lockChatScrollSnapDuringProgrammaticScroll();
-  setCollapseHandleTransitioning(true);
+  const handleSettleDelay = !collapsed && isMobileLandscapeRightDock()
+    ? RIGHT_CHAT_LAYOUT_TRANSITION_MS
+    : COLLAPSE_HANDLE_HIDE_MS;
+  setCollapseHandleTransitioning(true, handleSettleDelay);
   dom.sessionView.classList.toggle("chat-collapsed", collapsed);
   localStorage.setItem(EXTERNAL_CHAT_COLLAPSED_KEY, collapsed ? "1" : "0");
   if (!collapsed) dom.sessionView.classList.remove("chat-header-collapsed");

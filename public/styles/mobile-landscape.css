@@ -486,11 +486,32 @@
 
 }
 
-/* En cualquier landscape con chat lateral abierto, la toolbar superior
-   acompaña todo el conjunto video + chat. El ajuste es independiente de los
-   radios, que solo cambian en el full-bleed móvil. */
+/* En cualquier landscape con chat lateral, la toolbar superior acompaña todo
+   el conjunto video + chat, tanto abierto como colapsado. El ajuste es
+   independiente de los radios, que solo cambian en el full-bleed móvil. */
 @media (orientation: landscape) {
-  html.viewport-landscape body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="right"] .session-toolbar {
-    width: calc(100% + var(--chat-panel-width));
+  /* La toolbar no debe depender del ancho animado del video. Al convertir el
+     video-area en un contenedor estático, el workspace pasa a ser su bloque
+     de referencia y la toolbar conserva su posición durante toda la cortina. */
+  html.viewport-landscape body:not(.is-lobby)
+  .app-shell .session-view[data-chat-dock="right"] .video-area {
+    position: static;
   }
+
+  html.viewport-landscape body:not(.is-lobby)
+  .app-shell .session-view[data-chat-dock="right"] .session-toolbar {
+    top: calc(var(--session-toolbar-height) * -1);
+    right: auto;
+    bottom: auto;
+    left: 0;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+  }
+
+  html.viewport-landscape body:not(.is-lobby)
+  .app-shell .session-view[data-chat-dock="right"] .chat-area {
+    border-top-right-radius: 0;
+  }
+
 }

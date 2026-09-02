@@ -17,7 +17,7 @@ import {
 } from "./unread-counters.js";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 import { focusChatInput } from "./chat-input-focus.js";
-import { restorePageScrollAfterRightChatCollapse } from "./chat-scroll-preservation.js?v=20260902-chat-landscape-handle-settle-01";
+import { restorePageScrollAfterRightChatCollapse } from "./chat-scroll-preservation.js?v=20260902-chat-landscape-expand-scroll-fix-01";
 
 const AUTO_COLLAPSE_DELAY_MS = 5000;
 const AUTO_EXPAND_INSIDE_KEY = "cine-juntos-chat-auto-expand-inside";
@@ -1163,6 +1163,12 @@ function applyExternalChatCollapsed(collapsed) {
 
   if (!collapsed) {
     if (dom.sessionView.dataset.chatDock === "bottom") return;
+
+    // En landscape el chat se abre en la misma fila que el video. No hace
+    // falta revelar el panel con scrollIntoView: hacerlo desplaza la página
+    // verticalmente unos milisegundos después del toque, aunque el usuario
+    // solo haya pedido recuperar el ancho del chat.
+    if (isMobileLandscapeRightDock()) return;
 
     // En móvil el dock lateral ocupa una pantalla completa. Llevarlo al
     // viewport antes del primer repintado evita que se vea durante unos

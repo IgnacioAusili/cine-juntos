@@ -453,15 +453,6 @@
     padding-right: 4px;
   }
 
-  /* La flecha de contraer debe acompañar al header desde el primer frame de
-     la expansión; sólo se oculta la flecha del estado lateral contraído. */
-  body:not(.is-lobby) .session-view.chat-layout-transitioning:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone.is-transitioning .chat-collapse-handle,
-  body:not(.is-lobby) .session-view.chat-layout-transitioning:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone.is-transitioning .chat-collapse-icon-anchor {
-    visibility: visible;
-    opacity: 1 !important;
-    transition: none;
-  }
-
   body:not(.is-lobby) .player-volume-group {
     gap: 6px;
     transition: none;
@@ -503,8 +494,8 @@
     height: 8px;
   }
 
-  /* El chat expandido ocupa la superficie del video; su flecha queda integrada
-     en la cabecera, separada 8px del borde lateral izquierdo. */
+  /* El chat expandido ocupa la superficie del video; la flecha mantiene la
+     misma pieza circular que el estado contraído y queda separada del borde. */
   body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone {
     top: 1px;
     right: auto;
@@ -521,19 +512,29 @@
   }
 
   body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-icon-anchor {
-    width: 22px;
-    height: 28px;
-    flex-basis: 22px;
-    border-left: 0;
-    border-radius: 0 999px 999px 0;
-    background: rgb(20, 24, 28);
+    width: 26px;
+    height: 26px;
+    flex-basis: 26px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+    background: rgba(20, 24, 28, 0.9);
+    box-shadow:
+      0 4px 14px rgba(0, 0, 0, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
   }
 
-  /* El indicador permanece en el header sin dejar un hueco para la flecha. */
+  /* La flecha ocupa los primeros 32px del header; el contenido comienza
+     después de esa reserva para que ningún control quede debajo del círculo. */
   body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-tools > .presence-pill {
     transform: none;
     position: relative;
     z-index: 13;
+  }
+
+  @media (orientation: portrait) {
+    body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-tools {
+      padding-left: 38px;
+    }
   }
 
   body:not(.is-lobby) .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-icon-anchor {

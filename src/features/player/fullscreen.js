@@ -16,7 +16,7 @@ import {
   state,
 } from "../../core/state.js";
 import { isMiniPlayerActive } from "./mini-player.js?v=20260902-chat-overlay-landscape-04";
-import { syncInsideChatPanelOffset } from "../chat/chat-layout.js?v=20260902-chat-right-landscape-scroll-fix-03";
+import { syncInsideChatPanelOffset } from "../chat/chat-layout.js?v=20260902-chat-landscape-handle-settle-01";
 import { withShortcutHint } from "../../core/utils.js";
 import {
   captureFullscreenScroll,

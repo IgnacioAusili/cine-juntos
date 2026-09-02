@@ -38,7 +38,7 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js?v=20260902-chat-right-landscape-scroll-fix-03";
+} from "./features/chat/index.js?v=20260902-chat-landscape-handle-settle-01";
 import {
   initializePlayer,
   wirePlayerEvents,
@@ -47,7 +47,7 @@ import { wireMobileFullscreenOrientation } from "./features/player/mobile-fullsc
 import { wireMobileKeyboardLayout } from "./features/chat/mobile-keyboard.js";
 import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20260830-mobile-chat-header-fix-04";
 import { wireChatLayoutDebug } from "./features/chat/chat-layout-debug.js?v=20260902-chat-layout-debug-01";
-import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260902-chat-right-landscape-scroll-fix-03";
+import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260902-chat-landscape-handle-settle-01";
 import { wireTouchHover } from "./core/touch-interactions.js?v=20260829-touch-hold-fix-01";
 
 const requestedRoom = normalizeRoomCode(new URLSearchParams(window.location.search).get("room") || "");

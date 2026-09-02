@@ -269,6 +269,29 @@
     width: 0;
   }
 
+  /* El dock lateral usa la misma cortina que escritorio: el borde derecho
+     queda anclado y el panel cambia su flex-basis desde ese borde. La grilla
+     apaisada anterior cambiaba la columna de golpe y hacía crecer el chat
+     desde la unión izquierda, además de dejar que sus hijos se recalcularan
+     durante el trayecto. */
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .workspace {
+    display: flex;
+    grid-template-columns: none;
+    grid-template-rows: none;
+    grid-template-areas: none;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-area {
+    flex: 0 0 var(--chat-panel-width);
+    width: var(--chat-panel-width);
+    min-width: 0;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view.chat-collapsed[data-chat-dock="right"] .chat-area {
+    flex-basis: 0;
+    width: 0;
+  }
+
   /* Fullscreen debe ser una superficie fija del viewport visible. El topbar y
      la toolbar siguen disponibles fuera de fullscreen, pero no consumen alto
      del video cuando la pantalla apaisada queda limitada por el teclado. */
@@ -322,6 +345,26 @@
 
   html.viewport-landscape body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="right"] .workspace {
     grid-template-columns: minmax(0, 1fr) 0;
+  }
+
+  /* También en fullscreen el ancho debe animarse desde el borde derecho;
+     mobile-fullscreen-viewport sólo fija el tamaño de la superficie. */
+  html.viewport-landscape body.fullscreen-mode .session-view[data-chat-dock="right"] .workspace {
+    display: flex;
+    grid-template-columns: none;
+    grid-template-rows: none;
+    grid-template-areas: none;
+  }
+
+  html.viewport-landscape body.fullscreen-mode .session-view[data-chat-dock="right"] .chat-area {
+    flex: 0 0 var(--chat-panel-width);
+    width: var(--chat-panel-width);
+    min-width: 0;
+  }
+
+  html.viewport-landscape body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="right"] .chat-area {
+    flex-basis: 0;
+    width: 0;
   }
 
   html.viewport-landscape body.fullscreen-mode .session-view[data-chat-dock="right"] .video-area,

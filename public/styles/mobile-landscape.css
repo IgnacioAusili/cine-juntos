@@ -376,6 +376,28 @@
     width: 0;
   }
 
+  /* Solo el landscape full-bleed móvil elimina el gutter exterior. La
+     variante de tablet conserva el marco separado y sus radios. */
+  @media (max-width: 680px) and (orientation: landscape) {
+    /* En landscape móvil el reproductor y el chat forman una sola superficie:
+       no deben recuperar los radios del layout de escritorio. La toolbar vive
+       dentro del video, pero su fondo debe continuar por encima del chat abierto
+       hasta el borde real del workspace. */
+    html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .player-frame:not(.mini-player-surface),
+    html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-area,
+    html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-area::before {
+      border-radius: 0 !important;
+    }
+
+    html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .player-frame:not(.mini-player-surface),
+    html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .player-frame:not(.mini-player-surface) video {
+      width: 100% !important;
+      max-width: 100%;
+      min-width: 0;
+    }
+
+  }
+
   /* Fullscreen debe ser una superficie fija del viewport visible. El topbar y
      la toolbar siguen disponibles fuera de fullscreen, pero no consumen alto
      del video cuando la pantalla apaisada queda limitada por el teclado. */
@@ -462,4 +484,13 @@
     display: none;
   }
 
+}
+
+/* En cualquier landscape con chat lateral abierto, la toolbar superior
+   acompaña todo el conjunto video + chat. El ajuste es independiente de los
+   radios, que solo cambian en el full-bleed móvil. */
+@media (orientation: landscape) {
+  html.viewport-landscape body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="right"] .session-toolbar {
+    width: calc(100% + var(--chat-panel-width));
+  }
 }

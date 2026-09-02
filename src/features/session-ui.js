@@ -1,6 +1,6 @@
 import { dom } from "../core/dom.js";
 import { state, logEvent } from "../core/state.js";
-import { refreshLayoutMetrics } from "./layout-metrics.js?v=20260902-stable-page-viewport-01";
+import { refreshLayoutMetrics } from "./layout-metrics.js?v=20260902-mobile-viewport-lock-02";
 
 const ROOM_ENTRY_VIDEO_FOCUS_TIMEOUT_MS = 8000;
 let userScrollIntentVersion = 0;

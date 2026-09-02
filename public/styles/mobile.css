@@ -394,6 +394,8 @@
 
   body:not(.is-lobby) .session-view {
     width: calc(100% + (var(--app-shell-gutter) * 2));
+    margin-left: calc(var(--app-shell-gutter) * -1);
+    margin-right: calc(var(--app-shell-gutter) * -1);
     margin-inline: calc(var(--app-shell-gutter) * -1);
   }
 
@@ -966,6 +968,8 @@
   body:not(.is-lobby) .session-view {
     width: var(--app-viewport-width, 100vw);
     max-width: var(--app-viewport-width, 100vw);
+    margin-left: calc(var(--app-shell-gutter, 14px) * -1);
+    margin-right: calc(var(--app-shell-gutter, 14px) * -1);
     margin-inline: calc(var(--app-shell-gutter, 14px) * -1);
   }
 

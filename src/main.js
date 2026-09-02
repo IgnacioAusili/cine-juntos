@@ -18,7 +18,7 @@ import {
 } from "./features/icons-tooltips.js?v=20260829-touch-tooltip-fix-04";
 import {
   wireLayoutMetrics,
-} from "./features/layout-metrics.js?v=20260902-stable-page-viewport-01";
+} from "./features/layout-metrics.js?v=20260902-mobile-viewport-lock-02";
 import {
   renderPresence,
   wireIdentityEvents,

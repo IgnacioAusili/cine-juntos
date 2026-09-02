@@ -10,12 +10,12 @@ import {
   hideTooltip,
   hydrateIcons,
 } from "../icons-tooltips.js";
-import { setSyncStatus } from "../session-ui.js?v=20260827-entry-scroll-fix-01";
+import { setSyncStatus } from "../session-ui.js?v=20260902-stable-page-viewport-01";
 import {
   logEvent,
   state,
 } from "../../core/state.js";
-import { isMiniPlayerActive } from "./mini-player.js?v=20260902-chat-overlay-landscape-04";
+import { isMiniPlayerActive } from "./mini-player.js?v=20260902-video-scroll-touch-02";
 import { syncInsideChatPanelOffset } from "../chat/chat-layout.js?v=20260902-chat-landscape-handle-settle-01";
 import { withShortcutHint } from "../../core/utils.js";
 import {
@@ -192,11 +192,42 @@ function wirePlayerOverlayControls({ togglePlayback } = {}) {
     .forEach((controls) => controls.addEventListener("click", resetHideTimerAfterControlClick));
 
   const isTouchPointer = (event) => event?.pointerType === "touch" || event?.pointerType === "pen";
+  const VIDEO_GESTURE_MOVE_THRESHOLD = 10;
+  const supportsPointerEvents = "PointerEvent" in window;
   let lastTouchPointerAt = 0;
   let videoClickTimer = null;
-  const preventMobileVideoPlayback = (event) => {
-    if (event.target !== dom.videoPlayer || !isMobileTouchDevice()) return;
-    event.preventDefault();
+  let activeVideoTouchGesture = null;
+  const trackVideoTouchStart = (event) => {
+    if (
+      event.target !== dom.videoPlayer
+      || !isMobileTouchDevice()
+      || !isTouchPointer(event)
+    ) return;
+
+    activeVideoTouchGesture = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      moved: false,
+    };
+  };
+  const trackVideoTouchMove = (event) => {
+    if (!activeVideoTouchGesture || event.pointerId !== activeVideoTouchGesture.pointerId) return;
+    if (
+      Math.hypot(
+        event.clientX - activeVideoTouchGesture.startX,
+        event.clientY - activeVideoTouchGesture.startY,
+      ) >= VIDEO_GESTURE_MOVE_THRESHOLD
+    ) {
+      activeVideoTouchGesture.moved = true;
+    }
+  };
+  const finishVideoTouchGesture = (event) => {
+    if (!activeVideoTouchGesture || event.pointerId !== activeVideoTouchGesture.pointerId) return false;
+    const moved = activeVideoTouchGesture.moved;
+    activeVideoTouchGesture = null;
+    if (moved || event.target !== dom.videoPlayer) lastTouchPointerAt = Date.now();
+    return moved;
   };
   const toggleOverlayFromVideo = (event) => {
     if (
@@ -225,15 +256,60 @@ function wirePlayerOverlayControls({ togglePlayback } = {}) {
     setOverlayVisible(true);
     scheduleHide();
   };
-  dom.videoPlayer.addEventListener("pointerdown", preventMobileVideoPlayback, { passive: false });
-  dom.videoPlayer.addEventListener("touchstart", preventMobileVideoPlayback, { passive: false });
+  dom.videoPlayer.addEventListener("pointerdown", trackVideoTouchStart, { passive: true });
+  window.addEventListener("pointermove", trackVideoTouchMove, { passive: true });
   dom.videoPlayer.addEventListener("pointerup", (event) => {
-    if (isTouchPointer(event)) toggleOverlayFromVideo(event);
-  }, { passive: false });
-  dom.videoPlayer.addEventListener("touchend", (event) => {
-    if (Date.now() - lastTouchPointerAt <= 300) return;
+    if (!isTouchPointer(event)) return;
+    if (finishVideoTouchGesture(event)) return;
     toggleOverlayFromVideo(event);
   }, { passive: false });
+  document.addEventListener("pointerup", (event) => {
+    if (!isTouchPointer(event)) return;
+    finishVideoTouchGesture(event);
+  }, { passive: true });
+  document.addEventListener("pointercancel", (event) => {
+    if (!isTouchPointer(event)) return;
+    activeVideoTouchGesture = null;
+  }, { passive: true });
+  if (!supportsPointerEvents) {
+    let activeLegacyTouchGesture = null;
+    const getLegacyTouchPoint = (event) => {
+      const touch = event.changedTouches?.[0];
+      return touch ? { id: touch.identifier, x: touch.clientX, y: touch.clientY } : null;
+    };
+    dom.videoPlayer.addEventListener("touchstart", (event) => {
+      if (!isMobileTouchDevice() || event.target !== dom.videoPlayer) return;
+      const point = getLegacyTouchPoint(event);
+      if (!point) return;
+      activeLegacyTouchGesture = { ...point, moved: false };
+    }, { passive: true });
+    dom.videoPlayer.addEventListener("touchmove", (event) => {
+      if (!activeLegacyTouchGesture) return;
+      const point = getLegacyTouchPoint(event);
+      if (!point || point.id !== activeLegacyTouchGesture.id) return;
+      if (
+        Math.hypot(
+          point.x - activeLegacyTouchGesture.x,
+          point.y - activeLegacyTouchGesture.y,
+        ) >= VIDEO_GESTURE_MOVE_THRESHOLD
+      ) {
+        activeLegacyTouchGesture.moved = true;
+      }
+    }, { passive: true });
+    dom.videoPlayer.addEventListener("touchend", (event) => {
+      if (!activeLegacyTouchGesture) return;
+      const moved = activeLegacyTouchGesture.moved;
+      activeLegacyTouchGesture = null;
+      if (moved) {
+        lastTouchPointerAt = Date.now();
+        return;
+      }
+      toggleOverlayFromVideo(event);
+    }, { passive: false });
+    dom.videoPlayer.addEventListener("touchcancel", () => {
+      activeLegacyTouchGesture = null;
+    }, { passive: true });
+  }
   dom.videoPlayer.addEventListener("click", (event) => {
     if (event.target !== dom.videoPlayer) return;
     if (isMobileTouchDevice()) {

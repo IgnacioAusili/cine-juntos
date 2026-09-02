@@ -9,6 +9,13 @@
 }
 
 @media (max-width: 980px) {
+  /* El video debe poder iniciar el desplazamiento vertical de la página. El
+     toque corto se resuelve en JS; los arrastres no deben quedar bloqueados
+     por los eventos del reproductor. */
+  body:not(.is-lobby) .player-frame video {
+    touch-action: pan-y;
+  }
+
   /* Los botones conservan el alto de una línea aun cuando el textarea crece.
      El ancho extra queda dentro del botón, por lo que también es táctil. */
   body:not(.is-lobby) .chat-area > .message-form .input-wrapper .emoji-trigger {
@@ -956,6 +963,34 @@
 /* En vertical el video queda apenas por encima del chat; landscape conserva
    la composición que ya define mobile-landscape.css. */
 @media (max-width: 680px) and (orientation: portrait) {
+  body:not(.is-lobby) .session-view {
+    width: var(--app-viewport-width, 100vw);
+    max-width: var(--app-viewport-width, 100vw);
+    margin-inline: calc(var(--app-shell-gutter, 14px) * -1);
+  }
+
+  body:not(.is-lobby) .session-view .workspace,
+  body:not(.is-lobby) .session-view .video-area,
+  body:not(.is-lobby) .session-view .player-frame,
+  body:not(.is-lobby) .session-view .player-frame video {
+    width: 100% !important;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  body:not(.is-lobby) .session-view .player-frame:not(.mini-player-surface) {
+    border: 0 !important;
+    border-top: 1px solid var(--glass-border-strong) !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  body:not(.is-lobby) .session-view .player-frame:not(.mini-player-surface) video {
+    border: 0 !important;
+    border-radius: 0 !important;
+    height: calc(100% + 1px) !important;
+  }
+
   body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .workspace {
     grid-template-rows:
       minmax(220px, 40%)

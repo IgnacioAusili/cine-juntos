@@ -15,18 +15,18 @@ function isOverlayChatInputFocused() {
 
 function getViewportMetrics() {
   const viewport = window.visualViewport;
+  // La altura del viewport visual cambia cuando el navegador móvil oculta o
+  // muestra sus barras durante un swipe. No usarla para el tamaño estructural
+  // de la página: si cambia mientras se desplaza, el document.scrollHeight
+  // crece debajo del dedo y el scroll termina en una posición intermedia.
+  const layoutWidth = window.innerWidth || document.documentElement.clientWidth || 0;
+  const layoutHeight = window.innerHeight || document.documentElement.clientHeight || 0;
   const metrics = {
     width: Math.round(
-      viewport?.width ||
-        window.innerWidth ||
-        document.documentElement.clientWidth ||
-        0,
+      layoutWidth || viewport?.width || 0,
     ),
     height: Math.round(
-      viewport?.height ||
-        window.innerHeight ||
-        document.documentElement.clientHeight ||
-        0,
+      layoutHeight || viewport?.height || 0,
     ),
     offsetLeft: Math.round(viewport?.offsetLeft || 0),
     offsetTop: Math.round(viewport?.offsetTop || 0),
@@ -89,12 +89,6 @@ export function wireLayoutMetrics() {
     scheduleLayoutMetricsSync,
     { passive: true },
   );
-  window.visualViewport?.addEventListener(
-    "scroll",
-    scheduleLayoutMetricsSync,
-    { passive: true },
-  );
-
   if ("ResizeObserver" in window && dom.sessionToolbar) {
     toolbarObserver?.disconnect?.();
     toolbarObserver = new ResizeObserver(scheduleLayoutMetricsSync);

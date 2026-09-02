@@ -29,8 +29,8 @@ import {
   showLobby,
   showSession,
   watchRoomEntryVideoFocus,
-} from "./session-ui.js?v=20260827-entry-scroll-fix-01";
-import { handleRemoteState } from "./player/index.js?v=20260902-chat-overlay-landscape-04";
+} from "./session-ui.js?v=20260902-stable-page-viewport-01";
+import { handleRemoteState } from "./player/index.js?v=20260902-video-scroll-touch-02";
 import {
   renderMessage,
   beginSystemMessageHydration,

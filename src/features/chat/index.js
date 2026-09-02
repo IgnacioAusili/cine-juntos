@@ -12,7 +12,7 @@ import {
   updateCharCounter,
   wireFloatingComposerLayout,
   wireComposerScrollbar,
-} from "./chat-input.js?v=20260826-reply-reserve-sync-03";
+} from "./chat-input.js?v=20260902-chat-right-landscape-scroll-fix-04";
 import { setReplyTarget } from "./chat-reply.js?v=20260826-reply-sync-close-03";
 import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js";
 import {
@@ -22,6 +22,7 @@ import {
 } from "./message-menu.js";
 import {
   setChatDock,
+  captureExternalChatCollapseScroll,
   setExternalChatCollapsed,
   restoreExternalChatCollapsed,
   setExternalChatAutoExpandEnabled,
@@ -30,7 +31,7 @@ import {
   setInsideChatVisible,
   syncExternalChatCollapseHandleOffset,
   syncChatAutoExpandControls,
-} from "./chat-layout.js?v=20260901-chat-tooltip-fix-01";
+} from "./chat-layout.js?v=20260902-chat-right-landscape-scroll-fix-03";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 import { focusChatInput } from "./chat-input-focus.js";
 
@@ -134,7 +135,7 @@ export {
   buildEmojiPicker,
   updateCharCounter,
   sendMessage,
-} from "./chat-input.js?v=20260826-reply-reserve-sync-03";
+} from "./chat-input.js?v=20260902-chat-right-landscape-scroll-fix-04";
 export {
   beginSystemMessageHydration,
   finishSystemMessageHydration,
@@ -169,7 +170,7 @@ export {
   setInsideChatVisible,
   syncChatAutoExpandControls,
   updateCollapseButton,
-} from "./chat-layout.js?v=20260901-chat-tooltip-fix-01";
+} from "./chat-layout.js?v=20260902-chat-right-landscape-scroll-fix-03";
 
 export function wireChatEvents() {
   syncChatAutoExpandControls();
@@ -226,6 +227,7 @@ export function wireChatEvents() {
   });
 
   dom.collapseChatButton.addEventListener("pointerdown", (event) => {
+    captureExternalChatCollapseScroll();
     event.preventDefault();
   });
 

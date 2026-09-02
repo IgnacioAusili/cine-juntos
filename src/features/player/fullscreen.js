@@ -15,10 +15,9 @@ import {
   logEvent,
   state,
 } from "../../core/state.js";
-import { isMiniPlayerActive } from "./mini-player.js?v=20260831-player-control-click-reset-02";
-import { syncInsideChatPanelOffset } from "../chat/chat-layout.js?v=20260901-chat-tooltip-fix-01";
+import { isMiniPlayerActive } from "./mini-player.js?v=20260902-chat-overlay-landscape-04";
+import { syncInsideChatPanelOffset } from "../chat/chat-layout.js?v=20260902-chat-right-landscape-scroll-fix-03";
 import { withShortcutHint } from "../../core/utils.js";
-import { wireTouchHover } from "../../core/touch-interactions.js";
 import {
   captureFullscreenScroll,
   restoreFullscreenScroll,
@@ -26,7 +25,7 @@ import {
 
 const PLAYER_OVERLAY_IDLE_MS = 3000;
 const PLAYER_OVERLAY_LEAVE_HIDE_DELAY_MS = 800;
-const MOBILE_PLAYER_MEDIA_QUERY = "(max-width: 680px), (hover: none) and (pointer: coarse)";
+const MOBILE_PLAYER_MEDIA_QUERY = "(max-width: 980px) and (hover: none) and (pointer: coarse)";
 let fallbackFullscreenActive = false;
 
 const USE_NATIVE_FULLSCREEN = true;
@@ -62,12 +61,12 @@ function getElementScrollTop(element) {
   );
 }
 
-export function wireFullscreenEvents() {
+export function wireFullscreenEvents(options = {}) {
   dom.pageFullscreenButton.addEventListener("click", () => {
     togglePageFullscreen();
   });
 
-  wirePlayerOverlayControls();
+  wirePlayerOverlayControls(options);
   document.addEventListener("fullscreenchange", handleFullscreenChange);
   document.addEventListener("keydown", (event) => {
     if (event.key !== "Escape" || !fallbackFullscreenActive) return;
@@ -119,7 +118,7 @@ export function wireFullscreenEvents() {
 let hideTimer = null;
 let fullscreenScrollPreservationUntil = 0;
 
-function wirePlayerOverlayControls() {
+function wirePlayerOverlayControls({ togglePlayback } = {}) {
   if (!dom.playerFrame || !dom.pageFullscreenButton) return;
 
   const isInlinePlayerDialogVisible = () => Boolean(
@@ -137,12 +136,18 @@ function wirePlayerOverlayControls() {
     }
   };
 
+  const isMobileTouchDevice = () => window.matchMedia(MOBILE_PLAYER_MEDIA_QUERY).matches;
+  const keepOverlayWhilePaused = () => isMobileTouchDevice()
+    && (dom.videoPlayer.paused || dom.videoPlayer.ended);
+
   const scheduleHide = (delay = PLAYER_OVERLAY_IDLE_MS) => {
     clearHideTimer();
+    if (keepOverlayWhilePaused()) return;
     const safeDelay = delay > 0 ? delay : PLAYER_OVERLAY_IDLE_MS;
     hideTimer = window.setTimeout(() => {
       hideTimer = null;
       if (isInlinePlayerDialogVisible()) return;
+      if (keepOverlayWhilePaused()) return;
       if (state.ui.seekDragActive) {
         scheduleHide(safeDelay);
         return;
@@ -174,15 +179,84 @@ function wirePlayerOverlayControls() {
 
   const resetHideTimerAfterControlClick = (event) => {
     const control = event.target?.closest?.("button");
-    if (!control || !dom.playerBottomActions?.contains(control) || control.disabled) return;
+    const isPlayerControl = dom.playerBottomActions?.contains(control)
+      || dom.playerCenterActions?.contains(control);
+    if (!control || !isPlayerControl || control.disabled) return;
     if (isInlinePlayerDialogVisible()) return;
 
     scheduleHide();
   };
 
-  dom.playerBottomActions
-    ?.querySelector(".player-controls-bar")
-    ?.addEventListener("click", resetHideTimerAfterControlClick);
+  [dom.playerBottomActions, dom.playerCenterActions]
+    .filter(Boolean)
+    .forEach((controls) => controls.addEventListener("click", resetHideTimerAfterControlClick));
+
+  const isTouchPointer = (event) => event?.pointerType === "touch" || event?.pointerType === "pen";
+  let lastTouchPointerAt = 0;
+  let videoClickTimer = null;
+  const preventMobileVideoPlayback = (event) => {
+    if (event.target !== dom.videoPlayer || !isMobileTouchDevice()) return;
+    event.preventDefault();
+  };
+  const toggleOverlayFromVideo = (event) => {
+    if (
+      event?.target !== dom.videoPlayer
+      || dom.videoPlayer.closest(".mini-player-surface")
+      || !isMobileTouchDevice()
+    ) return;
+
+    if (event.defaultPrevented) {
+      lastTouchPointerAt = Date.now();
+      return;
+    }
+
+    event.preventDefault();
+    lastTouchPointerAt = Date.now();
+    clearHideTimer();
+    const isVisible = dom.playerFrame.classList.contains("player-overlay-visible");
+    if (isVisible) {
+      hideTooltip();
+      setOverlayVisible(false);
+      dom.playerFrame.classList.add("player-cursor-hidden");
+      return;
+    }
+
+    dom.playerFrame.classList.remove("player-cursor-hidden");
+    setOverlayVisible(true);
+    scheduleHide();
+  };
+  dom.videoPlayer.addEventListener("pointerdown", preventMobileVideoPlayback, { passive: false });
+  dom.videoPlayer.addEventListener("touchstart", preventMobileVideoPlayback, { passive: false });
+  dom.videoPlayer.addEventListener("pointerup", (event) => {
+    if (isTouchPointer(event)) toggleOverlayFromVideo(event);
+  }, { passive: false });
+  dom.videoPlayer.addEventListener("touchend", (event) => {
+    if (Date.now() - lastTouchPointerAt <= 300) return;
+    toggleOverlayFromVideo(event);
+  }, { passive: false });
+  dom.videoPlayer.addEventListener("click", (event) => {
+    if (event.target !== dom.videoPlayer) return;
+    if (isMobileTouchDevice()) {
+      if (Date.now() - lastTouchPointerAt <= 600) {
+        event.preventDefault();
+        return;
+      }
+      if (event.pointerType !== "mouse") toggleOverlayFromVideo(event);
+      return;
+    }
+
+    if (typeof togglePlayback !== "function") return;
+    if (videoClickTimer) window.clearTimeout(videoClickTimer);
+    videoClickTimer = window.setTimeout(() => {
+      videoClickTimer = null;
+      togglePlayback();
+    }, 220);
+  });
+  dom.videoPlayer.addEventListener("dblclick", () => {
+    if (!videoClickTimer) return;
+    window.clearTimeout(videoClickTimer);
+    videoClickTimer = null;
+  });
 
   // El input range puede perder la captura al salir de la barra durante el
   // arrastre. Mantener este estado en captura evita que ese detalle del
@@ -233,17 +307,23 @@ function wirePlayerOverlayControls() {
     // El botón del chat es una acción independiente del reproductor: no debe
     // cambiar la visibilidad de la barra ni provocar el estado suprimido.
     if (isChatToggle || Date.now() < suppressChatToggleOverlayUntil) return;
+    if (
+      isMobileTouchDevice()
+      && target === dom.videoPlayer
+      && (event?.type === "mousedown" || event?.type === "mouseenter")
+    ) return;
     dom.playerFrame.classList.remove("player-cursor-hidden");
     if (
       target === dom.videoPlayer
       && dom.playerFrame.classList.contains("player-overlay-suppressed")
     ) return;
-    // Un clic simple sobre el video alterna play/pausa, pero no debe revelar
-    // la barra: el indicador central es la única respuesta visual inmediata.
+    // En PC un clic sobre el video conserva el comportamiento anterior de
+    // alternar la reproducción; este bloque solo evita revelar el overlay al
+    // iniciar la pausa.
     if (
       event?.type === "mousedown"
       && target === dom.videoPlayer
-      && !window.matchMedia(MOBILE_PLAYER_MEDIA_QUERY).matches
+      && !isMobileTouchDevice()
     ) {
       if (!dom.videoPlayer.paused && !dom.videoPlayer.ended) return;
       clearHideTimer();
@@ -256,12 +336,19 @@ function wirePlayerOverlayControls() {
     }
     const isChatInteraction = target?.closest(".player-chat")
       && !dom.playerChatToggleButton?.matches(":hover");
+    if (isChatInteraction && isMobileTouchDevice()) return;
     // Al abrir el chat, el foco pasa automáticamente a su textarea. Ese
     // focusin burbujea hasta el playerFrame y no debe interpretarse como una
     // interacción con el video. Mientras el puntero siga sobre el overlay,
     // tampoco dejamos que un movimiento o una pulsación vuelva a revelarla.
     if (isChatInteraction) {
       clearHideTimer();
+      if (isMobileTouchDevice()) {
+        dom.playerFrame.classList.remove("player-overlay-suppressed");
+        setOverlayVisible(true);
+        scheduleHide();
+        return;
+      }
       dom.playerFrame.classList.add("player-overlay-suppressed");
       setOverlayVisible(false);
       scheduleHide();
@@ -272,51 +359,6 @@ function wirePlayerOverlayControls() {
     setOverlayVisible(true);
     scheduleHide();
   };
-
-  // En táctil, la barra del reproductor se comporta como un hover: aparece
-  // solo mientras se mantiene la pulsación y se limpia al soltar.
-  let ignoredChatToggleTouch = false;
-  wireTouchHover(dom.playerFrame, {
-    onActivate: (event) => {
-      if (event?.target?.closest?.("#playerChatToggleButton")) {
-        ignoredChatToggleTouch = true;
-        return;
-      }
-      // El chat vive dentro del playerFrame, pero sus pulsaciones no son una
-      // interacción con el video. En móvil no revelar la barra al mantener
-      // presionado un mensaje, el input o cualquier control del overlay.
-      if (event?.target?.closest?.(".player-chat")) {
-        clearHideTimer();
-        dom.playerFrame.classList.add("player-overlay-suppressed");
-        setOverlayVisible(false);
-        return;
-      }
-
-      if (event?.target === dom.videoPlayer) return;
-
-      clearHideTimer();
-      dom.playerFrame.classList.remove("player-cursor-hidden");
-      dom.playerFrame.classList.remove("player-overlay-suppressed");
-      setOverlayVisible(true);
-    },
-    onDeactivate: () => {
-      if (ignoredChatToggleTouch) {
-        ignoredChatToggleTouch = false;
-        return;
-      }
-      // El movimiento normal del dedo sobre un range termina el hover táctil
-      // del player. No ocultar los controles mientras el arrastre siga activo.
-      if (
-        state.ui.seekDragActive
-        || dom.playerFrame.classList.contains("player-seek-control-dragging")
-        || volumeControlPointerActive
-        || dom.playerVolumeGroup?.classList.contains("is-dragging")
-      ) {
-        return;
-      }
-      scheduleHide(0);
-    },
-  });
 
   // Al mover o clickear el mouse en el player frame, se muestra el overlay
   dom.playerFrame.addEventListener("mousemove", revealOverlay, { passive: true });

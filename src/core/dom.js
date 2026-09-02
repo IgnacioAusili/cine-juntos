@@ -20,6 +20,7 @@ export const dom = {
   chatArea: document.querySelector(".chat-area"),
   playerFrame: document.querySelector("#playerFrame"),
   playerActions: document.querySelector(".player-actions"),
+  playerCenterActions: document.querySelector(".player-center-actions"),
   playerBottomActions: document.querySelector(".player-bottom-actions"),
   videoPlayer: document.querySelector("#videoPlayer"),
   playbackGestureIndicator: document.querySelector("#playbackGestureIndicator"),

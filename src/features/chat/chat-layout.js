@@ -17,6 +17,7 @@ import {
 } from "./unread-counters.js";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 import { focusChatInput } from "./chat-input-focus.js";
+import { restorePageScrollAfterRightChatCollapse } from "./chat-scroll-preservation.js?v=20260902-chat-right-landscape-scroll-fix-03";
 
 const AUTO_COLLAPSE_DELAY_MS = 5000;
 const AUTO_EXPAND_INSIDE_KEY = "cine-juntos-chat-auto-expand-inside";
@@ -41,6 +42,7 @@ let chatUserScrollUnlockTimer = 0;
 let pendingBottomToRightSwitch = null;
 let externalChatVisualMotionTimer = 0;
 let bottomChatTransition = null;
+let pendingRightDockCollapseScrollTop = null;
 
 function getVideoAreaRect() {
   if (!dom.videoArea) return null;
@@ -50,6 +52,11 @@ function getVideoAreaRect() {
 
 function isMobileLayoutViewport() {
   return window.matchMedia("(max-width: 980px)").matches;
+}
+
+function isMobileLandscapeRightDock() {
+  return (dom.sessionView?.dataset.chatDock || "right") === "right"
+    && window.matchMedia("(max-width: 980px) and (orientation: landscape)").matches;
 }
 
 // La grilla debe cambiar de una vez para evitar que el texto se reenvuelva en
@@ -145,6 +152,13 @@ function scrollPageTo(top, behavior = "auto") {
   }
 
   window.scrollTo({ top, behavior });
+}
+
+export function captureExternalChatCollapseScroll() {
+  pendingRightDockCollapseScrollTop =
+    !dom.sessionView?.classList.contains("chat-collapsed") && isMobileLandscapeRightDock()
+      ? getPageScrollTop()
+      : null;
 }
 
 const PAGE_SCROLL_KEYS = new Set([
@@ -479,11 +493,21 @@ export function syncExternalChatCollapseHandleOffset() {
       ),
     );
   dom.sessionView.style.setProperty("--chat-bottom-dock-handle-top", `${handleTop}px`);
+  const collapsedHandleTop = playerControlBarRect
+    ? isPortraitMobileBottomDock
+      ? Math.max(
+        0,
+        Math.round(
+          playerControlBarRect.top
+          - workspaceRect.top
+          - 20,
+        ),
+      )
+      : Math.max(0, Math.round(playerControlBarRect.top - workspaceRect.top - 36))
+    : handleTop;
   dom.sessionView.style.setProperty(
     "--chat-bottom-dock-collapsed-handle-top",
-    playerControlBarRect && !isPortraitMobileBottomDock
-      ? `${Math.max(0, Math.round(playerControlBarRect.top - workspaceRect.top - 36))}px`
-      : `${handleTop}px`,
+    `${collapsedHandleTop}px`,
   );
 }
 
@@ -596,6 +620,16 @@ export function setChatDock(dock, options = {}) {
 function getBottomToRightScrollTop() {
   if (!dom.videoArea) return 0;
 
+  if (
+    dom.workspace
+    && window.matchMedia("(max-width: 680px) and (orientation: portrait)").matches
+  ) {
+    return Math.min(
+      getPageScrollMax(),
+      Math.max(0, Math.round(getElementPageTop(dom.workspace))),
+    );
+  }
+
   const videoRect = dom.videoArea.getBoundingClientRect();
   const maxScrollTop = getPageScrollMax();
   const viewportHeight = isFullscreenPageActive()
@@ -641,6 +675,16 @@ function scheduleBottomToRightSwitch(nextDock, targetScrollTop) {
       // directamente de dock inferior a 320px.
       void dom.chatArea?.offsetWidth;
       window.requestAnimationFrame(() => {
+        if (
+          nextDock === "right"
+          && window.matchMedia("(max-width: 680px) and (orientation: portrait)").matches
+        ) {
+          const workspaceTop = Math.min(
+            getPageScrollMax(),
+            Math.max(0, Math.round(getElementPageTop(dom.workspace))),
+          );
+          scrollPageTo(workspaceTop, "auto");
+        }
         dom.sessionView.classList.add("chat-dock-switching-entered");
         window.setTimeout(() => {
           dom.sessionView.classList.remove("chat-dock-switching", "chat-dock-switching-entered");
@@ -1010,6 +1054,11 @@ function getBottomDockVideoScrollTop() {
 
 export function setExternalChatCollapsed(collapsed, options = {}) {
   const source = options.source || "user";
+  const preserveRightDockScroll = collapsed && isMobileLandscapeRightDock();
+  const preservedPageScrollTop = preserveRightDockScroll
+    ? pendingRightDockCollapseScrollTop ?? getPageScrollTop()
+    : null;
+  pendingRightDockCollapseScrollTop = null;
   if (!collapsed) {
     state.chat.autoOpenedExternal = source === "auto";
   } else {
@@ -1055,6 +1104,13 @@ export function setExternalChatCollapsed(collapsed, options = {}) {
   }
 
   applyExternalChatCollapsed(collapsed);
+  restorePageScrollAfterRightChatCollapse(preservedPageScrollTop, {
+    getPageScrollContainer,
+    getPageScrollMax,
+    getPageScrollTop,
+    isCollapsed: () => dom.sessionView?.classList.contains("chat-collapsed"),
+    scrollPageTo,
+  });
 }
 
 function applyExternalChatCollapsed(collapsed) {
@@ -1080,7 +1136,7 @@ function applyExternalChatCollapsed(collapsed) {
   animateExternalChatLayoutFrom(previousVideoRect);
 
   if (dom.chatArea) {
-    if (collapsed && dom.chatArea.contains(document.activeElement)) {
+    if (collapsed && dom.chatArea.contains(document.activeElement) && !isMobileLandscapeRightDock()) {
       dom.videoPlayer?.focus({ preventScroll: true });
     }
     dom.chatArea.setAttribute("aria-hidden", String(collapsed));
@@ -1135,7 +1191,7 @@ function applyExternalChatCollapsed(collapsed) {
   }
 
   const isFullscreen = document.body.classList.contains("fullscreen-mode") || Boolean(document.fullscreenElement);
-  if (isFullscreen) {
+  if (isFullscreen && !(collapsed && isMobileLandscapeRightDock())) {
     focusFullscreenWorkspace();
   }
 }
@@ -1220,8 +1276,8 @@ export function updateCollapseButton() {
     : dock === "right"
       ? isPortraitMobileRightDock
         ? collapsed
-          ? "arrow-down"
-          : "arrow-up"
+          ? "arrow-left"
+          : "arrow-right"
         : collapsed
           ? "arrow-left"
           : "arrow-right"

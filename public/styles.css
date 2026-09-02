@@ -3,14 +3,14 @@
 @import url("./styles/layout.css?v=20260831-chat-collapse-dynamic-06");
 @import url("./styles/components.css?v=20260901-chat-arrow-unified-05");
 @import url("./styles/lobby.css?v=20260828-help-hover-touch-02");
-@import url("./styles/player.css?v=20260831-rate-select-04");
+@import url("./styles/player.css?v=20260901-mobile-player-redesign-08");
 @import url("./styles/chat.css?v=20260824-reply-direction-01");
 @import url("./styles/chat-overlay.css?v=20260824-reply-direction-01");
 @import url("./styles/states.css");
 @import url("./styles/responsive.css?v=20260901-chat-arrow-unified-05");
 @import url("./styles/mini-player.css?v=20260808-mini-player-13");
-@import url("./styles/mobile.css?v=20260901-chat-expand-scroll-final-02");
-@import url("./styles/mobile-landscape.css?v=20260901-chat-expand-scroll-final-04");
+@import url("./styles/mobile.css?v=20260901-chat-right-mobile-restore-02");
+@import url("./styles/mobile-landscape.css?v=20260902-chat-overlay-landscape-03");
 @import url("./styles/mobile-fullscreen-viewport.css?v=20260830-mobile-fullscreen-viewport-01");
 @import url("./styles/mobile-keyboard.css?v=20260830-mobile-keyboard-header-05");
 @import url("./styles/mini-player-adjustments.css?v=20260827-mini-player-dialog-01");

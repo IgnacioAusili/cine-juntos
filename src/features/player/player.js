@@ -17,7 +17,7 @@ import {
   hideTooltip,
   setControlIcon,
 } from "../icons-tooltips.js";
-import { scrollToVideoPosition, sendVideoEventMessage, setInsideChatVisible } from "../chat/index.js?v=20260901-chat-tooltip-fix-01";
+import { scrollToVideoPosition, sendVideoEventMessage, setInsideChatVisible } from "../chat/index.js?v=20260902-chat-right-landscape-scroll-fix-03";
 // Import circular intencional y seguro: estas funciones se invocan en runtime,
 // no durante la carga del modulo, y player-sync-logic.js a su vez importa
 // setVideoSource y waitForVideoMetadata desde aqui.
@@ -27,7 +27,7 @@ import {
   clearPlaybackRecoveryTracking,
   pauseRoomForPlaybackIssue,
   publishState,
-} from "./player-sync-logic.js?v=20260901-chat-tooltip-fix-01";
+} from "./player-sync-logic.js?v=20260902-chat-overlay-landscape-04";
 
 import {
   showErrorDialog,
@@ -35,9 +35,8 @@ import {
   showResumeVideoDialog,
   showSlowLoadDialog,
 } from "../session-ui.js?v=20260827-entry-scroll-fix-01";
-import { togglePageFullscreen } from "./fullscreen.js?v=20260901-chat-tooltip-fix-01";
-import { syncMiniPlayerButton } from "./mini-player.js?v=20260831-player-control-click-reset-02";
-import { wireVideoClickToggle } from "./video-click-toggle.js?v=20260831-mobile-landscape-tap-01";
+import { togglePageFullscreen } from "./fullscreen.js?v=20260902-chat-overlay-landscape-04";
+import { syncMiniPlayerButton } from "./mini-player.js?v=20260902-chat-overlay-landscape-04";
 import { shouldToggleMuteFromVolumeButton } from "./player-volume-layout.js?v=20260831-player-volume-layout-15";
 
 const SKIP_LOAD_REPLACE_DIALOG_KEY = "cine-juntos-skip-load-replace-dialog";
@@ -53,7 +52,6 @@ const SYNC_CONTROL_BURST_LIMIT = PLAY_BUTTON_BURST_LIMIT;
 const RATE_CONTROL_BURST_LIMIT = 3;
 const SYNC_CONTROL_COOLDOWN_MS = PLAY_BUTTON_COOLDOWN_MS;
 const RATE_SELECT_HOVER_RESET_MS = 400;
-const MOBILE_PLAYER_MEDIA_QUERY = "(max-width: 680px), (hover: none) and (pointer: coarse)";
 const MIN_RESUME_PROMPT_SECONDS = 5;
 const VIDEO_FINGERPRINT_WIDTH = 32;
 const VIDEO_FINGERPRINT_HEIGHT = 18;
@@ -70,6 +68,12 @@ const VIDEO_STATUS_TOOLTIPS = Object.freeze({
   error: "No se pudo cargar el video. Revisá el enlace e intentá cargarlo nuevamente",
 });
 const PLAYER_CONTROL_STYLES = new Set(["line"]);
+const MOBILE_PLAYER_CONTROLS_QUERY = "(max-width: 980px) and (hover: none) and (pointer: coarse)";
+const MOBILE_CENTER_BUTTON_LABELS = Object.freeze({
+  playerBackButton: "Retroceder 10 segundos",
+  playerPlayButton: "Reproducir o pausar video",
+  playerForwardButton: "Avanzar 10 segundos",
+});
 let isDurationShowingRemaining = false;
 let pendingLoadCompletionAnnouncement = false;
 let pendingLoadCompletionAnimateSystemGroups = true;
@@ -80,7 +84,6 @@ let seekTooltipRect = null;
 let seekPointerId = null;
 let rateMenuCloseTimer = null;
 let lastAudibleVolume = 1;
-let volumeGestureConsumed = false;
 
 export function initializePlayer() {
   isDurationShowingRemaining = false;
@@ -108,6 +111,7 @@ export function initializePlayer() {
 }
 
 export function wirePlayerCoreEvents() {
+  wireMobilePlayerControlPlacement();
   document.addEventListener("keydown", handleGlobalPlayerKeydown, true);
 
   dom.loadVideoButton.addEventListener("click", async () => {
@@ -216,14 +220,6 @@ export function wirePlayerCoreEvents() {
     syncPlayerControls();
   });
 
-  wireVideoClickToggle({
-    togglePlayback: () => togglePlaybackFromControls("video"),
-    consumeVolumeGesture: () => {
-      if (!volumeGestureConsumed) return false;
-      volumeGestureConsumed = false;
-      return true;
-    },
-  });
   wireFullscreenVolumeGesture();
 
   dom.videoPlayer.addEventListener("play", () => {
@@ -342,6 +338,60 @@ export function wirePlayerCoreEvents() {
     clearSlowLoadPromptTracking();
     syncPlayerControls(true);
   });
+
+  return {
+    togglePlayback: () => togglePlaybackFromControls("video"),
+  };
+}
+
+function wireMobilePlayerControlPlacement() {
+  const controls = [
+    dom.playerBackButton,
+    dom.playerPlayButton,
+    dom.playerForwardButton,
+  ].filter(Boolean);
+  const centerActions = dom.playerCenterActions;
+  const controlsBar = dom.playerBottomActions?.querySelector(".player-controls-bar");
+  if (!controls.length || !centerActions || !controlsBar) return;
+
+  const anchors = controls.map((control) => {
+    const anchor = document.createComment(`player-${control.id}-origin`);
+    controlsBar.insertBefore(anchor, control);
+    return { control, anchor };
+  });
+  const mobileQuery = window.matchMedia(MOBILE_PLAYER_CONTROLS_QUERY);
+  let isMobilePlacement = null;
+
+  const syncPlacement = () => {
+    const shouldCenter = mobileQuery.matches;
+    if (shouldCenter === isMobilePlacement) return;
+    isMobilePlacement = shouldCenter;
+
+    if (shouldCenter) {
+      anchors.forEach(({ control }) => centerActions.append(control));
+    } else {
+      anchors.forEach(({ control, anchor }) => {
+        anchor.parentNode?.insertBefore(control, anchor.nextSibling);
+      });
+    }
+    syncPlayerControls();
+  };
+
+  syncPlacement();
+  centerActions.addEventListener("click", (event) => {
+    const button = event.target?.closest?.("button");
+    if (!button || !centerActions.contains(button) || button.disabled) return;
+    button.classList.remove("is-click-bouncing");
+    void button.offsetWidth;
+    button.classList.add("is-click-bouncing");
+  });
+  mobileQuery.addEventListener?.("change", syncPlacement);
+  window.addEventListener("resize", syncPlacement, { passive: true });
+}
+
+function isMobileCenterControlsActive() {
+  return window.matchMedia(MOBILE_PLAYER_CONTROLS_QUERY).matches
+    && Boolean(dom.playerCenterActions?.contains(dom.playerPlayButton));
 }
 
 function applyPlayerControlStyle(style) {
@@ -570,10 +620,10 @@ function togglePlaybackFromControls(source = "keyboard") {
 
   if (dom.videoPlayer.paused || dom.videoPlayer.ended) {
     dom.videoPlayer.play().catch(() => {});
-    showPlaybackGestureIndicator("pause");
+    if (!isMobileCenterControlsActive()) showPlaybackGestureIndicator("pause");
   } else {
     dom.videoPlayer.pause();
-    showPlaybackGestureIndicator("play");
+    if (!isMobileCenterControlsActive()) showPlaybackGestureIndicator("play");
   }
 
   if (
@@ -773,7 +823,7 @@ function wireFullscreenVolumeGesture() {
 
   dom.videoPlayer.addEventListener("pointerdown", (event) => {
     if (
-      !window.matchMedia(MOBILE_PLAYER_MEDIA_QUERY).matches
+      !window.matchMedia("(max-width: 680px), (hover: none) and (pointer: coarse)").matches
       || !(event.pointerType === "touch" || event.pointerType === "pen")
       || !(document.fullscreenElement || document.body.classList.contains("fullscreen-mode"))
       || dom.videoPlayer.paused
@@ -817,7 +867,6 @@ function wireFullscreenVolumeGesture() {
     if (!press || event.pointerId !== press.pointerId) return;
     if (press.active) {
       event.preventDefault();
-      volumeGestureConsumed = true;
     }
     clearPress();
   };
@@ -1033,6 +1082,20 @@ function syncPlayerControls(forceSliderSync = false) {
     const currentVol = dom.videoPlayer.muted ? 0 : dom.videoPlayer.volume;
     dom.playerVolumeInput.style.setProperty("--volume-progress", `${currentVol * 100}%`);
   }
+
+  syncMobileCenterButtonTooltips();
+}
+
+function syncMobileCenterButtonTooltips() {
+  if (!isMobileCenterControlsActive()) return;
+
+  Object.entries(MOBILE_CENTER_BUTTON_LABELS).forEach(([id, label]) => {
+    const button = dom[id];
+    if (!button || !dom.playerCenterActions.contains(button)) return;
+    button.removeAttribute("data-tooltip");
+    button.removeAttribute("title");
+    button.setAttribute("aria-label", label);
+  });
 }
 
 function initializeRateSelectMenu() {

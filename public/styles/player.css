@@ -182,6 +182,139 @@ video::-webkit-media-controls-fullscreen-button {
   gap: 5px;
 }
 
+.player-center-actions {
+  display: none;
+}
+
+/* En móvil los comandos de reproducción viven sobre el video. El contenedor
+   solo aparece con el overlay para que un toque sobre el video siga teniendo
+   una única función: alternar la visibilidad de los controles. */
+@media (max-width: 980px) and (hover: none) and (pointer: coarse) {
+  .player-center-actions {
+    position: absolute;
+    z-index: 7;
+    top: 50%;
+    left: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(18px, 4vw, 30px);
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    transition: opacity 180ms ease;
+  }
+
+  .player-frame.player-overlay-visible .player-center-actions {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .player-center-actions .video-control-button {
+    width: clamp(42px, 12vw, 52px);
+    min-width: clamp(42px, 12vw, 52px);
+    height: clamp(42px, 12vw, 52px);
+    min-height: clamp(42px, 12vw, 52px);
+    flex: 0 0 clamp(42px, 12vw, 52px);
+    border-color: rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    background: rgba(14, 19, 21, 0.7) !important;
+    box-shadow: none !important;
+    color: rgba(255, 255, 255, 0.92);
+    filter: none;
+    outline: none;
+    transform: none;
+    transition: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .player-center-actions .player-skip-control svg {
+    width: clamp(19px, 5vw, 25px);
+    height: clamp(19px, 5vw, 25px);
+    display: block;
+    margin: 0;
+    filter: none;
+    transform: none;
+    transform-origin: center;
+  }
+
+  .player-center-actions .primary-video-control {
+    width: clamp(54px, 15vw, 66px);
+    min-width: clamp(54px, 15vw, 66px);
+    height: clamp(54px, 15vw, 66px);
+    min-height: clamp(54px, 15vw, 66px);
+    flex-basis: clamp(54px, 15vw, 66px);
+    border-color: transparent !important;
+    background: rgba(116, 67, 31, 0.68) !important;
+    color: #ffc896;
+  }
+
+  .player-center-actions .player-skip-control {
+    display: grid;
+    place-items: center;
+    border: 0 !important;
+    background: rgba(45, 78, 57, 0.64) !important;
+    color: #b4cfba;
+    line-height: 0;
+  }
+
+  .player-center-actions .primary-video-control svg {
+    width: clamp(25px, 7vw, 32px);
+    height: clamp(25px, 7vw, 32px);
+  }
+
+  .player-center-actions .video-control-button:not(:disabled):hover,
+  .player-center-actions .video-control-button:not(:disabled):focus-visible {
+    background: rgba(14, 19, 21, 0.7) !important;
+    border-color: rgba(255, 255, 255, 0.18) !important;
+    color: rgba(255, 255, 255, 0.92);
+    transform: none;
+  }
+
+  .player-center-actions .primary-video-control:not(:disabled):hover,
+  .player-center-actions .primary-video-control:not(:disabled):focus-visible {
+    background: rgba(116, 67, 31, 0.68) !important;
+    border-color: transparent !important;
+    color: #ffc896;
+  }
+
+  .player-center-actions .primary-video-control.active:not(:disabled) {
+    background: rgba(116, 67, 31, 0.68) !important;
+    border-color: transparent !important;
+    color: #ffc896;
+  }
+
+  .player-center-actions .player-skip-control:not(:disabled):hover,
+  .player-center-actions .player-skip-control:not(:disabled):focus-visible {
+    border: 0 !important;
+    background: rgba(45, 78, 57, 0.64) !important;
+    color: #b4cfba;
+  }
+
+  .player-center-actions .player-skip-control.active:not(:disabled) {
+    border: 0 !important;
+    background: rgba(45, 78, 57, 0.64) !important;
+    color: #b4cfba;
+  }
+
+  .player-center-actions .play-button-cooldown {
+    text-shadow: none;
+  }
+
+  .player-center-actions .video-control-button.is-click-bouncing {
+    animation: player-center-button-bounce 240ms ease-out;
+    backface-visibility: hidden;
+    transform-origin: center;
+    will-change: transform;
+  }
+
+  @keyframes player-center-button-bounce {
+    0% { transform: scale(1); }
+    38% { transform: scale(0.88); }
+    100% { transform: scale(1); }
+  }
+}
+
 .player-control-style-select {
   height: 28px;
   margin-top: 2px;

@@ -15,8 +15,8 @@ import {
   logEvent,
   state,
 } from "../../core/state.js";
-import { isMiniPlayerActive } from "./mini-player.js?v=20260902-video-scroll-touch-02";
-import { syncInsideChatPanelOffset } from "../chat/chat-layout.js?v=20260902-chat-landscape-handle-settle-01";
+import { isMiniPlayerActive } from "./mini-player.js?v=20260902-chat-snap-desktop-bottom-01";
+import { syncInsideChatPanelOffset } from "../chat/chat-layout.js?v=20260902-chat-landscape-expand-scroll-fix-01";
 import { withShortcutHint } from "../../core/utils.js";
 import {
   captureFullscreenScroll,
@@ -87,15 +87,14 @@ export function wireFullscreenEvents(options = {}) {
 
   let scrollSnapTimer = null;
   const handleFullscreenScroll = () => {
-    if (fullscreenScrollPreservationUntil > performance.now()) return;
-    const isBottomDock = dom.sessionView?.dataset.chatDock === "bottom";
-    if (!isBottomDock) {
-      if (!isBottomDock && scrollSnapTimer) {
+    if (!isChatScrollSnapEnabled()) {
+      if (scrollSnapTimer) {
         window.clearTimeout(scrollSnapTimer);
         scrollSnapTimer = null;
       }
       return;
     }
+    if (fullscreenScrollPreservationUntil > performance.now()) return;
 
     if (scrollSnapTimer) window.clearTimeout(scrollSnapTimer);
     scrollSnapTimer = window.setTimeout(() => {
@@ -506,13 +505,17 @@ function isPageFullscreenActive() {
   return Boolean(document.fullscreenElement) || document.body.classList.contains("fullscreen-mode");
 }
 
+function isChatScrollSnapEnabled() {
+  return dom.sessionView?.dataset.chatDock === "bottom"
+    && !window.matchMedia("(max-width: 980px)").matches;
+}
+
 function getDocumentTop(element) {
   return getElementScrollTop(element);
 }
 
 function getFullscreenSnapPoints() {
-  const isBottomDock = dom.sessionView?.dataset.chatDock === "bottom";
-  if (!isBottomDock || !dom.workspace) return [];
+  if (!isChatScrollSnapEnabled() || !dom.workspace) return [];
 
   const maxScroll = getFullscreenScrollMax();
   const collapsed = dom.sessionView.classList.contains("chat-collapsed");
@@ -542,7 +545,7 @@ function getFullscreenSnapPoints() {
 }
 
 export function snapFullscreenScroll() {
-  if (dom.sessionView?.dataset.chatDock !== "bottom") return;
+  if (!isChatScrollSnapEnabled()) return;
 
   const points = getFullscreenSnapPoints();
   if (!points.length) return;

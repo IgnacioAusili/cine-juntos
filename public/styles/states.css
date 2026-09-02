@@ -391,19 +391,24 @@ body.fullscreen-mode .session-view[data-chat-dock="bottom"] {
   margin-inline: calc(var(--app-shell-gutter) * -1);
 }
 
-body.fullscreen-mode .app-shell:has(.session-view[data-chat-dock="bottom"]) {
-  scroll-snap-type: y proximity;
-}
+/* El snap de la pagina solo aporta en escritorio con el chat inferior. En
+   movil y en el dock lateral dejamos que el scroll siga siendo libre para no
+   mover el video al abrir, cerrar o cambiar de modo. */
+@media (min-width: 981px) {
+  body.fullscreen-mode .app-shell:has(.session-view[data-chat-dock="bottom"]) {
+    scroll-snap-type: y proximity;
+  }
 
-body.fullscreen-mode .session-view[data-chat-dock="bottom"] .video-area,
-body.fullscreen-mode .session-view[data-chat-dock="bottom"] .chat-area {
-  scroll-snap-align: start;
-  scroll-snap-stop: normal;
-}
+  body.fullscreen-mode .session-view[data-chat-dock="bottom"] .video-area,
+  body.fullscreen-mode .session-view[data-chat-dock="bottom"] .chat-area {
+    scroll-snap-align: start;
+    scroll-snap-stop: normal;
+  }
 
-body.fullscreen-mode .session-view[data-chat-dock="bottom"] .session-toolbar {
-  scroll-snap-align: start;
-  scroll-snap-stop: normal;
+  body.fullscreen-mode .session-view[data-chat-dock="bottom"] .session-toolbar {
+    scroll-snap-align: start;
+    scroll-snap-stop: normal;
+  }
 }
 
 body.fullscreen-mode .session-view[data-chat-dock="bottom"] .workspace {

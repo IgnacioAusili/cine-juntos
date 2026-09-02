@@ -30,7 +30,7 @@
   display: grid;
   height: calc(var(--app-viewport-height) - (var(--app-shell-gutter) * 2));
   min-height: 560px;
-  margin-top: 68px;
+  margin-top: var(--session-toolbar-height);
   gap: var(--workspace-gap);
   align-items: stretch;
   transition:

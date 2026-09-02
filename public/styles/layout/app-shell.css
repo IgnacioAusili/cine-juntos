@@ -16,6 +16,16 @@
   margin-bottom: 6px;
 }
 
+/* La separacion del header de la sesion se controla en un solo lugar. */
+body:not(.is-lobby):not(.fullscreen-mode) .app-shell {
+  gap: var(--session-header-gap);
+  padding-top: var(--session-header-gap);
+}
+
+body:not(.is-lobby):not(.fullscreen-mode) .topbar {
+  margin-bottom: 0;
+}
+
 body.is-lobby .topbar {
   align-items: start;
 }

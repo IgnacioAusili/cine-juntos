@@ -38,15 +38,15 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js?v=20260902-chat-landscape-handle-settle-01";
+} from "./features/chat/index.js?v=20260902-chat-landscape-expand-scroll-fix-01";
 import {
   initializePlayer,
   wirePlayerEvents,
-} from "./features/player/index.js?v=20260902-video-scroll-touch-02";
+} from "./features/player/index.js?v=20260902-chat-snap-desktop-bottom-01";
 import { wireMobileFullscreenOrientation } from "./features/player/mobile-fullscreen-orientation.js";
 import { wireMobileKeyboardLayout } from "./features/chat/mobile-keyboard.js";
 import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20260830-mobile-chat-header-fix-04";
-import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260902-chat-landscape-handle-settle-01";
+import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260902-chat-landscape-expand-scroll-fix-01";
 import { wireTouchHover } from "./core/touch-interactions.js?v=20260829-touch-hold-fix-01";
 
 const requestedRoom = normalizeRoomCode(new URLSearchParams(window.location.search).get("room") || "");

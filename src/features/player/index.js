@@ -2,8 +2,8 @@
 import { wireFullscreenEvents } from "./fullscreen.js?v=20260902-chat-overlay-landscape-04";
 import { wireMiniPlayerEvents } from "./mini-player.js?v=20260902-chat-overlay-landscape-04";
 import { wirePlayerCoreEvents } from "./player.js?v=20260902-chat-overlay-landscape-04";
-import { wirePlayerControlLayouts } from "./player-controls-layout.js?v=20260831-player-controls-layout-06";
-import { wirePlayerVolumeLayouts } from "./player-volume-layout.js?v=20260831-player-volume-layout-15";
+import { wirePlayerControlLayouts } from "./player-controls-layout.js?v=20260902-player-controls-layout-17";
+import { wirePlayerVolumeLayouts } from "./player-volume-layout.js?v=20260902-player-volume-layout-18";
 
 export {
   initializePlayer,

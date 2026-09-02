@@ -18,3 +18,16 @@
     min-width: 48px;
   }
 }
+
+/* En móvil, si el layout JS confirmó que entra, el volumen queda visible sin
+   depender de hover, focus o una pulsación previa. */
+@media (max-width: 760px), (hover: none) and (pointer: coarse) {
+  .player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"] {
+    gap: var(--player-controls-item-gap);
+  }
+
+  .player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"] .player-volume-slider-wrap {
+    max-width: 48px;
+    transition: none;
+  }
+}

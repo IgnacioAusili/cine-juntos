@@ -15,7 +15,7 @@ import {
 } from "../../core/utils.js";
 import {
   setSyncStatus,
-} from "../session-ui.js?v=20260827-entry-scroll-fix-01";
+} from "../session-ui.js?v=20260902-stable-page-viewport-01";
 import { refreshTooltipForTarget } from "../icons-tooltips.js";
 import { markParticipantActive } from "../presence.js?v=20260901-chat-arrow-unified-03";
 import { clearReplyTarget } from "./chat-reply.js?v=20260826-reply-sync-close-03";

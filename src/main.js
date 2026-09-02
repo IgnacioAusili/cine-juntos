@@ -18,7 +18,7 @@ import {
 } from "./features/icons-tooltips.js?v=20260829-touch-tooltip-fix-04";
 import {
   wireLayoutMetrics,
-} from "./features/layout-metrics.js";
+} from "./features/layout-metrics.js?v=20260902-stable-page-viewport-01";
 import {
   renderPresence,
   wireIdentityEvents,
@@ -26,7 +26,7 @@ import {
 import {
   showLobby,
   initializeAboutDialog,
-} from "./features/session-ui.js?v=20260827-entry-scroll-fix-01";
+} from "./features/session-ui.js?v=20260902-stable-page-viewport-01";
 import {
   buildEmojiPicker,
   getPersistedInsideChatStyle,
@@ -42,11 +42,10 @@ import {
 import {
   initializePlayer,
   wirePlayerEvents,
-} from "./features/player/index.js?v=20260902-chat-overlay-landscape-04";
+} from "./features/player/index.js?v=20260902-video-scroll-touch-02";
 import { wireMobileFullscreenOrientation } from "./features/player/mobile-fullscreen-orientation.js";
 import { wireMobileKeyboardLayout } from "./features/chat/mobile-keyboard.js";
 import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20260830-mobile-chat-header-fix-04";
-import { wireChatLayoutDebug } from "./features/chat/chat-layout-debug.js?v=20260902-chat-layout-debug-01";
 import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260902-chat-landscape-handle-settle-01";
 import { wireTouchHover } from "./core/touch-interactions.js?v=20260829-touch-hold-fix-01";
 
@@ -78,7 +77,6 @@ wireTouchHover(dom.aboutButton, {
 });
 wireIdentityEvents();
 wireChatEvents();
-wireChatLayoutDebug();
 wireMobileKeyboardLayout();
 wirePlayerEvents();
 wireMobileFullscreenOrientation();

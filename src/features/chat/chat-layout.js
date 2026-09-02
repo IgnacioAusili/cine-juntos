@@ -3,7 +3,7 @@ import { dom } from "../../core/dom.js";
 import { state, logEvent } from "../../core/state.js";
 import { CHAT_DOCKS, CHAT_DOCK_META, withShortcutHint } from "../../core/utils.js";
 import { hydrateIcons, hideTooltip, refreshTooltipForTarget } from "../icons-tooltips.js";
-import { focusFullscreenWorkspace } from "../session-ui.js?v=20260827-entry-scroll-fix-01";
+import { focusFullscreenWorkspace } from "../session-ui.js?v=20260902-stable-page-viewport-01";
 import {
   cancelIdentityEditing,
   syncNameInputWidth,

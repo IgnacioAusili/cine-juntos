@@ -1,6 +1,6 @@
 import { dom } from "../core/dom.js";
 import { state } from "../core/state.js";
-import { setConnection } from "./session-ui.js?v=20260827-entry-scroll-fix-01";
+import { setConnection } from "./session-ui.js?v=20260902-stable-page-viewport-01";
 import { createForeignDocumentIcon } from "./foreign-lucide-icon.js";
 import {
   isTouchPointer,

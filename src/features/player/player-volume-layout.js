@@ -226,6 +226,11 @@ function wireVolumeGroup(group) {
 }
 
 function syncVolumeSliderLayout(group, bar) {
+  const view = bar.ownerDocument.defaultView || window;
+  const isMobileViewport = view.matchMedia?.("(max-width: 680px), (hover: none) and (pointer: coarse)").matches;
+  // En móvil la orientación se decide junto con la densidad de toda la barra,
+  // porque solo allí conocemos el ancho real disponible para el slider.
+  if (isMobileViewport && group.dataset.volumeSliderLayout) return;
   const useVertical = VOLUME_VERTICAL_DENSITIES.has(bar.dataset.controlDensity);
   const layout = useVertical ? "vertical" : "horizontal";
   if (group.dataset.volumeSliderLayout === layout) return;

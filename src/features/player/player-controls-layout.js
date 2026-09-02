@@ -160,7 +160,15 @@ function applyControlDensity(bar, density) {
   const volumeGroup = bar.querySelector(".player-volume-group");
   if (!volumeGroup) return;
 
-  const nextLayout = VOLUME_VERTICAL_DENSITIES.has(density) ? "vertical" : "horizontal";
+  const view = bar.ownerDocument.defaultView || window;
+  const isMobileViewport = view.matchMedia?.("(max-width: 680px), (hover: none) and (pointer: coarse)").matches;
+  const horizontalVolumeFits = isMobileViewport && canFitHorizontalVolume(
+    bar,
+    bar.querySelector(".player-controls-scroll-window"),
+  );
+  const nextLayout = isMobileViewport && horizontalVolumeFits
+    ? "horizontal"
+    : VOLUME_VERTICAL_DENSITIES.has(density) ? "vertical" : "horizontal";
   if (volumeGroup.dataset.volumeSliderLayout === nextLayout) return;
   volumeGroup.dataset.volumeSliderLayout = nextLayout;
 
@@ -174,10 +182,7 @@ function applyControlDensity(bar, density) {
 
 function canFitControlStage(bar, scrollWindow, density = bar.dataset.controlDensity) {
   if (isBarOverflowing(bar) || hasStableTrackOverflow(scrollWindow)) return false;
-  if (["comfortable", "close"].includes(density)) {
-    return canFitHorizontalVolume(bar, scrollWindow);
-  }
-  return true;
+  return canFitHorizontalVolume(bar, scrollWindow);
 }
 
 function canFitHorizontalVolume(bar, scrollWindow) {

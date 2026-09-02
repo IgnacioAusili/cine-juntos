@@ -159,6 +159,8 @@
   html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .message-form .input-wrapper {
     min-height: 30px;
     align-items: center;
+    border-radius: 16px;
+    padding-left: 4px;
   }
 
   html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .message-form .input-wrapper textarea {
@@ -166,6 +168,26 @@
     max-height: 66px;
     padding-block: 5px;
     padding-inline: 8px;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-area > .message-form .input-wrapper .emoji-trigger {
+    align-self: flex-end;
+    flex: 0 0 24px;
+    width: 24px;
+    min-height: 30px;
+    height: 30px;
+    margin: 0;
+    padding: 0;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-area > .message-form .input-wrapper .send {
+    align-self: flex-end;
+    flex: 0 0 34px;
+    width: 34px;
+    min-height: 30px;
+    height: 30px;
+    margin: 0;
+    padding: 0;
   }
 
   html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .message-form .input-wrapper .emoji-trigger,
@@ -246,16 +268,78 @@
     z-index: 10;
   }
 
-  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .message-form .input-wrapper {
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-area > .message-form .input-wrapper {
     min-height: 30px;
     align-items: center;
+    border-radius: 16px;
+    padding-left: 4px;
   }
 
-  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .message-form .input-wrapper textarea {
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-area > .message-form .input-wrapper textarea {
     min-height: 30px;
     max-height: 66px;
     padding-block: 5px;
     padding-inline: 8px;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-area > .message-form .input-wrapper .emoji-trigger {
+    align-self: flex-end;
+    flex: 0 0 24px;
+    width: 24px;
+    min-height: 30px;
+    height: 30px;
+    margin: 0;
+    padding: 0;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-area > .message-form .input-wrapper .send {
+    align-self: flex-end;
+    flex: 0 0 34px;
+    width: 34px;
+    min-height: 30px;
+    height: 30px;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* El chat interno conserva en landscape el mismo composer compacto que
+     usa el reproductor en portrait, en lugar de heredar el tamaño del chat
+     externo lateral. */
+  html.viewport-landscape body:not(.is-lobby) .player-frame .overlay-message-form {
+    padding-inline: 18px;
+    padding-bottom: 8px;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .player-frame .overlay-message-form .input-wrapper {
+    width: calc(100% - 12px);
+    min-height: 30px;
+    border-radius: 16px;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .player-frame .overlay-message-form .input-wrapper textarea {
+    min-height: 30px;
+    max-height: 66px;
+    padding: 5px 54px 5px 6px;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .player-frame .overlay-message-form .input-wrapper .emoji-trigger {
+    right: 34px;
+    bottom: 0;
+    width: 24px;
+    min-height: 30px;
+    height: 30px;
+    flex-basis: 24px;
+    margin: 0;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .player-frame .overlay-message-form .input-wrapper .send {
+    right: 0;
+    bottom: 0;
+    width: 34px;
+    min-height: 30px;
+    height: 30px;
+    flex-basis: 34px;
+    margin: 0;
   }
 
   html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .message-form .input-wrapper .emoji-trigger,

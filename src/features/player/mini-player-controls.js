@@ -1,5 +1,5 @@
-import { observePlayerControlLayouts } from "./player-controls-layout.js?v=20260831-player-controls-layout-06";
-import { observePlayerVolumeLayouts } from "./player-volume-layout.js?v=20260831-player-volume-layout-15";
+import { observePlayerControlLayouts } from "./player-controls-layout.js?v=20260902-player-controls-layout-17";
+import { observePlayerVolumeLayouts } from "./player-volume-layout.js?v=20260902-player-volume-layout-18";
 
 export function installMiniPlayerWindowStyles(targetDocument) {
   const emojiFont = targetDocument.createElement("link");

@@ -1,6 +1,5 @@
 import { dom } from "../../core/dom.js";
 import { state, logEvent } from "../../core/state.js";
-import { wireTouchHover } from "../../core/touch-interactions.js";
 import { setControlIcon } from "../icons-tooltips.js";
 import { setSyncStatus } from "../session-ui.js?v=20260827-entry-scroll-fix-01";
 import {
@@ -10,7 +9,7 @@ import {
 import {
   mirrorMiniPlayerChatState,
 } from "./mini-player-chat.js?v=20260813-mini-chat-reply-fix-01";
-import { movePlayerInterface } from "./mini-player-interface.js?v=20260813-mini-chat-reply-fix-01";
+import { movePlayerInterface } from "./mini-player-interface.js?v=20260902-chat-overlay-landscape-04";
 import { trackMiniPlayerReturnHint } from "./mini-player-return-hint.js";
 import { clampMiniPlayerPosition, wireMiniPlayerDrag } from "./mini-player-drag.js?v=20260808-scroll-mini-player-02";
 
@@ -224,6 +223,7 @@ function restoreMainPlayer() {
 
 function wireMiniPlayerOverlayControls(surface, ownerWindow) {
   let hideTimer = null;
+  let lastTouchPointerAt = 0;
   const isChatInteractionTarget = (target) => Boolean(target?.closest?.(
     ".player-chat, #playerChatToggleButton, [data-proxy-for=\"playerChatToggleButton\"]",
   ));
@@ -238,6 +238,11 @@ function wireMiniPlayerOverlayControls(surface, ownerWindow) {
     if (hideTimer) ownerWindow.clearTimeout(hideTimer);
     hideTimer = null;
   };
+  const isMobileTouchDevice = () => ownerWindow.matchMedia?.(
+    "(max-width: 980px) and (hover: none) and (pointer: coarse)",
+  ).matches === true;
+  const keepOverlayWhilePaused = () => isMobileTouchDevice()
+    && (dom.videoPlayer.paused || dom.videoPlayer.ended);
   const hide = () => {
     clearHideTimer();
     const activeSelect = ownerWindow.document.activeElement;
@@ -248,14 +253,18 @@ function wireMiniPlayerOverlayControls(surface, ownerWindow) {
   };
   const scheduleHide = (delay = MINI_PLAYER_OVERLAY_IDLE_MS) => {
     clearHideTimer();
+    if (keepOverlayWhilePaused()) return;
     const safeDelay = delay > 0 ? delay : MINI_PLAYER_OVERLAY_IDLE_MS;
     hideTimer = ownerWindow.setTimeout(() => {
       hideTimer = null;
+      if (keepOverlayWhilePaused()) return;
       hide();
     }, safeDelay);
   };
   const resetHideTimerAfterControlClick = (event) => {
-    const control = event.target?.closest?.(".player-controls-bar button");
+    const control = event.target?.closest?.(
+      ".player-controls-bar button, .player-center-actions button",
+    );
     if (!control || control.disabled) return;
 
     clearHideTimer();
@@ -263,17 +272,15 @@ function wireMiniPlayerOverlayControls(surface, ownerWindow) {
   };
   const reveal = (event) => {
     if (isChatInteractionTarget(event?.target)) return;
+    if (
+      isMobileTouchDevice()
+      && event?.target === dom.videoPlayer
+      && (event?.type === "mousedown" || event?.type === "mouseenter")
+    ) return;
     if (surface.classList.contains("player-overlay-suppressed")) return;
     clearHideTimer();
     surface.classList.add("player-overlay-visible");
     scheduleHide();
-  };
-
-  const revealForTouch = (event) => {
-    if (isChatInteractionTarget(event?.target)) return;
-    if (surface.classList.contains("player-overlay-suppressed")) return;
-    clearHideTimer();
-    surface.classList.add("player-overlay-visible");
   };
 
   const handlePointerMove = (event) => {
@@ -307,6 +314,10 @@ function wireMiniPlayerOverlayControls(surface, ownerWindow) {
   };
   const handleVideoPointerDown = (event) => {
     if (event.target !== dom.videoPlayer) return;
+    if (isMobileTouchDevice()) {
+      event.preventDefault();
+      return;
+    }
     if (!dom.videoPlayer.paused && !dom.videoPlayer.ended) return;
     clearHideTimer();
     surface.classList.remove("player-overlay-visible");
@@ -314,6 +325,40 @@ function wireMiniPlayerOverlayControls(surface, ownerWindow) {
     ownerWindow.setTimeout(() => {
       surface.classList.remove("player-overlay-suppressed");
     }, 700);
+  };
+  const toggleOverlayFromVideo = (event) => {
+    if (event?.target !== dom.videoPlayer || !isMobileTouchDevice()) return;
+    if (event.defaultPrevented) {
+      lastTouchPointerAt = Date.now();
+      return;
+    }
+
+    event.preventDefault();
+    lastTouchPointerAt = Date.now();
+    clearHideTimer();
+    const isVisible = surface.classList.contains("player-overlay-visible");
+    if (isVisible) {
+      hide();
+      return;
+    }
+    surface.classList.add("player-overlay-visible");
+    scheduleHide();
+  };
+  const handleVideoPointerUp = (event) => {
+    if (event.pointerType === "touch" || event.pointerType === "pen") {
+      toggleOverlayFromVideo(event);
+    }
+  };
+  const handleVideoTouchEnd = (event) => {
+    if (Date.now() - lastTouchPointerAt > 300) toggleOverlayFromVideo(event);
+  };
+  const handleVideoClick = (event) => {
+    if (event.target !== dom.videoPlayer || !isMobileTouchDevice()) return;
+    if (Date.now() - lastTouchPointerAt <= 600) {
+      event.preventDefault();
+      return;
+    }
+    if (event.pointerType !== "mouse") toggleOverlayFromVideo(event);
   };
   const handleMiniPlayerClose = (event) => {
     const button = event.target.closest?.(
@@ -324,33 +369,42 @@ function wireMiniPlayerOverlayControls(surface, ownerWindow) {
     event.stopPropagation();
     void toggleMiniPlayer();
   };
+  const handleCenterControlClick = (event) => {
+    const button = event.target?.closest?.(".player-center-actions button");
+    if (!button || button.disabled) return;
+    button.classList.remove("is-click-bouncing");
+    void button.offsetWidth;
+    button.classList.add("is-click-bouncing");
+  };
   surface.addEventListener("click", handleMiniPlayerClose, true);
   surface.addEventListener("click", resetHideTimerAfterControlClick);
+  surface.addEventListener("click", handleCenterControlClick);
   surface.addEventListener("pointerdown", handleVideoPointerDown, true);
+  dom.videoPlayer.addEventListener("pointerup", handleVideoPointerUp, { passive: false });
+  dom.videoPlayer.addEventListener("touchend", handleVideoTouchEnd, { passive: false });
+  dom.videoPlayer.addEventListener("click", handleVideoClick);
   surface.addEventListener("pointermove", handlePointerMove, { passive: true });
   surface.addEventListener("mousedown", handleMouseDown);
   surface.addEventListener("mouseenter", handleSurfaceEnter);
   surface.addEventListener("mouseleave", handleSurfaceLeave);
   surface.addEventListener("focusin", handleFocusIn);
   surface.addEventListener("focusout", handleFocusOut);
-  const removeTouchHover = wireTouchHover(surface, {
-    onActivate: revealForTouch,
-    onDeactivate: () => scheduleHide(0),
-    eventDocument: ownerWindow.document,
-  });
 
   return () => {
     clearHideTimer();
     surface.removeEventListener("click", handleMiniPlayerClose, true);
     surface.removeEventListener("click", resetHideTimerAfterControlClick);
+    surface.removeEventListener("click", handleCenterControlClick);
     surface.removeEventListener("pointerdown", handleVideoPointerDown, true);
+    dom.videoPlayer.removeEventListener("pointerup", handleVideoPointerUp);
+    dom.videoPlayer.removeEventListener("touchend", handleVideoTouchEnd);
+    dom.videoPlayer.removeEventListener("click", handleVideoClick);
     surface.removeEventListener("pointermove", handlePointerMove);
     surface.removeEventListener("mousedown", handleMouseDown);
     surface.removeEventListener("mouseenter", handleSurfaceEnter);
     surface.removeEventListener("mouseleave", handleSurfaceLeave);
     surface.removeEventListener("focusin", handleFocusIn);
     surface.removeEventListener("focusout", handleFocusOut);
-    removeTouchHover();
   };
 }
 

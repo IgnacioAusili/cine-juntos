@@ -38,15 +38,16 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js?v=20260901-chat-tooltip-fix-01";
+} from "./features/chat/index.js?v=20260902-chat-right-landscape-scroll-fix-03";
 import {
   initializePlayer,
   wirePlayerEvents,
-} from "./features/player/index.js?v=20260901-chat-tooltip-fix-01";
+} from "./features/player/index.js?v=20260902-chat-overlay-landscape-04";
 import { wireMobileFullscreenOrientation } from "./features/player/mobile-fullscreen-orientation.js";
 import { wireMobileKeyboardLayout } from "./features/chat/mobile-keyboard.js";
 import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20260830-mobile-chat-header-fix-04";
-import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260901-chat-tooltip-fix-01";
+import { wireChatLayoutDebug } from "./features/chat/chat-layout-debug.js?v=20260902-chat-layout-debug-01";
+import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260902-chat-right-landscape-scroll-fix-03";
 import { wireTouchHover } from "./core/touch-interactions.js?v=20260829-touch-hold-fix-01";
 
 const requestedRoom = normalizeRoomCode(new URLSearchParams(window.location.search).get("room") || "");
@@ -77,6 +78,7 @@ wireTouchHover(dom.aboutButton, {
 });
 wireIdentityEvents();
 wireChatEvents();
+wireChatLayoutDebug();
 wireMobileKeyboardLayout();
 wirePlayerEvents();
 wireMobileFullscreenOrientation();

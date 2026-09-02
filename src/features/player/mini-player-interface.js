@@ -16,8 +16,8 @@ import {
   toggleMiniEmojiPicker,
   toggleMiniChatOverlay,
   wireMirrorChatScrollbar,
-} from "./mini-player-chat-mirror.js?v=20260813-anchored-selector-08";
-import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js?v=20260901-chat-tooltip-fix-01";
+} from "./mini-player-chat-mirror.js?v=20260902-chat-overlay-landscape-04";
+import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js?v=20260902-chat-right-landscape-scroll-fix-03";
 import { wireMiniPlayerShortcuts } from "./mini-player-shortcuts.js?v=20260808-scroll-mini-player-02";
 import { wireTouchHover } from "../../core/touch-interactions.js";
 
@@ -42,6 +42,7 @@ export function movePlayerInterface(surface, options = {}) {
   const mirrors = [
     includeChatToggle ? dom.playerActions : null,
     dom.playerBottomActions,
+    dom.playerCenterActions,
     dom.resumeVideoPopup,
     includeChat ? dom.playerChat : null,
   ].filter(Boolean).map((source) => createInteractiveMirror(source, surface.ownerDocument));
@@ -98,7 +99,7 @@ function createInteractiveMirror(source, targetDocument) {
       }
       return;
     }
-    if (source === dom.playerBottomActions) {
+    if (source === dom.playerBottomActions || source === dom.playerCenterActions) {
       syncState();
       return;
     }
@@ -149,7 +150,7 @@ function createInteractiveMirror(source, targetDocument) {
     }
     target.click();
     requestAnimationFrame(() => {
-      if (source === dom.playerBottomActions) syncState();
+      if (source === dom.playerBottomActions || source === dom.playerCenterActions) syncState();
       else sync();
     });
   });
@@ -172,7 +173,7 @@ function createInteractiveMirror(source, targetDocument) {
       target.value = event.target.value;
       target.dispatchEvent(new Event(eventName, { bubbles: true }));
       if (eventName === "change") {
-        if (source === dom.playerBottomActions) syncState();
+        if (source === dom.playerBottomActions || source === dom.playerCenterActions) syncState();
         else sync();
       }
     });
@@ -242,7 +243,9 @@ function createInteractiveMirror(source, targetDocument) {
     }
     markProxyControls(element, keepIds);
     copyControlState(source, element);
-    if (source === dom.playerBottomActions) copyDynamicButtonPresentation(source, element);
+    if (source === dom.playerBottomActions || source === dom.playerCenterActions) {
+      copyDynamicButtonPresentation(source, element);
+    }
     removeTouchVolumeHovers.forEach((removeTouchHover) => removeTouchHover());
     removeTouchVolumeHovers = source === dom.playerBottomActions
       ? Array.from(element.querySelectorAll(".player-volume-group"), (volumeGroup) => (
@@ -270,7 +273,9 @@ function createInteractiveMirror(source, targetDocument) {
     copyControlState(source, element);
     copyPlayerTimeLabels(source, element);
     copySeekProgressPresentation(source, element);
-    if (source === dom.playerBottomActions) copyDynamicButtonPresentation(source, element);
+    if (source === dom.playerBottomActions || source === dom.playerCenterActions) {
+      copyDynamicButtonPresentation(source, element);
+    }
   }
 }
 
@@ -329,14 +334,24 @@ function copySeekProgressPresentation(source, element) {
 }
 
 function copyDynamicButtonPresentation(source, element) {
-  ["playerPlayButton", "playerMuteButton", "playerMiniPlayerButton"].forEach((id) => {
+  [
+    "playerBackButton",
+    "playerPlayButton",
+    "playerForwardButton",
+    "playerMuteButton",
+    "playerMiniPlayerButton",
+  ].forEach((id) => {
     const sourceButton = source.querySelector(`#${id}`);
     const mirrorButton = element.querySelector(`#${id}, [data-proxy-for="${id}"]`);
     if (!sourceButton || !mirrorButton) return;
     mirrorButton.className = sourceButton.className;
     mirrorButton.innerHTML = sourceButton.innerHTML;
     mirrorButton.setAttribute("aria-label", sourceButton.getAttribute("aria-label") || "");
-    mirrorButton.dataset.tooltip = sourceButton.dataset.tooltip || "";
+    if (sourceButton.dataset.tooltip) {
+      mirrorButton.dataset.tooltip = sourceButton.dataset.tooltip;
+    } else {
+      mirrorButton.removeAttribute("data-tooltip");
+    }
     if (sourceButton.hasAttribute("data-play-button-cooldown")) {
       mirrorButton.setAttribute("data-play-button-cooldown", "true");
     } else {

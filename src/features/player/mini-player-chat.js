@@ -1,7 +1,7 @@
 import {
   syncMiniChatAutoExpand,
   toggleMiniChatOverlay,
-} from "./mini-player-chat-mirror.js?v=20260813-anchored-selector-08";
+} from "./mini-player-chat-mirror.js?v=20260902-chat-overlay-landscape-04";
 import { state } from "../../core/state.js";
 
 export function mirrorMiniPlayerChatState(surface, visible = true) {

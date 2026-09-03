@@ -15,6 +15,7 @@ const csp = [
   "font-src 'self' https://fonts.gstatic.com data:",
   "img-src 'self' data: blob: https:",
   "media-src 'self' http: https: blob: data:",
+  "frame-src 'self' https://cinecompartidopagina.firebaseapp.com https://*.firebaseapp.com",
   "connect-src 'self' http://localhost:* http://127.0.0.1:* https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com",
   "object-src 'none'",
   "base-uri 'self'",

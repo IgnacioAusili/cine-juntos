@@ -14,7 +14,7 @@
   --danger: #e94444;
   --shadow: 0 18px 45px rgba(0, 0, 0, 0.28);
   --app-shell-gutter: 10px;
-  --session-header-gap: 5px;
+  --session-header-gap: var(--app-shell-gutter);
   --workspace-gap: 10px;
   --chat-handle-gap: 22px;
   --chat-handle-gap-collapsed: 16px;

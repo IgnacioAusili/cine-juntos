@@ -6,13 +6,14 @@ import {
   getDisplayName,
   getTransportNow,
   logEvent,
-} from "../../core/state.js";
+} from "../../core/state.js?v=20260902-mobile-real-browser-01";
 import {
   EMOJI_PICKER_ITEMS,
   MAX_CHARS,
   replaceEmojiShortcodes,
   withShortcutHint,
 } from "../../core/utils.js";
+import { createRandomId } from "../../core/random-id.js?v=20260902-mobile-real-browser-02";
 import {
   setSyncStatus,
 } from "../session-ui.js?v=20260902-stable-page-viewport-01";
@@ -22,7 +23,7 @@ import { clearReplyTarget } from "./chat-reply.js?v=20260826-reply-sync-close-03
 import { renderMessage } from "./chat-render.js?v=20260826-system-line-spacing-01";
 import {
   completeAutoOpenedChatResponse,
-} from "./chat-layout.js?v=20260902-chat-landscape-expand-scroll-fix-01";
+} from "./chat-layout.js?v=20260903-structural-viewport-scroll-02";
 import { queuePinnedChatScrollSync, isPinnedToBottom } from "./chat-scroll-sync.js?v=20260810-chat-fixes-01";
 import { focusChatInput } from "./chat-input-focus.js";
 import {
@@ -276,7 +277,7 @@ export function sendMessage(text, attachedImage) {
     videoEl.currentTime > 0;
 
   const message = {
-    id: crypto.randomUUID(),
+    id: createRandomId(),
     from: state.session.clientId,
     name: getDisplayName(),
     text: replaceEmojiShortcodes(text || ""),

@@ -1,5 +1,6 @@
 import { MAX_ROOM_PARTICIPANTS, STALE_MEMBER_TIMEOUT_MS } from "../core/utils.js";
-import { state, getDisplayName, logEvent } from "../core/state.js";
+import { createRandomId } from "../core/random-id.js?v=20260902-mobile-real-browser-02";
+import { state, getDisplayName, logEvent } from "../core/state.js?v=20260902-mobile-real-browser-01";
 
 export function createLocalTransport(roomCode, firebaseError = null) {
   const channelName = `cine-juntos:${roomCode}`;
@@ -113,7 +114,7 @@ export function createLocalTransport(roomCode, firebaseError = null) {
 
 function postLocalEvent(channel, storageKey, kind, payload) {
   const packet = {
-    id: crypto.randomUUID(),
+    id: createRandomId(),
     kind,
     payload,
     from: state.session.clientId,

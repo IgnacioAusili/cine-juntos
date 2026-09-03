@@ -515,3 +515,31 @@
   }
 
 }
+
+/* En landscape móvil solo la sesión es una superficie de borde a borde. El
+   header conserva el gutter exterior para que el tag de sala no quede pegado
+   ni recortado contra los bordes. */
+@media (max-width: 680px) and (orientation: landscape) {
+  body:not(.is-lobby):not(.fullscreen-mode) .app-shell {
+    width: var(--app-viewport-width, 100vw);
+    min-height: var(--app-viewport-height);
+    margin: 0;
+    padding: var(--app-shell-gutter) 0 0;
+    gap: var(--session-header-gap);
+  }
+
+  body:not(.is-lobby):not(.fullscreen-mode) .topbar {
+    margin-inline: var(--app-shell-gutter);
+  }
+
+  body:not(.is-lobby) .session-view {
+    width: 100%;
+    margin-inline: 0;
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock] .player-frame:not(.mini-player-surface),
+  body:not(.is-lobby) .session-view[data-chat-dock] .chat-area,
+  body:not(.is-lobby) .session-view[data-chat-dock] .chat-area::before {
+    border-radius: 0 !important;
+  }
+}

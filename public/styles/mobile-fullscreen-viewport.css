@@ -6,6 +6,23 @@
     max-height: var(--app-viewport-height) !important;
   }
 
+  /* La vista normal agrega un gutter negativo al session-view para llegar al
+     borde del teléfono. En fullscreen el shell ya es la superficie completa;
+     conservar ese margen ensancha el contenido al rotar a landscape. */
+  body.fullscreen-mode .session-view {
+    width: 100% !important;
+    margin-inline: 0 !important;
+  }
+
+  body.fullscreen-mode .session-view .session-toolbar,
+  body.fullscreen-mode .session-view .workspace {
+    margin-top: 0 !important;
+  }
+
+  body.fullscreen-mode .session-view .session-toolbar {
+    display: none !important;
+  }
+
   body.fullscreen-mode .session-view[data-chat-dock="right"] {
     width: 100% !important;
     margin-inline: 0 !important;

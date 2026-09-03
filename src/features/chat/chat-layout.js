@@ -1,6 +1,6 @@
 // Layout del chat externo e interno: visibilidad, estilo, dock y collapse.
 import { dom } from "../../core/dom.js";
-import { state, logEvent } from "../../core/state.js";
+import { state, logEvent } from "../../core/state.js?v=20260902-mobile-real-browser-01";
 import { CHAT_DOCKS, CHAT_DOCK_META, withShortcutHint } from "../../core/utils.js";
 import { hydrateIcons, hideTooltip, refreshTooltipForTarget } from "../icons-tooltips.js";
 import { focusFullscreenWorkspace } from "../session-ui.js?v=20260902-stable-page-viewport-01";
@@ -129,7 +129,7 @@ function getPageScrollTop() {
 
 function getPageScrollMax() {
   if (!isFullscreenPageActive()) {
-    return Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    return Math.max(0, document.documentElement.scrollHeight - document.documentElement.clientHeight);
   }
 
   const container = getPageScrollContainer();
@@ -636,7 +636,7 @@ function getBottomToRightScrollTop() {
   const maxScrollTop = getPageScrollMax();
   const viewportHeight = isFullscreenPageActive()
     ? (getPageScrollContainer().clientHeight || window.innerHeight)
-    : window.innerHeight;
+    : document.documentElement.clientHeight;
   const centeredVideoTop =
     getElementPageTop(dom.videoArea) + videoRect.height / 2 - viewportHeight / 2;
 

@@ -1,5 +1,5 @@
 import { dom } from "../../core/dom.js";
-import { state } from "../../core/state.js";
+import { state } from "../../core/state.js?v=20260902-mobile-real-browser-01";
 import {
   isPinnedToBottom,
   queuePinnedChatScrollSync,

@@ -7,7 +7,7 @@ import {
   getDisplayName,
   LAST_ROOM_KEY,
   logEvent,
-} from "../core/state.js";
+} from "../core/state.js?v=20260902-mobile-real-browser-01";
 import {
   MAX_ROOM_PARTICIPANTS,
   ROOM_CREATE_ATTEMPT_LIMIT,
@@ -15,7 +15,8 @@ import {
   generateRoomCode,
   normalizeRoomCode,
 } from "../core/utils.js";
-import { createTransport, createLocalTransport } from "../services/transport.js?v=20260830-room-cleanup-01";
+import { createRandomId } from "../core/random-id.js?v=20260902-mobile-real-browser-02";
+import { createTransport, createLocalTransport } from "../services/transport.js?v=20260902-mobile-real-browser-01";
 import {
   renderMembers,
   renderPresence,
@@ -30,7 +31,7 @@ import {
   showSession,
   watchRoomEntryVideoFocus,
 } from "./session-ui.js?v=20260902-stable-page-viewport-01";
-import { handleRemoteState } from "./player/index.js?v=20260902-chat-snap-desktop-bottom-01";
+import { handleRemoteState } from "./player/index.js?v=20260903-structural-viewport-scroll-03";
 import {
   renderMessage,
   beginSystemMessageHydration,
@@ -39,7 +40,7 @@ import {
   resetInsideUnread,
   resetPageUnread,
   renderReplyPreview,
-} from "./chat/index.js?v=20260902-chat-landscape-expand-scroll-fix-01";
+} from "./chat/index.js?v=20260903-structural-viewport-scroll-03";
 
 const ACTIVE_TAB_KEY = "cine-juntos-active-tab";
 const ACTIVE_TAB_TTL_MS = 30000;
@@ -51,7 +52,7 @@ let inviteCopyAnimationTimer = 0;
 function getTabId() {
   const stored = sessionStorage.getItem("cine-juntos-tab-id");
   if (stored) return stored;
-  const next = crypto.randomUUID();
+  const next = createRandomId();
   sessionStorage.setItem("cine-juntos-tab-id", next);
   return next;
 }

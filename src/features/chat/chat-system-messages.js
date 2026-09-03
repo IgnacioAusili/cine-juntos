@@ -3,8 +3,9 @@ import {
   getDisplayName,
   getTransportNow,
   logEvent,
-} from "../../core/state.js";
+} from "../../core/state.js?v=20260902-mobile-real-browser-01";
 import { formatClockTime } from "../../core/utils.js";
+import { createRandomId } from "../../core/random-id.js?v=20260902-mobile-real-browser-02";
 import { renderMessage } from "./chat-render.js?v=20260826-system-line-spacing-01";
 
 /**
@@ -17,7 +18,7 @@ export function sendVideoEventMessage(action, currentState) {
   if (!text) return;
 
   const message = {
-    id: crypto.randomUUID(),
+    id: createRandomId(),
     from: state.session.clientId,
     name: getDisplayName(),
     text,

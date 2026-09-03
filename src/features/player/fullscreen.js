@@ -14,14 +14,14 @@ import { setSyncStatus } from "../session-ui.js?v=20260902-stable-page-viewport-
 import {
   logEvent,
   state,
-} from "../../core/state.js";
-import { isMiniPlayerActive } from "./mini-player.js?v=20260902-chat-snap-desktop-bottom-01";
-import { syncInsideChatPanelOffset } from "../chat/chat-layout.js?v=20260902-chat-landscape-expand-scroll-fix-01";
+} from "../../core/state.js?v=20260902-mobile-real-browser-01";
+import { isMiniPlayerActive } from "./mini-player.js?v=20260903-structural-viewport-scroll-03";
+import { syncInsideChatPanelOffset } from "../chat/chat-layout.js?v=20260903-structural-viewport-scroll-02";
 import { withShortcutHint } from "../../core/utils.js";
 import {
   captureFullscreenScroll,
   restoreFullscreenScroll,
-} from "./fullscreen-scroll.js";
+} from "./fullscreen-scroll.js?v=20260903-structural-viewport-scroll-02";
 
 const PLAYER_OVERLAY_IDLE_MS = 3000;
 const PLAYER_OVERLAY_LEAVE_HIDE_DELAY_MS = 800;
@@ -41,7 +41,7 @@ function getFullscreenScrollTop() {
 
 function getFullscreenScrollMax() {
   if (!isPageFullscreenActive()) {
-    return Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    return Math.max(0, document.documentElement.scrollHeight - document.documentElement.clientHeight);
   }
 
   const container = getFullscreenScrollContainer();

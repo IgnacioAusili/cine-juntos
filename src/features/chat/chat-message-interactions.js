@@ -1,6 +1,6 @@
 // Cableado de interacciones del mensaje: listeners de puntero, long-press y contextmenu.
 // El motor de gesto vive en swipe-reply.js.
-import { state } from "../../core/state.js";
+import { state } from "../../core/state.js?v=20260902-mobile-real-browser-01";
 import { createSwipeReply } from "./swipe-reply.js";
 import { showMessageMenu } from "./message-menu.js";
 

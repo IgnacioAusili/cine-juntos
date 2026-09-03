@@ -1,6 +1,6 @@
 // Coordinacion general del chat: cableado de eventos, layout y reexport de submodulos.
 import { dom } from "../../core/dom.js";
-import { state } from "../../core/state.js";
+import { state } from "../../core/state.js?v=20260902-mobile-real-browser-01";
 import { CHAT_DOCK_META } from "../../core/utils.js";
 import {
   autoResizeMessageInput,
@@ -12,7 +12,7 @@ import {
   updateCharCounter,
   wireFloatingComposerLayout,
   wireComposerScrollbar,
-} from "./chat-input.js?v=20260902-chat-right-landscape-scroll-fix-04";
+} from "./chat-input.js?v=20260902-mobile-real-browser-01";
 import { setReplyTarget } from "./chat-reply.js?v=20260826-reply-sync-close-03";
 import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js";
 import {
@@ -31,7 +31,7 @@ import {
   setInsideChatVisible,
   syncExternalChatCollapseHandleOffset,
   syncChatAutoExpandControls,
-} from "./chat-layout.js?v=20260902-chat-landscape-expand-scroll-fix-01";
+} from "./chat-layout.js?v=20260903-structural-viewport-scroll-02";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 import { focusChatInput } from "./chat-input-focus.js";
 
@@ -135,7 +135,7 @@ export {
   buildEmojiPicker,
   updateCharCounter,
   sendMessage,
-} from "./chat-input.js?v=20260902-chat-right-landscape-scroll-fix-04";
+} from "./chat-input.js?v=20260902-mobile-real-browser-01";
 export {
   beginSystemMessageHydration,
   finishSystemMessageHydration,
@@ -147,7 +147,7 @@ export {
   scrollToMessage,
   setReplyTarget,
 } from "./chat-reply.js?v=20260826-reply-sync-close-03";
-export { sendVideoEventMessage } from "./chat-system-messages.js?v=20260826-system-line-spacing-01";
+export { sendVideoEventMessage } from "./chat-system-messages.js?v=20260902-mobile-real-browser-01";
 export {
   checkScrollPosition,
   resetInsideUnread,
@@ -170,7 +170,7 @@ export {
   setInsideChatVisible,
   syncChatAutoExpandControls,
   updateCollapseButton,
-} from "./chat-layout.js?v=20260902-chat-landscape-expand-scroll-fix-01";
+} from "./chat-layout.js?v=20260903-structural-viewport-scroll-02";
 
 export function wireChatEvents() {
   syncChatAutoExpandControls();

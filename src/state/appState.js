@@ -1,10 +1,10 @@
 import { dom } from "../core/dom.js";
 import {
   EXAMPLE_VIDEO_URL,
-  getOrCreateClientId,
   makeGuestName,
   normalizeGuestName,
 } from "../core/utils.js";
+import { getOrCreateClientId } from "../core/random-id.js?v=20260902-mobile-real-browser-02";
 
 export const firebaseConfig = window.CINE_JUNTOS_FIREBASE_CONFIG || {};
 const SESSION_NAME_KEY = "cine-juntos-name";

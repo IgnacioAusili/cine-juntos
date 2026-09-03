@@ -1,9 +1,9 @@
 import { dom } from "../../core/dom.js";
-import { state } from "../../core/state.js";
+import { state } from "../../core/state.js?v=20260902-mobile-real-browser-01";
 import {
   setExternalChatCollapsed,
   setInsideChatVisible,
-} from "./chat-layout.js?v=20260902-chat-landscape-expand-scroll-fix-01";
+} from "./chat-layout.js?v=20260903-structural-viewport-scroll-02";
 
 function isElementVisibleInViewport(element) {
   if (!element || document.hidden) return false;

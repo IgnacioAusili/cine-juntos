@@ -44,7 +44,7 @@ import {
   wirePlayerEvents,
 } from "./features/player/index.js?v=20260903-structural-viewport-scroll-03";
 import { wireMobileFullscreenOrientation } from "./features/player/mobile-fullscreen-orientation.js";
-import { wireMobileKeyboardLayout } from "./features/chat/mobile-keyboard.js";
+import { wireMobileKeyboardLayout } from "./features/chat/mobile-keyboard.js?v=20260903-iphone-chat-focus-02";
 import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20260830-mobile-chat-header-fix-04";
 import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260902-mobile-real-browser-01";
 import { wireTouchHover } from "./core/touch-interactions.js?v=20260829-touch-hold-fix-01";

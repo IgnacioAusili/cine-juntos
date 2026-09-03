@@ -16,6 +16,15 @@
     touch-action: pan-y;
   }
 
+  /* iOS Safari amplía la página al enfocar controles de texto menores a
+     16px. La línea explícita también centra el placeholder dentro de la
+     altura compacta del composer sin alterar el layout de escritorio. */
+  body:not(.is-lobby) .message-form .input-wrapper textarea,
+  body:not(.is-lobby) .overlay-message-form .input-wrapper textarea {
+    font-size: 16px;
+    line-height: 20px;
+  }
+
   /* Los botones conservan el alto de una línea aun cuando el textarea crece.
      El ancho extra queda dentro del botón, por lo que también es táctil. */
   body:not(.is-lobby) .chat-area > .message-form .input-wrapper .emoji-trigger {

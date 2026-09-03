@@ -1,5 +1,14 @@
 import { dom } from "../../core/dom.js";
 import { wireChatInputCorrections } from "./chat-input-focus.js";
+import {
+  captureFocusScrollPositionIfNeeded,
+  capturePageScrollPosition,
+  consumePointerFocus,
+  handleChatPointerDown,
+  isOverlayChatInput,
+  keepPageScrollLocked,
+  scheduleFocusScrollRestore,
+} from "./mobile-focus-scroll.js?v=20260903-iphone-chat-focus-02";
 
 const MOBILE_WIDTH_QUERY = "(max-width: 980px)";
 const KEYBOARD_REDUCTION_PX = 80;
@@ -8,9 +17,6 @@ const TEXT_INPUTS = new Set();
 let baselineHeight = 0;
 let baselineWidth = 0;
 let syncFrameId = 0;
-let lockedPageScrollTop = 0;
-let lockedScrollContainer = null;
-let lockedScrollContainerTop = 0;
 let keyboardWasOpen = false;
 let overlayInputFocused = false;
 
@@ -40,32 +46,6 @@ function isChatInputFocused() {
   return TEXT_INPUTS.has(document.activeElement);
 }
 
-function isOverlayChatInput(target) {
-  return target === dom.overlayMessageInput
-    || target?.matches?.('[data-proxy-for="overlayMessageInput"]');
-}
-
-function isFullscreenActive() {
-  return Boolean(document.fullscreenElement)
-    || document.body.classList.contains("fullscreen-mode");
-}
-
-function getScrollContainer() {
-  if (!isFullscreenActive()) return null;
-  return dom.sessionView?.closest(".app-shell") || null;
-}
-
-function capturePageScrollPosition() {
-  lockedPageScrollTop = Math.round(window.scrollY || document.scrollingElement?.scrollTop || 0);
-  lockedScrollContainer = getScrollContainer();
-  lockedScrollContainerTop = Math.round(lockedScrollContainer?.scrollTop || 0);
-}
-
-function handlePointerDown(event) {
-  if (!isOverlayChatInput(event.target)) return;
-  capturePageScrollPosition();
-}
-
 function setKeyboardState(isOpen) {
   if (!dom.sessionView) return;
   dom.sessionView.classList.toggle("chat-keyboard-open", isOpen);
@@ -79,23 +59,6 @@ function setKeyboardState(isOpen) {
   } else {
     rootStyle.setProperty("--mobile-keyboard-layout-height", `${getViewportHeight()}px`);
     rootStyle.setProperty("--mobile-keyboard-inset", "0px");
-  }
-}
-
-function keepPageScrollLocked() {
-  if (!keyboardWasOpen && !overlayInputFocused) return;
-  const currentScrollTop = Math.round(window.scrollY || document.scrollingElement?.scrollTop || 0);
-  if (currentScrollTop !== lockedPageScrollTop) {
-    window.scrollTo({ top: lockedPageScrollTop, behavior: "auto" });
-  }
-
-  const currentContainer = getScrollContainer();
-  if (
-    currentContainer
-    && currentContainer === lockedScrollContainer
-    && Math.round(currentContainer.scrollTop || 0) !== lockedScrollContainerTop
-  ) {
-    currentContainer.scrollTo({ top: lockedScrollContainerTop, behavior: "auto" });
   }
 }
 
@@ -118,11 +81,13 @@ function syncKeyboardState() {
     && focused
     && baselineHeight - currentHeight >= KEYBOARD_REDUCTION_PX;
   if (isKeyboardOpen && !keyboardWasOpen) {
-    lockedPageScrollTop = Math.round(window.scrollY || document.scrollingElement?.scrollTop || 0);
+    // En iOS el scroll automático ocurre antes de focusin. Si el toque ya
+    // capturó la posición, no la reemplaces por la posición desplazada.
+    captureFocusScrollPositionIfNeeded();
   }
   keyboardWasOpen = isKeyboardOpen;
   setKeyboardState(isKeyboardOpen);
-  keepPageScrollLocked();
+  keepPageScrollLocked(keyboardWasOpen, overlayInputFocused);
 }
 
 function scheduleKeyboardSync() {
@@ -130,26 +95,34 @@ function scheduleKeyboardSync() {
   syncFrameId = window.requestAnimationFrame(syncKeyboardState);
 }
 
+function lockPageScroll() {
+  keepPageScrollLocked(keyboardWasOpen, overlayInputFocused);
+}
+
 function handleFocusIn(event) {
+  const wasPointerFocused = consumePointerFocus(event.target);
+
   if (isOverlayChatInput(event.target)) {
     overlayInputFocused = true;
-    capturePageScrollPosition();
+    if (!wasPointerFocused) capturePageScrollPosition();
     scheduleKeyboardSync();
     return;
   }
   if (!TEXT_INPUTS.has(event.target)) return;
-  capturePageScrollPosition();
+  if (!wasPointerFocused) capturePageScrollPosition();
   scheduleKeyboardSync();
 }
 
 function handleFocusOut(event) {
   if (isOverlayChatInput(event.target)) {
     overlayInputFocused = false;
+    scheduleFocusScrollRestore();
     scheduleKeyboardSync();
     return;
   }
   if (!TEXT_INPUTS.has(event.target)) return;
   setKeyboardState(false);
+  scheduleFocusScrollRestore();
   scheduleKeyboardSync();
 }
 
@@ -162,15 +135,15 @@ export function wireMobileKeyboardLayout() {
   baselineHeight = getViewportHeight();
   baselineWidth = getViewportWidth();
 
-  document.addEventListener("pointerdown", handlePointerDown, {
+  document.addEventListener("pointerdown", (event) => handleChatPointerDown(event.target), {
     capture: true,
     passive: true,
   });
   document.addEventListener("focusin", handleFocusIn, { passive: true });
   document.addEventListener("focusout", handleFocusOut, { passive: true });
   window.addEventListener("resize", scheduleKeyboardSync, { passive: true });
-  window.addEventListener("scroll", keepPageScrollLocked, { passive: true });
-  document.addEventListener("scroll", keepPageScrollLocked, {
+  window.addEventListener("scroll", lockPageScroll, { passive: true });
+  document.addEventListener("scroll", lockPageScroll, {
     capture: true,
     passive: true,
   });

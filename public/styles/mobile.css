@@ -9,6 +9,29 @@
 }
 
 @media (max-width: 980px) {
+  /* El chat interno debe quedar por encima de los controles centrales y de la
+     barra inferior cuando el video y el overlay comparten la superficie. */
+  body:not(.is-lobby) .player-frame .player-chat {
+    z-index: 12;
+  }
+
+  /* El overlay tiene un tamaño máximo propio. Solo se reduce si no entra
+     entre sus dos bordes del reproductor; la barra de controles no participa
+     en este cálculo y puede quedar debajo del overlay. */
+  body:not(.is-lobby) .player-frame:not(.mini-player-surface) > .player-chat {
+    --player-chat-bottom-inset: 8px;
+    bottom: var(--player-chat-bottom-inset);
+    max-height: calc(
+      100% - var(--inside-chat-top-offset, 48px) - var(--player-chat-bottom-inset)
+    );
+  }
+
+  /* El disparador del overlay conserva acceso táctil aunque el panel abierto
+     llegue a solaparse con su esquina superior derecha. */
+  body:not(.is-lobby) .player-frame .player-actions {
+    z-index: 13;
+  }
+
   /* El video debe poder iniciar el desplazamiento vertical de la página. El
      toque corto se resuelve en JS; los arrastres no deben quedar bloqueados
      por los eventos del reproductor. */
@@ -25,24 +48,45 @@
     line-height: 20px;
   }
 
+  /* Todos los compositores externos usan la misma caja que el dock inferior:
+     el shell ocupa la altura disponible y el textarea conserva su línea y
+     padding vertical para que el texto quede centrado en cualquier dock u
+     orientación móvil. */
+  body:not(.is-lobby) .chat-area > .message-form .input-wrapper {
+    align-items: center;
+    padding-left: 4px;
+  }
+
+  body:not(.is-lobby) .chat-area > .message-form .input-wrapper .textarea-shell {
+    align-self: stretch;
+  }
+
+  /* El ancho temporal que se conserva durante el cambio desde el dock
+     lateral no debe sobrevivir en el dock inferior: sus márgenes laterales
+     son los que centran el compositor. Mientras la cortina está activa se
+     mantiene el ancho estable para evitar un salto visual. */
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"]:not(.chat-bottom-mobile-expand-visual):not(.chat-bottom-mobile-collapse-visual) .chat-area > .message-form {
+    width: auto !important;
+  }
+
   /* Los botones conservan el alto de una línea aun cuando el textarea crece.
      El ancho extra queda dentro del botón, por lo que también es táctil. */
   body:not(.is-lobby) .chat-area > .message-form .input-wrapper .emoji-trigger {
     align-self: flex-end;
     flex: 0 0 24px;
     width: 24px;
-    min-height: 36px;
-    height: 36px;
+    min-height: 30px;
+    height: 30px;
     margin: 0;
     padding: 0;
   }
 
   body:not(.is-lobby) .chat-area > .message-form .input-wrapper .send {
     align-self: flex-end;
-    flex: 0 0 38px;
-    width: 38px;
-    min-height: 36px;
-    height: 36px;
+    flex: 0 0 34px;
+    width: 34px;
+    min-height: 30px;
+    height: 30px;
     margin: 0;
     padding: 0;
   }
@@ -118,7 +162,7 @@
     opacity: 1;
     transform: none;
     transition: none;
-    will-change: clip-path, opacity;
+    will-change: clip-path;
   }
 
   body:not(.is-lobby) .session-view[data-chat-dock="bottom"].chat-bottom-mobile-collapse-visual .chat-area {
@@ -131,7 +175,9 @@
 
   body:not(.is-lobby) .session-view[data-chat-dock="bottom"].chat-bottom-mobile-collapse-visual.chat-bottom-mobile-curtain-active .chat-area {
     clip-path: inset(0 0 100% 0);
-    opacity: 0;
+    /* La cortina recorta el panel desde abajo; no debe convertirse en un
+       desvanecido mientras la fila del chat todavía está visible. */
+    opacity: 1;
   }
 
   body:not(.is-lobby) .session-view[data-chat-dock="bottom"].chat-bottom-mobile-expand-visual.chat-bottom-mobile-curtain-active .chat-area {
@@ -679,22 +725,22 @@
   }
 
   body:not(.is-lobby) .overlay-message-form {
-    padding-inline: 18px;
+    padding-inline: 8px;
     padding-bottom: 8px;
   }
 
   body:not(.is-lobby) .overlay-message-form .input-wrapper {
-    width: calc(100% - 12px);
+    width: 100%;
     min-height: 30px;
     border-radius: 16px;
   }
 
-  body:not(.is-lobby) .overlay-message-form .input-wrapper textarea {
+  body:not(.is-lobby) .session-view[data-chat-dock] .player-frame .overlay-message-form .input-wrapper textarea {
     min-height: 30px;
     max-height: 66px;
     padding-top: 5px;
     padding-bottom: 5px;
-    padding-right: 54px;
+    padding-right: 64px;
   }
 
   /* Los botones conservan la altura de una sola línea aunque el textarea se
@@ -720,31 +766,6 @@
   }
 
   body:not(.is-lobby) .player-frame .overlay-message-form .input-wrapper .send > * {
-    left: calc(50% - 3px);
-  }
-
-  /* En el dock lateral el input de una línea conserva su altura de 36px. */
-  body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-area > .message-form .input-wrapper .emoji-trigger {
-    align-self: flex-end;
-    flex: 0 0 24px;
-    width: 24px;
-    min-height: 36px;
-    height: 36px;
-    margin: 0;
-    padding: 0;
-  }
-
-  body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-area > .message-form .input-wrapper .send {
-    align-self: flex-end;
-    flex: 0 0 38px;
-    width: 38px;
-    min-height: 36px;
-    height: 36px;
-    margin: 0;
-    padding: 0;
-  }
-
-  body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-area > .message-form .input-wrapper .send > * {
     left: calc(50% - 3px);
   }
 
@@ -969,6 +990,26 @@
   .lobby-actions {
     gap: 6px;
   }
+
+  /* Los dos composers móviles comparten una única altura compacta. El
+     textarea conserva 20px de línea y 5px arriba/abajo para centrar el hint;
+     si el contenido crece, la altura inline del auto-resize sigue teniendo
+     prioridad. */
+  body:not(.is-lobby) .message-form .input-wrapper {
+    min-height: 30px;
+  }
+
+  body:not(.is-lobby) .message-form .input-wrapper textarea {
+    height: 30px;
+    min-height: 30px;
+    padding-block: 5px;
+  }
+
+  body:not(.is-lobby) .message-form .input-wrapper .emoji-trigger,
+  body:not(.is-lobby) .message-form .input-wrapper .send {
+    min-height: 30px !important;
+    height: 30px !important;
+  }
 }
 
 /* En vertical el video queda apenas por encima del chat; landscape conserva
@@ -1018,5 +1059,111 @@
     top: var(--chat-bottom-dock-collapsed-handle-top);
     height: 30px;
     transform: translate(-50%, -100%);
+  }
+
+  /* El dock lateral vertical es una capa sobre el reproductor, no una
+     segunda fila. El video conserva toda la superficie y el panel se abre
+     desde el borde derecho hacia la izquierda, igual que la cortina lateral
+     de escritorio. */
+  body:not(.is-lobby) .session-view[data-chat-dock="right"] .workspace {
+    position: relative;
+    display: block;
+    height: var(--app-viewport-height);
+    min-height: 0;
+    padding: 0;
+    gap: 0;
+    grid-template: none;
+    overflow: visible;
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="right"] .video-area {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    grid-area: auto;
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-area {
+    position: absolute;
+    z-index: 10;
+    inset: 0 0 0 auto;
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    min-height: 0;
+    flex: 0 0 100%;
+    transform: none;
+    /* En vertical el dock es una capa sobre el video: su superficie debe ser
+       sólida durante todo el barrido, sin revelar el reproductor debajo. */
+    background: rgb(20 24 28);
+    transition:
+      width 350ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: width;
+  }
+
+  /* Mantener el contenido con el ancho final hace que el borde izquierdo
+     funcione como una cortina y evita que los textos se reacomoden durante
+     cada frame de la apertura. */
+  body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-area > * {
+    width: var(--app-viewport-width, 100vw);
+    max-width: none;
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-area > .message-form {
+    width: calc(var(--app-viewport-width, 100vw) - 36px);
+  }
+
+  /* La capa permanece sólida mientras avanza la cortina. Al terminar el
+     período de transición se aplica el estado colapsado normal de opacidad 0. */
+  body:not(.is-lobby) .session-view.chat-layout-transitioning[data-chat-dock="right"] .chat-area {
+    opacity: 1 !important;
+  }
+
+  /* Al cambiar desde el dock inferior, la entrada del panel lateral debe
+     conservar la misma cortina horizontal que su apertura normal. Estas
+     reglas reemplazan el ancho fijo de escritorio y mantienen el contenido
+     con el ancho final para que no quede un hueco en el borde izquierdo. */
+  body:not(.is-lobby) .session-view.chat-dock-switching[data-chat-dock="right"] .chat-area {
+    width: 0 !important;
+    max-width: 100% !important;
+    flex-basis: 0 !important;
+    opacity: 1 !important;
+    transition: none !important;
+  }
+
+  body:not(.is-lobby) .session-view.chat-dock-switching.chat-dock-switching-entered[data-chat-dock="right"] .chat-area {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex-basis: 100% !important;
+    opacity: 1 !important;
+    transition: width 350ms cubic-bezier(0.22, 1, 0.36, 1) !important;
+  }
+
+  body:not(.is-lobby) .session-view.chat-collapsed[data-chat-dock="right"] .chat-area {
+    width: 0;
+    flex-basis: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* La flecha permanece dentro del header del chat, como en la vista anterior;
+     el panel puede ocupar todo el ancho sin mover este control. */
+  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone {
+    top: 1px;
+    right: auto;
+    bottom: auto;
+    left: 8px;
+    width: 22px;
+    height: 40px;
+    transform: none;
+  }
+
+  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-handle {
+    width: 22px;
+    height: 40px;
+    /* La flecha reaparece exactamente al terminar la cortina, sin un fade
+       adicional que la deje oculta después de que el panel ya se abrió. */
+    transition: color 160ms ease, background 160ms ease;
   }
 }

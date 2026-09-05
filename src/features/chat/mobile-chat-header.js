@@ -1,6 +1,7 @@
 // Controla la cabecera del chat inferior en pantallas tactiles.
 import { dom } from "../../core/dom.js";
 import { state } from "../../core/state.js?v=20260902-mobile-real-browser-01";
+import { hideTooltip } from "../icons-tooltips.js?v=20260904-help-invite-fixes-02";
 
 const MOBILE_QUERY = "(max-width: 680px)";
 const HEADER_IDLE_MS = 2200;
@@ -85,6 +86,7 @@ function setHeaderCollapsed(collapsed) {
     dom.sessionView.classList.remove("chat-header-collapsed");
     return;
   }
+  if (collapsed) hideTooltip(true);
   dom.sessionView.classList.toggle("chat-header-collapsed", Boolean(collapsed));
 }
 

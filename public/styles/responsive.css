@@ -161,10 +161,13 @@
 
   .player-chat {
     right: 18px;
-    bottom: 10px;
+    --player-chat-bottom-inset: 10px;
+    bottom: var(--player-chat-bottom-inset);
     left: auto;
     width: min(250px, calc(100% - 10px));
-    max-height: 62%;
+    max-height: calc(
+      100% - var(--inside-chat-top-offset, 48px) - var(--player-chat-bottom-inset)
+    );
   }
 
   body.fullscreen-mode .player-chat {

@@ -2,7 +2,7 @@
 import { dom } from "../../core/dom.js";
 import { state, logEvent } from "../../core/state.js?v=20260902-mobile-real-browser-01";
 import { CHAT_DOCKS, CHAT_DOCK_META, withShortcutHint } from "../../core/utils.js";
-import { hydrateIcons, hideTooltip, refreshTooltipForTarget } from "../icons-tooltips.js";
+import { hydrateIcons, hideTooltip, refreshTooltipForTarget } from "../icons-tooltips.js?v=20260904-help-invite-fixes-02";
 import { focusFullscreenWorkspace } from "../session-ui.js?v=20260902-stable-page-viewport-01";
 import {
   cancelIdentityEditing,
@@ -14,7 +14,7 @@ import {
   resetInsideUnread,
   resetPageUnread,
   syncUnreadBadgesWithVisibility,
-} from "./unread-counters.js";
+} from "./unread-counters.js?v=20260904-mobile-landscape-bottom-chat-07";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 import { focusChatInput } from "./chat-input-focus.js";
 import { restorePageScrollAfterRightChatCollapse } from "./chat-scroll-preservation.js?v=20260902-chat-landscape-expand-scroll-fix-01";
@@ -56,9 +56,18 @@ function isMobileLayoutViewport() {
   return window.matchMedia("(max-width: 980px)").matches;
 }
 
+function isMobilePortraitChatViewport() {
+  return window.matchMedia("(max-width: 680px) and (orientation: portrait)").matches;
+}
+
 function isMobileLandscapeRightDock() {
   return (dom.sessionView?.dataset.chatDock || "right") === "right"
     && window.matchMedia("(max-width: 980px) and (orientation: landscape)").matches;
+}
+
+function isMobilePortraitRightDock() {
+  return (dom.sessionView?.dataset.chatDock || "right") === "right"
+    && isMobilePortraitChatViewport();
 }
 
 // La grilla debe cambiar de una vez para evitar que el texto se reenvuelva en
@@ -317,7 +326,12 @@ function setCollapseHandleTransitioning(
   dom.sessionView?.classList.toggle("chat-layout-transitioning", isTransitioning);
   const messageForm = dom.chatArea?.querySelector(".message-form");
   if (isTransitioning && dom.sessionView?.dataset.chatDock === "right") {
-    messageForm?.style.setProperty("width", "calc(var(--chat-panel-width) - 37px)");
+    messageForm?.style.setProperty(
+      "width",
+      isMobilePortraitRightDock()
+        ? "calc(var(--app-viewport-width, 100vw) - 36px)"
+        : "calc(var(--chat-panel-width) - 37px)",
+    );
   }
   if (!isTransitioning) return;
 
@@ -568,6 +582,17 @@ export function setChatDock(dock, options = {}) {
     return;
   }
 
+  if (
+    !options.skipTransition
+    && currentDock === "right"
+    && nextDock === "bottom"
+    && isMobilePortraitChatViewport()
+    && !dom.sessionView.classList.contains("chat-collapsed")
+  ) {
+    animateRightToBottomSwitch(nextDock);
+    return;
+  }
+
   // El paso al dock inferior no interpola la grilla, pero sí mueve el
   // viewport. Congelar las mediciones auxiliares evita lecturas de layout
   // mientras el navegador realiza ese desplazamiento suave.
@@ -643,6 +668,54 @@ function getBottomToRightScrollTop() {
   return Math.min(maxScrollTop, Math.max(0, Math.round(centeredVideoTop)));
 }
 
+function animateRightToBottomSwitch(nextDock) {
+  if (!dom.sessionView || !dom.workspace || !dom.chatArea) {
+    setChatDock(nextDock, { skipTransition: true, preserveScroll: true });
+    return;
+  }
+
+  const transition = {
+    collapsed: false,
+    frameId: 0,
+    timeoutId: 0,
+    startedAt: performance.now(),
+    // En el dock lateral el video ocupa todo el viewport y el chat está
+    // superpuesto. Convertimos ese estado visual en las filas iniciales de la
+    // cortina inferior antes de empezar a revelar el panel.
+    startRows: [Math.max(0, dom.workspace.clientHeight), 0],
+    targetRows: [0, 0],
+    startScrollTop: getPageScrollTop(),
+    targetScrollTop: 0,
+  };
+  bottomChatTransition = transition;
+  setCollapseHandleTransitioning(
+    true,
+    BOTTOM_CHAT_CURTAIN_MS + BOTTOM_CHAT_SCROLL_TIMEOUT_MS + 80,
+  );
+
+  // Cambiar el dock sin revelar el chat todavía permite que el mismo motor de
+  // la cortina inferior controle las filas y el recorte, sin un frame visible
+  // en el que aparezcan ambos chats.
+  setChatDock(nextDock, { skipTransition: true, preserveScroll: true });
+  dom.sessionView.classList.add("chat-bottom-mobile-expand-visual");
+  transition.targetRows = getWorkspaceRowHeights();
+  transition.targetScrollTop = getBottomDockChatScrollTop();
+  dom.workspace.style.setProperty(
+    "grid-template-rows",
+    `${transition.startRows[0]}px ${transition.startRows[1]}px`,
+  );
+  setMobileBottomTransitionProgress(transition, 0);
+  void dom.chatArea.offsetWidth;
+  dom.sessionView.classList.add("chat-bottom-mobile-curtain-active");
+  transition.startedAt = performance.now();
+  transition.frameId = window.requestAnimationFrame(() => {
+    stepMobileBottomChatTransition(transition);
+  });
+  transition.timeoutId = window.setTimeout(() => {
+    stepMobileBottomChatTransition(transition, true);
+  }, BOTTOM_CHAT_CURTAIN_MS + 80);
+}
+
 function scheduleBottomToRightSwitch(nextDock, targetScrollTop) {
   if (pendingBottomToRightSwitch) return;
 
@@ -664,14 +737,20 @@ function scheduleBottomToRightSwitch(nextDock, targetScrollTop) {
     window.cancelAnimationFrame(transition.frameId);
     window.clearTimeout(transition.timeoutId);
 
+    const usePortraitOverlaySwitch =
+      nextDock === "right" && isMobilePortraitChatViewport();
+    const switchDuration = usePortraitOverlaySwitch
+      ? RIGHT_CHAT_LAYOUT_TRANSITION_MS
+      : BOTTOM_TO_RIGHT_LAYOUT_MS;
+
     // Separar el cambio de clase del cambio de dock permite que la grilla
     // tenga un estado inicial estable antes de extender el panel lateral.
     // Este es el único cambio de grilla animado entre docks. Durante él no
     // se deben recalcular offsets ni reservas del compositor por cada frame.
-    setCollapseHandleTransitioning(true, BOTTOM_TO_RIGHT_LAYOUT_MS + 80);
+    setCollapseHandleTransitioning(true, switchDuration);
     dom.sessionView.classList.add("chat-dock-switching");
     window.requestAnimationFrame(() => {
-      setChatDock(nextDock, { skipTransition: true });
+      setChatDock(nextDock, { skipTransition: true, preserveScroll: true });
       // Confirmar el estado lateral colapsado antes de habilitar la entrada.
       // Sin esta lectura el navegador puede agrupar ambos estados y saltar
       // directamente de dock inferior a 320px.
@@ -690,7 +769,7 @@ function scheduleBottomToRightSwitch(nextDock, targetScrollTop) {
         dom.sessionView.classList.add("chat-dock-switching-entered");
         window.setTimeout(() => {
           dom.sessionView.classList.remove("chat-dock-switching", "chat-dock-switching-entered");
-        }, BOTTOM_TO_RIGHT_LAYOUT_MS + 80);
+        }, switchDuration);
       });
     });
   };
@@ -743,8 +822,11 @@ function cancelBottomChatTransition() {
 }
 
 function isDesktopBottomDock() {
+  const isLandscapeMobile = window.matchMedia?.(
+    "(max-width: 980px) and (orientation: landscape)",
+  ).matches === true;
   return dom.sessionView?.dataset.chatDock === "bottom"
-    && !isMobileLayoutViewport();
+    && (!isMobileLayoutViewport() || isLandscapeMobile);
 }
 
 function completeDesktopBottomChatTransition(transition) {
@@ -807,10 +889,6 @@ function setMobileBottomTransitionProgress(transition, progress) {
   dom.chatArea?.style.setProperty(
     "clip-path",
     `inset(0 0 ${Math.max(0, Math.min(100, clipProgress * 100))}% 0)`,
-  );
-  dom.chatArea?.style.setProperty(
-    "opacity",
-    String(transition.collapsed ? 1 - easedProgress : easedProgress),
   );
 
   const scrollProgress = transition.startScrollTop
@@ -1049,7 +1127,8 @@ function getBottomDockVideoScrollTop() {
   // En móvil la sesión ocupa todo el ancho y el video debe comenzar en el
   // borde superior del viewport. El gutter ya no forma parte del espacio
   // visible, por lo que restarlo deja el reproductor desplazado al contraer.
-  const mobileViewport = window.matchMedia("(max-width: 680px)").matches;
+  const mobileViewport = window.matchMedia("(max-width: 680px)").matches
+    || window.matchMedia("(max-width: 980px) and (orientation: landscape)").matches;
   const topOffset = isFullscreenPageActive() || mobileViewport ? 0 : gutter;
   return Math.max(0, Math.round(getElementPageTop(dom.videoArea) - topOffset));
 }
@@ -1131,9 +1210,11 @@ function applyExternalChatCollapsed(collapsed) {
   // La reducción del layout también genera un evento de scroll por el clamp
   // del viewport; evitar que el snap lo anime durante el reflow.
   lockChatScrollSnapDuringProgrammaticScroll();
-  const handleSettleDelay = !collapsed && isMobileLandscapeRightDock()
+  const handleSettleDelay = isMobilePortraitRightDock()
     ? RIGHT_CHAT_LAYOUT_TRANSITION_MS
-    : COLLAPSE_HANDLE_HIDE_MS;
+    : !collapsed && isMobileLandscapeRightDock()
+      ? RIGHT_CHAT_LAYOUT_TRANSITION_MS
+      : COLLAPSE_HANDLE_HIDE_MS;
   setCollapseHandleTransitioning(true, handleSettleDelay);
   dom.sessionView.classList.toggle("chat-collapsed", collapsed);
   localStorage.setItem(EXTERNAL_CHAT_COLLAPSED_KEY, collapsed ? "1" : "0");
@@ -1267,11 +1348,16 @@ export function syncChatAutoExpandControls() {
 }
 
 export function updateCollapseButton() {
+  // El icono que contiene el tooltip puede cambiar de anclaje mientras el
+  // chat se contrae o cambia de dock. Limpiar la capa antes del reflow evita
+  // dejar flotando el texto de la flecha cuando ya no está visible.
+  hideTooltip(true);
   const collapsed = dom.sessionView.classList.contains("chat-collapsed");
   const dock = dom.sessionView.dataset.chatDock || "right";
   const iconAnchor = dom.collapseChatButton.querySelector(".chat-collapse-icon-anchor");
   const icon = iconAnchor?.querySelector("[data-lucide]");
   dom.collapseChatButton.removeAttribute("data-tooltip");
+  iconAnchor?.removeAttribute("data-tooltip");
   const isPortraitMobileRightDock =
     dock === "right"
     && window.matchMedia("(max-width: 980px) and (orientation: portrait)").matches;

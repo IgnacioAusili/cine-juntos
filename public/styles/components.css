@@ -1,12 +1,12 @@
 @import url("./components/app-status.css");
-@import url("./components/room-chip.css?v=20260829-copy-animation-03");
-@import url("./components/host-badge.css?v=20260828-help-hover-touch-01");
+@import url("./components/room-chip.css?v=20260904-help-invite-fixes-02");
+@import url("./components/host-badge.css?v=20260904-help-invite-fixes-02");
 @import url("./components/buttons.css?v=20260829-touch-hover-01");
 @import url("./components/chat-collapse-handle.css?v=20260901-chat-arrow-unified-05");
 @import url("./components/chat-auto-switch.css");
 @import url("./components/presence.css");
 @import url("./components/icon-fallbacks.css?v=20260901-chat-arrow-unified-05");
 @import url("./components/unread-badges.css");
-@import url("./components/emoji-popover.css?v=20260831-emoji-presentation-01");
-@import url("./components/tooltip-layer.css");
+@import url("./components/emoji-popover.css?v=20260903-emoji-popover-fade-01");
+@import url("./components/tooltip-layer.css?v=20260904-seek-tooltip-edge-03");
 @import url("./components/dialogs.css?v=20260822-confirm-dialog-layout-01");

@@ -113,16 +113,18 @@
   padding: 6px 8px 8px;
 }
 
-/* En la miniatura el chat conserva la proporcion del overlay normal y queda
+/* En la miniatura el chat usa el mismo maximo fijo del overlay normal y queda
    por encima de la barra de controles cuando ambas superficies coinciden. */
 .mini-player-surface .player-chat {
+  --player-chat-max-height: 330px;
+  --player-chat-bottom-inset: 8px;
   top: auto;
   right: 8px;
-  bottom: 8px;
+  bottom: var(--player-chat-bottom-inset);
   z-index: 10;
   width: min(280px, calc(100% - 16px));
-  height: min(62%, 330px);
-  max-height: calc(100% - 56px);
+  height: var(--player-chat-max-height);
+  max-height: calc(100% - 16px);
   padding-inline: 3px;
   --chat-composer-reserve: 62px;
   transform: translateY(7px);
@@ -138,11 +140,12 @@
    el borde inferior. */
 @container mini-player (max-height: 250px) {
   .mini-player-surface .player-chat {
+    --player-chat-bottom-inset: 8px;
     top: 8px;
     right: 42px;
     bottom: auto;
     width: min(280px, calc(100% - 52px));
-    height: min(62%, 190px);
+    height: var(--player-chat-max-height);
     max-height: calc(100% - 16px);
   }
 }

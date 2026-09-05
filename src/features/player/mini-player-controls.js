@@ -8,7 +8,7 @@ export function installMiniPlayerWindowStyles(targetDocument) {
   targetDocument.head.append(emojiFont);
 
   const stylesheets = [
-    "../../../public/styles.css?v=20260808-mini-player-13",
+    "../../../public/styles.css?v=20260905-overlay-height-cap-04",
     "../../../public/styles/mini-player-window.css?v=20260808-mini-player-12",
   ].map((path) => {
     const stylesheet = targetDocument.createElement("link");

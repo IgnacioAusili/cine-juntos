@@ -67,7 +67,7 @@
 /* El composer del mini no necesita ocupar casi todo el ancho del video. */
 .mini-player-surface .player-chat {
   width: min(240px, calc(100% - 16px));
-  height: min(330px, calc(100% - 16px));
+  height: var(--player-chat-max-height);
   max-height: calc(100% - 16px);
 }
 
@@ -90,7 +90,7 @@
     right: 42px;
     bottom: auto;
     width: min(224px, calc(100% - 52px));
-    height: min(190px, calc(100% - 16px));
+    height: var(--player-chat-max-height);
     max-height: calc(100% - 16px);
   }
 

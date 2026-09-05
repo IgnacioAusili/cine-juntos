@@ -1,15 +1,15 @@
 import { dom } from "../../core/dom.js";
 import { state, logEvent } from "../../core/state.js?v=20260902-mobile-real-browser-01";
-import { setControlIcon } from "../icons-tooltips.js";
+import { setControlIcon } from "../icons-tooltips.js?v=20260904-help-invite-fixes-02";
 import { setSyncStatus } from "../session-ui.js?v=20260902-stable-page-viewport-01";
 import {
   createMiniPlayerSurface,
   installMiniPlayerWindowStyles,
-} from "./mini-player-controls.js";
+} from "./mini-player-controls.js?v=20260905-overlay-height-cap-04";
 import {
   mirrorMiniPlayerChatState,
-} from "./mini-player-chat.js?v=20260813-mini-chat-reply-fix-01";
-import { movePlayerInterface } from "./mini-player-interface.js?v=20260902-chat-overlay-landscape-04";
+} from "./mini-player-chat.js?v=20260904-mobile-landscape-bottom-chat-07";
+import { movePlayerInterface } from "./mini-player-interface.js?v=20260904-mobile-landscape-bottom-chat-07";
 import { trackMiniPlayerReturnHint } from "./mini-player-return-hint.js";
 import { clampMiniPlayerPosition, wireMiniPlayerDrag } from "./mini-player-drag.js?v=20260808-scroll-mini-player-02";
 

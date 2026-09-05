@@ -17,14 +17,14 @@ import { createRandomId } from "../../core/random-id.js?v=20260902-mobile-real-b
 import {
   setSyncStatus,
 } from "../session-ui.js?v=20260902-stable-page-viewport-01";
-import { refreshTooltipForTarget } from "../icons-tooltips.js";
+import { refreshTooltipForTarget } from "../icons-tooltips.js?v=20260904-help-invite-fixes-02";
 import { markParticipantActive } from "../presence.js?v=20260901-chat-arrow-unified-03";
 import { clearReplyTarget } from "./chat-reply.js?v=20260826-reply-sync-close-03";
-import { renderMessage } from "./chat-render.js?v=20260826-system-line-spacing-01";
+import { renderMessage } from "./chat-render.js?v=20260904-mobile-landscape-bottom-chat-07";
 import {
   completeAutoOpenedChatResponse,
-} from "./chat-layout.js?v=20260903-structural-viewport-scroll-02";
-import { queuePinnedChatScrollSync, isPinnedToBottom } from "./chat-scroll-sync.js?v=20260810-chat-fixes-01";
+} from "./chat-layout.js?v=20260904-mobile-landscape-bottom-chat-07";
+import { queuePinnedChatScrollSync, isPinnedToBottom } from "./chat-scroll-sync.js?v=20260904-mobile-landscape-bottom-chat-07";
 import { focusChatInput } from "./chat-input-focus.js";
 import {
   compressImageBase64,
@@ -48,7 +48,16 @@ const IMAGE_RAPID_WINDOW_MS = 2500;
 const IMAGE_SPAM_COOLDOWN_MS = 30000;
 const IMAGE_FINGERPRINT_CACHE_LIMIT = 100;
 const PROGRESS_APPEAR_THRESHOLD = 150;
+const MOBILE_CHAT_LAYOUT_QUERY = "(max-width: 980px)";
+const EMOJI_POPOVER_GAP_PX = 8;
+const EMOJI_POPOVER_EDGE_PX = 8;
+const EMOJI_POPOVER_TAIL_INSET_PX = 12;
+const EMOJI_POPOVER_TRANSITION_MS = 150;
+const EMOJI_FONT_SHORTHAND = '0.82rem "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji"';
+const EMOJI_FONT_SAMPLE = "😂🫦❌👎✅👍🙏";
 let emojiFontReady = null;
+let emojiPopoverHideTimer = 0;
+let emojiPickerOpenRequestId = 0;
 
 let lastMessageSpamKey = "";
 let sameMessageCount = 0;
@@ -65,9 +74,84 @@ function preloadEmojiFont() {
   if (!document.fonts?.load) return Promise.resolve();
 
   emojiFontReady = document.fonts
-    .load('0.82rem "Noto Color Emoji"', "😂🫦")
+    .load(EMOJI_FONT_SHORTHAND, EMOJI_FONT_SAMPLE)
     .catch(() => undefined);
   return emojiFontReady;
+}
+
+function positionEmojiPopover(popover, anchor) {
+  const anchorRect = anchor.getBoundingClientRect();
+  const popoverWidth = popover.offsetWidth;
+  const popoverHeight = popover.offsetHeight;
+  const maxLeft = Math.max(
+    EMOJI_POPOVER_EDGE_PX,
+    window.innerWidth - popoverWidth - EMOJI_POPOVER_EDGE_PX,
+  );
+  const left = Math.min(
+    maxLeft,
+    Math.max(EMOJI_POPOVER_EDGE_PX, anchorRect.left),
+  );
+  const spaceAbove = anchorRect.top - EMOJI_POPOVER_GAP_PX;
+  const spaceBelow = window.innerHeight - anchorRect.bottom - EMOJI_POPOVER_GAP_PX;
+  const opensBelow = spaceAbove < popoverHeight && spaceBelow > spaceAbove;
+  const maxTop = Math.max(
+    EMOJI_POPOVER_EDGE_PX,
+    window.innerHeight - popoverHeight - EMOJI_POPOVER_EDGE_PX,
+  );
+  const desiredTop = opensBelow
+    ? anchorRect.bottom + EMOJI_POPOVER_GAP_PX
+    : anchorRect.top - popoverHeight - EMOJI_POPOVER_GAP_PX;
+  const top = Math.min(
+    maxTop,
+    Math.max(EMOJI_POPOVER_EDGE_PX, desiredTop),
+  );
+  const anchorOffset = Math.min(
+    popoverWidth - EMOJI_POPOVER_TAIL_INSET_PX,
+    Math.max(
+      EMOJI_POPOVER_TAIL_INSET_PX,
+      anchorRect.left + anchorRect.width / 2 - left,
+    ),
+  );
+
+  popover.dataset.placement = opensBelow ? "bottom" : "top";
+  popover.style.setProperty("--emoji-popover-anchor-x", `${anchorOffset}px`);
+  popover.style.top = `${top}px`;
+  popover.style.left = `${left}px`;
+}
+
+export function repositionEmojiPicker() {
+  const popover = dom.emojiPopover;
+  if (!popover || popover.hidden || !popover.dataset.anchor) return;
+
+  const anchor = document.getElementById(popover.dataset.anchor);
+  if (!anchor) {
+    hideEmojiPicker();
+    return;
+  }
+
+  const anchorRect = anchor.getBoundingClientRect();
+  if (anchorRect.bottom < 0 || anchorRect.top > window.innerHeight) {
+    hideEmojiPicker();
+    return;
+  }
+
+  positionEmojiPopover(popover, anchor);
+}
+
+function cancelEmojiPopoverHide() {
+  if (!emojiPopoverHideTimer) return;
+  window.clearTimeout(emojiPopoverHideTimer);
+  emojiPopoverHideTimer = 0;
+}
+
+function showEmojiPopover(popover) {
+  cancelEmojiPopoverHide();
+  popover.hidden = false;
+  popover.classList.remove("is-emoji-popover-closing");
+  window.requestAnimationFrame(() => {
+    if (popover.hidden || popover.classList.contains("is-emoji-popover-closing")) return;
+    popover.classList.add("is-emoji-popover-open");
+  });
 }
 
 function getSendButtons() {
@@ -403,13 +487,15 @@ export function autoResizeMessageInput(input) {
   const messagesContainer = isOverlay ? dom.overlayMessages : dom.messages;
   const wasPinnedToBottom = isPinnedToBottom(messagesContainer);
 
-  input.style.height = "auto";
   const maxHeight = isOverlay ? 86 : 118;
-  const minHeight = isOverlay ? 34 : 36;
-  input.style.height = `${Math.min(input.scrollHeight, maxHeight)}px`;
+  const mobileMinHeight = window.matchMedia?.(MOBILE_CHAT_LAYOUT_QUERY).matches;
+  const minHeight = mobileMinHeight ? 30 : (isOverlay ? 30 : 36);
+  input.style.height = `${minHeight}px`;
+  const contentHeight = input.scrollHeight;
+  input.style.height = `${Math.min(Math.max(contentHeight, minHeight), maxHeight)}px`;
   const wrapper = input.closest(".input-wrapper");
   if (wrapper) {
-    wrapper.dataset.expanded = String(input.scrollHeight > minHeight + 4);
+    wrapper.dataset.expanded = String(contentHeight > minHeight + 4);
   }
   input.scrollTop = input.scrollHeight;
   syncComposerScrollbar(input);
@@ -419,6 +505,10 @@ export function autoResizeMessageInput(input) {
 export function buildEmojiPicker() {
   void preloadEmojiFont();
   dom.emojiPopover.innerHTML = "";
+  const fog = document.createElement("span");
+  fog.className = "emoji-popover-fog";
+  fog.setAttribute("aria-hidden", "true");
+  dom.emojiPopover.append(fog);
   syncEmojiTriggerState();
   EMOJI_PICKER_ITEMS.forEach(({ emoji, tags }) => {
     const button = document.createElement("button");
@@ -450,18 +540,18 @@ export async function toggleEmojiPicker(input, anchor) {
 
   const selectionStart = input?.selectionStart ?? input?.value.length ?? 0;
   const selectionEnd = input?.selectionEnd ?? input?.value.length ?? 0;
+  const openRequestId = ++emojiPickerOpenRequestId;
   await preloadEmojiFont();
-  const rect = anchor.getBoundingClientRect();
-  dom.emojiPopover.hidden = false;
+  if (openRequestId !== emojiPickerOpenRequestId) return;
+
   dom.emojiPopover.dataset.anchor = anchor.id;
-  const top = Math.max(8, rect.top - dom.emojiPopover.offsetHeight - 8);
-  const left = Math.min(window.innerWidth - dom.emojiPopover.offsetWidth - 8, Math.max(8, rect.left));
-  dom.emojiPopover.style.top = `${top}px`;
-  dom.emojiPopover.style.left = `${left}px`;
+  showEmojiPopover(dom.emojiPopover);
+  positionEmojiPopover(dom.emojiPopover, anchor);
 
   syncEmojiTriggerState(anchor);
 
   window.requestAnimationFrame(() => {
+    if (openRequestId !== emojiPickerOpenRequestId || dom.emojiPopover.hidden) return;
     focusChatInput(input, selectionStart, selectionEnd);
   });
 }
@@ -476,9 +566,30 @@ function syncEmojiTriggerState(activeAnchor = null) {
 }
 
 export function hideEmojiPicker() {
-  dom.emojiPopover.hidden = true;
+  const popover = dom.emojiPopover;
+  emojiPickerOpenRequestId += 1;
+  if (popover.hidden) {
+    popover.classList.remove("is-emoji-popover-open", "is-emoji-popover-closing");
+    popover.dataset.anchor = "";
+    popover.dataset.placement = "";
+    popover.style.removeProperty("--emoji-popover-anchor-x");
+    syncEmojiTriggerState();
+    return;
+  }
+
+  if (popover.classList.contains("is-emoji-popover-closing")) return;
+  cancelEmojiPopoverHide();
+  popover.classList.remove("is-emoji-popover-open");
+  popover.classList.add("is-emoji-popover-closing");
   dom.emojiPopover.dataset.anchor = "";
   syncEmojiTriggerState();
+  emojiPopoverHideTimer = window.setTimeout(() => {
+    emojiPopoverHideTimer = 0;
+    popover.hidden = true;
+    popover.classList.remove("is-emoji-popover-closing");
+    popover.dataset.placement = "";
+    popover.style.removeProperty("--emoji-popover-anchor-x");
+  }, EMOJI_POPOVER_TRANSITION_MS);
 }
 
 export function normalizeEmojiShortcodesInput(input) {

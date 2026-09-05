@@ -210,7 +210,9 @@
   display: inline-flex;
   position: relative;
   justify-content: flex-start;
-  overflow: hidden;
+  /* La confirmación conserva su propio overflow; el botón debe dejar salir
+     el texto durante el lift de copiado para que no se corte arriba. */
+  overflow: visible;
 }
 
 .room-chip-copy-main {

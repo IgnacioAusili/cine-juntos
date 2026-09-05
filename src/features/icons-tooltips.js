@@ -112,6 +112,7 @@ export function wireTooltipEvents() {
     const context = getTooltipContext(event.target);
     if (!context) return;
     const isHelpButton = context.anchor.classList?.contains("help-button");
+    const isPresenceButton = isPresenceTooltipContext(context);
     if (event.pointerType === "mouse" && isSelectTooltipContext(context)) {
       suppressFocusTooltipUntil = performance.now() + TOOLTIP_SHOW_DELAY_MS;
       hideTooltip();
@@ -126,7 +127,7 @@ export function wireTooltipEvents() {
     if (!isTouchPointer(event)) return;
 
     suppressFocusTooltipUntil = performance.now() + TOUCH_FOCUS_SUPPRESSION_MS;
-    const shouldToggleOff = isHelpButton
+    const shouldToggleOff = (isHelpButton || isPresenceButton)
       && state.ui.tooltipTarget === context.anchor
       && !dom.tooltipLayer.hidden;
     clearTouchTooltipPress();
@@ -149,6 +150,7 @@ export function wireTooltipEvents() {
       y: event.clientY,
       context,
       isHelpButton,
+      isPresenceButton,
       longPress: false,
     };
     setTooltipTouchHover(context.anchor, true);
@@ -178,7 +180,7 @@ export function wireTooltipEvents() {
     const press = touchTooltipPress;
     if (
       press?.pointerId === event.pointerId
-      && press.isHelpButton
+      && (press.isHelpButton || press.isPresenceButton)
       && press.context.anchor.isConnected
     ) {
       if (press.longPress) {
@@ -207,10 +209,9 @@ export function wireTooltipEvents() {
     if (suppressedTouchTooltipClickTargets.delete(context.anchor)) {
       return;
     }
-    if (
-      window.matchMedia("(max-width: 680px)").matches
-      && context.anchor.classList?.contains("help-button")
-    ) {
+    const isMobileTooltipButton = context.anchor.classList?.contains("help-button")
+      || isPresenceTooltipContext(context);
+    if (window.matchMedia("(max-width: 680px)").matches && isMobileTooltipButton) {
       if (state.ui.tooltipTarget === context.anchor && !dom.tooltipLayer.hidden) {
         hideTooltip();
       } else {

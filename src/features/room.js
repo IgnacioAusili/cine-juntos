@@ -22,7 +22,7 @@ import {
   renderPresence,
   updateDisplayName,
 } from "./presence.js?v=20260901-chat-arrow-unified-03";
-import { setConnection } from "./icons-tooltips.js";
+import { setConnection } from "./icons-tooltips.js?v=20260904-help-invite-fixes-02";
 import {
   getUserScrollIntentVersion,
   setHostBadge,
@@ -31,7 +31,7 @@ import {
   showSession,
   watchRoomEntryVideoFocus,
 } from "./session-ui.js?v=20260902-stable-page-viewport-01";
-import { handleRemoteState } from "./player/index.js?v=20260903-structural-viewport-scroll-03";
+import { handleRemoteState } from "./player/index.js?v=20260904-mobile-landscape-bottom-chat-07";
 import {
   renderMessage,
   beginSystemMessageHydration,
@@ -40,7 +40,7 @@ import {
   resetInsideUnread,
   resetPageUnread,
   renderReplyPreview,
-} from "./chat/index.js?v=20260903-structural-viewport-scroll-03";
+} from "./chat/index.js?v=20260904-mobile-landscape-bottom-chat-07";
 
 const ACTIVE_TAB_KEY = "cine-juntos-active-tab";
 const ACTIVE_TAB_TTL_MS = 30000;

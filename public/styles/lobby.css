@@ -410,6 +410,8 @@
 }
 
 .lobby-fields .label-row {
+  align-items: center;
+  line-height: 1;
   padding-inline-start: 0;
   gap: 4px;
   width: max-content;
@@ -418,7 +420,13 @@
 }
 
 .lobby-fields .label-row .help-button {
+  align-self: center;
+  width: 16px;
+  height: 16px;
+  min-height: 16px;
+  flex: 0 0 16px;
   pointer-events: auto;
+  transform: none;
 }
 
 .lobby-actions {

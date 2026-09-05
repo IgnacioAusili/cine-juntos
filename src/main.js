@@ -15,7 +15,7 @@ import {
   hydrateIcons,
   initializeUi,
   setConnection,
-} from "./features/icons-tooltips.js?v=20260829-touch-tooltip-fix-04";
+} from "./features/icons-tooltips.js?v=20260904-help-invite-fixes-02";
 import {
   wireLayoutMetrics,
 } from "./features/layout-metrics.js?v=20260903-structural-viewport-scroll-03";
@@ -38,15 +38,15 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js?v=20260903-structural-viewport-scroll-03";
+} from "./features/chat/index.js?v=20260904-mobile-landscape-bottom-chat-07-overlay-composer-layout-01";
 import {
   initializePlayer,
   wirePlayerEvents,
-} from "./features/player/index.js?v=20260903-structural-viewport-scroll-03";
+} from "./features/player/index.js?v=20260905-overlay-height-cap-04";
 import { wireMobileFullscreenOrientation } from "./features/player/mobile-fullscreen-orientation.js";
 import { wireMobileKeyboardLayout } from "./features/chat/mobile-keyboard.js?v=20260903-iphone-chat-focus-02";
-import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20260830-mobile-chat-header-fix-04";
-import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260902-mobile-real-browser-01";
+import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20260904-help-invite-fixes-02";
+import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260904-mobile-landscape-bottom-chat-07";
 import { wireTouchHover } from "./core/touch-interactions.js?v=20260829-touch-hold-fix-01";
 
 const requestedRoom = normalizeRoomCode(new URLSearchParams(window.location.search).get("room") || "");

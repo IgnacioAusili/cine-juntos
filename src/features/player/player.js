@@ -16,8 +16,8 @@ import {
   hydrateIcons,
   hideTooltip,
   setControlIcon,
-} from "../icons-tooltips.js";
-import { scrollToVideoPosition, sendVideoEventMessage, setInsideChatVisible } from "../chat/index.js?v=20260903-structural-viewport-scroll-03";
+} from "../icons-tooltips.js?v=20260904-help-invite-fixes-02";
+import { scrollToVideoPosition, sendVideoEventMessage, setInsideChatVisible } from "../chat/index.js?v=20260904-mobile-landscape-bottom-chat-07";
 // Import circular intencional y seguro: estas funciones se invocan en runtime,
 // no durante la carga del modulo, y player-sync-logic.js a su vez importa
 // setVideoSource y waitForVideoMetadata desde aqui.
@@ -27,7 +27,7 @@ import {
   clearPlaybackRecoveryTracking,
   pauseRoomForPlaybackIssue,
   publishState,
-} from "./player-sync-logic.js?v=20260903-structural-viewport-scroll-03";
+} from "./player-sync-logic.js?v=20260904-mobile-landscape-bottom-chat-07";
 
 import {
   showErrorDialog,
@@ -35,8 +35,8 @@ import {
   showResumeVideoDialog,
   showSlowLoadDialog,
 } from "../session-ui.js?v=20260902-stable-page-viewport-01";
-import { togglePageFullscreen } from "./fullscreen.js?v=20260903-structural-viewport-scroll-02";
-import { syncMiniPlayerButton } from "./mini-player.js?v=20260903-structural-viewport-scroll-03";
+import { togglePageFullscreen } from "./fullscreen.js?v=20260904-mobile-landscape-bottom-chat-07";
+import { syncMiniPlayerButton } from "./mini-player.js?v=20260904-mobile-landscape-bottom-chat-07";
 import { shouldToggleMuteFromVolumeButton } from "./player-volume-layout.js?v=20260902-player-volume-layout-18";
 
 const SKIP_LOAD_REPLACE_DIALOG_KEY = "cine-juntos-skip-load-replace-dialog";
@@ -60,6 +60,13 @@ const KEYBOARD_VOLUME_STEP = 0.05;
 const SEEK_TOOLTIP_GAP = 10;
 const SEEK_TOOLTIP_VIEWPORT_PADDING = 8;
 const SEEK_THUMB_WIDTH = 14;
+const SEEK_TOOLTIP_ARROW_PADDING = SEEK_THUMB_WIDTH / 2 + 1;
+const SEEK_TOOLTIP_EDGE_RADIUS = 9;
+const SEEK_TOOLTIP_DEFAULT_RADIUS = 12;
+const SEEK_TOOLTIP_EDGE_TRANSITION_DISTANCE = 24;
+// Deja un pequeño respiro en el borde sin provocar un salto cuando empieza el
+// desborde; la cola todavía conserva el margen necesario para quedar dentro.
+const SEEK_TOOLTIP_HORIZONTAL_PADDING = SEEK_TOOLTIP_ARROW_PADDING / 2;
 const VIDEO_STATUS_TOOLTIPS = Object.freeze({
   empty: "Todavía no hay un video cargado en la sala",
   loading: "El video se está cargando. Los controles se habilitarán cuando esté listo",
@@ -79,8 +86,15 @@ let pendingLoadCompletionAnnouncement = false;
 let pendingLoadCompletionAnimateSystemGroups = true;
 let pendingVideoActivityAnnouncement = false;
 let seekTooltipFrame = 0;
+let seekPointerFrame = 0;
+let pendingSeekPointer = null;
 let seekTooltipPoint = null;
 let seekTooltipRect = null;
+let seekTooltipSize = null;
+let seekTooltipArrowOffset = null;
+let seekTooltipEdge = null;
+let seekTooltipEdgeRadius = null;
+let seekTooltipPlacement = null;
 let seekPointerId = null;
 let rateMenuCloseTimer = null;
 let lastAudibleVolume = 1;
@@ -618,7 +632,11 @@ function togglePlaybackFromControls(source = "keyboard") {
     state.player.lastUserPauseAt = now;
   }
 
-  if (dom.videoPlayer.paused || dom.videoPlayer.ended) {
+  if (dom.videoPlayer.ended) {
+    dom.videoPlayer.currentTime = 0;
+    dom.videoPlayer.play().catch(() => {});
+    if (!isMobileCenterControlsActive()) showPlaybackGestureIndicator("pause");
+  } else if (dom.videoPlayer.paused) {
     dom.videoPlayer.play().catch(() => {});
     if (!isMobileCenterControlsActive()) showPlaybackGestureIndicator("pause");
   } else {
@@ -992,7 +1010,9 @@ function syncPlayerControls(forceSliderSync = false) {
   if (dom.playerPlayButton) {
     const playButtonCoolingDown = isPlayButtonCoolingDown();
     dom.playerPlayButton.disabled = !hasMedia || playButtonCoolingDown;
-    const isPaused = dom.videoPlayer.paused || dom.videoPlayer.ended;
+    const isEnded = dom.videoPlayer.ended;
+    const isPaused = dom.videoPlayer.paused && !isEnded;
+    const nextIcon = isEnded ? "rotate-ccw" : isPaused ? "play" : "pause";
     const cooldownSeconds = Math.max(
       1,
       Math.ceil((Number(state.player.playButtonCooldownUntil || 0) - Date.now()) / 1000),
@@ -1006,18 +1026,20 @@ function syncPlayerControls(forceSliderSync = false) {
       if (counter) counter.textContent = String(cooldownSeconds);
     } else if (dom.playerPlayButton.dataset.playButtonCooldown === "true") {
       delete dom.playerPlayButton.dataset.playButtonCooldown;
-      dom.playerPlayButton.innerHTML = `<span data-lucide=\"${isPaused ? "play" : "pause"}\"></span>`;
-      setControlIcon(dom.playerPlayButton, isPaused ? "play" : "pause");
+      dom.playerPlayButton.innerHTML = `<span data-lucide=\"${nextIcon}\"></span>`;
+      setControlIcon(dom.playerPlayButton, nextIcon);
     }
     const icon = dom.playerPlayButton.querySelector("[data-lucide]");
     const tooltip = playButtonCoolingDown
       ? `Espera ${cooldownSeconds}s para usar el reproductor`
-      : withShortcutHint(isPaused ? "Reproducir video" : "Pausar video", "Espacio");
+      : withShortcutHint(
+        isEnded ? "Reiniciar video" : isPaused ? "Reproducir video" : "Pausar video",
+        "Espacio",
+      );
     dom.playerPlayButton.dataset.tooltip = tooltip;
     dom.playerPlayButton.setAttribute("aria-label", tooltip);
     dom.playerPlayButton.removeAttribute("title");
     if (icon) {
-      const nextIcon = isPaused ? "play" : "pause";
       if (icon.getAttribute("data-lucide") !== nextIcon) {
         setControlIcon(dom.playerPlayButton, nextIcon);
       }
@@ -1359,7 +1381,7 @@ function wireSeekTooltipEvents() {
       hideSeekTooltip();
       return;
     }
-    updateSeekTooltipFromPointer(event);
+    queueSeekTooltipFromPointer(event);
   };
 
   const handlePointerDown = (event) => {
@@ -1453,7 +1475,9 @@ function isPointerOverRateMenu(event) {
   const openMenu = dom.playerRateSelect
     ?.closest(".player-rate-select")
     ?.querySelector(".player-rate-menu:not([hidden])");
-  const menuRect = openMenu?.getBoundingClientRect();
+  if (!openMenu) return false;
+
+  const menuRect = openMenu.getBoundingClientRect();
   if (
     menuRect
     && clientX >= menuRect.left
@@ -1468,6 +1492,21 @@ function isPointerOverRateMenu(event) {
   return Boolean(elementUnderPointer?.closest?.(".player-rate-menu"));
 }
 
+function queueSeekTooltipFromPointer(event) {
+  pendingSeekPointer = {
+    clientX: event?.clientX,
+    clientY: event?.clientY,
+  };
+  if (seekPointerFrame) return;
+
+  seekPointerFrame = window.requestAnimationFrame(() => {
+    seekPointerFrame = 0;
+    const pointer = pendingSeekPointer;
+    pendingSeekPointer = null;
+    if (pointer) updateSeekTooltipFromPointer(pointer);
+  });
+}
+
 function updateSeekTooltipForValue(value) {
   if (!seekTooltipPoint || !dom.tooltipLayer || dom.playerSeekInput?.disabled) return;
   showSeekTooltip(value, seekTooltipPoint.x, seekTooltipRect);
@@ -1477,11 +1516,25 @@ function showSeekTooltip(value, clientX, rect) {
   if (!dom.tooltipLayer) return;
 
   const isVisibleSeekTooltip = Boolean(seekTooltipPoint && !dom.tooltipLayer.hidden);
-  if (!isVisibleSeekTooltip) hideTooltip(true);
+  if (!isVisibleSeekTooltip) {
+    // hideTooltip también limpia la variable CSS; reiniciar el caché evita
+    // omitir la escritura cuando el tooltip vuelve a aparecer en un extremo.
+    seekTooltipArrowOffset = null;
+    seekTooltipEdge = null;
+    seekTooltipEdgeRadius = null;
+    seekTooltipPlacement = null;
+    seekTooltipSize = null;
+    hideTooltip(true);
+    dom.tooltipLayer.removeAttribute("data-edge");
+  }
 
   seekTooltipPoint = { x: clientX };
   seekTooltipRect = rect || null;
-  dom.tooltipLayer.textContent = formatSeconds(value);
+  const nextText = formatSeconds(value);
+  if (dom.tooltipLayer.textContent !== nextText) {
+    dom.tooltipLayer.textContent = nextText;
+    seekTooltipSize = null;
+  }
 
   if (!isVisibleSeekTooltip) {
     dom.tooltipLayer.hidden = false;
@@ -1491,8 +1544,10 @@ function showSeekTooltip(value, clientX, rect) {
     dom.tooltipLayer.dataset.placement = "top";
   }
 
-  window.cancelAnimationFrame(seekTooltipFrame);
+  if (seekTooltipFrame) return;
+
   seekTooltipFrame = window.requestAnimationFrame(() => {
+    seekTooltipFrame = 0;
     if (!dom.tooltipLayer || dom.tooltipLayer.hidden) return;
     positionSeekTooltip();
     dom.tooltipLayer.style.visibility = "";
@@ -1503,36 +1558,119 @@ function showSeekTooltip(value, clientX, rect) {
 function positionSeekTooltip() {
   if (!dom.tooltipLayer || !seekTooltipPoint || !seekTooltipRect) return;
 
-  const tooltipRect = dom.tooltipLayer.getBoundingClientRect();
+  if (!seekTooltipSize) {
+    const tooltipRect = dom.tooltipLayer.getBoundingClientRect();
+    seekTooltipSize = { width: tooltipRect.width, height: tooltipRect.height };
+  }
+  const tooltipWidth = seekTooltipSize.width;
+  const tooltipHeight = seekTooltipSize.height;
   const maxLeft = Math.max(
-    SEEK_TOOLTIP_VIEWPORT_PADDING,
-    window.innerWidth - tooltipRect.width - SEEK_TOOLTIP_VIEWPORT_PADDING,
+    SEEK_TOOLTIP_HORIZONTAL_PADDING,
+    window.innerWidth - tooltipWidth - SEEK_TOOLTIP_HORIZONTAL_PADDING,
   );
-  const maxTop = Math.max(SEEK_TOOLTIP_VIEWPORT_PADDING, window.innerHeight - tooltipRect.height - SEEK_TOOLTIP_VIEWPORT_PADDING);
-  const centeredLeft = seekTooltipPoint.x - tooltipRect.width / 2;
-  const left = Math.min(Math.max(centeredLeft, SEEK_TOOLTIP_VIEWPORT_PADDING), maxLeft);
-  const aboveTop = seekTooltipRect.top - tooltipRect.height - SEEK_TOOLTIP_GAP;
+  const maxTop = Math.max(SEEK_TOOLTIP_VIEWPORT_PADDING, window.innerHeight - tooltipHeight - SEEK_TOOLTIP_VIEWPORT_PADDING);
+  const centeredLeft = seekTooltipPoint.x - tooltipWidth / 2;
+  const left = Math.min(Math.max(centeredLeft, SEEK_TOOLTIP_HORIZONTAL_PADDING), maxLeft);
+  const aboveTop = seekTooltipRect.top - tooltipHeight - SEEK_TOOLTIP_GAP;
   const belowTop = seekTooltipRect.bottom + SEEK_TOOLTIP_GAP;
   const canShowAbove = aboveTop >= SEEK_TOOLTIP_VIEWPORT_PADDING;
   const top = canShowAbove
     ? Math.min(Math.max(aboveTop, SEEK_TOOLTIP_VIEWPORT_PADDING), maxTop)
     : Math.min(Math.max(belowTop, SEEK_TOOLTIP_VIEWPORT_PADDING), maxTop);
+  const isHorizontallyClamped = Math.abs(left - centeredLeft) > 0.01;
 
-  dom.tooltipLayer.dataset.placement = canShowAbove ? "top" : "bottom";
-  dom.tooltipLayer.style.left = `${Math.round(left)}px`;
-  dom.tooltipLayer.style.top = `${Math.round(top)}px`;
+  const leftEdgeProgress = Math.min(
+    1,
+    Math.max(
+      0,
+      (SEEK_TOOLTIP_HORIZONTAL_PADDING + SEEK_TOOLTIP_EDGE_TRANSITION_DISTANCE - centeredLeft)
+        / SEEK_TOOLTIP_EDGE_TRANSITION_DISTANCE,
+    ),
+  );
+  const rightEdgeProgress = Math.min(
+    1,
+    Math.max(
+      0,
+      (centeredLeft - (maxLeft - SEEK_TOOLTIP_EDGE_TRANSITION_DISTANCE))
+        / SEEK_TOOLTIP_EDGE_TRANSITION_DISTANCE,
+    ),
+  );
+  const edgeProgress = Math.max(leftEdgeProgress, rightEdgeProgress);
+  const nextProgressEdge = leftEdgeProgress >= rightEdgeProgress && leftEdgeProgress > 0
+    ? "left"
+    : rightEdgeProgress > 0
+      ? "right"
+      : null;
+
+  const nextLeft = `${Math.round(left)}px`;
+  const nextTop = `${Math.round(top)}px`;
+  if (dom.tooltipLayer.style.left !== nextLeft) dom.tooltipLayer.style.left = nextLeft;
+  if (dom.tooltipLayer.style.top !== nextTop) dom.tooltipLayer.style.top = nextTop;
+  const nextPlacement = canShowAbove ? "top" : "bottom";
+  if (seekTooltipPlacement !== nextPlacement) {
+    seekTooltipPlacement = nextPlacement;
+    dom.tooltipLayer.dataset.placement = nextPlacement;
+  }
+  const nextEdge = nextProgressEdge;
+  if (seekTooltipEdge !== nextEdge) {
+    seekTooltipEdge = nextEdge;
+    if (nextEdge) {
+      dom.tooltipLayer.dataset.edge = nextEdge;
+    } else {
+      dom.tooltipLayer.removeAttribute("data-edge");
+    }
+  }
+  if (nextEdge) {
+    const nextRadius = Math.round(
+      (SEEK_TOOLTIP_DEFAULT_RADIUS
+        - (SEEK_TOOLTIP_DEFAULT_RADIUS - SEEK_TOOLTIP_EDGE_RADIUS) * edgeProgress) * 10,
+    ) / 10;
+    if (seekTooltipEdgeRadius !== nextRadius) {
+      seekTooltipEdgeRadius = nextRadius;
+      dom.tooltipLayer.style.setProperty("--tooltip-edge-radius", `${nextRadius}px`);
+    }
+  } else if (seekTooltipEdgeRadius !== null) {
+    seekTooltipEdgeRadius = null;
+    dom.tooltipLayer.style.removeProperty("--tooltip-edge-radius");
+  }
+  if (isHorizontallyClamped) {
+    const nextArrowOffset = Math.round(Math.min(
+      Math.max(seekTooltipPoint.x - left, SEEK_TOOLTIP_ARROW_PADDING),
+      Math.max(SEEK_TOOLTIP_ARROW_PADDING, tooltipWidth - SEEK_TOOLTIP_ARROW_PADDING),
+    ));
+    if (seekTooltipArrowOffset !== nextArrowOffset) {
+      seekTooltipArrowOffset = nextArrowOffset;
+      dom.tooltipLayer.style.setProperty("--tooltip-arrow-offset", `${nextArrowOffset}px`);
+    }
+  } else if (seekTooltipArrowOffset !== null) {
+    seekTooltipArrowOffset = null;
+    dom.tooltipLayer.style.removeProperty("--tooltip-arrow-offset");
+  }
 }
 
 function hideSeekTooltip() {
   seekTooltipPoint = null;
   seekTooltipRect = null;
+  seekTooltipSize = null;
+  pendingSeekPointer = null;
+  window.cancelAnimationFrame(seekPointerFrame);
+  seekPointerFrame = 0;
   window.cancelAnimationFrame(seekTooltipFrame);
   seekTooltipFrame = 0;
 
   if (!dom.tooltipLayer) return;
   dom.tooltipLayer.hidden = true;
   dom.tooltipLayer.style.visibility = "";
+  if (seekTooltipArrowOffset !== null) {
+    seekTooltipArrowOffset = null;
+    dom.tooltipLayer.style.removeProperty("--tooltip-arrow-offset");
+  }
+  seekTooltipEdge = null;
+  seekTooltipEdgeRadius = null;
+  seekTooltipPlacement = null;
+  dom.tooltipLayer.style.removeProperty("--tooltip-edge-radius");
   dom.tooltipLayer.removeAttribute("data-placement");
+  dom.tooltipLayer.removeAttribute("data-edge");
 }
 
 function getFiniteDuration() {

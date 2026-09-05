@@ -1,11 +1,14 @@
 import { clearReplyTarget, setReplyTarget } from "../chat/chat-reply.js?v=20260826-reply-sync-close-03";
 import { wireMessageInteractions } from "../chat/chat-message-interactions.js";
-import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js?v=20260903-structural-viewport-scroll-02";
+import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js?v=20260904-mobile-landscape-bottom-chat-07";
 import { state } from "../../core/state.js?v=20260902-mobile-real-browser-01";
 import { focusChatInput } from "../chat/chat-input-focus.js";
 
 const mirroredSystemGroupStates = new WeakMap();
 const miniSystemGroupAnimations = new WeakMap();
+const miniEmojiPopoverHideTimers = new WeakMap();
+const EMOJI_POPOVER_TAIL_INSET_PX = 12;
+const EMOJI_POPOVER_TRANSITION_MS = 150;
 
 export function normalizeMiniSystemGroupState(container) {
   container?.querySelectorAll(".message.system").forEach((systemMessage) => {
@@ -342,14 +345,58 @@ export function toggleMiniEmojiPicker(element) {
 
   const popover = getMiniEmojiPopover(surface);
   if (!popover.hidden) {
-    popover.hidden = true;
+    hideMiniEmojiPopover(popover);
     return;
   }
 
   const selectionStart = input.selectionStart ?? input.value.length;
   const selectionEnd = input.selectionEnd ?? input.value.length;
+  const hideTimer = miniEmojiPopoverHideTimers.get(popover);
+  if (hideTimer) {
+    window.clearTimeout(hideTimer);
+    miniEmojiPopoverHideTimers.delete(popover);
+  }
   popover.hidden = false;
+  popover.classList.remove("is-emoji-popover-closing");
+  const anchor = element.querySelector(
+    "#overlayEmojiButton, [data-proxy-for=\"overlayEmojiButton\"]",
+  );
+  if (anchor) {
+    const popoverRect = popover.getBoundingClientRect();
+    const anchorRect = anchor.getBoundingClientRect();
+    const anchorOffset = Math.min(
+      popoverRect.width - EMOJI_POPOVER_TAIL_INSET_PX,
+      Math.max(
+        EMOJI_POPOVER_TAIL_INSET_PX,
+        anchorRect.left + anchorRect.width / 2 - popoverRect.left,
+      ),
+    );
+    popover.dataset.placement = popoverRect.bottom <= anchorRect.top
+      ? "top"
+      : "bottom";
+    popover.style.setProperty("--emoji-popover-anchor-x", `${anchorOffset}px`);
+  }
+  window.requestAnimationFrame(() => {
+    if (popover.hidden || popover.classList.contains("is-emoji-popover-closing")) return;
+    popover.classList.add("is-emoji-popover-open");
+  });
   requestAnimationFrame(() => focusChatInput(input, selectionStart, selectionEnd));
+}
+
+function hideMiniEmojiPopover(popover) {
+  if (popover.hidden || popover.classList.contains("is-emoji-popover-closing")) return;
+  const hideTimer = miniEmojiPopoverHideTimers.get(popover);
+  if (hideTimer) window.clearTimeout(hideTimer);
+  popover.classList.remove("is-emoji-popover-open");
+  popover.classList.add("is-emoji-popover-closing");
+  const nextHideTimer = window.setTimeout(() => {
+    popover.hidden = true;
+    popover.classList.remove("is-emoji-popover-closing");
+    popover.dataset.placement = "";
+    popover.style.removeProperty("--emoji-popover-anchor-x");
+    miniEmojiPopoverHideTimers.delete(popover);
+  }, EMOJI_POPOVER_TRANSITION_MS);
+  miniEmojiPopoverHideTimers.set(popover, nextHideTimer);
 }
 
 export function toggleMiniChatOverlay(
@@ -388,8 +435,12 @@ function getMiniEmojiPopover(surface) {
   popover.className = "emoji-popover mini-emoji-popover";
   popover.hidden = true;
   popover.setAttribute("aria-label", "Selector de emojis");
+  const fog = surface.ownerDocument.createElement("span");
+  fog.className = "emoji-popover-fog";
+  fog.setAttribute("aria-hidden", "true");
+  popover.append(fog);
   const sourceOptions = document.querySelector("#emojiPopover")?.children || [];
-  [...sourceOptions].forEach((option) => popover.append(
+  [...sourceOptions].filter((option) => option.classList.contains("emoji-option")).forEach((option) => popover.append(
     surface.ownerDocument.importNode(option, true),
   ));
   popover.addEventListener("mousedown", (event) => event.preventDefault());
@@ -409,5 +460,5 @@ function insertMiniEmoji(surface, target) {
   const position = start + option.textContent.length;
   input.dispatchEvent(new Event("input", { bubbles: true }));
   focusChatInput(input, position, position);
-  surface.querySelector(".mini-emoji-popover").hidden = true;
+  hideMiniEmojiPopover(surface.querySelector(".mini-emoji-popover"));
 }

@@ -7,14 +7,15 @@ import {
   handlePasteEvent,
   hideEmojiPicker,
   normalizeEmojiShortcodesInput,
+  repositionEmojiPicker,
   submitMessageFrom,
   toggleEmojiPicker,
   updateCharCounter,
   wireFloatingComposerLayout,
   wireComposerScrollbar,
-} from "./chat-input.js?v=20260902-mobile-real-browser-01";
+} from "./chat-input.js?v=20260904-mobile-landscape-bottom-chat-07-overlay-composer-layout-01";
 import { setReplyTarget } from "./chat-reply.js?v=20260826-reply-sync-close-03";
-import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js";
+import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20260904-mobile-landscape-bottom-chat-07";
 import {
   copyMessageText,
   hideMessageMenu,
@@ -31,7 +32,7 @@ import {
   setInsideChatVisible,
   syncExternalChatCollapseHandleOffset,
   syncChatAutoExpandControls,
-} from "./chat-layout.js?v=20260903-structural-viewport-scroll-02";
+} from "./chat-layout.js?v=20260904-mobile-landscape-bottom-chat-07";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 import { focusChatInput } from "./chat-input-focus.js";
 
@@ -135,24 +136,24 @@ export {
   buildEmojiPicker,
   updateCharCounter,
   sendMessage,
-} from "./chat-input.js?v=20260902-mobile-real-browser-01";
+} from "./chat-input.js?v=20260904-mobile-landscape-bottom-chat-07-overlay-composer-layout-01";
 export {
   beginSystemMessageHydration,
   finishSystemMessageHydration,
   renderMessage,
-} from "./chat-render.js?v=20260826-system-line-spacing-01";
+} from "./chat-render.js?v=20260904-mobile-landscape-bottom-chat-07";
 export {
   clearReplyTarget,
   renderReplyPreview,
   scrollToMessage,
   setReplyTarget,
 } from "./chat-reply.js?v=20260826-reply-sync-close-03";
-export { sendVideoEventMessage } from "./chat-system-messages.js?v=20260902-mobile-real-browser-01";
+export { sendVideoEventMessage } from "./chat-system-messages.js?v=20260904-mobile-landscape-bottom-chat-07";
 export {
   checkScrollPosition,
   resetInsideUnread,
   resetPageUnread,
-} from "./unread-counters.js";
+} from "./unread-counters.js?v=20260904-mobile-landscape-bottom-chat-07";
 export {
   copyMessageText,
   hideMessageMenu,
@@ -170,7 +171,7 @@ export {
   setInsideChatVisible,
   syncChatAutoExpandControls,
   updateCollapseButton,
-} from "./chat-layout.js?v=20260903-structural-viewport-scroll-02";
+} from "./chat-layout.js?v=20260904-mobile-landscape-bottom-chat-07";
 
 export function wireChatEvents() {
   syncChatAutoExpandControls();
@@ -273,11 +274,14 @@ export function wireChatEvents() {
   window.addEventListener(
     "scroll",
     () => {
-      if (dom.emojiPopover.hidden) return;
-      hideEmojiPicker();
+      repositionEmojiPicker();
     },
     { passive: true },
   );
+  window.addEventListener("resize", repositionEmojiPicker, { passive: true });
+  window.visualViewport?.addEventListener("resize", repositionEmojiPicker, {
+    passive: true,
+  });
 
   document.addEventListener(
     "pointerdown",

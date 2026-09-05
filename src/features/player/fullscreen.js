@@ -9,14 +9,14 @@ import {
 import {
   hideTooltip,
   hydrateIcons,
-} from "../icons-tooltips.js";
+} from "../icons-tooltips.js?v=20260904-help-invite-fixes-02";
 import { setSyncStatus } from "../session-ui.js?v=20260902-stable-page-viewport-01";
 import {
   logEvent,
   state,
 } from "../../core/state.js?v=20260902-mobile-real-browser-01";
-import { isMiniPlayerActive } from "./mini-player.js?v=20260903-structural-viewport-scroll-03";
-import { syncInsideChatPanelOffset } from "../chat/chat-layout.js?v=20260903-structural-viewport-scroll-02";
+import { isMiniPlayerActive } from "./mini-player.js?v=20260904-mobile-landscape-bottom-chat-07";
+import { syncInsideChatPanelOffset } from "../chat/chat-layout.js?v=20260904-mobile-landscape-bottom-chat-07";
 import { withShortcutHint } from "../../core/utils.js";
 import {
   captureFullscreenScroll,
@@ -167,7 +167,7 @@ function wirePlayerOverlayControls({ togglePlayback } = {}) {
         scheduleHide(safeDelay);
         return;
       }
-      hideTooltip();
+      hideTooltip(true);
       if (document.activeElement === dom.playerRateSelect) {
         dom.playerRateSelect.blur();
       }
@@ -245,7 +245,7 @@ function wirePlayerOverlayControls({ togglePlayback } = {}) {
     clearHideTimer();
     const isVisible = dom.playerFrame.classList.contains("player-overlay-visible");
     if (isVisible) {
-      hideTooltip();
+      hideTooltip(true);
       setOverlayVisible(false);
       dom.playerFrame.classList.add("player-cursor-hidden");
       return;
@@ -434,6 +434,23 @@ function wirePlayerOverlayControls({ togglePlayback } = {}) {
     setOverlayVisible(true);
     scheduleHide();
   };
+
+  // La flecha puede quedar fuera del player-frame cuando el chat está
+  // contraído. En ese caso el mouseleave del video inicia el margen corto de
+  // salida y la flecha no alcanzaba a reiniciar el contador normal de la barra.
+  // Tratarla como una interacción del video mantiene ambos recorridos en 3 s.
+  const revealOverlayFromCollapseHandle = (event) => {
+    if (event?.pointerType && event.pointerType !== "mouse") return;
+    if (isInlinePlayerDialogVisible()) return;
+    clearHideTimer();
+    dom.playerFrame.classList.remove("player-cursor-hidden", "player-overlay-suppressed");
+    setOverlayVisible(true);
+    scheduleHide();
+  };
+
+  const collapseHandleZone = dom.collapseChatButton?.closest(".chat-collapse-hover-zone");
+  collapseHandleZone?.addEventListener("mouseenter", revealOverlayFromCollapseHandle);
+  collapseHandleZone?.addEventListener("mousemove", revealOverlayFromCollapseHandle);
 
   // Al mover o clickear el mouse en el player frame, se muestra el overlay
   dom.playerFrame.addEventListener("mousemove", revealOverlay, { passive: true });

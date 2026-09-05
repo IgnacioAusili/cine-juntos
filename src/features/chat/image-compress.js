@@ -3,7 +3,7 @@ import { state } from "../../core/state.js?v=20260902-mobile-real-browser-01";
 import {
   isPinnedToBottom,
   queuePinnedChatScrollSync,
-} from "./chat-scroll-sync.js";
+} from "./chat-scroll-sync.js?v=20260904-mobile-landscape-bottom-chat-07";
 
 export function compressImageBase64(base64Str, maxWidth, maxHeight, quality, callback) {
   const img = new Image();

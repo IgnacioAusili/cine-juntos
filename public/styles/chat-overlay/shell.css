@@ -1,12 +1,17 @@
 .player-chat {
+  --player-chat-max-height: 330px;
+  --player-chat-bottom-inset: 8px;
   position: absolute;
-  z-index: 6;
+  z-index: 12;
   top: var(--inside-chat-top-offset, 48px);
   right: 24px;
-  bottom: 8px;
+  bottom: var(--player-chat-bottom-inset);
   display: grid;
   width: min(280px, calc(100% - 10px));
-  max-height: min(62%, 330px);
+  height: var(--player-chat-max-height);
+  max-height: calc(
+    100% - var(--inside-chat-top-offset, 48px) - var(--player-chat-bottom-inset)
+  );
   grid-template-rows: auto minmax(0, 1fr);
   border-bottom-right-radius: var(--radius-md);
   overflow: hidden;
@@ -31,7 +36,7 @@
 .player-frame[data-chat-style="panel"] .player-chat {
   border: 0;
   border-radius: var(--radius-md);
-  background: rgba(7, 10, 12, 0.7);
+  background: rgba(7, 10, 12, 0.8);
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
 }
 

@@ -17,6 +17,7 @@ function getIconPaths(targetDocument, iconName) {
   const definitions = {
     play: [["polygon", { points: "5 3 19 12 5 21 5 3" }]],
     pause: [["rect", { width: "4", height: "16", x: "6", y: "4" }], ["rect", { width: "4", height: "16", x: "14", y: "4" }]],
+    "rotate-ccw": [["path", { d: "M3 12a9 9 0 1 0 3-6.7" }], ["path", { d: "M3 4v5h5" }]],
     x: [["path", { d: "M18 6 6 18" }], ["path", { d: "m6 6 12 12" }]],
     "volume-x": [["path", { d: "M11 5 6 9H2v6h4l5 4V5z" }], ["path", { d: "m22 9-6 6" }], ["path", { d: "m16 9 6 6" }]],
     "volume-1": [["path", { d: "M11 5 6 9H2v6h4l5 4V5z" }], ["path", { d: "M15.54 8.46a5 5 0 0 1 0 7.07" }]],

@@ -16,12 +16,12 @@ import {
   toggleMiniEmojiPicker,
   toggleMiniChatOverlay,
   wireMirrorChatScrollbar,
-} from "./mini-player-chat-mirror.js?v=20260902-chat-overlay-landscape-04";
-import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js?v=20260903-structural-viewport-scroll-02";
-import { wireMiniPlayerShortcuts } from "./mini-player-shortcuts.js?v=20260808-scroll-mini-player-02";
+} from "./mini-player-chat-mirror.js?v=20260904-mobile-landscape-bottom-chat-07";
+import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js?v=20260904-mobile-landscape-bottom-chat-07";
+import { wireMiniPlayerShortcuts } from "./mini-player-shortcuts.js?v=20260904-mobile-landscape-bottom-chat-07";
 import { wireTouchHover } from "../../core/touch-interactions.js";
 
-const VIDEO_EVENTS = ["play", "pause", "timeupdate", "seeked", "ratechange", "volumechange"];
+const VIDEO_EVENTS = ["play", "pause", "ended", "timeupdate", "seeked", "ratechange", "volumechange"];
 const PROXY_CONTROL_SELECTOR = "button, input:not([data-player-scroll-indicator]), select, textarea";
 
 export function movePlayerInterface(surface, options = {}) {

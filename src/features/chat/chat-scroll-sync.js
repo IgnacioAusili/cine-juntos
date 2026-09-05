@@ -1,4 +1,4 @@
-import { checkScrollPosition } from "./unread-counters.js";
+import { checkScrollPosition } from "./unread-counters.js?v=20260904-mobile-landscape-bottom-chat-07";
 
 const pendingScrollSync = new WeakMap();
 const DEFAULT_PIN_THRESHOLD = 10;

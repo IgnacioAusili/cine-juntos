@@ -69,3 +69,15 @@
   border-top: 0;
   border-bottom: var(--tooltip-arrow-size) solid var(--tooltip-arrow-fill-color);
 }
+
+/* En los extremos la cola queda cerca de una esquina: un ajuste leve y
+   simétrico arriba/abajo evita que la unión con el triángulo se vea cortada. */
+.tooltip-layer[data-edge="left"] {
+  border-top-left-radius: var(--tooltip-edge-radius, 12px);
+  border-bottom-left-radius: var(--tooltip-edge-radius, 12px);
+}
+
+.tooltip-layer[data-edge="right"] {
+  border-top-right-radius: var(--tooltip-edge-radius, 12px);
+  border-bottom-right-radius: var(--tooltip-edge-radius, 12px);
+}

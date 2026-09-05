@@ -10,7 +10,7 @@ import {
   handleIncomingUnread,
   handleIncomingPageUnread,
   incrementScrollIndicator,
-} from "./unread-counters.js";
+} from "./unread-counters.js?v=20260904-mobile-landscape-bottom-chat-07";
 import { setReplyTarget, scrollToMessage } from "./chat-reply.js?v=20260826-reply-sync-close-03";
 import {
   animateExpandedSystemMessageRemoval,

@@ -13,6 +13,7 @@
 
 html {
   height: 100%;
+  background: var(--bg);
   scrollbar-width: none;
 }
 
@@ -53,17 +54,31 @@ body:not(.app-ready) {
 }
 
 body.is-lobby {
+  position: relative;
+  isolation: isolate;
   overflow-x: hidden;
   overflow-y: auto;
+  background: var(--bg);
+  background-image: none;
+  background-attachment: scroll;
 }
 
-/* Grano de film sutil solo en el lobby (textura cinematografica) */
+/* Superficie visual fija del lobby. No usar el background del body para estas
+   capas: en Chrome Android el body se repinta con el documento al cambiar la
+   altura de las barras durante un scroll y el fondo parece extenderse. */
 body.is-lobby::before {
   position: fixed;
   inset: 0;
   z-index: -1;
   background:
+    radial-gradient(circle at 18% -8%, rgba(240, 140, 58, 0.18), transparent 42%),
+    radial-gradient(circle at 92% 8%, rgba(47, 184, 164, 0.13), transparent 44%),
+    radial-gradient(circle at 50% 108%, rgba(240, 140, 58, 0.08), transparent 50%),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px),
     linear-gradient(135deg, transparent 0 45%, rgba(255, 255, 255, 0.025) 45% 46%, transparent 46%);
+  background-size: auto, auto, auto, 56px 56px, 56px 56px, auto;
+  background-repeat: no-repeat, no-repeat, no-repeat, repeat, repeat, no-repeat;
   content: "";
   pointer-events: none;
 }

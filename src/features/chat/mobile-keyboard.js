@@ -38,6 +38,20 @@ function getViewportHeight() {
   );
 }
 
+function getStructuralViewportHeight() {
+  const cssHeight = Number.parseFloat(
+    getComputedStyle(document.documentElement).getPropertyValue("--app-viewport-height"),
+  );
+  return Number.isFinite(cssHeight) && cssHeight > 0
+    ? Math.round(cssHeight)
+    : getViewportHeight();
+}
+
+function getVirtualKeyboardInset() {
+  const keyboardHeight = navigator.virtualKeyboard?.boundingRect?.height || 0;
+  return Math.max(0, Math.round(keyboardHeight));
+}
+
 function isMobileLayout() {
   return window.matchMedia(MOBILE_WIDTH_QUERY).matches;
 }
@@ -51,14 +65,22 @@ function setKeyboardState(isOpen) {
   dom.sessionView.classList.toggle("chat-keyboard-open", isOpen);
   const rootStyle = document.documentElement.style;
   if (isOpen) {
-    rootStyle.setProperty("--mobile-keyboard-layout-height", `${baselineHeight}px`);
+    rootStyle.setProperty(
+      "--mobile-keyboard-layout-height",
+      `${getStructuralViewportHeight()}px`,
+    );
     rootStyle.setProperty(
       "--mobile-keyboard-inset",
-      `${Math.max(0, baselineHeight - getViewportHeight())}px`,
+      `${getVirtualKeyboardInset() || Math.max(0, baselineHeight - getViewportHeight())}px`,
     );
   } else {
-    rootStyle.setProperty("--mobile-keyboard-layout-height", `${getViewportHeight()}px`);
+    rootStyle.setProperty(
+      "--mobile-keyboard-layout-height",
+      `${getStructuralViewportHeight()}px`,
+    );
     rootStyle.setProperty("--mobile-keyboard-inset", "0px");
+    baselineHeight = getStructuralViewportHeight();
+    baselineWidth = getViewportWidth();
   }
 }
 
@@ -77,9 +99,10 @@ function syncKeyboardState() {
     baselineWidth = currentWidth;
   }
 
+  const keyboardInset = getVirtualKeyboardInset();
   const isKeyboardOpen = isMobileLayout()
     && focused
-    && baselineHeight - currentHeight >= KEYBOARD_REDUCTION_PX;
+    && (keyboardInset >= 24 || baselineHeight - currentHeight >= KEYBOARD_REDUCTION_PX);
   if (isKeyboardOpen && !keyboardWasOpen) {
     // En iOS el scroll automático ocurre antes de focusin. Si el toque ya
     // capturó la posición, no la reemplaces por la posición desplazada.
@@ -135,6 +158,10 @@ export function wireMobileKeyboardLayout() {
   baselineHeight = getViewportHeight();
   baselineWidth = getViewportWidth();
 
+  if (navigator.virtualKeyboard && "overlaysContent" in navigator.virtualKeyboard) {
+    navigator.virtualKeyboard.overlaysContent = true;
+  }
+
   document.addEventListener("pointerdown", (event) => handleChatPointerDown(event.target), {
     capture: true,
     passive: true,
@@ -150,5 +177,8 @@ export function wireMobileKeyboardLayout() {
   window.addEventListener("orientationchange", scheduleKeyboardSync, { passive: true });
   window.visualViewport?.addEventListener("resize", scheduleKeyboardSync, { passive: true });
   window.visualViewport?.addEventListener("scroll", scheduleKeyboardSync, { passive: true });
+  navigator.virtualKeyboard?.addEventListener?.("geometrychange", scheduleKeyboardSync, {
+    passive: true,
+  });
   scheduleKeyboardSync();
 }

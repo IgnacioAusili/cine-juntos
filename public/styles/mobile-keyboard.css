@@ -32,7 +32,7 @@
   /* El teclado se superpone al layout: la página conserva su posición y solo
      el compositor se eleva hasta el borde visible del viewport. */
   body:not(.is-lobby) .session-view.chat-keyboard-open[data-chat-dock="bottom"] .workspace {
-    height: var(--mobile-keyboard-layout-height, var(--app-viewport-height));
+    height: var(--app-viewport-height);
     min-height: 0;
   }
 

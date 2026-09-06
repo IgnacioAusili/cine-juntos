@@ -17,6 +17,9 @@ const TEXT_INPUTS = new Set();
 let baselineHeight = 0;
 let baselineWidth = 0;
 let syncFrameId = 0;
+let keyboardPollId = 0;
+let keyboardOpeningUntil = 0;
+let keyboardOpening = false;
 let keyboardWasOpen = false;
 let overlayInputFocused = false;
 
@@ -60,6 +63,18 @@ function isChatInputFocused() {
   return TEXT_INPUTS.has(document.activeElement);
 }
 
+function isBottomChatInputFocused() {
+  return isMobileLayout()
+    && document.activeElement === dom.messageInput
+    && dom.sessionView?.dataset.chatDock === "bottom";
+}
+
+function isBottomChatInputTarget(target) {
+  return isMobileLayout()
+    && target === dom.messageInput
+    && dom.sessionView?.dataset.chatDock === "bottom";
+}
+
 function setKeyboardState(isOpen) {
   if (!dom.sessionView) return;
   dom.sessionView.classList.toggle("chat-keyboard-open", isOpen);
@@ -100,9 +115,20 @@ function syncKeyboardState() {
   }
 
   const keyboardInset = getVirtualKeyboardInset();
+  const keyboardOverlaysContent = Boolean(navigator.virtualKeyboard?.overlaysContent);
+  const viewportReduction = keyboardOverlaysContent
+    ? 0
+    : baselineHeight - currentHeight;
+  const hasKeyboardGeometry = keyboardInset >= 24
+    || viewportReduction >= KEYBOARD_REDUCTION_PX;
+  if (hasKeyboardGeometry) keyboardOpening = false;
   const isKeyboardOpen = isMobileLayout()
     && focused
-    && (keyboardInset >= 24 || baselineHeight - currentHeight >= KEYBOARD_REDUCTION_PX);
+    && (
+      hasKeyboardGeometry
+      || (keyboardOpening && performance.now() < keyboardOpeningUntil)
+    );
+  if (!isKeyboardOpen) keyboardOpening = false;
   if (isKeyboardOpen && !keyboardWasOpen) {
     // En iOS el scroll automático ocurre antes de focusin. Si el toque ya
     // capturó la posición, no la reemplaces por la posición desplazada.
@@ -110,7 +136,7 @@ function syncKeyboardState() {
   }
   keyboardWasOpen = isKeyboardOpen;
   setKeyboardState(isKeyboardOpen);
-  keepPageScrollLocked(keyboardWasOpen, overlayInputFocused);
+  keepPageScrollLocked(keyboardWasOpen || keyboardOpening, overlayInputFocused);
 }
 
 function scheduleKeyboardSync() {
@@ -119,11 +145,33 @@ function scheduleKeyboardSync() {
 }
 
 function lockPageScroll() {
-  keepPageScrollLocked(keyboardWasOpen, overlayInputFocused);
+  keepPageScrollLocked(keyboardWasOpen || keyboardOpening, overlayInputFocused);
+}
+
+function startKeyboardPolling() {
+  if (keyboardPollId) return;
+  keyboardPollId = window.setInterval(() => {
+    if (!isChatInputFocused()) {
+      window.clearInterval(keyboardPollId);
+      keyboardPollId = 0;
+      return;
+    }
+    scheduleKeyboardSync();
+  }, 120);
+}
+
+function stopKeyboardPolling() {
+  if (!keyboardPollId) return;
+  window.clearInterval(keyboardPollId);
+  keyboardPollId = 0;
 }
 
 function handleFocusIn(event) {
   const wasPointerFocused = consumePointerFocus(event.target);
+
+  if (TEXT_INPUTS.has(event.target)) {
+    startKeyboardPolling();
+  }
 
   if (isOverlayChatInput(event.target)) {
     overlayInputFocused = true;
@@ -133,17 +181,32 @@ function handleFocusIn(event) {
   }
   if (!TEXT_INPUTS.has(event.target)) return;
   if (!wasPointerFocused) capturePageScrollPosition();
+  if (isBottomChatInputFocused()) {
+    // Android publica la geometría del teclado después de focusin; marcar el
+    // estado durante ese lapso evita que el primer frame quede debajo del IME.
+    keyboardOpening = true;
+    keyboardOpeningUntil = performance.now() + 1500;
+    setKeyboardState(true);
+    keepPageScrollLocked(true, false);
+  }
   scheduleKeyboardSync();
 }
 
 function handleFocusOut(event) {
   if (isOverlayChatInput(event.target)) {
     overlayInputFocused = false;
+    keyboardOpening = false;
+    keyboardOpeningUntil = 0;
+    stopKeyboardPolling();
     scheduleFocusScrollRestore();
     scheduleKeyboardSync();
     return;
   }
   if (!TEXT_INPUTS.has(event.target)) return;
+  keyboardOpening = false;
+  keyboardOpeningUntil = 0;
+  stopKeyboardPolling();
+  keyboardWasOpen = false;
   setKeyboardState(false);
   scheduleFocusScrollRestore();
   scheduleKeyboardSync();
@@ -162,7 +225,15 @@ export function wireMobileKeyboardLayout() {
     navigator.virtualKeyboard.overlaysContent = true;
   }
 
-  document.addEventListener("pointerdown", (event) => handleChatPointerDown(event.target), {
+  document.addEventListener("pointerdown", (event) => {
+    handleChatPointerDown(event.target);
+    if (isBottomChatInputTarget(event.target)) {
+      keyboardOpening = true;
+      keyboardOpeningUntil = performance.now() + 1500;
+      startKeyboardPolling();
+      keepPageScrollLocked(true, false);
+    }
+  }, {
     capture: true,
     passive: true,
   });

@@ -37,7 +37,7 @@
   }
 
   body:not(.is-lobby) .session-view.chat-keyboard-open[data-chat-dock="bottom"] .chat-area > .message-form {
-    bottom: calc(20px + var(--mobile-keyboard-inset, 0px));
+    bottom: calc(20px + max(var(--mobile-keyboard-inset, 0px), env(keyboard-inset-height, 0px)));
   }
 
   body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .message-form .input-wrapper {
@@ -58,7 +58,7 @@
   }
 
   body:not(.is-lobby) .session-view.chat-keyboard-open[data-chat-dock="bottom"] .chat-area > .message-form {
-    bottom: calc(20px + var(--mobile-keyboard-inset, 0px));
+    bottom: calc(20px + max(var(--mobile-keyboard-inset, 0px), env(keyboard-inset-height, 0px)));
   }
 
   body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .message-form .input-wrapper {

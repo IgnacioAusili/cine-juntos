@@ -38,16 +38,17 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js?v=20260904-mobile-landscape-bottom-chat-07-overlay-composer-layout-01";
+} from "./features/chat/index.js?v=20260907-mobile-emoji-keyboard-keep-open-01";
 import {
   initializePlayer,
   wirePlayerEvents,
 } from "./features/player/index.js?v=20260905-overlay-height-cap-04";
 import { wireMobileFullscreenOrientation } from "./features/player/mobile-fullscreen-orientation.js";
-import { wireMobileKeyboardLayout } from "./features/chat/mobile-keyboard.js?v=20260906-mobile-keyboard-overlay-04";
+import { wireMobileKeyboardLayout } from "./features/chat/mobile-keyboard.js?v=20260907-mobile-keyboard-diagnostics-01";
 import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20260904-help-invite-fixes-02";
 import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260904-mobile-landscape-bottom-chat-07";
 import { wireTouchHover } from "./core/touch-interactions.js?v=20260829-touch-hold-fix-01";
+import { wireMobileDebugTools } from "./features/mobile-debug.js?v=20260907-mobile-debug-tools-02";
 
 const requestedRoom = normalizeRoomCode(new URLSearchParams(window.location.search).get("room") || "");
 
@@ -90,6 +91,7 @@ setChatDock(localStorage.getItem("cine-juntos-chat-dock") || "right", {
 });
 restoreExternalChatCollapsed();
 wireMobileBottomChatHeader();
+wireMobileDebugTools();
 syncChatAutoExpandControls();
 updateCollapseButton();
 updateCharCounter(dom.messageInput, false);

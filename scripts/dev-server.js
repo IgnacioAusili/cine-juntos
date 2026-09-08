@@ -88,6 +88,16 @@ const server = http.createServer(async (req, res) => {
   }
 
   const url = new URL(req.url, "http://localhost");
+  if (url.pathname === "/console" || url.pathname === "/console/") {
+    url.pathname = "/index.html";
+    url.searchParams.set("console", "1");
+    res.writeHead(302, {
+      Location: `${url.pathname}?${url.searchParams.toString()}`,
+      "Cache-Control": "no-store",
+    });
+    res.end();
+    return;
+  }
   if (url.pathname === "/public/dev-runtime.js") {
     res.writeHead(200, {
       "Content-Type": "text/javascript; charset=utf-8",

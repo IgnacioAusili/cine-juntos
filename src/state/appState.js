@@ -10,6 +10,8 @@ export const firebaseConfig = window.CINE_JUNTOS_FIREBASE_CONFIG || {};
 const SESSION_NAME_KEY = "cine-juntos-name";
 export const LAST_ROOM_KEY = "cine-juntos-last-room";
 export const NAME_CHANGE_LIMIT = 3;
+const CLIENT_LOG_LIMIT = 1000;
+const clientLogBuffer = [];
 
 function getInitialNameChangeCount() {
   const storedCount = Number.parseInt(sessionStorage.getItem("cine-juntos-name-change-count"), 10);
@@ -203,7 +205,10 @@ export function logEvent(kind, message) {
     minute: "2-digit",
     second: "2-digit",
   });
-  console.info(`[${time}] [${kind}] ${message}`);
+  const line = `[${time}] [${kind}] ${message}`;
+  clientLogBuffer.push(line);
+  if (clientLogBuffer.length > CLIENT_LOG_LIMIT) clientLogBuffer.shift();
+  console.info(line);
   sendTerminalLog({
     at: now.toISOString(),
     room: state.session.activeRoom || null,
@@ -211,6 +216,10 @@ export function logEvent(kind, message) {
     kind,
     message,
   });
+}
+
+export function getClientLogText() {
+  return clientLogBuffer.join("\n");
 }
 
 function sendTerminalLog(payload) {

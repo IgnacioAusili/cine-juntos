@@ -1,6 +1,6 @@
 // Coordinacion general del chat: cableado de eventos, layout y reexport de submodulos.
 import { dom } from "../../core/dom.js";
-import { state } from "../../core/state.js?v=20260902-mobile-real-browser-01";
+import { logEvent, state } from "../../core/state.js?v=20260902-mobile-real-browser-01";
 import { CHAT_DOCK_META } from "../../core/utils.js";
 import {
   autoResizeMessageInput,
@@ -13,7 +13,7 @@ import {
   updateCharCounter,
   wireFloatingComposerLayout,
   wireComposerScrollbar,
-} from "./chat-input.js?v=20260904-mobile-landscape-bottom-chat-07-overlay-composer-layout-01";
+} from "./chat-input.js?v=20260907-mobile-emoji-keyboard-keep-open-01";
 import { setReplyTarget } from "./chat-reply.js?v=20260826-reply-sync-close-03";
 import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20260904-mobile-landscape-bottom-chat-07";
 import {
@@ -35,6 +35,15 @@ import {
 } from "./chat-layout.js?v=20260904-mobile-landscape-bottom-chat-07";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 import { focusChatInput } from "./chat-input-focus.js";
+
+const MOBILE_CHAT_LAYOUT_QUERY = "(max-width: 980px)";
+
+function isMobileChatLayout() {
+  return Boolean(
+    window.matchMedia
+    && window.matchMedia(MOBILE_CHAT_LAYOUT_QUERY).matches,
+  );
+}
 
 const CHAT_SCROLL_WHEEL_MULTIPLIER = 0.35;
 const DOM_DELTA_PIXEL = 0;
@@ -136,7 +145,7 @@ export {
   buildEmojiPicker,
   updateCharCounter,
   sendMessage,
-} from "./chat-input.js?v=20260904-mobile-landscape-bottom-chat-07-overlay-composer-layout-01";
+} from "./chat-input.js?v=20260907-mobile-emoji-keyboard-keep-open-01";
 export {
   beginSystemMessageHydration,
   finishSystemMessageHydration,
@@ -243,7 +252,22 @@ export function wireChatEvents() {
     dom.collapseChatButton.blur();
   });
 
+  [
+    [dom.messageEmojiButton, dom.messageInput],
+    [dom.overlayEmojiButton, dom.overlayMessageInput],
+  ].forEach(([button, input]) => {
+    const preserveInputFocus = (event) => {
+      if (!isMobileChatLayout() || document.activeElement !== input) return;
+      event.preventDefault();
+    };
+    button?.addEventListener("pointerdown", preserveInputFocus);
+    button?.addEventListener("mousedown", preserveInputFocus);
+  });
+
   dom.messageEmojiButton.addEventListener("click", () => {
+    if (dom.sessionView?.dataset.chatDock === "bottom") {
+      logEvent("mobile-keyboard-debug", `emoji:trigger-click ${JSON.stringify({ button: dom.messageEmojiButton.id, activeElement: document.activeElement?.id || document.activeElement?.tagName || null, inputFocused: document.activeElement === dom.messageInput })}`);
+    }
     toggleEmojiPicker(dom.messageInput, dom.messageEmojiButton);
   });
 
@@ -292,7 +316,7 @@ export function wireChatEvents() {
 
       const activeEmojiInput = state.ui.activeEmojiInput;
       hideEmojiPicker();
-      if (activeEmojiInput) {
+      if (activeEmojiInput && !isMobileChatLayout()) {
         window.requestAnimationFrame(() => {
           focusChatInput(activeEmojiInput);
         });
@@ -331,6 +355,9 @@ export function wireChatEvents() {
 
   dom.messageForm.addEventListener("submit", (event) => {
     event.preventDefault();
+    if (dom.sessionView?.dataset.chatDock === "bottom") {
+      logEvent("mobile-keyboard-debug", `submit:event ${JSON.stringify({ form: dom.messageForm.id, submitter: event.submitter?.id || null, activeElement: document.activeElement?.id || document.activeElement?.tagName || null, source: "main-form" })}`);
+    }
     submitMessageFrom(dom.messageInput);
   });
 
@@ -357,6 +384,9 @@ export function wireChatEvents() {
     input.addEventListener("keydown", (event) => {
       if (event.key === "Enter" && !event.shiftKey) {
         event.preventDefault();
+        if (input === dom.messageInput && dom.sessionView?.dataset.chatDock === "bottom") {
+          logEvent("mobile-keyboard-debug", `submit:enter ${JSON.stringify({ input: input.id, activeElement: document.activeElement?.id || document.activeElement?.tagName || null, isComposing: event.isComposing, valueLength: input.value.length })}`);
+        }
         submitMessageFrom(input);
       }
     });

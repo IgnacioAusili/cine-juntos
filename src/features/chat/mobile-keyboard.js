@@ -1,4 +1,5 @@
 import { dom } from "../../core/dom.js";
+import { logEvent } from "../../core/state.js?v=20260902-mobile-real-browser-01";
 import { wireChatInputCorrections } from "./chat-input-focus.js";
 import {
   captureFocusScrollPositionIfNeeded,
@@ -22,6 +23,29 @@ let keyboardOpeningUntil = 0;
 let keyboardOpening = false;
 let keyboardWasOpen = false;
 let overlayInputFocused = false;
+
+function logKeyboardDiagnostic(label, extra = {}) {
+  const viewport = window.visualViewport;
+  const keyboard = navigator.virtualKeyboard;
+  logEvent("mobile-keyboard-debug", `${label} ${JSON.stringify({
+    activeElement: document.activeElement?.id || document.activeElement?.tagName || null,
+    chatInputFocused: isChatInputFocused(),
+    messageInputFocused: document.activeElement === dom.messageInput,
+    overlayInputFocused,
+    keyboardOpening,
+    keyboardWasOpen,
+    baseline: { width: baselineWidth, height: baselineHeight },
+    window: { width: window.innerWidth, height: window.innerHeight, scrollY: Math.round(window.scrollY || 0) },
+    viewport: viewport ? { width: Math.round(viewport.width), height: Math.round(viewport.height), offsetTop: Math.round(viewport.offsetTop) } : null,
+    virtualKeyboard: keyboard ? { overlaysContent: Boolean(keyboard.overlaysContent), height: Math.round(keyboard.boundingRect?.height || 0) } : null,
+    ...extra,
+  })}`);
+}
+
+function isMainChatInput(target) {
+  return target === dom.messageInput
+    && dom.sessionView?.dataset.chatDock === "bottom";
+}
 
 function getViewportWidth() {
   return Math.round(
@@ -168,6 +192,7 @@ function stopKeyboardPolling() {
 
 function handleFocusIn(event) {
   const wasPointerFocused = consumePointerFocus(event.target);
+  if (isMainChatInput(event.target)) logKeyboardDiagnostic("focusin", { target: event.target.id, wasPointerFocused });
 
   if (TEXT_INPUTS.has(event.target)) {
     startKeyboardPolling();
@@ -193,6 +218,7 @@ function handleFocusIn(event) {
 }
 
 function handleFocusOut(event) {
+  if (isMainChatInput(event.target)) logKeyboardDiagnostic("focusout", { target: event.target.id, relatedTarget: event.relatedTarget?.id || event.relatedTarget?.tagName || null });
   if (isOverlayChatInput(event.target)) {
     overlayInputFocused = false;
     keyboardOpening = false;
@@ -227,6 +253,10 @@ export function wireMobileKeyboardLayout() {
 
   document.addEventListener("pointerdown", (event) => {
     handleChatPointerDown(event.target);
+    const composerControl = event.target.closest?.("#messageEmojiButton, #mainMessageSend, #emojiPopover .emoji-option");
+    if (composerControl) {
+      logKeyboardDiagnostic("pointerdown:composer-control", { target: composerControl.id || composerControl.getAttribute("aria-label") || null, eventType: event.pointerType });
+    }
     if (isBottomChatInputTarget(event.target)) {
       keyboardOpening = true;
       keyboardOpeningUntil = performance.now() + 1500;

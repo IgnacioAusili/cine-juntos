@@ -24,7 +24,7 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap"
     />
     <link rel="icon" href="./public/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="./public/styles.css?v=20260906-mobile-keyboard-overlay-04" />
+    <link rel="stylesheet" href="./public/styles.css?v=20260907-mobile-debug-tools-01" />
   </head>
   <body class="is-lobby">
     <div class="app-shell">
@@ -813,7 +813,29 @@
         <button type="button" data-action="reply">Responder</button>
       </div>
       <div class="tooltip-layer" id="tooltipLayer" hidden></div>
+      <button
+        class="mobile-debug-button"
+        id="mobileDebugButton"
+        type="button"
+        hidden
+        aria-label="Ver logs de diagnóstico"
+      >
+        Logs
+      </button>
     </div>
+
+    <dialog id="mobileDebugDialog" class="app-dialog mobile-debug-dialog" aria-labelledby="mobileDebugTitle">
+      <div class="mobile-debug-card">
+        <button id="mobileDebugCloseButton" type="button" class="dialog-close" aria-label="Cerrar logs">
+          <span data-lucide="x" aria-hidden="true"></span>
+        </button>
+        <h2 id="mobileDebugTitle">Logs de diagnóstico móvil</h2>
+        <textarea id="mobileDebugLog" readonly spellcheck="false" aria-label="Log de diagnóstico"></textarea>
+        <div class="dialog-actions">
+          <button id="mobileDebugCopyButton" type="button" class="button primary">Copiar log</button>
+        </div>
+      </div>
+    </dialog>
 
     <dialog
       id="errorDialog"
@@ -933,6 +955,6 @@
     <script src="./public/dev-runtime.js?v=20260715-02"></script>
     <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script src="./public/firebase-config.js"></script>
-    <script type="module" src="./src/main.js?v=20260906-mobile-keyboard-overlay-04"></script>
+    <script type="module" src="./src/main.js?v=20260907-mobile-debug-tools-02"></script>
   </body>
 </html>

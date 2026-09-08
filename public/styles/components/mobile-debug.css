@@ -1,0 +1,64 @@
+.mobile-debug-button {
+  position: fixed;
+  right: 14px;
+  bottom: 14px;
+  z-index: 60;
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1px solid rgba(255, 193, 7, 0.5);
+  border-radius: 999px;
+  background: rgba(55, 40, 14, 0.96);
+  color: #ffe69a;
+  font-size: 0.76rem;
+  font-weight: 800;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.32);
+}
+
+.mobile-debug-dialog {
+  width: min(760px, calc(100% - 24px));
+  max-width: 760px;
+  padding: 0;
+  border: 1px solid var(--glass-border-strong);
+  border-radius: 14px;
+  background: #111619;
+}
+
+.mobile-debug-card {
+  position: relative;
+  padding: 24px;
+}
+
+.mobile-debug-card h2 {
+  margin: 0 28px 14px 0;
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.mobile-debug-card textarea {
+  display: block;
+  width: 100%;
+  min-height: min(58dvh, 440px);
+  box-sizing: border-box;
+  resize: vertical;
+  padding: 12px;
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  background: #080b0d;
+  color: #d9f5ef;
+  font: 0.72rem/1.45 ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+
+.mobile-debug-card .dialog-actions {
+  margin-top: 14px;
+}
+
+@media (max-width: 680px) {
+  .mobile-debug-button {
+    right: 10px;
+    bottom: 10px;
+  }
+
+  .mobile-debug-card {
+    padding: 20px 16px 16px;
+  }
+}

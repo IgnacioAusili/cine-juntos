@@ -69,6 +69,44 @@ let sentImageFingerprintSet = new Set();
 let spamCooldownUntil = 0;
 let spamCooldownTimer = 0;
 
+function isMobileLayout() {
+  return Boolean(
+    window.matchMedia
+    && window.matchMedia(MOBILE_CHAT_LAYOUT_QUERY).matches,
+  );
+}
+
+function getMobileInteractionSnapshot(input = null) {
+  const viewport = window.visualViewport;
+  const keyboard = navigator.virtualKeyboard;
+  return {
+    layout: window.matchMedia?.(MOBILE_CHAT_LAYOUT_QUERY).matches ? "mobile" : "desktop",
+    activeElement: document.activeElement?.id || document.activeElement?.tagName || null,
+    input: input?.id || null,
+    inputFocused: input ? document.activeElement === input : false,
+    selection: input
+      ? { start: input.selectionStart, end: input.selectionEnd, length: input.value.length }
+      : null,
+    popoverHidden: dom.emojiPopover?.hidden ?? null,
+    popoverAnchor: dom.emojiPopover?.dataset.anchor || null,
+    viewport: viewport
+      ? { width: Math.round(viewport.width), height: Math.round(viewport.height), offsetTop: Math.round(viewport.offsetTop) }
+      : null,
+    window: { width: window.innerWidth, height: window.innerHeight, scrollY: Math.round(window.scrollY || 0) },
+    virtualKeyboard: keyboard
+      ? { overlaysContent: Boolean(keyboard.overlaysContent), height: Math.round(keyboard.boundingRect?.height || 0) }
+      : null,
+  };
+}
+
+function logMobileInteraction(label, input = null, extra = {}) {
+  if (
+    input
+    && (input !== dom.messageInput || dom.sessionView?.dataset.chatDock !== "bottom")
+  ) return;
+  logEvent("mobile-keyboard-debug", `${label} ${JSON.stringify({ ...getMobileInteractionSnapshot(input), ...extra })}`);
+}
+
 function preloadEmojiFont() {
   if (emojiFontReady) return emojiFontReady;
   if (!document.fonts?.load) return Promise.resolve();
@@ -397,12 +435,16 @@ export function sendMessage(text, attachedImage) {
 
 export function submitMessageFrom(input) {
   const isOverlay = input === dom.overlayMessageInput;
+  logMobileInteraction("submit:start", input, { isOverlay, triggerActiveElement: document.activeElement?.id || null });
   normalizeEmojiShortcodesInput(input);
   const text = input.value.trim();
   const img = isOverlay ? state.chat.pendingOverlayImage : state.chat.pendingImage;
   const hasImages = Array.isArray(img) ? img.length > 0 : Boolean(img);
 
-  if (!text && !hasImages) return;
+  if (!text && !hasImages) {
+    logMobileInteraction("submit:ignored-empty", input, { isOverlay });
+    return;
+  }
 
   if (input.value.length >= MAX_CHARS) {
     const counter = isOverlay ? dom.overlayCharCounter : dom.mainCharCounter;
@@ -415,7 +457,7 @@ export function submitMessageFrom(input) {
 
   if (getSpamCooldownRemaining()) {
     updateSpamCooldownButtons();
-    focusChatInput(input);
+    if (!isMobileLayout()) focusChatInput(input);
     return;
   }
 
@@ -424,12 +466,15 @@ export function submitMessageFrom(input) {
     state.session.transport &&
     !registerMessageForSpamCheck(text, img)
   ) {
-    focusChatInput(input);
+    if (!isMobileLayout()) focusChatInput(input);
     return;
   }
 
   const wasQueued = sendMessage(text, img);
-  if (!wasQueued) return;
+  if (!wasQueued) {
+    logMobileInteraction("submit:not-queued", input, { isOverlay });
+    return;
+  }
 
   input.value = "";
   updateCharCounter(input, isOverlay);
@@ -440,7 +485,10 @@ export function submitMessageFrom(input) {
   }
   completeAutoOpenedChatResponse(isOverlay);
   autoResizeMessageInput(input);
-  focusChatInput(input);
+  if (!isMobileLayout()) {
+    focusChatInput(input);
+    logMobileInteraction("submit:after-focus", input, { isOverlay });
+  }
 }
 
 export function handlePasteEvent(event, isOverlay) {
@@ -532,9 +580,15 @@ export function buildEmojiPicker() {
 }
 
 export async function toggleEmojiPicker(input, anchor) {
+  logMobileInteraction("emoji:toggle-start", input, {
+    anchor: anchor?.id || null,
+    anchorFocused: document.activeElement === anchor,
+    anchorRect: anchor ? (() => { const rect = anchor.getBoundingClientRect(); return { top: Math.round(rect.top), bottom: Math.round(rect.bottom), left: Math.round(rect.left), width: Math.round(rect.width), height: Math.round(rect.height) }; })() : null,
+  });
   state.ui.activeEmojiInput = input;
   if (!dom.emojiPopover.hidden && dom.emojiPopover.dataset.anchor === anchor.id) {
     hideEmojiPicker();
+    logMobileInteraction("emoji:toggle-close", input, { anchor: anchor.id });
     return;
   }
 
@@ -547,12 +601,15 @@ export async function toggleEmojiPicker(input, anchor) {
   dom.emojiPopover.dataset.anchor = anchor.id;
   showEmojiPopover(dom.emojiPopover);
   positionEmojiPopover(dom.emojiPopover, anchor);
+  logMobileInteraction("emoji:opened-before-focus-restore", input, { anchor: anchor.id });
 
   syncEmojiTriggerState(anchor);
 
   window.requestAnimationFrame(() => {
     if (openRequestId !== emojiPickerOpenRequestId || dom.emojiPopover.hidden) return;
+    if (isMobileLayout()) return;
     focusChatInput(input, selectionStart, selectionEnd);
+    logMobileInteraction("emoji:after-focus-restore", input, { anchor: anchor.id });
   });
 }
 
@@ -617,12 +674,22 @@ export function normalizeEmojiShortcodesInput(input) {
 function insertEmoji(emoji) {
   if (!state.ui.activeEmojiInput) return;
   const input = state.ui.activeEmojiInput;
+  logMobileInteraction("emoji:insert-start", input, { emoji, activeEmojiInput: input.id || null });
   const start = input.selectionStart ?? input.value.length;
   const end = input.selectionEnd ?? input.value.length;
   input.value = `${input.value.slice(0, start)}${emoji}${input.value.slice(end)}`;
   const nextPosition = start + emoji.length;
-  focusChatInput(input, nextPosition, nextPosition);
+  if (isMobileLayout()) {
+    input.setSelectionRange?.(nextPosition, nextPosition);
+  } else {
+    focusChatInput(input, nextPosition, nextPosition);
+  }
   hideEmojiPicker();
+  logMobileInteraction("emoji:insert-after-focus", input, {
+    emoji,
+    nextPosition,
+    inputFocused: document.activeElement === input,
+  });
 }
 
 export function updateCharCounter(input, isOverlay) {

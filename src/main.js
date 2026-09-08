@@ -18,7 +18,7 @@ import {
 } from "./features/icons-tooltips.js?v=20260904-help-invite-fixes-02";
 import {
   wireLayoutMetrics,
-} from "./features/layout-metrics.js?v=20260903-structural-viewport-scroll-03";
+} from "./features/layout-metrics.js?v=20260908-interactive-widget-resizes-content-01";
 import {
   renderPresence,
   wireIdentityEvents,
@@ -44,7 +44,6 @@ import {
   wirePlayerEvents,
 } from "./features/player/index.js?v=20260905-overlay-height-cap-04";
 import { wireMobileFullscreenOrientation } from "./features/player/mobile-fullscreen-orientation.js";
-import { wireMobileKeyboardLayout } from "./features/chat/mobile-keyboard.js?v=20260907-mobile-keyboard-diagnostics-01";
 import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20260904-help-invite-fixes-02";
 import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260904-mobile-landscape-bottom-chat-07";
 import { wireTouchHover } from "./core/touch-interactions.js?v=20260829-touch-hold-fix-01";
@@ -78,7 +77,6 @@ wireTouchHover(dom.aboutButton, {
 });
 wireIdentityEvents();
 wireChatEvents();
-wireMobileKeyboardLayout();
 wirePlayerEvents();
 wireMobileFullscreenOrientation();
 buildEmojiPicker();

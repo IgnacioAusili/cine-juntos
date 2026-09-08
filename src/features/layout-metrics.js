@@ -21,6 +21,11 @@ function isOverlayChatInputFocused() {
   return isOverlayChatInput(document.activeElement);
 }
 
+function isBottomChatInputFocused() {
+  return document.activeElement === dom.messageInput
+    && dom.sessionView?.dataset.chatDock === "bottom";
+}
+
 function measureViewportUnit(unit) {
   if (!document.body || !window.CSS?.supports?.("height", `100${unit}`)) return 0;
 
@@ -45,6 +50,15 @@ function getLargeViewportHeight() {
     || window.innerHeight
     || window.visualViewport?.height
     || 0;
+}
+
+function getCurrentViewportHeight() {
+  return Math.round(
+    document.documentElement.clientHeight
+      || window.innerHeight
+      || window.visualViewport?.height
+      || 0,
+  );
 }
 
 function getNativePageScrollMax() {
@@ -102,7 +116,9 @@ function getViewportMetrics() {
     || window.innerWidth
     || viewport?.width
     || 0;
-  const layoutHeight = getLargeViewportHeight()
+  const layoutHeight = isBottomChatInputFocused()
+    ? getCurrentViewportHeight()
+    : getLargeViewportHeight()
     || window.innerHeight
     || viewport?.height
     || 0;
@@ -119,7 +135,9 @@ function getViewportMetrics() {
 
   // El teclado del overlay se superpone al reproductor. Mantener las últimas
   // métricas completas evita que el visualViewport reducido refluya toda la
-  // sesión o que una pantalla vertical sea interpretada como apaisada.
+  // sesión o que una pantalla vertical sea interpretada como apaisada. El
+  // chat inferior es la excepción: con interactive-widget=resizes-content
+  // necesita aceptar el alto reducido para que el composer siga al teclado.
   if (isOverlayChatInputFocused() && lastViewportMetrics) {
     return lastViewportMetrics;
   }
@@ -138,7 +156,9 @@ function isFullscreenActive() {
 
 function getStableViewportMetrics(force = false) {
   const liveMetrics = getViewportMetrics(force);
-  const shouldLock = isMobileLayout() && !isFullscreenActive();
+  const shouldLock = isMobileLayout()
+    && !isFullscreenActive()
+    && !isBottomChatInputFocused();
 
   if (!shouldLock) {
     lockedMobileViewportMetrics = null;
@@ -170,7 +190,9 @@ function syncViewportMetrics(force = false) {
   const wasAtPageBottom = previousMaxScroll > 4
     && window.scrollY >= previousMaxScroll - 4;
   const metrics = getStableViewportMetrics(force);
-  if (!isOverlayChatInputFocused()) lastViewportMetrics = metrics;
+  if (!isOverlayChatInputFocused() && !isBottomChatInputFocused()) {
+    lastViewportMetrics = metrics;
+  }
   document.documentElement.classList.toggle(
     "viewport-landscape",
     metrics.width > metrics.height,
@@ -274,6 +296,12 @@ export function wireLayoutMetrics() {
     { passive: true },
   );
   document.addEventListener("fullscreenchange", () => scheduleLayoutMetricsSync(true));
+  document.addEventListener("focusin", (event) => {
+    if (event.target === dom.messageInput) scheduleLayoutMetricsSync();
+  }, { passive: true });
+  document.addEventListener("focusout", (event) => {
+    if (event.target === dom.messageInput) scheduleLayoutMetricsSync();
+  }, { passive: true });
   if ("MutationObserver" in window && document.body) {
     bodyObserver?.disconnect?.();
     bodyObserver = new MutationObserver((records) => {

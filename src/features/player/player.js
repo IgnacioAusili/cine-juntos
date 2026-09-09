@@ -17,7 +17,7 @@ import {
   hideTooltip,
   setControlIcon,
 } from "../icons-tooltips.js?v=20260904-help-invite-fixes-02";
-import { scrollToVideoPosition, sendVideoEventMessage, setInsideChatVisible } from "../chat/index.js?v=20260907-mobile-emoji-keyboard-keep-open-01";
+import { scrollToVideoPosition, sendVideoEventMessage, setInsideChatVisible } from "../chat/index.js?v=20260909-keyboard-arrow-27";
 // Import circular intencional y seguro: estas funciones se invocan en runtime,
 // no durante la carga del modulo, y player-sync-logic.js a su vez importa
 // setVideoSource y waitForVideoMetadata desde aqui.
@@ -34,7 +34,7 @@ import {
   showLoadReplaceDialog,
   showResumeVideoDialog,
   showSlowLoadDialog,
-} from "../session-ui.js?v=20260909-fullscreen-viewport-settle-23";
+} from "../session-ui.js?v=20260909-keyboard-arrow-27";
 import { togglePageFullscreen } from "./fullscreen.js?v=20260904-mobile-landscape-bottom-chat-07";
 import { syncMiniPlayerButton } from "./mini-player.js?v=20260904-mobile-landscape-bottom-chat-07";
 import { shouldToggleMuteFromVolumeButton } from "./player-volume-layout.js?v=20260902-player-volume-layout-18";

@@ -10,7 +10,7 @@ import {
   hideTooltip,
   hydrateIcons,
 } from "../icons-tooltips.js?v=20260904-help-invite-fixes-02";
-import { setSyncStatus } from "../session-ui.js?v=20260909-fullscreen-viewport-settle-23";
+import { setSyncStatus } from "../session-ui.js?v=20260909-keyboard-arrow-27";
 import {
   logEvent,
   state,

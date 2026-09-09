@@ -18,7 +18,7 @@ import {
 } from "./features/icons-tooltips.js?v=20260904-help-invite-fixes-02";
 import {
   wireLayoutMetrics,
-} from "./features/layout-metrics.js?v=20260909-fullscreen-viewport-settle-23";
+} from "./features/layout-metrics.js?v=20260909-keyboard-arrow-27";
 import {
   renderPresence,
   wireIdentityEvents,
@@ -26,7 +26,7 @@ import {
 import {
   showLobby,
   initializeAboutDialog,
-} from "./features/session-ui.js?v=20260909-fullscreen-viewport-settle-23";
+} from "./features/session-ui.js?v=20260909-keyboard-arrow-27";
 import {
   buildEmojiPicker,
   getPersistedInsideChatStyle,
@@ -38,7 +38,7 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js?v=20260907-mobile-emoji-keyboard-keep-open-01";
+} from "./features/chat/index.js?v=20260909-keyboard-arrow-27";
 import {
   initializePlayer,
   wirePlayerEvents,

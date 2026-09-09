@@ -45,6 +45,33 @@ function isMobileChatLayout() {
   );
 }
 
+function isBottomChatKeyboardOpen() {
+  return document.documentElement.classList.contains("bottom-chat-keyboard-open");
+}
+
+function toggleExternalChatCollapse() {
+  setExternalChatCollapsed(
+    !dom.sessionView.classList.contains("chat-collapsed"),
+  );
+  dom.collapseChatButton.blur();
+}
+
+function toggleExternalChatCollapseAfterKeyboardCloses() {
+  dom.messageInput?.blur();
+  dom.overlayMessageInput?.blur();
+
+  const startedAt = performance.now();
+  const applyToggle = () => {
+    if (isBottomChatKeyboardOpen() && performance.now() - startedAt < 1500) {
+      window.requestAnimationFrame(applyToggle);
+      return;
+    }
+    toggleExternalChatCollapse();
+  };
+
+  window.requestAnimationFrame(applyToggle);
+}
+
 const CHAT_SCROLL_WHEEL_MULTIPLIER = 0.35;
 const DOM_DELTA_PIXEL = 0;
 const DOM_DELTA_LINE = 1;
@@ -246,10 +273,11 @@ export function wireChatEvents() {
   });
 
   dom.collapseChatButton.addEventListener("click", () => {
-    setExternalChatCollapsed(
-      !dom.sessionView.classList.contains("chat-collapsed"),
-    );
-    dom.collapseChatButton.blur();
+    if (isBottomChatKeyboardOpen()) {
+      toggleExternalChatCollapseAfterKeyboardCloses();
+      return;
+    }
+    toggleExternalChatCollapse();
   });
 
   [

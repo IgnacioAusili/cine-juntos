@@ -13,8 +13,8 @@ import {
   formatSeconds,
 } from "../../core/utils.js";
 import { markParticipantActive, rememberParticipant } from "../presence.js?v=20260901-chat-arrow-unified-03";
-import { setSyncStatus } from "../session-ui.js?v=20260909-fullscreen-viewport-settle-23";
-import { sendVideoEventMessage, renderMessage } from "../chat/index.js?v=20260907-mobile-emoji-keyboard-keep-open-01";
+import { setSyncStatus } from "../session-ui.js?v=20260909-keyboard-arrow-27";
+import { sendVideoEventMessage, renderMessage } from "../chat/index.js?v=20260909-keyboard-arrow-27";
 // Import circular intencional y seguro: estas funciones se invocan en runtime,
 // no durante la carga del modulo, y player.js a su vez importa publishState.
 import { clearVideoSource, setVideoSource, waitForVideoMetadata } from "./player.js?v=20260904-mobile-landscape-bottom-chat-07";

@@ -11,6 +11,7 @@ let lastNativePageScrollTop = 0;
 let pageBottomRestoreTimer = 0;
 let bottomChatScrollBeforeKeyboard = null;
 let wasBottomChatKeyboardOpen = false;
+let bottomChatKeyboardHandleAnchor = null;
 let fullscreenMetricResyncTimers = [];
 let lastFullscreenActive = false;
 
@@ -32,6 +33,74 @@ function isBottomChatInputFocused() {
 
 function isBottomChatKeyboardOpen() {
   return document.documentElement.classList.contains("bottom-chat-keyboard-open");
+}
+
+function captureBottomChatKeyboardHandlePosition() {
+  const handleZone = dom.collapseChatButton?.closest(".chat-collapse-hover-zone");
+  if (
+    !handleZone
+    || !isMobileLayout()
+    || dom.sessionView?.dataset.chatDock !== "bottom"
+    || bottomChatKeyboardHandleAnchor?.handleZone === handleZone
+  ) return;
+
+  const rect = handleZone.getBoundingClientRect();
+  if (rect.width <= 0 || rect.height <= 0) return;
+
+  const properties = ["position", "top", "right", "bottom", "left", "transform", "opacity"];
+  bottomChatKeyboardHandleAnchor = {
+    handleZone,
+    centerY: rect.top + rect.height / 2,
+    revealScheduled: false,
+    inlineStyles: Object.fromEntries(
+      properties.map((property) => [
+        property,
+        {
+          value: handleZone.style.getPropertyValue(property),
+          priority: handleZone.style.getPropertyPriority(property),
+        },
+      ]),
+    ),
+  };
+
+  // El teclado reduce el viewport visual y el layout del dock vuelve a medir
+  // la grilla. Mantener la zona como capa fija conserva la posición que el
+  // usuario estaba viendo justo antes de que aparezca el teclado.
+  handleZone.style.setProperty("position", "fixed");
+  handleZone.style.setProperty("top", `${bottomChatKeyboardHandleAnchor.centerY}px`);
+  handleZone.style.setProperty("right", "auto");
+  handleZone.style.setProperty("bottom", "auto");
+  handleZone.style.setProperty("left", "50%");
+  handleZone.style.setProperty("transform", "translate(-50%, -50%)");
+  handleZone.style.setProperty("opacity", "0");
+}
+
+function restoreBottomChatKeyboardHandlePosition() {
+  const anchor = bottomChatKeyboardHandleAnchor;
+  bottomChatKeyboardHandleAnchor = null;
+  if (!anchor?.handleZone) return;
+
+  // La posición absoluta vuelve a depender del reflow que ocurre al cerrar el
+  // teclado. Ocultar la capa durante ese frame evita mostrar el salto visual.
+  anchor.handleZone.style.setProperty("opacity", "0");
+  Object.entries(anchor.inlineStyles).forEach(([property, inlineStyle]) => {
+    if (property === "opacity") return;
+    if (inlineStyle.value) {
+      anchor.handleZone.style.setProperty(property, inlineStyle.value, inlineStyle.priority);
+    } else {
+      anchor.handleZone.style.removeProperty(property);
+    }
+  });
+
+  window.requestAnimationFrame(() => {
+    if (bottomChatKeyboardHandleAnchor) return;
+    const inlineStyle = anchor.inlineStyles.opacity;
+    if (inlineStyle.value) {
+      anchor.handleZone.style.setProperty("opacity", inlineStyle.value, inlineStyle.priority);
+    } else {
+      anchor.handleZone.style.removeProperty("opacity");
+    }
+  });
 }
 
 function isBottomChatScrollableTarget(target) {
@@ -257,13 +326,14 @@ function syncViewportMetrics(force = false) {
   syncBottomChatVisibleHeight(currentViewportHeight);
   rootStyle.setProperty("--app-viewport-offset-left", `${metrics.offsetLeft}px`);
   rootStyle.setProperty("--app-viewport-offset-top", `${metrics.offsetTop}px`);
+  if (bottomChatKeyboardOpen && !wasBottomChatKeyboardOpen) {
+    bottomChatScrollBeforeKeyboard = window.scrollY;
+    captureBottomChatKeyboardHandlePosition();
+  }
   document.documentElement.classList.toggle(
     "bottom-chat-keyboard-open",
     bottomChatKeyboardOpen,
   );
-  if (bottomChatKeyboardOpen && !wasBottomChatKeyboardOpen) {
-    bottomChatScrollBeforeKeyboard = window.scrollY;
-  }
   if (bottomChatKeyboardOpen) {
     window.requestAnimationFrame(() => {
       alignBottomChatKeyboardViewport();
@@ -272,6 +342,7 @@ function syncViewportMetrics(force = false) {
       }, 50);
     });
   } else if (wasBottomChatKeyboardOpen) {
+    restoreBottomChatKeyboardHandlePosition();
     if (isBottomChatInputFocused()) {
       dom.messageInput.blur();
     }
@@ -336,6 +407,28 @@ function alignBottomChatKeyboardViewport() {
     window.scrollTo({ top: Math.max(0, workspaceTop), behavior: "auto" });
   }
   syncBottomChatVisibleHeight(getCurrentViewportHeight());
+
+  const anchoredHandleZone = bottomChatKeyboardHandleAnchor?.handleZone;
+  const videoRect = dom.videoArea?.getBoundingClientRect();
+  if (anchoredHandleZone && videoRect?.height > 0) {
+    // El centro de la flecha debe quedar exactamente sobre la unión visual de
+    // las dos superficies, incluso cuando la grilla se comprime por el IME.
+    anchoredHandleZone.style.setProperty("top", `${videoRect.bottom}px`);
+
+    const anchor = bottomChatKeyboardHandleAnchor;
+    if (!anchor.revealScheduled) {
+      anchor.revealScheduled = true;
+      window.requestAnimationFrame(() => {
+        if (bottomChatKeyboardHandleAnchor !== anchor) return;
+        const inlineStyle = anchor.inlineStyles.opacity;
+        if (inlineStyle.value) {
+          anchor.handleZone.style.setProperty("opacity", inlineStyle.value, inlineStyle.priority);
+        } else {
+          anchor.handleZone.style.removeProperty("opacity");
+        }
+      });
+    }
+  }
 }
 
 function syncLayoutMetrics(forceViewport = false) {
@@ -416,10 +509,24 @@ export function wireLayoutMetrics() {
   lastFullscreenActive = isFullscreenActive();
   document.addEventListener("fullscreenchange", scheduleFullscreenMetricResync);
   document.addEventListener("focusin", (event) => {
-    if (event.target === dom.messageInput) scheduleLayoutMetricsSync();
+    if (event.target === dom.messageInput) {
+      // Preparar el anclaje antes de que Chrome reduzca el viewport evita que
+      // la flecha permanezca un instante en su posición vieja.
+      captureBottomChatKeyboardHandlePosition();
+      scheduleLayoutMetricsSync();
+    }
   }, { passive: true });
   document.addEventListener("focusout", (event) => {
-    if (event.target === dom.messageInput) scheduleLayoutMetricsSync();
+    if (event.target === dom.messageInput) {
+      scheduleLayoutMetricsSync();
+      if (!isBottomChatKeyboardOpen() && !wasBottomChatKeyboardOpen) {
+        window.setTimeout(() => {
+          if (!isBottomChatKeyboardOpen() && !wasBottomChatKeyboardOpen) {
+            restoreBottomChatKeyboardHandlePosition();
+          }
+        }, 140);
+      }
+    }
   }, { passive: true });
   if ("MutationObserver" in window && document.body) {
     bodyObserver?.disconnect?.();

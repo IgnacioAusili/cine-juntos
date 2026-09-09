@@ -6,6 +6,7 @@ import { hideTooltip } from "../icons-tooltips.js?v=20260904-help-invite-fixes-0
 const MOBILE_QUERY = "(max-width: 680px)";
 const HEADER_IDLE_MS = 2200;
 const GESTURE_THRESHOLD_PX = 8;
+const TAP_TOGGLE_DELAY_MS = 160;
 const CONTEXTUAL_TARGET_SELECTOR = [
   ".message",
   ".message-form",
@@ -22,8 +23,10 @@ const CONTEXTUAL_TARGET_SELECTOR = [
 ].join(",");
 
 let hideTimer = 0;
+let tapToggleTimer = 0;
 let activeGesture = null;
 let headerCollapsedBeforeKeyboard = null;
+let chatHasMessages = false;
 
 function isMobileBottomDock() {
   return Boolean(
@@ -66,6 +69,12 @@ function clearHideTimer() {
   hideTimer = 0;
 }
 
+function clearTapToggleTimer() {
+  if (!tapToggleTimer) return;
+  window.clearTimeout(tapToggleTimer);
+  tapToggleTimer = 0;
+}
+
 function hasPersistentActivity() {
   const activeElement = document.activeElement;
   const editingName = activeElement === dom.nameInput
@@ -105,7 +114,12 @@ function scheduleHeaderHide() {
     setHeaderCollapsed(true);
     return;
   }
-  if (!isActiveBottomChat() || !hasMessages() || activeGesture || hasPersistentActivity()) return;
+  if (!isActiveBottomChat()) return;
+  if (!hasMessages()) {
+    setHeaderCollapsed(false);
+    return;
+  }
+  if (activeGesture || hasPersistentActivity()) return;
 
   hideTimer = window.setTimeout(() => {
     hideTimer = 0;
@@ -127,6 +141,34 @@ function revealHeader() {
   clearHideTimer();
   setHeaderCollapsed(false);
   scheduleHeaderHide();
+}
+
+function scheduleHeaderToggle() {
+  if (isBottomChatKeyboardOpen() || !isActiveBottomChat()) return;
+  clearTapToggleTimer();
+  tapToggleTimer = window.setTimeout(() => {
+    tapToggleTimer = 0;
+    if (
+      isBottomChatKeyboardOpen()
+        || !isActiveBottomChat()
+        || hasPersistentActivity()
+    ) return;
+
+    const shouldCollapse = !dom.sessionView.classList.contains("chat-header-collapsed");
+    setHeaderCollapsed(shouldCollapse);
+    if (!shouldCollapse) scheduleHeaderHide();
+  }, TAP_TOGGLE_DELAY_MS);
+}
+
+function scheduleHeaderCollapseAfterMessage() {
+  if (!isActiveBottomChat() || !hasMessages()) return;
+  clearHideTimer();
+  clearTapToggleTimer();
+  window.setTimeout(() => {
+    if (!isActiveBottomChat() || !hasMessages() || hasPersistentActivity()) return;
+    if (isBottomChatKeyboardOpen()) headerCollapsedBeforeKeyboard = true;
+    setHeaderCollapsed(true);
+  }, TAP_TOGGLE_DELAY_MS);
 }
 
 function canScrollMessagesAtStart(upward) {
@@ -187,7 +229,8 @@ function finishGesture(event) {
   // Solo el scroll que empieza dentro de #messages puede revelar el header.
   // Un arrastre de la pagina conserva el estado visible/oculto que ya tenia.
   if (gesture.localSwipeUp || isContextFreeTap) {
-    revealHeader();
+    if (isContextFreeTap && !gesture.localSwipeUp) scheduleHeaderToggle();
+    else revealHeader();
     return;
   }
   scheduleHeaderHide();
@@ -248,8 +291,14 @@ export function wireMobileBottomChatHeader() {
   dom.chatArea.addEventListener("focusin", scheduleHeaderHide, { passive: true });
   dom.chatArea.addEventListener("focusout", scheduleHeaderHide, { passive: true });
   dom.messageInput?.addEventListener("input", scheduleHeaderHide, { passive: true });
+  chatHasMessages = hasMessages();
 
-  const activityObserver = new MutationObserver(() => scheduleHeaderHide());
+  const activityObserver = new MutationObserver(() => {
+    const nextHasMessages = hasMessages();
+    if (!chatHasMessages && nextHasMessages) scheduleHeaderCollapseAfterMessage();
+    chatHasMessages = nextHasMessages;
+    scheduleHeaderHide();
+  });
   activityObserver.observe(dom.messages, { childList: true });
   [dom.replyPreview, dom.imagePreview, dom.messageMenu, dom.chatNameEditor].forEach((element) => {
     if (!element) return;

@@ -11,6 +11,8 @@ let lastNativePageScrollTop = 0;
 let pageBottomRestoreTimer = 0;
 let bottomChatScrollBeforeKeyboard = null;
 let wasBottomChatKeyboardOpen = false;
+let fullscreenMetricResyncTimers = [];
+let lastFullscreenActive = false;
 
 const MOBILE_LAYOUT_QUERY = "(max-width: 980px)";
 
@@ -120,16 +122,17 @@ function preservePageBottomAfterViewportChange() {
   }, 80);
 }
 
-function getViewportMetrics() {
+function getViewportMetrics(force = false) {
   const viewport = window.visualViewport;
   const documentElement = document.documentElement;
   const currentViewportHeight = getCurrentViewportHeight();
-  const hasReducedViewport = Boolean(
+  const hasReducedViewport = !force && Boolean(
     lastViewportMetrics?.height
       && currentViewportHeight > 0
       && currentViewportHeight < lastViewportMetrics.height - 80,
   );
-  // La altura del viewport visual cambia cuando el navegador móvil oculta o
+  // Una sincronización forzada también debe poder descartar una altura vieja
+  // que haya quedado después de salir de fullscreen. La altura del viewport visual cambia cuando el navegador móvil oculta o
   // muestra sus barras durante un swipe. No usarla para el tamaño estructural
   // de la página: si cambia mientras se desplaza, el document.scrollHeight
   // crece debajo del dedo y el scroll termina en una posición intermedia.
@@ -177,6 +180,25 @@ function isMobileLayout() {
 function isFullscreenActive() {
   return Boolean(document.fullscreenElement)
     || document.body.classList.contains("fullscreen-mode");
+}
+
+function scheduleFullscreenMetricResync() {
+  fullscreenMetricResyncTimers.forEach((timer) => window.clearTimeout(timer));
+  fullscreenMetricResyncTimers = [];
+  lastViewportMetrics = null;
+  lockedMobileViewportMetrics = null;
+
+  [0, 80, 180, 360, 700].forEach((delay) => {
+    const timer = window.setTimeout(() => {
+      fullscreenMetricResyncTimers = fullscreenMetricResyncTimers.filter(
+        (activeTimer) => activeTimer !== timer,
+      );
+      lastViewportMetrics = null;
+      lockedMobileViewportMetrics = null;
+      scheduleLayoutMetricsSync(true);
+    }, delay);
+    fullscreenMetricResyncTimers.push(timer);
+  });
 }
 
 function getStableViewportMetrics(force = false) {
@@ -391,7 +413,8 @@ export function wireLayoutMetrics() {
     },
     { passive: true },
   );
-  document.addEventListener("fullscreenchange", () => scheduleLayoutMetricsSync(true));
+  lastFullscreenActive = isFullscreenActive();
+  document.addEventListener("fullscreenchange", scheduleFullscreenMetricResync);
   document.addEventListener("focusin", (event) => {
     if (event.target === dom.messageInput) scheduleLayoutMetricsSync();
   }, { passive: true });
@@ -402,6 +425,12 @@ export function wireLayoutMetrics() {
     bodyObserver?.disconnect?.();
     bodyObserver = new MutationObserver((records) => {
       if (records.some((record) => record.attributeName === "class")) {
+        const fullscreenActive = isFullscreenActive();
+        if (fullscreenActive !== lastFullscreenActive) {
+          lastFullscreenActive = fullscreenActive;
+          scheduleFullscreenMetricResync();
+          return;
+        }
         scheduleLayoutMetricsSync(true);
       }
     });

@@ -1048,8 +1048,17 @@
   /* El chat inferior llega hasta el borde del teléfono en vertical: sus
      esquinas inferiores no deben dejar una curva separada del borde. */
   body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-area {
+    border: 0 !important;
     border-bottom-left-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
+  }
+
+  /* El reproductor ya está unido al borde superior del viewport cuando la
+     barra de Chrome se oculta. Su borde superior de 1px dejaba una línea
+     visible entre la toolbar y el video. */
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface) {
+    border-top: 0 !important;
   }
 
   body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .workspace {

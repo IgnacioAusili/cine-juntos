@@ -18,7 +18,7 @@ import {
 } from "./features/icons-tooltips.js?v=20260904-help-invite-fixes-02";
 import {
   wireLayoutMetrics,
-} from "./features/layout-metrics.js?v=20260908-bottom-chat-keyboard-resize-07";
+} from "./features/layout-metrics.js?v=20260909-large-viewport-mobile-10";
 import {
   renderPresence,
   wireIdentityEvents,

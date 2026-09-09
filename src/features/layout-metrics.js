@@ -9,6 +9,8 @@ let forceViewportSync = false;
 let lastNativePageScrollMax = 0;
 let lastNativePageScrollTop = 0;
 let pageBottomRestoreTimer = 0;
+let bottomChatScrollBeforeKeyboard = null;
+let wasBottomChatKeyboardOpen = false;
 
 const MOBILE_LAYOUT_QUERY = "(max-width: 980px)";
 
@@ -114,10 +116,10 @@ function getViewportMetrics() {
   // de la página: si cambia mientras se desplaza, el document.scrollHeight
   // crece debajo del dedo y el scroll termina en una posición intermedia.
   // clientWidth representa el ancho CSS del documento. Para la altura usamos
-  // lvh (large viewport height): es el alto completo que queda disponible con
-  // las barras de Chrome ocultas y no cambia cuando esas barras aparecen o se
-  // esconden durante un swipe. innerHeight/visualViewport son dinámicos y no
-  // deben dimensionar el workspace.
+  // lvh (large viewport height): conserva el alto del viewport cuando las
+  // barras de Chrome están ocultas, incluso mientras siguen visibles. Así el
+  // workspace no cambia de tamaño al iniciar un swipe. innerHeight y
+  // visualViewport solo se usan para el ajuste específico del teclado.
   const layoutWidth = documentElement.clientWidth
     || window.innerWidth
     || viewport?.width
@@ -219,6 +221,9 @@ function syncViewportMetrics(force = false) {
     "bottom-chat-keyboard-open",
     bottomChatKeyboardOpen,
   );
+  if (bottomChatKeyboardOpen && !wasBottomChatKeyboardOpen) {
+    bottomChatScrollBeforeKeyboard = window.scrollY;
+  }
   if (bottomChatKeyboardOpen) {
     window.requestAnimationFrame(() => {
       alignBottomChatKeyboardViewport();
@@ -226,7 +231,22 @@ function syncViewportMetrics(force = false) {
         alignBottomChatKeyboardViewport();
       }, 50);
     });
+  } else if (wasBottomChatKeyboardOpen) {
+    window.requestAnimationFrame(() => {
+      const maxScroll = Math.max(
+        0,
+        document.documentElement.scrollHeight - document.documentElement.clientHeight,
+      );
+      const targetScroll = Math.min(
+        bottomChatScrollBeforeKeyboard ?? maxScroll,
+        maxScroll,
+      );
+      window.scrollTo({ top: targetScroll, behavior: "auto" });
+      bottomChatScrollBeforeKeyboard = null;
+      rememberNativePageScrollPosition();
+    });
   }
+  wasBottomChatKeyboardOpen = bottomChatKeyboardOpen;
 
   // Un cambio real de orientación/ancho puede alterar la altura estructural.
   // Si ya estábamos abajo, el nuevo alto aumenta el documento y hay que

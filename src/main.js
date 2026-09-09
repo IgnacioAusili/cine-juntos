@@ -18,7 +18,7 @@ import {
 } from "./features/icons-tooltips.js?v=20260904-help-invite-fixes-02";
 import {
   wireLayoutMetrics,
-} from "./features/layout-metrics.js?v=20260909-keyboard-arrow-27";
+} from "./features/layout-metrics.js?v=20260909-keyboard-arrow-30";
 import {
   renderPresence,
   wireIdentityEvents,
@@ -26,7 +26,7 @@ import {
 import {
   showLobby,
   initializeAboutDialog,
-} from "./features/session-ui.js?v=20260909-keyboard-arrow-27";
+} from "./features/session-ui.js?v=20260909-keyboard-arrow-30";
 import {
   buildEmojiPicker,
   getPersistedInsideChatStyle,
@@ -38,13 +38,13 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js?v=20260909-keyboard-arrow-27";
+} from "./features/chat/index.js?v=20260909-keyboard-arrow-30";
 import {
   initializePlayer,
   wirePlayerEvents,
 } from "./features/player/index.js?v=20260905-overlay-height-cap-04";
 import { wireMobileFullscreenOrientation } from "./features/player/mobile-fullscreen-orientation.js";
-import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20260909-keyboard-chat-state-20";
+import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20260909-keyboard-header-focus-21";
 import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260904-mobile-landscape-bottom-chat-07";
 import { wireTouchHover } from "./core/touch-interactions.js?v=20260829-touch-hold-fix-01";
 import { wireMobileDebugTools } from "./features/mobile-debug.js?v=20260907-mobile-debug-tools-02";

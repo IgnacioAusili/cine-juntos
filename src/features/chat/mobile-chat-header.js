@@ -26,6 +26,7 @@ let hideTimer = 0;
 let tapToggleTimer = 0;
 let activeGesture = null;
 let headerCollapsedBeforeKeyboard = null;
+let headerKeyboardPreparing = false;
 let chatHasMessages = false;
 
 function isMobileBottomDock() {
@@ -100,7 +101,7 @@ function setHeaderCollapsed(collapsed) {
     dom.sessionView.classList.remove("chat-header-collapsed");
     return;
   }
-  const forcedByKeyboard = isBottomChatKeyboardOpen();
+  const forcedByKeyboard = isBottomChatKeyboardOpen() || headerKeyboardPreparing;
   if (collapsed || forcedByKeyboard) hideTooltip(true);
   dom.sessionView.classList.toggle(
     "chat-header-collapsed",
@@ -110,7 +111,7 @@ function setHeaderCollapsed(collapsed) {
 
 function scheduleHeaderHide() {
   clearHideTimer();
-  if (isBottomChatKeyboardOpen()) {
+  if (isBottomChatKeyboardOpen() || headerKeyboardPreparing) {
     setHeaderCollapsed(true);
     return;
   }
@@ -252,7 +253,7 @@ function handleWheel(event) {
 }
 
 function syncHeaderMode() {
-  if (isBottomChatKeyboardOpen() && isActiveBottomChat()) {
+  if ((isBottomChatKeyboardOpen() || headerKeyboardPreparing) && isActiveBottomChat()) {
     if (headerCollapsedBeforeKeyboard === null) {
       headerCollapsedBeforeKeyboard = dom.sessionView.classList.contains("chat-header-collapsed");
     }
@@ -261,7 +262,7 @@ function syncHeaderMode() {
     return;
   }
 
-  if (!isBottomChatKeyboardOpen() && headerCollapsedBeforeKeyboard !== null) {
+  if (!isBottomChatKeyboardOpen() && !headerKeyboardPreparing && headerCollapsedBeforeKeyboard !== null) {
     const shouldRestoreCollapsed = headerCollapsedBeforeKeyboard;
     headerCollapsedBeforeKeyboard = null;
     if (isActiveBottomChat()) {
@@ -288,8 +289,22 @@ export function wireMobileBottomChatHeader() {
   document.addEventListener("pointercancel", finishGesture, { capture: true, passive: true });
   dom.messages.addEventListener("wheel", handleWheel, { passive: true });
 
-  dom.chatArea.addEventListener("focusin", scheduleHeaderHide, { passive: true });
-  dom.chatArea.addEventListener("focusout", scheduleHeaderHide, { passive: true });
+  dom.chatArea.addEventListener("focusin", (event) => {
+    if (event.target === dom.messageInput && isActiveBottomChat()) {
+      if (headerCollapsedBeforeKeyboard === null) {
+        headerCollapsedBeforeKeyboard = dom.sessionView.classList.contains("chat-header-collapsed");
+      }
+      headerKeyboardPreparing = true;
+      clearHideTimer();
+      setHeaderCollapsed(true);
+    }
+    scheduleHeaderHide();
+  }, { passive: true });
+  dom.chatArea.addEventListener("focusout", (event) => {
+    if (event.target === dom.messageInput) headerKeyboardPreparing = false;
+    syncHeaderMode();
+    scheduleHeaderHide();
+  }, { passive: true });
   dom.messageInput?.addEventListener("input", scheduleHeaderHide, { passive: true });
   chatHasMessages = hasMessages();
 

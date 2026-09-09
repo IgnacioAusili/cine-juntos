@@ -46,12 +46,15 @@ function captureBottomChatKeyboardHandlePosition() {
 
   const rect = handleZone.getBoundingClientRect();
   if (rect.width <= 0 || rect.height <= 0) return;
+  const positioningParent = handleZone.offsetParent || dom.workspace;
+  const positioningParentRect = positioningParent?.getBoundingClientRect();
+  if (!positioningParentRect) return;
 
-  const properties = ["position", "top", "right", "bottom", "left", "transform", "opacity"];
+  const properties = ["position", "top", "right", "bottom", "left", "transform", "transition"];
   bottomChatKeyboardHandleAnchor = {
     handleZone,
-    centerY: rect.top + rect.height / 2,
-    revealScheduled: false,
+    positioningParent,
+    initialTop: rect.top + rect.height / 2 - positioningParentRect.top,
     inlineStyles: Object.fromEntries(
       properties.map((property) => [
         property,
@@ -63,16 +66,19 @@ function captureBottomChatKeyboardHandlePosition() {
     ),
   };
 
-  // El teclado reduce el viewport visual y el layout del dock vuelve a medir
-  // la grilla. Mantener la zona como capa fija conserva la posición que el
-  // usuario estaba viendo justo antes de que aparezca el teclado.
-  handleZone.style.setProperty("position", "fixed");
-  handleZone.style.setProperty("top", `${bottomChatKeyboardHandleAnchor.centerY}px`);
+  // El handle vive dentro de un contexto de posicionamiento propio. Usar
+  // absolute y expresar el top relativo a su offsetParent evita que un fixed
+  // se teletransporte al borde del header cuando el contenedor tiene transform.
+  handleZone.style.setProperty("position", "absolute");
+  handleZone.style.setProperty("top", `${bottomChatKeyboardHandleAnchor.initialTop}px`);
   handleZone.style.setProperty("right", "auto");
   handleZone.style.setProperty("bottom", "auto");
   handleZone.style.setProperty("left", "50%");
   handleZone.style.setProperty("transform", "translate(-50%, -50%)");
-  handleZone.style.setProperty("opacity", "0");
+  handleZone.style.setProperty(
+    "transition",
+    "top 180ms ease, opacity 160ms ease, color 160ms ease, background 160ms ease",
+  );
 }
 
 function restoreBottomChatKeyboardHandlePosition() {
@@ -80,25 +86,11 @@ function restoreBottomChatKeyboardHandlePosition() {
   bottomChatKeyboardHandleAnchor = null;
   if (!anchor?.handleZone) return;
 
-  // La posición absoluta vuelve a depender del reflow que ocurre al cerrar el
-  // teclado. Ocultar la capa durante ese frame evita mostrar el salto visual.
-  anchor.handleZone.style.setProperty("opacity", "0");
   Object.entries(anchor.inlineStyles).forEach(([property, inlineStyle]) => {
-    if (property === "opacity") return;
     if (inlineStyle.value) {
       anchor.handleZone.style.setProperty(property, inlineStyle.value, inlineStyle.priority);
     } else {
       anchor.handleZone.style.removeProperty(property);
-    }
-  });
-
-  window.requestAnimationFrame(() => {
-    if (bottomChatKeyboardHandleAnchor) return;
-    const inlineStyle = anchor.inlineStyles.opacity;
-    if (inlineStyle.value) {
-      anchor.handleZone.style.setProperty("opacity", inlineStyle.value, inlineStyle.priority);
-    } else {
-      anchor.handleZone.style.removeProperty("opacity");
     }
   });
 }
@@ -413,21 +405,13 @@ function alignBottomChatKeyboardViewport() {
   if (anchoredHandleZone && videoRect?.height > 0) {
     // El centro de la flecha debe quedar exactamente sobre la unión visual de
     // las dos superficies, incluso cuando la grilla se comprime por el IME.
-    anchoredHandleZone.style.setProperty("top", `${videoRect.bottom}px`);
-
-    const anchor = bottomChatKeyboardHandleAnchor;
-    if (!anchor.revealScheduled) {
-      anchor.revealScheduled = true;
-      window.requestAnimationFrame(() => {
-        if (bottomChatKeyboardHandleAnchor !== anchor) return;
-        const inlineStyle = anchor.inlineStyles.opacity;
-        if (inlineStyle.value) {
-          anchor.handleZone.style.setProperty("opacity", inlineStyle.value, inlineStyle.priority);
-        } else {
-          anchor.handleZone.style.removeProperty("opacity");
-        }
-      });
-    }
+    const positioningParent = anchoredHandleZone.offsetParent || dom.workspace;
+    const positioningParentRect = positioningParent?.getBoundingClientRect();
+    if (!positioningParentRect) return;
+    anchoredHandleZone.style.setProperty(
+      "top",
+      `${videoRect.bottom - positioningParentRect.top}px`,
+    );
   }
 }
 
@@ -508,6 +492,14 @@ export function wireLayoutMetrics() {
   );
   lastFullscreenActive = isFullscreenActive();
   document.addEventListener("fullscreenchange", scheduleFullscreenMetricResync);
+  document.addEventListener("pointerdown", (event) => {
+    if (event.target === dom.messageInput) {
+      // pointerdown ocurre antes de focusin y antes de que el header se
+      // contraiga. Capturar aquí evita usar como origen una posición
+      // intermedia del reflow del chat.
+      captureBottomChatKeyboardHandlePosition();
+    }
+  }, { capture: true, passive: true });
   document.addEventListener("focusin", (event) => {
     if (event.target === dom.messageInput) {
       // Preparar el anclaje antes de que Chrome reduzca el viewport evita que

@@ -3,7 +3,7 @@ import { dom } from "../../core/dom.js";
 import { state } from "../../core/state.js?v=20260902-mobile-real-browser-01";
 import { hideTooltip } from "../icons-tooltips.js?v=20260904-help-invite-fixes-02";
 
-const MOBILE_QUERY = "(max-width: 680px)";
+const MOBILE_QUERY = "(hover: none) and (pointer: coarse)";
 const HEADER_IDLE_MS = 2200;
 const GESTURE_THRESHOLD_PX = 8;
 const TAP_TOGGLE_DELAY_MS = 160;
@@ -225,12 +225,17 @@ function finishGesture(event) {
   const gesture = activeGesture;
   const isTap = !gesture.moved;
   const isContextFreeTap = isTap && !gesture.contextual;
+  const isCollapsedMessagesTap = isTap
+    && gesture.startedInMessages
+    && dom.sessionView?.classList.contains("chat-header-collapsed");
   activeGesture = null;
 
   // Solo el scroll que empieza dentro de #messages puede revelar el header.
   // Un arrastre de la pagina conserva el estado visible/oculto que ya tenia.
-  if (gesture.localSwipeUp || isContextFreeTap) {
-    if (isContextFreeTap && !gesture.localSwipeUp) scheduleHeaderToggle();
+  if (gesture.localSwipeUp || isContextFreeTap || isCollapsedMessagesTap) {
+    if ((isContextFreeTap || isCollapsedMessagesTap) && !gesture.localSwipeUp) {
+      scheduleHeaderToggle();
+    }
     else revealHeader();
     return;
   }

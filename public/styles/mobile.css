@@ -1253,6 +1253,24 @@
    zona web muy baja; el chat enfocado debe ocupar esa zona, no conservar las
    dos filas completas del layout apaisado y quedar debajo del teclado. */
 @media (max-width: 980px) {
+  html.viewport-landscape body:not(.is-lobby)
+    .session-view.chat-header-collapsed[data-chat-dock="bottom"] .chat-tools {
+    min-height: 0 !important;
+    height: 0 !important;
+    max-height: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transform: translateY(0) !important;
+  }
+
+  html.viewport-landscape body:not(.is-lobby)
+    .session-view.chat-header-collapsed[data-chat-dock="bottom"] .chat-area {
+    gap: 3px;
+    grid-template-rows: 0 minmax(0, 1fr) !important;
+  }
+
   html.viewport-landscape.bottom-chat-keyboard-open body:not(.is-lobby)
     .session-view[data-chat-dock="bottom"] .workspace {
     height: var(--chat-bottom-viewport-height, var(--app-viewport-height)) !important;

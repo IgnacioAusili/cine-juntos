@@ -1189,6 +1189,15 @@
    el reproductor no cambia de tamaño ni el documento se desplaza para mostrar
    un chat completo que ya no entra sobre el teclado. */
 @media (max-width: 680px) {
+  html.bottom-chat-keyboard-open body:not(.is-lobby) {
+    overscroll-behavior: none !important;
+  }
+
+  html.bottom-chat-keyboard-open body:not(.is-lobby)
+    .session-view[data-chat-dock="bottom"] .messages {
+    overscroll-behavior: contain;
+  }
+
   html.bottom-chat-keyboard-open body:not(.is-lobby)
     .session-view[data-chat-dock="bottom"] .chat-area > .message-form {
     bottom: 0 !important;

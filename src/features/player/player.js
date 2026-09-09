@@ -34,7 +34,7 @@ import {
   showLoadReplaceDialog,
   showResumeVideoDialog,
   showSlowLoadDialog,
-} from "../session-ui.js?v=20260902-stable-page-viewport-01";
+} from "../session-ui.js?v=20260909-keyboard-focus-reset-17";
 import { togglePageFullscreen } from "./fullscreen.js?v=20260904-mobile-landscape-bottom-chat-07";
 import { syncMiniPlayerButton } from "./mini-player.js?v=20260904-mobile-landscape-bottom-chat-07";
 import { shouldToggleMuteFromVolumeButton } from "./player-volume-layout.js?v=20260902-player-volume-layout-18";

@@ -30,7 +30,7 @@ import {
   showLobby,
   showSession,
   watchRoomEntryVideoFocus,
-} from "./session-ui.js?v=20260902-stable-page-viewport-01";
+} from "./session-ui.js?v=20260909-keyboard-focus-reset-17";
 import { handleRemoteState } from "./player/index.js?v=20260904-mobile-landscape-bottom-chat-07";
 import {
   renderMessage,

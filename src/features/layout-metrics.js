@@ -28,6 +28,24 @@ function isBottomChatInputFocused() {
     && dom.sessionView?.dataset.chatDock === "bottom";
 }
 
+function isBottomChatKeyboardOpen() {
+  return document.documentElement.classList.contains("bottom-chat-keyboard-open");
+}
+
+function isBottomChatScrollableTarget(target) {
+  return target instanceof Element
+    && Boolean(target.closest([
+      ".session-view[data-chat-dock=\"bottom\"] .messages",
+      ".session-view[data-chat-dock=\"bottom\"] .chat-scrollbar",
+      ".session-view[data-chat-dock=\"bottom\"] .message-form",
+    ].join(",")));
+}
+
+function preventBottomChatPageScroll(event) {
+  if (!isBottomChatKeyboardOpen() || isBottomChatScrollableTarget(event.target)) return;
+  event.preventDefault();
+}
+
 function measureViewportUnit(unit) {
   if (!document.body || !window.CSS?.supports?.("height", `100${unit}`)) return 0;
 
@@ -232,6 +250,9 @@ function syncViewportMetrics(force = false) {
       }, 50);
     });
   } else if (wasBottomChatKeyboardOpen) {
+    if (isBottomChatInputFocused()) {
+      dom.messageInput.blur();
+    }
     window.requestAnimationFrame(() => {
       const maxScroll = Math.max(
         0,
@@ -318,6 +339,14 @@ export function wireLayoutMetrics() {
 
   window.addEventListener("scroll", rememberNativePageScrollPosition, {
     passive: true,
+  });
+  document.addEventListener("touchmove", preventBottomChatPageScroll, {
+    capture: true,
+    passive: false,
+  });
+  document.addEventListener("wheel", preventBottomChatPageScroll, {
+    capture: true,
+    passive: false,
   });
 
   window.addEventListener("resize", () => {

@@ -18,7 +18,7 @@ import {
 } from "./features/icons-tooltips.js?v=20260904-help-invite-fixes-02";
 import {
   wireLayoutMetrics,
-} from "./features/layout-metrics.js?v=20260909-large-viewport-mobile-10";
+} from "./features/layout-metrics.js?v=20260909-keyboard-focus-reset-17";
 import {
   renderPresence,
   wireIdentityEvents,
@@ -26,7 +26,7 @@ import {
 import {
   showLobby,
   initializeAboutDialog,
-} from "./features/session-ui.js?v=20260902-stable-page-viewport-01";
+} from "./features/session-ui.js?v=20260909-keyboard-focus-reset-17";
 import {
   buildEmojiPicker,
   getPersistedInsideChatStyle,

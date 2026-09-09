@@ -10,6 +10,7 @@ let lastNativePageScrollMax = 0;
 let lastNativePageScrollTop = 0;
 let pageBottomRestoreTimer = 0;
 let bottomChatScrollBeforeKeyboard = null;
+let bottomChatPageScrollLockTop = null;
 let wasBottomChatKeyboardOpen = false;
 let bottomChatKeyboardHandleAnchor = null;
 let fullscreenMetricResyncTimers = [];
@@ -100,13 +101,22 @@ function isBottomChatScrollableTarget(target) {
     && Boolean(target.closest([
       ".session-view[data-chat-dock=\"bottom\"] .messages",
       ".session-view[data-chat-dock=\"bottom\"] .chat-scrollbar",
-      ".session-view[data-chat-dock=\"bottom\"] .message-form",
+      ".session-view[data-chat-dock=\"bottom\"] textarea",
     ].join(",")));
 }
 
 function preventBottomChatPageScroll(event) {
   if (!isBottomChatKeyboardOpen() || isBottomChatScrollableTarget(event.target)) return;
   event.preventDefault();
+}
+
+function restoreBottomChatPageScrollPosition() {
+  if (!isBottomChatKeyboardOpen() || !Number.isFinite(bottomChatPageScrollLockTop)) return;
+
+  const currentTop = window.scrollY || 0;
+  if (Math.abs(currentTop - bottomChatPageScrollLockTop) > 1) {
+    window.scrollTo({ top: bottomChatPageScrollLockTop, behavior: "auto" });
+  }
 }
 
 function measureViewportUnit(unit) {
@@ -320,6 +330,7 @@ function syncViewportMetrics(force = false) {
   rootStyle.setProperty("--app-viewport-offset-top", `${metrics.offsetTop}px`);
   if (bottomChatKeyboardOpen && !wasBottomChatKeyboardOpen) {
     bottomChatScrollBeforeKeyboard = window.scrollY;
+    bottomChatPageScrollLockTop = null;
     captureBottomChatKeyboardHandlePosition();
   }
   document.documentElement.classList.toggle(
@@ -329,11 +340,15 @@ function syncViewportMetrics(force = false) {
   if (bottomChatKeyboardOpen) {
     window.requestAnimationFrame(() => {
       alignBottomChatKeyboardViewport();
+      if (bottomChatPageScrollLockTop === null) {
+        bottomChatPageScrollLockTop = window.scrollY || 0;
+      }
       window.setTimeout(() => {
         alignBottomChatKeyboardViewport();
       }, 50);
     });
   } else if (wasBottomChatKeyboardOpen) {
+    bottomChatPageScrollLockTop = null;
     restoreBottomChatKeyboardHandlePosition();
     if (isBottomChatInputFocused()) {
       dom.messageInput.blur();
@@ -395,8 +410,9 @@ function alignBottomChatKeyboardViewport() {
   if (!dom.workspace || !isBottomChatInputFocused()) return;
 
   const workspaceTop = dom.workspace.getBoundingClientRect().top + window.scrollY;
-  if (Math.abs(window.scrollY - workspaceTop) > 1) {
-    window.scrollTo({ top: Math.max(0, workspaceTop), behavior: "auto" });
+  const targetTop = bottomChatPageScrollLockTop ?? Math.max(0, workspaceTop);
+  if (Math.abs(window.scrollY - targetTop) > 1) {
+    window.scrollTo({ top: targetTop, behavior: "auto" });
   }
   syncBottomChatVisibleHeight(getCurrentViewportHeight());
 
@@ -437,6 +453,9 @@ export function wireLayoutMetrics() {
   rememberNativePageScrollPosition();
 
   window.addEventListener("scroll", rememberNativePageScrollPosition, {
+    passive: true,
+  });
+  window.addEventListener("scroll", restoreBottomChatPageScrollPosition, {
     passive: true,
   });
   document.addEventListener("touchmove", preventBottomChatPageScroll, {

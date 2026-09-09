@@ -1247,3 +1247,39 @@
     box-shadow: none !important;
   }
 }
+
+/* En apaisado el ancho CSS puede superar 680px aunque siga siendo un layout
+   móvil. Cuando Chrome muestra el teclado, la barra del navegador deja una
+   zona web muy baja; el chat enfocado debe ocupar esa zona, no conservar las
+   dos filas completas del layout apaisado y quedar debajo del teclado. */
+@media (max-width: 980px) {
+  html.viewport-landscape.bottom-chat-keyboard-open body:not(.is-lobby)
+    .session-view[data-chat-dock="bottom"] .workspace {
+    height: var(--chat-bottom-viewport-height, var(--app-viewport-height)) !important;
+    min-height: 0 !important;
+    padding-top: 0 !important;
+    grid-template-rows: 0 minmax(0, 1fr) !important;
+  }
+
+  html.viewport-landscape.bottom-chat-keyboard-open body:not(.is-lobby)
+    .session-view[data-chat-dock="bottom"] .video-area {
+    height: 0 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  html.viewport-landscape.bottom-chat-keyboard-open body:not(.is-lobby)
+    .session-view[data-chat-dock="bottom"] .chat-area {
+    height: auto !important;
+    min-height: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    grid-template-rows: 0 minmax(0, 1fr) !important;
+  }
+
+  html.viewport-landscape.bottom-chat-keyboard-open body:not(.is-lobby)
+    .session-view[data-chat-dock="bottom"] .chat-area > .message-form {
+    bottom: 0 !important;
+  }
+}

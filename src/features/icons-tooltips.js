@@ -1,6 +1,6 @@
 import { dom } from "../core/dom.js";
 import { state } from "../core/state.js?v=20260902-mobile-real-browser-01";
-import { setConnection } from "./session-ui.js?v=20260909-keyboard-arrow-30";
+import { setConnection } from "./session-ui.js?v=20260909-keyboard-page-scroll-lock-31";
 import { createForeignDocumentIcon } from "./foreign-lucide-icon.js";
 import {
   isTouchPointer,

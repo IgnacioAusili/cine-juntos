@@ -16,7 +16,7 @@ import {
 import { createRandomId } from "../../core/random-id.js?v=20260902-mobile-real-browser-02";
 import {
   setSyncStatus,
-} from "../session-ui.js?v=20260909-keyboard-arrow-30";
+} from "../session-ui.js?v=20260909-keyboard-page-scroll-lock-31";
 import { refreshTooltipForTarget } from "../icons-tooltips.js?v=20260904-help-invite-fixes-02";
 import { markParticipantActive } from "../presence.js?v=20260901-chat-arrow-unified-03";
 import { clearReplyTarget } from "./chat-reply.js?v=20260826-reply-sync-close-03";

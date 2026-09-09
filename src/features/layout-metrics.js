@@ -103,6 +103,12 @@ function preservePageBottomAfterViewportChange() {
 function getViewportMetrics() {
   const viewport = window.visualViewport;
   const documentElement = document.documentElement;
+  const currentViewportHeight = getCurrentViewportHeight();
+  const hasReducedViewport = Boolean(
+    lastViewportMetrics?.height
+      && currentViewportHeight > 0
+      && currentViewportHeight < lastViewportMetrics.height - 80,
+  );
   // La altura del viewport visual cambia cuando el navegador móvil oculta o
   // muestra sus barras durante un swipe. No usarla para el tamaño estructural
   // de la página: si cambia mientras se desplaza, el document.scrollHeight
@@ -116,9 +122,8 @@ function getViewportMetrics() {
     || window.innerWidth
     || viewport?.width
     || 0;
-  const layoutHeight = isBottomChatInputFocused()
-    ? getCurrentViewportHeight()
-    : getLargeViewportHeight()
+  const layoutHeight = (hasReducedViewport && lastViewportMetrics?.height)
+    || getLargeViewportHeight()
     || window.innerHeight
     || viewport?.height
     || 0;
@@ -190,6 +195,10 @@ function syncViewportMetrics(force = false) {
   const wasAtPageBottom = previousMaxScroll > 4
     && window.scrollY >= previousMaxScroll - 4;
   const metrics = getStableViewportMetrics(force);
+  const currentViewportHeight = getCurrentViewportHeight();
+  const bottomChatKeyboardOpen = isBottomChatInputFocused()
+    && currentViewportHeight > 0
+    && metrics.height - currentViewportHeight > 80;
   if (!isOverlayChatInputFocused() && !isBottomChatInputFocused()) {
     lastViewportMetrics = metrics;
   }
@@ -199,8 +208,25 @@ function syncViewportMetrics(force = false) {
   );
   rootStyle.setProperty("--app-viewport-width", `${metrics.width}px`);
   rootStyle.setProperty("--app-viewport-height", `${metrics.height}px`);
+  rootStyle.setProperty(
+    "--chat-bottom-viewport-height",
+    `${currentViewportHeight || metrics.height}px`,
+  );
+  syncBottomChatVisibleHeight(currentViewportHeight);
   rootStyle.setProperty("--app-viewport-offset-left", `${metrics.offsetLeft}px`);
   rootStyle.setProperty("--app-viewport-offset-top", `${metrics.offsetTop}px`);
+  document.documentElement.classList.toggle(
+    "bottom-chat-keyboard-open",
+    bottomChatKeyboardOpen,
+  );
+  if (bottomChatKeyboardOpen) {
+    window.requestAnimationFrame(() => {
+      alignBottomChatKeyboardViewport();
+      window.setTimeout(() => {
+        alignBottomChatKeyboardViewport();
+      }, 50);
+    });
+  }
 
   // Un cambio real de orientación/ancho puede alterar la altura estructural.
   // Si ya estábamos abajo, el nuevo alto aumenta el documento y hay que
@@ -226,6 +252,27 @@ function syncViewportMetrics(force = false) {
 function syncSessionToolbarHeight() {
   const height = Math.round(dom.sessionToolbar?.getBoundingClientRect().height || 0);
   document.documentElement.style.setProperty("--session-toolbar-height", `${height}px`);
+}
+
+function syncBottomChatVisibleHeight(viewportHeight) {
+  if (!dom.chatArea || !viewportHeight) return;
+
+  const chatRect = dom.chatArea.getBoundingClientRect();
+  const availableChatHeight = Math.max(0, viewportHeight - chatRect.top);
+  document.documentElement.style.setProperty(
+    "--chat-bottom-visible-height",
+    `${availableChatHeight}px`,
+  );
+}
+
+function alignBottomChatKeyboardViewport() {
+  if (!dom.workspace || !isBottomChatInputFocused()) return;
+
+  const workspaceTop = dom.workspace.getBoundingClientRect().top + window.scrollY;
+  if (Math.abs(window.scrollY - workspaceTop) > 1) {
+    window.scrollTo({ top: Math.max(0, workspaceTop), behavior: "auto" });
+  }
+  syncBottomChatVisibleHeight(getCurrentViewportHeight());
 }
 
 function syncLayoutMetrics(forceViewport = false) {
@@ -273,7 +320,7 @@ export function wireLayoutMetrics() {
     // ese caso innerHeight cambia, pero el viewport estructural y el ancho no:
     // recalcularlo agranda/achica el reproductor durante el scroll. La altura
     // solo se vuelve a tomar en un cambio real de ancho/orientación.
-    preservePageBottomAfterViewportChange();
+    if (!isBottomChatInputFocused()) preservePageBottomAfterViewportChange();
     scheduleLayoutMetricsSync(!isMobileLayout() || widthChanged);
   }, {
     passive: true,
@@ -290,7 +337,7 @@ export function wireLayoutMetrics() {
         && lockedMobileViewportMetrics
         && viewportWidth !== lockedMobileViewportMetrics.width,
       );
-      preservePageBottomAfterViewportChange();
+      if (!isBottomChatInputFocused()) preservePageBottomAfterViewportChange();
       scheduleLayoutMetricsSync(widthChanged);
     },
     { passive: true },

@@ -1174,3 +1174,27 @@
     transition: color 160ms ease, background 160ms ease;
   }
 }
+
+/* Al abrir el teclado del chat inferior, Chrome reduce el viewport de layout.
+   La pagina conserva su altura estructural y solo se comprime la segunda fila:
+   el reproductor no cambia de tamaño ni el documento se desplaza para mostrar
+   un chat completo que ya no entra sobre el teclado. */
+@media (max-width: 680px) {
+  html.bottom-chat-keyboard-open body:not(.is-lobby)
+    .session-view[data-chat-dock="bottom"] .chat-area > .message-form {
+    bottom: 0 !important;
+  }
+
+  html.bottom-chat-keyboard-open body:not(.is-lobby)
+    .session-view[data-chat-dock="bottom"] .workspace {
+    height: var(--app-viewport-height) !important;
+    min-height: 0 !important;
+    padding-top: 0 !important;
+    grid-template-rows:
+      minmax(0, 40%)
+      minmax(
+        0,
+        var(--chat-bottom-visible-height, 0px)
+      ) !important;
+  }
+}

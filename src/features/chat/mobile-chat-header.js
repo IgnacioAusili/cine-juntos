@@ -23,6 +23,7 @@ const CONTEXTUAL_TARGET_SELECTOR = [
 
 let hideTimer = 0;
 let activeGesture = null;
+let headerCollapsedBeforeKeyboard = null;
 
 function isMobileBottomDock() {
   return Boolean(
@@ -39,6 +40,10 @@ function isLayoutTransitioning() {
       || dom.sessionView?.classList.contains("chat-bottom-collapse-visual")
       || dom.sessionView?.classList.contains("chat-bottom-expand-visual"),
   );
+}
+
+function isBottomChatKeyboardOpen() {
+  return document.documentElement.classList.contains("bottom-chat-keyboard-open");
 }
 
 function isActiveBottomChat() {
@@ -86,12 +91,20 @@ function setHeaderCollapsed(collapsed) {
     dom.sessionView.classList.remove("chat-header-collapsed");
     return;
   }
-  if (collapsed) hideTooltip(true);
-  dom.sessionView.classList.toggle("chat-header-collapsed", Boolean(collapsed));
+  const forcedByKeyboard = isBottomChatKeyboardOpen();
+  if (collapsed || forcedByKeyboard) hideTooltip(true);
+  dom.sessionView.classList.toggle(
+    "chat-header-collapsed",
+    Boolean(collapsed || forcedByKeyboard),
+  );
 }
 
 function scheduleHeaderHide() {
   clearHideTimer();
+  if (isBottomChatKeyboardOpen()) {
+    setHeaderCollapsed(true);
+    return;
+  }
   if (!isActiveBottomChat() || !hasMessages() || activeGesture || hasPersistentActivity()) return;
 
   hideTimer = window.setTimeout(() => {
@@ -106,6 +119,10 @@ function isContextualTarget(target) {
 }
 
 function revealHeader() {
+  if (isBottomChatKeyboardOpen()) {
+    setHeaderCollapsed(true);
+    return;
+  }
   if (!isActiveBottomChat()) return;
   clearHideTimer();
   setHeaderCollapsed(false);
@@ -192,6 +209,25 @@ function handleWheel(event) {
 }
 
 function syncHeaderMode() {
+  if (isBottomChatKeyboardOpen() && isActiveBottomChat()) {
+    if (headerCollapsedBeforeKeyboard === null) {
+      headerCollapsedBeforeKeyboard = dom.sessionView.classList.contains("chat-header-collapsed");
+    }
+    clearHideTimer();
+    setHeaderCollapsed(true);
+    return;
+  }
+
+  if (!isBottomChatKeyboardOpen() && headerCollapsedBeforeKeyboard !== null) {
+    const shouldRestoreCollapsed = headerCollapsedBeforeKeyboard;
+    headerCollapsedBeforeKeyboard = null;
+    if (isActiveBottomChat()) {
+      setHeaderCollapsed(shouldRestoreCollapsed);
+      if (!shouldRestoreCollapsed) scheduleHeaderHide();
+      return;
+    }
+  }
+
   if (!isActiveBottomChat()) {
     clearHideTimer();
     setHeaderCollapsed(false);
@@ -226,5 +262,11 @@ export function wireMobileBottomChatHeader() {
 
   window.addEventListener("chat-layout-settled", syncHeaderMode, { passive: true });
   window.addEventListener("resize", syncHeaderMode, { passive: true });
+  window.visualViewport?.addEventListener("resize", syncHeaderMode, { passive: true });
+  const viewportStateObserver = new MutationObserver(syncHeaderMode);
+  viewportStateObserver.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ["class"],
+  });
   syncHeaderMode();
 }

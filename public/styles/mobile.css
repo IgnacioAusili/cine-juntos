@@ -1206,4 +1206,21 @@
         var(--chat-bottom-visible-height, 0px)
       ) !important;
   }
+
+  html.bottom-chat-keyboard-open body:not(.is-lobby)
+    .session-view[data-chat-dock="bottom"] .chat-tools {
+    min-height: 0 !important;
+    height: 0 !important;
+    max-height: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transform: none !important;
+  }
+
+  html.bottom-chat-keyboard-open body:not(.is-lobby)
+    .session-view[data-chat-dock="bottom"] .chat-area {
+    grid-template-rows: 0px minmax(0, 1fr) !important;
+  }
 }

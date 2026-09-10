@@ -282,9 +282,9 @@
   }
 
   .player-status-badge.empty .video-status-dot {
-    width: 7px;
-    height: 7px;
-    flex-basis: 7px;
+    width: 8px;
+    height: 8px;
+    flex-basis: 8px;
   }
 
   .player-status-badge.video-status.empty {
@@ -292,8 +292,8 @@
   }
 
   .player-status-badge.video-status.empty .video-status-dot {
-    background: rgba(255, 255, 255, 0.9);
-    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.13);
+    background: currentColor;
+    box-shadow: none;
   }
 }
 

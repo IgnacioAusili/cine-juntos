@@ -32,7 +32,7 @@ import {
   setInsideChatVisible,
   syncExternalChatCollapseHandleOffset,
   syncChatAutoExpandControls,
-} from "./chat-layout.js?v=20260904-mobile-landscape-bottom-chat-07";
+} from "./chat-layout.js?v=20260910-mobile-chat-side-placement-02";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 import { focusChatInput } from "./chat-input-focus.js";
 
@@ -207,7 +207,7 @@ export {
   setInsideChatVisible,
   syncChatAutoExpandControls,
   updateCollapseButton,
-} from "./chat-layout.js?v=20260904-mobile-landscape-bottom-chat-07";
+} from "./chat-layout.js?v=20260910-mobile-chat-side-placement-02";
 
 export function wireChatEvents() {
   syncChatAutoExpandControls();
@@ -531,7 +531,12 @@ export function wireChatEvents() {
   });
 
   [dom.mainMessageSend, dom.overlayMessageSend].forEach((button) => {
-    button?.addEventListener("mousedown", (event) => event.preventDefault());
+    const preventSendButtonFocus = (event) => {
+      if (!isMobileChatLayout()) return;
+      event.preventDefault();
+    };
+    button?.addEventListener("pointerdown", preventSendButtonFocus);
+    button?.addEventListener("mousedown", preventSendButtonFocus);
   });
 
   window.addEventListener("scroll", syncUnreadBadgesWithVisibility, {

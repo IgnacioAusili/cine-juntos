@@ -225,12 +225,46 @@
   }
 
   html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-tools {
+    position: relative;
+    z-index: 4;
     height: 38px;
     min-height: 38px;
     max-height: 38px;
     gap: 4px;
     padding-left: 4px;
     padding-right: 4px;
+    transition:
+      opacity 220ms ease,
+      padding 220ms ease;
+  }
+
+  /* El header lateral comparte el ciclo táctil del chat inferior: una
+     pulsación en la superficie del header lo pliega, y otra lo despliega.
+     Los controles interactivos siguen conservando sus propios eventos. */
+  html.viewport-landscape body:not(.is-lobby)
+    .session-view[data-chat-dock="right"] .chat-area {
+    gap: 3px;
+    grid-template-rows: 38px minmax(0, 1fr);
+    transition: grid-template-rows 220ms ease;
+  }
+
+  html.viewport-landscape body:not(.is-lobby)
+    .session-view.chat-header-collapsed[data-chat-dock="right"] .chat-tools {
+    min-height: 0;
+    height: auto;
+    max-height: none;
+    padding-top: 0;
+    padding-bottom: 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    transform: translateY(0);
+  }
+
+  html.viewport-landscape body:not(.is-lobby)
+    .session-view.chat-header-collapsed[data-chat-dock="right"] .chat-area {
+    gap: 3px;
+    grid-template-rows: 0px minmax(0, 1fr);
   }
 
   html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-tools-actions {
@@ -405,6 +439,28 @@
   html.viewport-landscape body:not(.is-lobby) .session-view.chat-collapsed[data-chat-dock="right"] .chat-area {
     flex-basis: 0;
     width: 0;
+  }
+
+  /* Al abrir el teclado en el chat lateral, el viewport de layout se reduce.
+     Comprimir el workspace contra ese alto mantiene video y chat anclados a
+     la misma posición de página; el scroll automático de Chrome ya no tiene
+     que subir toda la sesión para encontrar el composer. */
+  html.viewport-landscape.right-chat-keyboard-open
+    body:not(.is-lobby):not(.fullscreen-mode)
+    .session-view[data-chat-dock="right"] .workspace {
+    height: var(--right-chat-visible-height, var(--app-viewport-height)) !important;
+    max-height: var(--right-chat-visible-height, var(--app-viewport-height)) !important;
+    min-height: 0 !important;
+  }
+
+  html.viewport-landscape.right-chat-keyboard-open
+    body:not(.is-lobby):not(.fullscreen-mode)
+    .session-view[data-chat-dock="right"] .video-area,
+  html.viewport-landscape.right-chat-keyboard-open
+    body:not(.is-lobby):not(.fullscreen-mode)
+    .session-view[data-chat-dock="right"] .chat-area {
+    height: 100% !important;
+    min-height: 0 !important;
   }
 
   /* Solo el landscape full-bleed móvil elimina el gutter exterior. La

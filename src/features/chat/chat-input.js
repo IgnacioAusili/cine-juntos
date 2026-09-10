@@ -17,13 +17,13 @@ import { createRandomId } from "../../core/random-id.js?v=20260902-mobile-real-b
 import {
   setSyncStatus,
 } from "../session-ui.js?v=20260909-landscape-chat-emoji-34";
-import { refreshTooltipForTarget } from "../icons-tooltips.js?v=20260904-help-invite-fixes-02";
+import { refreshTooltipForTarget } from "../icons-tooltips.js?v=20260910-status-tooltip-01";
 import { markParticipantActive } from "../presence.js?v=20260901-chat-arrow-unified-03";
 import { clearReplyTarget } from "./chat-reply.js?v=20260826-reply-sync-close-03";
 import { renderMessage } from "./chat-render.js?v=20260904-mobile-landscape-bottom-chat-07";
 import {
   completeAutoOpenedChatResponse,
-} from "./chat-layout.js?v=20260904-mobile-landscape-bottom-chat-07";
+} from "./chat-layout.js?v=20260910-mobile-chat-side-placement-02";
 import { queuePinnedChatScrollSync, isPinnedToBottom } from "./chat-scroll-sync.js?v=20260904-mobile-landscape-bottom-chat-07";
 import { focusChatInput } from "./chat-input-focus.js";
 import {

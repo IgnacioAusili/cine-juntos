@@ -12,13 +12,30 @@
   white-space: nowrap;
 }
 
-.app-status-dot {
+.status-dot {
+  --status-glow: rgba(120, 130, 141, 0.28);
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
   width: 8px;
   height: 8px;
   flex: 0 0 8px;
   border-radius: 999px;
   background: var(--muted-2);
-  box-shadow: 0 0 0 3px rgba(120, 130, 141, 0.12);
+  box-shadow: none;
+}
+
+.status-dot::before {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  z-index: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle, var(--status-glow) 0%, transparent 72%);
+  pointer-events: none;
+}
+
+.app-status-dot {
   cursor: help;
 }
 
@@ -32,8 +49,8 @@
 }
 
 .app-status[data-state="online"] .app-status-dot {
+  --status-glow: rgba(56, 216, 121, 0.38);
   background: #38d879;
-  box-shadow: 0 0 0 3px rgba(56, 216, 121, 0.14);
 }
 
 .app-status[data-state="local"] {
@@ -42,8 +59,8 @@
 }
 
 .app-status[data-state="local"] .app-status-dot {
+  --status-glow: rgba(240, 140, 58, 0.37);
   background: #f08c3a;
-  box-shadow: 0 0 0 3px rgba(240, 140, 58, 0.14);
 }
 
 .app-status[data-state="starting"] .app-status-dot {
@@ -56,8 +73,8 @@
 }
 
 .app-status[data-state="error"] .app-status-dot {
+  --status-glow: rgba(233, 68, 68, 0.4);
   background: var(--danger);
-  box-shadow: 0 0 0 3px rgba(233, 68, 68, 0.14);
 }
 
 @keyframes statusPulse {

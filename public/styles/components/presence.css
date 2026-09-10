@@ -19,16 +19,14 @@
 }
 
 .presence-dot {
-  width: 8px;
-  height: 8px;
+  --status-glow: rgba(56, 216, 121, 0.38);
   border-radius: 999px;
   background: #38d879;
-  box-shadow: 0 0 0 3px rgba(56, 216, 121, 0.14);
 }
 
 .presence-pill[data-state="solo"] .presence-dot {
+  --status-glow: rgba(224, 107, 107, 0.4);
   background: #e06b6b;
-  box-shadow: 0 0 0 3px rgba(224, 107, 107, 0.14);
 }
 
 .presence-self-label,

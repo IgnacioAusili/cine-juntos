@@ -774,4 +774,12 @@
     flex-basis: 0;
     width: 0;
   }
+
+  /* Un poco más de recorrido para el volumen sin agrandar la barra de
+     controles ni cambiar el tamaño del thumb. */
+  html.viewport-landscape body:not(.is-lobby) .player-volume-slider-wrap,
+  html.viewport-landscape body:not(.is-lobby) .player-volume-input {
+    width: 68px;
+    max-width: 68px;
+  }
 }

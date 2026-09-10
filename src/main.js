@@ -46,7 +46,7 @@ import {
 import { wireMobileFullscreenOrientation } from "./features/player/mobile-fullscreen-orientation.js";
 import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20260910-landscape-chat-header-03";
 import { wireMobileLandscapeVideoSnap } from "./features/mobile-landscape-video-snap.js?v=20260909-landscape-snap-29";
-import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260910-mobile-chat-side-placement-01";
+import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260910-mobile-copy-feedback-01";
 import { wireTouchHover } from "./core/touch-interactions.js?v=20260829-touch-hold-fix-01";
 import { wireMobileDebugTools } from "./features/mobile-debug.js?v=20260907-mobile-debug-tools-02";
 

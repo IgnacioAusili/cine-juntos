@@ -1,4 +1,4 @@
-// Controla la cabecera del chat inferior en pantallas tactiles.
+// Controla la cabecera del chat en pantallas tactiles.
 import { dom } from "../../core/dom.js";
 import { state } from "../../core/state.js?v=20260902-mobile-real-browser-01";
 import { hideTooltip } from "../icons-tooltips.js?v=20260910-status-tooltip-01";
@@ -12,7 +12,6 @@ const CONTEXTUAL_TARGET_SELECTOR = [
   ".message-form",
   ".reply-preview",
   ".image-preview-container",
-  ".chat-tools",
   ".chat-scrollbar",
   ".scroll-bottom-btn",
   "button",
@@ -59,9 +58,14 @@ function isBottomChatKeyboardOpen() {
   return document.documentElement.classList.contains("bottom-chat-keyboard-open");
 }
 
-function isActiveBottomChat() {
+function isChatKeyboardOpen() {
+  return isBottomChatKeyboardOpen()
+    || document.documentElement.classList.contains("right-chat-keyboard-open");
+}
+
+function isActiveChatDock() {
   return Boolean(
-    isMobileBottomDock()
+    isMobileChatHeaderDock()
       && dom.sessionView
       && !dom.sessionView.hidden
       && !dom.sessionView.classList.contains("chat-collapsed")
@@ -106,12 +110,12 @@ function hasPersistentActivity() {
 
 function setHeaderCollapsed(collapsed) {
   if (!dom.sessionView) return;
-  if (!isMobileBottomDock() || isLayoutTransitioning()) {
+  if (!isMobileChatHeaderDock() || isLayoutTransitioning()) {
     dom.sessionView.classList.remove("chat-header-collapsed");
     return;
   }
   const keepVisibleWithoutMessages = !hasMessages();
-  const forcedByKeyboard = isBottomChatKeyboardOpen() || headerKeyboardPreparing;
+  const forcedByKeyboard = isChatKeyboardOpen() || headerKeyboardPreparing;
   const shouldCollapse = forcedByKeyboard || (Boolean(collapsed) && !keepVisibleWithoutMessages);
   if (shouldCollapse) hideTooltip(true);
   dom.sessionView.classList.toggle(
@@ -120,13 +124,26 @@ function setHeaderCollapsed(collapsed) {
   );
 }
 
+function isMobileLandscapeRightDock() {
+  return Boolean(
+    dom.sessionView
+      && dom.sessionView.dataset.chatDock === "right"
+      && document.documentElement.classList.contains("viewport-landscape")
+      && window.matchMedia("(max-width: 980px) and (orientation: landscape)").matches,
+  );
+}
+
+function isMobileChatHeaderDock() {
+  return isMobileBottomDock() || isMobileLandscapeRightDock();
+}
+
 function scheduleHeaderHide() {
   clearHideTimer();
-  if (isBottomChatKeyboardOpen() || headerKeyboardPreparing) {
+  if (isChatKeyboardOpen() || headerKeyboardPreparing) {
     setHeaderCollapsed(true);
     return;
   }
-  if (!isActiveBottomChat()) return;
+  if (!isActiveChatDock()) return;
   if (!hasMessages()) {
     setHeaderCollapsed(false);
     return;
@@ -135,13 +152,16 @@ function scheduleHeaderHide() {
 
   hideTimer = window.setTimeout(() => {
     hideTimer = 0;
-    if (!isActiveBottomChat() || activeGesture || hasPersistentActivity()) return;
+    if (!isActiveChatDock() || activeGesture || hasPersistentActivity()) return;
     setHeaderCollapsed(true);
   }, HEADER_IDLE_MS);
 }
 
 function isContextualTarget(target) {
-  return target instanceof Element && Boolean(target.closest(CONTEXTUAL_TARGET_SELECTOR));
+  if (!(target instanceof Element)) return false;
+  const chatTools = target.closest(".chat-tools");
+  if (chatTools) return Boolean(target.closest(MESSAGE_INTERACTIVE_SELECTOR));
+  return Boolean(target.closest(CONTEXTUAL_TARGET_SELECTOR));
 }
 
 function isMessageSurfaceTap(target) {
@@ -150,18 +170,18 @@ function isMessageSurfaceTap(target) {
 }
 
 function revealHeader() {
-  if (isBottomChatKeyboardOpen()) {
+  if (isChatKeyboardOpen()) {
     setHeaderCollapsed(true);
     return;
   }
-  if (!isActiveBottomChat()) return;
+  if (!isActiveChatDock()) return;
   clearHideTimer();
   setHeaderCollapsed(false);
   scheduleHeaderHide();
 }
 
 function scheduleHeaderToggle() {
-  if (isBottomChatKeyboardOpen() || !isActiveBottomChat()) return;
+  if (isChatKeyboardOpen() || !isActiveChatDock()) return;
   if (!hasMessages()) {
     setHeaderCollapsed(false);
     return;
@@ -169,25 +189,26 @@ function scheduleHeaderToggle() {
   clearTapToggleTimer();
   tapToggleTimer = window.setTimeout(() => {
     tapToggleTimer = 0;
-    if (
-      isBottomChatKeyboardOpen()
-        || !isActiveBottomChat()
-        || hasPersistentActivity()
-    ) return;
+    if (isChatKeyboardOpen() || !isActiveChatDock()) return;
 
-    const shouldCollapse = !dom.sessionView.classList.contains("chat-header-collapsed");
+    const isCollapsed = dom.sessionView.classList.contains("chat-header-collapsed");
+    // La actividad persistente impide volver a ocultar la cabecera, pero no
+    // debe impedir que un toque sobre el chat la revele si ya estaba plegada.
+    if (!isCollapsed && hasPersistentActivity()) return;
+
+    const shouldCollapse = !isCollapsed;
     setHeaderCollapsed(shouldCollapse);
     if (!shouldCollapse) scheduleHeaderHide();
   }, TAP_TOGGLE_DELAY_MS);
 }
 
 function scheduleHeaderCollapseAfterMessage() {
-  if (!isActiveBottomChat() || !hasMessages()) return;
+  if (!isActiveChatDock() || !hasMessages()) return;
   clearHideTimer();
   clearTapToggleTimer();
   window.setTimeout(() => {
-    if (!isActiveBottomChat() || !hasMessages() || hasPersistentActivity()) return;
-    if (isBottomChatKeyboardOpen()) headerCollapsedBeforeKeyboard = true;
+    if (!isActiveChatDock() || !hasMessages() || hasPersistentActivity()) return;
+    if (isChatKeyboardOpen()) headerCollapsedBeforeKeyboard = true;
     setHeaderCollapsed(true);
   }, TAP_TOGGLE_DELAY_MS);
 }
@@ -261,7 +282,7 @@ function finishGesture(event) {
 }
 
 function handleWheel(event) {
-  if (!isActiveBottomChat() || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
+  if (!isActiveChatDock() || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
 
   const maxScrollTop = Math.max(0, dom.messages.scrollHeight - dom.messages.clientHeight);
   if (maxScrollTop <= 1) return;
@@ -276,7 +297,7 @@ function handleWheel(event) {
 }
 
 function syncHeaderMode() {
-  if ((isBottomChatKeyboardOpen() || headerKeyboardPreparing) && isActiveBottomChat()) {
+  if ((isChatKeyboardOpen() || headerKeyboardPreparing) && isActiveChatDock()) {
     if (headerCollapsedBeforeKeyboard === null) {
       headerCollapsedBeforeKeyboard = dom.sessionView.classList.contains("chat-header-collapsed");
     }
@@ -285,17 +306,17 @@ function syncHeaderMode() {
     return;
   }
 
-  if (!isBottomChatKeyboardOpen() && !headerKeyboardPreparing && headerCollapsedBeforeKeyboard !== null) {
+  if (!isChatKeyboardOpen() && !headerKeyboardPreparing && headerCollapsedBeforeKeyboard !== null) {
     const shouldRestoreCollapsed = headerCollapsedBeforeKeyboard;
     headerCollapsedBeforeKeyboard = null;
-    if (isActiveBottomChat()) {
+    if (isActiveChatDock()) {
       setHeaderCollapsed(shouldRestoreCollapsed);
       if (!shouldRestoreCollapsed) scheduleHeaderHide();
       return;
     }
   }
 
-  if (!isActiveBottomChat()) {
+  if (!isActiveChatDock()) {
     clearHideTimer();
     setHeaderCollapsed(false);
     return;
@@ -313,7 +334,7 @@ export function wireMobileBottomChatHeader() {
   dom.messages.addEventListener("wheel", handleWheel, { passive: true });
 
   dom.chatArea.addEventListener("focusin", (event) => {
-    if (event.target === dom.messageInput && isActiveBottomChat()) {
+    if (event.target === dom.messageInput && isActiveChatDock()) {
       if (headerCollapsedBeforeKeyboard === null) {
         headerCollapsedBeforeKeyboard = dom.sessionView.classList.contains("chat-header-collapsed");
       }

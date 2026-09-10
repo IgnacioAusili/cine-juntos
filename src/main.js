@@ -44,7 +44,7 @@ import {
   wirePlayerEvents,
 } from "./features/player/index.js?v=20260905-overlay-height-cap-04";
 import { wireMobileFullscreenOrientation } from "./features/player/mobile-fullscreen-orientation.js";
-import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20260910-chat-empty-header-02";
+import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20260910-landscape-chat-header-03";
 import { wireMobileLandscapeVideoSnap } from "./features/mobile-landscape-video-snap.js?v=20260909-landscape-snap-29";
 import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260910-mobile-chat-side-placement-01";
 import { wireTouchHover } from "./core/touch-interactions.js?v=20260829-touch-hold-fix-01";

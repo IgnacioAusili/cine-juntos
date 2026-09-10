@@ -275,6 +275,7 @@ function getViewportMetrics(force = false) {
       && currentViewportHeight > 0
       && currentViewportHeight < lastViewportMetrics.height - 80,
   );
+  const fullscreenActive = isFullscreenActive();
   // Una sincronización forzada también debe poder descartar una altura vieja
   // que haya quedado después de salir de fullscreen. La altura del viewport visual cambia cuando el navegador móvil oculta o
   // muestra sus barras durante un swipe. No usarla para el tamaño estructural
@@ -289,7 +290,7 @@ function getViewportMetrics(force = false) {
     || window.innerWidth
     || viewport?.width
     || 0;
-  const layoutHeight = rightChatKeyboardOpen
+  const layoutHeight = rightChatKeyboardOpen || fullscreenActive
     ? currentViewportHeight
     : (hasReducedViewport && lastViewportMetrics?.height)
       || getLargeViewportHeight()

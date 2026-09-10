@@ -24,7 +24,7 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap"
     />
     <link rel="icon" href="./public/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="./public/styles.css?v=20260909-landscape-snap-30" />
+    <link rel="stylesheet" href="./public/styles.css?v=20260910-status-text-03" />
   </head>
   <body class="is-lobby">
     <div class="app-shell">
@@ -48,7 +48,7 @@
               </span>
               <h1 class="room-chip-title">
                 <span class="app-status room-chip-status-inline" id="connectionStatus" data-state="starting" data-tooltip="Conectando con la sala" aria-label="Estado de la aplicación: Iniciando. Conectando con la sala">
-                  <span class="app-status-dot" aria-hidden="true"></span>
+                  <span class="status-dot app-status-dot" aria-hidden="true"></span>
                 </span>
                 SALA
                 <span class="room-chip-title-actions">
@@ -336,7 +336,7 @@
                 title="Estado de video"
                 data-tooltip="Todavía no hay un video cargado en la sala"
               >
-                <span class="video-status-dot" id="videoStatusIcon" aria-hidden="true"></span>
+                <span class="status-dot video-status-dot" id="videoStatusIcon" aria-hidden="true"></span>
                 <span id="videoStatusText">Sin contenido</span>
               </p>
 
@@ -534,7 +534,7 @@
                     aria-label="Usuarios conectados"
                     data-tooltip="Conectados: vos"
                   >
-                    <span class="presence-dot" aria-hidden="true"></span>
+                    <span class="status-dot presence-dot" aria-hidden="true"></span>
                     <span class="presence-self-label" id="overlayPresenceSelfLabel" hidden></span>
                     <span id="overlayParticipantCount">1</span>
                   </button>
@@ -657,7 +657,7 @@
                 aria-label="Usuarios conectados"
                 data-tooltip="Conectados: vos"
               >
-                <span class="presence-dot" aria-hidden="true"></span>
+                <span class="status-dot presence-dot" aria-hidden="true"></span>
                 <span class="presence-self-label" id="presenceSelfLabel" hidden></span>
                 <span id="participantCount">1</span>
               </button>

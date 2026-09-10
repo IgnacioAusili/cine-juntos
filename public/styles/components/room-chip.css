@@ -304,10 +304,10 @@
   box-shadow: none;
 }
 
-.room-chip .app-status-dot {
-  width: 6px;
-  height: 6px;
-  flex: 0 0 6px;
+.room-chip .status-dot {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 8px;
 }
 
 body.is-lobby .room-chip,

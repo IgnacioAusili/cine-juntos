@@ -1015,6 +1015,10 @@
 /* En vertical el video queda apenas por encima del chat; landscape conserva
    la composición que ya define mobile-landscape.css. */
 @media (max-width: 680px) and (orientation: portrait) {
+  body:not(.is-lobby) .player-status-badge {
+    font-size: 0.82rem;
+  }
+
   body:not(.is-lobby) .session-view {
     width: var(--app-viewport-width, 100vw);
     max-width: var(--app-viewport-width, 100vw);

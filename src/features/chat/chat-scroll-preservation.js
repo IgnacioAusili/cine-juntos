@@ -11,6 +11,7 @@ export function restorePageScrollAfterRightChatCollapse(scrollTop, options = {})
     getPageScrollTop,
     isCollapsed,
     scrollPageTo,
+    durationMs = RESTORE_WINDOW_MS,
   } = options;
   if (!getPageScrollContainer || !getPageScrollMax || !getPageScrollTop || !isCollapsed || !scrollPageTo) {
     return;
@@ -45,7 +46,7 @@ export function restorePageScrollAfterRightChatCollapse(scrollTop, options = {})
     const targetTop = Math.min(scrollTop, getPageScrollMax());
     if (getPageScrollTop() !== targetTop) scrollPageTo(targetTop, "auto");
 
-    if (performance.now() - startedAt < RESTORE_WINDOW_MS) {
+    if (performance.now() - startedAt < durationMs) {
       frameId = window.requestAnimationFrame(restore);
     } else {
       cleanup();
@@ -59,6 +60,6 @@ export function restorePageScrollAfterRightChatCollapse(scrollTop, options = {})
     scrollTarget.addEventListener("scroll", onScroll, { passive: true });
   }
   activeCleanup = cleanup;
-  timeoutId = window.setTimeout(cleanup, RESTORE_WINDOW_MS + 120);
+  timeoutId = window.setTimeout(cleanup, durationMs + 120);
   restore();
 }

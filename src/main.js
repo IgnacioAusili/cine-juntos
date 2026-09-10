@@ -18,7 +18,7 @@ import {
 } from "./features/icons-tooltips.js?v=20260910-status-tooltip-01";
 import {
   wireLayoutMetrics,
-} from "./features/layout-metrics.js?v=20260909-landscape-chat-emoji-34";
+} from "./features/layout-metrics.js?v=20260910-right-chat-keyboard-01";
 import {
   renderPresence,
   wireIdentityEvents,
@@ -26,7 +26,7 @@ import {
 import {
   showLobby,
   initializeAboutDialog,
-} from "./features/session-ui.js?v=20260909-landscape-chat-emoji-34";
+} from "./features/session-ui.js?v=20260910-right-chat-keyboard-01";
 import {
   buildEmojiPicker,
   getPersistedInsideChatStyle,
@@ -44,7 +44,7 @@ import {
   wirePlayerEvents,
 } from "./features/player/index.js?v=20260905-overlay-height-cap-04";
 import { wireMobileFullscreenOrientation } from "./features/player/mobile-fullscreen-orientation.js";
-import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20260909-landscape-chat-emoji-34";
+import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20260910-chat-empty-header-02";
 import { wireMobileLandscapeVideoSnap } from "./features/mobile-landscape-video-snap.js?v=20260909-landscape-snap-29";
 import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260910-mobile-chat-side-placement-01";
 import { wireTouchHover } from "./core/touch-interactions.js?v=20260829-touch-hold-fix-01";

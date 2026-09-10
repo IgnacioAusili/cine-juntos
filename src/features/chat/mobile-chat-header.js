@@ -110,11 +110,13 @@ function setHeaderCollapsed(collapsed) {
     dom.sessionView.classList.remove("chat-header-collapsed");
     return;
   }
+  const keepVisibleWithoutMessages = !hasMessages();
   const forcedByKeyboard = isBottomChatKeyboardOpen() || headerKeyboardPreparing;
-  if (collapsed || forcedByKeyboard) hideTooltip(true);
+  const shouldCollapse = forcedByKeyboard || (Boolean(collapsed) && !keepVisibleWithoutMessages);
+  if (shouldCollapse) hideTooltip(true);
   dom.sessionView.classList.toggle(
     "chat-header-collapsed",
-    Boolean(collapsed || forcedByKeyboard),
+    shouldCollapse,
   );
 }
 
@@ -160,6 +162,10 @@ function revealHeader() {
 
 function scheduleHeaderToggle() {
   if (isBottomChatKeyboardOpen() || !isActiveBottomChat()) return;
+  if (!hasMessages()) {
+    setHeaderCollapsed(false);
+    return;
+  }
   clearTapToggleTimer();
   tapToggleTimer = window.setTimeout(() => {
     tapToggleTimer = 0;

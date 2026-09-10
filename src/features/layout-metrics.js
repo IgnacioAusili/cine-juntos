@@ -13,6 +13,9 @@ let bottomChatScrollBeforeKeyboard = null;
 let bottomChatPageScrollLockTop = null;
 let wasBottomChatKeyboardOpen = false;
 let bottomChatKeyboardHandleAnchor = null;
+let rightChatScrollBeforeKeyboard = null;
+let rightChatPageScrollLockTop = null;
+let wasRightChatKeyboardOpen = false;
 let fullscreenMetricResyncTimers = [];
 let lastFullscreenActive = false;
 
@@ -34,6 +37,70 @@ function isBottomChatInputFocused() {
 
 function isBottomChatKeyboardOpen() {
   return document.documentElement.classList.contains("bottom-chat-keyboard-open");
+}
+
+function isRightChatInputFocused() {
+  return document.activeElement === dom.messageInput
+    && dom.sessionView?.dataset.chatDock === "right";
+}
+
+function isRightChatKeyboardOpen(viewportHeight = getCurrentViewportHeight()) {
+  const referenceHeight = lastViewportMetrics?.height || getLargeViewportHeight();
+  return isRightChatInputFocused()
+    && viewportHeight > 0
+    && referenceHeight - viewportHeight > 80;
+}
+
+function captureRightChatKeyboardScroll(allowUnfocused = false) {
+  if (
+    !isMobileLayout()
+    || (!allowUnfocused && !isRightChatInputFocused())
+    || rightChatScrollBeforeKeyboard !== null
+  ) return;
+
+  rightChatScrollBeforeKeyboard = window.scrollY || 0;
+  rightChatPageScrollLockTop = rightChatScrollBeforeKeyboard;
+}
+
+function alignRightChatKeyboardViewport() {
+  if (!document.documentElement.classList.contains("right-chat-keyboard-open")) return;
+
+  const targetTop = rightChatPageScrollLockTop;
+  if (targetTop === null || Math.abs((window.scrollY || 0) - targetTop) <= 1) return;
+  window.scrollTo({ top: targetTop, behavior: "auto" });
+}
+
+function restoreRightChatKeyboardScroll() {
+  const targetTop = rightChatScrollBeforeKeyboard;
+  rightChatScrollBeforeKeyboard = null;
+  rightChatPageScrollLockTop = null;
+  if (targetTop === null) return;
+
+  window.requestAnimationFrame(() => {
+    const maxScroll = Math.max(
+      0,
+      document.documentElement.scrollHeight - document.documentElement.clientHeight,
+    );
+    window.scrollTo({
+      top: Math.min(targetTop, maxScroll),
+      behavior: "auto",
+    });
+  });
+}
+
+function isRightChatScrollableTarget(target) {
+  return target instanceof Element
+    && Boolean(target.closest([
+      ".session-view[data-chat-dock=\"right\"] .messages",
+      ".session-view[data-chat-dock=\"right\"] .chat-scrollbar",
+      ".session-view[data-chat-dock=\"right\"] textarea",
+    ].join(",")));
+}
+
+function preventRightChatPageScroll(event) {
+  if (!document.documentElement.classList.contains("right-chat-keyboard-open")) return;
+  if (isRightChatScrollableTarget(event.target)) return;
+  event.preventDefault();
 }
 
 function captureBottomChatKeyboardHandlePosition() {
@@ -202,6 +269,7 @@ function getViewportMetrics(force = false) {
   const viewport = window.visualViewport;
   const documentElement = document.documentElement;
   const currentViewportHeight = getCurrentViewportHeight();
+  const rightChatKeyboardOpen = isRightChatKeyboardOpen(currentViewportHeight);
   const hasReducedViewport = !force && Boolean(
     lastViewportMetrics?.height
       && currentViewportHeight > 0
@@ -221,11 +289,13 @@ function getViewportMetrics(force = false) {
     || window.innerWidth
     || viewport?.width
     || 0;
-  const layoutHeight = (hasReducedViewport && lastViewportMetrics?.height)
-    || getLargeViewportHeight()
-    || window.innerHeight
-    || viewport?.height
-    || 0;
+  const layoutHeight = rightChatKeyboardOpen
+    ? currentViewportHeight
+    : (hasReducedViewport && lastViewportMetrics?.height)
+      || getLargeViewportHeight()
+      || window.innerHeight
+      || viewport?.height
+      || 0;
   const metrics = {
     width: Math.round(
       layoutWidth || viewport?.width || 0,
@@ -281,7 +351,8 @@ function getStableViewportMetrics(force = false) {
   const liveMetrics = getViewportMetrics(force);
   const shouldLock = isMobileLayout()
     && !isFullscreenActive()
-    && !isBottomChatInputFocused();
+    && !isBottomChatInputFocused()
+    && !isRightChatKeyboardOpen();
 
   if (!shouldLock) {
     lockedMobileViewportMetrics = null;
@@ -317,7 +388,12 @@ function syncViewportMetrics(force = false) {
   const bottomChatKeyboardOpen = isBottomChatInputFocused()
     && currentViewportHeight > 0
     && metrics.height - currentViewportHeight > 80;
-  if (!isOverlayChatInputFocused() && !isBottomChatInputFocused()) {
+  const rightChatKeyboardOpen = isRightChatKeyboardOpen(currentViewportHeight);
+  if (
+    !isOverlayChatInputFocused()
+    && !isBottomChatInputFocused()
+    && !rightChatKeyboardOpen
+  ) {
     lastViewportMetrics = metrics;
   }
   document.documentElement.classList.toggle(
@@ -328,6 +404,10 @@ function syncViewportMetrics(force = false) {
   rootStyle.setProperty("--app-viewport-height", `${metrics.height}px`);
   rootStyle.setProperty(
     "--chat-bottom-viewport-height",
+    `${currentViewportHeight || metrics.height}px`,
+  );
+  rootStyle.setProperty(
+    "--right-chat-visible-height",
     `${currentViewportHeight || metrics.height}px`,
   );
   syncBottomChatVisibleHeight(currentViewportHeight);
@@ -342,6 +422,20 @@ function syncViewportMetrics(force = false) {
     "bottom-chat-keyboard-open",
     bottomChatKeyboardOpen,
   );
+  if (rightChatKeyboardOpen && !wasRightChatKeyboardOpen) {
+    captureRightChatKeyboardScroll();
+  }
+  document.documentElement.classList.toggle(
+    "right-chat-keyboard-open",
+    rightChatKeyboardOpen,
+  );
+  if (rightChatKeyboardOpen) {
+    window.requestAnimationFrame(alignRightChatKeyboardViewport);
+    window.setTimeout(alignRightChatKeyboardViewport, 50);
+  } else if (wasRightChatKeyboardOpen) {
+    restoreRightChatKeyboardScroll();
+  }
+  wasRightChatKeyboardOpen = rightChatKeyboardOpen;
   if (bottomChatKeyboardOpen) {
     window.requestAnimationFrame(() => {
       alignBottomChatKeyboardViewport();
@@ -496,11 +590,22 @@ export function wireLayoutMetrics() {
   window.addEventListener("scroll", restoreBottomChatPageScrollPosition, {
     passive: true,
   });
+  window.addEventListener("scroll", alignRightChatKeyboardViewport, {
+    passive: true,
+  });
   document.addEventListener("touchmove", preventBottomChatPageScroll, {
     capture: true,
     passive: false,
   });
   document.addEventListener("wheel", preventBottomChatPageScroll, {
+    capture: true,
+    passive: false,
+  });
+  document.addEventListener("touchmove", preventRightChatPageScroll, {
+    capture: true,
+    passive: false,
+  });
+  document.addEventListener("wheel", preventRightChatPageScroll, {
     capture: true,
     passive: false,
   });
@@ -525,7 +630,9 @@ export function wireLayoutMetrics() {
     // ese caso innerHeight cambia, pero el viewport estructural y el ancho no:
     // recalcularlo agranda/achica el reproductor durante el scroll. La altura
     // solo se vuelve a tomar en un cambio real de ancho/orientación.
-    if (!isBottomChatInputFocused()) preservePageBottomAfterViewportChange();
+    if (!isBottomChatInputFocused() && !isRightChatKeyboardOpen()) {
+      preservePageBottomAfterViewportChange();
+    }
     scheduleLayoutMetricsSync(!isMobileLayout() || widthChanged);
   }, {
     passive: true,
@@ -542,7 +649,9 @@ export function wireLayoutMetrics() {
         && lockedMobileViewportMetrics
         && viewportWidth !== lockedMobileViewportMetrics.width,
       );
-      if (!isBottomChatInputFocused()) preservePageBottomAfterViewportChange();
+      if (!isBottomChatInputFocused() && !isRightChatKeyboardOpen()) {
+        preservePageBottomAfterViewportChange();
+      }
       scheduleLayoutMetricsSync(widthChanged);
     },
     { passive: true },
@@ -551,6 +660,9 @@ export function wireLayoutMetrics() {
   document.addEventListener("fullscreenchange", scheduleFullscreenMetricResync);
   document.addEventListener("pointerdown", (event) => {
     if (event.target === dom.messageInput) {
+      if (dom.sessionView?.dataset.chatDock === "right") {
+        captureRightChatKeyboardScroll(true);
+      }
       // pointerdown ocurre antes de focusin y antes de que el header se
       // contraiga. Capturar aquí evita usar como origen una posición
       // intermedia del reflow del chat.
@@ -559,6 +671,9 @@ export function wireLayoutMetrics() {
   }, { capture: true, passive: true });
   document.addEventListener("focusin", (event) => {
     if (event.target === dom.messageInput) {
+      if (dom.sessionView?.dataset.chatDock === "right") {
+        captureRightChatKeyboardScroll();
+      }
       // Preparar el anclaje antes de que Chrome reduzca el viewport evita que
       // la flecha permanezca un instante en su posición vieja.
       captureBottomChatKeyboardHandlePosition();

@@ -405,13 +405,50 @@ export async function copyInvite() {
   }
   const invite = new URL(window.location.href);
   invite.searchParams.set("room", state.session.activeRoom);
-  try {
-    await navigator.clipboard.writeText(invite.toString());
-  } catch {
+  if (!await copyTextToClipboard(invite.toString())) {
     return;
   }
   setInviteCopyFeedback(true);
   setSyncStatus("Invitacion copiada.");
+}
+
+async function copyTextToClipboard(text) {
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+  } catch {
+    // Chrome Android puede rechazar Clipboard API en una página no segura o
+    // después de una transición de foco; continuar con el método compatible.
+  }
+
+  const fallbackInput = document.createElement("textarea");
+  fallbackInput.value = text;
+  fallbackInput.setAttribute("readonly", "");
+  fallbackInput.setAttribute("aria-hidden", "true");
+  Object.assign(fallbackInput.style, {
+    position: "fixed",
+    top: "0",
+    left: "0",
+    width: "1px",
+    height: "1px",
+    padding: "0",
+    border: "0",
+    opacity: "0",
+    pointerEvents: "none",
+  });
+  document.body.append(fallbackInput);
+  fallbackInput.focus({ preventScroll: true });
+  fallbackInput.select();
+  let copied = false;
+  try {
+    copied = document.execCommand("copy");
+  } catch {
+    copied = false;
+  }
+  fallbackInput.remove();
+  return copied;
 }
 
 export async function leaveRoom() {

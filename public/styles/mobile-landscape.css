@@ -245,7 +245,59 @@
     .session-view[data-chat-dock="right"] .chat-area {
     gap: 3px;
     grid-template-rows: 38px minmax(0, 1fr);
-    transition: grid-template-rows 220ms ease;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      flex-basis 350ms cubic-bezier(0.22, 1, 0.36, 1),
+      width 350ms cubic-bezier(0.22, 1, 0.36, 1),
+      grid-template-rows 220ms ease;
+    will-change: flex-basis, width, grid-template-rows;
+  }
+
+  /* Chrome Android puede pintar el tap highlight sobre un ancestro de la
+     superficie tocada durante la transición del dock. En ese momento el
+     resaltado queda compuesto como un rectángulo sobre el panel. */
+  html.viewport-landscape body:not(.is-lobby)
+    .session-view[data-chat-dock="right"],
+  html.viewport-landscape body:not(.is-lobby)
+    .session-view[data-chat-dock="right"] .workspace,
+  html.viewport-landscape body:not(.is-lobby)
+    .session-view[data-chat-dock="right"] .chat-area,
+  html.viewport-landscape body:not(.is-lobby)
+    .session-view[data-chat-dock="right"] .chat-area *,
+  html.viewport-landscape body:not(.is-lobby)
+    .session-view[data-chat-dock="right"] .chat-collapse-hover-zone,
+  html.viewport-landscape body:not(.is-lobby)
+    .session-view[data-chat-dock="right"] .chat-collapse-hover-zone * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html.viewport-landscape body:not(.is-lobby)
+    .session-view[data-chat-dock="right"] .chat-collapse-hover-zone {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Durante la cortina se desactiva el blur para evitar repintados costosos.
+     El fondo glass semitransparente dejaría pasar el glow teal del body y
+     produciría un rectángulo verdoso mientras cambia el ancho del panel. */
+  html.viewport-landscape body:not(.is-lobby)
+    .session-view.chat-layout-transitioning[data-chat-dock="right"] .chat-area {
+    /* El log del dispositivo mostró que la franja aparece cuando el ancho
+       todavía es visible pero la opacidad ya cayó a 0.15--0.45. Mantener la
+       cortina opaca evita que se transparente el reproductor que queda debajo. */
+    background: rgb(20, 24, 28);
+    opacity: 1;
+    transition:
+      flex-basis 350ms cubic-bezier(0.22, 1, 0.36, 1),
+      width 350ms cubic-bezier(0.22, 1, 0.36, 1),
+      grid-template-rows 220ms ease;
+  }
+
+  html.viewport-landscape body:not(.is-lobby)
+    .session-view.chat-collapsed[data-chat-dock="right"] .chat-area {
+    transition:
+      flex-basis 350ms cubic-bezier(0.22, 1, 0.36, 1),
+      width 350ms cubic-bezier(0.22, 1, 0.36, 1),
+      grid-template-rows 220ms ease;
   }
 
   html.viewport-landscape body:not(.is-lobby)
@@ -664,5 +716,70 @@
   body:not(.is-lobby) .session-view[data-chat-dock] .player-frame:not(.mini-player-surface),
   body:not(.is-lobby) .session-view[data-chat-dock] .chat-area {
     box-shadow: none !important;
+  }
+}
+
+/* En fullscreen móvil apaisado el dock lateral debe conservar exactamente
+   la composición flex del modo normal. El grid vertical de la primera regla
+   de fullscreen puede ganar durante el cambio de viewport y dejar el panel
+   sin la misma cortina horizontal. */
+@media (max-width: 980px) and (max-height: 500px) and (orientation: landscape) {
+  html.viewport-landscape body.fullscreen-mode
+    .session-view[data-chat-dock="right"] .workspace {
+    display: flex !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    gap: 0 !important;
+    grid-template-columns: none !important;
+    grid-template-rows: none !important;
+    grid-template-areas: none !important;
+  }
+
+  html.viewport-landscape body.fullscreen-mode
+    .session-view[data-chat-dock="right"] .video-area {
+    flex: 1 1 auto;
+    width: auto;
+    height: 100% !important;
+    min-width: 0;
+    min-height: 0;
+  }
+
+  html.viewport-landscape body.fullscreen-mode
+    .session-view[data-chat-dock="right"] .chat-area {
+    flex: 0 0 var(--chat-panel-width);
+    width: var(--chat-panel-width);
+    height: 100% !important;
+    /* states.css agrega 8px de padding al dock lateral de fullscreen para la
+       variante de escritorio. En móvil apaisado ese padding desplaza el
+       header hacia abajo y hace que la línea de colapso parezca más alta. */
+    padding: 0 !important;
+    min-width: 0;
+    min-height: 0;
+    grid-template-rows: 34px minmax(0, 1fr);
+  }
+
+  html.viewport-landscape body.fullscreen-mode
+    .session-view[data-chat-dock="right"] .chat-tools {
+    height: 34px;
+    min-height: 34px;
+    max-height: 34px;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  html.viewport-landscape body.fullscreen-mode
+    .session-view.chat-collapsed[data-chat-dock="right"] .chat-area {
+    flex-basis: 0;
+    width: 0;
+  }
+
+  /* Un poco más de recorrido para el volumen sin agrandar la barra de
+     controles ni cambiar el tamaño del thumb. */
+  html.viewport-landscape body:not(.is-lobby) .player-volume-slider-wrap,
+  html.viewport-landscape body:not(.is-lobby) .player-volume-input {
+    width: 68px;
+    max-width: 68px;
   }
 }

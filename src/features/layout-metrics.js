@@ -275,6 +275,7 @@ function getViewportMetrics(force = false) {
       && currentViewportHeight > 0
       && currentViewportHeight < lastViewportMetrics.height - 80,
   );
+  const fullscreenActive = isFullscreenActive();
   // Una sincronización forzada también debe poder descartar una altura vieja
   // que haya quedado después de salir de fullscreen. La altura del viewport visual cambia cuando el navegador móvil oculta o
   // muestra sus barras durante un swipe. No usarla para el tamaño estructural
@@ -289,7 +290,7 @@ function getViewportMetrics(force = false) {
     || window.innerWidth
     || viewport?.width
     || 0;
-  const layoutHeight = rightChatKeyboardOpen
+  const layoutHeight = rightChatKeyboardOpen || fullscreenActive
     ? currentViewportHeight
     : (hasReducedViewport && lastViewportMetrics?.height)
       || getLargeViewportHeight()
@@ -317,6 +318,21 @@ function getViewportMetrics(force = false) {
   }
 
   return metrics;
+}
+
+function isViewportLandscape(metrics, rightChatKeyboardOpen) {
+  if (!rightChatKeyboardOpen || !lastViewportMetrics) {
+    return metrics.width > metrics.height;
+  }
+
+  // El teclado reduce el viewport visible, pero no cambia la orientación del
+  // dispositivo. Mientras el ancho siga siendo el mismo, conservar la última
+  // métrica completa evita que una pantalla vertical active las reglas de
+  // landscape y vuelva a poner video y chat en columnas. Si el ancho cambió,
+  // sí hay una rotación real y las métricas actuales vuelven a ser la fuente.
+  const widthChanged = Math.abs(metrics.width - lastViewportMetrics.width) > 1;
+  return (widthChanged ? metrics : lastViewportMetrics).width
+    > (widthChanged ? metrics : lastViewportMetrics).height;
 }
 
 function isMobileLayout() {
@@ -398,7 +414,7 @@ function syncViewportMetrics(force = false) {
   }
   document.documentElement.classList.toggle(
     "viewport-landscape",
-    metrics.width > metrics.height,
+    isViewportLandscape(metrics, rightChatKeyboardOpen),
   );
   rootStyle.setProperty("--app-viewport-width", `${metrics.width}px`);
   rootStyle.setProperty("--app-viewport-height", `${metrics.height}px`);

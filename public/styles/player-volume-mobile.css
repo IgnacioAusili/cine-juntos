@@ -1,6 +1,6 @@
 /* En móvil el slider horizontal ocupa menos espacio; el vertical conserva su
    recorrido para que el ajuste siga siendo preciso cuando la fila no entra. */
-@media (max-width: 760px) {
+@media (max-width: 760px), (hover: none) and (pointer: coarse) {
   .player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"] .player-volume-slider-wrap {
     width: 48px;
     flex-basis: 48px;

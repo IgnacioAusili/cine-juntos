@@ -17,7 +17,7 @@ import {
 } from "./unread-counters.js?v=20260904-mobile-landscape-bottom-chat-07";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 import { focusChatInput } from "./chat-input-focus.js";
-import { restorePageScrollAfterRightChatCollapse } from "./chat-scroll-preservation.js?v=20260902-chat-landscape-expand-scroll-fix-01";
+import { restorePageScrollAfterRightChatCollapse } from "./chat-scroll-preservation.js?v=20260910-mobile-chat-scroll-lock-01";
 import {
   preserveInsideChatPanelPlacementWhileClosing,
   syncInsideChatPanelPlacement,
@@ -33,6 +33,9 @@ const CHAT_LAYOUT_SETTLE_MS = 280;
 const COLLAPSE_HANDLE_HIDE_MS = CHAT_LAYOUT_SETTLE_MS + 40;
 // El dock lateral hereda esta duración de la transición flex de escritorio.
 const RIGHT_CHAT_LAYOUT_TRANSITION_MS = 350;
+// El bloqueo solo debe sobrevivir al último frame de la cortina, no a los
+// 900 ms de protección genérica de los demás layouts.
+const RIGHT_CHAT_SCROLL_LOCK_MS = RIGHT_CHAT_LAYOUT_TRANSITION_MS + 40;
 const CHAT_SCROLL_SNAP_LOCK_MS = 900;
 const CHAT_USER_SCROLL_LOCK_MS = 900;
 const BOTTOM_CHAT_CURTAIN_MS = 320;
@@ -221,7 +224,7 @@ function unlockUserScrollDuringChatTransition() {
   chatUserScrollUnlockTimer = 0;
 }
 
-function lockUserScrollDuringChatTransition() {
+function lockUserScrollDuringChatTransition(durationMs = CHAT_USER_SCROLL_LOCK_MS) {
   if (!dom.sessionView || dom.sessionView.hidden) return;
 
   document.removeEventListener("wheel", preventPageScrollDuringChatTransition, true);
@@ -249,7 +252,7 @@ function lockUserScrollDuringChatTransition() {
   }
   chatUserScrollUnlockTimer = window.setTimeout(
     unlockUserScrollDuringChatTransition,
-    CHAT_USER_SCROLL_LOCK_MS,
+    durationMs,
   );
 }
 
@@ -550,7 +553,7 @@ function scheduleExternalChatCollapseHandleOffset() {
   }, CHAT_LAYOUT_SETTLE_MS);
 }
 
-function lockChatScrollSnapDuringProgrammaticScroll() {
+function lockChatScrollSnapDuringProgrammaticScroll(durationMs = CHAT_SCROLL_SNAP_LOCK_MS) {
   if (!dom.sessionView) return;
 
   dom.sessionView.classList.add("chat-scroll-snap-locked");
@@ -560,7 +563,7 @@ function lockChatScrollSnapDuringProgrammaticScroll() {
   chatScrollSnapLockTimer = window.setTimeout(() => {
     chatScrollSnapLockTimer = 0;
     dom.sessionView.classList.remove("chat-scroll-snap-locked");
-  }, CHAT_SCROLL_SNAP_LOCK_MS);
+  }, durationMs);
 }
 
 export function getPersistedInsideChatStyle() {
@@ -1157,7 +1160,13 @@ export function setExternalChatCollapsed(collapsed, options = {}) {
     state.chat.autoOpenedExternal = false;
   }
   const wasCollapsed = dom.sessionView.classList.contains("chat-collapsed");
-  if (wasCollapsed !== collapsed) lockUserScrollDuringChatTransition();
+  if (wasCollapsed !== collapsed) {
+    lockUserScrollDuringChatTransition(
+      isMobileLandscapeRightDock()
+        ? RIGHT_CHAT_SCROLL_LOCK_MS
+        : CHAT_USER_SCROLL_LOCK_MS,
+    );
+  }
   cancelBottomChatTransition();
 
   if (
@@ -1202,6 +1211,7 @@ export function setExternalChatCollapsed(collapsed, options = {}) {
     getPageScrollTop,
     isCollapsed: () => dom.sessionView?.classList.contains("chat-collapsed"),
     scrollPageTo,
+    durationMs: isMobileLandscapeRightDock() ? RIGHT_CHAT_SCROLL_LOCK_MS : undefined,
   });
 }
 
@@ -1220,7 +1230,11 @@ function applyExternalChatCollapsed(collapsed) {
   }
   // La reducción del layout también genera un evento de scroll por el clamp
   // del viewport; evitar que el snap lo anime durante el reflow.
-  lockChatScrollSnapDuringProgrammaticScroll();
+  lockChatScrollSnapDuringProgrammaticScroll(
+    isMobileLandscapeRightDock()
+      ? RIGHT_CHAT_SCROLL_LOCK_MS
+      : CHAT_SCROLL_SNAP_LOCK_MS,
+  );
   const handleSettleDelay = isMobilePortraitRightDock()
     ? RIGHT_CHAT_LAYOUT_TRANSITION_MS
     : !collapsed && isMobileLandscapeRightDock()

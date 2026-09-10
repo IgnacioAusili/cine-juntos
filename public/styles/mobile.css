@@ -9,6 +9,14 @@
 }
 
 @media (max-width: 980px) {
+  /* El trazo de circle-help queda ópticamente bajo respecto de las etiquetas
+     aunque la caja táctil ya esté centrada por flex/grid. */
+  .room-chip-label-row .help-button svg,
+  .session-toolbar-label-row .help-button svg,
+  .lobby-fields .label-row .help-button svg {
+    transform: translateY(-1px);
+  }
+
   /* El chat interno debe quedar por encima de los controles centrales y de la
      barra inferior cuando el video y el overlay comparten la superficie. */
   body:not(.is-lobby) .player-frame .player-chat {

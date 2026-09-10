@@ -13,9 +13,13 @@
     max-width: 48px;
   }
 
-  .player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"] .player-volume-input {
+  .player-frame .player-controls-bar .player-volume-group .player-volume-input {
     width: 48px;
     min-width: 48px;
+    /* El slider vive dentro de una pista con pan-x. Sin aislar su gesto, Chrome
+       móvil entrega el arrastre al scroll de controles y el volumen queda
+       trabado al intentar invertir la dirección. */
+    touch-action: none;
   }
 }
 

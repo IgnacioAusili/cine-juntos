@@ -30,7 +30,7 @@ import {
   showLobby,
   showSession,
   watchRoomEntryVideoFocus,
-} from "./session-ui.js?v=20260909-keyboard-page-scroll-lock-31";
+} from "./session-ui.js?v=20260909-keyboard-page-scroll-lock-32";
 import { handleRemoteState } from "./player/index.js?v=20260904-mobile-landscape-bottom-chat-07";
 import {
   renderMessage,

@@ -418,16 +418,35 @@ function alignBottomChatKeyboardViewport() {
 
   const anchoredHandleZone = bottomChatKeyboardHandleAnchor?.handleZone;
   const videoRect = dom.videoArea?.getBoundingClientRect();
-  if (anchoredHandleZone && videoRect?.height > 0) {
-    // El centro de la flecha debe quedar exactamente sobre la unión visual de
-    // las dos superficies, incluso cuando la grilla se comprime por el IME.
+  const chatRect = dom.chatArea?.getBoundingClientRect();
+  if (anchoredHandleZone && chatRect && (videoRect?.height > 0 || isBottomChatKeyboardOpen())) {
+    // Cuando el IME colapsa el video, la unión pasa a ser el borde superior
+    // del chat. Mantener el centro dentro del workspace evita que la flecha
+    // conserve el top anterior y desaparezca fuera del viewport reducido.
     const positioningParent = anchoredHandleZone.offsetParent || dom.workspace;
     const positioningParentRect = positioningParent?.getBoundingClientRect();
     if (!positioningParentRect) return;
+    const handleHeight = anchoredHandleZone.getBoundingClientRect().height
+      || anchoredHandleZone.offsetHeight;
+    const halfHandle = handleHeight / 2;
+    const boundaryTop = videoRect?.height > 0
+      ? videoRect.bottom
+      : chatRect.top;
+    const desiredCenter = boundaryTop - positioningParentRect.top
+      + (videoRect?.height > 0 ? 0 : halfHandle);
+    const minCenter = halfHandle;
+    const maxCenter = Math.max(minCenter, positioningParentRect.height - halfHandle);
+    const boundedCenter = Math.min(maxCenter, Math.max(minCenter, desiredCenter));
+    if (document.documentElement.classList.contains("viewport-landscape")) {
+      // El reanclaje acompaña el cambio de viewport del IME; no debe verse
+      // como un salto animado desde la posición previa del video.
+      anchoredHandleZone.style.setProperty("transition", "none");
+    }
     anchoredHandleZone.style.setProperty(
       "top",
-      `${videoRect.bottom - positioningParentRect.top}px`,
+      `${boundedCenter}px`,
     );
+    anchoredHandleZone.style.setProperty("bottom", "auto");
   }
 }
 

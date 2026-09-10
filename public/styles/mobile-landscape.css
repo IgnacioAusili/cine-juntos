@@ -577,6 +577,12 @@
   body:not(.is-lobby) .session-view[data-chat-dock] .player-frame:not(.mini-player-surface),
   body:not(.is-lobby) .session-view[data-chat-dock] .chat-area,
   body:not(.is-lobby) .session-view[data-chat-dock] .chat-area::before {
+    border: 0 !important;
     border-radius: 0 !important;
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock] .player-frame:not(.mini-player-surface),
+  body:not(.is-lobby) .session-view[data-chat-dock] .chat-area {
+    box-shadow: none !important;
   }
 }

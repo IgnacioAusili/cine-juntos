@@ -6,6 +6,7 @@ const SMOOTH_SETTLE_TIMEOUT = 600;
 
 function isEligible() {
   return window.matchMedia(LANDSCAPE_BOTTOM_CHAT_QUERY).matches
+    && !window.matchMedia("(orientation: portrait)").matches
     && document.documentElement.classList.contains("viewport-landscape")
     && !document.documentElement.classList.contains("bottom-chat-keyboard-open")
     && !document.body.classList.contains("is-lobby")

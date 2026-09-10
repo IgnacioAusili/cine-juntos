@@ -9,6 +9,29 @@
 }
 
 @media (max-width: 980px) {
+  /* En móvil vertical el documento debe seguir exactamente el recorrido que
+     hace el dedo. Ningún contenedor de la composición puede atraerlo a una
+     sección cercana al terminar el gesto. */
+  @media (orientation: portrait) {
+    html,
+    body,
+    body:not(.is-lobby) .app-shell,
+    body:not(.is-lobby) .session-view,
+    body:not(.is-lobby) .workspace,
+    body:not(.is-lobby) .video-area,
+    body:not(.is-lobby) .chat-area {
+      scroll-snap-type: none !important;
+    }
+
+    body:not(.is-lobby) .session-view,
+    body:not(.is-lobby) .workspace,
+    body:not(.is-lobby) .video-area,
+    body:not(.is-lobby) .chat-area {
+      scroll-snap-align: none !important;
+      scroll-snap-stop: normal !important;
+    }
+  }
+
   /* El trazo de circle-help queda ópticamente bajo respecto de las etiquetas
      aunque la caja táctil ya esté centrada por flex/grid. */
   .room-chip-label-row .help-button svg,

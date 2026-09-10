@@ -9,13 +9,13 @@ import {
 import {
   hideTooltip,
   hydrateIcons,
-} from "../icons-tooltips.js?v=20260910-status-tooltip-01";
+} from "../icons-tooltips.js?v=20260910-status-tooltip-03";
 import { setSyncStatus } from "../session-ui.js?v=20260909-landscape-chat-emoji-34";
 import {
   logEvent,
   state,
 } from "../../core/state.js?v=20260902-mobile-real-browser-01";
-import { isMiniPlayerActive } from "./mini-player.js?v=20260904-mobile-landscape-bottom-chat-07";
+import { isMiniPlayerActive } from "./mini-player.js?v=20260910-player-tooltip-chain-01";
 import { syncInsideChatPanelOffset } from "../chat/chat-layout.js?v=20260910-mobile-chat-scroll-lock-01";
 import { withShortcutHint } from "../../core/utils.js";
 import {

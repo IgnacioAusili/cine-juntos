@@ -15,8 +15,9 @@ import {
 import {
   hydrateIcons,
   hideTooltip,
+  refreshTooltipForTarget,
   setControlIcon,
-} from "../icons-tooltips.js?v=20260910-status-tooltip-01";
+} from "../icons-tooltips.js?v=20260910-status-tooltip-03";
 import { scrollToVideoPosition, sendVideoEventMessage, setInsideChatVisible } from "../chat/index.js?v=20260910-mobile-chat-side-placement-01";
 // Import circular intencional y seguro: estas funciones se invocan en runtime,
 // no durante la carga del modulo, y player-sync-logic.js a su vez importa
@@ -27,7 +28,7 @@ import {
   clearPlaybackRecoveryTracking,
   pauseRoomForPlaybackIssue,
   publishState,
-} from "./player-sync-logic.js?v=20260904-mobile-landscape-bottom-chat-07";
+} from "./player-sync-logic.js?v=20260910-player-cooldown-tooltip-05";
 
 import {
   showErrorDialog,
@@ -35,8 +36,8 @@ import {
   showResumeVideoDialog,
   showSlowLoadDialog,
 } from "../session-ui.js?v=20260909-landscape-chat-emoji-34";
-import { togglePageFullscreen } from "./fullscreen.js?v=20260910-player-overlay-toggle-09";
-import { syncMiniPlayerButton } from "./mini-player.js?v=20260904-mobile-landscape-bottom-chat-07";
+import { togglePageFullscreen } from "./fullscreen.js?v=20260910-player-overlay-toggle-12";
+import { syncMiniPlayerButton } from "./mini-player.js?v=20260910-player-tooltip-chain-01";
 import { shouldToggleMuteFromVolumeButton } from "./player-volume-layout.js?v=20260902-player-volume-layout-18";
 
 const SKIP_LOAD_REPLACE_DIALOG_KEY = "cine-juntos-skip-load-replace-dialog";
@@ -47,6 +48,7 @@ const VIDEO_LOAD_COOLDOWN_MS = 3000;
 const PLAY_BUTTON_BURST_WINDOW_MS = 1000;
 const PLAY_BUTTON_BURST_LIMIT = 4;
 const PLAY_BUTTON_COOLDOWN_MS = 30000;
+const COOLDOWN_REFRESH_INTERVAL_MS = 250;
 const SYNC_CONTROL_BURST_WINDOW_MS = PLAY_BUTTON_BURST_WINDOW_MS;
 const SYNC_CONTROL_BURST_LIMIT = PLAY_BUTTON_BURST_LIMIT;
 const RATE_CONTROL_BURST_LIMIT = 3;
@@ -397,7 +399,7 @@ function wireMobilePlayerControlPlacement() {
   syncPlacement();
   centerActions.addEventListener("click", (event) => {
     const button = event.target?.closest?.("button");
-    if (!button || !centerActions.contains(button) || button.disabled) return;
+    if (!button || !centerActions.contains(button) || button.disabled || button.getAttribute("aria-disabled") === "true") return;
     button.classList.remove("is-click-bouncing");
     void button.offsetWidth;
     button.classList.add("is-click-bouncing");
@@ -671,7 +673,7 @@ function activatePlayButtonCooldown(now = Date.now()) {
       state.player.playButtonCooldownTimeoutId = null;
     }
     syncPlayerControls();
-  }, 1000);
+  }, COOLDOWN_REFRESH_INTERVAL_MS);
   syncPlayerControls();
 }
 
@@ -718,7 +720,7 @@ function activateSyncControlCooldown(kind, now = Date.now()) {
       state.player[timeoutKey] = null;
     }
     syncPlayerControls();
-  }, 1000);
+  }, COOLDOWN_REFRESH_INTERVAL_MS);
   syncPlayerControls();
 }
 
@@ -1012,7 +1014,10 @@ function syncPlayerControls(forceSliderSync = false) {
 
   if (dom.playerPlayButton) {
     const playButtonCoolingDown = isPlayButtonCoolingDown();
-    dom.playerPlayButton.disabled = !hasMedia || playButtonCoolingDown;
+    dom.playerPlayButton.disabled = !hasMedia;
+    if (playButtonCoolingDown) dom.playerPlayButton.setAttribute("aria-disabled", "true");
+    else dom.playerPlayButton.removeAttribute("aria-disabled");
+    dom.playerPlayButton.classList.toggle("player-control-cooldown-disabled", playButtonCoolingDown);
     const isEnded = dom.videoPlayer.ended;
     const isPaused = dom.videoPlayer.paused && !isEnded;
     const nextIcon = isEnded ? "rotate-ccw" : isPaused ? "play" : "pause";
@@ -1042,6 +1047,7 @@ function syncPlayerControls(forceSliderSync = false) {
     dom.playerPlayButton.dataset.tooltip = tooltip;
     dom.playerPlayButton.setAttribute("aria-label", tooltip);
     dom.playerPlayButton.removeAttribute("title");
+    refreshTooltipForTarget(dom.playerPlayButton);
     if (icon) {
       if (icon.getAttribute("data-lucide") !== nextIcon) {
         setControlIcon(dom.playerPlayButton, nextIcon);
@@ -1054,7 +1060,10 @@ function syncPlayerControls(forceSliderSync = false) {
   const skipCooldownSeconds = getSyncControlCooldownSeconds("seek");
   for (const control of [dom.playerBackButton, dom.playerForwardButton]) {
     if (!control) continue;
-    control.disabled = skipControlsDisabled || skipCoolingDown;
+    control.disabled = skipControlsDisabled;
+    if (skipCoolingDown) control.setAttribute("aria-disabled", "true");
+    else control.removeAttribute("aria-disabled");
+    control.classList.toggle("player-control-cooldown-disabled", skipCoolingDown);
     const direction = control === dom.playerBackButton ? "Retroceder 10 segundos" : "Avanzar 10 segundos";
     const shortcut = control === dom.playerBackButton ? "←" : "→";
     const tooltip = skipCoolingDown
@@ -1063,6 +1072,7 @@ function syncPlayerControls(forceSliderSync = false) {
     control.dataset.tooltip = tooltip;
     control.setAttribute("aria-label", tooltip);
     control.removeAttribute("title");
+    refreshTooltipForTarget(control);
   }
 
   if (dom.playerRateSelect) {
@@ -1117,6 +1127,12 @@ function syncMobileCenterButtonTooltips() {
   Object.entries(MOBILE_CENTER_BUTTON_LABELS).forEach(([id, label]) => {
     const button = dom[id];
     if (!button || !dom.playerCenterActions.contains(button)) return;
+    if (button.getAttribute("aria-disabled") === "true") {
+      const cooldownTooltip = button.dataset.tooltip || label;
+      button.dataset.tooltip = cooldownTooltip;
+      button.setAttribute("aria-label", cooldownTooltip);
+      return;
+    }
     button.removeAttribute("data-tooltip");
     button.removeAttribute("title");
     button.setAttribute("aria-label", label);

@@ -218,6 +218,11 @@ video::-webkit-media-controls-fullscreen-button {
     pointer-events: auto;
   }
 
+  .player-frame.player-no-content .player-center-actions {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
   .player-center-actions .video-control-button {
     width: clamp(42px, 12vw, 52px);
     min-width: clamp(42px, 12vw, 52px);
@@ -391,6 +396,13 @@ video::-webkit-media-controls-fullscreen-button {
 }
 
 .player-frame.player-overlay-visible .player-bottom-actions {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Sin contenido, un toque no debe poder dejar inutilizables los controles. */
+.player-frame.player-no-content .player-bottom-actions {
   opacity: 1;
   transform: translateY(0);
   pointer-events: auto;

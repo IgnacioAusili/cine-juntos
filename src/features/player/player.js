@@ -35,7 +35,7 @@ import {
   showResumeVideoDialog,
   showSlowLoadDialog,
 } from "../session-ui.js?v=20260909-landscape-chat-emoji-34";
-import { togglePageFullscreen } from "./fullscreen.js?v=20260904-mobile-landscape-bottom-chat-07";
+import { togglePageFullscreen } from "./fullscreen.js?v=20260910-player-overlay-toggle-07";
 import { syncMiniPlayerButton } from "./mini-player.js?v=20260904-mobile-landscape-bottom-chat-07";
 import { shouldToggleMuteFromVolumeButton } from "./player-volume-layout.js?v=20260902-player-volume-layout-18";
 

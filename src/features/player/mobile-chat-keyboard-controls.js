@@ -8,11 +8,18 @@ const isRightLandscapeChatKeyboardOpen = () => Boolean(
 );
 let visibilitySyncFrame = 0;
 let visibilitySyncTimer = 0;
+let wasRightLandscapeChatKeyboardOpen = false;
 
 function syncPlayerControlsVisibility() {
   const keyboardOpen = isRightLandscapeChatKeyboardOpen();
+  const keyboardJustClosed = wasRightLandscapeChatKeyboardOpen && !keyboardOpen;
   dom.playerFrame?.classList.toggle("player-controls-keyboard-hidden", keyboardOpen);
   if (keyboardOpen) dom.playerFrame?.classList.remove("player-cursor-hidden");
+  if (keyboardJustClosed && dom.playerFrame?.classList.contains("player-no-content")) {
+    dom.playerFrame.classList.add("player-overlay-visible");
+    dom.playerFrame.classList.remove("player-cursor-hidden");
+  }
+  wasRightLandscapeChatKeyboardOpen = keyboardOpen;
 }
 
 export function wireMobileChatKeyboardControls() {

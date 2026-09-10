@@ -520,13 +520,21 @@
      que un toque sobre el video sigue llegando a fullscreen.js. */
   body:not(.is-lobby):not(.fullscreen-mode)
     .session-view[data-chat-dock="right"] .player-frame.player-controls-keyboard-hidden
-    .player-bottom-actions {
+    .player-bottom-actions,
+  body:not(.is-lobby):not(.fullscreen-mode)
+    .session-view[data-chat-dock="right"] .player-frame.player-controls-keyboard-hidden
+    .player-center-actions {
     opacity: 0;
-    transform: translateY(6px);
     pointer-events: none;
     transition:
       opacity 180ms ease,
       transform 180ms ease;
+  }
+
+  body:not(.is-lobby):not(.fullscreen-mode)
+    .session-view[data-chat-dock="right"] .player-frame.player-controls-keyboard-hidden
+    .player-bottom-actions {
+    transform: translateY(6px);
   }
 
   /* Solo el landscape full-bleed móvil elimina el gutter exterior. La

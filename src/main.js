@@ -18,7 +18,7 @@ import {
 } from "./features/icons-tooltips.js?v=20260910-status-tooltip-01";
 import {
   wireLayoutMetrics,
-} from "./features/layout-metrics.js?v=20260910-mobile-fullscreen-viewport-01";
+} from "./features/layout-metrics.js?v=20260910-mobile-fullscreen-viewport-02";
 import {
   renderPresence,
   wireIdentityEvents,
@@ -26,7 +26,7 @@ import {
 import {
   showLobby,
   initializeAboutDialog,
-} from "./features/session-ui.js?v=20260910-right-chat-keyboard-01";
+} from "./features/session-ui.js?v=20260910-right-chat-keyboard-02";
 import {
   buildEmojiPicker,
   getPersistedInsideChatStyle,

@@ -320,6 +320,21 @@ function getViewportMetrics(force = false) {
   return metrics;
 }
 
+function isViewportLandscape(metrics, rightChatKeyboardOpen) {
+  if (!rightChatKeyboardOpen || !lastViewportMetrics) {
+    return metrics.width > metrics.height;
+  }
+
+  // El teclado reduce el viewport visible, pero no cambia la orientación del
+  // dispositivo. Mientras el ancho siga siendo el mismo, conservar la última
+  // métrica completa evita que una pantalla vertical active las reglas de
+  // landscape y vuelva a poner video y chat en columnas. Si el ancho cambió,
+  // sí hay una rotación real y las métricas actuales vuelven a ser la fuente.
+  const widthChanged = Math.abs(metrics.width - lastViewportMetrics.width) > 1;
+  return (widthChanged ? metrics : lastViewportMetrics).width
+    > (widthChanged ? metrics : lastViewportMetrics).height;
+}
+
 function isMobileLayout() {
   return window.matchMedia?.(MOBILE_LAYOUT_QUERY).matches === true;
 }
@@ -399,7 +414,7 @@ function syncViewportMetrics(force = false) {
   }
   document.documentElement.classList.toggle(
     "viewport-landscape",
-    metrics.width > metrics.height,
+    isViewportLandscape(metrics, rightChatKeyboardOpen),
   );
   rootStyle.setProperty("--app-viewport-width", `${metrics.width}px`);
   rootStyle.setProperty("--app-viewport-height", `${metrics.height}px`);

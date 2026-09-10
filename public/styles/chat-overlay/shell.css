@@ -28,6 +28,20 @@
   pointer-events: auto;
 }
 
+/* En vertical, el módulo de layout mueve este panel al lateral del disparador
+   cuando el alto completo no entra dentro del reproductor. Las variables se
+   calculan con los rectángulos reales, por lo que no dependen de un teléfono
+   o una altura fija. */
+.player-chat[data-inside-chat-placement="side"] {
+  top: var(--inside-chat-placement-top) !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: var(--inside-chat-placement-left) !important;
+  width: var(--inside-chat-placement-width) !important;
+  height: var(--inside-chat-placement-height) !important;
+  max-height: var(--inside-chat-placement-max-height) !important;
+}
+
 .player-frame:not(.chat-inside-open) .player-chat,
 .player-frame:not(.chat-inside-open) .player-chat * {
   pointer-events: none;

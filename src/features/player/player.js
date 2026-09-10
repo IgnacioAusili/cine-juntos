@@ -16,8 +16,8 @@ import {
   hydrateIcons,
   hideTooltip,
   setControlIcon,
-} from "../icons-tooltips.js?v=20260904-help-invite-fixes-02";
-import { scrollToVideoPosition, sendVideoEventMessage, setInsideChatVisible } from "../chat/index.js?v=20260909-landscape-chat-emoji-34";
+} from "../icons-tooltips.js?v=20260910-status-tooltip-01";
+import { scrollToVideoPosition, sendVideoEventMessage, setInsideChatVisible } from "../chat/index.js?v=20260910-mobile-chat-side-placement-01";
 // Import circular intencional y seguro: estas funciones se invocan en runtime,
 // no durante la carga del modulo, y player-sync-logic.js a su vez importa
 // setVideoSource y waitForVideoMetadata desde aqui.

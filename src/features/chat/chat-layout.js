@@ -2,7 +2,7 @@
 import { dom } from "../../core/dom.js";
 import { state, logEvent } from "../../core/state.js?v=20260902-mobile-real-browser-01";
 import { CHAT_DOCKS, CHAT_DOCK_META, withShortcutHint } from "../../core/utils.js";
-import { hydrateIcons, hideTooltip, refreshTooltipForTarget } from "../icons-tooltips.js?v=20260904-help-invite-fixes-02";
+import { hydrateIcons, hideTooltip, refreshTooltipForTarget } from "../icons-tooltips.js?v=20260910-status-tooltip-01";
 import { focusFullscreenWorkspace } from "../session-ui.js?v=20260909-landscape-chat-emoji-34";
 import {
   cancelIdentityEditing,
@@ -18,6 +18,11 @@ import {
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 import { focusChatInput } from "./chat-input-focus.js";
 import { restorePageScrollAfterRightChatCollapse } from "./chat-scroll-preservation.js?v=20260902-chat-landscape-expand-scroll-fix-01";
+import {
+  preserveInsideChatPanelPlacementWhileClosing,
+  syncInsideChatPanelPlacement,
+  wireInsideChatPanelPlacement,
+} from "../player/inside-chat-layout.js?v=20260910-mobile-chat-side-placement-02";
 
 const AUTO_COLLAPSE_DELAY_MS = 5000;
 const AUTO_EXPAND_INSIDE_KEY = "cine-juntos-chat-auto-expand-inside";
@@ -368,6 +373,7 @@ function scheduleAutoCollapse(isOverlay) {
 }
 
 export function setInsideChatVisible(visible, options = {}) {
+  wireInsideChatPanelPlacement();
   const source = options.source || "user";
   const wasVisible = dom.playerFrame.classList.contains("chat-inside-open");
   if (wasVisible !== visible && !options.skipScrollLock) lockUserScrollDuringChatTransition();
@@ -384,6 +390,11 @@ export function setInsideChatVisible(visible, options = {}) {
   }
   if (!visible) cancelIdentityEditing();
   dom.playerFrame.classList.toggle("chat-inside-open", visible);
+  if (visible) {
+    syncInsideChatPanelPlacement();
+  } else {
+    preserveInsideChatPanelPlacementWhileClosing();
+  }
   dom.playerChatToggleButton.classList.toggle("active", visible);
   dom.playerChatToggleButton.setAttribute("aria-pressed", String(visible));
   const shortcutTooltip = withShortcutHint(visible ? "Ocultar chat" : "Mostrar chat", "Tab");

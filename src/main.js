@@ -15,7 +15,7 @@ import {
   hydrateIcons,
   initializeUi,
   setConnection,
-} from "./features/icons-tooltips.js?v=20260904-help-invite-fixes-02";
+} from "./features/icons-tooltips.js?v=20260910-status-tooltip-01";
 import {
   wireLayoutMetrics,
 } from "./features/layout-metrics.js?v=20260909-landscape-chat-emoji-34";
@@ -38,7 +38,7 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js?v=20260910-overlay-composer-focus-01";
+} from "./features/chat/index.js?v=20260910-mobile-chat-side-placement-01";
 import {
   initializePlayer,
   wirePlayerEvents,
@@ -46,7 +46,7 @@ import {
 import { wireMobileFullscreenOrientation } from "./features/player/mobile-fullscreen-orientation.js";
 import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20260909-landscape-chat-emoji-34";
 import { wireMobileLandscapeVideoSnap } from "./features/mobile-landscape-video-snap.js?v=20260909-landscape-snap-29";
-import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260904-mobile-landscape-bottom-chat-07";
+import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260910-mobile-chat-side-placement-01";
 import { wireTouchHover } from "./core/touch-interactions.js?v=20260829-touch-hold-fix-01";
 import { wireMobileDebugTools } from "./features/mobile-debug.js?v=20260907-mobile-debug-tools-02";
 

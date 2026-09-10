@@ -47,7 +47,7 @@
                 </button>
               </span>
               <h1 class="room-chip-title">
-                <span class="app-status room-chip-status-inline" id="connectionStatus" data-state="starting" data-tooltip="Conectando con la sala" aria-label="Estado de la aplicación: Iniciando. Conectando con la sala">
+                <span class="app-status room-chip-status-inline" id="connectionStatus" role="button" tabindex="0" data-state="starting" data-tooltip="Conectando con la sala" aria-label="Estado de la aplicación: Iniciando. Conectando con la sala">
                   <span class="status-dot app-status-dot" aria-hidden="true"></span>
                 </span>
                 SALA
@@ -333,6 +333,8 @@
               <p
                 id="syncStatus"
                 class="sync-status video-status empty player-status-badge"
+                role="button"
+                tabindex="0"
                 title="Estado de video"
                 data-tooltip="Todavía no hay un video cargado en la sala"
               >
@@ -955,6 +957,6 @@
     <script src="./public/dev-runtime.js?v=20260715-02"></script>
     <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script src="./public/firebase-config.js"></script>
-    <script type="module" src="./src/main.js?v=20260909-landscape-chat-emoji-34"></script>
+    <script type="module" src="./src/main.js?v=20260910-mobile-chat-side-placement-01"></script>
   </body>
 </html>

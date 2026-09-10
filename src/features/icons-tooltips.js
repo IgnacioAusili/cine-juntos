@@ -113,13 +113,14 @@ export function wireTooltipEvents() {
     if (!context) return;
     const isHelpButton = context.anchor.classList?.contains("help-button");
     const isPresenceButton = isPresenceTooltipContext(context);
+    const isStatusButton = isStatusTooltipContext(context);
     if (event.pointerType === "mouse" && isSelectTooltipContext(context)) {
       suppressFocusTooltipUntil = performance.now() + TOOLTIP_SHOW_DELAY_MS;
       hideTooltip();
       return;
     }
     if (event.pointerType === "mouse" && isButtonTooltipContext(context)) {
-      if (isHelpButton || isPresenceTooltipContext(context)) return;
+      if (isHelpButton || isPresenceButton || isStatusButton) return;
       suppressFocusTooltipUntil = performance.now() + TOOLTIP_SHOW_DELAY_MS;
       hideTooltip();
       return;
@@ -127,7 +128,7 @@ export function wireTooltipEvents() {
     if (!isTouchPointer(event)) return;
 
     suppressFocusTooltipUntil = performance.now() + TOUCH_FOCUS_SUPPRESSION_MS;
-    const shouldToggleOff = (isHelpButton || isPresenceButton)
+    const shouldToggleOff = (isHelpButton || isPresenceButton || isStatusButton)
       && state.ui.tooltipTarget === context.anchor
       && !dom.tooltipLayer.hidden;
     clearTouchTooltipPress();
@@ -151,6 +152,7 @@ export function wireTooltipEvents() {
       context,
       isHelpButton,
       isPresenceButton,
+      isStatusButton,
       longPress: false,
     };
     setTooltipTouchHover(context.anchor, true);
@@ -169,8 +171,9 @@ export function wireTooltipEvents() {
   document.addEventListener("pointerup", (event) => {
     const context = getTooltipContext(event.target);
     const isHelpButton = context?.anchor.classList?.contains("help-button");
+    const isStatusButton = isStatusTooltipContext(context);
     if (event.pointerType === "mouse" && isButtonTooltipContext(context)) {
-      if (isHelpButton || isPresenceTooltipContext(context)) return;
+      if (isHelpButton || isPresenceTooltipContext(context) || isStatusButton) return;
       suppressFocusTooltipUntil = performance.now() + TOOLTIP_SHOW_DELAY_MS;
       hideTooltip();
       return;
@@ -180,7 +183,7 @@ export function wireTooltipEvents() {
     const press = touchTooltipPress;
     if (
       press?.pointerId === event.pointerId
-      && (press.isHelpButton || press.isPresenceButton)
+      && (press.isHelpButton || press.isPresenceButton || press.isStatusButton)
       && press.context.anchor.isConnected
     ) {
       if (press.longPress) {
@@ -205,12 +208,17 @@ export function wireTooltipEvents() {
 
   document.addEventListener("click", (event) => {
     const context = getTooltipContext(event.target);
-    if (!isPresenceTooltipContext(context) && !context?.anchor?.classList?.contains("help-button")) return;
+    if (
+      !isPresenceTooltipContext(context)
+      && !context?.anchor?.classList?.contains("help-button")
+      && !isStatusTooltipContext(context)
+    ) return;
     if (suppressedTouchTooltipClickTargets.delete(context.anchor)) {
       return;
     }
     const isMobileTooltipButton = context.anchor.classList?.contains("help-button")
-      || isPresenceTooltipContext(context);
+      || isPresenceTooltipContext(context)
+      || isStatusTooltipContext(context);
     if (window.matchMedia("(max-width: 680px)").matches && isMobileTooltipButton) {
       if (state.ui.tooltipTarget === context.anchor && !dom.tooltipLayer.hidden) {
         hideTooltip();
@@ -323,6 +331,10 @@ function isSelectTooltipContext(context) {
 
 function isPresenceTooltipContext(context) {
   return Boolean(context?.anchor?.classList?.contains("presence-pill"));
+}
+
+function isStatusTooltipContext(context) {
+  return Boolean(context?.anchor?.matches?.(".app-status, .player-status-badge"));
 }
 
 function scheduleTooltip(context) {

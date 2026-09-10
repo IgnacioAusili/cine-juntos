@@ -38,7 +38,7 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js?v=20260909-landscape-chat-emoji-34";
+} from "./features/chat/index.js?v=20260910-overlay-composer-focus-01";
 import {
   initializePlayer,
   wirePlayerEvents,

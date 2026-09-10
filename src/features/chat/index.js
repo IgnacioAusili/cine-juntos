@@ -531,7 +531,12 @@ export function wireChatEvents() {
   });
 
   [dom.mainMessageSend, dom.overlayMessageSend].forEach((button) => {
-    button?.addEventListener("mousedown", (event) => event.preventDefault());
+    const preventSendButtonFocus = (event) => {
+      if (!isMobileChatLayout()) return;
+      event.preventDefault();
+    };
+    button?.addEventListener("pointerdown", preventSendButtonFocus);
+    button?.addEventListener("mousedown", preventSendButtonFocus);
   });
 
   window.addEventListener("scroll", syncUnreadBadgesWithVisibility, {

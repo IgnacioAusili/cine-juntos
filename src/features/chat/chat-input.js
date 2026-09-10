@@ -16,7 +16,7 @@ import {
 import { createRandomId } from "../../core/random-id.js?v=20260902-mobile-real-browser-02";
 import {
   setSyncStatus,
-} from "../session-ui.js?v=20260909-keyboard-page-scroll-lock-32";
+} from "../session-ui.js?v=20260909-landscape-chat-emoji-34";
 import { refreshTooltipForTarget } from "../icons-tooltips.js?v=20260904-help-invite-fixes-02";
 import { markParticipantActive } from "../presence.js?v=20260901-chat-arrow-unified-03";
 import { clearReplyTarget } from "./chat-reply.js?v=20260826-reply-sync-close-03";
@@ -117,24 +117,99 @@ function preloadEmojiFont() {
   return emojiFontReady;
 }
 
+function isLandscapeKeyboardEmojiLayout() {
+  return Boolean(
+    document.documentElement.classList.contains("viewport-landscape")
+      && document.documentElement.classList.contains("bottom-chat-keyboard-open")
+      && dom.sessionView?.dataset.chatDock === "bottom",
+  );
+}
+
+function getEmojiViewportSize() {
+  const viewport = window.visualViewport;
+  return {
+    width: Math.max(0, viewport?.width || window.innerWidth || 0),
+    height: Math.max(0, viewport?.height || window.innerHeight || 0),
+  };
+}
+
+function syncEmojiPopoverLayout(popover) {
+  if (!isLandscapeKeyboardEmojiLayout()) {
+    popover.style.removeProperty("width");
+    popover.style.removeProperty("max-width");
+    popover.style.removeProperty("grid-template-columns");
+    return;
+  }
+
+  const options = [...popover.querySelectorAll(".emoji-option")];
+  if (!options.length) return;
+
+  const computedStyle = window.getComputedStyle(popover);
+  const parsePixels = (value) => Number.parseFloat(value) || 0;
+  const horizontalChrome = parsePixels(computedStyle.paddingLeft)
+    + parsePixels(computedStyle.paddingRight)
+    + parsePixels(computedStyle.borderLeftWidth)
+    + parsePixels(computedStyle.borderRightWidth);
+  const verticalChrome = parsePixels(computedStyle.paddingTop)
+    + parsePixels(computedStyle.paddingBottom)
+    + parsePixels(computedStyle.borderTopWidth)
+    + parsePixels(computedStyle.borderBottomWidth);
+  const columnGap = parsePixels(computedStyle.columnGap || computedStyle.gap);
+  const rowGap = parsePixels(computedStyle.rowGap || computedStyle.gap);
+  const { width: viewportWidth, height: viewportHeight } = getEmojiViewportSize();
+  const availableWidth = Math.max(
+    0,
+    viewportWidth - EMOJI_POPOVER_EDGE_PX * 2,
+  );
+  const availableHeight = Math.max(
+    0,
+    viewportHeight - EMOJI_POPOVER_EDGE_PX * 2,
+  );
+
+  // El propio botón sirve como referencia de tamaño. Se elige la menor
+  // cantidad de columnas que hace que cada celda pueda entrar en el alto
+  // visual; si el ancho fuera el límite, el algoritmo sigue reduciendo la
+  // celda sin depender de una resolución concreta.
+  let columns = options.length;
+  for (let candidate = 1; candidate <= options.length; candidate += 1) {
+    const rows = Math.ceil(options.length / candidate);
+    const cellWidth = (
+      availableWidth - horizontalChrome - columnGap * (candidate - 1)
+    ) / candidate;
+    const cellHeight = (
+      availableHeight - verticalChrome - rowGap * (rows - 1)
+    ) / rows;
+    if (cellWidth <= cellHeight + 0.5) {
+      columns = candidate;
+      break;
+    }
+  }
+
+  popover.style.width = `${availableWidth}px`;
+  popover.style.maxWidth = `${availableWidth}px`;
+  popover.style.gridTemplateColumns = `repeat(${columns}, minmax(0, 1fr))`;
+}
+
 function positionEmojiPopover(popover, anchor) {
+  syncEmojiPopoverLayout(popover);
+  const { width: viewportWidth, height: viewportHeight } = getEmojiViewportSize();
   const anchorRect = anchor.getBoundingClientRect();
   const popoverWidth = popover.offsetWidth;
   const popoverHeight = popover.offsetHeight;
   const maxLeft = Math.max(
     EMOJI_POPOVER_EDGE_PX,
-    window.innerWidth - popoverWidth - EMOJI_POPOVER_EDGE_PX,
+    viewportWidth - popoverWidth - EMOJI_POPOVER_EDGE_PX,
   );
   const left = Math.min(
     maxLeft,
     Math.max(EMOJI_POPOVER_EDGE_PX, anchorRect.left),
   );
   const spaceAbove = anchorRect.top - EMOJI_POPOVER_GAP_PX;
-  const spaceBelow = window.innerHeight - anchorRect.bottom - EMOJI_POPOVER_GAP_PX;
+  const spaceBelow = viewportHeight - anchorRect.bottom - EMOJI_POPOVER_GAP_PX;
   const opensBelow = spaceAbove < popoverHeight && spaceBelow > spaceAbove;
   const maxTop = Math.max(
     EMOJI_POPOVER_EDGE_PX,
-    window.innerHeight - popoverHeight - EMOJI_POPOVER_EDGE_PX,
+    viewportHeight - popoverHeight - EMOJI_POPOVER_EDGE_PX,
   );
   const desiredTop = opensBelow
     ? anchorRect.bottom + EMOJI_POPOVER_GAP_PX

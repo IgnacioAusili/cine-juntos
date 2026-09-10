@@ -21,6 +21,15 @@ const CONTEXTUAL_TARGET_SELECTOR = [
   "select",
   "[contenteditable=\"true\"]",
 ].join(",");
+const MESSAGE_INTERACTIVE_SELECTOR = [
+  "button",
+  "a",
+  "input",
+  "textarea",
+  "select",
+  "[contenteditable=\"true\"]",
+  "[role=\"button\"]",
+].join(",");
 
 let hideTimer = 0;
 let tapToggleTimer = 0;
@@ -133,6 +142,11 @@ function isContextualTarget(target) {
   return target instanceof Element && Boolean(target.closest(CONTEXTUAL_TARGET_SELECTOR));
 }
 
+function isMessageSurfaceTap(target) {
+  if (!(target instanceof Element) || !target.closest("#messages")) return false;
+  return !target.closest(MESSAGE_INTERACTIVE_SELECTOR);
+}
+
 function revealHeader() {
   if (isBottomChatKeyboardOpen()) {
     setHeaderCollapsed(true);
@@ -225,15 +239,13 @@ function finishGesture(event) {
   const gesture = activeGesture;
   const isTap = !gesture.moved;
   const isContextFreeTap = isTap && !gesture.contextual;
-  const isCollapsedMessagesTap = isTap
-    && gesture.startedInMessages
-    && dom.sessionView?.classList.contains("chat-header-collapsed");
+  const isMessagesSurfaceTap = isTap && isMessageSurfaceTap(event.target);
   activeGesture = null;
 
   // Solo el scroll que empieza dentro de #messages puede revelar el header.
   // Un arrastre de la pagina conserva el estado visible/oculto que ya tenia.
-  if (gesture.localSwipeUp || isContextFreeTap || isCollapsedMessagesTap) {
-    if ((isContextFreeTap || isCollapsedMessagesTap) && !gesture.localSwipeUp) {
+  if (gesture.localSwipeUp || isContextFreeTap || isMessagesSurfaceTap) {
+    if ((isContextFreeTap || isMessagesSurfaceTap) && !gesture.localSwipeUp) {
       scheduleHeaderToggle();
     }
     else revealHeader();

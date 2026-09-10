@@ -13,7 +13,7 @@ import {
   updateCharCounter,
   wireFloatingComposerLayout,
   wireComposerScrollbar,
-} from "./chat-input.js?v=20260907-mobile-emoji-keyboard-keep-open-01";
+} from "./chat-input.js?v=20260909-landscape-chat-emoji-34";
 import { setReplyTarget } from "./chat-reply.js?v=20260826-reply-sync-close-03";
 import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20260904-mobile-landscape-bottom-chat-07";
 import {
@@ -172,7 +172,7 @@ export {
   buildEmojiPicker,
   updateCharCounter,
   sendMessage,
-} from "./chat-input.js?v=20260907-mobile-emoji-keyboard-keep-open-01";
+} from "./chat-input.js?v=20260909-landscape-chat-emoji-34";
 export {
   beginSystemMessageHydration,
   finishSystemMessageHydration,

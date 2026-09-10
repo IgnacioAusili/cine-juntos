@@ -78,8 +78,13 @@ function captureBottomChatKeyboardHandlePosition() {
   handleZone.style.setProperty("transform", "translate(-50%, -50%)");
   handleZone.style.setProperty(
     "transition",
-    "top 180ms ease, opacity 160ms ease, color 160ms ease, background 160ms ease",
+    "opacity 180ms ease, color 160ms ease, background 160ms ease",
   );
+  if (document.documentElement.classList.contains("viewport-landscape")) {
+    // Primero se desvanece en su posición anterior; el reanclaje se aplica
+    // mientras está invisible para evitar el salto visible al abrir el IME.
+    handleZone.style.setProperty("opacity", "0");
+  }
 }
 
 function restoreBottomChatKeyboardHandlePosition() {
@@ -346,6 +351,11 @@ function syncViewportMetrics(force = false) {
       window.setTimeout(() => {
         alignBottomChatKeyboardViewport();
       }, 50);
+      window.requestAnimationFrame(() => {
+        if (isBottomChatKeyboardOpen() && bottomChatKeyboardHandleAnchor?.handleZone) {
+          bottomChatKeyboardHandleAnchor.handleZone.style.setProperty("opacity", "1");
+        }
+      });
     });
   } else if (wasBottomChatKeyboardOpen) {
     bottomChatPageScrollLockTop = null;
@@ -438,15 +448,24 @@ function alignBottomChatKeyboardViewport() {
     const maxCenter = Math.max(minCenter, positioningParentRect.height - halfHandle);
     const boundedCenter = Math.min(maxCenter, Math.max(minCenter, desiredCenter));
     if (document.documentElement.classList.contains("viewport-landscape")) {
-      // El reanclaje acompaña el cambio de viewport del IME; no debe verse
-      // como un salto animado desde la posición previa del video.
-      anchoredHandleZone.style.setProperty("transition", "none");
+      // La posición ya fue aplicada mientras el handle estaba oculto. Solo
+      // animar la aparición evita que viaje desde el borde del video.
+      anchoredHandleZone.style.setProperty(
+        "transition",
+        "opacity 180ms ease, color 160ms ease, background 160ms ease",
+      );
     }
     anchoredHandleZone.style.setProperty(
       "top",
       `${boundedCenter}px`,
     );
     anchoredHandleZone.style.setProperty("bottom", "auto");
+    if (document.documentElement.classList.contains("viewport-landscape")) {
+      // La posición ya está corregida; desde aquí la transición solo afecta
+      // la opacidad y evita que la flecha quede invisible si Chrome emite
+      // varios resize mientras termina de abrir el teclado.
+      anchoredHandleZone.style.setProperty("opacity", "1");
+    }
   }
 }
 

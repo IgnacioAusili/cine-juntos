@@ -30,7 +30,7 @@ import {
   showLobby,
   showSession,
   watchRoomEntryVideoFocus,
-} from "./session-ui.js?v=20260909-keyboard-page-scroll-lock-32";
+} from "./session-ui.js?v=20260909-landscape-chat-emoji-34";
 import { handleRemoteState } from "./player/index.js?v=20260904-mobile-landscape-bottom-chat-07";
 import {
   renderMessage,
@@ -40,7 +40,7 @@ import {
   resetInsideUnread,
   resetPageUnread,
   renderReplyPreview,
-} from "./chat/index.js?v=20260909-keyboard-page-scroll-lock-31";
+} from "./chat/index.js?v=20260909-landscape-chat-emoji-34";
 
 const ACTIVE_TAB_KEY = "cine-juntos-active-tab";
 const ACTIVE_TAB_TTL_MS = 30000;

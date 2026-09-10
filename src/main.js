@@ -44,6 +44,7 @@ import {
   wirePlayerEvents,
 } from "./features/player/index.js?v=20260905-overlay-height-cap-04";
 import { wireMobileFullscreenOrientation } from "./features/player/mobile-fullscreen-orientation.js";
+import { wireMobileChatKeyboardControls } from "./features/player/mobile-chat-keyboard-controls.js?v=20260910-landscape-right-chat-keyboard-controls-05";
 import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20260910-landscape-chat-header-03";
 import { wireMobileLandscapeVideoSnap } from "./features/mobile-landscape-video-snap.js?v=20260909-landscape-snap-29";
 import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260910-mobile-copy-feedback-01";
@@ -79,6 +80,7 @@ wireTouchHover(dom.aboutButton, {
 wireIdentityEvents();
 wireChatEvents();
 wirePlayerEvents();
+wireMobileChatKeyboardControls();
 wireMobileFullscreenOrientation();
 wireMobileLandscapeVideoSnap();
 buildEmojiPicker();

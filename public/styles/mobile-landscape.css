@@ -130,6 +130,7 @@
   html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-area {
     gap: 3px;
     grid-template-rows: 38px minmax(0, 1fr);
+    transition: grid-template-rows 220ms ease;
   }
 
   html.viewport-landscape body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"] .chat-collapse-hover-zone {
@@ -164,6 +165,9 @@
     padding-inline: 4px;
     gap: 4px;
     overflow: hidden;
+    transition:
+      opacity 220ms ease,
+      padding 220ms ease;
   }
 
   html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-tools > * {

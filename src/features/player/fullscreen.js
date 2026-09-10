@@ -25,6 +25,7 @@ import {
 
 const PLAYER_OVERLAY_IDLE_MS = 3000;
 const PLAYER_OVERLAY_LEAVE_HIDE_DELAY_MS = 800;
+const MOBILE_OVERLAY_TOGGLE_LOCK_MS = 320;
 const MOBILE_PLAYER_MEDIA_QUERY = "(max-width: 980px) and (hover: none) and (pointer: coarse)";
 let fallbackFullscreenActive = false;
 
@@ -196,6 +197,23 @@ function wirePlayerOverlayControls({ togglePlayback } = {}) {
   let lastTouchPointerAt = 0;
   let videoClickTimer = null;
   let activeVideoTouchGesture = null;
+  let mobileTouchHidVisibleOverlay = false;
+  let mobileTouchInteractionActive = false;
+  let suppressMobileVideoRevealUntil = 0;
+  let mobileOverlayLockedUntil = 0;
+  const hideOverlayForMobileVideoTouch = () => {
+    if (
+      dom.playerFrame.classList.contains("player-no-content")
+      || !dom.playerFrame.classList.contains("player-overlay-visible")
+    ) return false;
+    clearHideTimer();
+    hideTooltip(true);
+    setOverlayVisible(false);
+    dom.playerFrame.classList.add("player-cursor-hidden");
+    suppressMobileVideoRevealUntil = Date.now() + 700;
+    mobileOverlayLockedUntil = Date.now() + MOBILE_OVERLAY_TOGGLE_LOCK_MS;
+    return true;
+  };
   const trackVideoTouchStart = (event) => {
     if (
       event.target !== dom.videoPlayer
@@ -203,6 +221,18 @@ function wirePlayerOverlayControls({ togglePlayback } = {}) {
       || !isTouchPointer(event)
     ) return;
 
+    mobileTouchInteractionActive = true;
+    if (Date.now() < mobileOverlayLockedUntil) {
+      activeVideoTouchGesture = {
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startY: event.clientY,
+        moved: false,
+        blocked: true,
+      };
+      return;
+    }
+    mobileTouchHidVisibleOverlay = hideOverlayForMobileVideoTouch();
     activeVideoTouchGesture = {
       pointerId: event.pointerId,
       startX: event.clientX,
@@ -224,7 +254,9 @@ function wirePlayerOverlayControls({ togglePlayback } = {}) {
   const finishVideoTouchGesture = (event) => {
     if (!activeVideoTouchGesture || event.pointerId !== activeVideoTouchGesture.pointerId) return false;
     const moved = activeVideoTouchGesture.moved;
+    const blocked = activeVideoTouchGesture.blocked;
     activeVideoTouchGesture = null;
+    if (blocked) return true;
     if (moved || event.target !== dom.videoPlayer) lastTouchPointerAt = Date.now();
     return moved;
   };
@@ -237,11 +269,26 @@ function wirePlayerOverlayControls({ togglePlayback } = {}) {
 
     if (event.defaultPrevented) {
       lastTouchPointerAt = Date.now();
+      mobileTouchInteractionActive = false;
+      mobileTouchHidVisibleOverlay = false;
       return;
     }
 
     event.preventDefault();
     lastTouchPointerAt = Date.now();
+    mobileTouchInteractionActive = false;
+    if (dom.playerFrame.classList.contains("player-no-content")) {
+      mobileTouchHidVisibleOverlay = false;
+      suppressMobileVideoRevealUntil = 0;
+      dom.playerFrame.classList.remove("player-cursor-hidden");
+      setOverlayVisible(true);
+      return;
+    }
+    if (mobileTouchHidVisibleOverlay) {
+      mobileTouchHidVisibleOverlay = false;
+      return;
+    }
+    suppressMobileVideoRevealUntil = 0;
     clearHideTimer();
     const isVisible = dom.playerFrame.classList.contains("player-overlay-visible");
     if (isVisible) {
@@ -253,6 +300,7 @@ function wirePlayerOverlayControls({ togglePlayback } = {}) {
 
     dom.playerFrame.classList.remove("player-cursor-hidden");
     setOverlayVisible(true);
+    mobileOverlayLockedUntil = Date.now() + MOBILE_OVERLAY_TOGGLE_LOCK_MS;
     scheduleHide();
   };
   dom.videoPlayer.addEventListener("pointerdown", trackVideoTouchStart, { passive: true });
@@ -269,6 +317,8 @@ function wirePlayerOverlayControls({ togglePlayback } = {}) {
   document.addEventListener("pointercancel", (event) => {
     if (!isTouchPointer(event)) return;
     activeVideoTouchGesture = null;
+    mobileTouchInteractionActive = false;
+    mobileTouchHidVisibleOverlay = false;
   }, { passive: true });
   if (!supportsPointerEvents) {
     let activeLegacyTouchGesture = null;
@@ -280,6 +330,12 @@ function wirePlayerOverlayControls({ togglePlayback } = {}) {
       if (!isMobileTouchDevice() || event.target !== dom.videoPlayer) return;
       const point = getLegacyTouchPoint(event);
       if (!point) return;
+      mobileTouchInteractionActive = true;
+      if (Date.now() < mobileOverlayLockedUntil) {
+        activeLegacyTouchGesture = { ...point, moved: false, blocked: true };
+        return;
+      }
+      mobileTouchHidVisibleOverlay = hideOverlayForMobileVideoTouch();
       activeLegacyTouchGesture = { ...point, moved: false };
     }, { passive: true });
     dom.videoPlayer.addEventListener("touchmove", (event) => {
@@ -298,8 +354,9 @@ function wirePlayerOverlayControls({ togglePlayback } = {}) {
     dom.videoPlayer.addEventListener("touchend", (event) => {
       if (!activeLegacyTouchGesture) return;
       const moved = activeLegacyTouchGesture.moved;
+      const blocked = activeLegacyTouchGesture.blocked;
       activeLegacyTouchGesture = null;
-      if (moved) {
+      if (blocked || moved) {
         lastTouchPointerAt = Date.now();
         return;
       }
@@ -312,11 +369,10 @@ function wirePlayerOverlayControls({ togglePlayback } = {}) {
   dom.videoPlayer.addEventListener("click", (event) => {
     if (event.target !== dom.videoPlayer) return;
     if (isMobileTouchDevice()) {
-      if (Date.now() - lastTouchPointerAt <= 600) {
-        event.preventDefault();
-        return;
-      }
-      if (event.pointerType !== "mouse") toggleOverlayFromVideo(event);
+      // En táctil el overlay se alterna en pointerup/touchend. El click
+      // sintético posterior solo debe consumirse para no procesar el toque
+      // dos veces y volver a mostrar la barra después de ocultarla.
+      event.preventDefault();
       return;
     }
 
@@ -378,10 +434,20 @@ function wirePlayerOverlayControls({ togglePlayback } = {}) {
     }
 
     const target = event?.target instanceof Element ? event.target : null;
+    if (
+      isMobileTouchDevice()
+      && target === dom.videoPlayer
+      && (mobileTouchInteractionActive || Date.now() < suppressMobileVideoRevealUntil)
+    ) return;
     const isChatToggle = target?.closest("#playerChatToggleButton");
     // El botón del chat es una acción independiente del reproductor: no debe
     // cambiar la visibilidad de la barra ni provocar el estado suprimido.
     if (isChatToggle || Date.now() < suppressChatToggleOverlayUntil) return;
+    if (
+      isMobileTouchDevice()
+      && Date.now() < suppressMobileVideoRevealUntil
+      && !target?.closest(".player-chat")
+    ) return;
     if (
       isMobileTouchDevice()
       && target === dom.videoPlayer

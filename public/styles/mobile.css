@@ -158,7 +158,7 @@
   body:not(.is-lobby) .session-view[data-chat-dock="bottom"].chat-bottom-mobile-expand-visual .chat-area {
     height: 100%;
     min-height: 0;
-    border-width: 1px;
+    border: 0;
     opacity: 1;
     transform: none;
     transition: none;
@@ -1048,8 +1048,18 @@
   /* El chat inferior llega hasta el borde del teléfono en vertical: sus
      esquinas inferiores no deben dejar una curva separada del borde. */
   body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-area {
+    border: 0 !important;
+    box-shadow: none !important;
     border-bottom-left-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
+  }
+
+  /* El reproductor ya está unido al borde superior del viewport cuando la
+     barra de Chrome se oculta. Su borde superior de 1px dejaba una línea
+     visible entre la toolbar y el video. */
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface) {
+    border-top: 0 !important;
   }
 
   body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .workspace {
@@ -1172,5 +1182,122 @@
     /* La flecha reaparece exactamente al terminar la cortina, sin un fade
        adicional que la deje oculta después de que el panel ya se abrió. */
     transition: color 160ms ease, background 160ms ease;
+  }
+}
+
+/* Al abrir el teclado del chat inferior, Chrome reduce el viewport de layout.
+   La pagina conserva su altura estructural y solo se comprime la segunda fila:
+   el reproductor no cambia de tamaño ni el documento se desplaza para mostrar
+   un chat completo que ya no entra sobre el teclado. */
+@media (max-width: 680px) {
+  html.bottom-chat-keyboard-open body:not(.is-lobby) {
+    overscroll-behavior: none !important;
+  }
+
+  html.bottom-chat-keyboard-open body:not(.is-lobby)
+    .session-view[data-chat-dock="bottom"] .messages {
+    overscroll-behavior: contain;
+  }
+
+  html.bottom-chat-keyboard-open body:not(.is-lobby)
+    .session-view[data-chat-dock="bottom"] .chat-area > .message-form {
+    bottom: 0 !important;
+  }
+
+  html.bottom-chat-keyboard-open body:not(.is-lobby)
+    .session-view[data-chat-dock="bottom"] .workspace {
+    height: var(--app-viewport-height) !important;
+    min-height: 0 !important;
+    padding-top: 0 !important;
+    grid-template-rows:
+      minmax(0, 40%)
+      minmax(
+        0,
+        var(--chat-bottom-visible-height, 0px)
+      ) !important;
+  }
+
+  html.bottom-chat-keyboard-open body:not(.is-lobby)
+    .session-view[data-chat-dock="bottom"] .chat-tools {
+    min-height: 0 !important;
+    height: 0 !important;
+    max-height: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transform: none !important;
+  }
+
+  html.bottom-chat-keyboard-open body:not(.is-lobby)
+    .session-view[data-chat-dock="bottom"] .chat-area {
+    grid-template-rows: 0px minmax(0, 1fr) !important;
+  }
+
+  /* El viewport reducido por el teclado puede activar temporalmente
+     orientation: landscape aunque el teléfono siga en vertical. Mantener
+     aquí la composición sin bordes evita que reaparezca el marco base del
+     reproductor y del chat durante ese cambio de media query. */
+  html.bottom-chat-keyboard-open body:not(.is-lobby)
+    .session-view[data-chat-dock="bottom"] .player-frame:not(.mini-player-surface),
+  html.bottom-chat-keyboard-open body:not(.is-lobby)
+    .session-view[data-chat-dock="bottom"] .chat-area {
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+}
+
+/* En apaisado el ancho CSS puede superar 680px aunque siga siendo un layout
+   móvil. Cuando Chrome muestra el teclado, la barra del navegador deja una
+   zona web muy baja; el chat enfocado debe ocupar esa zona, no conservar las
+   dos filas completas del layout apaisado y quedar debajo del teclado. */
+@media (max-width: 980px) {
+  html.viewport-landscape body:not(.is-lobby)
+    .session-view.chat-header-collapsed[data-chat-dock="bottom"] .chat-tools {
+    min-height: 0 !important;
+    height: 0 !important;
+    max-height: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transform: translateY(0) !important;
+  }
+
+  html.viewport-landscape body:not(.is-lobby)
+    .session-view.chat-header-collapsed[data-chat-dock="bottom"] .chat-area {
+    gap: 3px;
+    grid-template-rows: 0 minmax(0, 1fr) !important;
+  }
+
+  html.viewport-landscape.bottom-chat-keyboard-open body:not(.is-lobby)
+    .session-view[data-chat-dock="bottom"] .workspace {
+    height: var(--chat-bottom-viewport-height, var(--app-viewport-height)) !important;
+    min-height: 0 !important;
+    padding-top: 0 !important;
+    grid-template-rows: 0 minmax(0, 1fr) !important;
+  }
+
+  html.viewport-landscape.bottom-chat-keyboard-open body:not(.is-lobby)
+    .session-view[data-chat-dock="bottom"] .video-area {
+    height: 0 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  html.viewport-landscape.bottom-chat-keyboard-open body:not(.is-lobby)
+    .session-view[data-chat-dock="bottom"] .chat-area {
+    height: auto !important;
+    min-height: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    grid-template-rows: 0 minmax(0, 1fr) !important;
+  }
+
+  html.viewport-landscape.bottom-chat-keyboard-open body:not(.is-lobby)
+    .session-view[data-chat-dock="bottom"] .chat-area > .message-form {
+    bottom: 0 !important;
   }
 }

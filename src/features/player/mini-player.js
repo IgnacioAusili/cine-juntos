@@ -9,7 +9,7 @@ import {
 import {
   mirrorMiniPlayerChatState,
 } from "./mini-player-chat.js?v=20260904-mobile-landscape-bottom-chat-07";
-import { movePlayerInterface } from "./mini-player-interface.js?v=20260904-mobile-landscape-bottom-chat-07";
+import { movePlayerInterface } from "./mini-player-interface.js?v=20260910-mobile-chat-button-focus-01";
 import { trackMiniPlayerReturnHint } from "./mini-player-return-hint.js";
 import { clampMiniPlayerPosition, wireMiniPlayerDrag } from "./mini-player-drag.js?v=20260808-scroll-mini-player-02";
 

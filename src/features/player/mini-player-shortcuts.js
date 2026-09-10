@@ -1,5 +1,5 @@
 import { dom } from "../../core/dom.js";
-import { toggleMiniChatOverlay } from "./mini-player-chat-mirror.js?v=20260904-mobile-landscape-bottom-chat-07";
+import { toggleMiniChatOverlay } from "./mini-player-chat-mirror.js?v=20260910-mobile-chat-button-focus-01";
 
 const SEEK_STEP_SECONDS = 5;
 const VOLUME_STEP = 0.05;

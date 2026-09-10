@@ -9,6 +9,14 @@ const miniSystemGroupAnimations = new WeakMap();
 const miniEmojiPopoverHideTimers = new WeakMap();
 const EMOJI_POPOVER_TAIL_INSET_PX = 12;
 const EMOJI_POPOVER_TRANSITION_MS = 150;
+const MOBILE_CHAT_LAYOUT_QUERY = "(max-width: 980px)";
+
+function isMobileChatLayout() {
+  return Boolean(
+    window.matchMedia
+    && window.matchMedia(MOBILE_CHAT_LAYOUT_QUERY).matches,
+  );
+}
 
 export function normalizeMiniSystemGroupState(container) {
   container?.querySelectorAll(".message.system").forEach((systemMessage) => {
@@ -380,7 +388,9 @@ export function toggleMiniEmojiPicker(element) {
     if (popover.hidden || popover.classList.contains("is-emoji-popover-closing")) return;
     popover.classList.add("is-emoji-popover-open");
   });
-  requestAnimationFrame(() => focusChatInput(input, selectionStart, selectionEnd));
+  if (!isMobileChatLayout()) {
+    requestAnimationFrame(() => focusChatInput(input, selectionStart, selectionEnd));
+  }
 }
 
 function hideMiniEmojiPopover(popover) {
@@ -459,6 +469,10 @@ function insertMiniEmoji(surface, target) {
   input.value = `${input.value.slice(0, start)}${option.textContent}${input.value.slice(end)}`;
   const position = start + option.textContent.length;
   input.dispatchEvent(new Event("input", { bubbles: true }));
-  focusChatInput(input, position, position);
+  if (isMobileChatLayout()) {
+    input.setSelectionRange?.(position, position);
+  } else {
+    focusChatInput(input, position, position);
+  }
   hideMiniEmojiPopover(surface.querySelector(".mini-emoji-popover"));
 }

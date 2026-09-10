@@ -177,6 +177,27 @@ function wirePlayerOverlayControls({ togglePlayback } = {}) {
     }, safeDelay);
   };
 
+  let controlDragActive = false;
+  let suppressFocusoutHideUntil = 0;
+  const resetOverlayHideAfterControlDrag = () => {
+    controlDragActive = false;
+    suppressFocusoutHideUntil = Date.now() + 600;
+    if (isInlinePlayerDialogVisible()) return;
+    dom.playerFrame.classList.remove("player-cursor-hidden");
+    setOverlayVisible(true);
+    scheduleHide();
+  };
+
+  const startControlDrag = () => {
+    controlDragActive = true;
+    suppressFocusoutHideUntil = 0;
+    clearHideTimer();
+  };
+  window.addEventListener("player-seek-drag-start", startControlDrag);
+  window.addEventListener("player-volume-drag-start", startControlDrag);
+  window.addEventListener("player-seek-drag-end", resetOverlayHideAfterControlDrag);
+  window.addEventListener("player-volume-drag-end", resetOverlayHideAfterControlDrag);
+
   const resetHideTimerAfterControlClick = (event) => {
     const control = event.target?.closest?.("button");
     const isPlayerControl = dom.playerBottomActions?.contains(control)
@@ -571,6 +592,7 @@ function wirePlayerOverlayControls({ togglePlayback } = {}) {
   }, { passive: true, capture: true });
 
   dom.playerFrame.addEventListener("focusout", () => {
+    if (controlDragActive || Date.now() < suppressFocusoutHideUntil) return;
     scheduleHide(800);
   });
 

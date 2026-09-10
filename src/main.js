@@ -42,7 +42,7 @@ import {
 import {
   initializePlayer,
   wirePlayerEvents,
-} from "./features/player/index.js?v=20260910-player-overlay-toggle-07";
+} from "./features/player/index.js?v=20260910-player-overlay-toggle-09";
 import { wireMobileFullscreenOrientation } from "./features/player/mobile-fullscreen-orientation.js";
 import { wireMobileChatKeyboardControls } from "./features/player/mobile-chat-keyboard-controls.js?v=20260910-landscape-right-chat-keyboard-controls-06";
 import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20260910-landscape-chat-header-03";

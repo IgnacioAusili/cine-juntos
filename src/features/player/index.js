@@ -1,5 +1,5 @@
 // Coordinacion general del player: reexporta sync de video y fullscreen sin romper imports existentes.
-import { wireFullscreenEvents } from "./fullscreen.js?v=20260910-player-overlay-toggle-07";
+import { wireFullscreenEvents } from "./fullscreen.js?v=20260910-player-overlay-toggle-09";
 import { wireMiniPlayerEvents } from "./mini-player.js?v=20260905-overlay-height-cap-04";
 import { wirePlayerCoreEvents } from "./player.js?v=20260904-mobile-landscape-bottom-chat-07";
 import { wirePlayerControlLayouts } from "./player-controls-layout.js?v=20260902-player-controls-layout-17";
@@ -21,7 +21,7 @@ export {
   handleFullscreenChange,
   snapFullscreenScroll,
   togglePageFullscreen,
-} from "./fullscreen.js?v=20260910-player-overlay-toggle-07";
+} from "./fullscreen.js?v=20260910-player-overlay-toggle-09";
 
 export function wirePlayerEvents() {
   const playerInteractions = wirePlayerCoreEvents();

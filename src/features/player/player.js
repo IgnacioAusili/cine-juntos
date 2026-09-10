@@ -35,7 +35,7 @@ import {
   showResumeVideoDialog,
   showSlowLoadDialog,
 } from "../session-ui.js?v=20260909-landscape-chat-emoji-34";
-import { togglePageFullscreen } from "./fullscreen.js?v=20260910-player-overlay-toggle-07";
+import { togglePageFullscreen } from "./fullscreen.js?v=20260910-player-overlay-toggle-09";
 import { syncMiniPlayerButton } from "./mini-player.js?v=20260904-mobile-landscape-bottom-chat-07";
 import { shouldToggleMuteFromVolumeButton } from "./player-volume-layout.js?v=20260902-player-volume-layout-18";
 
@@ -205,15 +205,18 @@ export function wirePlayerCoreEvents() {
     dom.playerVolumeGroup?.classList.remove("is-dragging");
     dom.playerFrame?.classList.remove("player-volume-control-dragging");
     dom.playerVolumeInput.blur();
+    window.dispatchEvent(new Event("player-volume-drag-end"));
   });
 
   dom.playerVolumeInput?.addEventListener("pointerdown", () => {
     dom.playerVolumeGroup?.classList.add("is-dragging");
     dom.playerFrame?.classList.add("player-volume-control-dragging");
+    window.dispatchEvent(new Event("player-volume-drag-start"));
   });
   dom.playerVolumeInput?.addEventListener("pointercancel", () => {
     dom.playerVolumeGroup?.classList.remove("is-dragging");
     dom.playerFrame?.classList.remove("player-volume-control-dragging");
+    window.dispatchEvent(new Event("player-volume-drag-end"));
   });
 
   dom.playerVolumeGroup?.addEventListener("wheel", (e) => {
@@ -1394,6 +1397,7 @@ function wireSeekTooltipEvents() {
 
     hideTooltip(true);
     setSeekDragActive(true);
+    window.dispatchEvent(new Event("player-seek-drag-start"));
     seekPointerId = event.pointerId;
     try {
       dom.playerSeekInput.setPointerCapture?.(event.pointerId);
@@ -1409,6 +1413,7 @@ function wireSeekTooltipEvents() {
     setSeekDragActive(false);
     seekPointerId = null;
     hideSeekTooltip();
+    window.dispatchEvent(new Event("player-seek-drag-end"));
   };
 
   const handlePointerLeave = () => {

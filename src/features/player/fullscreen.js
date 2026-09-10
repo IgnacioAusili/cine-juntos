@@ -156,10 +156,6 @@ function wirePlayerOverlayControls({ togglePlayback } = {}) {
         scheduleHide(safeDelay);
         return;
       }
-      if (dom.playerFrame.classList.contains("player-volume-gesture-active")) {
-        scheduleHide(safeDelay);
-        return;
-      }
       if (
         dom.playerVolumeGroup?.classList.contains("is-dragging")
         || volumeControlPointerActive
@@ -222,19 +218,6 @@ function wirePlayerOverlayControls({ togglePlayback } = {}) {
   let mobileTouchInteractionActive = false;
   let suppressMobileVideoRevealUntil = 0;
   let mobileOverlayLockedUntil = 0;
-  const hideOverlayForMobileVideoTouch = () => {
-    if (
-      dom.playerFrame.classList.contains("player-no-content")
-      || !dom.playerFrame.classList.contains("player-overlay-visible")
-    ) return false;
-    clearHideTimer();
-    hideTooltip(true);
-    setOverlayVisible(false);
-    dom.playerFrame.classList.add("player-cursor-hidden");
-    suppressMobileVideoRevealUntil = Date.now() + 700;
-    mobileOverlayLockedUntil = Date.now() + MOBILE_OVERLAY_TOGGLE_LOCK_MS;
-    return true;
-  };
   const trackVideoTouchStart = (event) => {
     if (
       event.target !== dom.videoPlayer
@@ -243,6 +226,7 @@ function wirePlayerOverlayControls({ togglePlayback } = {}) {
     ) return;
 
     mobileTouchInteractionActive = true;
+    clearHideTimer();
     if (Date.now() < mobileOverlayLockedUntil) {
       activeVideoTouchGesture = {
         pointerId: event.pointerId,
@@ -253,7 +237,9 @@ function wirePlayerOverlayControls({ togglePlayback } = {}) {
       };
       return;
     }
-    mobileTouchHidVisibleOverlay = hideOverlayForMobileVideoTouch();
+    // El inicio solo registra el estado. La barra se alterna al soltar, nunca
+    // mientras el dedo permanece apoyado sobre el video.
+    mobileTouchHidVisibleOverlay = dom.playerFrame.classList.contains("player-overlay-visible");
     activeVideoTouchGesture = {
       pointerId: event.pointerId,
       startX: event.clientX,
@@ -270,6 +256,9 @@ function wirePlayerOverlayControls({ togglePlayback } = {}) {
       ) >= VIDEO_GESTURE_MOVE_THRESHOLD
     ) {
       activeVideoTouchGesture.moved = true;
+      // El navegador puede emitir mousemove sintéticos durante o justo
+      // después del arrastre táctil. No deben revelar ni alternar el overlay.
+      suppressMobileVideoRevealUntil = Date.now() + 700;
     }
   };
   const finishVideoTouchGesture = (event) => {
@@ -298,6 +287,9 @@ function wirePlayerOverlayControls({ togglePlayback } = {}) {
     event.preventDefault();
     lastTouchPointerAt = Date.now();
     mobileTouchInteractionActive = false;
+    // El gesto se resuelve al soltar; bloquear los eventos de mouse
+    // sintéticos posteriores evita que la barra rebote inmediatamente.
+    suppressMobileVideoRevealUntil = Date.now() + 700;
     if (dom.playerFrame.classList.contains("player-no-content")) {
       mobileTouchHidVisibleOverlay = false;
       suppressMobileVideoRevealUntil = 0;
@@ -305,11 +297,7 @@ function wirePlayerOverlayControls({ togglePlayback } = {}) {
       setOverlayVisible(true);
       return;
     }
-    if (mobileTouchHidVisibleOverlay) {
-      mobileTouchHidVisibleOverlay = false;
-      return;
-    }
-    suppressMobileVideoRevealUntil = 0;
+    mobileTouchHidVisibleOverlay = false;
     clearHideTimer();
     const isVisible = dom.playerFrame.classList.contains("player-overlay-visible");
     if (isVisible) {
@@ -352,11 +340,12 @@ function wirePlayerOverlayControls({ togglePlayback } = {}) {
       const point = getLegacyTouchPoint(event);
       if (!point) return;
       mobileTouchInteractionActive = true;
+      clearHideTimer();
       if (Date.now() < mobileOverlayLockedUntil) {
         activeLegacyTouchGesture = { ...point, moved: false, blocked: true };
         return;
       }
-      mobileTouchHidVisibleOverlay = hideOverlayForMobileVideoTouch();
+      mobileTouchHidVisibleOverlay = dom.playerFrame.classList.contains("player-overlay-visible");
       activeLegacyTouchGesture = { ...point, moved: false };
     }, { passive: true });
     dom.videoPlayer.addEventListener("touchmove", (event) => {

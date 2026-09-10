@@ -36,7 +36,7 @@ import {
   showResumeVideoDialog,
   showSlowLoadDialog,
 } from "../session-ui.js?v=20260909-landscape-chat-emoji-34";
-import { togglePageFullscreen } from "./fullscreen.js?v=20260910-player-overlay-toggle-12";
+import { togglePageFullscreen } from "./fullscreen.js?v=20260910-video-scroll-touch-02";
 import { syncMiniPlayerButton } from "./mini-player.js?v=20260910-player-tooltip-chain-01";
 import { shouldToggleMuteFromVolumeButton } from "./player-volume-layout.js?v=20260902-player-volume-layout-18";
 
@@ -238,8 +238,6 @@ export function wirePlayerCoreEvents() {
     persistVolume(dom.videoPlayer.volume);
     syncPlayerControls();
   });
-
-  wireFullscreenVolumeGesture();
 
   dom.videoPlayer.addEventListener("play", () => {
     rememberPlaybackPosition();
@@ -828,73 +826,6 @@ function adjustVolumeBy(delta) {
     dom.videoPlayer.muted = false;
   }
   syncPlayerControls();
-}
-
-function wireFullscreenVolumeGesture() {
-  let press = null;
-  let longPressTimer = null;
-
-  const clearPress = () => {
-    window.clearTimeout(longPressTimer);
-    longPressTimer = null;
-    dom.playerFrame?.classList.remove("player-volume-gesture-active");
-    if (press?.active && press.pointerId != null && dom.videoPlayer.hasPointerCapture?.(press.pointerId)) {
-      try { dom.videoPlayer.releasePointerCapture(press.pointerId); } catch { /* ya liberado */ }
-    }
-    press = null;
-  };
-
-  dom.videoPlayer.addEventListener("pointerdown", (event) => {
-    if (
-      !window.matchMedia("(max-width: 680px), (hover: none) and (pointer: coarse)").matches
-      || !(event.pointerType === "touch" || event.pointerType === "pen")
-      || !(document.fullscreenElement || document.body.classList.contains("fullscreen-mode"))
-      || dom.videoPlayer.paused
-      || dom.videoPlayer.ended
-    ) return;
-
-    clearPress();
-    press = {
-      pointerId: event.pointerId,
-      startX: event.clientX,
-      startY: event.clientY,
-      lastY: event.clientY,
-      active: false,
-    };
-    longPressTimer = window.setTimeout(() => {
-      if (!press || press.pointerId !== event.pointerId || dom.videoPlayer.paused) return;
-      press.active = true;
-      dom.playerFrame?.classList.add("player-volume-gesture-active");
-      try { dom.videoPlayer.setPointerCapture(event.pointerId); } catch { /* no disponible */ }
-    }, 520);
-  });
-
-  document.addEventListener("pointermove", (event) => {
-    if (!press || event.pointerId !== press.pointerId) return;
-    if (!press.active) {
-      if (Math.hypot(event.clientX - press.startX, event.clientY - press.startY) > 10) clearPress();
-      return;
-    }
-
-    event.preventDefault();
-    const deltaY = press.lastY - event.clientY;
-    if (Math.abs(deltaY) >= 2) {
-      adjustVolumeBy(deltaY * 0.005);
-      const action = deltaY > 0 ? "volume-up" : "volume-down";
-      showPlaybackGestureIndicator(action, `${Math.round(dom.videoPlayer.volume * 100)}%`);
-      press.lastY = event.clientY;
-    }
-  }, { passive: false });
-
-  const endGesture = (event) => {
-    if (!press || event.pointerId !== press.pointerId) return;
-    if (press.active) {
-      event.preventDefault();
-    }
-    clearPress();
-  };
-  document.addEventListener("pointerup", endGesture, { passive: false });
-  document.addEventListener("pointercancel", endGesture, { passive: false });
 }
 
 function readPersistedVolume() {

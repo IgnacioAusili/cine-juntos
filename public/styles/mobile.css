@@ -44,7 +44,7 @@
      toque corto se resuelve en JS; los arrastres no deben quedar bloqueados
      por los eventos del reproductor. */
   body:not(.is-lobby) .player-frame video {
-    touch-action: pan-y;
+    touch-action: auto;
   }
 
   /* iOS Safari amplía la página al enfocar controles de texto menores a

@@ -31,7 +31,7 @@ import {
   showSession,
   watchRoomEntryVideoFocus,
 } from "./session-ui.js?v=20260909-landscape-chat-emoji-34";
-import { handleRemoteState } from "./player/index.js?v=20260910-player-overlay-toggle-16";
+import { handleRemoteState } from "./player/index.js?v=20260910-video-scroll-touch-02";
 import {
   renderMessage,
   beginSystemMessageHydration,

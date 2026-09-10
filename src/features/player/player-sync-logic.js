@@ -17,7 +17,7 @@ import { setSyncStatus } from "../session-ui.js?v=20260909-landscape-chat-emoji-
 import { sendVideoEventMessage, renderMessage } from "../chat/index.js?v=20260910-mobile-chat-side-placement-01";
 // Import circular intencional y seguro: estas funciones se invocan en runtime,
 // no durante la carga del modulo, y player.js a su vez importa publishState.
-import { clearVideoSource, setVideoSource, waitForVideoMetadata } from "./player.js?v=20260910-player-cooldown-tooltip-05";
+import { clearVideoSource, setVideoSource, waitForVideoMetadata } from "./player.js?v=20260910-video-scroll-touch-02";
 
 const PLAYBACK_ISSUE_SYNC_COOLDOWN_MS = 2200;
 // Los eventos waiting/stalled también se disparan por pequeños saltos de red.

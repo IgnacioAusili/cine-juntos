@@ -49,6 +49,7 @@ export const dom = {
   dockChatButton: document.querySelector("#dockChatButton"),
   externalChatAutoExpandSwitch: document.querySelector("#externalChatAutoExpandSwitch"),
   collapseChatButton: document.querySelector("#collapseChatButton"),
+  expandChatButton: document.querySelector("#expandChatButton"),
   presencePill: document.querySelector("#presencePill"),
   participantCount: document.querySelector("#participantCount"),
   overlayPresencePill: document.querySelector("#overlayPresencePill"),

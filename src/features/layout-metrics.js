@@ -107,7 +107,10 @@ function preventRightChatPageScroll(event) {
 }
 
 function captureBottomChatKeyboardHandlePosition() {
-  const handleZone = dom.collapseChatButton?.closest(".chat-collapse-hover-zone");
+  const activeHandleButton = dom.sessionView?.classList.contains("chat-collapsed")
+    ? dom.expandChatButton
+    : dom.collapseChatButton;
+  const handleZone = activeHandleButton?.closest(".chat-collapse-hover-zone");
   if (
     !handleZone
     || !isMobileLayout()

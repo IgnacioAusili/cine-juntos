@@ -19,8 +19,10 @@ import { isMiniPlayerActive } from "./mini-player.js?v=20260910-player-tooltip-c
 import {
   syncExternalChatCollapseHandleOffset,
   syncInsideChatPanelOffset,
+  cancelExternalChatAutoCollapse,
+  forceExternalChatCollapsed,
   updateCollapseButton,
-} from "../chat/chat-layout.js?v=20260910-fullscreen-chat-handle-08";
+} from "../chat/chat-layout.js?v=20260910-fullscreen-chat-handle-12";
 import { withShortcutHint } from "../../core/utils.js";
 import {
   captureFullscreenScroll,
@@ -528,9 +530,14 @@ function wirePlayerOverlayControls({ togglePlayback } = {}) {
     scheduleHide();
   };
 
-  const collapseHandleZone = dom.collapseChatButton?.closest(".chat-collapse-hover-zone");
-  collapseHandleZone?.addEventListener("mouseenter", revealOverlayFromCollapseHandle);
-  collapseHandleZone?.addEventListener("mousemove", revealOverlayFromCollapseHandle);
+  [dom.collapseChatButton, dom.expandChatButton]
+    .filter(Boolean)
+    .map((button) => button.closest(".chat-collapse-hover-zone"))
+    .filter(Boolean)
+    .forEach((collapseHandleZone) => {
+      collapseHandleZone.addEventListener("mouseenter", revealOverlayFromCollapseHandle);
+      collapseHandleZone.addEventListener("mousemove", revealOverlayFromCollapseHandle);
+    });
 
   // Al mover o clickear el mouse en el player frame, se muestra el overlay
   dom.playerFrame.addEventListener("mousemove", revealOverlay, { passive: true });
@@ -730,6 +737,14 @@ export function handleFullscreenChange() {
 
   document.documentElement.classList.toggle("fullscreen-mode", isFullscreen);
   document.body.classList.toggle("fullscreen-mode", isFullscreen);
+  if (
+    isFullscreen
+    && dom.sessionView?.dataset.chatDock === "bottom"
+    && window.matchMedia("(max-width: 980px) and (orientation: landscape)").matches
+  ) {
+    cancelExternalChatAutoCollapse();
+    forceExternalChatCollapsed();
+  }
   updateCollapseButton();
   dom.pageFullscreenButton.classList.toggle("active", isFullscreen);
   dom.pageFullscreenButton.dataset.tooltip = tooltip;

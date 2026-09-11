@@ -96,7 +96,10 @@ function getDesktopBottomNameGeometry() {
   const tools = dom.chatNameField?.closest(".chat-tools");
   const sessionView = tools?.closest(".session-view");
   const field = dom.chatNameField?.parentElement;
-  const collapseAnchor = dom.collapseChatButton?.querySelector(".chat-collapse-icon-anchor");
+  const activeCollapseButton = sessionView.classList.contains("chat-collapsed")
+    ? dom.expandChatButton
+    : dom.collapseChatButton;
+  const collapseAnchor = activeCollapseButton?.querySelector(".chat-collapse-icon-anchor");
   if (
     !tools
     || !sessionView

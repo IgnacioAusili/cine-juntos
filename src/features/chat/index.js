@@ -32,7 +32,7 @@ import {
   setInsideChatVisible,
   syncExternalChatCollapseHandleOffset,
   syncChatAutoExpandControls,
-} from "./chat-layout.js?v=20260910-fullscreen-chat-handle-08";
+} from "./chat-layout.js?v=20260910-fullscreen-chat-handle-12";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 import { focusChatInput } from "./chat-input-focus.js";
 
@@ -53,7 +53,8 @@ function toggleExternalChatCollapse() {
   setExternalChatCollapsed(
     !dom.sessionView.classList.contains("chat-collapsed"),
   );
-  dom.collapseChatButton.blur();
+  dom.collapseChatButton?.blur();
+  dom.expandChatButton?.blur();
 }
 
 function toggleExternalChatCollapseAfterKeyboardCloses() {
@@ -207,7 +208,7 @@ export {
   setInsideChatVisible,
   syncChatAutoExpandControls,
   updateCollapseButton,
-} from "./chat-layout.js?v=20260910-fullscreen-chat-handle-08";
+} from "./chat-layout.js?v=20260910-fullscreen-chat-handle-12";
 
 export function wireChatEvents() {
   syncChatAutoExpandControls();
@@ -263,21 +264,23 @@ export function wireChatEvents() {
     setChatDock(CHAT_DOCK_META[currentDock]?.next || "right");
   });
 
-  dom.collapseChatButton.addEventListener("pointerdown", (event) => {
-    captureExternalChatCollapseScroll();
-    event.preventDefault();
-  });
+  [dom.collapseChatButton, dom.expandChatButton].filter(Boolean).forEach((button) => {
+    button.addEventListener("pointerdown", (event) => {
+      captureExternalChatCollapseScroll();
+      event.preventDefault();
+    });
 
-  dom.collapseChatButton.addEventListener("focus", () => {
-    dom.collapseChatButton.blur();
-  });
+    button.addEventListener("focus", () => {
+      button.blur();
+    });
 
-  dom.collapseChatButton.addEventListener("click", () => {
-    if (isBottomChatKeyboardOpen()) {
-      toggleExternalChatCollapseAfterKeyboardCloses();
-      return;
-    }
-    toggleExternalChatCollapse();
+    button.addEventListener("click", () => {
+      if (isBottomChatKeyboardOpen()) {
+        toggleExternalChatCollapseAfterKeyboardCloses();
+        return;
+      }
+      toggleExternalChatCollapse();
+    });
   });
 
   [

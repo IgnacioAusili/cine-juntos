@@ -329,15 +329,22 @@ function setCollapseHandleTransitioning(
 
   if (isTransitioning) hideTooltip();
 
-  const collapseHandleZone = dom.collapseChatButton.closest(".chat-collapse-hover-zone");
+  const collapseHandleButtons = [dom.collapseChatButton, dom.expandChatButton].filter(Boolean);
+  const collapseHandleZones = collapseHandleButtons
+    .map((button) => button.closest(".chat-collapse-hover-zone"))
+    .filter(Boolean);
 
   if (state.chat.collapseHandleTransitionTimer) {
     window.clearTimeout(state.chat.collapseHandleTransitionTimer);
     state.chat.collapseHandleTransitionTimer = null;
   }
 
-  dom.collapseChatButton.classList.toggle("is-transitioning", isTransitioning);
-  collapseHandleZone?.classList.toggle("is-transitioning", isTransitioning);
+  collapseHandleButtons.forEach((button) => {
+    button.classList.toggle("is-transitioning", isTransitioning);
+  });
+  collapseHandleZones.forEach((zone) => {
+    zone.classList.toggle("is-transitioning", isTransitioning);
+  });
   dom.sessionView?.classList.toggle("chat-layout-transitioning", isTransitioning);
   const messageForm = dom.chatArea?.querySelector(".message-form");
   if (isTransitioning && dom.sessionView?.dataset.chatDock === "right") {
@@ -351,12 +358,19 @@ function setCollapseHandleTransitioning(
   if (!isTransitioning) return;
 
   state.chat.collapseHandleTransitionTimer = window.setTimeout(() => {
-    dom.collapseChatButton.classList.remove("is-transitioning");
-    collapseHandleZone?.classList.remove("is-transitioning");
+    collapseHandleButtons.forEach((button) => {
+      button.classList.remove("is-transitioning");
+    });
+    collapseHandleZones.forEach((zone) => {
+      zone.classList.remove("is-transitioning");
+    });
     dom.sessionView?.classList.remove("chat-layout-transitioning");
     messageForm?.style.removeProperty("width");
     state.chat.collapseHandleTransitionTimer = null;
     syncExternalChatCollapseHandleOffset();
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(syncExternalChatCollapseHandleOffset);
+    });
     window.dispatchEvent(new Event("chat-layout-settled"));
   }, settleDelayMs);
 }
@@ -366,6 +380,7 @@ function scheduleAutoCollapse(isOverlay) {
     ? state.chat.autoExpandInsideEnabled
     : state.chat.autoExpandExternalEnabled;
   const autoOpenedKey = isOverlay ? "autoOpenedInside" : "autoOpenedExternal";
+  if (!isOverlay && isMobileLandscapeFullscreenBottomDock()) return;
   if (!enabled || !state.chat[autoOpenedKey]) return;
 
   clearAutoCollapseTimer(isOverlay);
@@ -376,6 +391,7 @@ function scheduleAutoCollapse(isOverlay) {
       if (!dom.playerFrame.classList.contains("chat-inside-open")) return;
       setInsideChatVisible(false, { source: "auto-timeout" });
     } else {
+      if (isMobileLandscapeFullscreenBottomDock()) return;
       if (dom.sessionView.classList.contains("chat-collapsed")) return;
       setExternalChatCollapsed(true, { source: "auto-timeout" });
     }
@@ -1240,6 +1256,25 @@ export function setExternalChatCollapsed(collapsed, options = {}) {
   });
 }
 
+export function forceExternalChatCollapsed() {
+  if (!dom.sessionView || !dom.chatArea) return;
+
+  clearAutoCollapseTimer(false);
+  state.chat.autoOpenedExternal = false;
+  cancelBottomChatTransition();
+  clearBottomChatTransitionVisuals();
+  dom.chatArea.style.setProperty("transition", "none");
+  dom.sessionView.classList.add("chat-collapsed");
+  dom.chatArea.setAttribute("aria-hidden", "true");
+  dom.chatArea.setAttribute("inert", "");
+  updateCollapseButton();
+  syncUnreadBadgesWithVisibility();
+  syncExternalChatCollapseHandleOffset();
+  window.requestAnimationFrame(() => {
+    dom.chatArea?.style.removeProperty("transition");
+  });
+}
+
 function applyExternalChatCollapsed(collapsed) {
   const previousVideoRect = getVideoAreaRect();
   clearAutoCollapseTimer(false);
@@ -1377,6 +1412,11 @@ export function scheduleExternalChatAutoCollapse() {
   scheduleAutoCollapse(false);
 }
 
+export function cancelExternalChatAutoCollapse() {
+  clearAutoCollapseTimer(false);
+  state.chat.autoOpenedExternal = false;
+}
+
 export function completeAutoOpenedChatResponse(isOverlay) {
   const openedKey = isOverlay ? "autoOpenedInside" : "autoOpenedExternal";
   if (!state.chat[openedKey]) return false;
@@ -1398,16 +1438,12 @@ export function syncChatAutoExpandControls() {
 }
 
 export function updateCollapseButton() {
-  // El icono que contiene el tooltip puede cambiar de anclaje mientras el
-  // chat se contrae o cambia de dock. Limpiar la capa antes del reflow evita
-  // dejar flotando el texto de la flecha cuando ya no está visible.
+  // Cada estado tiene su propio botón y anclaje. Solo cambia la visibilidad
+  // semántica y el icono de cada acción; ningún nodo se reposiciona entre
+  // contraer y expandir.
   hideTooltip(true);
   const collapsed = dom.sessionView.classList.contains("chat-collapsed");
   const dock = dom.sessionView.dataset.chatDock || "right";
-  const iconAnchor = dom.collapseChatButton.querySelector(".chat-collapse-icon-anchor");
-  const icon = iconAnchor?.querySelector("[data-lucide]");
-  dom.collapseChatButton.removeAttribute("data-tooltip");
-  iconAnchor?.removeAttribute("data-tooltip");
   const isPortraitMobileRightDock =
     dock === "right"
     && window.matchMedia("(max-width: 980px) and (orientation: portrait)").matches;
@@ -1443,18 +1479,31 @@ export function updateCollapseButton() {
         : collapsed
           ? "arrow-up"
           : "arrow-down";
-  const label = collapsed ? "Expandir chat" : "Contraer chat";
 
-  dom.collapseChatButton.removeAttribute("title");
-  dom.collapseChatButton.setAttribute("aria-label", label);
-  if (iconAnchor) {
-    iconAnchor.dataset.tooltip = label;
-  } else {
-    dom.collapseChatButton.dataset.tooltip = label;
-  }
-  if (icon) {
-    icon.setAttribute("data-lucide", iconName);
-    icon.innerHTML = "";
-  }
+  const controls = [
+    { button: dom.collapseChatButton, isCollapsedState: false },
+    { button: dom.expandChatButton, isCollapsedState: true },
+  ];
+  controls.forEach(({ button, isCollapsedState }) => {
+    if (!button) return;
+    const label = isCollapsedState ? "Expandir chat" : "Contraer chat";
+    const controlIconName = isCollapsedState === collapsed
+      ? iconName
+      : isFullscreenLandscapeBottomDock
+        ? isCollapsedState ? "arrow-up" : "arrow-down"
+        : iconName;
+    const iconAnchor = button.querySelector(".chat-collapse-icon-anchor");
+    const icon = iconAnchor?.querySelector("[data-lucide]");
+    button.removeAttribute("data-tooltip");
+    button.removeAttribute("title");
+    button.setAttribute("aria-label", label);
+    button.setAttribute("aria-hidden", String(isCollapsedState !== collapsed));
+    iconAnchor?.removeAttribute("data-tooltip");
+    iconAnchor?.setAttribute("data-tooltip", label);
+    if (icon) {
+      icon.setAttribute("data-lucide", controlIconName);
+      icon.innerHTML = "";
+    }
+  });
   hydrateIcons();
 }

@@ -49,6 +49,7 @@
 }
 
 .mobile-debug-card .dialog-actions {
+  flex-wrap: wrap;
   margin-top: 14px;
 }
 

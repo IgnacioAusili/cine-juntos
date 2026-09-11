@@ -18,7 +18,7 @@ import {
 } from "./features/icons-tooltips.js?v=20260910-status-tooltip-04";
 import {
   wireLayoutMetrics,
-} from "./features/layout-metrics.js?v=20260911-header-arrow-04";
+} from "./features/layout-metrics.js?v=20260911-orientation-scroll-anchor-01";
 import {
   renderPresence,
   wireIdentityEvents,
@@ -26,7 +26,7 @@ import {
 import {
   showLobby,
   initializeAboutDialog,
-} from "./features/session-ui.js?v=20260910-right-chat-keyboard-02";
+} from "./features/session-ui.js?v=20260911-orientation-scroll-anchor-01";
 import {
   buildEmojiPicker,
   getPersistedInsideChatStyle,
@@ -49,7 +49,7 @@ import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.j
 import { wireMobileLandscapeVideoSnap } from "./features/mobile-landscape-video-snap.js?v=20260910-mobile-portrait-no-snap-01";
 import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260910-mobile-copy-feedback-01";
 import { wireTouchHover } from "./core/touch-interactions.js?v=20260829-touch-hold-fix-01";
-import { wireMobileDebugTools } from "./features/mobile-debug.js?v=20260907-mobile-debug-tools-02";
+import { wireMobileDebugTools } from "./features/mobile-debug.js?v=20260911-console-log-share-01";
 import { wireMobileKeyboardDiagnostics } from "./features/mobile-keyboard-diagnostics.js?v=20260911-ios-landscape-keyboard-diagnostics-01";
 
 const requestedRoom = normalizeRoomCode(new URLSearchParams(window.location.search).get("room") || "");

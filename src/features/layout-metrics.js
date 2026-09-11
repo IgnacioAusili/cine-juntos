@@ -18,6 +18,8 @@ let rightChatPageScrollLockTop = null;
 let wasRightChatKeyboardOpen = false;
 let fullscreenMetricResyncTimers = [];
 let lastFullscreenActive = false;
+let pendingOrientationScrollRestore = null;
+let orientationScrollRestoreFrame = 0;
 
 const MOBILE_LAYOUT_QUERY = "(max-width: 980px)";
 
@@ -254,6 +256,50 @@ function getCurrentViewportHeight() {
 
 function getNativePageScrollMax() {
   return Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+}
+
+function captureOrientationScrollPosition() {
+  if (
+    !isMobileLayout()
+    || isFullscreenActive()
+    || isBottomChatInputFocused()
+    || isRightChatKeyboardOpen()
+    || pendingOrientationScrollRestore
+  ) return;
+
+  const maxScroll = getNativePageScrollMax();
+  const scrollTop = window.scrollY || 0;
+  pendingOrientationScrollRestore = {
+    scrollTop,
+    wasAtBottom: maxScroll > 4 && scrollTop >= maxScroll - 6,
+  };
+}
+
+function restoreOrientationScrollPosition() {
+  const pending = pendingOrientationScrollRestore;
+  pendingOrientationScrollRestore = null;
+  orientationScrollRestoreFrame = 0;
+  if (!pending) return;
+
+  const maxScroll = getNativePageScrollMax();
+  const targetScroll = pending.wasAtBottom
+    ? maxScroll
+    : Math.min(pending.scrollTop, maxScroll);
+  if (Math.abs((window.scrollY || 0) - targetScroll) <= 1) return;
+
+  window.scrollTo({ top: targetScroll, behavior: "auto" });
+}
+
+function scheduleOrientationScrollRestore() {
+  if (!pendingOrientationScrollRestore || orientationScrollRestoreFrame) return;
+
+  // Esperar dos frames deja que el navegador termine el reflow provocado por
+  // la nueva orientación antes de calcular el máximo y restaurar el anclaje.
+  orientationScrollRestoreFrame = window.requestAnimationFrame(() => {
+    orientationScrollRestoreFrame = window.requestAnimationFrame(
+      restoreOrientationScrollPosition,
+    );
+  });
 }
 
 function rememberNativePageScrollPosition() {
@@ -534,6 +580,8 @@ function syncViewportMetrics(force = false) {
       });
     });
   }
+
+  if (force) scheduleOrientationScrollRestore();
 }
 
 function syncSessionToolbarHeight() {
@@ -679,7 +727,10 @@ export function wireLayoutMetrics() {
   }, {
     passive: true,
   });
-  window.addEventListener("orientationchange", () => scheduleLayoutMetricsSync(true), {
+  window.addEventListener("orientationchange", () => {
+    captureOrientationScrollPosition();
+    scheduleLayoutMetricsSync(true);
+  }, {
     passive: true,
   });
   window.visualViewport?.addEventListener(

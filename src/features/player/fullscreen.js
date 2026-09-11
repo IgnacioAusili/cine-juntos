@@ -10,7 +10,7 @@ import {
   hideTooltip,
   hydrateIcons,
 } from "../icons-tooltips.js?v=20260910-status-tooltip-04";
-import { setSyncStatus } from "../session-ui.js?v=20260909-landscape-chat-emoji-34";
+import { setSyncStatus } from "../session-ui.js?v=20260911-orientation-scroll-anchor-01";
 import {
   logEvent,
   state,

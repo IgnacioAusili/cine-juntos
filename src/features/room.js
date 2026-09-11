@@ -30,7 +30,7 @@ import {
   showLobby,
   showSession,
   watchRoomEntryVideoFocus,
-} from "./session-ui.js?v=20260909-landscape-chat-emoji-34";
+} from "./session-ui.js?v=20260911-orientation-scroll-anchor-01";
 import { handleRemoteState } from "./player/index.js?v=20260910-chat-two-controls-02";
 import {
   renderMessage,

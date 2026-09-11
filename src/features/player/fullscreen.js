@@ -16,7 +16,11 @@ import {
   state,
 } from "../../core/state.js?v=20260902-mobile-real-browser-01";
 import { isMiniPlayerActive } from "./mini-player.js?v=20260910-player-tooltip-chain-01";
-import { syncInsideChatPanelOffset } from "../chat/chat-layout.js?v=20260910-mobile-chat-scroll-lock-01";
+import {
+  syncExternalChatCollapseHandleOffset,
+  syncInsideChatPanelOffset,
+  updateCollapseButton,
+} from "../chat/chat-layout.js?v=20260910-fullscreen-chat-handle-08";
 import { withShortcutHint } from "../../core/utils.js";
 import {
   captureFullscreenScroll,
@@ -726,6 +730,7 @@ export function handleFullscreenChange() {
 
   document.documentElement.classList.toggle("fullscreen-mode", isFullscreen);
   document.body.classList.toggle("fullscreen-mode", isFullscreen);
+  updateCollapseButton();
   dom.pageFullscreenButton.classList.toggle("active", isFullscreen);
   dom.pageFullscreenButton.dataset.tooltip = tooltip;
   dom.pageFullscreenButton.removeAttribute("title");
@@ -737,5 +742,11 @@ export function handleFullscreenChange() {
   hydrateIcons();
   restoreFullscreenScroll(isFullscreen);
   syncInsideChatPanelOffset();
+  // El fullscreen cambia el origen y las filas del layout móvil. Recalcular
+  // también el anclaje del control externo evita que la flecha del chat
+  // inferior conserve el offset del viewport anterior y quede fuera de la
+  // pantalla al entrar en fullscreen.
+  syncExternalChatCollapseHandleOffset();
+  window.requestAnimationFrame(syncExternalChatCollapseHandleOffset);
   logEvent("ui", isFullscreen ? "Pantalla completa de pagina activada." : "Pantalla completa desactivada.");
 }

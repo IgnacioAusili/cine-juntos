@@ -645,6 +645,68 @@
     display: none;
   }
 
+  /* En fullscreen apaisado móvil el dock inferior se comporta como la misma
+     cortina del chat normal, pero sobre el video: no agrega una segunda fila
+     ni desplaza la página y cubre toda la superficie al terminar de abrirse. */
+  html.viewport-landscape body.fullscreen-mode
+    .session-view[data-chat-dock="bottom"] {
+    position: relative;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0;
+    margin: 0 !important;
+  }
+
+  html.viewport-landscape body.fullscreen-mode
+    .session-view[data-chat-dock="bottom"] .workspace {
+    position: relative;
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden;
+    grid-template: none !important;
+  }
+
+  html.viewport-landscape body.fullscreen-mode
+    .session-view[data-chat-dock="bottom"] .video-area {
+    position: relative;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+  }
+
+  html.viewport-landscape body.fullscreen-mode
+    .session-view[data-chat-dock="bottom"] .chat-area {
+    position: absolute;
+    top: auto;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 20;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    opacity: 1 !important;
+    transform: translateY(0);
+    transition: transform 320ms ease;
+    will-change: transform;
+  }
+
+  html.viewport-landscape body.fullscreen-mode
+    .session-view.chat-collapsed[data-chat-dock="bottom"] .chat-area {
+    transform: translateY(100%);
+    opacity: 1 !important;
+    pointer-events: none;
+  }
+
+  html.viewport-landscape body.fullscreen-mode
+    .session-view[data-chat-dock="bottom"] .chat-collapse-hover-zone {
+    z-index: 22;
+  }
+
 }
 
 /* En cualquier landscape con chat lateral, la toolbar superior acompaña todo

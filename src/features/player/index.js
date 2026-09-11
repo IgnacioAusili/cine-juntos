@@ -1,5 +1,5 @@
 // Coordinacion general del player: reexporta sync de video y fullscreen sin romper imports existentes.
-import { wireFullscreenEvents } from "./fullscreen.js?v=20260910-video-scroll-touch-02";
+import { wireFullscreenEvents } from "./fullscreen.js?v=20260910-fullscreen-chat-handle-02";
 import { wireMiniPlayerEvents } from "./mini-player.js?v=20260910-player-tooltip-chain-01";
 import { wirePlayerCoreEvents } from "./player.js?v=20260910-video-scroll-touch-02";
 import { wirePlayerControlLayouts } from "./player-controls-layout.js?v=20260902-player-controls-layout-17";
@@ -21,7 +21,7 @@ export {
   handleFullscreenChange,
   snapFullscreenScroll,
   togglePageFullscreen,
-} from "./fullscreen.js?v=20260910-video-scroll-touch-02";
+} from "./fullscreen.js?v=20260910-fullscreen-chat-handle-02";
 
 export function wirePlayerEvents() {
   const playerInteractions = wirePlayerCoreEvents();

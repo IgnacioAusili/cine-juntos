@@ -1330,3 +1330,11 @@
     bottom: 0 !important;
   }
 }
+
+/* Esta anulación queda al final de la hoja para ganar también sobre el borde
+   estructural del frame definido en la variante de viewport móvil compacto. */
+@media (max-width: 980px) and (orientation: portrait) {
+  body:not(.is-lobby) .session-view .player-frame:not(.mini-player-surface) {
+    border-top: 0 !important;
+  }
+}

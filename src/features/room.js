@@ -22,7 +22,7 @@ import {
   renderPresence,
   updateDisplayName,
 } from "./presence.js?v=20260901-chat-arrow-unified-03";
-import { setConnection } from "./icons-tooltips.js?v=20260910-status-tooltip-03";
+import { setConnection } from "./icons-tooltips.js?v=20260910-status-tooltip-04";
 import {
   getUserScrollIntentVersion,
   setHostBadge,
@@ -40,7 +40,7 @@ import {
   resetInsideUnread,
   resetPageUnread,
   renderReplyPreview,
-} from "./chat/index.js?v=20260910-chat-two-controls-01";
+} from "./chat/index.js?v=20260910-chat-two-controls-02";
 
 const ACTIVE_TAB_KEY = "cine-juntos-active-tab";
 const ACTIVE_TAB_TTL_MS = 30000;

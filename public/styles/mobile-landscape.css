@@ -178,6 +178,48 @@
     transform: none;
   }
 
+  /* Al plegarse solo el contenido del header, la flecha sigue siendo el
+     control visible para recuperar la cabecera. El ancho landscape del móvil
+     no entra en el bloque portrait de mobile.css, por eso se declara aquí. */
+  html.viewport-landscape body:not(.is-lobby)
+    .session-view.chat-header-collapsed[data-chat-dock="bottom"] .chat-tools {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  html.viewport-landscape body:not(.is-lobby)
+    .session-view.chat-header-collapsed[data-chat-dock="bottom"]
+    .chat-tools > :not(.chat-collapse-hover-zone) {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  html.viewport-landscape body:not(.is-lobby)
+    .session-view[data-chat-dock="bottom"] .chat-tools > :not(.chat-collapse-hover-zone) {
+    transition: opacity 220ms ease, visibility 0s linear;
+  }
+
+  html.viewport-landscape body:not(.is-lobby)
+    .session-view.chat-header-collapsed[data-chat-dock="bottom"] .chat-area {
+    gap: 3px;
+    grid-template-rows: 0 minmax(0, 1fr);
+  }
+
+  html.viewport-landscape body:not(.is-lobby)
+    .session-view.chat-header-collapsed[data-chat-dock="bottom"]
+    .chat-tools > :not(.chat-collapse-hover-zone) {
+    transition: opacity 220ms ease, visibility 0s linear 220ms;
+  }
+
+  html.viewport-landscape body:not(.is-lobby)
+    .session-view.chat-header-collapsed[data-chat-dock="bottom"]
+    .chat-tools > .chat-collapse-hover-zone[data-chat-control="collapse"] {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
   /* La fila visual del header termina después del gap de 3px del chat-area.
      La flecha conserva su anclaje geométrico; el resto del contenido baja
      lo necesario para quedar centrado respecto de la franja visible. */
@@ -711,8 +753,10 @@
     min-height: 0 !important;
     opacity: 1 !important;
     transform: translateY(0);
-    transition: transform 320ms ease;
-    will-change: transform;
+    transition:
+      transform 320ms ease,
+      grid-template-rows 220ms ease;
+    will-change: transform, grid-template-rows;
   }
 
   html.viewport-landscape body.fullscreen-mode

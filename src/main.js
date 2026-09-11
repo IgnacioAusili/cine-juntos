@@ -15,10 +15,10 @@ import {
   hydrateIcons,
   initializeUi,
   setConnection,
-} from "./features/icons-tooltips.js?v=20260910-status-tooltip-03";
+} from "./features/icons-tooltips.js?v=20260910-status-tooltip-04";
 import {
   wireLayoutMetrics,
-} from "./features/layout-metrics.js?v=20260910-video-scroll-touch-01";
+} from "./features/layout-metrics.js?v=20260911-header-arrow-03";
 import {
   renderPresence,
   wireIdentityEvents,
@@ -38,7 +38,7 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js?v=20260910-chat-two-controls-01";
+} from "./features/chat/index.js?v=20260910-chat-two-controls-02";
 import {
   initializePlayer,
   wirePlayerEvents,

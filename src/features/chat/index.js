@@ -32,9 +32,10 @@ import {
   setInsideChatVisible,
   syncExternalChatCollapseHandleOffset,
   syncChatAutoExpandControls,
-} from "./chat-layout.js?v=20260910-fullscreen-chat-handle-12";
+} from "./chat-layout.js?v=20260910-fullscreen-chat-handle-13";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 import { focusChatInput } from "./chat-input-focus.js";
+import { hideTooltip } from "../icons-tooltips.js?v=20260910-status-tooltip-04";
 
 const MOBILE_CHAT_LAYOUT_QUERY = "(max-width: 980px)";
 
@@ -208,7 +209,7 @@ export {
   setInsideChatVisible,
   syncChatAutoExpandControls,
   updateCollapseButton,
-} from "./chat-layout.js?v=20260910-fullscreen-chat-handle-12";
+} from "./chat-layout.js?v=20260910-fullscreen-chat-handle-13";
 
 export function wireChatEvents() {
   syncChatAutoExpandControls();
@@ -266,6 +267,9 @@ export function wireChatEvents() {
 
   [dom.collapseChatButton, dom.expandChatButton].filter(Boolean).forEach((button) => {
     button.addEventListener("pointerdown", (event) => {
+      hideTooltip(true);
+      dom.collapseChatButton?.blur();
+      dom.expandChatButton?.blur();
       captureExternalChatCollapseScroll();
       event.preventDefault();
     });
@@ -275,6 +279,7 @@ export function wireChatEvents() {
     });
 
     button.addEventListener("click", () => {
+      hideTooltip(true);
       if (isBottomChatKeyboardOpen()) {
         toggleExternalChatCollapseAfterKeyboardCloses();
         return;

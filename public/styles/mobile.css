@@ -858,7 +858,7 @@
   }
 
   body:not(.is-lobby) .session-view.chat-header-collapsed[data-chat-dock="bottom"]
-    .chat-tools > .chat-collapse-hover-zone[data-chat-control="collapse"] {
+    .chat-area > .chat-collapse-hover-zone[data-chat-control="collapse"] {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
@@ -1322,7 +1322,7 @@
 
   html.viewport-landscape.bottom-chat-keyboard-open body:not(.is-lobby)
     .session-view.chat-header-collapsed[data-chat-dock="bottom"]
-    .chat-tools > .chat-collapse-hover-zone[data-chat-control="collapse"] {
+    .chat-area > .chat-collapse-hover-zone[data-chat-control="collapse"] {
     opacity: 1 !important;
     visibility: visible;
     pointer-events: auto !important;

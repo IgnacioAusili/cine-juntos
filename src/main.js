@@ -18,7 +18,7 @@ import {
 } from "./features/icons-tooltips.js?v=20260910-status-tooltip-04";
 import {
   wireLayoutMetrics,
-} from "./features/layout-metrics.js?v=20260911-header-arrow-03";
+} from "./features/layout-metrics.js?v=20260911-header-arrow-04";
 import {
   renderPresence,
   wireIdentityEvents,

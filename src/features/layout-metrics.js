@@ -118,11 +118,10 @@ function captureBottomChatKeyboardHandlePosition() {
     || bottomChatKeyboardHandleAnchor?.handleZone === handleZone
   ) return;
 
-  // La flecha de contraer está incrustada en .chat-tools. Ese header debe
-  // conservarla en su propio flujo incluso cuando aparece el teclado; la
-  // reubicación temporal del handle inferior la sacaría del header y le
-  // dejaría un opacity inline que luego no se recupera.
-  if (handleZone.closest(".chat-tools")) return;
+  // La flecha de contraer vive como capa independiente sobre .chat-area. No
+  // debe entrar en la reubicación temporal del teclado: ese cálculo le dejaría
+  // estilos inline y la movería mientras el header se anima.
+  if (handleZone.closest(".chat-area, .chat-tools")) return;
 
   const rect = handleZone.getBoundingClientRect();
   if (rect.width <= 0 || rect.height <= 0) return;

@@ -7,6 +7,15 @@
   outline: none;
 }
 
+/* Cada estado tiene su propio control: el botón de contraer vive en el
+   header y el de expandir conserva su anclaje junto a la barra del video. */
+.session-view:not(.chat-collapsed)
+  .chat-collapse-hover-zone[data-chat-control="expand"],
+.session-view.chat-collapsed
+  .chat-collapse-hover-zone[data-chat-control="collapse"] {
+  display: none;
+}
+
 /* El overlay inline vive dentro del frame, mientras que la flecha es su
    hermano en el layout. Elevar el frame completo conserva la flecha visible
    y hace que el overlay la pinte por delante cuando ambos se superponen. */

@@ -5,7 +5,7 @@
     width: var(--app-viewport-width, 100vw);
     height: var(--app-viewport-height);
     min-height: 0;
-    overflow: hidden;
+    overflow: visible;
   }
 
   body.fullscreen-mode .app-shell {
@@ -160,8 +160,11 @@
     min-height: 0;
     height: auto;
     max-height: none;
-    padding-top: 2px;
-    padding-bottom: 0;
+    /* La flecha se ancla al centro geométrico del header. El contenido
+       restante debe tener el mismo centro: padding simétrico evita que el
+       track normal quede un píxel más abajo. */
+    padding-top: 1px;
+    padding-bottom: 1px;
     padding-inline: 4px;
     gap: 4px;
     overflow: hidden;
@@ -173,6 +176,23 @@
   html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-tools > * {
     align-self: center;
     transform: none;
+  }
+
+  /* La fila visual del header termina después del gap de 3px del chat-area.
+     La flecha conserva su anclaje geométrico; el resto del contenido baja
+     lo necesario para quedar centrado respecto de la franja visible. */
+  html.viewport-landscape body:not(.is-lobby)
+    .session-view[data-chat-dock="bottom"] .chat-tools > .presence-pill,
+  html.viewport-landscape body:not(.is-lobby)
+    .session-view[data-chat-dock="bottom"] .chat-tools > .chat-name-field,
+  html.viewport-landscape body:not(.is-lobby)
+    .session-view[data-chat-dock="bottom"] .chat-tools > .chat-tools-actions {
+    transform: translateY(2px) !important;
+  }
+
+  html.viewport-landscape body.fullscreen-mode
+    .session-view[data-chat-dock="bottom"] .chat-tools > .chat-name-field:has(.chat-name-editor[data-editing="false"]) {
+    transform: translateY(2px) !important;
   }
 
   html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-tools-actions {
@@ -705,6 +725,44 @@
   html.viewport-landscape body.fullscreen-mode
     .session-view[data-chat-dock="bottom"] .chat-collapse-hover-zone {
     z-index: 22;
+  }
+
+  /* En fullscreen la referencia visual del header incluye el separador
+     inferior; bajar solo la flecha la alinea con esa referencia sin mover el
+     resto del contenido ni cambiar el botón. */
+  html.viewport-landscape body.fullscreen-mode
+    .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .chat-collapse-hover-zone[data-chat-control="collapse"] {
+    /* El botón superior no depende del rectángulo animado del chat: aparece
+       en su posición final desde el primer frame de la expansión. */
+    top: calc(38px / 2);
+    transform: translate(-50%, calc(-50% + 2px));
+  }
+
+  /* La flecha no desaparece durante la cortina. La zona puede seguir sin
+     capturar un segundo toque durante el reflow, pero el control permanece
+     visible y no deja que el nombre salte a ocupar su lugar. */
+  html.viewport-landscape body.fullscreen-mode
+    .session-view[data-chat-dock="bottom"] .chat-collapse-hover-zone.is-transitioning,
+  html.viewport-landscape body.fullscreen-mode
+    .session-view[data-chat-dock="bottom"] .chat-collapse-hover-zone.is-transitioning .chat-collapse-handle,
+  html.viewport-landscape body.fullscreen-mode
+    .session-view[data-chat-dock="bottom"] .chat-collapse-hover-zone.is-transitioning .chat-collapse-icon-anchor {
+    visibility: visible;
+    opacity: 1 !important;
+  }
+
+  html.viewport-landscape body.fullscreen-mode
+    .session-view[data-chat-dock="bottom"] .chat-name-field:has(.chat-name-editor[data-editing="false"]) {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: calc(50% + 70px) !important;
+    height: auto;
+    justify-self: unset;
+    align-items: center;
+    max-width: calc(50% - 140px) !important;
+    transform: none !important;
   }
 
 }

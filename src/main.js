@@ -15,10 +15,10 @@ import {
   hydrateIcons,
   initializeUi,
   setConnection,
-} from "./features/icons-tooltips.js?v=20260910-status-tooltip-01";
+} from "./features/icons-tooltips.js?v=20260910-status-tooltip-03";
 import {
   wireLayoutMetrics,
-} from "./features/layout-metrics.js?v=20260910-mobile-fullscreen-viewport-02";
+} from "./features/layout-metrics.js?v=20260910-video-scroll-touch-01";
 import {
   renderPresence,
   wireIdentityEvents,
@@ -42,11 +42,11 @@ import {
 import {
   initializePlayer,
   wirePlayerEvents,
-} from "./features/player/index.js?v=20260910-player-overlay-toggle-07";
+} from "./features/player/index.js?v=20260910-fullscreen-chat-handle-03";
 import { wireMobileFullscreenOrientation } from "./features/player/mobile-fullscreen-orientation.js";
 import { wireMobileChatKeyboardControls } from "./features/player/mobile-chat-keyboard-controls.js?v=20260910-landscape-right-chat-keyboard-controls-06";
 import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20260910-landscape-chat-header-03";
-import { wireMobileLandscapeVideoSnap } from "./features/mobile-landscape-video-snap.js?v=20260909-landscape-snap-29";
+import { wireMobileLandscapeVideoSnap } from "./features/mobile-landscape-video-snap.js?v=20260910-mobile-portrait-no-snap-01";
 import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260910-mobile-copy-feedback-01";
 import { wireTouchHover } from "./core/touch-interactions.js?v=20260829-touch-hold-fix-01";
 import { wireMobileDebugTools } from "./features/mobile-debug.js?v=20260907-mobile-debug-tools-02";

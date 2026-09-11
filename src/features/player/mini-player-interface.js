@@ -16,8 +16,8 @@ import {
   toggleMiniEmojiPicker,
   toggleMiniChatOverlay,
   wireMirrorChatScrollbar,
-} from "./mini-player-chat-mirror.js?v=20260904-mobile-landscape-bottom-chat-07";
-import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js?v=20260910-mobile-chat-scroll-lock-01";
+} from "./mini-player-chat-mirror.js?v=20260910-mobile-chat-button-focus-01";
+import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js?v=20260910-fullscreen-chat-handle-08";
 import { wireMiniPlayerShortcuts } from "./mini-player-shortcuts.js?v=20260904-mobile-landscape-bottom-chat-07";
 import { wireTouchHover } from "../../core/touch-interactions.js";
 
@@ -212,6 +212,27 @@ function createInteractiveMirror(source, targetDocument) {
     });
   }
   sync();
+
+  if (source === dom.playerChat) {
+    const preventMirrorComposerFocus = (event) => {
+      if (!window.matchMedia?.("(max-width: 980px)").matches) return;
+
+      const button = event.target.closest?.(
+        "#overlayEmojiButton, #overlayMessageSend, [data-proxy-for=\"overlayEmojiButton\"], [data-proxy-for=\"overlayMessageSend\"]",
+      );
+      if (!button) return;
+
+      const input = element.querySelector(
+        "#overlayMessageInput, [data-proxy-for=\"overlayMessageInput\"]",
+      );
+      const isSendButton = button.matches(
+        "#overlayMessageSend, [data-proxy-for=\"overlayMessageSend\"]",
+      );
+      if (isSendButton || document.activeElement === input) event.preventDefault();
+    };
+    element.addEventListener("pointerdown", preventMirrorComposerFocus);
+    element.addEventListener("mousedown", preventMirrorComposerFocus);
+  }
 
   return {
     element,

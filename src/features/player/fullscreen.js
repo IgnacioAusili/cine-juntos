@@ -9,14 +9,18 @@ import {
 import {
   hideTooltip,
   hydrateIcons,
-} from "../icons-tooltips.js?v=20260910-status-tooltip-01";
+} from "../icons-tooltips.js?v=20260910-status-tooltip-03";
 import { setSyncStatus } from "../session-ui.js?v=20260909-landscape-chat-emoji-34";
 import {
   logEvent,
   state,
 } from "../../core/state.js?v=20260902-mobile-real-browser-01";
-import { isMiniPlayerActive } from "./mini-player.js?v=20260904-mobile-landscape-bottom-chat-07";
-import { syncInsideChatPanelOffset } from "../chat/chat-layout.js?v=20260910-mobile-chat-scroll-lock-01";
+import { isMiniPlayerActive } from "./mini-player.js?v=20260910-player-tooltip-chain-01";
+import {
+  syncExternalChatCollapseHandleOffset,
+  syncInsideChatPanelOffset,
+  updateCollapseButton,
+} from "../chat/chat-layout.js?v=20260910-fullscreen-chat-handle-08";
 import { withShortcutHint } from "../../core/utils.js";
 import {
   captureFullscreenScroll,
@@ -156,10 +160,6 @@ function wirePlayerOverlayControls({ togglePlayback } = {}) {
         scheduleHide(safeDelay);
         return;
       }
-      if (dom.playerFrame.classList.contains("player-volume-gesture-active")) {
-        scheduleHide(safeDelay);
-        return;
-      }
       if (
         dom.playerVolumeGroup?.classList.contains("is-dragging")
         || volumeControlPointerActive
@@ -176,6 +176,27 @@ function wirePlayerOverlayControls({ togglePlayback } = {}) {
       dom.playerFrame.classList.add("player-cursor-hidden");
     }, safeDelay);
   };
+
+  let controlDragActive = false;
+  let suppressFocusoutHideUntil = 0;
+  const resetOverlayHideAfterControlDrag = () => {
+    controlDragActive = false;
+    suppressFocusoutHideUntil = Date.now() + 600;
+    if (isInlinePlayerDialogVisible()) return;
+    dom.playerFrame.classList.remove("player-cursor-hidden");
+    setOverlayVisible(true);
+    scheduleHide();
+  };
+
+  const startControlDrag = () => {
+    controlDragActive = true;
+    suppressFocusoutHideUntil = 0;
+    clearHideTimer();
+  };
+  window.addEventListener("player-seek-drag-start", startControlDrag);
+  window.addEventListener("player-volume-drag-start", startControlDrag);
+  window.addEventListener("player-seek-drag-end", resetOverlayHideAfterControlDrag);
+  window.addEventListener("player-volume-drag-end", resetOverlayHideAfterControlDrag);
 
   const resetHideTimerAfterControlClick = (event) => {
     const control = event.target?.closest?.("button");
@@ -201,19 +222,6 @@ function wirePlayerOverlayControls({ togglePlayback } = {}) {
   let mobileTouchInteractionActive = false;
   let suppressMobileVideoRevealUntil = 0;
   let mobileOverlayLockedUntil = 0;
-  const hideOverlayForMobileVideoTouch = () => {
-    if (
-      dom.playerFrame.classList.contains("player-no-content")
-      || !dom.playerFrame.classList.contains("player-overlay-visible")
-    ) return false;
-    clearHideTimer();
-    hideTooltip(true);
-    setOverlayVisible(false);
-    dom.playerFrame.classList.add("player-cursor-hidden");
-    suppressMobileVideoRevealUntil = Date.now() + 700;
-    mobileOverlayLockedUntil = Date.now() + MOBILE_OVERLAY_TOGGLE_LOCK_MS;
-    return true;
-  };
   const trackVideoTouchStart = (event) => {
     if (
       event.target !== dom.videoPlayer
@@ -222,6 +230,7 @@ function wirePlayerOverlayControls({ togglePlayback } = {}) {
     ) return;
 
     mobileTouchInteractionActive = true;
+    clearHideTimer();
     if (Date.now() < mobileOverlayLockedUntil) {
       activeVideoTouchGesture = {
         pointerId: event.pointerId,
@@ -232,7 +241,9 @@ function wirePlayerOverlayControls({ togglePlayback } = {}) {
       };
       return;
     }
-    mobileTouchHidVisibleOverlay = hideOverlayForMobileVideoTouch();
+    // El inicio solo registra el estado. La barra se alterna al soltar, nunca
+    // mientras el dedo permanece apoyado sobre el video.
+    mobileTouchHidVisibleOverlay = dom.playerFrame.classList.contains("player-overlay-visible");
     activeVideoTouchGesture = {
       pointerId: event.pointerId,
       startX: event.clientX,
@@ -249,6 +260,9 @@ function wirePlayerOverlayControls({ togglePlayback } = {}) {
       ) >= VIDEO_GESTURE_MOVE_THRESHOLD
     ) {
       activeVideoTouchGesture.moved = true;
+      // El navegador puede emitir mousemove sintéticos durante o justo
+      // después del arrastre táctil. No deben revelar ni alternar el overlay.
+      suppressMobileVideoRevealUntil = Date.now() + 700;
     }
   };
   const finishVideoTouchGesture = (event) => {
@@ -277,6 +291,9 @@ function wirePlayerOverlayControls({ togglePlayback } = {}) {
     event.preventDefault();
     lastTouchPointerAt = Date.now();
     mobileTouchInteractionActive = false;
+    // El gesto se resuelve al soltar; bloquear los eventos de mouse
+    // sintéticos posteriores evita que la barra rebote inmediatamente.
+    suppressMobileVideoRevealUntil = Date.now() + 700;
     if (dom.playerFrame.classList.contains("player-no-content")) {
       mobileTouchHidVisibleOverlay = false;
       suppressMobileVideoRevealUntil = 0;
@@ -284,11 +301,7 @@ function wirePlayerOverlayControls({ togglePlayback } = {}) {
       setOverlayVisible(true);
       return;
     }
-    if (mobileTouchHidVisibleOverlay) {
-      mobileTouchHidVisibleOverlay = false;
-      return;
-    }
-    suppressMobileVideoRevealUntil = 0;
+    mobileTouchHidVisibleOverlay = false;
     clearHideTimer();
     const isVisible = dom.playerFrame.classList.contains("player-overlay-visible");
     if (isVisible) {
@@ -331,11 +344,12 @@ function wirePlayerOverlayControls({ togglePlayback } = {}) {
       const point = getLegacyTouchPoint(event);
       if (!point) return;
       mobileTouchInteractionActive = true;
+      clearHideTimer();
       if (Date.now() < mobileOverlayLockedUntil) {
         activeLegacyTouchGesture = { ...point, moved: false, blocked: true };
         return;
       }
-      mobileTouchHidVisibleOverlay = hideOverlayForMobileVideoTouch();
+      mobileTouchHidVisibleOverlay = dom.playerFrame.classList.contains("player-overlay-visible");
       activeLegacyTouchGesture = { ...point, moved: false };
     }, { passive: true });
     dom.videoPlayer.addEventListener("touchmove", (event) => {
@@ -571,6 +585,7 @@ function wirePlayerOverlayControls({ togglePlayback } = {}) {
   }, { passive: true, capture: true });
 
   dom.playerFrame.addEventListener("focusout", () => {
+    if (controlDragActive || Date.now() < suppressFocusoutHideUntil) return;
     scheduleHide(800);
   });
 
@@ -715,6 +730,7 @@ export function handleFullscreenChange() {
 
   document.documentElement.classList.toggle("fullscreen-mode", isFullscreen);
   document.body.classList.toggle("fullscreen-mode", isFullscreen);
+  updateCollapseButton();
   dom.pageFullscreenButton.classList.toggle("active", isFullscreen);
   dom.pageFullscreenButton.dataset.tooltip = tooltip;
   dom.pageFullscreenButton.removeAttribute("title");
@@ -726,5 +742,11 @@ export function handleFullscreenChange() {
   hydrateIcons();
   restoreFullscreenScroll(isFullscreen);
   syncInsideChatPanelOffset();
+  // El fullscreen cambia el origen y las filas del layout móvil. Recalcular
+  // también el anclaje del control externo evita que la flecha del chat
+  // inferior conserve el offset del viewport anterior y quede fuera de la
+  // pantalla al entrar en fullscreen.
+  syncExternalChatCollapseHandleOffset();
+  window.requestAnimationFrame(syncExternalChatCollapseHandleOffset);
   logEvent("ui", isFullscreen ? "Pantalla completa de pagina activada." : "Pantalla completa desactivada.");
 }

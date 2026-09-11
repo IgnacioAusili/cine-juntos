@@ -1,6 +1,6 @@
 import { dom } from "../../core/dom.js";
 import { state, logEvent } from "../../core/state.js?v=20260902-mobile-real-browser-01";
-import { setControlIcon } from "../icons-tooltips.js?v=20260910-status-tooltip-01";
+import { setControlIcon } from "../icons-tooltips.js?v=20260910-status-tooltip-03";
 import { setSyncStatus } from "../session-ui.js?v=20260909-landscape-chat-emoji-34";
 import {
   createMiniPlayerSurface,
@@ -9,7 +9,7 @@ import {
 import {
   mirrorMiniPlayerChatState,
 } from "./mini-player-chat.js?v=20260904-mobile-landscape-bottom-chat-07";
-import { movePlayerInterface } from "./mini-player-interface.js?v=20260904-mobile-landscape-bottom-chat-07";
+import { movePlayerInterface } from "./mini-player-interface.js?v=20260910-mobile-chat-button-focus-01";
 import { trackMiniPlayerReturnHint } from "./mini-player-return-hint.js";
 import { clampMiniPlayerPosition, wireMiniPlayerDrag } from "./mini-player-drag.js?v=20260808-scroll-mini-player-02";
 

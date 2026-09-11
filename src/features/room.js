@@ -22,7 +22,7 @@ import {
   renderPresence,
   updateDisplayName,
 } from "./presence.js?v=20260901-chat-arrow-unified-03";
-import { setConnection } from "./icons-tooltips.js?v=20260910-status-tooltip-01";
+import { setConnection } from "./icons-tooltips.js?v=20260910-status-tooltip-03";
 import {
   getUserScrollIntentVersion,
   setHostBadge,
@@ -31,7 +31,7 @@ import {
   showSession,
   watchRoomEntryVideoFocus,
 } from "./session-ui.js?v=20260909-landscape-chat-emoji-34";
-import { handleRemoteState } from "./player/index.js?v=20260904-mobile-landscape-bottom-chat-07";
+import { handleRemoteState } from "./player/index.js?v=20260910-fullscreen-chat-handle-03";
 import {
   renderMessage,
   beginSystemMessageHydration,

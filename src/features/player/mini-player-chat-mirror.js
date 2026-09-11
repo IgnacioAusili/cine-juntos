@@ -1,6 +1,6 @@
 import { clearReplyTarget, setReplyTarget } from "../chat/chat-reply.js?v=20260826-reply-sync-close-03";
 import { wireMessageInteractions } from "../chat/chat-message-interactions.js";
-import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js?v=20260910-mobile-chat-scroll-lock-01";
+import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js?v=20260910-fullscreen-chat-handle-08";
 import { state } from "../../core/state.js?v=20260902-mobile-real-browser-01";
 import { focusChatInput } from "../chat/chat-input-focus.js";
 
@@ -9,6 +9,14 @@ const miniSystemGroupAnimations = new WeakMap();
 const miniEmojiPopoverHideTimers = new WeakMap();
 const EMOJI_POPOVER_TAIL_INSET_PX = 12;
 const EMOJI_POPOVER_TRANSITION_MS = 150;
+const MOBILE_CHAT_LAYOUT_QUERY = "(max-width: 980px)";
+
+function isMobileChatLayout() {
+  return Boolean(
+    window.matchMedia
+    && window.matchMedia(MOBILE_CHAT_LAYOUT_QUERY).matches,
+  );
+}
 
 export function normalizeMiniSystemGroupState(container) {
   container?.querySelectorAll(".message.system").forEach((systemMessage) => {
@@ -380,7 +388,9 @@ export function toggleMiniEmojiPicker(element) {
     if (popover.hidden || popover.classList.contains("is-emoji-popover-closing")) return;
     popover.classList.add("is-emoji-popover-open");
   });
-  requestAnimationFrame(() => focusChatInput(input, selectionStart, selectionEnd));
+  if (!isMobileChatLayout()) {
+    requestAnimationFrame(() => focusChatInput(input, selectionStart, selectionEnd));
+  }
 }
 
 function hideMiniEmojiPopover(popover) {
@@ -459,6 +469,10 @@ function insertMiniEmoji(surface, target) {
   input.value = `${input.value.slice(0, start)}${option.textContent}${input.value.slice(end)}`;
   const position = start + option.textContent.length;
   input.dispatchEvent(new Event("input", { bubbles: true }));
-  focusChatInput(input, position, position);
+  if (isMobileChatLayout()) {
+    input.setSelectionRange?.(position, position);
+  } else {
+    focusChatInput(input, position, position);
+  }
   hideMiniEmojiPopover(surface.querySelector(".mini-emoji-popover"));
 }

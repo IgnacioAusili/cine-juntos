@@ -9,6 +9,29 @@
 }
 
 @media (max-width: 980px) {
+  /* En móvil vertical el documento debe seguir exactamente el recorrido que
+     hace el dedo. Ningún contenedor de la composición puede atraerlo a una
+     sección cercana al terminar el gesto. */
+  @media (orientation: portrait) {
+    html,
+    body,
+    body:not(.is-lobby) .app-shell,
+    body:not(.is-lobby) .session-view,
+    body:not(.is-lobby) .workspace,
+    body:not(.is-lobby) .video-area,
+    body:not(.is-lobby) .chat-area {
+      scroll-snap-type: none !important;
+    }
+
+    body:not(.is-lobby) .session-view,
+    body:not(.is-lobby) .workspace,
+    body:not(.is-lobby) .video-area,
+    body:not(.is-lobby) .chat-area {
+      scroll-snap-align: none !important;
+      scroll-snap-stop: normal !important;
+    }
+  }
+
   /* El trazo de circle-help queda ópticamente bajo respecto de las etiquetas
      aunque la caja táctil ya esté centrada por flex/grid. */
   .room-chip-label-row .help-button svg,
@@ -44,7 +67,7 @@
      toque corto se resuelve en JS; los arrastres no deben quedar bloqueados
      por los eventos del reproductor. */
   body:not(.is-lobby) .player-frame video {
-    touch-action: pan-y;
+    touch-action: auto;
   }
 
   /* iOS Safari amplía la página al enfocar controles de texto menores a
@@ -1305,5 +1328,13 @@
   html.viewport-landscape.bottom-chat-keyboard-open body:not(.is-lobby)
     .session-view[data-chat-dock="bottom"] .chat-area > .message-form {
     bottom: 0 !important;
+  }
+}
+
+/* Esta anulación queda al final de la hoja para ganar también sobre el borde
+   estructural del frame definido en la variante de viewport móvil compacto. */
+@media (max-width: 980px) and (orientation: portrait) {
+  body:not(.is-lobby) .session-view .player-frame:not(.mini-player-surface) {
+    border-top: 0 !important;
   }
 }

@@ -2,7 +2,7 @@
 import { dom } from "../../core/dom.js";
 import { state, logEvent } from "../../core/state.js?v=20260902-mobile-real-browser-01";
 import { CHAT_DOCKS, CHAT_DOCK_META, withShortcutHint } from "../../core/utils.js";
-import { hydrateIcons, hideTooltip, refreshTooltipForTarget } from "../icons-tooltips.js?v=20260910-status-tooltip-01";
+import { hydrateIcons, hideTooltip, refreshTooltipForTarget } from "../icons-tooltips.js?v=20260910-status-tooltip-03";
 import { focusFullscreenWorkspace } from "../session-ui.js?v=20260909-landscape-chat-emoji-34";
 import {
   cancelIdentityEditing,
@@ -70,6 +70,12 @@ function isMobilePortraitChatViewport() {
 
 function isMobileLandscapeRightDock() {
   return (dom.sessionView?.dataset.chatDock || "right") === "right"
+    && window.matchMedia("(max-width: 980px) and (orientation: landscape)").matches;
+}
+
+function isMobileLandscapeFullscreenBottomDock() {
+  return (dom.sessionView?.dataset.chatDock || "right") === "bottom"
+    && isFullscreenPageActive()
     && window.matchMedia("(max-width: 980px) and (orientation: landscape)").matches;
 }
 
@@ -284,6 +290,7 @@ export function revealBottomDockUnion(behavior = "smooth") {
   if (!dom.chatArea) return;
 
   syncExternalChatCollapseHandleOffset();
+  if (isMobileLandscapeFullscreenBottomDock()) return;
   const nextBehavior = isFullscreenPageActive() ? "auto" : behavior;
   const chatTop = getBottomDockChatScrollTop();
   scrollPageTo(Math.max(0, Math.round(chatTop - BOTTOM_DOCK_UNION_REVEAL_PX)), nextBehavior);
@@ -502,6 +509,9 @@ export function syncExternalChatCollapseHandleOffset() {
   const chatHeaderRect = chatHeader?.getBoundingClientRect();
   const isPortraitMobileBottomDock =
     window.matchMedia("(max-width: 680px) and (orientation: portrait)").matches;
+  const isLandscapeMobileFullscreenBottomDock =
+    isFullscreenPageActive()
+    && window.matchMedia("(max-width: 980px) and (orientation: landscape)").matches;
   const parsedDockGap = Number.parseFloat(
     getComputedStyle(dom.sessionView).getPropertyValue("--chat-bottom-dock-gap"),
   );
@@ -512,16 +522,24 @@ export function syncExternalChatCollapseHandleOffset() {
     getComputedStyle(dom.sessionView).getPropertyValue("--chat-bottom-header-arrow-offset"),
   );
   const arrowOffset = Number.isFinite(parsedArrowOffset) ? parsedArrowOffset : 16;
-  const handleTop = chatHeaderRect && !isPortraitMobileBottomDock
-    ? Math.max(0, Math.round(chatHeaderRect.top - workspaceRect.top + chatHeaderRect.height / 2))
-    : Math.max(
-      0,
-      Math.round(
-        chatRect.top
-        - workspaceRect.top
-        + (isPortraitMobileBottomDock ? 0 : arrowOffset - dockGap / 2),
-      ),
-    );
+  const collapseHandleHeight = dom.collapseChatButton?.getBoundingClientRect().height || 32;
+  const isFullscreenBottomChatBelowViewport =
+    isLandscapeMobileFullscreenBottomDock
+    && chatRect.top >= window.innerHeight - 1;
+  const handleTop = isFullscreenBottomChatBelowViewport
+    ? playerControlBarRect
+      ? Math.max(0, Math.round(playerControlBarRect.top - workspaceRect.top - 36))
+      : Math.max(0, Math.round(chatRect.top - workspaceRect.top - collapseHandleHeight / 2))
+    : chatHeaderRect && !isPortraitMobileBottomDock
+      ? Math.max(0, Math.round(chatHeaderRect.top - workspaceRect.top + chatHeaderRect.height / 2))
+      : Math.max(
+        0,
+        Math.round(
+          chatRect.top
+          - workspaceRect.top
+          + (isPortraitMobileBottomDock ? 0 : arrowOffset - dockGap / 2),
+        ),
+      );
   dom.sessionView.style.setProperty("--chat-bottom-dock-handle-top", `${handleTop}px`);
   const collapsedHandleTop = playerControlBarRect
     ? isPortraitMobileBottomDock
@@ -1169,6 +1187,13 @@ export function setExternalChatCollapsed(collapsed, options = {}) {
   }
   cancelBottomChatTransition();
 
+  // En fullscreen apaisado móvil el chat inferior es una capa sobre el video.
+  // No hay una segunda fila que revelar ni un scroll que llevar hasta el chat.
+  if (isMobileLandscapeFullscreenBottomDock()) {
+    applyExternalChatCollapsed(collapsed);
+    return;
+  }
+
   if (
     collapsed
     && dom.sessionView?.dataset.chatDock === "bottom"
@@ -1386,8 +1411,16 @@ export function updateCollapseButton() {
   const isPortraitMobileRightDock =
     dock === "right"
     && window.matchMedia("(max-width: 980px) and (orientation: portrait)").matches;
+  const isFullscreenLandscapeBottomDock =
+    dock === "bottom"
+    && isFullscreenPageActive()
+    && window.matchMedia("(max-width: 980px) and (orientation: landscape)").matches;
   const isDesktopLayout = window.matchMedia("(min-width: 981px)").matches;
-  const iconName = isDesktopLayout
+  const iconName = isFullscreenLandscapeBottomDock
+    ? collapsed
+      ? "arrow-up"
+      : "arrow-down"
+    : isDesktopLayout
     ? collapsed
       ? dock === "right"
         ? "arrow-left"

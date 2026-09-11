@@ -90,11 +90,14 @@ function restoreRightChatKeyboardScroll() {
 
 function isRightChatScrollableTarget(target) {
   return target instanceof Element
-    && Boolean(target.closest([
-      ".session-view[data-chat-dock=\"right\"] .messages",
-      ".session-view[data-chat-dock=\"right\"] .chat-scrollbar",
-      ".session-view[data-chat-dock=\"right\"] textarea",
-    ].join(",")));
+    && (
+      target === dom.videoPlayer
+      || Boolean(target.closest([
+        ".session-view[data-chat-dock=\"right\"] .messages",
+        ".session-view[data-chat-dock=\"right\"] .chat-scrollbar",
+        ".session-view[data-chat-dock=\"right\"] textarea",
+      ].join(",")))
+    );
 }
 
 function preventRightChatPageScroll(event) {
@@ -170,11 +173,14 @@ function restoreBottomChatKeyboardHandlePosition() {
 
 function isBottomChatScrollableTarget(target) {
   return target instanceof Element
-    && Boolean(target.closest([
-      ".session-view[data-chat-dock=\"bottom\"] .messages",
-      ".session-view[data-chat-dock=\"bottom\"] .chat-scrollbar",
-      ".session-view[data-chat-dock=\"bottom\"] textarea",
-    ].join(",")));
+    && (
+      target === dom.videoPlayer
+      || Boolean(target.closest([
+        ".session-view[data-chat-dock=\"bottom\"] .messages",
+        ".session-view[data-chat-dock=\"bottom\"] .chat-scrollbar",
+        ".session-view[data-chat-dock=\"bottom\"] textarea",
+      ].join(",")))
+    );
 }
 
 function preventBottomChatPageScroll(event) {

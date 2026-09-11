@@ -2,7 +2,7 @@
 import { dom } from "../../core/dom.js";
 import { state, logEvent } from "../../core/state.js?v=20260902-mobile-real-browser-01";
 import { CHAT_DOCKS, CHAT_DOCK_META, withShortcutHint } from "../../core/utils.js";
-import { hydrateIcons, hideTooltip, refreshTooltipForTarget } from "../icons-tooltips.js?v=20260910-status-tooltip-03";
+import { hydrateIcons, hideTooltip, refreshTooltipForTarget } from "../icons-tooltips.js?v=20260910-status-tooltip-04";
 import { focusFullscreenWorkspace } from "../session-ui.js?v=20260909-landscape-chat-emoji-34";
 import {
   cancelIdentityEditing,
@@ -1498,8 +1498,11 @@ export function updateCollapseButton() {
     button.removeAttribute("title");
     button.setAttribute("aria-label", label);
     button.setAttribute("aria-hidden", String(isCollapsedState !== collapsed));
+    // Las flechas cambian de anclaje mientras el panel se anima. El tooltip
+    // no debe volver a programarse sobre el control que queda bajo el puntero.
     iconAnchor?.removeAttribute("data-tooltip");
-    iconAnchor?.setAttribute("data-tooltip", label);
+    button.setAttribute("tabindex", "-1");
+    button.blur();
     if (icon) {
       icon.setAttribute("data-lucide", controlIconName);
       icon.innerHTML = "";

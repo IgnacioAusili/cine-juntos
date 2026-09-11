@@ -7,7 +7,7 @@ import {
   logEvent,
 } from "../core/state.js?v=20260902-mobile-real-browser-01";
 import { makeGuestName, makeParticipantLabel } from "../core/utils.js";
-import { hideTooltip } from "./icons-tooltips.js?v=20260910-status-tooltip-03";
+import { hideTooltip } from "./icons-tooltips.js?v=20260910-status-tooltip-04";
 
 // El heartbeat llega cada 10 s. La ventana anterior de 12 s dejaba solo
 // 2 s para tolerar latencia o una actualización demorada de Firebase, lo

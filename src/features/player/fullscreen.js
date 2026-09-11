@@ -9,7 +9,7 @@ import {
 import {
   hideTooltip,
   hydrateIcons,
-} from "../icons-tooltips.js?v=20260910-status-tooltip-03";
+} from "../icons-tooltips.js?v=20260910-status-tooltip-04";
 import { setSyncStatus } from "../session-ui.js?v=20260909-landscape-chat-emoji-34";
 import {
   logEvent,
@@ -22,7 +22,7 @@ import {
   cancelExternalChatAutoCollapse,
   forceExternalChatCollapsed,
   updateCollapseButton,
-} from "../chat/chat-layout.js?v=20260910-fullscreen-chat-handle-12";
+} from "../chat/chat-layout.js?v=20260910-fullscreen-chat-handle-13";
 import { withShortcutHint } from "../../core/utils.js";
 import {
   captureFullscreenScroll,

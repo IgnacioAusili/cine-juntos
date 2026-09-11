@@ -1,6 +1,6 @@
 import { dom } from "../../core/dom.js";
 import { state, logEvent } from "../../core/state.js?v=20260902-mobile-real-browser-01";
-import { setControlIcon } from "../icons-tooltips.js?v=20260910-status-tooltip-03";
+import { setControlIcon } from "../icons-tooltips.js?v=20260910-status-tooltip-04";
 import { setSyncStatus } from "../session-ui.js?v=20260909-landscape-chat-emoji-34";
 import {
   createMiniPlayerSurface,

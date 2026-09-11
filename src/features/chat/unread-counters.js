@@ -3,7 +3,7 @@ import { state } from "../../core/state.js?v=20260902-mobile-real-browser-01";
 import {
   setExternalChatCollapsed,
   setInsideChatVisible,
-} from "./chat-layout.js?v=20260910-fullscreen-chat-handle-12";
+} from "./chat-layout.js?v=20260910-fullscreen-chat-handle-13";
 
 function isElementVisibleInViewport(element) {
   if (!element || document.hidden) return false;

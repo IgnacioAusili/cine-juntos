@@ -15,10 +15,10 @@ import {
   hydrateIcons,
   initializeUi,
   setConnection,
-} from "./features/icons-tooltips.js?v=20260910-status-tooltip-03";
+} from "./features/icons-tooltips.js?v=20260910-status-tooltip-04";
 import {
   wireLayoutMetrics,
-} from "./features/layout-metrics.js?v=20260910-video-scroll-touch-01";
+} from "./features/layout-metrics.js?v=20260911-header-arrow-04";
 import {
   renderPresence,
   wireIdentityEvents,
@@ -38,7 +38,7 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js?v=20260910-chat-two-controls-01";
+} from "./features/chat/index.js?v=20260910-chat-two-controls-02";
 import {
   initializePlayer,
   wirePlayerEvents,
@@ -50,6 +50,7 @@ import { wireMobileLandscapeVideoSnap } from "./features/mobile-landscape-video-
 import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260910-mobile-copy-feedback-01";
 import { wireTouchHover } from "./core/touch-interactions.js?v=20260829-touch-hold-fix-01";
 import { wireMobileDebugTools } from "./features/mobile-debug.js?v=20260907-mobile-debug-tools-02";
+import { wireMobileKeyboardDiagnostics } from "./features/mobile-keyboard-diagnostics.js?v=20260911-ios-landscape-keyboard-diagnostics-01";
 
 const requestedRoom = normalizeRoomCode(new URLSearchParams(window.location.search).get("room") || "");
 
@@ -94,6 +95,7 @@ setChatDock(localStorage.getItem("cine-juntos-chat-dock") || "right", {
 restoreExternalChatCollapsed();
 wireMobileBottomChatHeader();
 wireMobileDebugTools();
+wireMobileKeyboardDiagnostics();
 syncChatAutoExpandControls();
 updateCollapseButton();
 updateCharCounter(dom.messageInput, false);

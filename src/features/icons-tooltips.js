@@ -429,6 +429,7 @@ export function hideTooltip(force = false) {
   window.cancelAnimationFrame(tooltipFrame);
   tooltipFrame = 0;
   dom.tooltipLayer.hidden = true;
+  dom.tooltipLayer.textContent = "";
   dom.tooltipLayer.style.visibility = "";
   dom.tooltipLayer.style.removeProperty("--tooltip-arrow-offset");
   dom.tooltipLayer.removeAttribute("data-placement");

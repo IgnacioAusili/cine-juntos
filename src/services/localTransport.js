@@ -1,6 +1,6 @@
 import { MAX_ROOM_PARTICIPANTS, STALE_MEMBER_TIMEOUT_MS } from "../core/utils.js";
 import { createRandomId } from "../core/random-id.js?v=20260902-mobile-real-browser-02";
-import { state, getDisplayName, logEvent } from "../core/state.js?v=20260902-mobile-real-browser-01";
+import { state, getDisplayName, logEvent } from "../core/state.js?v=20260912-name-session-01";
 
 export function createLocalTransport(roomCode, firebaseError = null) {
   const channelName = `cine-juntos:${roomCode}`;

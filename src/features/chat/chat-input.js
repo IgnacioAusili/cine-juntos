@@ -6,7 +6,7 @@ import {
   getDisplayName,
   getTransportNow,
   logEvent,
-} from "../../core/state.js?v=20260902-mobile-real-browser-01";
+} from "../../core/state.js?v=20260912-name-session-01";
 import {
   EMOJI_PICKER_ITEMS,
   MAX_CHARS,
@@ -18,7 +18,7 @@ import {
   setSyncStatus,
 } from "../session-ui.js?v=20260911-orientation-scroll-anchor-01";
 import { refreshTooltipForTarget } from "../icons-tooltips.js?v=20260910-status-tooltip-04";
-import { markParticipantActive } from "../presence.js?v=20260901-chat-arrow-unified-03";
+import { markParticipantActive } from "../presence.js?v=20260912-name-session-01";
 import { clearReplyTarget } from "./chat-reply.js?v=20260826-reply-sync-close-03";
 import { renderMessage } from "./chat-render.js?v=20260904-mobile-landscape-bottom-chat-07";
 import {

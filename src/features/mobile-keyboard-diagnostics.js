@@ -1,5 +1,5 @@
 import { dom } from "../core/dom.js";
-import { logEvent } from "../core/state.js?v=20260902-mobile-real-browser-01";
+import { logEvent } from "../core/state.js?v=20260912-name-session-01";
 import { collectMobileKeyboardSnapshot } from "./mobile-keyboard-diagnostics-snapshot.js?v=20260911-ios-landscape-keyboard-diagnostics-01";
 
 const LOG_KIND = "mobile-keyboard-debug";

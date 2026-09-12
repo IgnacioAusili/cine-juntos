@@ -4,22 +4,19 @@ import {
   makeGuestName,
   normalizeGuestName,
 } from "../core/utils.js";
+import { normalizeDisplayName } from "../core/name-policy.js?v=20260912-name-session-01";
 import { getOrCreateClientId } from "../core/random-id.js?v=20260902-mobile-real-browser-02";
 
 export const firebaseConfig = window.CINE_JUNTOS_FIREBASE_CONFIG || {};
 const SESSION_NAME_KEY = "cine-juntos-name";
 export const LAST_ROOM_KEY = "cine-juntos-last-room";
-export const NAME_CHANGE_LIMIT = 3;
 const CLIENT_LOG_LIMIT = 1000;
 const clientLogBuffer = [];
 
-function getInitialNameChangeCount() {
-  const storedCount = Number.parseInt(sessionStorage.getItem("cine-juntos-name-change-count"), 10);
-  if (Number.isFinite(storedCount)) return Math.min(NAME_CHANGE_LIMIT, Math.max(0, storedCount));
-
-  // Compatibilidad con la marca booleana usada por versiones anteriores.
-  return sessionStorage.getItem("cine-juntos-name-change-used") === "1" ? 1 : 0;
-}
+// Versiones anteriores guardaban este contador en sessionStorage, que sobrevive
+// una recarga. El cupo actual es solo de esta carga de la página.
+sessionStorage.removeItem("cine-juntos-name-change-count");
+sessionStorage.removeItem("cine-juntos-name-change-used");
 
 function isLegacyAutomaticName(value) {
   return /^Usuario [A-Z0-9]{4}$/i.test(String(value || "").trim());
@@ -28,7 +25,7 @@ function isLegacyAutomaticName(value) {
 function readPersistedName() {
   const savedName = localStorage.getItem(SESSION_NAME_KEY);
   if (savedName && !isLegacyAutomaticName(savedName)) {
-    const normalizedName = normalizeGuestName(savedName);
+    const normalizedName = normalizeDisplayName(normalizeGuestName(savedName));
     if (normalizedName !== savedName) localStorage.setItem(SESSION_NAME_KEY, normalizedName);
     return normalizedName;
   }
@@ -36,7 +33,7 @@ function readPersistedName() {
   // Migrar el nombre que ya existía antes de hacerlo persistente entre sesiones.
   const legacyName = sessionStorage.getItem(SESSION_NAME_KEY);
   if (legacyName && !isLegacyAutomaticName(legacyName)) {
-    const normalizedName = normalizeGuestName(legacyName);
+    const normalizedName = normalizeDisplayName(normalizeGuestName(legacyName));
     localStorage.setItem(SESSION_NAME_KEY, normalizedName);
     return normalizedName;
   }
@@ -136,7 +133,8 @@ export const chatState = {
   systemGroupAnimationMaxTimer: null,
   mainScrollUnread: 0,
   overlayScrollUnread: 0,
-  nameChangeCount: getInitialNameChangeCount(),
+  // El cupo vive en memoria: una recarga inicia una nueva sesión de página.
+  nameChangeCount: 0,
 };
 
 export const uiState = {
@@ -175,13 +173,17 @@ export function applyInitialDefaults() {
 }
 
 export function getDisplayName() {
-  const saved = localStorage.getItem(SESSION_NAME_KEY);
-  const inputVal = ((dom.lobbyNameInput && dom.lobbyNameInput.value) || "").trim();
+  const savedValue = localStorage.getItem(SESSION_NAME_KEY);
+  const saved = normalizeDisplayName(savedValue);
+  const inputVal = normalizeDisplayName(dom.lobbyNameInput?.value);
+  if (saved !== savedValue) {
+    localStorage.setItem(SESSION_NAME_KEY, saved || initialDisplayName);
+  }
   if (inputVal) {
     if (saved !== inputVal) {
       localStorage.setItem(SESSION_NAME_KEY, inputVal);
     }
-    return inputVal.slice(0, 20);
+    return inputVal;
   }
   return saved || initialDisplayName;
 }

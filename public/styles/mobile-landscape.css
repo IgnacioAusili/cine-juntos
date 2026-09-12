@@ -134,9 +134,9 @@
   }
 
   html.viewport-landscape body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"] .chat-collapse-hover-zone {
-    /* El control vive dentro de .chat-tools; el valor calculado por JS está
-       expresado respecto del workspace y lo desplazaba una fila completa. */
-    top: calc(38px / 2);
+    /* El control es hijo de .chat-area: top: 0 coincide con la unión
+       superior del panel, sin mezclar coordenadas del workspace. */
+    top: 0;
     width: 38px;
     height: 38px;
     transform: translate(-50%, -50%);

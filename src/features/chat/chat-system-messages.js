@@ -3,7 +3,7 @@ import {
   getDisplayName,
   getTransportNow,
   logEvent,
-} from "../../core/state.js?v=20260902-mobile-real-browser-01";
+} from "../../core/state.js?v=20260912-name-session-01";
 import { formatClockTime } from "../../core/utils.js";
 import { createRandomId } from "../../core/random-id.js?v=20260902-mobile-real-browser-02";
 import { renderMessage } from "./chat-render.js?v=20260904-mobile-landscape-bottom-chat-07";

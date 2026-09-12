@@ -1115,7 +1115,13 @@
   }
 
   body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"] .chat-collapse-hover-zone {
+    top: 0;
     transform: translate(-50%, -50%);
+  }
+
+  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"] .chat-area {
+    overflow: visible;
+    contain: layout;
   }
 
   body:not(.is-lobby) .session-view.chat-collapsed[data-chat-dock="bottom"] .chat-collapse-hover-zone {

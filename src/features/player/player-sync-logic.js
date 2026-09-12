@@ -5,14 +5,14 @@ import {
   getDisplayName,
   getTransportNow,
   logEvent,
-} from "../../core/state.js?v=20260902-mobile-real-browser-01";
+} from "../../core/state.js?v=20260912-name-session-01";
 import {
   MAX_DRIFT_SECONDS,
   HARD_DRIFT_SECONDS,
   SEND_THROTTLE_MS,
   formatSeconds,
 } from "../../core/utils.js";
-import { markParticipantActive, rememberParticipant } from "../presence.js?v=20260901-chat-arrow-unified-03";
+import { markParticipantActive, rememberParticipant } from "../presence.js?v=20260912-name-session-01";
 import { setSyncStatus } from "../session-ui.js?v=20260911-orientation-scroll-anchor-01";
 import { sendVideoEventMessage, renderMessage } from "../chat/index.js?v=20260910-chat-two-controls-02";
 // Import circular intencional y seguro: estas funciones se invocan en runtime,

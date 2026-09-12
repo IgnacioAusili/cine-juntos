@@ -246,12 +246,22 @@ function getLargeViewportHeight() {
 }
 
 function getCurrentViewportHeight() {
-  return Math.round(
+  const visualViewportHeight = Math.round(window.visualViewport?.height || 0);
+  const layoutViewportHeight = Math.round(
     document.documentElement.clientHeight
       || window.innerHeight
-      || window.visualViewport?.height
+      || visualViewportHeight
       || 0,
   );
+
+  // En Safari iOS el clientHeight puede seguir representando el área de
+  // layout mientras el teclado ya redujo el visualViewport. Para el chat
+  // lateral enfocado, esa diferencia es precisamente el espacio ocupado por
+  // el teclado; usar clientHeight deja el composer debajo del IME.
+  const rightChatKeyboardLikelyOpen = isRightChatInputFocused()
+    && visualViewportHeight > 0
+    && layoutViewportHeight - visualViewportHeight > 80;
+  return rightChatKeyboardLikelyOpen ? visualViewportHeight : layoutViewportHeight;
 }
 
 function getNativePageScrollMax() {

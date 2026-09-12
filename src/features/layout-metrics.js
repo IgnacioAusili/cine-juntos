@@ -16,6 +16,8 @@ let bottomChatKeyboardHandleAnchor = null;
 let rightChatScrollBeforeKeyboard = null;
 let rightChatPageScrollLockTop = null;
 let wasRightChatKeyboardOpen = false;
+let lastRightChatKeyboardViewportHeight = 0;
+let lastRightChatKeyboardViewportWidth = 0;
 let fullscreenMetricResyncTimers = [];
 let lastFullscreenActive = false;
 let pendingOrientationScrollRestore = null;
@@ -245,14 +247,21 @@ function getLargeViewportHeight() {
     || 0;
 }
 
+function getMinimumUsableRightChatViewportHeight() {
+  const inputHeight = Math.round(dom.messageInput?.getBoundingClientRect().height || 0);
+  return Math.max(80, inputHeight * 2);
+}
+
 function getCurrentViewportHeight() {
   const visualViewportHeight = Math.round(window.visualViewport?.height || 0);
+  const visualViewportWidth = Math.round(window.visualViewport?.width || 0);
   const layoutViewportHeight = Math.round(
     document.documentElement.clientHeight
       || window.innerHeight
       || visualViewportHeight
       || 0,
   );
+  const minimumUsableHeight = getMinimumUsableRightChatViewportHeight();
 
   // En Safari iOS el clientHeight puede seguir representando el área de
   // layout mientras el teclado ya redujo el visualViewport. Para el chat
@@ -261,7 +270,30 @@ function getCurrentViewportHeight() {
   const rightChatKeyboardLikelyOpen = isRightChatInputFocused()
     && visualViewportHeight > 0
     && layoutViewportHeight - visualViewportHeight > 80;
-  return rightChatKeyboardLikelyOpen ? visualViewportHeight : layoutViewportHeight;
+  if (rightChatKeyboardLikelyOpen && visualViewportHeight >= minimumUsableHeight) {
+    lastRightChatKeyboardViewportHeight = visualViewportHeight;
+    lastRightChatKeyboardViewportWidth = visualViewportWidth;
+    return visualViewportHeight;
+  }
+
+  // En aperturas posteriores Safari puede emitir transitoriamente un
+  // visualViewport de 1-3px. Aplicarlo al layout crea un feedback loop: el
+  // chat se reduce a esa altura y el input termina fuera de pantalla. Si ya
+  // tenemos una medición válida de esta misma orientación, la conservamos
+  // hasta que Safari entregue una nueva medición utilizable.
+  const sameViewportWidth = visualViewportWidth > 0
+    && lastRightChatKeyboardViewportWidth > 0
+    && Math.abs(visualViewportWidth - lastRightChatKeyboardViewportWidth) <= 1;
+  if (
+    rightChatKeyboardLikelyOpen
+    && visualViewportHeight < minimumUsableHeight
+    && sameViewportWidth
+    && lastRightChatKeyboardViewportHeight >= minimumUsableHeight
+  ) {
+    return lastRightChatKeyboardViewportHeight;
+  }
+
+  return layoutViewportHeight;
 }
 
 function getNativePageScrollMax() {

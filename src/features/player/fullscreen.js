@@ -22,7 +22,7 @@ import {
   cancelExternalChatAutoCollapse,
   forceExternalChatCollapsed,
   updateCollapseButton,
-} from "../chat/chat-layout.js?v=20260910-fullscreen-chat-handle-13";
+} from "../chat/chat-layout.js?v=20260912-bottom-to-right-arrow-timing-02";
 import { withShortcutHint } from "../../core/utils.js";
 import {
   captureFullscreenScroll,
@@ -85,10 +85,6 @@ export function wireFullscreenEvents(options = {}) {
   dom.videoPlayer.addEventListener("dblclick", (event) => {
     if (isMiniPlayerActive()) return;
     event.preventDefault();
-    togglePageFullscreen();
-  });
-
-  dom.videoPlayer.addEventListener("webkitbeginfullscreen", () => {
     togglePageFullscreen();
   });
 
@@ -698,6 +694,17 @@ export async function togglePageFullscreen() {
     if (fallbackFullscreenActive) {
       captureFullscreenScroll(false);
       fallbackFullscreenActive = false;
+      handleFullscreenChange();
+      return;
+    }
+
+    // En móviles el fullscreen de la aplicación es el comportamiento base:
+    // conserva el video y el chat lateral dentro del mismo layout. No pedir
+    // fullscreen nativo del video porque ese modo reemplaza la página por el
+    // reproductor del sistema y oculta el chat.
+    if (window.matchMedia(MOBILE_PLAYER_MEDIA_QUERY).matches) {
+      captureFullscreenScroll(true);
+      fallbackFullscreenActive = true;
       handleFullscreenChange();
       return;
     }

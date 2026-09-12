@@ -270,8 +270,14 @@
   }
 
   .session-view[data-chat-dock="bottom"] .chat-collapse-handle {
-    width: 38px;
+    /* El área hover puede seguir siendo más amplia, pero el botón debe
+       coincidir con el círculo visual definido para PC. */
+    width: 28px;
     height: 28px;
+  }
+
+  .session-view:not(.chat-collapsed)[data-chat-dock="bottom"] .chat-collapse-hover-zone {
+    transform: translate(-50%, calc(-50% - 2px));
   }
 
   .player-status-badge.empty {
@@ -297,19 +303,38 @@
   }
 }
 
+/* En PC el chat lateral se contrae desde el borde medio del panel. El
+   anclaje superior al header pertenece únicamente a la variante móvil. */
 @media (min-width: 981px) {
+  /* Durante el cambio inferior -> lateral la flecha de contraer todavía no
+     pertenece a la posición final. Mantenerla oculta hasta que termine la
+     transición evita que aparezca adelantada sobre el panel en movimiento. */
+  .session-view.chat-dock-switching[data-chat-dock="right"]
+    .chat-collapse-hover-zone[data-chat-control="collapse"] {
+    visibility: hidden;
+    opacity: 0 !important;
+    pointer-events: none;
+  }
+
+  /* La flecha de expandir del dock lateral sigue disponible aunque el
+     reproductor no tenga contenido ni active su overlay de controles. */
+  .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-handle {
+    opacity: 1 !important;
+    cursor: pointer;
+  }
+
   .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone {
-    top: 50%;
-    right: auto;
-    bottom: auto;
-    left: calc(100% - var(--chat-panel-width));
-    width: 30px;
-    height: 40px;
-    transform: translate(-50%, -50%);
+    top: 50% !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: calc(100% - var(--chat-panel-width)) !important;
+    width: 30px !important;
+    height: 40px !important;
+    transform: translate(-50%, -50%) !important;
   }
 
   .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-handle {
-    width: 30px;
-    height: 40px;
+    width: 30px !important;
+    height: 40px !important;
   }
 }

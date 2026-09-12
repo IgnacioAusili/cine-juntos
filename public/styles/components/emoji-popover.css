@@ -1,10 +1,7 @@
 .emoji-popover {
   --emoji-popover-background: rgb(29, 36, 40);
-  --emoji-popover-border: rgb(59, 65, 69);
   --emoji-popover-anchor-x: 50%;
   --emoji-popover-arrow-size: 8px;
-  --emoji-popover-arrow-border-size: 0.5px;
-  --emoji-popover-arrow-border-color: rgb(90, 96, 101);
   --emoji-popover-arrow-fill-color: var(--emoji-popover-background);
   --emoji-popover-transition-duration: 150ms;
   --emoji-popover-close-duration: 150ms;
@@ -15,12 +12,12 @@
   max-width: calc(100vw - 16px);
   grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 2px;
-  border: 1px solid var(--emoji-popover-border);
+  border: 0;
   border-radius: 12px;
   background: var(--emoji-popover-background);
   backdrop-filter: blur(14px) saturate(1.08);
   -webkit-backdrop-filter: blur(14px) saturate(1.08);
-  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.36);
+  box-shadow: none;
   padding: 6px;
   box-sizing: border-box;
   overflow: visible;
@@ -63,7 +60,6 @@
 /* La cola une el selector con el botón que lo abrió. El atributo de posición
    permite reutilizar la misma pieza cuando el selector debe caer debajo del
    botón por falta de espacio arriba. */
-.emoji-popover::before,
 .emoji-popover::after {
   position: absolute;
   content: "";
@@ -77,7 +73,7 @@
 .emoji-popover::after {
   z-index: 3;
   left: var(--emoji-popover-anchor-x);
-  width: calc((var(--emoji-popover-arrow-size) + var(--emoji-popover-arrow-border-size)) * 2);
+  width: calc(var(--emoji-popover-arrow-size) * 2);
   height: var(--emoji-popover-arrow-size);
   transform: translateX(-50%);
   background: var(--emoji-popover-arrow-fill-color);
@@ -85,32 +81,12 @@
   pointer-events: none;
 }
 
-.emoji-popover::before {
-  z-index: 2;
-  left: var(--emoji-popover-anchor-x);
-  width: calc((var(--emoji-popover-arrow-size) + var(--emoji-popover-arrow-border-size)) * 2);
-  height: calc(var(--emoji-popover-arrow-size) + var(--emoji-popover-arrow-border-size));
-  transform: translateX(-50%);
-  background: var(--emoji-popover-arrow-border-color);
-  clip-path: polygon(0 0, 100% 0, 50% 100%);
-  pointer-events: none;
-}
-
-.emoji-popover[data-placement="top"]::before {
-  bottom: calc((var(--emoji-popover-arrow-size) + var(--emoji-popover-arrow-border-size)) * -1);
-}
-
 .emoji-popover[data-placement="top"]::after {
-  bottom: calc((var(--emoji-popover-arrow-size) * -1) + var(--emoji-popover-arrow-border-size));
-}
-
-.emoji-popover[data-placement="bottom"]::before {
-  top: calc((var(--emoji-popover-arrow-size) + var(--emoji-popover-arrow-border-size)) * -1);
-  clip-path: polygon(0 100%, 100% 100%, 50% 0);
+  bottom: calc(var(--emoji-popover-arrow-size) * -1);
 }
 
 .emoji-popover[data-placement="bottom"]::after {
-  top: calc((var(--emoji-popover-arrow-size) * -1) + var(--emoji-popover-arrow-border-size));
+  top: calc(var(--emoji-popover-arrow-size) * -1);
   clip-path: polygon(0 100%, 100% 100%, 50% 0);
 }
 

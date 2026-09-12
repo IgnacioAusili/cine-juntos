@@ -7,7 +7,7 @@
 @import url("./components/presence.css?v=20260910-status-glow-09");
 @import url("./components/icon-fallbacks.css?v=20260901-chat-arrow-unified-05");
 @import url("./components/unread-badges.css");
-@import url("./components/emoji-popover.css?v=20260903-emoji-popover-fade-01");
-@import url("./components/tooltip-layer.css?v=20260904-seek-tooltip-edge-03");
+@import url("./components/emoji-popover.css?v=20260912-borderless-popovers-03");
+@import url("./components/tooltip-layer.css?v=20260912-borderless-popovers-03");
 @import url("./components/dialogs.css?v=20260822-confirm-dialog-layout-01");
 @import url("./components/mobile-debug.css?v=20260911-console-log-share-01");

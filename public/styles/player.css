@@ -96,7 +96,7 @@ video::-webkit-media-controls-fullscreen-button {
 
 /* El halo de la bolita no debe quedar recortado por la regla general del estado. */
 .sync-status.player-status-badge {
-  margin: 0;
+  margin: -2px 0 0 -2px;
   overflow: visible;
   text-overflow: clip;
 }
@@ -130,7 +130,6 @@ video::-webkit-media-controls-fullscreen-button {
   display: inline-flex;
   align-items: center;
   line-height: 1;
-  transform: translateY(1px);
 }
 
 .player-status-badge.video-status.empty {

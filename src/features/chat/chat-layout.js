@@ -42,7 +42,8 @@ const BOTTOM_CHAT_CURTAIN_MS = 320;
 const BOTTOM_CHAT_SCROLL_TIMEOUT_MS = 1200;
 const BOTTOM_DOCK_UNION_REVEAL_PX = 0;
 const BOTTOM_TO_RIGHT_SCROLL_TIMEOUT_MS = 1200;
-const BOTTOM_TO_RIGHT_LAYOUT_MS = 280;
+// Debe coincidir con la transición real de flex-basis/width del panel lateral.
+const BOTTOM_TO_RIGHT_LAYOUT_MS = 400;
 
 let layoutAdjustmentTimer = 0;
 let collapseHandleOffsetTimer = 0;
@@ -542,12 +543,30 @@ export function syncExternalChatCollapseHandleOffset() {
   const isFullscreenBottomChatBelowViewport =
     isLandscapeMobileFullscreenBottomDock
     && chatRect.top >= window.innerHeight - 1;
+  // La zona de la flecha vive dentro de .chat-area, por lo que su offset
+  // vertical debe ser relativo al panel y no al workspace completo. Usar el
+  // workspace aquí la deja fuera del header en el dock inferior de escritorio.
+  const chatHeaderStyles = chatHeader ? getComputedStyle(chatHeader) : null;
+  const headerPaddingTop = Number.parseFloat(chatHeaderStyles?.paddingTop || "0") || 0;
+  const headerPaddingBottom = Number.parseFloat(chatHeaderStyles?.paddingBottom || "0") || 0;
+  // Con padding vertical asimétrico, el centro geométrico del header no
+  // coincide con el centro visual de su contenido. La corrección se deriva
+  // de esos paddings para no fijar un desplazamiento en píxeles.
+  const headerContentCenterCorrection = (headerPaddingTop - headerPaddingBottom) / 2;
   const handleTop = isFullscreenBottomChatBelowViewport
     ? playerControlBarRect
       ? Math.max(0, Math.round(playerControlBarRect.top - workspaceRect.top - 36))
       : Math.max(0, Math.round(chatRect.top - workspaceRect.top - collapseHandleHeight / 2))
     : chatHeaderRect && !isPortraitMobileBottomDock
-      ? Math.max(0, Math.round(chatHeaderRect.top - workspaceRect.top + chatHeaderRect.height / 2))
+      ? Math.max(
+        0,
+        Math.round(
+          chatHeaderRect.top
+          - chatRect.top
+          + chatHeaderRect.height / 2
+          - headerContentCenterCorrection,
+        ),
+      )
       : Math.max(
         0,
         Math.round(

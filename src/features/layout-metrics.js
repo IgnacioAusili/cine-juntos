@@ -15,7 +15,6 @@ let wasBottomChatKeyboardOpen = false;
 let bottomChatKeyboardHandleAnchor = null;
 let rightChatScrollBeforeKeyboard = null;
 let rightChatPageScrollLockTop = null;
-let rightChatKeyboardRestoreTimers = [];
 let wasRightChatKeyboardOpen = false;
 let lastRightChatKeyboardViewportHeight = 0;
 let lastRightChatKeyboardViewportWidth = 0;
@@ -63,8 +62,6 @@ function captureRightChatKeyboardScroll(allowUnfocused = false) {
     || rightChatScrollBeforeKeyboard !== null
   ) return;
 
-  rightChatKeyboardRestoreTimers.forEach((timer) => window.clearTimeout(timer));
-  rightChatKeyboardRestoreTimers = [];
   rightChatScrollBeforeKeyboard = window.scrollY || 0;
   rightChatPageScrollLockTop = rightChatScrollBeforeKeyboard;
 }
@@ -83,19 +80,7 @@ function restoreRightChatKeyboardScroll() {
   rightChatPageScrollLockTop = null;
   if (targetTop === null) return;
 
-  rightChatKeyboardRestoreTimers.forEach((timer) => window.clearTimeout(timer));
-  rightChatKeyboardRestoreTimers = [];
-
-  const restore = () => {
-    // Safari puede volver a mover la página después del primer resize del
-    // viewport, cuando termina de cerrar el teclado. Reintentar durante esa
-    // transición mantiene el anclaje original sin interferir si el usuario
-    // ya volvió a enfocar el input o reabrió el teclado.
-    if (
-      document.documentElement.classList.contains("right-chat-keyboard-open")
-      || isRightChatInputFocused()
-    ) return;
-
+  window.requestAnimationFrame(() => {
     const maxScroll = Math.max(
       0,
       document.documentElement.scrollHeight - document.documentElement.clientHeight,
@@ -104,17 +89,6 @@ function restoreRightChatKeyboardScroll() {
       top: Math.min(targetTop, maxScroll),
       behavior: "auto",
     });
-  };
-
-  restore();
-  [50, 140, 280, 480].forEach((delay) => {
-    const timer = window.setTimeout(() => {
-      rightChatKeyboardRestoreTimers = rightChatKeyboardRestoreTimers.filter(
-        (activeTimer) => activeTimer !== timer,
-      );
-      restore();
-    }, delay);
-    rightChatKeyboardRestoreTimers.push(timer);
   });
 }
 

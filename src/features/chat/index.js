@@ -32,7 +32,7 @@ import {
   setInsideChatVisible,
   syncExternalChatCollapseHandleOffset,
   syncChatAutoExpandControls,
-} from "./chat-layout.js?v=20260910-fullscreen-chat-handle-13";
+} from "./chat-layout.js?v=20260912-bottom-to-right-arrow-timing-02";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 import { focusChatInput } from "./chat-input-focus.js";
 import { hideTooltip } from "../icons-tooltips.js?v=20260910-status-tooltip-04";
@@ -209,7 +209,7 @@ export {
   setInsideChatVisible,
   syncChatAutoExpandControls,
   updateCollapseButton,
-} from "./chat-layout.js?v=20260910-fullscreen-chat-handle-13";
+} from "./chat-layout.js?v=20260912-bottom-to-right-arrow-timing-02";
 
 export function wireChatEvents() {
   syncChatAutoExpandControls();

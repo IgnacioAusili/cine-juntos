@@ -7,7 +7,7 @@ import {
   applyInitialDefaults,
   detectTerminalLogEndpoint,
   logEvent,
-} from "./core/state.js?v=20260902-mobile-real-browser-01";
+} from "./core/state.js?v=20260912-name-session-01";
 import {
   normalizeRoomCode,
 } from "./core/utils.js";
@@ -22,7 +22,7 @@ import {
 import {
   renderPresence,
   wireIdentityEvents,
-} from "./features/presence.js?v=20260901-chat-arrow-unified-03";
+} from "./features/presence.js?v=20260912-name-session-01";
 import {
   showLobby,
   initializeAboutDialog,

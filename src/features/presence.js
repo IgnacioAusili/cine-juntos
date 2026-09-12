@@ -1,11 +1,16 @@
 import { dom } from "../core/dom.js";
 import {
   state,
-  NAME_CHANGE_LIMIT,
   getDisplayName,
   getTransportNow,
   logEvent,
-} from "../core/state.js?v=20260902-mobile-real-browser-01";
+} from "../core/state.js?v=20260912-name-session-01";
+import {
+  DISPLAY_NAME_MAX_LENGTH,
+  DISPLAY_NAME_MIN_LENGTH,
+  NAME_CHANGE_LIMIT,
+  normalizeDisplayName,
+} from "../core/name-policy.js?v=20260912-name-session-01";
 import { makeGuestName, makeParticipantLabel } from "../core/utils.js";
 import { hideTooltip } from "./icons-tooltips.js?v=20260910-status-tooltip-04";
 
@@ -23,10 +28,9 @@ let nameInputMeasureCanvas = null;
 let activityRefreshTimer = null;
 let nameInputResizeObserver = null;
 const recentActivityByParticipantId = new Map();
-const MIN_DISPLAY_NAME_LENGTH = 3;
 
 function getPendingDisplayName() {
-  return String(dom.nameInput?.value || "").trim().slice(0, 28);
+  return normalizeDisplayName(dom.nameInput?.value);
 }
 
 function syncConfirmNameButtonState() {
@@ -36,7 +40,7 @@ function syncConfirmNameButtonState() {
   const nextName = getPendingDisplayName();
   const currentName = getDisplayName();
   const isNoOpConfirm = nextName === currentName;
-  const isTooShort = nextName.length < MIN_DISPLAY_NAME_LENGTH;
+  const isTooShort = nextName.length < DISPLAY_NAME_MIN_LENGTH;
   dom.confirmNameButton.disabled = false;
 
   if (!isEditing) {
@@ -46,10 +50,10 @@ function syncConfirmNameButtonState() {
     dom.confirmNameButton.dataset.tooltip = "No hay cambios para guardar";
     dom.confirmNameButton.setAttribute("aria-label", "Aceptar nombre. No hay cambios para guardar");
   } else if (isTooShort) {
-    dom.confirmNameButton.dataset.tooltip = `Si confirmas, volverá al usuario anterior porque el nombre debe tener al menos ${MIN_DISPLAY_NAME_LENGTH} caracteres`;
+    dom.confirmNameButton.dataset.tooltip = `Si confirmas, volverá al usuario anterior porque el nombre debe tener al menos ${DISPLAY_NAME_MIN_LENGTH} caracteres`;
     dom.confirmNameButton.setAttribute(
       "aria-label",
-      `Aceptar nombre. Si confirmas, volverá al usuario anterior porque el nombre debe tener al menos ${MIN_DISPLAY_NAME_LENGTH} caracteres`,
+      `Aceptar nombre. Si confirmas, volverá al usuario anterior porque el nombre debe tener al menos ${DISPLAY_NAME_MIN_LENGTH} caracteres`,
     );
   } else {
     dom.confirmNameButton.dataset.tooltip = "Aceptar nombre (Enter)";
@@ -63,8 +67,8 @@ function syncEditNameButtonState() {
   const limitReached = state.chat.nameChangeCount >= NAME_CHANGE_LIMIT;
   dom.editNameButton.disabled = limitReached;
   if (limitReached) {
-    dom.editNameButton.dataset.tooltip = `Alcanzaste el límite de ${NAME_CHANGE_LIMIT} cambios de nombre en esta sala`;
-    dom.editNameButton.setAttribute("aria-label", `Editar nombre deshabilitado. Alcanzaste el límite de ${NAME_CHANGE_LIMIT} cambios de nombre en esta sala`);
+    dom.editNameButton.dataset.tooltip = `Alcanzaste el límite de ${NAME_CHANGE_LIMIT} cambios de nombre en esta sesión`;
+    dom.editNameButton.setAttribute("aria-label", `Editar nombre deshabilitado. Alcanzaste el límite de ${NAME_CHANGE_LIMIT} cambios de nombre en esta sesión`);
     dom.editNameButton.removeAttribute("title");
   } else {
     dom.editNameButton.dataset.tooltip = "Editar nombre";
@@ -405,7 +409,7 @@ function commitDisplayNameChange() {
     setIdentityEditing(false);
     return;
   }
-  if (requestedName.length < MIN_DISPLAY_NAME_LENGTH) {
+  if (requestedName.length < DISPLAY_NAME_MIN_LENGTH) {
     dom.nameInput.setCustomValidity("");
     if (dom.nameInput) dom.nameInput.value = previousName;
     if (dom.lobbyNameInput) dom.lobbyNameInput.value = previousName;
@@ -427,8 +431,6 @@ function commitDisplayNameChange() {
   if (nameChanged) {
     state.session.transport?.updateMember?.(confirmedName);
     state.chat.nameChangeCount += 1;
-    sessionStorage.setItem("cine-juntos-name-change-count", String(state.chat.nameChangeCount));
-    sessionStorage.removeItem("cine-juntos-name-change-used");
     logEvent("user", `Nombre actualizado: ${confirmedName}`);
   }
   syncEditNameButtonState();
@@ -536,8 +538,9 @@ export function renderPresence() {
 }
 
 export function updateDisplayName(value, sourceInput, { allowLobbyEdit = false } = {}) {
-  const nextName = String(value || "").slice(0, 28);
-  const lockedName = localStorage.getItem("cine-juntos-name") || makeGuestName(state.session.clientId);
+  const nextName = normalizeDisplayName(value).slice(0, DISPLAY_NAME_MAX_LENGTH);
+  const lockedName = normalizeDisplayName(localStorage.getItem("cine-juntos-name"))
+    || makeGuestName(state.session.clientId);
 
   if (state.chat.nameChangeCount >= NAME_CHANGE_LIMIT && !allowLobbyEdit) {
     if (dom.nameInput) dom.nameInput.value = lockedName;

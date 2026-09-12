@@ -5,7 +5,7 @@ import {
   state,
   getDisplayName,
   logEvent,
-} from "../../core/state.js?v=20260902-mobile-real-browser-01";
+} from "../../core/state.js?v=20260912-name-session-01";
 import {
   formatSeconds,
   formatClockTime,

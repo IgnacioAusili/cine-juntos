@@ -7,7 +7,7 @@ import {
   getDisplayName,
   LAST_ROOM_KEY,
   logEvent,
-} from "../core/state.js?v=20260902-mobile-real-browser-01";
+} from "../core/state.js?v=20260912-name-session-01";
 import {
   MAX_ROOM_PARTICIPANTS,
   ROOM_CREATE_ATTEMPT_LIMIT,
@@ -16,12 +16,12 @@ import {
   normalizeRoomCode,
 } from "../core/utils.js";
 import { createRandomId } from "../core/random-id.js?v=20260902-mobile-real-browser-02";
-import { createTransport, createLocalTransport } from "../services/transport.js?v=20260902-mobile-real-browser-01";
+import { createTransport, createLocalTransport } from "../services/transport.js?v=20260912-name-session-01";
 import {
   renderMembers,
   renderPresence,
   updateDisplayName,
-} from "./presence.js?v=20260901-chat-arrow-unified-03";
+} from "./presence.js?v=20260912-name-session-01";
 import { setConnection } from "./icons-tooltips.js?v=20260910-status-tooltip-04";
 import {
   getUserScrollIntentVersion,

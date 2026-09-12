@@ -1,6 +1,6 @@
 // Coordinacion general del chat: cableado de eventos, layout y reexport de submodulos.
 import { dom } from "../../core/dom.js";
-import { logEvent, state } from "../../core/state.js?v=20260902-mobile-real-browser-01";
+import { logEvent, state } from "../../core/state.js?v=20260912-name-session-01";
 import { CHAT_DOCK_META } from "../../core/utils.js";
 import {
   autoResizeMessageInput,

@@ -1,5 +1,5 @@
 import { dom } from "../core/dom.js";
-import { getClientLogText, logEvent } from "../core/state.js?v=20260907-mobile-keyboard-diagnostics-02";
+import { getClientLogText, logEvent } from "../core/state.js?v=20260912-name-session-01";
 
 const LOG_FILE_NAME = "cine-juntos-log.txt";
 const SHARE_TITLE = "Log de diagnóstico de Cine Juntos";

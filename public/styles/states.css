@@ -354,13 +354,21 @@ body.fullscreen-mode .session-view[data-chat-dock="right"] .player-frame {
 }
 
 body.fullscreen-mode .session-view[data-chat-dock="right"] .chat-area {
-  padding: 8px 0 0;
+  /* En pantalla completa el header debe arrancar en el borde superior del
+     viewport, sin el gutter vertical del layout normal. */
+  padding: 0;
   border: 1px solid var(--glass-border-strong);
   border-left: 0;
   border-radius: 0 var(--radius-md) var(--radius-md) 0;
   background: var(--glass-bg);
   box-shadow: var(--shadow-lg);
   backdrop-filter: blur(16px);
+}
+
+/* El nombre queda alineado 1px por encima del centro matemático de la fila,
+   tanto en el dock lateral normal como en pantalla completa. */
+.session-view[data-chat-dock="right"] .chat-name-field {
+  transform: translateY(-1px);
 }
 
 body.fullscreen-mode .session-view[data-chat-dock="right"] .player-actions {

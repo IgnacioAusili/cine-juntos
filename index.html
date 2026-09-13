@@ -24,7 +24,7 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap"
     />
     <link rel="icon" href="./public/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="./public/styles.css?v=20260913-name-input-autofill-05" />
+    <link rel="stylesheet" href="./public/styles.css?v=20260913-noto-emoji-fullscreen-01" />
   </head>
   <body class="is-lobby">
     <div class="app-shell">
@@ -833,8 +833,14 @@
 
       <div class="emoji-popover" id="emojiPopover" hidden aria-label="Selector de emojis"></div>
       <div class="message-menu" id="messageMenu" hidden>
-        <button type="button" data-action="copy">Copiar</button>
-        <button type="button" data-action="reply">Responder</button>
+        <button type="button" data-action="copy">
+          <span data-lucide="copy" aria-hidden="true"></span>
+          <span>Copiar</span>
+        </button>
+        <button type="button" data-action="reply">
+          <span data-lucide="reply" aria-hidden="true"></span>
+          <span>Responder</span>
+        </button>
       </div>
       <div class="tooltip-layer" id="tooltipLayer" hidden></div>
       <button

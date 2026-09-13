@@ -67,7 +67,7 @@
   --text-font:
     Inter, -apple-system, BlinkMacSystemFont, "Segoe UI";
   font-family: var(--text-font), ui-sans-serif, sans-serif;
-  /* Las fuentes nativas tienen soporte completo para símbolos y emojis
-     compuestos; Noto queda como fallback para plataformas que no las traen. */
-  --emoji-font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+  /* Noto debe ganar también en Windows: las fuentes nativas del sistema
+     cambiarían el estilo de WhatsApp que usa la interfaz. */
+  --emoji-font-family: "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
 }

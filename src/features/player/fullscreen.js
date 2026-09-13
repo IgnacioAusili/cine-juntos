@@ -8,7 +8,7 @@ import {
 } from "../../core/utils.js";
 import {
   hideTooltip,
-  hydrateIcons,
+  setControlIcon,
 } from "../icons-tooltips.js?v=20260912-continuous-bubble-04";
 import { setSyncStatus } from "../session-ui.js?v=20260911-orientation-scroll-anchor-01";
 import {
@@ -729,7 +729,6 @@ export function handleFullscreenChange() {
   const isFullscreen = Boolean(document.fullscreenElement) || fallbackFullscreenActive;
   captureFullscreenScroll(isFullscreen);
   fullscreenScrollPreservationUntil = performance.now() + FULLSCREEN_SNAP_DELAY_MS + 80;
-  const icon = dom.pageFullscreenButton.querySelector("[data-lucide]");
   const tooltip = withShortcutHint(
     isFullscreen ? "Salir de pantalla completa" : "Pantalla completa",
     "F",
@@ -750,11 +749,7 @@ export function handleFullscreenChange() {
   dom.pageFullscreenButton.dataset.tooltip = tooltip;
   dom.pageFullscreenButton.removeAttribute("title");
   dom.pageFullscreenButton.setAttribute("aria-label", tooltip);
-  if (icon) {
-    icon.setAttribute("data-lucide", isFullscreen ? "minimize" : "maximize");
-    icon.innerHTML = "";
-  }
-  hydrateIcons();
+  setControlIcon(dom.pageFullscreenButton, isFullscreen ? "minimize" : "maximize");
   restoreFullscreenScroll(isFullscreen);
   syncInsideChatPanelOffset();
   // El fullscreen cambia el origen y las filas del layout móvil. Recalcular

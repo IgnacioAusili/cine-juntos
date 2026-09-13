@@ -357,12 +357,15 @@ body.fullscreen-mode .session-view[data-chat-dock="right"] .chat-area {
   /* En pantalla completa el header debe arrancar en el borde superior del
      viewport, sin el gutter vertical del layout normal. */
   padding: 0;
-  border: 1px solid var(--glass-border-strong);
-  border-left: 0;
-  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  border: 0;
+  border-radius: 0;
   background: var(--glass-bg);
-  box-shadow: var(--shadow-lg);
+  box-shadow: none;
   backdrop-filter: blur(16px);
+}
+
+body.fullscreen-mode .session-view[data-chat-dock="right"] .messages {
+  border-radius: 0;
 }
 
 /* El nombre queda alineado 1px por encima del centro matemático de la fila,

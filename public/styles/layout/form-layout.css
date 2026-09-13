@@ -169,6 +169,7 @@
   box-shadow: none;
   color: var(--text);
   transform: none;
+  transition: color 140ms ease, filter 140ms ease;
 }
 
 .chat-name-edit-button:disabled {
@@ -217,6 +218,29 @@
 .chat-name-confirm-button.is-invalid:hover,
 .chat-name-confirm-button.is-invalid:focus-visible {
   color: var(--danger);
+}
+
+.chat-name-edit-button:not(:disabled):hover,
+.chat-name-edit-button:not(:disabled):focus-visible,
+.chat-name-edit-button:not(:disabled).is-touch-hover,
+.chat-name-confirm-button:hover,
+.chat-name-confirm-button:focus-visible,
+.chat-name-confirm-button.is-touch-hover {
+  filter: brightness(1.18);
+}
+
+@media (hover: none) {
+  .chat-name-edit-button:not(:disabled):hover:not(.is-touch-hover),
+  .chat-name-confirm-button:hover:not(.is-touch-hover) {
+    filter: none;
+  }
+
+  .chat-name-edit-button:not(:disabled).is-touch-hover,
+  .chat-name-edit-button:not(:disabled).is-touch-hover:hover,
+  .chat-name-confirm-button.is-touch-hover,
+  .chat-name-confirm-button.is-touch-hover:hover {
+    filter: brightness(1.18);
+  }
 }
 
 .chat-name-edit-button svg,

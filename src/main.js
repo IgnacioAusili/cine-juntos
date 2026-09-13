@@ -22,7 +22,7 @@ import {
 import {
   renderPresence,
   wireIdentityEvents,
-} from "./features/presence.js?v=20260913-name-confirm-button-01";
+} from "./features/presence.js?v=20260913-name-confirm-icon-01";
 import {
   showLobby,
   initializeAboutDialog,
@@ -45,7 +45,7 @@ import {
 } from "./features/player/index.js?v=20260912-mobile-native-fullscreen-chat-02";
 import { wireMobileFullscreenOrientation } from "./features/player/mobile-fullscreen-orientation.js";
 import { wireMobileChatKeyboardControls } from "./features/player/mobile-chat-keyboard-controls.js?v=20260910-landscape-right-chat-keyboard-controls-06";
-import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20260910-landscape-chat-header-03";
+import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20260913-system-message-header-01";
 import { wireMobileLandscapeVideoSnap } from "./features/mobile-landscape-video-snap.js?v=20260910-mobile-portrait-no-snap-01";
 import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260910-mobile-copy-feedback-01";
 import { wireTouchHover } from "./core/touch-interactions.js?v=20260829-touch-hold-fix-01";
@@ -79,6 +79,8 @@ wireTouchHover(dom.aboutButton, {
   onDeactivate: () => dom.aboutButton?.blur(),
 });
 wireIdentityEvents();
+wireTouchHover(dom.editNameButton, { delay: 0 });
+wireTouchHover(dom.confirmNameButton, { delay: 0 });
 wireChatEvents();
 wirePlayerEvents();
 wireMobileChatKeyboardControls();

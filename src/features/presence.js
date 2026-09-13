@@ -12,7 +12,10 @@ import {
   normalizeDisplayName,
 } from "../core/name-policy.js?v=20260912-name-session-01";
 import { makeGuestName, makeParticipantLabel } from "../core/utils.js";
-import { hideTooltip } from "./icons-tooltips.js?v=20260912-continuous-bubble-04";
+import {
+  hideTooltip,
+  setControlIcon,
+} from "./icons-tooltips.js?v=20260912-continuous-bubble-04";
 import {
   isTouchPointer,
   TOUCH_LONG_PRESS_DELAY_MS,
@@ -55,6 +58,7 @@ function syncConfirmNameButtonState() {
   dom.confirmNameButton.disabled = false;
   dom.confirmNameButton.classList.toggle("is-invalid", isInvalid);
   dom.confirmNameButton.classList.toggle("is-valid", !isInvalid);
+  setControlIcon(dom.confirmNameButton, isInvalid ? "x" : "check");
 
   if (!isEditing) {
     dom.confirmNameButton.dataset.tooltip = "Aceptar nombre (Enter)";

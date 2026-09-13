@@ -169,6 +169,10 @@ function isMessageSurfaceTap(target) {
   return !target.closest(MESSAGE_INTERACTIVE_SELECTOR);
 }
 
+function isSystemMessageTarget(target) {
+  return target instanceof Element && Boolean(target.closest("#messages .message.system"));
+}
+
 function revealHeader() {
   if (isChatKeyboardOpen()) {
     setHeaderCollapsed(true);
@@ -232,6 +236,7 @@ function startGesture(event) {
     axis: null,
     moved: false,
     startedInMessages: event.target instanceof Element && Boolean(event.target.closest("#messages")),
+    startedInSystemMessage: isSystemMessageTarget(event.target),
     contextual: isContextualTarget(event.target),
     initialScrollTop: dom.messages?.scrollTop || 0,
     localSwipeUp: false,
@@ -268,6 +273,11 @@ function finishGesture(event) {
   const isContextFreeTap = isTap && !gesture.contextual;
   const isMessagesSurfaceTap = isTap && isMessageSurfaceTap(event.target);
   activeGesture = null;
+
+  // Los mensajes de sistema tienen su propia interacción (expandir el grupo,
+  // abrir el menú o responder). Un toque allí no debe reutilizar el gesto
+  // global que alterna la visibilidad del header del chat.
+  if (isTap && gesture.startedInSystemMessage) return;
 
   // Solo el scroll que empieza dentro de #messages puede revelar el header.
   // Un arrastre de la pagina conserva el estado visible/oculto que ya tenia.

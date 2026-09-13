@@ -121,7 +121,8 @@
   translate: -50% 0;
 }
 
-.chat-name-edit-row input[type="text"] {
+.chat-name-edit-row input[type="text"],
+.chat-name-edit-row input[type="search"] {
   appearance: none;
   display: block;
   min-width: 0;
@@ -148,7 +149,8 @@
   transition: width 180ms ease, max-width 180ms ease;
 }
 
-.chat-name-edit-row input[type="text"]:focus {
+.chat-name-edit-row input[type="text"]:focus,
+.chat-name-edit-row input[type="search"]:focus {
   border: 0 !important;
   outline: none;
   background: transparent !important;
@@ -206,6 +208,11 @@
   box-shadow: none;
   color: var(--text);
   transform: none;
+}
+
+.chat-name-edit-row input[type="search"]::-webkit-search-cancel-button {
+  appearance: none;
+  display: none;
 }
 
 .chat-name-confirm-button.is-valid,
@@ -443,13 +450,31 @@
   border: 1px solid rgba(240, 140, 58, 0.3);
   border-radius: 20px;
   background: #d4762a;
-  color: #0d0904;
-  font-size: 0.74rem;
+  color: #000 !important;
+  -webkit-text-fill-color: #000 !important;
+  font-size: 0.82rem;
   font-weight: 800;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+  text-shadow: none;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
   transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.session-toolbar-body .button.primary > .button-label,
+.session-toolbar-body .button.primary > svg {
+  color: #000 !important;
+  -webkit-text-fill-color: #000 !important;
+}
+
+.session-toolbar-body .button.primary > .button-label {
+  position: relative;
+  top: 1px;
+}
+
+.session-toolbar-body .button.primary > svg {
+  color: #000 !important;
+  -webkit-text-fill-color: #000 !important;
 }
 
 .session-toolbar-body .button.primary:hover {

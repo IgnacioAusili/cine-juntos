@@ -55,11 +55,15 @@ const EMOJI_POPOVER_BORDER_WIDTH_PX = 1;
 const EMOJI_POPOVER_TAIL_INSET_PX = 20;
 const EMOJI_POPOVER_TAIL_HEIGHT_PX = 8;
 const EMOJI_POPOVER_TRANSITION_MS = 150;
+const EMOJI_PAGE_COLUMNS = 7;
+const EMOJI_PAGE_MAX_ROWS = 2;
+const EMOJI_PAGE_MIN_CELL_PX = 20;
 const EMOJI_FONT_SHORTHAND = '0.82rem "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji"';
 const EMOJI_FONT_SAMPLE = "😂🫦❌👎✅👍🙏";
 let emojiFontReady = null;
 let emojiPopoverHideTimer = 0;
 let emojiPickerOpenRequestId = 0;
+let emojiPopoverOriginalParent = null;
 
 let lastMessageSpamKey = "";
 let sameMessageCount = 0;
@@ -76,6 +80,36 @@ function isMobileLayout() {
     window.matchMedia
     && window.matchMedia(MOBILE_CHAT_LAYOUT_QUERY).matches,
   );
+}
+
+function syncFullscreenEmojiPopoverSurface(anchor) {
+  const popover = dom.emojiPopover;
+  if (!popover || !isMobileLayout() || !document.body.classList.contains("fullscreen-mode")) {
+    return;
+  }
+
+  if (!emojiPopoverOriginalParent) {
+    emojiPopoverOriginalParent = popover.parentElement;
+  }
+
+  const surface = anchor?.closest(".chat-area, .player-frame")
+    || dom.chatArea
+    || dom.playerFrame;
+  if (surface && popover.parentElement !== surface) {
+    surface.append(popover);
+  }
+}
+
+function restoreEmojiPopoverSurface() {
+  const popover = dom.emojiPopover;
+  if (
+    popover
+    && emojiPopoverOriginalParent
+    && popover.parentElement !== emojiPopoverOriginalParent
+  ) {
+    emojiPopoverOriginalParent.append(popover);
+  }
+  popover?.style.removeProperty("position");
 }
 
 function getMobileInteractionSnapshot(input = null) {
@@ -135,28 +169,47 @@ function getEmojiViewportSize() {
   };
 }
 
-function syncEmojiPopoverLayout(popover) {
-  if (!isLandscapeKeyboardEmojiLayout()) {
-    popover.style.removeProperty("width");
-    popover.style.removeProperty("max-width");
-    popover.style.removeProperty("grid-template-columns");
-    return;
+function getEmojiPopoverTrack(popover) {
+  return popover.querySelector(".emoji-popover-track");
+}
+
+function rebuildEmojiPopoverPages(popover, options, columns, rows) {
+  const track = getEmojiPopoverTrack(popover);
+  if (!track) return;
+
+  const previousPage = track.clientWidth > 0
+    ? Math.round(track.scrollLeft / track.clientWidth)
+    : 0;
+  const pageSize = Math.max(1, columns * rows);
+  track.replaceChildren();
+
+  for (let start = 0; start < options.length; start += pageSize) {
+    const page = document.createElement("div");
+    page.className = "emoji-popover-page";
+    page.style.setProperty("--emoji-page-columns", String(columns));
+    page.style.setProperty("--emoji-page-rows", String(rows));
+    options.slice(start, start + pageSize).forEach((option) => page.append(option));
+    track.append(page);
   }
 
+  const nextPage = Math.min(
+    Math.max(0, previousPage),
+    Math.max(0, track.children.length - 1),
+  );
+  track.scrollLeft = nextPage * track.clientWidth;
+}
+
+function syncEmojiPopoverLayout(popover) {
   const options = [...popover.querySelectorAll(".emoji-option")];
   if (!options.length) return;
 
+  const landscapeKeyboardLayout = isLandscapeKeyboardEmojiLayout();
   const computedStyle = window.getComputedStyle(popover);
   const parsePixels = (value) => Number.parseFloat(value) || 0;
-  const horizontalChrome = parsePixels(computedStyle.paddingLeft)
-    + parsePixels(computedStyle.paddingRight)
-    + parsePixels(computedStyle.borderLeftWidth)
-    + parsePixels(computedStyle.borderRightWidth);
   const verticalChrome = parsePixels(computedStyle.paddingTop)
     + parsePixels(computedStyle.paddingBottom)
     + parsePixels(computedStyle.borderTopWidth)
     + parsePixels(computedStyle.borderBottomWidth);
-  const columnGap = parsePixels(computedStyle.columnGap || computedStyle.gap);
   const rowGap = parsePixels(computedStyle.rowGap || computedStyle.gap);
   const { width: viewportWidth, height: viewportHeight } = getEmojiViewportSize();
   const availableWidth = Math.max(
@@ -165,31 +218,53 @@ function syncEmojiPopoverLayout(popover) {
   );
   const availableHeight = Math.max(
     0,
-    viewportHeight - EMOJI_POPOVER_EDGE_PX * 2,
+    viewportHeight
+      - EMOJI_POPOVER_EDGE_PX * 2
+      - EMOJI_POPOVER_TAIL_HEIGHT_PX,
   );
 
-  // El propio botón sirve como referencia de tamaño. Se elige la menor
-  // cantidad de columnas que hace que cada celda pueda entrar en el alto
-  // visual; si el ancho fuera el límite, el algoritmo sigue reduciendo la
-  // celda sin depender de una resolución concreta.
-  let columns = options.length;
-  for (let candidate = 1; candidate <= options.length; candidate += 1) {
-    const rows = Math.ceil(options.length / candidate);
-    const cellWidth = (
-      availableWidth - horizontalChrome - columnGap * (candidate - 1)
-    ) / candidate;
-    const cellHeight = (
-      availableHeight - verticalChrome - rowGap * (rows - 1)
-    ) / rows;
-    if (cellWidth <= cellHeight + 0.5) {
-      columns = candidate;
-      break;
-    }
+  if (landscapeKeyboardLayout) {
+    popover.style.width = `${availableWidth}px`;
+    popover.style.maxWidth = `${availableWidth}px`;
+  } else {
+    popover.style.removeProperty("width");
+    popover.style.removeProperty("max-width");
   }
 
-  popover.style.width = `${availableWidth}px`;
-  popover.style.maxWidth = `${availableWidth}px`;
-  popover.style.gridTemplateColumns = `repeat(${columns}, minmax(0, 1fr))`;
+  popover.classList.remove("is-emoji-popover-paged");
+  popover.style.removeProperty("height");
+  rebuildEmojiPopoverPages(
+    popover,
+    options,
+    EMOJI_PAGE_COLUMNS,
+    Math.ceil(options.length / EMOJI_PAGE_COLUMNS),
+  );
+
+  const naturalHeight = popover.offsetHeight + EMOJI_POPOVER_TAIL_HEIGHT_PX;
+  if (naturalHeight <= availableHeight) return;
+
+  const optionRect = options[0].getBoundingClientRect();
+  const naturalCellHeight = Math.max(EMOJI_PAGE_MIN_CELL_PX, optionRect.height);
+  const rows = Math.max(
+    1,
+    Math.min(
+      EMOJI_PAGE_MAX_ROWS,
+      Math.floor(
+        (availableHeight - verticalChrome + rowGap)
+        / (naturalCellHeight + rowGap),
+      ),
+    ),
+  );
+
+  popover.classList.add("is-emoji-popover-paged");
+  const compactHeight = verticalChrome
+    + rows * naturalCellHeight
+    + rowGap * Math.max(0, rows - 1);
+  popover.style.height = `${Math.max(
+    EMOJI_PAGE_MIN_CELL_PX + verticalChrome,
+    Math.min(availableHeight, compactHeight),
+  )}px`;
+  rebuildEmojiPopoverPages(popover, options, EMOJI_PAGE_COLUMNS, rows);
 }
 
 function positionEmojiPopover(popover, anchor) {
@@ -236,8 +311,19 @@ function positionEmojiPopover(popover, anchor) {
 
   popover.dataset.placement = opensBelow ? "bottom" : "top";
   popover.style.setProperty("--emoji-popover-anchor-x", `${anchorOffset}px`);
-  popover.style.top = `${top}px`;
-  popover.style.left = `${left}px`;
+  const surface = popover.parentElement?.matches(".chat-area, .player-frame")
+    ? popover.parentElement
+    : null;
+  if (surface) {
+    const surfaceRect = surface.getBoundingClientRect();
+    popover.style.position = "absolute";
+    popover.style.top = `${top - surfaceRect.top}px`;
+    popover.style.left = `${left - surfaceRect.left}px`;
+  } else {
+    popover.style.removeProperty("position");
+    popover.style.top = `${top}px`;
+    popover.style.left = `${left}px`;
+  }
 }
 
 export function repositionEmojiPicker() {
@@ -267,6 +353,8 @@ function cancelEmojiPopoverHide() {
 
 function showEmojiPopover(popover) {
   cancelEmojiPopoverHide();
+  const track = getEmojiPopoverTrack(popover);
+  if (track) track.scrollLeft = 0;
   popover.hidden = false;
   popover.classList.remove("is-emoji-popover-closing");
   window.requestAnimationFrame(() => {
@@ -635,11 +723,19 @@ export function autoResizeMessageInput(input) {
 
 export function buildEmojiPicker() {
   void preloadEmojiFont();
+  emojiPopoverOriginalParent = dom.emojiPopover.parentElement;
   dom.emojiPopover.innerHTML = "";
   const fog = document.createElement("span");
   fog.className = "emoji-popover-fog";
   fog.setAttribute("aria-hidden", "true");
+  const track = document.createElement("div");
+  track.className = "emoji-popover-track";
+  const page = document.createElement("div");
+  page.className = "emoji-popover-page";
+  page.style.setProperty("--emoji-page-columns", String(EMOJI_PAGE_COLUMNS));
+  track.append(page);
   dom.emojiPopover.append(fog);
+  dom.emojiPopover.append(track);
   syncEmojiTriggerState();
   EMOJI_PICKER_ITEMS.forEach(({ emoji, tags }) => {
     const button = document.createElement("button");
@@ -658,7 +754,7 @@ export function buildEmojiPicker() {
     button.addEventListener("click", () => {
       insertEmoji(emoji);
     });
-    dom.emojiPopover.append(button);
+    page.append(button);
   });
 }
 
@@ -681,6 +777,7 @@ export async function toggleEmojiPicker(input, anchor) {
   await preloadEmojiFont();
   if (openRequestId !== emojiPickerOpenRequestId) return;
 
+  syncFullscreenEmojiPopoverSurface(anchor);
   dom.emojiPopover.dataset.anchor = anchor.id;
   showEmojiPopover(dom.emojiPopover);
   positionEmojiPopover(dom.emojiPopover, anchor);
@@ -713,6 +810,7 @@ export function hideEmojiPicker() {
     popover.dataset.anchor = "";
     popover.dataset.placement = "";
     popover.style.removeProperty("--emoji-popover-anchor-x");
+    restoreEmojiPopoverSurface();
     syncEmojiTriggerState();
     return;
   }
@@ -729,6 +827,7 @@ export function hideEmojiPicker() {
     popover.classList.remove("is-emoji-popover-closing");
     popover.dataset.placement = "";
     popover.style.removeProperty("--emoji-popover-anchor-x");
+    restoreEmojiPopoverSurface();
   }, EMOJI_POPOVER_TRANSITION_MS);
 }
 

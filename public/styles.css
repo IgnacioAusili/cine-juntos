@@ -1,7 +1,7 @@
 @import url("./styles/tokens.css?v=20260904-emoji-picker-system-fonts-01");
 @import url("./styles/base.css?v=20260906-lobby-fixed-background-01");
-@import url("./styles/layout.css?v=20260913-name-confirm-feedback-02");
-@import url("./styles/components.css?v=20260912-continuous-bubble-08");
+@import url("./styles/layout.css?v=20260913-name-input-autofill-02");
+@import url("./styles/components.css?v=20260913-bottom-chat-handle-stack-03");
 @import url("./styles/lobby.css?v=20260904-help-invite-fixes-02");
 @import url("./styles/player.css?v=20260912-sync-status-vertical-center-10");
 @import url("./styles/chat.css?v=20260824-reply-direction-01");
@@ -9,9 +9,9 @@
 @import url("./styles/states.css?v=20260913-fullscreen-chat-header-gap-03");
 @import url("./styles/responsive.css?v=20260912-bottom-to-right-arrow-timing-02");
 @import url("./styles/mini-player.css?v=20260905-overlay-height-cap-03");
-  @import url("./styles/mobile.css?v=20260913-fullscreen-dock-switch-01");
-  @import url("./styles/mobile-landscape.css?v=20260913-fullscreen-dock-switch-01");
-  @import url("./styles/mobile-landscape-chat.css?v=20260912-bottom-chat-arrow-centered-landscape-01");
+  @import url("./styles/mobile.css?v=20260913-name-editor-keyboard-header-02");
+  @import url("./styles/mobile-landscape.css?v=20260913-chat-arrow-fixed-02");
+  @import url("./styles/mobile-landscape-chat.css?v=20260913-chat-arrow-fixed-02");
 @import url("./styles/mobile-fullscreen-viewport.css?v=20260902-mobile-fullscreen-viewport-03");
 @import url("./styles/mini-player-adjustments.css?v=20260905-overlay-height-cap-03");
 @import url("./styles/player-controls-layout.css?v=20260902-player-controls-layout-17");

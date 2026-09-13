@@ -63,6 +63,15 @@ function isChatKeyboardOpen() {
     || document.documentElement.classList.contains("right-chat-keyboard-open");
 }
 
+function isNameEditorActive() {
+  return dom.chatNameField?.dataset.editing === "true"
+    && document.activeElement === dom.nameInput;
+}
+
+function isHeaderForcedByKeyboard() {
+  return (isChatKeyboardOpen() && !isNameEditorActive()) || headerKeyboardPreparing;
+}
+
 function isActiveChatDock() {
   return Boolean(
     isMobileChatHeaderDock()
@@ -115,8 +124,8 @@ function setHeaderCollapsed(collapsed) {
     return;
   }
   const keepVisibleWithoutMessages = !hasMessages();
-  const forcedByKeyboard = isChatKeyboardOpen() || headerKeyboardPreparing;
-  const shouldCollapse = forcedByKeyboard || (Boolean(collapsed) && !keepVisibleWithoutMessages);
+  const shouldCollapse = !isNameEditorActive()
+    && (isHeaderForcedByKeyboard() || (Boolean(collapsed) && !keepVisibleWithoutMessages));
   if (shouldCollapse) hideTooltip(true);
   dom.sessionView.classList.toggle(
     "chat-header-collapsed",
@@ -139,7 +148,7 @@ function isMobileChatHeaderDock() {
 
 function scheduleHeaderHide() {
   clearHideTimer();
-  if (isChatKeyboardOpen() || headerKeyboardPreparing) {
+  if (isHeaderForcedByKeyboard()) {
     setHeaderCollapsed(true);
     return;
   }
@@ -307,7 +316,7 @@ function handleWheel(event) {
 }
 
 function syncHeaderMode() {
-  if ((isChatKeyboardOpen() || headerKeyboardPreparing) && isActiveChatDock()) {
+  if (isHeaderForcedByKeyboard() && isActiveChatDock()) {
     if (headerCollapsedBeforeKeyboard === null) {
       headerCollapsedBeforeKeyboard = dom.sessionView.classList.contains("chat-header-collapsed");
     }
@@ -316,7 +325,7 @@ function syncHeaderMode() {
     return;
   }
 
-  if (!isChatKeyboardOpen() && !headerKeyboardPreparing && headerCollapsedBeforeKeyboard !== null) {
+  if (!isHeaderForcedByKeyboard() && headerCollapsedBeforeKeyboard !== null) {
     const shouldRestoreCollapsed = headerCollapsedBeforeKeyboard;
     headerCollapsedBeforeKeyboard = null;
     if (isActiveChatDock()) {

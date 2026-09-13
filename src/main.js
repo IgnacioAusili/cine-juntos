@@ -18,7 +18,7 @@ import {
 } from "./features/icons-tooltips.js?v=20260912-continuous-bubble-04";
 import {
   wireLayoutMetrics,
-} from "./features/layout-metrics.js?v=20260911-ios-right-chat-visual-viewport-02";
+} from "./features/layout-metrics.js?v=20260913-bottom-chat-keyboard-arrow-fixed-04";
 import {
   renderPresence,
   wireIdentityEvents,
@@ -38,16 +38,16 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js?v=20260912-continuous-bubble-04";
+} from "./features/chat/index.js?v=20260913-emoji-horizontal-pages-03";
 import {
   initializePlayer,
   wirePlayerEvents,
-} from "./features/player/index.js?v=20260912-mobile-native-fullscreen-chat-02";
+} from "./features/player/index.js?v=20260913-emoji-horizontal-pages-03";
 import { wireMobileFullscreenOrientation } from "./features/player/mobile-fullscreen-orientation.js";
 import { wireMobileChatKeyboardControls } from "./features/player/mobile-chat-keyboard-controls.js?v=20260910-landscape-right-chat-keyboard-controls-06";
-import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20260913-system-message-header-01";
+import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20260913-name-editor-keyboard-header-02";
 import { wireMobileLandscapeVideoSnap } from "./features/mobile-landscape-video-snap.js?v=20260910-mobile-portrait-no-snap-01";
-import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260910-mobile-copy-feedback-01";
+import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260913-emoji-horizontal-pages-03";
 import { wireTouchHover } from "./core/touch-interactions.js?v=20260829-touch-hold-fix-01";
 import { wireMobileDebugTools } from "./features/mobile-debug.js?v=20260911-console-log-share-01";
 import { wireMobileKeyboardDiagnostics } from "./features/mobile-keyboard-diagnostics.js?v=20260911-ios-landscape-keyboard-diagnostics-01";

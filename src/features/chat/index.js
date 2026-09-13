@@ -13,7 +13,7 @@ import {
   updateCharCounter,
   wireFloatingComposerLayout,
   wireComposerScrollbar,
-} from "./chat-input.js?v=20260912-continuous-bubble-03";
+} from "./chat-input.js?v=20260913-emoji-horizontal-pages-03";
 import { setReplyTarget } from "./chat-reply.js?v=20260826-reply-sync-close-03";
 import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20260913-taskbar-badge-01";
 import {
@@ -174,7 +174,7 @@ export {
   buildEmojiPicker,
   updateCharCounter,
   sendMessage,
-} from "./chat-input.js?v=20260912-continuous-bubble-03";
+} from "./chat-input.js?v=20260913-emoji-horizontal-pages-03";
 export {
   beginSystemMessageHydration,
   finishSystemMessageHydration,
@@ -293,11 +293,14 @@ export function wireChatEvents() {
     [dom.overlayEmojiButton, dom.overlayMessageInput],
   ].forEach(([button, input]) => {
     const preserveInputFocus = (event) => {
-      if (!isMobileChatLayout() || document.activeElement !== input) return;
+      if (!isMobileChatLayout()) return;
       event.preventDefault();
     };
     button?.addEventListener("pointerdown", preserveInputFocus);
     button?.addEventListener("mousedown", preserveInputFocus);
+    button?.addEventListener("focus", () => {
+      if (isMobileChatLayout()) button.blur();
+    });
   });
 
   dom.messageEmojiButton.addEventListener("click", () => {
@@ -324,6 +327,7 @@ export function wireChatEvents() {
     popover?.addEventListener(
       "touchmove",
       (event) => {
+        if (popover.classList.contains("is-emoji-popover-paged")) return;
         event.preventDefault();
         event.stopPropagation();
       },

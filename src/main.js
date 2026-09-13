@@ -22,7 +22,7 @@ import {
 import {
   renderPresence,
   wireIdentityEvents,
-} from "./features/presence.js?v=20260912-name-session-01";
+} from "./features/presence.js?v=20260913-name-confirm-button-01";
 import {
   showLobby,
   initializeAboutDialog,

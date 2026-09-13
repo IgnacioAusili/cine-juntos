@@ -13,6 +13,10 @@ import {
 } from "../core/name-policy.js?v=20260912-name-session-01";
 import { makeGuestName, makeParticipantLabel } from "../core/utils.js";
 import { hideTooltip } from "./icons-tooltips.js?v=20260912-continuous-bubble-04";
+import {
+  isTouchPointer,
+  TOUCH_LONG_PRESS_DELAY_MS,
+} from "../core/touch-interactions.js?v=20260829-touch-hold-fix-01";
 
 // El heartbeat llega cada 10 s. La ventana anterior de 12 s dejaba solo
 // 2 s para tolerar latencia o una actualización demorada de Firebase, lo
@@ -23,10 +27,16 @@ const RECENT_ACTIVITY_WINDOW_MS = 30000;
 const DESKTOP_BOTTOM_NAME_GAP_PX = 8;
 const DESKTOP_BOTTOM_NAME_ARROW_GAP_PX = 120;
 const DESKTOP_BOTTOM_EDIT_MARGIN_PX = 12;
+const CONFIRM_NAME_HOLD_MOVE_TOLERANCE_PX = 10;
 
 let nameInputMeasureCanvas = null;
 let activityRefreshTimer = null;
 let nameInputResizeObserver = null;
+let confirmNameLongPressTimer = null;
+let confirmNameLongPressPointerId = null;
+let confirmNameLongPressStart = null;
+let suppressNextConfirmNameClick = false;
+let suppressNextConfirmNameClickResetTimer = null;
 const recentActivityByParticipantId = new Map();
 
 function getPendingDisplayName() {
@@ -41,7 +51,10 @@ function syncConfirmNameButtonState() {
   const currentName = getDisplayName();
   const isNoOpConfirm = nextName === currentName;
   const isTooShort = nextName.length < DISPLAY_NAME_MIN_LENGTH;
+  const isInvalid = isEditing && isTooShort;
   dom.confirmNameButton.disabled = false;
+  dom.confirmNameButton.classList.toggle("is-invalid", isInvalid);
+  dom.confirmNameButton.classList.toggle("is-valid", !isInvalid);
 
   if (!isEditing) {
     dom.confirmNameButton.dataset.tooltip = "Aceptar nombre (Enter)";
@@ -60,6 +73,77 @@ function syncConfirmNameButtonState() {
     dom.confirmNameButton.setAttribute("aria-label", "Aceptar nombre");
   }
   dom.confirmNameButton.removeAttribute("title");
+}
+
+function clearConfirmNameLongPress() {
+  if (confirmNameLongPressTimer !== null) {
+    window.clearTimeout(confirmNameLongPressTimer);
+  }
+  confirmNameLongPressTimer = null;
+  confirmNameLongPressPointerId = null;
+  confirmNameLongPressStart = null;
+}
+
+function markConfirmNameLongPress() {
+  suppressNextConfirmNameClick = true;
+  if (suppressNextConfirmNameClickResetTimer !== null) {
+    window.clearTimeout(suppressNextConfirmNameClickResetTimer);
+  }
+  suppressNextConfirmNameClickResetTimer = window.setTimeout(() => {
+    suppressNextConfirmNameClick = false;
+    suppressNextConfirmNameClickResetTimer = null;
+  }, 1500);
+}
+
+function consumeSuppressedConfirmNameClick() {
+  const shouldSuppress = suppressNextConfirmNameClick;
+  suppressNextConfirmNameClick = false;
+  if (suppressNextConfirmNameClickResetTimer !== null) {
+    window.clearTimeout(suppressNextConfirmNameClickResetTimer);
+  }
+  suppressNextConfirmNameClickResetTimer = null;
+  return shouldSuppress;
+}
+
+function startConfirmNameLongPress(event) {
+  if (
+    !isTouchPointer(event)
+    || (event.button && event.button !== 0)
+    || !dom.confirmNameButton?.classList.contains("is-invalid")
+  ) return;
+
+  clearConfirmNameLongPress();
+  confirmNameLongPressPointerId = event.pointerId;
+  confirmNameLongPressStart = { x: event.clientX, y: event.clientY };
+  confirmNameLongPressTimer = window.setTimeout(() => {
+    if (confirmNameLongPressPointerId !== event.pointerId) return;
+    markConfirmNameLongPress();
+  }, TOUCH_LONG_PRESS_DELAY_MS);
+}
+
+function trackConfirmNameLongPressMove(event) {
+  if (
+    !isTouchPointer(event)
+    || confirmNameLongPressPointerId !== event.pointerId
+    || !confirmNameLongPressStart
+  ) return;
+
+  const movedX = event.clientX - confirmNameLongPressStart.x;
+  const movedY = event.clientY - confirmNameLongPressStart.y;
+  if (Math.hypot(movedX, movedY) <= CONFIRM_NAME_HOLD_MOVE_TOLERANCE_PX) return;
+
+  const longPressAlreadyTriggered = suppressNextConfirmNameClick;
+  clearConfirmNameLongPress();
+  if (!longPressAlreadyTriggered) consumeSuppressedConfirmNameClick();
+}
+
+function finishConfirmNameLongPress() {
+  clearConfirmNameLongPress();
+}
+
+function cancelConfirmNameLongPress() {
+  clearConfirmNameLongPress();
+  consumeSuppressedConfirmNameClick();
 }
 
 function syncEditNameButtonState() {
@@ -573,9 +657,19 @@ export function wireIdentityEvents() {
     setIdentityEditing(true);
   });
 
-  dom.confirmNameButton?.addEventListener("click", () => {
+  dom.confirmNameButton?.addEventListener("click", (event) => {
+    if (consumeSuppressedConfirmNameClick()) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      return;
+    }
     commitDisplayNameChange();
   });
+
+  dom.confirmNameButton?.addEventListener("pointerdown", startConfirmNameLongPress);
+  document.addEventListener("pointermove", trackConfirmNameLongPressMove, { passive: true });
+  document.addEventListener("pointerup", finishConfirmNameLongPress, { passive: true });
+  document.addEventListener("pointercancel", cancelConfirmNameLongPress, { passive: true });
 
   dom.confirmNameButton?.addEventListener("pointerdown", () => {
     dom.nameInput.dataset.commitOnBlur = "1";

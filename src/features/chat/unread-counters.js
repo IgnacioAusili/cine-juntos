@@ -3,7 +3,7 @@ import { state } from "../../core/state.js?v=20260912-name-session-01";
 import {
   setExternalChatCollapsed,
   setInsideChatVisible,
-} from "./chat-layout.js?v=20260912-bottom-to-right-arrow-timing-02";
+} from "./chat-layout.js?v=20260913-fullscreen-dock-switch-01";
 
 function isElementVisibleInViewport(element) {
   if (!element || document.hidden) return false;

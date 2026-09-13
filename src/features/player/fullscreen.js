@@ -22,7 +22,7 @@ import {
   cancelExternalChatAutoCollapse,
   forceExternalChatCollapsed,
   updateCollapseButton,
-} from "../chat/chat-layout.js?v=20260912-bottom-to-right-arrow-timing-02";
+} from "../chat/chat-layout.js?v=20260913-fullscreen-dock-switch-01";
 import { withShortcutHint } from "../../core/utils.js";
 import {
   captureFullscreenScroll,

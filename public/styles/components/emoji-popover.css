@@ -1,5 +1,10 @@
 .emoji-popover {
   --emoji-popover-background: rgb(29, 36, 40);
+  --emoji-popover-border: rgb(59, 65, 69);
+  --emoji-popover-border-width: 1px;
+  --emoji-popover-radius: 12px;
+  --emoji-popover-tail-width: 16px;
+  --emoji-popover-tail-height: 8px;
   --emoji-popover-anchor-x: 50%;
   --emoji-popover-arrow-size: 8px;
   --emoji-popover-arrow-fill-color: var(--emoji-popover-background);
@@ -13,10 +18,10 @@
   grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 2px;
   border: 0;
-  border-radius: 12px;
-  background: var(--emoji-popover-background);
-  backdrop-filter: blur(14px) saturate(1.08);
-  -webkit-backdrop-filter: blur(14px) saturate(1.08);
+  border-radius: 0;
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   box-shadow: none;
   padding: 6px;
   box-sizing: border-box;
@@ -57,37 +62,26 @@
   display: none;
 }
 
-/* La cola une el selector con el botón que lo abrió. El atributo de posición
-   permite reutilizar la misma pieza cuando el selector debe caer debajo del
-   botón por falta de espacio arriba. */
-.emoji-popover::after {
-  position: absolute;
-  content: "";
+.emoji-popover-svg {
+  position: fixed;
+  z-index: 0;
+  top: 0;
+  left: 0;
+  display: block;
+  overflow: visible;
+  pointer-events: none;
 }
 
 .emoji-popover .emoji-option {
   position: relative;
-  z-index: 2;
+  z-index: 1;
 }
 
-.emoji-popover::after {
-  z-index: 3;
-  left: var(--emoji-popover-anchor-x);
-  width: calc(var(--emoji-popover-arrow-size) * 2);
-  height: var(--emoji-popover-arrow-size);
-  transform: translateX(-50%);
-  background: var(--emoji-popover-arrow-fill-color);
-  clip-path: polygon(0 0, 100% 0, 50% 100%);
-  pointer-events: none;
-}
-
-.emoji-popover[data-placement="top"]::after {
-  bottom: calc(var(--emoji-popover-arrow-size) * -1);
-}
-
-.emoji-popover[data-placement="bottom"]::after {
-  top: calc(var(--emoji-popover-arrow-size) * -1);
-  clip-path: polygon(0 100%, 100% 100%, 50% 0);
+.emoji-popover-svg path {
+  fill: var(--emoji-popover-background, rgb(29, 36, 40));
+  stroke: var(--emoji-popover-border, rgb(59, 65, 69));
+  stroke-width: var(--emoji-popover-border-width, 1px);
+  stroke-linejoin: round;
 }
 
 .emoji-option {

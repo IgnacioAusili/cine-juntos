@@ -13,9 +13,9 @@ import {
   updateCharCounter,
   wireFloatingComposerLayout,
   wireComposerScrollbar,
-} from "./chat-input.js?v=20260909-landscape-chat-emoji-34";
+} from "./chat-input.js?v=20260912-continuous-bubble-03";
 import { setReplyTarget } from "./chat-reply.js?v=20260826-reply-sync-close-03";
-import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20260904-mobile-landscape-bottom-chat-07";
+import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20260913-taskbar-badge-01";
 import {
   copyMessageText,
   hideMessageMenu,
@@ -35,7 +35,7 @@ import {
 } from "./chat-layout.js?v=20260912-bottom-to-right-arrow-timing-02";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 import { focusChatInput } from "./chat-input-focus.js";
-import { hideTooltip } from "../icons-tooltips.js?v=20260910-status-tooltip-04";
+import { hideTooltip } from "../icons-tooltips.js?v=20260912-continuous-bubble-04";
 
 const MOBILE_CHAT_LAYOUT_QUERY = "(max-width: 980px)";
 
@@ -174,7 +174,7 @@ export {
   buildEmojiPicker,
   updateCharCounter,
   sendMessage,
-} from "./chat-input.js?v=20260909-landscape-chat-emoji-34";
+} from "./chat-input.js?v=20260912-continuous-bubble-03";
 export {
   beginSystemMessageHydration,
   finishSystemMessageHydration,
@@ -191,7 +191,7 @@ export {
   checkScrollPosition,
   resetInsideUnread,
   resetPageUnread,
-} from "./unread-counters.js?v=20260904-mobile-landscape-bottom-chat-07";
+} from "./unread-counters.js?v=20260913-taskbar-badge-01";
 export {
   copyMessageText,
   hideMessageMenu,

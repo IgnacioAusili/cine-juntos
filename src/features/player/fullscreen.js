@@ -9,7 +9,7 @@ import {
 import {
   hideTooltip,
   hydrateIcons,
-} from "../icons-tooltips.js?v=20260910-status-tooltip-04";
+} from "../icons-tooltips.js?v=20260912-continuous-bubble-04";
 import { setSyncStatus } from "../session-ui.js?v=20260911-orientation-scroll-anchor-01";
 import {
   logEvent,
@@ -698,25 +698,18 @@ export async function togglePageFullscreen() {
       return;
     }
 
-    // En móviles el fullscreen de la aplicación es el comportamiento base:
-    // conserva el video y el chat lateral dentro del mismo layout. No pedir
-    // fullscreen nativo del video porque ese modo reemplaza la página por el
-    // reproductor del sistema y oculta el chat.
-    if (window.matchMedia(MOBILE_PLAYER_MEDIA_QUERY).matches) {
-      captureFullscreenScroll(true);
-      fallbackFullscreenActive = true;
-      handleFullscreenChange();
-      return;
-    }
-
-    const fullscreenTarget = dom.sessionView?.closest(".app-shell")
-      || dom.sessionView
-      || document.documentElement;
+    const isMobilePlayer = window.matchMedia(MOBILE_PLAYER_MEDIA_QUERY).matches;
+    // En móviles el workspace es el destino nativo: contiene el reproductor y
+    // el chat, por lo que la flecha sigue dentro de la superficie fullscreen
+    // y se puede tocar para desplegarlo. Si el navegador no ofrece la API,
+    // queda el fallback visual.
+    const fullscreenTarget = isMobilePlayer
+      ? dom.workspace || dom.playerFrame || dom.videoPlayer
+      : dom.sessionView?.closest(".app-shell")
+        || dom.sessionView
+        || document.documentElement;
     if (USE_NATIVE_FULLSCREEN && document.fullscreenEnabled && typeof fullscreenTarget?.requestFullscreen === "function") {
       captureFullscreenScroll(true);
-      // La app completa conserva la cabecera de la sala dentro del fullscreen,
-      // pero el contenedor se ajusta por inset en lugar de heredar el alto
-      // previo del <html> durante la transicion de Chrome.
       await fullscreenTarget.requestFullscreen({ navigationUI: "hide" });
     } else {
       captureFullscreenScroll(true);

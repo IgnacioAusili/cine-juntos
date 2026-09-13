@@ -891,10 +891,6 @@
     font-size: 0.82rem;
   }
 
-  body:not(.is-lobby) .player-status-badge.empty {
-    top: 10px;
-  }
-
   body:not(.is-lobby) #playerChatToggleButton {
     width: 34px;
     min-height: 34px;

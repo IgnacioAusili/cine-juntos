@@ -1,5 +1,9 @@
 import { dom } from "../core/dom.js";
 import { state } from "../core/state.js?v=20260912-name-session-01";
+import {
+  buildContinuousBubblePath,
+  clampBubbleTailCenter,
+} from "../core/continuous-bubble.js?v=20260912-continuous-bubble-01";
 import { setConnection } from "./session-ui.js?v=20260911-orientation-scroll-anchor-01";
 import { createForeignDocumentIcon } from "./foreign-lucide-icon.js";
 import {
@@ -10,6 +14,10 @@ import {
 const TOOLTIP_ANCHOR_SELECTOR = "button, [role='button'], a, label, summary, input, select, textarea";
 const TOOLTIP_VIEWPORT_PADDING = 8;
 const TOOLTIP_GAP = 4;
+const TOOLTIP_BORDER_WIDTH_PX = 1;
+const TOOLTIP_RADIUS_PX = 12;
+const TOOLTIP_TAIL_WIDTH_PX = 14;
+const TOOLTIP_TAIL_HEIGHT_PX = 7;
 const TOOLTIP_SHOW_DELAY_MS = 800;
 const HELP_TOOLTIP_SHOW_DELAY_MS = 500;
 const PRESENCE_TOOLTIP_SHOW_DELAY_MS = 300;
@@ -24,6 +32,231 @@ let suppressFocusTooltipUntil = 0;
 let touchTooltipPress = null;
 let touchTooltipTimer = null;
 const suppressedTouchTooltipClickTargets = new Set();
+let tooltipChrome = null;
+let tooltipChromePath = null;
+const emojiPopoverChromes = new Map();
+let bubbleChromeObserversReady = false;
+
+function createBubbleChrome(className, zIndex) {
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  svg.classList.add(className);
+  svg.append(path);
+  svg.style.zIndex = String(zIndex);
+  svg.setAttribute("aria-hidden", "true");
+  document.body.append(svg);
+  return { svg, path };
+}
+
+function parseCssPixel(value, fallback) {
+  const parsed = Number.parseFloat(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function readCssOffset(value, width, fallback) {
+  const normalized = String(value || "").trim();
+  if (normalized.endsWith("%")) {
+    const percentage = Number.parseFloat(normalized);
+    return Number.isFinite(percentage) ? width * percentage / 100 : fallback;
+  }
+  return parseCssPixel(normalized, fallback);
+}
+
+function getBubbleGeometry(style, defaults) {
+  return {
+    borderWidth: parseCssPixel(style.getPropertyValue(defaults.borderWidth), defaults.borderWidthPx),
+    radius: parseCssPixel(style.getPropertyValue(defaults.radius), defaults.radiusPx),
+    tailWidth: parseCssPixel(style.getPropertyValue(defaults.tailWidth), defaults.tailWidthPx),
+    tailHeight: parseCssPixel(style.getPropertyValue(defaults.tailHeight), defaults.tailHeightPx),
+  };
+}
+
+function syncTooltipChrome() {
+  if (!tooltipChrome || !dom.tooltipLayer) return;
+  if (dom.tooltipLayer.hidden) {
+    tooltipChrome.style.visibility = "hidden";
+    tooltipChrome.style.opacity = "0";
+    return;
+  }
+
+  const layer = dom.tooltipLayer;
+  const style = getComputedStyle(layer);
+  const rect = layer.getBoundingClientRect();
+  const geometry = getBubbleGeometry(style, {
+    borderWidth: "--tooltip-border-width",
+    borderWidthPx: TOOLTIP_BORDER_WIDTH_PX,
+    radius: "--tooltip-radius",
+    radiusPx: TOOLTIP_RADIUS_PX,
+    tailWidth: "--tooltip-tail-width",
+    tailWidthPx: TOOLTIP_TAIL_WIDTH_PX,
+    tailHeight: "--tooltip-tail-height",
+    tailHeightPx: TOOLTIP_TAIL_HEIGHT_PX,
+  });
+  const contentWidth = Math.max(0, rect.width - geometry.borderWidth);
+  const contentHeight = Math.max(0, rect.height - geometry.borderWidth);
+  const tailCenter = clampBubbleTailCenter(
+    readCssOffset(style.getPropertyValue("--tooltip-arrow-offset"), contentWidth, contentWidth / 2),
+    contentWidth,
+    geometry.radius,
+    geometry.tailWidth,
+  );
+  const placement = layer.dataset.placement || "top";
+  const tailSide = placement === "bottom" ? "top" : "bottom";
+  const svgHeight = rect.height + geometry.tailHeight;
+
+  tooltipChrome.style.setProperty("--tooltip-border-color", style.getPropertyValue("--tooltip-border-color").trim());
+  tooltipChrome.style.setProperty("--tooltip-border-width", `${geometry.borderWidth}px`);
+  tooltipChrome.setAttribute("width", `${rect.width}`);
+  tooltipChrome.setAttribute("height", `${svgHeight}`);
+  tooltipChrome.setAttribute("viewBox", `0 0 ${rect.width} ${svgHeight}`);
+  tooltipChrome.style.left = `${rect.left}px`;
+  tooltipChrome.style.top = `${placement === "bottom" ? rect.top - geometry.tailHeight : rect.top}px`;
+  tooltipChrome.style.visibility = style.visibility;
+  tooltipChrome.style.opacity = "1";
+  tooltipChromePath.setAttribute(
+    "d",
+    buildContinuousBubblePath({
+      width: contentWidth,
+      height: contentHeight,
+      tailSide,
+      tailCenter,
+      radius: geometry.radius,
+      tailWidth: geometry.tailWidth,
+      tailHeight: geometry.tailHeight,
+    }),
+  );
+  tooltipChromePath.setAttribute(
+    "transform",
+    `translate(${geometry.borderWidth / 2} ${geometry.borderWidth / 2})`,
+  );
+}
+
+function syncEmojiPopoverChrome(popover) {
+  const chrome = emojiPopoverChromes.get(popover);
+  if (!chrome || !popover) return;
+  const { svg, path } = chrome;
+  const style = getComputedStyle(popover);
+  if (popover.hidden) {
+    svg.style.visibility = "hidden";
+    svg.style.opacity = "0";
+    return;
+  }
+
+  const rect = popover.getBoundingClientRect();
+  const geometry = getBubbleGeometry(style, {
+    borderWidth: "--emoji-popover-border-width",
+    borderWidthPx: 1,
+    radius: "--emoji-popover-radius",
+    radiusPx: 12,
+    tailWidth: "--emoji-popover-tail-width",
+    tailWidthPx: 16,
+    tailHeight: "--emoji-popover-tail-height",
+    tailHeightPx: 8,
+  });
+  const contentWidth = Math.max(0, rect.width - geometry.borderWidth);
+  const contentHeight = Math.max(0, rect.height - geometry.borderWidth);
+  const tailCenter = clampBubbleTailCenter(
+    readCssOffset(style.getPropertyValue("--emoji-popover-anchor-x"), contentWidth, contentWidth / 2),
+    contentWidth,
+    geometry.radius,
+    geometry.tailWidth,
+  );
+  const placement = popover.dataset.placement || "top";
+  const tailSide = placement === "bottom" ? "top" : "bottom";
+  const svgHeight = rect.height + geometry.tailHeight;
+
+  svg.style.setProperty("--emoji-popover-background", style.getPropertyValue("--emoji-popover-background").trim());
+  svg.style.setProperty("--emoji-popover-border", style.getPropertyValue("--emoji-popover-border").trim());
+  svg.style.setProperty("--emoji-popover-border-width", `${geometry.borderWidth}px`);
+  svg.setAttribute("width", `${rect.width}`);
+  svg.setAttribute("height", `${svgHeight}`);
+  svg.setAttribute("viewBox", `0 0 ${rect.width} ${svgHeight}`);
+  svg.style.left = `${rect.left}px`;
+  svg.style.top = `${placement === "bottom" ? rect.top - geometry.tailHeight : rect.top}px`;
+  svg.style.visibility = style.visibility;
+  svg.style.opacity = popover.classList.contains("is-emoji-popover-open")
+    ? "1"
+    : "0";
+  path.setAttribute(
+    "d",
+    buildContinuousBubblePath({
+      width: contentWidth,
+      height: contentHeight,
+      tailSide,
+      tailCenter,
+      radius: geometry.radius,
+      tailWidth: geometry.tailWidth,
+      tailHeight: geometry.tailHeight,
+    }),
+  );
+  path.setAttribute(
+    "transform",
+    `translate(${geometry.borderWidth / 2} ${geometry.borderWidth / 2})`,
+  );
+}
+
+function registerEmojiPopover(popover) {
+  if (!popover || emojiPopoverChromes.has(popover)) return;
+  const chrome = createBubbleChrome("emoji-popover-svg", 8999);
+  const observer = new MutationObserver(() => syncEmojiPopoverChrome(popover));
+  observer.observe(popover, {
+    attributes: true,
+    attributeFilter: ["class", "data-anchor", "data-placement", "hidden", "style"],
+    childList: true,
+    subtree: true,
+  });
+  emojiPopoverChromes.set(popover, { ...chrome, observer });
+  syncEmojiPopoverChrome(popover);
+}
+
+function unregisterEmojiPopover(popover) {
+  const chrome = emojiPopoverChromes.get(popover);
+  if (!chrome) return;
+  chrome.observer.disconnect();
+  chrome.svg.remove();
+  emojiPopoverChromes.delete(popover);
+}
+
+function registerEmojiPopoversIn(node) {
+  if (!(node instanceof Element)) return;
+  if (node.matches(".emoji-popover")) registerEmojiPopover(node);
+  node.querySelectorAll(".emoji-popover").forEach(registerEmojiPopover);
+}
+
+function unregisterEmojiPopoversIn(node) {
+  if (!(node instanceof Element)) return;
+  if (node.matches(".emoji-popover")) unregisterEmojiPopover(node);
+  node.querySelectorAll(".emoji-popover").forEach(unregisterEmojiPopover);
+}
+
+function initializeBubbleChrome() {
+  if (bubbleChromeObserversReady || !dom.tooltipLayer || !dom.emojiPopover || !document.body) return;
+  bubbleChromeObserversReady = true;
+  ({ svg: tooltipChrome, path: tooltipChromePath } = createBubbleChrome("tooltip-layer-svg", 9999));
+  registerEmojiPopover(dom.emojiPopover);
+
+  const tooltipObserver = new MutationObserver(syncTooltipChrome);
+  tooltipObserver.observe(dom.tooltipLayer, {
+    attributes: true,
+    attributeFilter: ["data-edge", "data-placement", "hidden", "style"],
+    childList: true,
+    characterData: true,
+    subtree: true,
+  });
+  const bodyObserver = new MutationObserver((mutations) => {
+    mutations.forEach(({ addedNodes, removedNodes }) => {
+      addedNodes.forEach(registerEmojiPopoversIn);
+      removedNodes.forEach(unregisterEmojiPopoversIn);
+    });
+  });
+  bodyObserver.observe(document.body, { childList: true, subtree: true });
+  window.addEventListener("resize", () => {
+    syncTooltipChrome();
+    emojiPopoverChromes.forEach((_, popover) => syncEmojiPopoverChrome(popover));
+  }, { passive: true });
+  syncTooltipChrome();
+  emojiPopoverChromes.forEach((_, popover) => syncEmojiPopoverChrome(popover));
+}
 
 function suppressTouchTooltipClick(anchor) {
   if (anchor) suppressedTouchTooltipClickTargets.add(anchor);
@@ -35,6 +268,7 @@ function setTooltipTouchHover(anchor, active) {
 }
 
 export function initializeUi() {
+  initializeBubbleChrome();
   hydrateIcons();
   normalizeTooltips();
   wireTooltipEvents();
@@ -393,29 +627,29 @@ function showTooltip(context) {
 function positionTooltip(anchor) {
   const rect = anchor.getBoundingClientRect();
   const tooltipRect = dom.tooltipLayer.getBoundingClientRect();
+  const tooltipVisualHeight = tooltipRect.height + TOOLTIP_TAIL_HEIGHT_PX;
   const maxLeft = Math.max(TOOLTIP_VIEWPORT_PADDING, window.innerWidth - tooltipRect.width - TOOLTIP_VIEWPORT_PADDING);
   const maxTop = Math.max(TOOLTIP_VIEWPORT_PADDING, window.innerHeight - tooltipRect.height - TOOLTIP_VIEWPORT_PADDING);
   const rawLeft = rect.left + rect.width / 2 - tooltipRect.width / 2;
   const left = Math.min(Math.max(rawLeft, TOOLTIP_VIEWPORT_PADDING), maxLeft);
-  const candidateBelow = rect.bottom + TOOLTIP_GAP;
-  const candidateAbove = rect.top - tooltipRect.height - TOOLTIP_GAP;
+  const candidateBelow = rect.bottom + TOOLTIP_GAP + TOOLTIP_TAIL_HEIGHT_PX;
+  const candidateAbove = rect.top - tooltipVisualHeight - TOOLTIP_GAP;
   const fitsBelow = candidateBelow + tooltipRect.height <= window.innerHeight - TOOLTIP_VIEWPORT_PADDING;
   const fitsAbove = candidateAbove >= TOOLTIP_VIEWPORT_PADDING;
-  const top = fitsBelow
-    ? candidateBelow
-    : fitsAbove
-      ? candidateAbove
-      : Math.min(Math.max(candidateBelow, TOOLTIP_VIEWPORT_PADDING), maxTop);
-  const arrowPadding = 14;
+  const showBelow = fitsBelow || (!fitsAbove && window.innerHeight - rect.bottom >= rect.top);
+  const desiredTop = showBelow ? candidateBelow : candidateAbove;
+  const top = Math.min(Math.max(desiredTop, TOOLTIP_VIEWPORT_PADDING), maxTop);
+  const pathWidth = Math.max(0, tooltipRect.width - TOOLTIP_BORDER_WIDTH_PX);
+  const arrowPadding = TOOLTIP_RADIUS_PX + TOOLTIP_TAIL_WIDTH_PX / 2;
   const arrowOffset = Math.min(
-    Math.max(rect.left + rect.width / 2 - left, arrowPadding),
-    Math.max(arrowPadding, tooltipRect.width - arrowPadding),
+    Math.max(rect.left + rect.width / 2 - left - TOOLTIP_BORDER_WIDTH_PX / 2, arrowPadding),
+    Math.max(arrowPadding, pathWidth - arrowPadding),
   );
 
   dom.tooltipLayer.style.top = `${top}px`;
   dom.tooltipLayer.style.left = `${left}px`;
   dom.tooltipLayer.style.setProperty("--tooltip-arrow-offset", `${Math.round(arrowOffset)}px`);
-  dom.tooltipLayer.dataset.placement = top > rect.bottom ? "bottom" : "top";
+  dom.tooltipLayer.dataset.placement = showBelow ? "bottom" : "top";
 }
 
 export function hideTooltip(force = false) {

@@ -15,7 +15,7 @@ import {
   hydrateIcons,
   initializeUi,
   setConnection,
-} from "./features/icons-tooltips.js?v=20260910-status-tooltip-04";
+} from "./features/icons-tooltips.js?v=20260912-continuous-bubble-04";
 import {
   wireLayoutMetrics,
 } from "./features/layout-metrics.js?v=20260911-ios-right-chat-visual-viewport-02";
@@ -38,11 +38,11 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js?v=20260910-chat-two-controls-02";
+} from "./features/chat/index.js?v=20260912-continuous-bubble-04";
 import {
   initializePlayer,
   wirePlayerEvents,
-} from "./features/player/index.js?v=20260910-chat-two-controls-02";
+} from "./features/player/index.js?v=20260912-mobile-native-fullscreen-chat-02";
 import { wireMobileFullscreenOrientation } from "./features/player/mobile-fullscreen-orientation.js";
 import { wireMobileChatKeyboardControls } from "./features/player/mobile-chat-keyboard-controls.js?v=20260910-landscape-right-chat-keyboard-controls-06";
 import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20260910-landscape-chat-header-03";

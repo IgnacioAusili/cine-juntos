@@ -57,6 +57,12 @@ function updatePageTitle() {
   const unreadCount = state.chat.pageUnreadCount;
   const baseTitle = state.chat.pageTitleBase || document.title;
   document.title = unreadCount > 0 ? `(+${unreadCount}) ${baseTitle}` : baseTitle;
+
+  if (typeof navigator.setAppBadge !== "function") return;
+  const badgeUpdate = unreadCount > 0
+    ? navigator.setAppBadge(unreadCount)
+    : navigator.clearAppBadge?.();
+  Promise.resolve(badgeUpdate).catch(() => {});
 }
 
 export function incrementPageUnread() {

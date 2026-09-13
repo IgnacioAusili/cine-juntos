@@ -17,8 +17,8 @@ import {
   hideTooltip,
   refreshTooltipForTarget,
   setControlIcon,
-} from "../icons-tooltips.js?v=20260910-status-tooltip-04";
-import { scrollToVideoPosition, sendVideoEventMessage, setInsideChatVisible } from "../chat/index.js?v=20260910-chat-two-controls-02";
+} from "../icons-tooltips.js?v=20260912-continuous-bubble-04";
+import { scrollToVideoPosition, sendVideoEventMessage, setInsideChatVisible } from "../chat/index.js?v=20260912-continuous-bubble-04";
 // Import circular intencional y seguro: estas funciones se invocan en runtime,
 // no durante la carga del modulo, y player-sync-logic.js a su vez importa
 // setVideoSource y waitForVideoMetadata desde aqui.
@@ -36,7 +36,7 @@ import {
   showResumeVideoDialog,
   showSlowLoadDialog,
 } from "../session-ui.js?v=20260911-orientation-scroll-anchor-01";
-import { togglePageFullscreen } from "./fullscreen.js?v=20260912-mobile-page-fullscreen-01";
+import { togglePageFullscreen } from "./fullscreen.js?v=20260912-mobile-native-fullscreen-chat-02";
 import { syncMiniPlayerButton } from "./mini-player.js?v=20260910-player-tooltip-chain-01";
 import { shouldToggleMuteFromVolumeButton } from "./player-volume-layout.js?v=20260902-player-volume-layout-18";
 

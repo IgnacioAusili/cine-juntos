@@ -17,7 +17,7 @@ import { createRandomId } from "../../core/random-id.js?v=20260902-mobile-real-b
 import {
   setSyncStatus,
 } from "../session-ui.js?v=20260911-orientation-scroll-anchor-01";
-import { refreshTooltipForTarget } from "../icons-tooltips.js?v=20260910-status-tooltip-04";
+import { refreshTooltipForTarget } from "../icons-tooltips.js?v=20260912-continuous-bubble-04";
 import { markParticipantActive } from "../presence.js?v=20260912-name-session-01";
 import { clearReplyTarget } from "./chat-reply.js?v=20260826-reply-sync-close-03";
 import { renderMessage } from "./chat-render.js?v=20260904-mobile-landscape-bottom-chat-07";
@@ -51,7 +51,9 @@ const PROGRESS_APPEAR_THRESHOLD = 150;
 const MOBILE_CHAT_LAYOUT_QUERY = "(max-width: 980px)";
 const EMOJI_POPOVER_GAP_PX = 8;
 const EMOJI_POPOVER_EDGE_PX = 8;
-const EMOJI_POPOVER_TAIL_INSET_PX = 12;
+const EMOJI_POPOVER_BORDER_WIDTH_PX = 1;
+const EMOJI_POPOVER_TAIL_INSET_PX = 20;
+const EMOJI_POPOVER_TAIL_HEIGHT_PX = 8;
 const EMOJI_POPOVER_TRANSITION_MS = 150;
 const EMOJI_FONT_SHORTHAND = '0.82rem "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji"';
 const EMOJI_FONT_SAMPLE = "😂🫦❌👎✅👍🙏";
@@ -196,6 +198,7 @@ function positionEmojiPopover(popover, anchor) {
   const anchorRect = anchor.getBoundingClientRect();
   const popoverWidth = popover.offsetWidth;
   const popoverHeight = popover.offsetHeight;
+  const popoverVisualHeight = popoverHeight + EMOJI_POPOVER_TAIL_HEIGHT_PX;
   const maxLeft = Math.max(
     EMOJI_POPOVER_EDGE_PX,
     viewportWidth - popoverWidth - EMOJI_POPOVER_EDGE_PX,
@@ -206,23 +209,28 @@ function positionEmojiPopover(popover, anchor) {
   );
   const spaceAbove = anchorRect.top - EMOJI_POPOVER_GAP_PX;
   const spaceBelow = viewportHeight - anchorRect.bottom - EMOJI_POPOVER_GAP_PX;
-  const opensBelow = spaceAbove < popoverHeight && spaceBelow > spaceAbove;
+  const opensBelow = spaceAbove < popoverVisualHeight && spaceBelow > spaceAbove;
   const maxTop = Math.max(
     EMOJI_POPOVER_EDGE_PX,
     viewportHeight - popoverHeight - EMOJI_POPOVER_EDGE_PX,
   );
   const desiredTop = opensBelow
-    ? anchorRect.bottom + EMOJI_POPOVER_GAP_PX
-    : anchorRect.top - popoverHeight - EMOJI_POPOVER_GAP_PX;
+    ? anchorRect.bottom + EMOJI_POPOVER_GAP_PX + EMOJI_POPOVER_TAIL_HEIGHT_PX
+    : anchorRect.top - popoverVisualHeight - EMOJI_POPOVER_GAP_PX;
   const top = Math.min(
     maxTop,
     Math.max(EMOJI_POPOVER_EDGE_PX, desiredTop),
   );
+  const pathWidth = Math.max(0, popoverWidth - EMOJI_POPOVER_BORDER_WIDTH_PX);
+  const rawAnchorOffset = anchorRect.left
+    + anchorRect.width / 2
+    - left
+    - EMOJI_POPOVER_BORDER_WIDTH_PX / 2;
   const anchorOffset = Math.min(
-    popoverWidth - EMOJI_POPOVER_TAIL_INSET_PX,
+    Math.max(EMOJI_POPOVER_TAIL_INSET_PX, pathWidth - EMOJI_POPOVER_TAIL_INSET_PX),
     Math.max(
       EMOJI_POPOVER_TAIL_INSET_PX,
-      anchorRect.left + anchorRect.width / 2 - left,
+      rawAnchorOffset,
     ),
   );
 

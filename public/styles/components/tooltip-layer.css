@@ -1,58 +1,72 @@
 .tooltip-layer {
+  --tooltip-border-width: 1px;
+  --tooltip-border-color: rgba(255, 255, 255, 0.16);
+  --tooltip-radius: 12px;
+  --tooltip-tail-width: 14px;
+  --tooltip-tail-height: 7px;
   --tooltip-arrow-size: 7px;
   --tooltip-arrow-offset: 50%;
   --tooltip-arrow-fill-color: rgba(8, 10, 12, 0.97);
   position: fixed;
   z-index: 10000;
+  display: block;
+  box-sizing: border-box;
+  width: max-content;
+  max-width: min(320px, calc(100vw - 16px));
+  padding: 6px 9px;
+  color: var(--text);
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+  word-break: normal;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  pointer-events: none;
+}
+
+.tooltip-layer-svg {
+  position: fixed;
+  z-index: 0;
+  top: 0;
+  left: 0;
+  display: block;
+  overflow: visible;
+  pointer-events: none;
+  filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.34));
+}
+
+.tooltip-layer-svg path {
+  fill: rgba(8, 10, 12, 0.97);
+  stroke: var(--tooltip-border-color, rgba(255, 255, 255, 0.16));
+  stroke-width: var(--tooltip-border-width, 1px);
+  stroke-linejoin: round;
+}
+
+.tooltip-layer-text {
+  position: relative;
+  z-index: 1;
+  display: block;
   box-sizing: border-box;
   max-width: min(320px, calc(100vw - 16px));
-  border: 0;
-  border-radius: 12px;
-  background: rgba(8, 10, 12, 0.97);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.34);
-  backdrop-filter: blur(10px);
-  color: var(--text);
-  font-size: 0.72rem;
-  font-weight: 650;
-  line-height: 1.25;
   padding: 6px 9px;
+  color: var(--text);
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.25;
   overflow-wrap: anywhere;
-  pointer-events: none;
   white-space: pre-line;
   word-break: normal;
 }
 
-.tooltip-layer::after {
-  content: "";
-  position: absolute;
-  z-index: 1;
-  left: var(--tooltip-arrow-offset);
-  width: 0;
-  height: 0;
-  transform: translateX(-50%);
-  border-left: var(--tooltip-arrow-size) solid transparent;
-  border-right: var(--tooltip-arrow-size) solid transparent;
-  border-top: var(--tooltip-arrow-size) solid var(--tooltip-arrow-fill-color);
-}
-
-.tooltip-layer[data-placement="top"]::after {
-  bottom: calc(var(--tooltip-arrow-size) * -1);
-}
-
-.tooltip-layer[data-placement="bottom"]::after {
-  top: calc(var(--tooltip-arrow-size) * -1);
-  border-top: 0;
-  border-bottom: var(--tooltip-arrow-size) solid var(--tooltip-arrow-fill-color);
-}
-
-/* En los extremos la cola queda cerca de una esquina: un ajuste leve y
-   simétrico arriba/abajo evita que la unión con el triángulo se vea cortada. */
+/* Al acercarse a un extremo, la geometría compartida reduce el radio para
+   que la cola pueda seguir al disparador sin invadir la esquina. */
 .tooltip-layer[data-edge="left"] {
-  border-top-left-radius: var(--tooltip-edge-radius, 12px);
-  border-bottom-left-radius: var(--tooltip-edge-radius, 12px);
+  --tooltip-radius: var(--tooltip-edge-radius, 12px);
 }
 
 .tooltip-layer[data-edge="right"] {
-  border-top-right-radius: var(--tooltip-edge-radius, 12px);
-  border-bottom-right-radius: var(--tooltip-edge-radius, 12px);
+  --tooltip-radius: var(--tooltip-edge-radius, 12px);
 }

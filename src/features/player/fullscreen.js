@@ -14,8 +14,8 @@ import { setSyncStatus } from "../session-ui.js?v=20260911-orientation-scroll-an
 import {
   logEvent,
   state,
-} from "../../core/state.js?v=20260912-name-session-01";
-import { isMiniPlayerActive } from "./mini-player.js?v=20260910-player-tooltip-chain-01";
+} from "../../core/state.js?v=20260914-console-log-controls-01";
+import { isMiniPlayerActive } from "./mini-player.js?v=20260914-system-message-roll-sizing-01";
 import {
   syncExternalChatCollapseHandleOffset,
   syncInsideChatPanelOffset,

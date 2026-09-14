@@ -224,6 +224,10 @@ export function getClientLogText() {
   return clientLogBuffer.join("\n");
 }
 
+export function clearClientLog() {
+  clientLogBuffer.length = 0;
+}
+
 function sendTerminalLog(payload) {
   if (!state.session.terminalLogsEnabled) return;
 

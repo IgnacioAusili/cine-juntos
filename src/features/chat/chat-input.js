@@ -6,7 +6,7 @@ import {
   getDisplayName,
   getTransportNow,
   logEvent,
-} from "../../core/state.js?v=20260912-name-session-01";
+} from "../../core/state.js?v=20260914-console-log-controls-01";
 import {
   EMOJI_PICKER_ITEMS,
   MAX_CHARS,
@@ -19,8 +19,8 @@ import {
 } from "../session-ui.js?v=20260911-orientation-scroll-anchor-01";
 import { refreshTooltipForTarget } from "../icons-tooltips.js?v=20260914-presence-visual-anchor-01";
 import { markParticipantActive } from "../presence.js?v=20260912-name-session-01";
-import { clearReplyTarget } from "./chat-reply.js?v=20260826-reply-sync-close-03";
-import { renderMessage } from "./chat-render.js?v=20260904-mobile-landscape-bottom-chat-07";
+import { clearReplyTarget } from "./chat-reply.js?v=20260914-system-message-roll-sizing-01";
+import { renderMessage } from "./chat-render.js?v=20260914-system-message-roll-sizing-01";
 import {
   completeAutoOpenedChatResponse,
 } from "./chat-layout.js?v=20260914-fullscreen-dock-animation-16";

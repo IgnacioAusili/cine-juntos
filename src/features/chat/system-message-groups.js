@@ -1,7 +1,7 @@
 import {
   animateCollapsedSystemMessageAdvance,
   settleSystemMessageRoll,
-} from "./system-message-roll.js?v=20260823-system-message-drum-09";
+} from "./system-message-roll.js?v=20260914-system-message-roll-sizing-01";
 
 const SYSTEM_GROUP_MIN_SIZE = 3;
 const SYSTEM_GROUP_TRANSITION_MS = 180;

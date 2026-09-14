@@ -7,7 +7,7 @@ import {
   getDisplayName,
   LAST_ROOM_KEY,
   logEvent,
-} from "../core/state.js?v=20260912-name-session-01";
+} from "../core/state.js?v=20260914-console-log-controls-01";
 import {
   MAX_ROOM_PARTICIPANTS,
   ROOM_CREATE_ATTEMPT_LIMIT,
@@ -31,7 +31,7 @@ import {
   showSession,
   watchRoomEntryVideoFocus,
 } from "./session-ui.js?v=20260911-orientation-scroll-anchor-01";
-import { handleRemoteState } from "./player/index.js?v=20260914-empty-player-controls-visible-01";
+import { handleRemoteState } from "./player/index.js?v=20260914-collapse-hover-reset-04";
 import {
   renderMessage,
   beginSystemMessageHydration,
@@ -40,7 +40,7 @@ import {
   resetInsideUnread,
   resetPageUnread,
   renderReplyPreview,
-} from "./chat/index.js?v=20260914-collapse-hover-reset-02";
+} from "./chat/index.js?v=20260914-collapse-hover-reset-04";
 
 const ACTIVE_TAB_KEY = "cine-juntos-active-tab";
 const ACTIVE_TAB_TTL_MS = 30000;

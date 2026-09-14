@@ -1,5 +1,5 @@
 import { dom } from "../core/dom.js";
-import { state, logEvent } from "../core/state.js?v=20260912-name-session-01";
+import { state, logEvent } from "../core/state.js?v=20260914-console-log-controls-01";
 import { refreshLayoutMetrics } from "./layout-metrics.js?v=20260911-ios-right-chat-visual-viewport-02";
 
 const ROOM_ENTRY_VIDEO_FOCUS_TIMEOUT_MS = 8000;

@@ -17,13 +17,12 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
 
   const nextRect = nextText.getBoundingClientRect();
   const previousRect = previousSnapshot.rect;
-  // El mensaje nuevo ya está en layout cuando empieza el giro. Usar también
-  // el ancho anterior aquí puede agrandar la burbuja en ese instante y mover
-  // sus bordes hacia ambos lados. El viewport conserva el ancho que ya tenía
-  // el mensaje nuevo; el texto anterior queda recortado por la máscara si es
-  // más largo, sin alterar la geometría de la fila.
+  // El mensaje nuevo ya está en layout cuando empieza el giro. Toda la rueda
+  // debe adoptar sus dimensiones: si el tambor conserva el ancho anterior,
+  // el texto nuevo se ajusta contra otra caja y puede quedar recortado por la
+  // máscara al pasar de una línea a varias.
   const width = Math.max(1, nextRect.width);
-  const visualWidth = Math.max(width, previousRect?.width || 0);
+  const visualWidth = width;
   const lineHeight = Number.parseFloat(getComputedStyle(nextText).lineHeight);
   const lineCount = Number.isFinite(lineHeight) && lineHeight > 0
     ? Math.max(1, Math.round(nextRect.height / lineHeight))

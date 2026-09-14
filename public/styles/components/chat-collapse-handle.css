@@ -124,9 +124,11 @@
    siguiente movimiento real del puntero evita que el nuevo anclaje herede
    el resaltado de la acción anterior. */
 .chat-collapse-handle.chat-collapse-hover-reset,
-.chat-collapse-hover-zone.chat-collapse-hover-reset .chat-collapse-handle {
-  color: rgba(255, 255, 255, 0.78);
-  background: transparent;
+.chat-collapse-handle.chat-collapse-hover-reset:hover,
+.chat-collapse-hover-zone.chat-collapse-hover-reset .chat-collapse-handle,
+.chat-collapse-hover-zone.chat-collapse-hover-reset:hover .chat-collapse-handle {
+  color: rgba(255, 255, 255, 0.78) !important;
+  background: transparent !important;
 }
 
 .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-handle {
@@ -305,8 +307,11 @@
     background: rgba(32, 38, 43, 0.98);
   }
 
-  .session-view[data-chat-dock] .chat-collapse-handle.chat-collapse-hover-reset .chat-collapse-icon-anchor {
-    border-color: rgba(255, 255, 255, 0.2);
-    background: rgba(20, 24, 28, 0.9);
+  .session-view[data-chat-dock] .chat-collapse-handle.chat-collapse-hover-reset .chat-collapse-icon-anchor,
+  .session-view[data-chat-dock] .chat-collapse-handle.chat-collapse-hover-reset:hover .chat-collapse-icon-anchor,
+  .session-view[data-chat-dock] .chat-collapse-hover-zone.chat-collapse-hover-reset .chat-collapse-handle .chat-collapse-icon-anchor,
+  .session-view[data-chat-dock] .chat-collapse-hover-zone.chat-collapse-hover-reset:hover .chat-collapse-handle .chat-collapse-icon-anchor {
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    background: rgba(20, 24, 28, 0.9) !important;
   }
 }

@@ -24,7 +24,7 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap"
     />
     <link rel="icon" href="./public/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="./public/styles.css?v=20260914-lobby-input-offset-05" />
+    <link rel="stylesheet" href="./public/styles.css?v=20260914-console-log-controls-06" />
   </head>
   <body class="is-lobby">
     <div class="app-shell">
@@ -848,7 +848,7 @@
         id="mobileDebugButton"
         type="button"
         hidden
-        aria-label="Ver logs de diagnóstico"
+        aria-label="Ver logs"
       >
         Logs
       </button>
@@ -856,14 +856,19 @@
 
     <dialog id="mobileDebugDialog" class="app-dialog mobile-debug-dialog" aria-labelledby="mobileDebugTitle">
       <div class="mobile-debug-card">
-        <button id="mobileDebugCloseButton" type="button" class="dialog-close" aria-label="Cerrar logs">
+        <button id="mobileDebugCloseButton" type="button" class="dialog-close" aria-label="Cerrar">
           <span data-lucide="x" aria-hidden="true"></span>
         </button>
-        <h2 id="mobileDebugTitle">Logs de diagnóstico móvil</h2>
-        <textarea id="mobileDebugLog" readonly spellcheck="false" aria-label="Log de diagnóstico"></textarea>
+        <h2 id="mobileDebugTitle">Registros de la página</h2>
+        <label class="mobile-debug-filter" for="mobileDebugFilter">
+          <span>Filtrar</span>
+          <input id="mobileDebugFilter" type="search" placeholder="Buscar..." autocomplete="off" />
+        </label>
+        <textarea id="mobileDebugLog" readonly spellcheck="false" aria-label="Diagnóstico"></textarea>
         <div class="dialog-actions">
-          <button id="mobileDebugCopyButton" type="button" class="button primary">Copiar log</button>
-          <button id="mobileDebugShareButton" type="button" class="button">Compartir log</button>
+          <button id="mobileDebugCopyButton" type="button" class="button primary">Copiar</button>
+          <button id="mobileDebugShareButton" type="button" class="button">Compartir</button>
+          <button id="mobileDebugClearButton" type="button" class="button">Eliminar</button>
         </div>
       </div>
     </dialog>
@@ -986,6 +991,6 @@
     <script src="./public/dev-runtime.js?v=20260715-02"></script>
     <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script src="./public/firebase-config.js"></script>
-    <script type="module" src="./src/main.js?v=20260914-fullscreen-dock-animation-16"></script>
+     <script type="module" src="./src/main.js?v=20260914-collapse-hover-reset-04"></script>
   </body>
 </html>

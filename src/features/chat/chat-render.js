@@ -1,5 +1,5 @@
 import { dom } from "../../core/dom.js";
-import { state, logEvent } from "../../core/state.js?v=20260912-name-session-01";
+import { state, logEvent } from "../../core/state.js?v=20260914-console-log-controls-01";
 import { MAX_RENDERED_MESSAGES, formatTime, formatClockTime } from "../../core/utils.js";
 import { markParticipantActive, rememberParticipant } from "../presence.js?v=20260912-name-session-01";
 import { wireMessageInteractions } from "./chat-message-interactions.js";
@@ -11,14 +11,14 @@ import {
   handleIncomingPageUnread,
   incrementScrollIndicator,
 } from "./unread-counters.js?v=20260913-taskbar-badge-01";
-import { setReplyTarget, scrollToMessage } from "./chat-reply.js?v=20260826-reply-sync-close-03";
+import { setReplyTarget, scrollToMessage } from "./chat-reply.js?v=20260914-system-message-roll-sizing-01";
 import {
   animateExpandedSystemMessageRemoval,
   captureExpandedSystemMessageRemoval,
   prepareSystemMessageRemoval,
   refreshSystemMessageGroup,
   scheduleSystemMessageCollapse,
-} from "./system-message-groups.js?v=20260826-overlay-system-layout-01";
+} from "./system-message-groups.js?v=20260914-system-message-roll-sizing-01";
 
 const EMOJI_ONLY_PATTERN = /^(?:[\s\p{Extended_Pictographic}\p{Emoji_Presentation}\p{Emoji_Modifier}\uFE0F\u200D\u20E3])+$/u;
 const EMOJI_GLYPH_PATTERN = /[\p{Extended_Pictographic}\p{Emoji_Presentation}]/u;

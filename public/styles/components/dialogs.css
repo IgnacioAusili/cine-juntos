@@ -39,11 +39,6 @@
   transform: translateX(8px);
 }
 
-html:has(.app-dialog[open]),
-body:has(.app-dialog[open]) {
-  overflow: hidden;
-}
-
 .about-dialog-header {
   display: flex;
   align-items: center;

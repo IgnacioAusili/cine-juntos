@@ -1,4 +1,4 @@
-import { firebaseConfig, logEvent } from "../core/state.js?v=20260912-name-session-01";
+import { firebaseConfig, logEvent } from "../core/state.js?v=20260914-console-log-controls-01";
 import { hasFirebaseConfig } from "../core/utils.js";
 import { createFirebaseTransport } from "./firebaseTransport.js?v=20260912-name-session-01";
 import { createLocalTransport } from "./localTransport.js?v=20260912-name-session-01";

@@ -4,7 +4,7 @@ import {
   getDisplayName,
   getTransportNow,
   logEvent,
-} from "../core/state.js?v=20260912-name-session-01";
+} from "../core/state.js?v=20260914-console-log-controls-01";
 import {
   DISPLAY_NAME_MAX_LENGTH,
   DISPLAY_NAME_MIN_LENGTH,

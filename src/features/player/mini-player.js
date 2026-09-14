@@ -1,15 +1,15 @@
 import { dom } from "../../core/dom.js";
-import { state, logEvent } from "../../core/state.js?v=20260912-name-session-01";
+import { state, logEvent } from "../../core/state.js?v=20260914-console-log-controls-01";
 import { setControlIcon } from "../icons-tooltips.js?v=20260914-presence-visual-anchor-01";
 import { setSyncStatus } from "../session-ui.js?v=20260911-orientation-scroll-anchor-01";
 import {
   createMiniPlayerSurface,
   installMiniPlayerWindowStyles,
-} from "./mini-player-controls.js?v=20260905-overlay-height-cap-04";
+} from "./mini-player-controls.js?v=20260914-system-message-roll-sizing-01";
 import {
   mirrorMiniPlayerChatState,
-} from "./mini-player-chat.js?v=20260904-mobile-landscape-bottom-chat-07";
-import { movePlayerInterface } from "./mini-player-interface.js?v=20260910-mobile-chat-button-focus-01";
+} from "./mini-player-chat.js?v=20260914-system-message-roll-sizing-01";
+import { movePlayerInterface } from "./mini-player-interface.js?v=20260914-system-message-roll-sizing-01";
 import { trackMiniPlayerReturnHint } from "./mini-player-return-hint.js";
 import { clampMiniPlayerPosition, wireMiniPlayerDrag } from "./mini-player-drag.js?v=20260808-scroll-mini-player-02";
 

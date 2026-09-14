@@ -1,9 +1,10 @@
 import { dom } from "../core/dom.js";
-import { getClientLogText, logEvent } from "../core/state.js?v=20260912-name-session-01";
+import { clearClientLog, getClientLogText, logEvent } from "../core/state.js?v=20260914-console-log-controls-01";
 
 const LOG_FILE_NAME = "cine-juntos-log.txt";
 const SHARE_TITLE = "Log de diagnóstico de Cine Juntos";
 const SHARE_TEXT_FALLBACK = "Log de diagnóstico de Cine Juntos";
+let mobileDebugScrollPosition = null;
 
 function isTestRoute() {
   return window.location.pathname === "/console"
@@ -16,7 +17,31 @@ function syncDebugButtonVisibility() {
 }
 
 function refreshLogTextarea() {
-  if (dom.mobileDebugLog) dom.mobileDebugLog.value = getClientLogText();
+  if (!dom.mobileDebugLog) return;
+  const filter = dom.mobileDebugFilter?.value.trim().toLocaleLowerCase("es-AR") || "";
+  const text = getClientLogText();
+  dom.mobileDebugLog.value = filter
+    ? text.split("\n").filter((line) => line.toLocaleLowerCase("es-AR").includes(filter)).join("\n")
+    : text;
+}
+
+function clearLogs() {
+  clearClientLog();
+  refreshLogTextarea();
+}
+
+function restoreMobileDebugScroll() {
+  if (!mobileDebugScrollPosition) return;
+  window.scrollTo(mobileDebugScrollPosition.left, mobileDebugScrollPosition.top);
+}
+
+function closeMobileDebugDialog() {
+  dom.mobileDebugDialog.close();
+  restoreMobileDebugScroll();
+  requestAnimationFrame(() => {
+    restoreMobileDebugScroll();
+    mobileDebugScrollPosition = null;
+  });
 }
 
 async function copyLogs() {
@@ -98,14 +123,27 @@ export function wireMobileDebugTools() {
   observer.observe(dom.sessionView, { attributes: true, attributeFilter: ["hidden"] });
 
   dom.mobileDebugButton.addEventListener("click", () => {
+    mobileDebugScrollPosition = { left: window.scrollX, top: window.scrollY };
     refreshLogTextarea();
     dom.mobileDebugDialog.showModal();
+    dom.mobileDebugCloseButton?.focus({ preventScroll: true });
+    restoreMobileDebugScroll();
+    requestAnimationFrame(restoreMobileDebugScroll);
     dom.mobileDebugLog?.scrollTo(0, dom.mobileDebugLog.scrollHeight);
   });
-  dom.mobileDebugCloseButton?.addEventListener("click", () => dom.mobileDebugDialog.close());
+  dom.mobileDebugCloseButton?.addEventListener("click", closeMobileDebugDialog);
   dom.mobileDebugCopyButton?.addEventListener("click", copyLogs);
   mobileDebugShareButton?.addEventListener("click", shareLogs);
+  dom.mobileDebugClearButton?.addEventListener("click", clearLogs);
+  dom.mobileDebugFilter?.addEventListener("input", refreshLogTextarea);
+  dom.mobileDebugDialog.addEventListener("close", () => {
+    restoreMobileDebugScroll();
+    requestAnimationFrame(() => {
+      restoreMobileDebugScroll();
+      mobileDebugScrollPosition = null;
+    });
+  });
   dom.mobileDebugDialog.addEventListener("click", (event) => {
-    if (event.target === dom.mobileDebugDialog) dom.mobileDebugDialog.close();
+    if (event.target === dom.mobileDebugDialog) closeMobileDebugDialog();
   });
 }

@@ -709,13 +709,19 @@ export function autoResizeMessageInput(input) {
   const maxHeight = isOverlay ? 86 : 118;
   const mobileMinHeight = window.matchMedia?.(MOBILE_CHAT_LAYOUT_QUERY).matches;
   const minHeight = mobileMinHeight ? 30 : (isOverlay ? 30 : 36);
+  const wrapper = input.closest(".input-wrapper");
+
   input.style.height = `${minHeight}px`;
+  // El padding del textarea cambia cuando pasa a multilinea. Resolver el
+  // estado antes de la medición final evita calcular la altura con la métrica
+  // anterior y producir un salto en el primer Enter.
+  const shouldExpand = input.scrollHeight > minHeight + 4;
+  if (wrapper) {
+    wrapper.dataset.expanded = String(shouldExpand);
+  }
+
   const contentHeight = input.scrollHeight;
   input.style.height = `${Math.min(Math.max(contentHeight, minHeight), maxHeight)}px`;
-  const wrapper = input.closest(".input-wrapper");
-  if (wrapper) {
-    wrapper.dataset.expanded = String(contentHeight > minHeight + 4);
-  }
   input.scrollTop = input.scrollHeight;
   syncComposerScrollbar(input);
   queuePinnedChatScrollSync(messagesContainer, isOverlay, wasPinnedToBottom);

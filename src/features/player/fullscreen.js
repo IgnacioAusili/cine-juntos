@@ -27,7 +27,7 @@ import { withShortcutHint } from "../../core/utils.js";
 import {
   captureFullscreenScroll,
   restoreFullscreenScroll,
-} from "./fullscreen-scroll.js?v=20260903-structural-viewport-scroll-02";
+} from "./fullscreen-scroll.js?v=20260913-fullscreen-scroll-user-interrupt-01";
 
 const PLAYER_OVERLAY_IDLE_MS = 3000;
 const PLAYER_OVERLAY_LEAVE_HIDE_DELAY_MS = 800;

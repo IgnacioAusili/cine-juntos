@@ -13,7 +13,7 @@ import {
   updateCharCounter,
   wireFloatingComposerLayout,
   wireComposerScrollbar,
-} from "./chat-input.js?v=20260913-emoji-horizontal-pages-03";
+} from "./chat-input.js?v=20260914-chat-composer-resize-02";
 import { setReplyTarget } from "./chat-reply.js?v=20260826-reply-sync-close-03";
 import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20260913-taskbar-badge-01";
 import {
@@ -174,7 +174,7 @@ export {
   buildEmojiPicker,
   updateCharCounter,
   sendMessage,
-} from "./chat-input.js?v=20260913-emoji-horizontal-pages-03";
+} from "./chat-input.js?v=20260914-chat-composer-resize-02";
 export {
   beginSystemMessageHydration,
   finishSystemMessageHydration,

@@ -329,6 +329,36 @@ body.fullscreen-mode .app-shell:fullscreen .session-view.chat-collapsed[data-cha
   grid-template-areas: "video chat";
 }
 
+@media (min-width: 981px) {
+  /* En PC fullscreen la grilla debe interpolar el ancho del panel. El layout
+     lateral normal deja transition en none porque usa flex; acá se restaura
+     solo para la variante de grilla de pantalla completa. */
+  body.fullscreen-mode .session-view[data-chat-dock="right"] .workspace,
+  body.fullscreen-mode .app-shell:fullscreen .session-view[data-chat-dock="right"] .workspace {
+    transition: grid-template-columns 350ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* La grilla controla el ancho del panel durante la animación. Mantener el
+     contenido del chat como un item de grilla evita que width: 0 lo oculte de
+     golpe antes de que termine el cierre. */
+  body.fullscreen-mode .session-view[data-chat-dock="right"] .chat-area,
+  body.fullscreen-mode .app-shell:fullscreen .session-view[data-chat-dock="right"] .chat-area {
+    flex: none;
+    width: auto;
+    min-width: 0;
+  }
+
+  /* En fullscreen el viewport coincide con el borde del shell. Repetimos la
+     separación de la variante normal para que la flecha no quede pegada al
+     borde derecho. */
+  body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-hover-zone,
+  body.fullscreen-mode .app-shell:fullscreen .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-hover-zone {
+    right: 9px;
+    width: 28px;
+    height: 72px;
+  }
+}
+
 body.fullscreen-mode .session-view[data-chat-dock="right"] .video-area {
   display: flex;
 }

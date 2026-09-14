@@ -149,6 +149,17 @@ select {
     background 160ms ease;
 }
 
+input[type="text"],
+input[type="url"],
+input[type="search"],
+input[type="email"],
+input[type="tel"],
+input[type="password"],
+textarea,
+[contenteditable="true"] {
+  caret-color: var(--accent);
+}
+
 textarea {
   min-height: 38px;
   max-height: 118px;

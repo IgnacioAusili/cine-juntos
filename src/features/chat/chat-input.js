@@ -23,7 +23,7 @@ import { clearReplyTarget } from "./chat-reply.js?v=20260826-reply-sync-close-03
 import { renderMessage } from "./chat-render.js?v=20260904-mobile-landscape-bottom-chat-07";
 import {
   completeAutoOpenedChatResponse,
-} from "./chat-layout.js?v=20260913-fullscreen-dock-switch-01";
+} from "./chat-layout.js?v=20260914-fullscreen-dock-animation-01";
 import { queuePinnedChatScrollSync, isPinnedToBottom } from "./chat-scroll-sync.js?v=20260904-mobile-landscape-bottom-chat-07";
 import { focusChatInput } from "./chat-input-focus.js";
 import {

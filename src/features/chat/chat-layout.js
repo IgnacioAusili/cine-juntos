@@ -44,11 +44,11 @@ const BOTTOM_DOCK_UNION_REVEAL_PX = 0;
 const BOTTOM_TO_RIGHT_SCROLL_TIMEOUT_MS = 1200;
 // Debe coincidir con la transición real de flex-basis/width del panel lateral.
 const BOTTOM_TO_RIGHT_LAYOUT_MS = 400;
-// En fullscreen móvil el dock cambia de superficie (lateral/inferior). La
-// salida debe terminar antes de montar la nueva superficie para que no haya
-// un frame en el que ambos estados aparezcan juntos.
-const MOBILE_FULLSCREEN_DOCK_OUT_MS = 260;
-const MOBILE_FULLSCREEN_DOCK_IN_MS = 320;
+// En fullscreen el dock cambia de superficie (lateral/inferior). La salida
+// debe terminar antes de montar la nueva superficie para que no haya un frame
+// en el que ambos estados aparezcan juntos.
+const FULLSCREEN_DOCK_OUT_MS = 260;
+const FULLSCREEN_DOCK_IN_MS = 320;
 
 let layoutAdjustmentTimer = 0;
 let collapseHandleOffsetTimer = 0;
@@ -56,7 +56,7 @@ let expandScrollTimer = 0;
 let chatScrollSnapLockTimer = 0;
 let chatUserScrollUnlockTimer = 0;
 let pendingBottomToRightSwitch = null;
-let pendingMobileFullscreenDockSwitch = null;
+let pendingFullscreenDockSwitch = null;
 let externalChatVisualMotionTimer = 0;
 let bottomChatTransition = null;
 let pendingRightDockCollapseScrollTop = null;
@@ -84,10 +84,6 @@ function isMobileLandscapeFullscreenBottomDock() {
   return (dom.sessionView?.dataset.chatDock || "right") === "bottom"
     && isFullscreenPageActive()
     && window.matchMedia("(max-width: 980px) and (orientation: landscape)").matches;
-}
-
-function isMobileFullscreenDockSwitchViewport() {
-  return isFullscreenPageActive() && isMobileLayoutViewport();
 }
 
 function isMobilePortraitRightDock() {
@@ -650,15 +646,15 @@ export function setChatDock(dock, options = {}) {
   const currentDock = dom.sessionView?.dataset.chatDock || "right";
   const centeredVideoScrollTop = getBottomToRightScrollTop();
 
-  if (!options.skipTransition && pendingMobileFullscreenDockSwitch) return;
+  if (!options.skipTransition && pendingFullscreenDockSwitch) return;
 
   if (
     !options.skipTransition
     && currentDock !== nextDock
-    && isMobileFullscreenDockSwitchViewport()
+    && isFullscreenPageActive()
     && !dom.sessionView?.classList.contains("chat-collapsed")
   ) {
-    animateMobileFullscreenDockSwitch(nextDock);
+    animateFullscreenDockSwitch(nextDock);
     return;
   }
 
@@ -728,12 +724,12 @@ export function setChatDock(dock, options = {}) {
   }
 
   const isFullscreen = document.body.classList.contains("fullscreen-mode") || Boolean(document.fullscreenElement);
-  if (isFullscreen) {
+  if (isFullscreen && !options.skipFullscreenFocus) {
     focusFullscreenWorkspace();
   }
 }
 
-function animateMobileFullscreenDockSwitch(nextDock) {
+function animateFullscreenDockSwitch(nextDock) {
   if (!dom.sessionView || !dom.chatArea) {
     setChatDock(nextDock, { skipTransition: true, preserveScroll: true });
     return;
@@ -744,10 +740,10 @@ function animateMobileFullscreenDockSwitch(nextDock) {
     outTimerId: 0,
     inTimerId: 0,
   };
-  pendingMobileFullscreenDockSwitch = transition;
+  pendingFullscreenDockSwitch = transition;
   setCollapseHandleTransitioning(
     true,
-    MOBILE_FULLSCREEN_DOCK_OUT_MS + MOBILE_FULLSCREEN_DOCK_IN_MS + 80,
+    FULLSCREEN_DOCK_OUT_MS + FULLSCREEN_DOCK_IN_MS + 80,
   );
 
   const sessionView = dom.sessionView;
@@ -758,24 +754,33 @@ function animateMobileFullscreenDockSwitch(nextDock) {
   // aplicar la clase y el cambio de dock queda después de que termina.
   void chatArea.offsetWidth;
   window.requestAnimationFrame(() => {
-    if (pendingMobileFullscreenDockSwitch !== transition) return;
+    if (pendingFullscreenDockSwitch !== transition) return;
     sessionView.classList.add("chat-dock-mobile-transition-out-active");
     transition.outTimerId = window.setTimeout(() => {
-      if (pendingMobileFullscreenDockSwitch !== transition) return;
+      if (pendingFullscreenDockSwitch !== transition) return;
 
       sessionView.classList.remove(
         "chat-dock-mobile-transition-out",
         "chat-dock-mobile-transition-out-active",
       );
-      setChatDock(nextDock, { skipTransition: true, preserveScroll: true });
+      setChatDock(nextDock, {
+        skipTransition: true,
+        preserveScroll: true,
+        skipFullscreenFocus: true,
+      });
+      if (nextDock === "bottom") {
+        revealBottomDockUnion("auto");
+      } else {
+        focusFullscreenWorkspace();
+      }
       sessionView.classList.add("chat-dock-mobile-transition-in");
       void chatArea.offsetWidth;
       window.requestAnimationFrame(() => {
-        if (pendingMobileFullscreenDockSwitch !== transition) return;
+        if (pendingFullscreenDockSwitch !== transition) return;
         sessionView.classList.add("chat-dock-mobile-transition-in-active");
         transition.inTimerId = window.setTimeout(() => {
-          if (pendingMobileFullscreenDockSwitch !== transition) return;
-          pendingMobileFullscreenDockSwitch = null;
+          if (pendingFullscreenDockSwitch !== transition) return;
+          pendingFullscreenDockSwitch = null;
           sessionView.classList.remove(
             "chat-dock-mobile-transition-in",
             "chat-dock-mobile-transition-in-active",
@@ -783,9 +788,9 @@ function animateMobileFullscreenDockSwitch(nextDock) {
           setCollapseHandleTransitioning(false);
           scheduleExternalChatCollapseHandleOffset();
           scheduleMessageTimeAdjustmentAfterLayout();
-        }, MOBILE_FULLSCREEN_DOCK_IN_MS);
+    }, FULLSCREEN_DOCK_IN_MS);
       });
-    }, MOBILE_FULLSCREEN_DOCK_OUT_MS);
+    }, FULLSCREEN_DOCK_OUT_MS);
   });
 }
 

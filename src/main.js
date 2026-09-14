@@ -38,7 +38,7 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js?v=20260914-chat-composer-resize-02";
+} from "./features/chat/index.js?v=20260914-fullscreen-dock-animation-01";
 import {
   initializePlayer,
   wirePlayerEvents,

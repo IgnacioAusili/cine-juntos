@@ -13,7 +13,7 @@ import {
   updateCharCounter,
   wireFloatingComposerLayout,
   wireComposerScrollbar,
-} from "./chat-input.js?v=20260914-fullscreen-dock-animation-01";
+} from "./chat-input.js?v=20260914-fullscreen-dock-animation-16";
 import { setReplyTarget } from "./chat-reply.js?v=20260826-reply-sync-close-03";
 import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20260913-taskbar-badge-01";
 import {
@@ -32,7 +32,7 @@ import {
   setInsideChatVisible,
   syncExternalChatCollapseHandleOffset,
   syncChatAutoExpandControls,
-} from "./chat-layout.js?v=20260914-fullscreen-dock-animation-01";
+} from "./chat-layout.js?v=20260914-fullscreen-dock-animation-16";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 import { focusChatInput } from "./chat-input-focus.js";
 import { hideTooltip } from "../icons-tooltips.js?v=20260912-continuous-bubble-04";
@@ -174,7 +174,7 @@ export {
   buildEmojiPicker,
   updateCharCounter,
   sendMessage,
-} from "./chat-input.js?v=20260914-fullscreen-dock-animation-01";
+} from "./chat-input.js?v=20260914-fullscreen-dock-animation-16";
 export {
   beginSystemMessageHydration,
   finishSystemMessageHydration,
@@ -209,7 +209,7 @@ export {
   setInsideChatVisible,
   syncChatAutoExpandControls,
   updateCollapseButton,
-} from "./chat-layout.js?v=20260914-fullscreen-dock-animation-01";
+} from "./chat-layout.js?v=20260914-fullscreen-dock-animation-16";
 
 export function wireChatEvents() {
   syncChatAutoExpandControls();

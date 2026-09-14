@@ -38,7 +38,7 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js?v=20260914-fullscreen-dock-animation-01";
+} from "./features/chat/index.js?v=20260914-fullscreen-dock-animation-16";
 import {
   initializePlayer,
   wirePlayerEvents,

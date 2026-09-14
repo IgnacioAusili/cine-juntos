@@ -99,6 +99,18 @@
   transition: none;
 }
 
+/* Durante un cambio de dock ninguna flecha pertenece a la vista activa.
+   Este bloqueo cubre también el instante posterior al colapso nativo, cuando
+   el chat desmontado volvería a mostrar su control de expansión. */
+.session-view.chat-dock-handle-switching .chat-collapse-hover-zone,
+.session-view.chat-dock-handle-switching .chat-collapse-handle,
+.session-view.chat-dock-handle-switching .chat-collapse-icon-anchor {
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: none !important;
+}
+
 .chat-collapse-handle:hover,
 .chat-collapse-handle.is-touch-hover,
 .chat-collapse-hover-zone.is-touch-hover .chat-collapse-handle,

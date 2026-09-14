@@ -22,7 +22,7 @@ import {
   cancelExternalChatAutoCollapse,
   forceExternalChatCollapsed,
   updateCollapseButton,
-} from "../chat/chat-layout.js?v=20260914-fullscreen-dock-animation-01";
+} from "../chat/chat-layout.js?v=20260914-fullscreen-dock-animation-16";
 import { withShortcutHint } from "../../core/utils.js";
 import {
   captureFullscreenScroll,

@@ -146,7 +146,9 @@
   line-height: 1.2;
   white-space: nowrap;
   transform: none;
-  transition: width 180ms ease, max-width 180ms ease;
+  /* El ancho del editor se recalcula al entrar en edición. Animarlo hace que
+     la fila centrada se desplace horizontalmente durante la transición. */
+  transition: none;
 }
 
 .chat-name-edit-row input[type="text"]:focus,

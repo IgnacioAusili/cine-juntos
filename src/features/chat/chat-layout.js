@@ -42,8 +42,9 @@ const BOTTOM_CHAT_CURTAIN_MS = 320;
 const BOTTOM_CHAT_SCROLL_TIMEOUT_MS = 1200;
 const BOTTOM_DOCK_UNION_REVEAL_PX = 0;
 const BOTTOM_TO_RIGHT_SCROLL_TIMEOUT_MS = 1200;
-// Debe coincidir con la transición real de flex-basis/width del panel lateral.
-const BOTTOM_TO_RIGHT_LAYOUT_MS = 400;
+// El cambio inferior → lateral debe conservar la misma velocidad que la
+// expansión natural del botón lateral.
+const BOTTOM_TO_RIGHT_LAYOUT_MS = RIGHT_CHAT_LAYOUT_TRANSITION_MS;
 // En fullscreen el dock cambia de superficie (lateral/inferior). La salida
 // debe terminar antes de montar la nueva superficie para que no haya un frame
 // en el que ambos estados aparezcan juntos.
@@ -60,6 +61,7 @@ let pendingFullscreenDockSwitch = null;
 let externalChatVisualMotionTimer = 0;
 let bottomChatTransition = null;
 let pendingRightDockCollapseScrollTop = null;
+let chatDockHandleSwitchTimer = 0;
 
 function getVideoAreaRect() {
   if (!dom.videoArea) return null;
@@ -365,6 +367,21 @@ function setCollapseHandleTransitioning(
   if (!isTransitioning) return;
 
   state.chat.collapseHandleTransitionTimer = window.setTimeout(() => {
+    // El timer propio del collapse puede vencer antes que la segunda fase
+    // del cambio de dock (por ejemplo, lateral -> inferior). Mantener los
+    // handles bloqueados mientras haya un switch pendiente evita que reaparezca
+    // la flecha de la superficie que todavía se está desmontando.
+    if (pendingFullscreenDockSwitch || pendingBottomToRightSwitch) {
+      state.chat.collapseHandleTransitionTimer = window.setTimeout(() => {
+        if (pendingFullscreenDockSwitch || pendingBottomToRightSwitch) {
+          setCollapseHandleTransitioning(true, 80);
+        } else {
+          setCollapseHandleTransitioning(false);
+        }
+      }, 80);
+      return;
+    }
+
     collapseHandleButtons.forEach((button) => {
       button.classList.remove("is-transitioning");
     });
@@ -380,6 +397,28 @@ function setCollapseHandleTransitioning(
     });
     window.dispatchEvent(new Event("chat-layout-settled"));
   }, settleDelayMs);
+}
+
+function keepChatDockHandlesHidden() {
+  if (!dom.sessionView) return;
+
+  if (chatDockHandleSwitchTimer) {
+    window.clearTimeout(chatDockHandleSwitchTimer);
+    chatDockHandleSwitchTimer = 0;
+  }
+  dom.sessionView.classList.add("chat-dock-handle-switching");
+}
+
+function scheduleChatDockHandlesReveal(delayMs) {
+  if (!dom.sessionView) return;
+
+  if (chatDockHandleSwitchTimer) {
+    window.clearTimeout(chatDockHandleSwitchTimer);
+  }
+  chatDockHandleSwitchTimer = window.setTimeout(() => {
+    chatDockHandleSwitchTimer = 0;
+    dom.sessionView?.classList.remove("chat-dock-handle-switching");
+  }, Math.max(0, delayMs));
 }
 
 function scheduleAutoCollapse(isOverlay) {
@@ -650,20 +689,36 @@ export function setChatDock(dock, options = {}) {
 
   if (
     !options.skipTransition
-    && currentDock !== nextDock
+    && currentDock === "bottom"
+    && nextDock === "right"
     && isFullscreenPageActive()
-    && !dom.sessionView?.classList.contains("chat-collapsed")
+    && window.matchMedia("(min-width: 981px)").matches
   ) {
-    animateFullscreenDockSwitch(nextDock);
+    animateFullscreenBottomToRightWithNativeCollapse();
     return;
   }
 
+  // El cambio inferior → lateral ya tiene un motor que espera a que el
+  // viewport vuelva a la posición del video y luego anima el ancho del panel
+  // junto con la reducción del video. También debe ser el camino de
+  // fullscreen: cambiar primero el dock hacía que el video se redujera de
+  // golpe, antes de que el chat empezara a entrar.
   if (
     !options.skipTransition
     && currentDock === "bottom"
     && nextDock === "right"
   ) {
     scheduleBottomToRightSwitch(nextDock, centeredVideoScrollTop);
+    return;
+  }
+
+  if (
+    !options.skipTransition
+    && currentDock !== nextDock
+    && isFullscreenPageActive()
+    && !dom.sessionView?.classList.contains("chat-collapsed")
+  ) {
+    animateFullscreenDockSwitch(nextDock);
     return;
   }
 
@@ -691,6 +746,12 @@ export function setChatDock(dock, options = {}) {
   cancelIdentityEditing();
   dom.sessionView.dataset.chatDock = nextDock;
   dom.sessionView.classList.remove("chat-header-collapsed");
+  if (nextDock === "bottom") {
+    // setCollapseHandleTransitioning fija temporalmente el ancho lateral del
+    // formulario para que no salte durante ese dock. Ese ancho no puede
+    // sobrevivir al cambio a la superficie inferior.
+    dom.chatArea?.querySelector(".message-form")?.style.removeProperty("width");
+  }
   dom.dockChatButton.dataset.tooltip = meta.tooltip;
   dom.dockChatButton.removeAttribute("title");
   dom.dockChatButton.setAttribute("aria-label", `Chat ${meta.label}. ${meta.tooltip}`);
@@ -735,12 +796,26 @@ function animateFullscreenDockSwitch(nextDock) {
     return;
   }
 
+  // En PC el botón de contraer ya contiene la transición correcta del dock
+  // lateral: la grilla reduce la columna y el video ocupa ese espacio al
+  // mismo tiempo. Reutilizar ese motor evita una segunda animación paralela
+  // que ocultaba el chat pero dejaba el video fijo hasta el cambio de dock.
+  if (
+    nextDock === "bottom"
+    && window.matchMedia("(min-width: 981px)").matches
+    && dom.sessionView.dataset.chatDock === "right"
+  ) {
+    animateFullscreenRightToBottomWithNativeCollapse();
+    return;
+  }
+
   const transition = {
     nextDock,
     outTimerId: 0,
     inTimerId: 0,
   };
   pendingFullscreenDockSwitch = transition;
+  keepChatDockHandlesHidden();
   setCollapseHandleTransitioning(
     true,
     FULLSCREEN_DOCK_OUT_MS + FULLSCREEN_DOCK_IN_MS + 80,
@@ -768,6 +843,15 @@ function animateFullscreenDockSwitch(nextDock) {
         preserveScroll: true,
         skipFullscreenFocus: true,
       });
+      // En PC el dock inferior tiene una cortina propia que también se usa
+      // fuera de fullscreen. Reutilizarla acá mantiene el mismo despliegue y
+      // hace que el scroll acompañe al panel hasta la unión inferior.
+      if (nextDock === "bottom" && isDesktopBottomDock()) {
+        pendingFullscreenDockSwitch = null;
+        animateDesktopBottomChatExpand();
+        scheduleChatDockHandlesReveal(BOTTOM_CHAT_CURTAIN_MS + 80);
+        return;
+      }
       if (nextDock === "bottom") {
         revealBottomDockUnion("auto");
       } else {
@@ -781,6 +865,7 @@ function animateFullscreenDockSwitch(nextDock) {
         transition.inTimerId = window.setTimeout(() => {
           if (pendingFullscreenDockSwitch !== transition) return;
           pendingFullscreenDockSwitch = null;
+          scheduleChatDockHandlesReveal(FULLSCREEN_DOCK_IN_MS + 80);
           sessionView.classList.remove(
             "chat-dock-mobile-transition-in",
             "chat-dock-mobile-transition-in-active",
@@ -792,6 +877,54 @@ function animateFullscreenDockSwitch(nextDock) {
       });
     }, FULLSCREEN_DOCK_OUT_MS);
   });
+}
+
+function animateFullscreenRightToBottomWithNativeCollapse() {
+  const transition = {
+    switchTimerId: 0,
+  };
+  pendingFullscreenDockSwitch = transition;
+  keepChatDockHandlesHidden();
+
+  // Es el mismo cambio que ejecuta el botón "Contraer chat". Al terminar la
+  // reducción lateral se monta el dock inferior todavía contraído y se deja
+  // que setExternalChatCollapsed(false) ejecute su expansión natural.
+  setExternalChatCollapsed(true, { source: "dock-switch" });
+  transition.switchTimerId = window.setTimeout(() => {
+    if (pendingFullscreenDockSwitch !== transition) return;
+    pendingFullscreenDockSwitch = null;
+    setChatDock("bottom", {
+      skipTransition: true,
+      preserveScroll: true,
+      skipFullscreenFocus: true,
+    });
+    setExternalChatCollapsed(false, { source: "dock-switch" });
+    scheduleChatDockHandlesReveal(BOTTOM_CHAT_CURTAIN_MS + 80);
+  }, RIGHT_CHAT_LAYOUT_TRANSITION_MS + 40);
+}
+
+function animateFullscreenBottomToRightWithNativeCollapse() {
+  const transition = {
+    switchTimerId: 0,
+  };
+  pendingFullscreenDockSwitch = transition;
+  keepChatDockHandlesHidden();
+
+  // Primero se ejecuta la cortina natural del dock inferior. El dock lateral
+  // se monta recién cuando el video ya recuperó su posición y luego se abre
+  // con la transición natural de expansión del panel.
+  setExternalChatCollapsed(true, { source: "dock-switch" });
+  transition.switchTimerId = window.setTimeout(() => {
+    if (pendingFullscreenDockSwitch !== transition) return;
+    pendingFullscreenDockSwitch = null;
+    setChatDock("right", {
+      skipTransition: true,
+      preserveScroll: true,
+      skipFullscreenFocus: true,
+    });
+    setExternalChatCollapsed(false, { source: "dock-switch" });
+    scheduleChatDockHandlesReveal(RIGHT_CHAT_LAYOUT_TRANSITION_MS + 80);
+  }, BOTTOM_CHAT_CURTAIN_MS + 40);
 }
 
 function getBottomToRightScrollTop() {
@@ -838,6 +971,7 @@ function animateRightToBottomSwitch(nextDock) {
     targetScrollTop: 0,
   };
   bottomChatTransition = transition;
+  keepChatDockHandlesHidden();
   setCollapseHandleTransitioning(
     true,
     BOTTOM_CHAT_CURTAIN_MS + BOTTOM_CHAT_SCROLL_TIMEOUT_MS + 80,
@@ -863,6 +997,7 @@ function animateRightToBottomSwitch(nextDock) {
   });
   transition.timeoutId = window.setTimeout(() => {
     stepMobileBottomChatTransition(transition, true);
+    scheduleChatDockHandlesReveal(BOTTOM_CHAT_CURTAIN_MS + 80);
   }, BOTTOM_CHAT_CURTAIN_MS + 80);
 }
 
@@ -874,6 +1009,7 @@ function scheduleBottomToRightSwitch(nextDock, targetScrollTop) {
     timeoutId: 0,
   };
   pendingBottomToRightSwitch = transition;
+  keepChatDockHandlesHidden();
 
   const needsScroll = Math.abs(getPageScrollTop() - targetScrollTop) > 2;
   if (needsScroll) {
@@ -900,11 +1036,31 @@ function scheduleBottomToRightSwitch(nextDock, targetScrollTop) {
     setCollapseHandleTransitioning(true, switchDuration);
     dom.sessionView.classList.add("chat-dock-switching");
     window.requestAnimationFrame(() => {
-      setChatDock(nextDock, { skipTransition: true, preserveScroll: true });
+      setChatDock(nextDock, {
+        skipTransition: true,
+        preserveScroll: true,
+        skipFullscreenFocus: isFullscreenPageActive(),
+      });
+      const chatArea = dom.chatArea;
+      const workspace = dom.workspace;
+      const fullscreenSwitch = isFullscreenPageActive();
+      // Fijar el estado cerrado después del cambio de dock evita que flex
+      // salte directamente al ancho final. La siguiente fase abre el panel y
+      // reduce el video en el mismo tick de layout.
+      chatArea?.style.setProperty("flex-basis", "0px");
+      chatArea?.style.setProperty("width", "0px");
+      chatArea?.style.setProperty("min-width", "0px");
+      chatArea?.style.setProperty("opacity", "0");
+      chatArea?.style.setProperty("transition", "none");
+      if (fullscreenSwitch) {
+        workspace?.style.setProperty("grid-template-columns", "minmax(0, 1fr) 0px");
+        workspace?.style.setProperty("transition", "none");
+      }
       // Confirmar el estado lateral colapsado antes de habilitar la entrada.
       // Sin esta lectura el navegador puede agrupar ambos estados y saltar
       // directamente de dock inferior a 320px.
-      void dom.chatArea?.offsetWidth;
+      void chatArea?.offsetWidth;
+      void workspace?.offsetWidth;
       window.requestAnimationFrame(() => {
         if (
           nextDock === "right"
@@ -917,8 +1073,33 @@ function scheduleBottomToRightSwitch(nextDock, targetScrollTop) {
           scrollPageTo(workspaceTop, "auto");
         }
         dom.sessionView.classList.add("chat-dock-switching-entered");
+        chatArea?.style.setProperty(
+          "transition",
+          `flex-basis ${BOTTOM_TO_RIGHT_LAYOUT_MS}ms ease-in-out, width ${BOTTOM_TO_RIGHT_LAYOUT_MS}ms ease-in-out, opacity ${BOTTOM_TO_RIGHT_LAYOUT_MS}ms ease-in-out`,
+        );
+        chatArea?.style.setProperty("flex-basis", "var(--chat-panel-width)");
+        chatArea?.style.setProperty("width", "var(--chat-panel-width)");
+        chatArea?.style.setProperty("opacity", "1");
+        if (fullscreenSwitch) {
+          workspace?.style.setProperty(
+            "transition",
+            `grid-template-columns ${BOTTOM_TO_RIGHT_LAYOUT_MS}ms ease-in-out`,
+          );
+          workspace?.style.setProperty(
+            "grid-template-columns",
+            "minmax(0, 1fr) var(--chat-panel-width)",
+          );
+        }
+        scheduleChatDockHandlesReveal(switchDuration + 80);
         window.setTimeout(() => {
           dom.sessionView.classList.remove("chat-dock-switching", "chat-dock-switching-entered");
+          chatArea?.style.removeProperty("flex-basis");
+          chatArea?.style.removeProperty("width");
+          chatArea?.style.removeProperty("min-width");
+          chatArea?.style.removeProperty("opacity");
+          chatArea?.style.removeProperty("transition");
+          workspace?.style.removeProperty("grid-template-columns");
+          workspace?.style.removeProperty("transition");
         }, switchDuration);
       });
     });
@@ -960,6 +1141,9 @@ function clearBottomChatTransitionVisuals() {
   dom.workspace?.style.removeProperty("grid-template-rows");
   dom.chatArea?.style.removeProperty("clip-path");
   dom.chatArea?.style.removeProperty("opacity");
+  if (dom.sessionView?.dataset.chatDock === "bottom") {
+    dom.chatArea?.querySelector(".message-form")?.style.removeProperty("width");
+  }
 }
 
 function cancelBottomChatTransition() {
@@ -1083,6 +1267,9 @@ function stepDesktopBottomChatTransition(transition, force = false) {
     ? 1
     : Math.min(1, Math.max(0, elapsed / BOTTOM_CHAT_CURTAIN_MS));
   const progress = easeBottomChatCurtainProgress(linearProgress);
+  // En escritorio la unión visual está en el borde superior del panel. Al
+  // cerrar se oculta desde arriba hacia abajo; al abrir se revela desde abajo
+  // hacia arriba, mientras el shell desplaza el video en el mismo frame.
   const clipProgress = transition.collapsed ? progress : 1 - progress;
   setDesktopBottomChatCurtainProgress(clipProgress * 100);
 

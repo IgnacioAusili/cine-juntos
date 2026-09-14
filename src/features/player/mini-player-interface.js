@@ -17,7 +17,7 @@ import {
   toggleMiniChatOverlay,
   wireMirrorChatScrollbar,
 } from "./mini-player-chat-mirror.js?v=20260910-mobile-chat-button-focus-01";
-import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js?v=20260914-fullscreen-dock-animation-01";
+import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js?v=20260914-fullscreen-dock-animation-16";
 import { wireMiniPlayerShortcuts } from "./mini-player-shortcuts.js?v=20260904-mobile-landscape-bottom-chat-07";
 import { wireTouchHover } from "../../core/touch-interactions.js";
 

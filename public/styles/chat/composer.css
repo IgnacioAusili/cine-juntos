@@ -98,9 +98,10 @@
   outline: none;
   resize: none;
   color: var(--text);
-  /* La fuente de interfaz conserva letras, números y símbolos; Noto queda
-     como fallback únicamente para los glifos emoji que esa fuente no tiene. */
-  font-family: var(--text-font), "Noto Color Emoji", ui-sans-serif, sans-serif;
+  /* Noto va primero para que los emojis escritos antes de enviar mantengan el
+     mismo estilo que el picker y los mensajes. Para letras hace fallback a la
+     fuente de interfaz. */
+  font-family: "Noto Color Emoji", var(--text-font), ui-sans-serif, sans-serif;
   line-height: 1.28;
   overscroll-behavior: auto;
   scrollbar-width: none;
@@ -110,6 +111,28 @@
 .message-form .input-wrapper textarea::-webkit-scrollbar {
   width: 0;
   height: 0;
+}
+
+@media (min-width: 981px) {
+  .message-form .input-wrapper {
+    padding-left: 2px;
+  }
+
+  .message-form .input-wrapper textarea {
+    font-size: 0.9rem;
+    padding-inline: 4px;
+  }
+
+  .message-form .input-wrapper:not([data-expanded="true"]) textarea {
+    padding-left: 6px;
+  }
+
+  /* La métrica de la fuente deja unos píxeles de aire visual en el último
+     renglón. Este reparto compacto compensa esa métrica sin recortar texto. */
+  .message-form .input-wrapper[data-expanded="true"] textarea {
+    padding-top: 2px;
+    padding-bottom: 4px;
+  }
 }
 
 .message-form .composer-scrollbar {

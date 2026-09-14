@@ -5,6 +5,16 @@ let pendingRestoreAtBottom = false;
 let pageScrollBeforeFullscreen = null;
 let pageWasAtBottomBeforeFullscreen = false;
 const EXIT_RESTORE_WINDOW_MS = 3000;
+const PAGE_SCROLL_KEYS = new Set([
+  "ArrowDown",
+  "ArrowUp",
+  "PageDown",
+  "PageUp",
+  "Home",
+  "End",
+  " ",
+  "Spacebar",
+]);
 
 function getScrollContainer() {
   return dom.sessionView?.closest(".app-shell")
@@ -78,28 +88,53 @@ export function restoreFullscreenScroll(isFullscreen) {
   // y evita que el formulario quede fuera del viewport.
   const restoreUntil = performance.now() + (isFullscreen ? 80 : EXIT_RESTORE_WINDOW_MS);
   const handleViewportChange = () => restore();
+  let restoreCancelled = false;
+  let cleanup = () => {};
+  const cancelOnScrollKey = (event) => {
+    if (PAGE_SCROLL_KEYS.has(event.key) && !event.ctrlKey && !event.metaKey && !event.altKey) {
+      restoreCancelled = true;
+      cleanup();
+    }
+  };
+  const cancelRestore = () => {
+    restoreCancelled = true;
+    cleanup();
+  };
   if (!isFullscreen) {
     window.addEventListener("resize", handleViewportChange, { passive: true });
     window.addEventListener("orientationchange", handleViewportChange, { passive: true });
     window.visualViewport?.addEventListener("resize", handleViewportChange, { passive: true });
+    // La restauración acompaña los últimos cambios de viewport al salir de
+    // fullscreen, pero nunca debe pisar un desplazamiento iniciado por el
+    // usuario. Antes el bucle de RAF duraba 3 s y hacía que el scroll pareciera
+    // bloqueado durante toda esa ventana.
+    window.addEventListener("wheel", cancelRestore, { capture: true, passive: true });
+    window.addEventListener("touchstart", cancelRestore, { capture: true, passive: true });
+    window.addEventListener("touchmove", cancelRestore, { capture: true, passive: true });
+    window.addEventListener("pointerdown", cancelRestore, { capture: true, passive: true });
+    window.addEventListener("keydown", cancelOnScrollKey, { capture: true, passive: true });
   }
-  const cleanup = () => {
+  cleanup = () => {
     if (isFullscreen) return;
     window.removeEventListener("resize", handleViewportChange);
     window.removeEventListener("orientationchange", handleViewportChange);
     window.visualViewport?.removeEventListener("resize", handleViewportChange);
+    window.removeEventListener("wheel", cancelRestore, true);
+    window.removeEventListener("touchstart", cancelRestore, true);
+    window.removeEventListener("touchmove", cancelRestore, true);
+    window.removeEventListener("pointerdown", cancelRestore, true);
+    window.removeEventListener("keydown", cancelOnScrollKey, true);
+    pageScrollBeforeFullscreen = null;
+    pageWasAtBottomBeforeFullscreen = false;
   };
   const scheduleRestore = () => {
+    if (restoreCancelled) return;
     restore();
     if (performance.now() < restoreUntil) {
       window.requestAnimationFrame(scheduleRestore);
       return;
     }
     cleanup();
-    if (!isFullscreen) {
-      pageScrollBeforeFullscreen = null;
-      pageWasAtBottomBeforeFullscreen = false;
-    }
   };
   window.requestAnimationFrame(scheduleRestore);
 }

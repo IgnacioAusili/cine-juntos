@@ -3,7 +3,7 @@ import { state } from "../../core/state.js?v=20260912-name-session-01";
 import {
   setExternalChatCollapsed,
   setInsideChatVisible,
-} from "./chat-layout.js?v=20260912-bottom-to-right-arrow-timing-02";
+} from "./chat-layout.js?v=20260914-fullscreen-dock-animation-01";
 
 function isElementVisibleInViewport(element) {
   if (!element || document.hidden) return false;
@@ -57,6 +57,12 @@ function updatePageTitle() {
   const unreadCount = state.chat.pageUnreadCount;
   const baseTitle = state.chat.pageTitleBase || document.title;
   document.title = unreadCount > 0 ? `(+${unreadCount}) ${baseTitle}` : baseTitle;
+
+  if (typeof navigator.setAppBadge !== "function") return;
+  const badgeUpdate = unreadCount > 0
+    ? navigator.setAppBadge(unreadCount)
+    : navigator.clearAppBadge?.();
+  Promise.resolve(badgeUpdate).catch(() => {});
 }
 
 export function incrementPageUnread() {

@@ -8,8 +8,8 @@ import {
 } from "../../core/utils.js";
 import {
   hideTooltip,
-  hydrateIcons,
-} from "../icons-tooltips.js?v=20260910-status-tooltip-04";
+  setControlIcon,
+} from "../icons-tooltips.js?v=20260912-continuous-bubble-04";
 import { setSyncStatus } from "../session-ui.js?v=20260911-orientation-scroll-anchor-01";
 import {
   logEvent,
@@ -22,12 +22,12 @@ import {
   cancelExternalChatAutoCollapse,
   forceExternalChatCollapsed,
   updateCollapseButton,
-} from "../chat/chat-layout.js?v=20260912-bottom-to-right-arrow-timing-02";
+} from "../chat/chat-layout.js?v=20260914-fullscreen-dock-animation-01";
 import { withShortcutHint } from "../../core/utils.js";
 import {
   captureFullscreenScroll,
   restoreFullscreenScroll,
-} from "./fullscreen-scroll.js?v=20260903-structural-viewport-scroll-02";
+} from "./fullscreen-scroll.js?v=20260913-fullscreen-scroll-user-interrupt-01";
 
 const PLAYER_OVERLAY_IDLE_MS = 3000;
 const PLAYER_OVERLAY_LEAVE_HIDE_DELAY_MS = 800;
@@ -698,25 +698,18 @@ export async function togglePageFullscreen() {
       return;
     }
 
-    // En móviles el fullscreen de la aplicación es el comportamiento base:
-    // conserva el video y el chat lateral dentro del mismo layout. No pedir
-    // fullscreen nativo del video porque ese modo reemplaza la página por el
-    // reproductor del sistema y oculta el chat.
-    if (window.matchMedia(MOBILE_PLAYER_MEDIA_QUERY).matches) {
-      captureFullscreenScroll(true);
-      fallbackFullscreenActive = true;
-      handleFullscreenChange();
-      return;
-    }
-
-    const fullscreenTarget = dom.sessionView?.closest(".app-shell")
-      || dom.sessionView
-      || document.documentElement;
+    const isMobilePlayer = window.matchMedia(MOBILE_PLAYER_MEDIA_QUERY).matches;
+    // En móviles el workspace es el destino nativo: contiene el reproductor y
+    // el chat, por lo que la flecha sigue dentro de la superficie fullscreen
+    // y se puede tocar para desplegarlo. Si el navegador no ofrece la API,
+    // queda el fallback visual.
+    const fullscreenTarget = isMobilePlayer
+      ? dom.workspace || dom.playerFrame || dom.videoPlayer
+      : dom.sessionView?.closest(".app-shell")
+        || dom.sessionView
+        || document.documentElement;
     if (USE_NATIVE_FULLSCREEN && document.fullscreenEnabled && typeof fullscreenTarget?.requestFullscreen === "function") {
       captureFullscreenScroll(true);
-      // La app completa conserva la cabecera de la sala dentro del fullscreen,
-      // pero el contenedor se ajusta por inset en lugar de heredar el alto
-      // previo del <html> durante la transicion de Chrome.
       await fullscreenTarget.requestFullscreen({ navigationUI: "hide" });
     } else {
       captureFullscreenScroll(true);
@@ -736,7 +729,6 @@ export function handleFullscreenChange() {
   const isFullscreen = Boolean(document.fullscreenElement) || fallbackFullscreenActive;
   captureFullscreenScroll(isFullscreen);
   fullscreenScrollPreservationUntil = performance.now() + FULLSCREEN_SNAP_DELAY_MS + 80;
-  const icon = dom.pageFullscreenButton.querySelector("[data-lucide]");
   const tooltip = withShortcutHint(
     isFullscreen ? "Salir de pantalla completa" : "Pantalla completa",
     "F",
@@ -757,11 +749,7 @@ export function handleFullscreenChange() {
   dom.pageFullscreenButton.dataset.tooltip = tooltip;
   dom.pageFullscreenButton.removeAttribute("title");
   dom.pageFullscreenButton.setAttribute("aria-label", tooltip);
-  if (icon) {
-    icon.setAttribute("data-lucide", isFullscreen ? "minimize" : "maximize");
-    icon.innerHTML = "";
-  }
-  hydrateIcons();
+  setControlIcon(dom.pageFullscreenButton, isFullscreen ? "minimize" : "maximize");
   restoreFullscreenScroll(isFullscreen);
   syncInsideChatPanelOffset();
   // El fullscreen cambia el origen y las filas del layout móvil. Recalcular

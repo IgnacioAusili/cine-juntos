@@ -280,27 +280,6 @@
     transform: translate(-50%, calc(-50% - 2px));
   }
 
-  .player-status-badge.empty {
-    top: 9px;
-    left: 20px;
-    min-height: 28px;
-    font-size: 0.82rem;
-  }
-
-  .player-status-badge.empty .video-status-dot {
-    width: 8px;
-    height: 8px;
-    flex-basis: 8px;
-  }
-
-  .player-status-badge.video-status.empty {
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.78), 0 0 8px rgba(0, 0, 0, 0.3);
-  }
-
-  .player-status-badge.video-status.empty .video-status-dot {
-    background: currentColor;
-    box-shadow: none;
-  }
 }
 
 /* En PC el chat lateral se contrae desde el borde medio del panel. El

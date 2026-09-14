@@ -1,7 +1,7 @@
 // Controla la cabecera del chat en pantallas tactiles.
 import { dom } from "../../core/dom.js";
 import { state } from "../../core/state.js?v=20260912-name-session-01";
-import { hideTooltip } from "../icons-tooltips.js?v=20260910-status-tooltip-04";
+import { hideTooltip } from "../icons-tooltips.js?v=20260912-continuous-bubble-04";
 
 const MOBILE_QUERY = "(hover: none) and (pointer: coarse)";
 const HEADER_IDLE_MS = 2200;
@@ -63,6 +63,15 @@ function isChatKeyboardOpen() {
     || document.documentElement.classList.contains("right-chat-keyboard-open");
 }
 
+function isNameEditorActive() {
+  return dom.chatNameField?.dataset.editing === "true"
+    && document.activeElement === dom.nameInput;
+}
+
+function isHeaderForcedByKeyboard() {
+  return (isChatKeyboardOpen() && !isNameEditorActive()) || headerKeyboardPreparing;
+}
+
 function isActiveChatDock() {
   return Boolean(
     isMobileChatHeaderDock()
@@ -115,8 +124,8 @@ function setHeaderCollapsed(collapsed) {
     return;
   }
   const keepVisibleWithoutMessages = !hasMessages();
-  const forcedByKeyboard = isChatKeyboardOpen() || headerKeyboardPreparing;
-  const shouldCollapse = forcedByKeyboard || (Boolean(collapsed) && !keepVisibleWithoutMessages);
+  const shouldCollapse = !isNameEditorActive()
+    && (isHeaderForcedByKeyboard() || (Boolean(collapsed) && !keepVisibleWithoutMessages));
   if (shouldCollapse) hideTooltip(true);
   dom.sessionView.classList.toggle(
     "chat-header-collapsed",
@@ -139,7 +148,7 @@ function isMobileChatHeaderDock() {
 
 function scheduleHeaderHide() {
   clearHideTimer();
-  if (isChatKeyboardOpen() || headerKeyboardPreparing) {
+  if (isHeaderForcedByKeyboard()) {
     setHeaderCollapsed(true);
     return;
   }
@@ -167,6 +176,10 @@ function isContextualTarget(target) {
 function isMessageSurfaceTap(target) {
   if (!(target instanceof Element) || !target.closest("#messages")) return false;
   return !target.closest(MESSAGE_INTERACTIVE_SELECTOR);
+}
+
+function isSystemMessageTarget(target) {
+  return target instanceof Element && Boolean(target.closest("#messages .message.system"));
 }
 
 function revealHeader() {
@@ -232,6 +245,7 @@ function startGesture(event) {
     axis: null,
     moved: false,
     startedInMessages: event.target instanceof Element && Boolean(event.target.closest("#messages")),
+    startedInSystemMessage: isSystemMessageTarget(event.target),
     contextual: isContextualTarget(event.target),
     initialScrollTop: dom.messages?.scrollTop || 0,
     localSwipeUp: false,
@@ -269,6 +283,11 @@ function finishGesture(event) {
   const isMessagesSurfaceTap = isTap && isMessageSurfaceTap(event.target);
   activeGesture = null;
 
+  // Los mensajes de sistema tienen su propia interacción (expandir el grupo,
+  // abrir el menú o responder). Un toque allí no debe reutilizar el gesto
+  // global que alterna la visibilidad del header del chat.
+  if (isTap && gesture.startedInSystemMessage) return;
+
   // Solo el scroll que empieza dentro de #messages puede revelar el header.
   // Un arrastre de la pagina conserva el estado visible/oculto que ya tenia.
   if (gesture.localSwipeUp || isContextFreeTap || isMessagesSurfaceTap) {
@@ -297,7 +316,7 @@ function handleWheel(event) {
 }
 
 function syncHeaderMode() {
-  if ((isChatKeyboardOpen() || headerKeyboardPreparing) && isActiveChatDock()) {
+  if (isHeaderForcedByKeyboard() && isActiveChatDock()) {
     if (headerCollapsedBeforeKeyboard === null) {
       headerCollapsedBeforeKeyboard = dom.sessionView.classList.contains("chat-header-collapsed");
     }
@@ -306,7 +325,7 @@ function syncHeaderMode() {
     return;
   }
 
-  if (!isChatKeyboardOpen() && !headerKeyboardPreparing && headerCollapsedBeforeKeyboard !== null) {
+  if (!isHeaderForcedByKeyboard() && headerCollapsedBeforeKeyboard !== null) {
     const shouldRestoreCollapsed = headerCollapsedBeforeKeyboard;
     headerCollapsedBeforeKeyboard = null;
     if (isActiveChatDock()) {

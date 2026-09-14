@@ -176,6 +176,78 @@
   }
 }
 
+/* Cambio de dock en fullscreen móvil: el panel que sale se oculta completo
+   antes de cambiar de composición y el nuevo panel entra desde su borde.
+   La prioridad alta mantiene estas fases por encima de las reglas de layout
+   que fuerzan opacity: 1 mientras se sincronizan los controles. */
+@media (max-width: 980px) {
+  body.fullscreen-mode
+    .session-view.chat-dock-mobile-transition-out
+    .chat-area {
+    opacity: 1 !important;
+    transform: translate(0, 0) !important;
+    transition: none !important;
+    pointer-events: auto;
+    will-change: transform, opacity;
+  }
+
+  body.fullscreen-mode
+    .session-view.chat-dock-mobile-transition-out-active[data-chat-dock="right"]
+    .chat-area {
+    opacity: 0 !important;
+    transform: translateX(100%) !important;
+    transition: transform 260ms ease, opacity 220ms ease !important;
+    pointer-events: none;
+  }
+
+  body.fullscreen-mode
+    .session-view.chat-dock-mobile-transition-out-active[data-chat-dock="bottom"]
+    .chat-area {
+    opacity: 0 !important;
+    transform: translateY(100%) !important;
+    transition: transform 260ms ease, opacity 220ms ease !important;
+    pointer-events: none;
+  }
+
+  body.fullscreen-mode
+    .session-view.chat-dock-mobile-transition-in[data-chat-dock="right"]
+    .chat-area {
+    opacity: 0 !important;
+    transform: translateX(100%) !important;
+    transition: none !important;
+    pointer-events: none;
+    will-change: transform, opacity;
+  }
+
+  body.fullscreen-mode
+    .session-view.chat-dock-mobile-transition-in-active[data-chat-dock="right"]
+    .chat-area {
+    opacity: 1 !important;
+    transform: translateX(0) !important;
+    transition: transform 320ms ease, opacity 260ms ease !important;
+    pointer-events: auto;
+  }
+
+  body.fullscreen-mode
+    .session-view.chat-dock-mobile-transition-in[data-chat-dock="bottom"]
+    .chat-area {
+    opacity: 0 !important;
+    transform: translateY(100%) !important;
+    transition: none !important;
+    pointer-events: none;
+    will-change: transform, opacity;
+  }
+
+  body.fullscreen-mode
+    .session-view.chat-dock-mobile-transition-in-active[data-chat-dock="bottom"]
+    .chat-area {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+    transition: transform 320ms ease, opacity 260ms ease !important;
+    pointer-events: auto;
+  }
+}
+
 /* El dock inferior móvil cambia la altura del video y del chat en un único
    movimiento. La fila se interpola al mismo tiempo que la cortina del chat;
    así no queda una pausa entre ambos estados. */
@@ -829,7 +901,7 @@
 
   body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-name-field {
     justify-self: center;
-    transform: translateX(-8px);
+    transform: translateX(-12px);
   }
 
   body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-name-field .label-row {
@@ -881,6 +953,15 @@
     top: calc(var(--chat-bottom-dock-collapsed-handle-top, calc(100dvh - 16px)) - 22px);
   }
 
+  /* Al abrir el teclado el alto del chat cambia, pero la flecha del header
+     debe seguir centrada exactamente sobre la unión entre video y chat. */
+  html.bottom-chat-keyboard-open body:not(.is-lobby)
+    .session-view[data-chat-dock="bottom"]
+    .chat-collapse-hover-zone[data-chat-control="collapse"] {
+    top: 0 !important;
+    transform: translate(-50%, -50%) !important;
+  }
+
   /* El estado del reproductor conserva el mismo tamaño en portrait y
      landscape para que "Sin contenido" no cambie al rotar o abrir el teclado. */
   body:not(.is-lobby) .player-status-badge {
@@ -889,10 +970,6 @@
     max-width: min(200px, calc(100% - 72px));
     padding: 0;
     font-size: 0.82rem;
-  }
-
-  body:not(.is-lobby) .player-status-badge.empty {
-    top: 10px;
   }
 
   body:not(.is-lobby) #playerChatToggleButton {
@@ -1270,7 +1347,7 @@
   }
 
   html.bottom-chat-keyboard-open body:not(.is-lobby)
-    .session-view[data-chat-dock="bottom"] .chat-tools {
+    .session-view[data-chat-dock="bottom"]:not(:has(.chat-name-editor[data-editing="true"])) .chat-tools {
     min-height: 0 !important;
     height: 0 !important;
     max-height: 0 !important;
@@ -1282,8 +1359,14 @@
   }
 
   html.bottom-chat-keyboard-open body:not(.is-lobby)
-    .session-view[data-chat-dock="bottom"] .chat-area {
+    .session-view[data-chat-dock="bottom"]:not(:has(.chat-name-editor[data-editing="true"])) .chat-area {
     grid-template-rows: 0px minmax(0, 1fr) !important;
+  }
+
+  html.bottom-chat-keyboard-open body:not(.is-lobby)
+    .session-view[data-chat-dock="bottom"]:has(.chat-name-editor[data-editing="true"])
+    #messageForm {
+    display: none !important;
   }
 
   /* El viewport reducido por el teclado puede activar temporalmente
@@ -1376,5 +1459,204 @@
 @media (max-width: 980px) and (orientation: portrait) {
   body:not(.is-lobby) .session-view .player-frame:not(.mini-player-surface) {
     border-top: 0 !important;
+  }
+}
+
+/* En fullscreen móvil el workspace es una superficie fija por encima del
+   app-shell. El picker global quedaba fuera de esa superficie: el DOM lo
+   mostraba, pero no llegaba a pintarse ni a recibir el toque. chat-input.js
+   lo porta dentro de la superficie activa; aquí recuperamos su chrome porque
+   el SVG decorativo global tampoco puede cruzar ese contexto de apilado. */
+@media (max-width: 980px) {
+  body.fullscreen-mode .chat-area > .emoji-popover,
+  body.fullscreen-mode .player-frame > .emoji-popover {
+    width: 228px;
+    max-width: calc(100vw - 16px);
+    border: 1px solid var(--emoji-popover-border);
+    border-radius: var(--emoji-popover-radius);
+    background: var(--emoji-popover-background);
+    box-shadow: 0 12px 28px rgb(0 0 0 / 32%);
+  }
+
+  body.fullscreen-mode .chat-area > .emoji-popover::after,
+  body.fullscreen-mode .player-frame > .emoji-popover::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    width: var(--emoji-popover-tail-height);
+    height: var(--emoji-popover-tail-height);
+    background: var(--emoji-popover-background);
+    border: 1px solid var(--emoji-popover-border);
+    transform: rotate(45deg);
+    pointer-events: none;
+  }
+
+  body.fullscreen-mode .chat-area > .emoji-popover[data-placement="top"]::after,
+  body.fullscreen-mode .player-frame > .emoji-popover[data-placement="top"]::after {
+    right: auto;
+    bottom: -5px;
+    left: calc(var(--emoji-popover-anchor-x) - 4px);
+    border-top: 0;
+    border-left: 0;
+  }
+
+  body.fullscreen-mode .chat-area > .emoji-popover[data-placement="bottom"]::after,
+  body.fullscreen-mode .player-frame > .emoji-popover[data-placement="bottom"]::after {
+    top: -5px;
+    right: auto;
+    left: calc(var(--emoji-popover-anchor-x) - 4px);
+    border-right: 0;
+    border-bottom: 0;
+  }
+
+  body.fullscreen-mode .emoji-popover-svg {
+    display: none !important;
+  }
+}
+
+/* En vertical móvil, la pista de tiempo queda contra el borde inferior del
+   reproductor y la fila de controles se mantiene por encima de ella. */
+@media (max-width: 680px) and (orientation: portrait) {
+  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface) {
+    /* La pista sobresale unos píxeles para que su centro quede sobre la unión
+       video/chat; el frame no debe recortarla. */
+    overflow: visible;
+    overflow-x: clip;
+    /* El blur crea un contexto de apilado que arrastraba también al video por
+       encima de la flecha. La superficie móvil no necesita ese blur para sus
+       bordes y así la pista puede elevarse por separado. */
+    z-index: auto;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface) .player-bottom-actions {
+    /* El chat y su flecha deben quedar por encima del video; la pista queda
+       debajo de esa capa y se mantiene dentro del borde del reproductor. */
+    z-index: auto;
+    transform: none;
+    padding-bottom: 4px;
+    background:
+      linear-gradient(
+        180deg,
+        rgba(4, 7, 8, 0) 0%,
+        rgba(4, 7, 8, 0.14) 38%,
+        rgba(4, 7, 8, 0.42) 100%
+      );
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.025),
+      inset 0 8px 18px rgba(0, 0, 0, 0.08);
+  }
+
+  /* La pista debe poder quedar sobre el borde del chat, mientras la flecha
+     sigue siendo el elemento superior. Estas propiedades evitan que el blur,
+     el containment y el will-change del panel lo encierren en otra capa. */
+  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"] .chat-area {
+    z-index: auto;
+    contain: none !important;
+    will-change: auto;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .chat-area > .chat-collapse-hover-zone {
+    z-index: 41;
+  }
+
+  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-controls-bar {
+    position: static;
+    z-index: auto;
+  }
+
+  /* Estos controles deben quedar sobre el video, pero debajo de la flecha del
+     chat. El contenedor no puede recibir z-index porque encerraría la pista. */
+  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"]
+    .player-controls-bar > .video-control-button,
+  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"]
+    .player-controls-bar > .player-volume-group,
+  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"]
+    .player-controls-bar > .player-controls-scroll-zone {
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Al abrir velocidad, esta pista debe superar al botón central de avance
+     (que vive en otra capa), sin alterar el orden de la toolbar. */
+  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"]
+    .player-controls-bar > .player-controls-scroll-zone:has(.player-rate-select.is-open) {
+    z-index: 8;
+  }
+
+  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-progress-group {
+    right: 12px;
+    bottom: -9px;
+    left: 12px;
+    z-index: 39;
+  }
+
+  /* La pista queda como un hilo en reposo y aumenta sólo mientras se
+     interactúa con ella. */
+  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-progress-group::before {
+    top: calc(50% - 0.5px);
+    height: 1px;
+    transform: translateY(-50%);
+    transition: height 180ms ease-out, top 180ms ease-out;
+  }
+
+  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface).player-seek-control-dragging[data-control-style="line"]
+    .player-progress-group::before,
+  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"]
+    .player-progress-group:has(.player-seek-input:active)::before,
+  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"]
+    .player-progress-group:has(.player-seek-input:not(:disabled)):focus-within::before,
+  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"]
+    .player-progress-group:has(.player-seek-input:not(:disabled)):hover::before {
+    top: calc(50% - 2.5px);
+    height: 3px;
+  }
+
+  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"]
+    .player-progress-group:has(.player-seek-input:active) .player-seek-input,
+  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"]
+    .player-progress-group:has(.player-seek-input:not(:disabled)):focus-within .player-seek-input,
+  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"]
+    .player-progress-group:has(.player-seek-input:not(:disabled)):hover .player-seek-input,
+  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface).player-seek-control-dragging[data-control-style="line"]
+    .player-seek-input {
+    transform: translateY(-1.5px);
+  }
+
+  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-seek-input {
+    background: transparent !important;
+    background-image: none !important;
+  }
+
+  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"]
+    .player-seek-input::-webkit-slider-runnable-track,
+  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"]
+    .player-seek-input::-moz-range-track {
+    background: transparent !important;
+    background-image: none !important;
   }
 }

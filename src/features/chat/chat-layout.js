@@ -2,7 +2,7 @@
 import { dom } from "../../core/dom.js";
 import { state, logEvent } from "../../core/state.js?v=20260912-name-session-01";
 import { CHAT_DOCKS, CHAT_DOCK_META, withShortcutHint } from "../../core/utils.js";
-import { hydrateIcons, hideTooltip, refreshTooltipForTarget } from "../icons-tooltips.js?v=20260910-status-tooltip-04";
+import { hydrateIcons, hideTooltip, refreshTooltipForTarget } from "../icons-tooltips.js?v=20260912-continuous-bubble-04";
 import { focusFullscreenWorkspace } from "../session-ui.js?v=20260911-orientation-scroll-anchor-01";
 import {
   cancelIdentityEditing,
@@ -14,7 +14,7 @@ import {
   resetInsideUnread,
   resetPageUnread,
   syncUnreadBadgesWithVisibility,
-} from "./unread-counters.js?v=20260904-mobile-landscape-bottom-chat-07";
+} from "./unread-counters.js?v=20260913-taskbar-badge-01";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 import { focusChatInput } from "./chat-input-focus.js";
 import { restorePageScrollAfterRightChatCollapse } from "./chat-scroll-preservation.js?v=20260910-mobile-chat-scroll-lock-01";
@@ -44,6 +44,11 @@ const BOTTOM_DOCK_UNION_REVEAL_PX = 0;
 const BOTTOM_TO_RIGHT_SCROLL_TIMEOUT_MS = 1200;
 // Debe coincidir con la transición real de flex-basis/width del panel lateral.
 const BOTTOM_TO_RIGHT_LAYOUT_MS = 400;
+// En fullscreen el dock cambia de superficie (lateral/inferior). La salida
+// debe terminar antes de montar la nueva superficie para que no haya un frame
+// en el que ambos estados aparezcan juntos.
+const FULLSCREEN_DOCK_OUT_MS = 260;
+const FULLSCREEN_DOCK_IN_MS = 320;
 
 let layoutAdjustmentTimer = 0;
 let collapseHandleOffsetTimer = 0;
@@ -51,6 +56,7 @@ let expandScrollTimer = 0;
 let chatScrollSnapLockTimer = 0;
 let chatUserScrollUnlockTimer = 0;
 let pendingBottomToRightSwitch = null;
+let pendingFullscreenDockSwitch = null;
 let externalChatVisualMotionTimer = 0;
 let bottomChatTransition = null;
 let pendingRightDockCollapseScrollTop = null;
@@ -640,6 +646,18 @@ export function setChatDock(dock, options = {}) {
   const currentDock = dom.sessionView?.dataset.chatDock || "right";
   const centeredVideoScrollTop = getBottomToRightScrollTop();
 
+  if (!options.skipTransition && pendingFullscreenDockSwitch) return;
+
+  if (
+    !options.skipTransition
+    && currentDock !== nextDock
+    && isFullscreenPageActive()
+    && !dom.sessionView?.classList.contains("chat-collapsed")
+  ) {
+    animateFullscreenDockSwitch(nextDock);
+    return;
+  }
+
   if (
     !options.skipTransition
     && currentDock === "bottom"
@@ -706,9 +724,74 @@ export function setChatDock(dock, options = {}) {
   }
 
   const isFullscreen = document.body.classList.contains("fullscreen-mode") || Boolean(document.fullscreenElement);
-  if (isFullscreen) {
+  if (isFullscreen && !options.skipFullscreenFocus) {
     focusFullscreenWorkspace();
   }
+}
+
+function animateFullscreenDockSwitch(nextDock) {
+  if (!dom.sessionView || !dom.chatArea) {
+    setChatDock(nextDock, { skipTransition: true, preserveScroll: true });
+    return;
+  }
+
+  const transition = {
+    nextDock,
+    outTimerId: 0,
+    inTimerId: 0,
+  };
+  pendingFullscreenDockSwitch = transition;
+  setCollapseHandleTransitioning(
+    true,
+    FULLSCREEN_DOCK_OUT_MS + FULLSCREEN_DOCK_IN_MS + 80,
+  );
+
+  const sessionView = dom.sessionView;
+  const chatArea = dom.chatArea;
+  sessionView.classList.add("chat-dock-mobile-transition-out");
+  // Primero se fija el estado inicial y recién en el frame siguiente se
+  // dispara la salida. Así la transición no se convierte en un salto al
+  // aplicar la clase y el cambio de dock queda después de que termina.
+  void chatArea.offsetWidth;
+  window.requestAnimationFrame(() => {
+    if (pendingFullscreenDockSwitch !== transition) return;
+    sessionView.classList.add("chat-dock-mobile-transition-out-active");
+    transition.outTimerId = window.setTimeout(() => {
+      if (pendingFullscreenDockSwitch !== transition) return;
+
+      sessionView.classList.remove(
+        "chat-dock-mobile-transition-out",
+        "chat-dock-mobile-transition-out-active",
+      );
+      setChatDock(nextDock, {
+        skipTransition: true,
+        preserveScroll: true,
+        skipFullscreenFocus: true,
+      });
+      if (nextDock === "bottom") {
+        revealBottomDockUnion("auto");
+      } else {
+        focusFullscreenWorkspace();
+      }
+      sessionView.classList.add("chat-dock-mobile-transition-in");
+      void chatArea.offsetWidth;
+      window.requestAnimationFrame(() => {
+        if (pendingFullscreenDockSwitch !== transition) return;
+        sessionView.classList.add("chat-dock-mobile-transition-in-active");
+        transition.inTimerId = window.setTimeout(() => {
+          if (pendingFullscreenDockSwitch !== transition) return;
+          pendingFullscreenDockSwitch = null;
+          sessionView.classList.remove(
+            "chat-dock-mobile-transition-in",
+            "chat-dock-mobile-transition-in-active",
+          );
+          setCollapseHandleTransitioning(false);
+          scheduleExternalChatCollapseHandleOffset();
+          scheduleMessageTimeAdjustmentAfterLayout();
+    }, FULLSCREEN_DOCK_IN_MS);
+      });
+    }, FULLSCREEN_DOCK_OUT_MS);
+  });
 }
 
 function getBottomToRightScrollTop() {

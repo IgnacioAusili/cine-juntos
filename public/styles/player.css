@@ -65,8 +65,8 @@ video::-webkit-media-controls-fullscreen-button {
   position: absolute;
   /* El diálogo inline y su backdrop deben cubrir también este estado. */
   z-index: 4;
-  top: 8px;
-  left: 16px;
+  top: 13px;
+  left: 20px;
   display: inline-flex;
   align-items: center;
   justify-content: flex-start;
@@ -85,6 +85,7 @@ video::-webkit-media-controls-fullscreen-button {
   letter-spacing: 0.01em;
   line-height: 1;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), 0 0 10px rgba(0, 0, 0, 0.45);
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.68));
   pointer-events: auto;
   cursor: help;
   opacity: 1;
@@ -96,7 +97,7 @@ video::-webkit-media-controls-fullscreen-button {
 
 /* El halo de la bolita no debe quedar recortado por la regla general del estado. */
 .sync-status.player-status-badge {
-  margin: 0;
+  margin: -2px 0 0 -2px;
   overflow: visible;
   text-overflow: clip;
 }
@@ -115,10 +116,6 @@ video::-webkit-media-controls-fullscreen-button {
   transform: translateY(0);
 }
 
-.player-status-badge.empty {
-  top: 8px;
-}
-
 .player-status-badge .video-status-dot {
   --status-glow: rgba(255, 255, 255, 0.38);
   border-radius: 999px;
@@ -130,7 +127,6 @@ video::-webkit-media-controls-fullscreen-button {
   display: inline-flex;
   align-items: center;
   line-height: 1;
-  transform: translateY(1px);
 }
 
 .player-status-badge.video-status.empty {
@@ -138,8 +134,8 @@ video::-webkit-media-controls-fullscreen-button {
 }
 
 .player-status-badge.video-status.empty .video-status-dot {
-  --status-glow: currentColor;
-  background: currentColor;
+  --status-glow: rgba(255, 255, 255, 0.38);
+  background: #ffffff;
 }
 
 .player-status-badge.video-status.empty .video-status-dot::before {

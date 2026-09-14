@@ -60,6 +60,7 @@
   display: grid;
   position: relative;
   min-width: 0;
+  min-height: 24px;
   width: fit-content;
   max-width: 100%;
   overflow: hidden;
@@ -77,6 +78,7 @@
   display: flex;
   grid-area: 1 / 1;
   min-width: 0;
+  min-height: 24px;
   width: fit-content;
   max-width: 100%;
   overflow: hidden;
@@ -96,7 +98,7 @@
   color: var(--text);
   font-size: 0.82rem;
   font-weight: 600;
-  line-height: 1;
+  line-height: 1.2;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -119,14 +121,15 @@
   translate: -50% 0;
 }
 
-.chat-name-edit-row input[type="text"] {
+.chat-name-edit-row input[type="text"],
+.chat-name-edit-row input[type="search"] {
   appearance: none;
   display: block;
   min-width: 0;
   flex: 0 1 auto;
   field-sizing: fixed;
   width: 0;
-  height: 1em;
+  height: 1.2em;
   max-width: none;
   min-height: 0;
   border: 0 !important;
@@ -140,13 +143,14 @@
   box-sizing: border-box;
   align-self: center;
   overflow-x: auto;
-  line-height: 1;
+  line-height: 1.2;
   white-space: nowrap;
-  transform: translateY(-1px);
+  transform: none;
   transition: width 180ms ease, max-width 180ms ease;
 }
 
-.chat-name-edit-row input[type="text"]:focus {
+.chat-name-edit-row input[type="text"]:focus,
+.chat-name-edit-row input[type="search"]:focus {
   border: 0 !important;
   outline: none;
   background: transparent !important;
@@ -165,8 +169,9 @@
   border-radius: 0;
   background: transparent;
   box-shadow: none;
-  color: var(--muted-2);
+  color: var(--text);
   transform: none;
+  transition: color 140ms ease, filter 140ms ease;
 }
 
 .chat-name-edit-button:disabled {
@@ -203,6 +208,46 @@
   box-shadow: none;
   color: var(--text);
   transform: none;
+}
+
+.chat-name-edit-row input[type="search"]::-webkit-search-cancel-button {
+  appearance: none;
+  display: none;
+}
+
+.chat-name-confirm-button.is-valid,
+.chat-name-confirm-button.is-valid:hover,
+.chat-name-confirm-button.is-valid:focus-visible {
+  color: #38d879;
+}
+
+.chat-name-confirm-button.is-invalid,
+.chat-name-confirm-button.is-invalid:hover,
+.chat-name-confirm-button.is-invalid:focus-visible {
+  color: var(--danger);
+}
+
+.chat-name-edit-button:not(:disabled):hover,
+.chat-name-edit-button:not(:disabled):focus-visible,
+.chat-name-edit-button:not(:disabled).is-touch-hover,
+.chat-name-confirm-button:hover,
+.chat-name-confirm-button:focus-visible,
+.chat-name-confirm-button.is-touch-hover {
+  filter: brightness(1.18);
+}
+
+@media (hover: none) {
+  .chat-name-edit-button:not(:disabled):hover:not(.is-touch-hover),
+  .chat-name-confirm-button:hover:not(.is-touch-hover) {
+    filter: none;
+  }
+
+  .chat-name-edit-button:not(:disabled).is-touch-hover,
+  .chat-name-edit-button:not(:disabled).is-touch-hover:hover,
+  .chat-name-confirm-button.is-touch-hover,
+  .chat-name-confirm-button.is-touch-hover:hover {
+    filter: brightness(1.18);
+  }
 }
 
 .chat-name-edit-button svg,
@@ -405,13 +450,31 @@
   border: 1px solid rgba(240, 140, 58, 0.3);
   border-radius: 20px;
   background: #d4762a;
-  color: #0d0904;
-  font-size: 0.74rem;
+  color: #000 !important;
+  -webkit-text-fill-color: #000 !important;
+  font-size: 0.82rem;
   font-weight: 800;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+  text-shadow: none;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
   transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.session-toolbar-body .button.primary > .button-label,
+.session-toolbar-body .button.primary > svg {
+  color: #000 !important;
+  -webkit-text-fill-color: #000 !important;
+}
+
+.session-toolbar-body .button.primary > .button-label {
+  position: relative;
+  top: 1px;
+}
+
+.session-toolbar-body .button.primary > svg {
+  color: #000 !important;
+  -webkit-text-fill-color: #000 !important;
 }
 
 .session-toolbar-body .button.primary:hover {

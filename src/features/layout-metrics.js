@@ -34,9 +34,21 @@ function isOverlayChatInputFocused() {
   return isOverlayChatInput(document.activeElement);
 }
 
-function isBottomChatInputFocused() {
-  return document.activeElement === dom.messageInput
+function isBottomChatKeyboardTarget(target) {
+  return (target === dom.messageInput || target === dom.nameInput)
     && dom.sessionView?.dataset.chatDock === "bottom";
+}
+
+function isBottomChatNameEditorFocused() {
+  return Boolean(
+    dom.nameInput
+      && dom.chatNameField?.dataset.editing === "true"
+      && document.activeElement === dom.nameInput,
+  );
+}
+
+function isBottomChatInputFocused() {
+  return isBottomChatKeyboardTarget(document.activeElement);
 }
 
 function isBottomChatKeyboardOpen() {
@@ -121,11 +133,6 @@ function captureBottomChatKeyboardHandlePosition() {
     || dom.sessionView?.dataset.chatDock !== "bottom"
     || bottomChatKeyboardHandleAnchor?.handleZone === handleZone
   ) return;
-
-  // La flecha de contraer vive como capa independiente sobre .chat-area. No
-  // debe entrar en la reubicación temporal del teclado: ese cálculo le dejaría
-  // estilos inline y la movería mientras el header se anima.
-  if (handleZone.closest(".chat-area, .chat-tools")) return;
 
   const rect = handleZone.getBoundingClientRect();
   if (rect.width <= 0 || rect.height <= 0) return;
@@ -545,7 +552,12 @@ function syncViewportMetrics(force = false) {
   rootStyle.setProperty("--app-viewport-offset-top", `${metrics.offsetTop}px`);
   if (bottomChatKeyboardOpen && !wasBottomChatKeyboardOpen) {
     bottomChatScrollBeforeKeyboard = window.scrollY;
-    bottomChatPageScrollLockTop = null;
+    // Chrome intenta desplazar la pagina para mostrar el input enfocado. En
+    // el chat inferior ese ajuste mueve el header completo; conservar el
+    // scroll anterior mantiene el input y la flecha en su anclaje visual.
+    bottomChatPageScrollLockTop = isBottomChatNameEditorFocused()
+      ? null
+      : bottomChatScrollBeforeKeyboard;
     captureBottomChatKeyboardHandlePosition();
   }
   document.documentElement.classList.toggle(
@@ -635,7 +647,11 @@ function syncBottomChatVisibleHeight(viewportHeight) {
   if (!dom.chatArea || !viewportHeight) return;
 
   const chatRect = dom.chatArea.getBoundingClientRect();
-  const availableChatHeight = Math.max(0, viewportHeight - chatRect.top);
+  const minimumHeaderHeight = isBottomChatNameEditorFocused() ? 38 : 0;
+  const availableChatHeight = Math.max(
+    minimumHeaderHeight,
+    viewportHeight - chatRect.top,
+  );
   document.documentElement.style.setProperty(
     "--chat-bottom-visible-height",
     `${availableChatHeight}px`,
@@ -794,7 +810,7 @@ export function wireLayoutMetrics() {
   lastFullscreenActive = isFullscreenActive();
   document.addEventListener("fullscreenchange", scheduleFullscreenMetricResync);
   document.addEventListener("pointerdown", (event) => {
-    if (event.target === dom.messageInput) {
+    if (isBottomChatKeyboardTarget(event.target)) {
       if (dom.sessionView?.dataset.chatDock === "right") {
         captureRightChatKeyboardScroll(true);
       }
@@ -805,7 +821,7 @@ export function wireLayoutMetrics() {
     }
   }, { capture: true, passive: true });
   document.addEventListener("focusin", (event) => {
-    if (event.target === dom.messageInput) {
+    if (isBottomChatKeyboardTarget(event.target)) {
       if (dom.sessionView?.dataset.chatDock === "right") {
         captureRightChatKeyboardScroll();
       }
@@ -816,7 +832,7 @@ export function wireLayoutMetrics() {
     }
   }, { passive: true });
   document.addEventListener("focusout", (event) => {
-    if (event.target === dom.messageInput) {
+    if (isBottomChatKeyboardTarget(event.target)) {
       scheduleLayoutMetricsSync();
       if (!isBottomChatKeyboardOpen() && !wasBottomChatKeyboardOpen) {
         window.setTimeout(() => {

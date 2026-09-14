@@ -13,9 +13,9 @@ import {
   updateCharCounter,
   wireFloatingComposerLayout,
   wireComposerScrollbar,
-} from "./chat-input.js?v=20260909-landscape-chat-emoji-34";
+} from "./chat-input.js?v=20260914-fullscreen-dock-animation-01";
 import { setReplyTarget } from "./chat-reply.js?v=20260826-reply-sync-close-03";
-import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20260904-mobile-landscape-bottom-chat-07";
+import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20260913-taskbar-badge-01";
 import {
   copyMessageText,
   hideMessageMenu,
@@ -32,10 +32,10 @@ import {
   setInsideChatVisible,
   syncExternalChatCollapseHandleOffset,
   syncChatAutoExpandControls,
-} from "./chat-layout.js?v=20260912-bottom-to-right-arrow-timing-02";
+} from "./chat-layout.js?v=20260914-fullscreen-dock-animation-01";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 import { focusChatInput } from "./chat-input-focus.js";
-import { hideTooltip } from "../icons-tooltips.js?v=20260910-status-tooltip-04";
+import { hideTooltip } from "../icons-tooltips.js?v=20260912-continuous-bubble-04";
 
 const MOBILE_CHAT_LAYOUT_QUERY = "(max-width: 980px)";
 
@@ -174,7 +174,7 @@ export {
   buildEmojiPicker,
   updateCharCounter,
   sendMessage,
-} from "./chat-input.js?v=20260909-landscape-chat-emoji-34";
+} from "./chat-input.js?v=20260914-fullscreen-dock-animation-01";
 export {
   beginSystemMessageHydration,
   finishSystemMessageHydration,
@@ -191,7 +191,7 @@ export {
   checkScrollPosition,
   resetInsideUnread,
   resetPageUnread,
-} from "./unread-counters.js?v=20260904-mobile-landscape-bottom-chat-07";
+} from "./unread-counters.js?v=20260913-taskbar-badge-01";
 export {
   copyMessageText,
   hideMessageMenu,
@@ -209,7 +209,7 @@ export {
   setInsideChatVisible,
   syncChatAutoExpandControls,
   updateCollapseButton,
-} from "./chat-layout.js?v=20260912-bottom-to-right-arrow-timing-02";
+} from "./chat-layout.js?v=20260914-fullscreen-dock-animation-01";
 
 export function wireChatEvents() {
   syncChatAutoExpandControls();
@@ -293,11 +293,14 @@ export function wireChatEvents() {
     [dom.overlayEmojiButton, dom.overlayMessageInput],
   ].forEach(([button, input]) => {
     const preserveInputFocus = (event) => {
-      if (!isMobileChatLayout() || document.activeElement !== input) return;
+      if (!isMobileChatLayout()) return;
       event.preventDefault();
     };
     button?.addEventListener("pointerdown", preserveInputFocus);
     button?.addEventListener("mousedown", preserveInputFocus);
+    button?.addEventListener("focus", () => {
+      if (isMobileChatLayout()) button.blur();
+    });
   });
 
   dom.messageEmojiButton.addEventListener("click", () => {
@@ -324,6 +327,7 @@ export function wireChatEvents() {
     popover?.addEventListener(
       "touchmove",
       (event) => {
+        if (popover.classList.contains("is-emoji-popover-paged")) return;
         event.preventDefault();
         event.stopPropagation();
       },

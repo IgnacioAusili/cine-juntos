@@ -35,9 +35,31 @@ import {
 } from "./chat-layout.js?v=20260914-fullscreen-dock-animation-16";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 import { focusChatInput } from "./chat-input-focus.js";
-import { hideTooltip } from "../icons-tooltips.js?v=20260912-continuous-bubble-04";
+import { hideTooltip } from "../icons-tooltips.js?v=20260914-presence-visual-anchor-01";
 
 const MOBILE_CHAT_LAYOUT_QUERY = "(max-width: 980px)";
+const COLLAPSE_HOVER_RESET_CLASS = "chat-collapse-hover-reset";
+let collapseHoverResetListenerAttached = false;
+
+function clearCollapseHandleHoverReset() {
+  [dom.collapseChatButton, dom.expandChatButton]
+    .filter(Boolean)
+    .forEach((button) => button.classList.remove(COLLAPSE_HOVER_RESET_CLASS));
+  collapseHoverResetListenerAttached = false;
+  document.removeEventListener("pointermove", clearCollapseHandleHoverReset);
+}
+
+function suppressCollapseHandleHover() {
+  [dom.collapseChatButton, dom.expandChatButton]
+    .filter(Boolean)
+    .forEach((button) => button.classList.add(COLLAPSE_HOVER_RESET_CLASS));
+
+  if (collapseHoverResetListenerAttached) return;
+  collapseHoverResetListenerAttached = true;
+  document.addEventListener("pointermove", clearCollapseHandleHoverReset, {
+    passive: true,
+  });
+}
 
 function isMobileChatLayout() {
   return Boolean(
@@ -279,6 +301,7 @@ export function wireChatEvents() {
     });
 
     button.addEventListener("click", () => {
+      suppressCollapseHandleHover();
       hideTooltip(true);
       if (isBottomChatKeyboardOpen()) {
         toggleExternalChatCollapseAfterKeyboardCloses();

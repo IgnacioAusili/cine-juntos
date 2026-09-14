@@ -555,6 +555,29 @@ function getTooltipAnchor(source) {
   return source.closest?.(TOOLTIP_ANCHOR_SELECTOR) || source;
 }
 
+function getTooltipAnchorRect(anchor) {
+  const anchorRect = anchor.getBoundingClientRect();
+  if (!anchor.classList?.contains("presence-pill")) return anchorRect;
+
+  const visibleParts = [...anchor.querySelectorAll(".presence-dot, .presence-self-label, #participantCount, #overlayParticipantCount")]
+    .map((part) => part.getBoundingClientRect())
+    .filter((rect) => rect.width > 0 && rect.height > 0);
+  if (!visibleParts.length) return anchorRect;
+
+  const top = Math.min(...visibleParts.map((rect) => rect.top));
+  const right = Math.max(...visibleParts.map((rect) => rect.right));
+  const bottom = Math.max(...visibleParts.map((rect) => rect.bottom));
+  const left = Math.min(...visibleParts.map((rect) => rect.left));
+  return {
+    top,
+    right,
+    bottom,
+    left,
+    width: right - left,
+    height: bottom - top,
+  };
+}
+
 function isButtonTooltipContext(context) {
   return Boolean(context?.anchor?.matches?.("button, [role='button']"));
 }
@@ -625,7 +648,7 @@ function showTooltip(context) {
 }
 
 function positionTooltip(anchor) {
-  const rect = anchor.getBoundingClientRect();
+  const rect = getTooltipAnchorRect(anchor);
   const tooltipRect = dom.tooltipLayer.getBoundingClientRect();
   const tooltipVisualHeight = tooltipRect.height + TOOLTIP_TAIL_HEIGHT_PX;
   const maxLeft = Math.max(TOOLTIP_VIEWPORT_PADDING, window.innerWidth - tooltipRect.width - TOOLTIP_VIEWPORT_PADDING);

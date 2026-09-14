@@ -15,7 +15,7 @@ import {
   hydrateIcons,
   initializeUi,
   setConnection,
-} from "./features/icons-tooltips.js?v=20260912-continuous-bubble-04";
+} from "./features/icons-tooltips.js?v=20260914-presence-visual-anchor-01";
 import {
   wireLayoutMetrics,
 } from "./features/layout-metrics.js?v=20260913-bottom-chat-keyboard-arrow-fixed-04";
@@ -38,13 +38,13 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js?v=20260914-fullscreen-dock-animation-16";
+} from "./features/chat/index.js?v=20260914-collapse-hover-reset-02";
 import {
   initializePlayer,
   wirePlayerEvents,
-} from "./features/player/index.js?v=20260913-fullscreen-scroll-user-interrupt-01";
+} from "./features/player/index.js?v=20260914-empty-player-controls-visible-01";
 import { wireMobileFullscreenOrientation } from "./features/player/mobile-fullscreen-orientation.js";
-import { wireMobileChatKeyboardControls } from "./features/player/mobile-chat-keyboard-controls.js?v=20260910-landscape-right-chat-keyboard-controls-06";
+import { wireMobileChatKeyboardControls } from "./features/player/mobile-chat-keyboard-controls.js?v=20260914-keyboard-player-controls-01";
 import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20260913-name-editor-keyboard-header-02";
 import { wireMobileLandscapeVideoSnap } from "./features/mobile-landscape-video-snap.js?v=20260910-mobile-portrait-no-snap-01";
 import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260913-emoji-horizontal-pages-03";

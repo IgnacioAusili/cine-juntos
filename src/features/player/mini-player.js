@@ -1,6 +1,6 @@
 import { dom } from "../../core/dom.js";
 import { state, logEvent } from "../../core/state.js?v=20260912-name-session-01";
-import { setControlIcon } from "../icons-tooltips.js?v=20260912-continuous-bubble-04";
+import { setControlIcon } from "../icons-tooltips.js?v=20260914-presence-visual-anchor-01";
 import { setSyncStatus } from "../session-ui.js?v=20260911-orientation-scroll-anchor-01";
 import {
   createMiniPlayerSurface,

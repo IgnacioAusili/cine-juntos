@@ -17,8 +17,8 @@ import {
   hideTooltip,
   refreshTooltipForTarget,
   setControlIcon,
-} from "../icons-tooltips.js?v=20260912-continuous-bubble-04";
-import { scrollToVideoPosition, sendVideoEventMessage, setInsideChatVisible } from "../chat/index.js?v=20260914-fullscreen-dock-animation-16";
+} from "../icons-tooltips.js?v=20260914-presence-visual-anchor-01";
+import { scrollToVideoPosition, sendVideoEventMessage, setInsideChatVisible } from "../chat/index.js?v=20260914-collapse-hover-reset-02";
 // Import circular intencional y seguro: estas funciones se invocan en runtime,
 // no durante la carga del modulo, y player-sync-logic.js a su vez importa
 // setVideoSource y waitForVideoMetadata desde aqui.
@@ -36,7 +36,7 @@ import {
   showResumeVideoDialog,
   showSlowLoadDialog,
 } from "../session-ui.js?v=20260911-orientation-scroll-anchor-01";
-import { togglePageFullscreen } from "./fullscreen.js?v=20260913-fullscreen-scroll-user-interrupt-01";
+import { togglePageFullscreen } from "./fullscreen.js?v=20260914-empty-player-controls-visible-01";
 import { syncMiniPlayerButton } from "./mini-player.js?v=20260910-player-tooltip-chain-01";
 import { shouldToggleMuteFromVolumeButton } from "./player-volume-layout.js?v=20260902-player-volume-layout-18";
 
@@ -598,6 +598,10 @@ function announceVideoActivity() {
 export function setVideoStatus(videoState, text) {
   dom.syncStatus.className = `sync-status video-status player-status-badge ${videoState}`;
   dom.playerFrame?.classList.toggle("player-no-content", videoState === "empty");
+  if (videoState === "empty") {
+    dom.playerFrame?.classList.remove("player-overlay-suppressed", "player-cursor-hidden");
+    dom.playerFrame?.classList.add("player-overlay-visible");
+  }
   const tooltipKey = videoState === "loaded" && text === "En vivo" ? "playing" : videoState;
   const tooltip = VIDEO_STATUS_TOOLTIPS[tooltipKey] || "Estado actual del video en la sala";
   dom.syncStatus.dataset.tooltip = tooltip;

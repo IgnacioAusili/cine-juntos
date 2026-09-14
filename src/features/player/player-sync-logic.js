@@ -14,10 +14,10 @@ import {
 } from "../../core/utils.js";
 import { markParticipantActive, rememberParticipant } from "../presence.js?v=20260912-name-session-01";
 import { setSyncStatus } from "../session-ui.js?v=20260911-orientation-scroll-anchor-01";
-import { sendVideoEventMessage, renderMessage } from "../chat/index.js?v=20260914-fullscreen-dock-animation-16";
+import { sendVideoEventMessage, renderMessage } from "../chat/index.js?v=20260914-collapse-hover-reset-02";
 // Import circular intencional y seguro: estas funciones se invocan en runtime,
 // no durante la carga del modulo, y player.js a su vez importa publishState.
-import { clearVideoSource, setVideoSource, waitForVideoMetadata } from "./player.js?v=20260913-emoji-horizontal-pages-03";
+import { clearVideoSource, setVideoSource, waitForVideoMetadata } from "./player.js?v=20260914-empty-player-controls-visible-01";
 
 const PLAYBACK_ISSUE_SYNC_COOLDOWN_MS = 2200;
 // Los eventos waiting/stalled también se disparan por pequeños saltos de red.

@@ -22,7 +22,7 @@ import {
   renderPresence,
   updateDisplayName,
 } from "./presence.js?v=20260912-name-session-01";
-import { setConnection } from "./icons-tooltips.js?v=20260912-continuous-bubble-04";
+import { setConnection } from "./icons-tooltips.js?v=20260914-presence-visual-anchor-01";
 import {
   getUserScrollIntentVersion,
   setHostBadge,
@@ -31,7 +31,7 @@ import {
   showSession,
   watchRoomEntryVideoFocus,
 } from "./session-ui.js?v=20260911-orientation-scroll-anchor-01";
-import { handleRemoteState } from "./player/index.js?v=20260913-emoji-horizontal-pages-03";
+import { handleRemoteState } from "./player/index.js?v=20260914-empty-player-controls-visible-01";
 import {
   renderMessage,
   beginSystemMessageHydration,
@@ -40,7 +40,7 @@ import {
   resetInsideUnread,
   resetPageUnread,
   renderReplyPreview,
-} from "./chat/index.js?v=20260914-fullscreen-dock-animation-16";
+} from "./chat/index.js?v=20260914-collapse-hover-reset-02";
 
 const ACTIVE_TAB_KEY = "cine-juntos-active-tab";
 const ACTIVE_TAB_TTL_MS = 30000;

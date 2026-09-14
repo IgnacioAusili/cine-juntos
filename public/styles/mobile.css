@@ -1314,6 +1314,30 @@
   }
 }
 
+/* El teclado ocupa parte del viewport móvil y no debe tapar la barra del
+   reproductor. La clase se aplica mientras se conserva el estado original
+   para restaurarlo cuando el teclado se cierra, incluso sin contenido. */
+@media (max-width: 980px) {
+  body:not(.is-lobby):not(.fullscreen-mode)
+    .session-view[data-chat-dock] .player-frame.player-controls-keyboard-hidden
+    .player-bottom-actions,
+  body:not(.is-lobby):not(.fullscreen-mode)
+    .session-view[data-chat-dock] .player-frame.player-controls-keyboard-hidden
+    .player-center-actions {
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      opacity 180ms ease,
+      transform 180ms ease;
+  }
+
+  body:not(.is-lobby):not(.fullscreen-mode)
+    .session-view[data-chat-dock] .player-frame.player-controls-keyboard-hidden
+    .player-bottom-actions {
+    transform: translateY(6px);
+  }
+}
+
 /* Al abrir el teclado del chat inferior, Chrome reduce el viewport de layout.
    La pagina conserva su altura estructural y solo se comprime la segunda fila:
    el reproductor no cambia de tamaño ni el documento se desplaza para mostrar

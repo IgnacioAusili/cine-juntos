@@ -398,12 +398,12 @@
 
 .lobby-fields input[type="text"] {
   --lobby-input-offset: 3px;
-  display: flex;
-  align-items: center;
+  appearance: none;
+  display: block;
   height: 40px;
   min-height: 40px;
   padding-block: 0;
-  line-height: normal;
+  line-height: 40px;
   text-align: start;
   box-shadow: none;
   background: rgba(7, 9, 11, 0.5);

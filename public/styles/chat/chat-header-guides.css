@@ -1,0 +1,36 @@
+/* Referencias visuales del header del chat. No participan del layout ni de la
+   interacción: sirven para leer el centro real del alto y sus dos mitades. */
+.chat-tools {
+  isolation: isolate;
+}
+
+.chat-tools::before,
+.chat-tools::after {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  content: "";
+}
+
+/* Corte horizontal: recorre todo el ancho del header en su centro vertical. */
+.chat-tools::before {
+  top: 50%;
+  right: 0;
+  left: 0;
+  border-top: 1px solid color-mix(in srgb, var(--amber) 58%, transparent);
+  transform: translateY(-0.5px);
+}
+
+/* Medida vertical: une los dos bordes del header y cruza el corte central. */
+.chat-tools::after {
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  border-left: 1px dashed color-mix(in srgb, var(--amber) 46%, transparent);
+  transform: translateX(-0.5px);
+}
+
+.chat-tools > * {
+  position: relative;
+  z-index: 1;
+}

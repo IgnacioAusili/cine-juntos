@@ -145,7 +145,8 @@
   overflow-x: auto;
   line-height: 1.2;
   white-space: nowrap;
-  transform: none;
+  /* El texto nativo del input queda apenas por debajo del nombre visible. */
+  transform: translateY(-1px);
   /* El ancho del editor se recalcula al entrar en edición. Animarlo hace que
      la fila centrada se desplace horizontalmente durante la transición. */
   transition: none;

@@ -1102,7 +1102,7 @@
   .lobby-fields input[type="text"] {
     height: 36px;
     min-height: 36px;
-    line-height: normal;
+    line-height: 36px;
   }
 
   .lobby-actions {

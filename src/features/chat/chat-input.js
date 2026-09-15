@@ -17,10 +17,10 @@ import { createRandomId } from "../../core/random-id.js?v=20260902-mobile-real-b
 import {
   setSyncStatus,
 } from "../session-ui.js?v=20260911-orientation-scroll-anchor-01";
-import { refreshTooltipForTarget } from "../icons-tooltips.js?v=20260914-presence-visual-anchor-01";
+import { refreshTooltipForTarget } from "../icons-tooltips.js?v=20260914-tooltip-single-path-01";
 import { markParticipantActive } from "../presence.js?v=20260912-name-session-01";
-import { clearReplyTarget } from "./chat-reply.js?v=20260914-system-message-roll-sizing-01";
-import { renderMessage } from "./chat-render.js?v=20260914-system-message-roll-sizing-01";
+import { clearReplyTarget } from "./chat-reply.js?v=20260914-system-message-roll-transition-05";
+import { renderMessage } from "./chat-render.js?v=20260914-system-message-roll-transition-05";
 import {
   completeAutoOpenedChatResponse,
 } from "./chat-layout.js?v=20260914-fullscreen-dock-animation-16";

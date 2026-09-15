@@ -1479,58 +1479,6 @@
   }
 }
 
-/* En fullscreen móvil el workspace es una superficie fija por encima del
-   app-shell. El picker global quedaba fuera de esa superficie: el DOM lo
-   mostraba, pero no llegaba a pintarse ni a recibir el toque. chat-input.js
-   lo porta dentro de la superficie activa; aquí recuperamos su chrome porque
-   el SVG decorativo global tampoco puede cruzar ese contexto de apilado. */
-@media (max-width: 980px) {
-  body.fullscreen-mode .chat-area > .emoji-popover,
-  body.fullscreen-mode .player-frame > .emoji-popover {
-    width: 228px;
-    max-width: calc(100vw - 16px);
-    border: 1px solid var(--emoji-popover-border);
-    border-radius: var(--emoji-popover-radius);
-    background: var(--emoji-popover-background);
-    box-shadow: 0 12px 28px rgb(0 0 0 / 32%);
-  }
-
-  body.fullscreen-mode .chat-area > .emoji-popover::after,
-  body.fullscreen-mode .player-frame > .emoji-popover::after {
-    content: "";
-    position: absolute;
-    z-index: -1;
-    width: var(--emoji-popover-tail-height);
-    height: var(--emoji-popover-tail-height);
-    background: var(--emoji-popover-background);
-    border: 1px solid var(--emoji-popover-border);
-    transform: rotate(45deg);
-    pointer-events: none;
-  }
-
-  body.fullscreen-mode .chat-area > .emoji-popover[data-placement="top"]::after,
-  body.fullscreen-mode .player-frame > .emoji-popover[data-placement="top"]::after {
-    right: auto;
-    bottom: -5px;
-    left: calc(var(--emoji-popover-anchor-x) - 4px);
-    border-top: 0;
-    border-left: 0;
-  }
-
-  body.fullscreen-mode .chat-area > .emoji-popover[data-placement="bottom"]::after,
-  body.fullscreen-mode .player-frame > .emoji-popover[data-placement="bottom"]::after {
-    top: -5px;
-    right: auto;
-    left: calc(var(--emoji-popover-anchor-x) - 4px);
-    border-right: 0;
-    border-bottom: 0;
-  }
-
-  body.fullscreen-mode .emoji-popover-svg {
-    display: none !important;
-  }
-}
-
 /* En vertical móvil, la pista de tiempo queda contra el borde inferior del
    reproductor y la fila de controles se mantiene por encima de ella. */
 @media (max-width: 680px) and (orientation: portrait) {

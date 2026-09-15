@@ -15,7 +15,7 @@ import { makeGuestName, makeParticipantLabel } from "../core/utils.js";
 import {
   hideTooltip,
   setControlIcon,
-} from "./icons-tooltips.js?v=20260914-presence-visual-anchor-01";
+} from "./icons-tooltips.js?v=20260914-tooltip-single-path-01";
 import {
   isTouchPointer,
   TOUCH_LONG_PRESS_DELAY_MS,

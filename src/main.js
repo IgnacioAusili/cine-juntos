@@ -15,7 +15,7 @@ import {
   hydrateIcons,
   initializeUi,
   setConnection,
-} from "./features/icons-tooltips.js?v=20260914-presence-visual-anchor-01";
+} from "./features/icons-tooltips.js?v=20260914-tooltip-single-path-01";
 import {
   wireLayoutMetrics,
 } from "./features/layout-metrics.js?v=20260913-bottom-chat-keyboard-arrow-fixed-04";
@@ -38,21 +38,23 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js?v=20260914-collapse-hover-reset-04";
+} from "./features/chat/index.js?v=20260914-system-message-roll-transition-05";
 import {
   initializePlayer,
   wirePlayerEvents,
-} from "./features/player/index.js?v=20260914-collapse-hover-reset-04";
+} from "./features/player/index.js?v=20260914-system-message-roll-transition-05";
 import { wireMobileFullscreenOrientation } from "./features/player/mobile-fullscreen-orientation.js";
 import { wireMobileChatKeyboardControls } from "./features/player/mobile-chat-keyboard-controls.js?v=20260914-keyboard-player-controls-01";
 import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20260913-name-editor-keyboard-header-02";
 import { wireMobileLandscapeVideoSnap } from "./features/mobile-landscape-video-snap.js?v=20260910-mobile-portrait-no-snap-01";
-import { joinRoom, wireRoomEvents } from "./features/room.js?v=20260914-collapse-hover-reset-04";
+import { joinRoom, wireCopyAnimationDiagnostics, wireRoomEvents } from "./features/room.js?v=20260915-copy-animation-debug-03";
 import { wireTouchHover } from "./core/touch-interactions.js?v=20260829-touch-hold-fix-01";
-import { wireMobileDebugTools } from "./features/mobile-debug.js?v=20260914-console-scroll-fix-01";
+import { installConsoleLogCapture, wireMobileDebugTools } from "./features/mobile-debug.js?v=20260914-console-log-highlight-01";
 import { wireMobileKeyboardDiagnostics } from "./features/mobile-keyboard-diagnostics.js?v=20260911-ios-landscape-keyboard-diagnostics-01";
 
 const requestedRoom = normalizeRoomCode(new URLSearchParams(window.location.search).get("room") || "");
+
+installConsoleLogCapture();
 
 document.body.classList.remove("app-ready");
 applyInitialDefaults();
@@ -61,6 +63,7 @@ initializeUi();
 initializeAboutDialog();
 renderPresence();
 wireRoomEvents();
+wireCopyAnimationDiagnostics();
 wireTouchHover(dom.createRoomButton);
 wireTouchHover(dom.joinRoomButton);
 wireTouchHover(dom.copyInviteButton, {

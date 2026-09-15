@@ -11,14 +11,14 @@ import {
   handleIncomingPageUnread,
   incrementScrollIndicator,
 } from "./unread-counters.js?v=20260913-taskbar-badge-01";
-import { setReplyTarget, scrollToMessage } from "./chat-reply.js?v=20260914-system-message-roll-sizing-01";
+import { setReplyTarget, scrollToMessage } from "./chat-reply.js?v=20260914-system-message-roll-transition-05";
 import {
   animateExpandedSystemMessageRemoval,
   captureExpandedSystemMessageRemoval,
   prepareSystemMessageRemoval,
   refreshSystemMessageGroup,
   scheduleSystemMessageCollapse,
-} from "./system-message-groups.js?v=20260914-system-message-roll-sizing-01";
+} from "./system-message-groups.js?v=20260914-system-message-roll-transition-05";
 
 const EMOJI_ONLY_PATTERN = /^(?:[\s\p{Extended_Pictographic}\p{Emoji_Presentation}\p{Emoji_Modifier}\uFE0F\u200D\u20E3])+$/u;
 const EMOJI_GLYPH_PATTERN = /[\p{Extended_Pictographic}\p{Emoji_Presentation}]/u;

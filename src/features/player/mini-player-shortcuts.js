@@ -1,5 +1,5 @@
 import { dom } from "../../core/dom.js";
-import { toggleMiniChatOverlay } from "./mini-player-chat-mirror.js?v=20260914-system-message-roll-sizing-01";
+import { toggleMiniChatOverlay } from "./mini-player-chat-mirror.js?v=20260914-system-message-roll-transition-05";
 
 const SEEK_STEP_SECONDS = 5;
 const VOLUME_STEP = 0.05;

@@ -71,18 +71,29 @@
   outline: none;
 }
 
-.mobile-debug-card textarea {
+.mobile-debug-card .mobile-debug-log {
   display: block;
   width: 100%;
   min-height: min(58dvh, 440px);
+  max-height: min(58dvh, 440px);
   box-sizing: border-box;
-  resize: vertical;
+  margin: 0;
   padding: 12px;
   border: 1px solid var(--glass-border);
   border-radius: 8px;
   background: #080b0d;
   color: #d9f5ef;
   font: 0.72rem/1.45 ui-monospace, SFMono-Regular, Consolas, monospace;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.mobile-debug-log mark {
+  border-radius: 3px;
+  background: rgba(47, 184, 164, 0.62);
+  color: #e8fffb;
+  font-weight: 700;
 }
 
 .mobile-debug-card .dialog-actions {

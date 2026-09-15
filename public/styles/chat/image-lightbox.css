@@ -1,0 +1,151 @@
+/* Los mensajes con texto e imagen deben crecer con todo su contenido. */
+.message-bubble:has(> .message-content > .message-media-strip),
+.message-bubble:has(> .message-content > .message-media-link > .message-media) {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.message-content:has(> .message-media-strip),
+.message-content:has(> .message-media-link > .message-media) {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+}
+
+.message-bubble:has(> .message-content > .message-media-strip) > .message-time-anchor,
+.message-bubble:has(> .message-content > .message-media-link > .message-media) > .message-time-anchor {
+  order: 2;
+  float: none;
+  height: auto;
+  margin-left: auto;
+  shape-outside: none;
+}
+
+.message-content:has(> .message-media-strip) > .message-media-strip,
+.message-content:has(> .message-media-link > .message-media) > .message-media-link {
+  order: -1;
+  min-width: 0;
+  max-width: 100%;
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+.message-content:has(> .message-media-strip) > .message-text,
+.message-content:has(> .message-media-link > .message-media) > .message-text {
+  order: 1;
+}
+
+.message-media-link,
+.message-media {
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.message-media-link {
+  cursor: zoom-in;
+}
+
+/* El visor vive en la capa superior del navegador y no dentro del chat. */
+.image-lightbox {
+  box-sizing: border-box;
+  width: 100vw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  color: #fff;
+  background: rgba(4, 7, 9, 0.94);
+}
+
+.image-lightbox::backdrop {
+  background: rgba(0, 0, 0, 0.82);
+}
+
+.image-lightbox-surface {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  width: 100%;
+  height: 100%;
+}
+
+.image-lightbox-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  min-height: 56px;
+  padding: 10px 14px;
+}
+
+.image-lightbox-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 50%;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  font: inherit;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.image-lightbox-button:hover,
+.image-lightbox-button:focus-visible {
+  border-color: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.2);
+  outline: none;
+}
+
+.image-lightbox-close {
+  margin-left: 4px;
+  font-size: 1.8rem;
+}
+
+.image-lightbox-zoom-label {
+  min-width: 52px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.78rem;
+  text-align: center;
+  user-select: none;
+}
+
+.image-lightbox-viewport {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px 28px;
+  overflow: auto;
+  cursor: zoom-out;
+}
+
+.image-lightbox-image {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  transform: scale(var(--image-lightbox-scale, 1));
+  transform-origin: center;
+  cursor: default;
+  user-select: none;
+}
+
+@media (max-width: 680px) {
+  .image-lightbox-toolbar {
+    min-height: 52px;
+    padding: 8px 10px;
+  }
+
+  .image-lightbox-viewport {
+    padding: 8px 12px 20px;
+  }
+}

@@ -17,8 +17,8 @@ import {
   hideTooltip,
   refreshTooltipForTarget,
   setControlIcon,
-} from "../icons-tooltips.js?v=20260914-presence-visual-anchor-01";
-import { scrollToVideoPosition, sendVideoEventMessage, setInsideChatVisible } from "../chat/index.js?v=20260914-collapse-hover-reset-04";
+} from "../icons-tooltips.js?v=20260914-tooltip-single-path-01";
+import { scrollToVideoPosition, sendVideoEventMessage, setInsideChatVisible } from "../chat/index.js?v=20260914-system-message-roll-transition-05";
 // Import circular intencional y seguro: estas funciones se invocan en runtime,
 // no durante la carga del modulo, y player-sync-logic.js a su vez importa
 // setVideoSource y waitForVideoMetadata desde aqui.
@@ -28,7 +28,7 @@ import {
   clearPlaybackRecoveryTracking,
   pauseRoomForPlaybackIssue,
   publishState,
-} from "./player-sync-logic.js?v=20260914-collapse-hover-reset-04";
+} from "./player-sync-logic.js?v=20260914-system-message-roll-transition-05";
 
 import {
   showErrorDialog,
@@ -37,7 +37,7 @@ import {
   showSlowLoadDialog,
 } from "../session-ui.js?v=20260911-orientation-scroll-anchor-01";
 import { togglePageFullscreen } from "./fullscreen.js?v=20260914-empty-player-controls-visible-01";
-import { syncMiniPlayerButton } from "./mini-player.js?v=20260914-system-message-roll-sizing-01";
+import { syncMiniPlayerButton } from "./mini-player.js?v=20260914-system-message-roll-transition-05";
 import { shouldToggleMuteFromVolumeButton } from "./player-volume-layout.js?v=20260902-player-volume-layout-18";
 
 const SKIP_LOAD_REPLACE_DIALOG_KEY = "cine-juntos-skip-load-replace-dialog";

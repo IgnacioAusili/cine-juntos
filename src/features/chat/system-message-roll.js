@@ -1,7 +1,12 @@
 const SYSTEM_ROLL_FACE_COUNT = 5;
 const SYSTEM_ROLL_ANGLE = 360 / SYSTEM_ROLL_FACE_COUNT;
 const SYSTEM_ROLL_DURATION_MS = 650;
+const SYSTEM_ROLL_ROTATION_DELAY_MS = 520;
+const SYSTEM_ROLL_ROTATION_DURATION_MS =
+  SYSTEM_ROLL_DURATION_MS - SYSTEM_ROLL_ROTATION_DELAY_MS;
+const SYSTEM_ROLL_SIZE_TRANSITION_MS = 180;
 const systemRollAnimations = new WeakMap();
+const systemRollBubbleAnimations = new WeakMap();
 
 /**
  * Hace avanzar el texto visible de un grupo contraído con la misma rueda 3D
@@ -17,22 +22,41 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
 
   const nextRect = nextText.getBoundingClientRect();
   const previousRect = previousSnapshot.rect;
-  // El mensaje nuevo ya está en layout cuando empieza el giro. Toda la rueda
-  // debe adoptar sus dimensiones: si el tambor conserva el ancho anterior,
-  // el texto nuevo se ajusta contra otra caja y puede quedar recortado por la
-  // máscara al pasar de una línea a varias.
-  const width = Math.max(1, nextRect.width);
-  const visualWidth = width;
+  // El mensaje nuevo ya está en layout cuando empieza el giro. La ventana de
+  // la rueda debe poder contener ambas caras: conservar solo el tamaño nuevo
+  // contrae el panel demasiado pronto al pasar de varias líneas a una sola,
+  // mientras que conservar solo el anterior puede hacer que el texto entrante
+  // se ajuste contra una caja incorrecta al crecer.
   const lineHeight = Number.parseFloat(getComputedStyle(nextText).lineHeight);
   const lineCount = Number.isFinite(lineHeight) && lineHeight > 0
     ? Math.max(1, Math.round(nextRect.height / lineHeight))
     : 1;
-  const height = Number.isFinite(lineHeight) && lineHeight > 0
+  const nextWidth = Math.max(1, nextRect.width);
+  const nextHeight = Number.isFinite(lineHeight) && lineHeight > 0
     ? Math.max(lineHeight, lineCount * lineHeight)
-    : Math.max(1, nextRect.height, previousRect?.height || 0);
+    : Math.max(1, nextRect.height);
+  const width = Math.max(nextWidth, previousRect?.width || 0);
+  const height = Math.max(nextHeight, previousRect?.height || 0);
+  const visualWidth = width;
   const radius = height / (2 * Math.tan(Math.PI / SYSTEM_ROLL_FACE_COUNT));
   const originalNodes = Array.from(nextText.childNodes);
   const originalStyle = nextText.getAttribute("style");
+  const bubble = nextText.closest(".message-system-bubble");
+  const originalBubbleStyle = bubble?.getAttribute("style");
+  const nextBubbleRect = bubble?.getBoundingClientRect();
+  const previousBubbleAnimation = bubble && systemRollBubbleAnimations.get(bubble);
+  previousBubbleAnimation?.cancel();
+  if (bubble && systemRollBubbleAnimations.get(bubble) === previousBubbleAnimation) {
+    systemRollBubbleAnimations.delete(bubble);
+  }
+  const bubbleHeight = Math.max(
+    nextBubbleRect?.height || 0,
+    previousSnapshot.bubbleRect?.height || 0,
+  );
+  const bubbleWidth = Math.max(
+    nextBubbleRect?.width || 0,
+    previousSnapshot.bubbleRect?.width || 0,
+  );
   const row = nextText.closest(".system-message-row");
   const previousMarkup = previousSnapshot.markup.cloneNode(true);
 
@@ -63,36 +87,136 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
     `--system-roll-width: ${width}px`,
     `--system-roll-height: ${height}px`,
   ].filter(Boolean).join(";"));
+  if (bubble && bubbleHeight > 0) {
+    bubble.style.setProperty("height", `${bubbleHeight}px`);
+  }
+  if (bubble && bubbleWidth > 0) {
+    bubble.style.setProperty("width", `${bubbleWidth}px`);
+  }
   nextText.replaceChildren(drum);
   row?.classList.add("system-message-rolling");
 
+  const initialTransform =
+    "translateX(-50%) translateZ(calc(var(--system-roll-radius) * -1)) rotateX(0deg)";
+  const finalTransform =
+    `translateX(-50%) translateZ(calc(var(--system-roll-radius) * -1)) rotateX(${SYSTEM_ROLL_ANGLE}deg)`;
   const animation = drum.animate(
     [
       {
-        transform: "translateX(-50%) translateZ(calc(var(--system-roll-radius) * -1)) rotateX(0deg)",
+        transform: initialTransform,
       },
       {
-        transform: `translateX(-50%) translateZ(calc(var(--system-roll-radius) * -1)) rotateX(${SYSTEM_ROLL_ANGLE}deg)`,
+        transform: finalTransform,
       },
     ],
     {
-      duration: SYSTEM_ROLL_DURATION_MS,
+      duration: SYSTEM_ROLL_ROTATION_DURATION_MS,
+      delay: SYSTEM_ROLL_ROTATION_DELAY_MS,
       easing: "cubic-bezier(.65, -.15, .25, 1.15)",
       fill: "both",
     },
   );
 
+  const maskTimer = window.setTimeout(() => {
+    if (systemRollAnimations.get(nextText)) {
+      nextText.classList.add("system-message-roll-soft-edge");
+    }
+  }, SYSTEM_ROLL_ROTATION_DELAY_MS);
   const record = { animation, cleanup: null };
   systemRollAnimations.set(nextText, record);
-  const cleanup = () => {
-    if (systemRollAnimations.get(nextText) !== record) return;
+  let cleanupStarted = false;
+  let bubbleSizeAnimation = null;
+  let textSizeAnimation = null;
+  let bubbleFinalized = false;
+  const finalizeBubble = () => {
+    if (bubbleFinalized || systemRollAnimations.get(nextText) !== record) return;
+    if (
+      bubble &&
+      bubbleSizeAnimation &&
+      systemRollBubbleAnimations.get(bubble) !== bubbleSizeAnimation
+    ) return;
+    bubbleFinalized = true;
+    bubbleSizeAnimation?.cancel();
+    textSizeAnimation?.cancel();
     nextText.replaceChildren(...originalNodes);
     if (originalStyle === null) nextText.removeAttribute("style");
     else nextText.setAttribute("style", originalStyle);
     nextText.classList.remove("system-message-roll-viewport");
+    nextText.classList.remove("system-message-roll-soft-edge");
     row?.classList.remove("system-message-rolling");
-    animation.cancel();
+    if (bubble) {
+      if (originalBubbleStyle === null) bubble.removeAttribute("style");
+      else bubble.setAttribute("style", originalBubbleStyle);
+      if (systemRollBubbleAnimations.get(bubble) === bubbleSizeAnimation) {
+        systemRollBubbleAnimations.delete(bubble);
+      }
+    }
     systemRollAnimations.delete(nextText);
+    animation.cancel();
+  };
+  const cancelSizeAnimations = () => {
+    bubbleSizeAnimation?.cancel();
+    textSizeAnimation?.cancel();
+  };
+  const startSizeTransition = () => {
+    const finalTextWidth = Math.max(1, nextRect.width);
+    const finalTextHeight = Math.max(1, nextRect.height);
+    const finalBubbleWidth = nextBubbleRect?.width || bubbleWidth;
+    const finalBubbleHeight = nextBubbleRect?.height || bubbleHeight;
+    const transition = {
+      duration: SYSTEM_ROLL_SIZE_TRANSITION_MS,
+      easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+      fill: "forwards",
+    };
+    const animations = [];
+    if (
+      bubble &&
+      (bubbleWidth > finalBubbleWidth + 0.5 || bubbleHeight > finalBubbleHeight + 0.5)
+    ) {
+      bubbleSizeAnimation = bubble.animate(
+        [
+          { width: `${bubbleWidth}px`, height: `${bubbleHeight}px` },
+          { width: `${finalBubbleWidth}px`, height: `${finalBubbleHeight}px` },
+        ],
+        transition,
+      );
+      record.bubbleSizeAnimation = bubbleSizeAnimation;
+      systemRollBubbleAnimations.set(bubble, bubbleSizeAnimation);
+      animations.push(bubbleSizeAnimation);
+    }
+    if (width > finalTextWidth + 0.5 || height > finalTextHeight + 0.5) {
+      textSizeAnimation = nextText.animate(
+        [
+          { width: `${width}px`, height: `${height}px` },
+          { width: `${finalTextWidth}px`, height: `${finalTextHeight}px` },
+        ],
+        transition,
+      );
+      animations.push(textSizeAnimation);
+    }
+    if (!animations.length) return false;
+    Promise.all(animations.map((entry) => entry.finished.catch(() => null)))
+      .then(finalizeBubble, finalizeBubble);
+    return true;
+  };
+  const cleanup = ({ immediate = false } = {}) => {
+    if (systemRollAnimations.get(nextText) !== record) return;
+    if (cleanupStarted) {
+      if (immediate) {
+        cancelSizeAnimations();
+        finalizeBubble();
+      }
+      return;
+    }
+    cleanupStarted = true;
+    window.clearTimeout(maskTimer);
+    if (immediate) {
+      cancelSizeAnimations();
+      finalizeBubble();
+      return;
+    }
+    if (startSizeTransition()) return;
+    finalizeBubble();
   };
   record.cleanup = cleanup;
 
@@ -102,5 +226,5 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
 
 export function settleSystemMessageRoll(target) {
   const record = systemRollAnimations.get(target);
-  record?.cleanup?.();
+  record?.cleanup?.({ immediate: true });
 }

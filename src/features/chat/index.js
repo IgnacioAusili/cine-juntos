@@ -13,8 +13,8 @@ import {
   updateCharCounter,
   wireFloatingComposerLayout,
   wireComposerScrollbar,
-} from "./chat-input.js?v=20260914-system-message-roll-sizing-01";
-import { setReplyTarget } from "./chat-reply.js?v=20260914-system-message-roll-sizing-01";
+} from "./chat-input.js?v=20260914-system-message-roll-transition-05";
+import { setReplyTarget } from "./chat-reply.js?v=20260914-system-message-roll-transition-05";
 import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20260913-taskbar-badge-01";
 import {
   copyMessageText,
@@ -35,7 +35,7 @@ import {
 } from "./chat-layout.js?v=20260914-fullscreen-dock-animation-16";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 import { focusChatInput } from "./chat-input-focus.js";
-import { hideTooltip } from "../icons-tooltips.js?v=20260914-presence-visual-anchor-01";
+import { hideTooltip } from "../icons-tooltips.js?v=20260914-tooltip-single-path-01";
 
 const MOBILE_CHAT_LAYOUT_QUERY = "(max-width: 980px)";
 const COLLAPSE_HOVER_RESET_CLASS = "chat-collapse-hover-reset";
@@ -230,19 +230,19 @@ export {
   buildEmojiPicker,
   updateCharCounter,
   sendMessage,
-} from "./chat-input.js?v=20260914-system-message-roll-sizing-01";
+} from "./chat-input.js?v=20260914-system-message-roll-transition-05";
 export {
   beginSystemMessageHydration,
   finishSystemMessageHydration,
   renderMessage,
-} from "./chat-render.js?v=20260914-system-message-roll-sizing-01";
+} from "./chat-render.js?v=20260914-system-message-roll-transition-05";
 export {
   clearReplyTarget,
   renderReplyPreview,
   scrollToMessage,
   setReplyTarget,
-} from "./chat-reply.js?v=20260914-system-message-roll-sizing-01";
-export { sendVideoEventMessage } from "./chat-system-messages.js?v=20260914-system-message-roll-sizing-01";
+} from "./chat-reply.js?v=20260914-system-message-roll-transition-05";
+export { sendVideoEventMessage } from "./chat-system-messages.js?v=20260914-system-message-roll-transition-05";
 export {
   checkScrollPosition,
   resetInsideUnread,

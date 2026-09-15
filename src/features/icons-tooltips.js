@@ -44,7 +44,11 @@ function createBubbleChrome(className, zIndex) {
   svg.append(path);
   svg.style.zIndex = String(zIndex);
   svg.setAttribute("aria-hidden", "true");
-  document.body.append(svg);
+  // El chrome tiene que pertenecer al app-shell para mantenerse dentro de la
+  // top layer cuando el shell entra en fullscreen nativo. Así no hace falta
+  // volver a dibujar la cola con un pseudo-elemento CSS distinto.
+  const chromeHost = document.querySelector(".app-shell") || document.body;
+  chromeHost.append(svg);
   return { svg, path };
 }
 

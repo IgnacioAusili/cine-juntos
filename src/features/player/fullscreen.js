@@ -9,13 +9,13 @@ import {
 import {
   hideTooltip,
   setControlIcon,
-} from "../icons-tooltips.js?v=20260914-presence-visual-anchor-01";
+} from "../icons-tooltips.js?v=20260914-tooltip-single-path-01";
 import { setSyncStatus } from "../session-ui.js?v=20260911-orientation-scroll-anchor-01";
 import {
   logEvent,
   state,
 } from "../../core/state.js?v=20260914-console-log-controls-01";
-import { isMiniPlayerActive } from "./mini-player.js?v=20260914-system-message-roll-sizing-01";
+import { isMiniPlayerActive } from "./mini-player.js?v=20260914-system-message-roll-transition-05";
 import {
   syncExternalChatCollapseHandleOffset,
   syncInsideChatPanelOffset,

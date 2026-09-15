@@ -24,7 +24,7 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap"
     />
     <link rel="icon" href="./public/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="./public/styles.css?v=20260914-chat-header-guides-01-overlay-spacing-03" />
+    <link rel="stylesheet" href="./public/styles.css?v=20260915-image-lightbox-01" />
   </head>
   <body class="is-lobby">
     <div class="app-shell">
@@ -36,12 +36,12 @@
           <div class="room-chip" id="roomChip">
             <div class="room-chip-heading">
               <span class="room-chip-label-row">
-                <span class="room-chip-label">Sala de video</span>
+                <span class="room-chip-label">Sala de cine</span>
                 <button
                   class="help-button"
                   type="button"
                   aria-label="Ayuda sobre la sala"
-                  data-tooltip="Este es el número de la sala en la que estás, compartilo para invitar a más personas a unirse"
+                  data-tooltip="Este es el código de la sala en la que estás, compartilo para invitar a más personas a unirse"
                 >
                   <span data-lucide="circle-help"></span>
                 </button>
@@ -57,7 +57,7 @@
                     id="copyInviteButton"
                     type="button"
                     aria-label="Copiar enlace de invitación"
-                    data-tooltip="Click para copiar la invitación"
+                    data-tooltip="Click para copiar código/invitación"
                   >
                     <span class="room-chip-copy-main">
                       <span class="room-chip-code-text" id="roomBadge">Sin sala</span>
@@ -864,7 +864,7 @@
           <span>Filtrar</span>
           <input id="mobileDebugFilter" type="search" placeholder="Buscar..." autocomplete="off" />
         </label>
-        <textarea id="mobileDebugLog" readonly spellcheck="false" aria-label="Diagnóstico"></textarea>
+        <pre id="mobileDebugLog" class="mobile-debug-log" role="textbox" aria-readonly="true" tabindex="0" aria-label="Registros de la página"></pre>
         <div class="dialog-actions">
           <button id="mobileDebugCopyButton" type="button" class="button primary">Copiar</button>
           <button id="mobileDebugShareButton" type="button" class="button">Compartir</button>
@@ -991,6 +991,7 @@
     <script src="./public/dev-runtime.js?v=20260715-02"></script>
     <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script src="./public/firebase-config.js"></script>
-     <script type="module" src="./src/main.js?v=20260914-collapse-hover-reset-04"></script>
+     <script type="module" src="./src/features/chat/image-lightbox.js?v=20260915-image-lightbox-04"></script>
+     <script type="module" src="./src/main.js?v=20260915-copy-animation-debug-03"></script>
   </body>
 </html>

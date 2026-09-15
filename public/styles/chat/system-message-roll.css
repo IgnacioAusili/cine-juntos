@@ -11,6 +11,9 @@
   perspective: 900px;
   perspective-origin: 50% 50%;
   isolation: isolate;
+}
+
+.message.system .message-system-text.system-message-roll-viewport.system-message-roll-soft-edge {
   -webkit-mask-image: linear-gradient(
     to bottom,
     transparent 0%,
@@ -65,7 +68,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .message.system .message-system-text.system-message-roll-viewport {
+  .message.system .message-system-text.system-message-roll-soft-edge {
     -webkit-mask-image: none;
     mask-image: none;
   }

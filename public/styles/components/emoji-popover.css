@@ -114,45 +114,6 @@
   pointer-events: none;
 }
 
-/* En fullscreen nativo el app-shell entra en la top layer y el SVG de chrome
-   que vive en body queda fuera de esa capa. El propio popover conserva aquí
-   una superficie completa para que el contenedor no desaparezca mientras sus
-   emojis siguen viviendo dentro del app-shell. */
-.app-shell:fullscreen .emoji-popover {
-  border: 1px solid var(--emoji-popover-border);
-  border-radius: var(--emoji-popover-radius);
-  background: var(--emoji-popover-background);
-  box-shadow: 0 12px 28px rgb(0 0 0 / 32%);
-}
-
-.app-shell:fullscreen .emoji-popover::after {
-  content: "";
-  position: absolute;
-  z-index: 0;
-  width: var(--emoji-popover-tail-height);
-  height: var(--emoji-popover-tail-height);
-  border: 1px solid var(--emoji-popover-border);
-  background: var(--emoji-popover-background);
-  transform: rotate(45deg);
-  pointer-events: none;
-}
-
-.app-shell:fullscreen .emoji-popover[data-placement="top"]::after {
-  right: auto;
-  bottom: -5px;
-  left: calc(var(--emoji-popover-anchor-x) - 4px);
-  border-top: 0;
-  border-left: 0;
-}
-
-.app-shell:fullscreen .emoji-popover[data-placement="bottom"]::after {
-  top: -5px;
-  right: auto;
-  left: calc(var(--emoji-popover-anchor-x) - 4px);
-  border-right: 0;
-  border-bottom: 0;
-}
-
 .app-shell:fullscreen .emoji-popover-track {
   position: relative;
   z-index: 1;

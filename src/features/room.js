@@ -252,6 +252,7 @@ export function wireRoomEvents() {
 }
 
 const COPY_ANIMATION_DEBUG_TAG = "[cine-copy-animation-debug]";
+const COPY_CURSOR_DEBUG_TAG = "[cine-cursor-debug]";
 
 function isConsoleDiagnosticsRoute() {
   return window.location.pathname === "/console"
@@ -363,6 +364,40 @@ export function wireCopyAnimationDiagnostics() {
     logEvent("copy-animation-debug", JSON.stringify(payload));
   };
 
+  const getPointerTarget = (event) => {
+    const target = event?.target instanceof Element ? event.target : null;
+    const pointTarget = Number.isFinite(event?.clientX) && Number.isFinite(event?.clientY)
+      ? document.elementFromPoint(event.clientX, event.clientY)
+      : null;
+    const describeTarget = (element) => element
+      ? {
+          tag: element.tagName,
+          id: element.id || null,
+          className: typeof element.className === "string" ? element.className : null,
+          cursor: getComputedStyle(element).cursor,
+        }
+      : null;
+    return {
+      pointerType: event?.pointerType || null,
+      clientX: round(event?.clientX),
+      clientY: round(event?.clientY),
+      target: describeTarget(target),
+      relatedTarget: describeTarget(event?.relatedTarget instanceof Element ? event.relatedTarget : null),
+      elementFromPoint: describeTarget(pointTarget),
+      buttonHovered: button.matches(":hover"),
+      mainHovered: Boolean(main?.matches(":hover")),
+      buttonCursor: getComputedStyle(button).cursor,
+      mainCursor: main ? getComputedStyle(main).cursor : null,
+    };
+  };
+
+  const emitCursor = (eventName, event) => {
+    const payload = snapshot(eventName, {
+      cursor: getPointerTarget(event),
+    });
+    logEvent("cursor-debug", JSON.stringify({ ...payload, tag: COPY_CURSOR_DEBUG_TAG }));
+  };
+
   const sample = (timestamp) => {
     const elapsed = timestamp - samplingStartedAt;
     if (timestamp - lastSampleAt >= 50 || elapsed >= 1400) {
@@ -390,6 +425,24 @@ export function wireCopyAnimationDiagnostics() {
     baseline = getGeometry();
     emit("click-baseline");
   });
+
+  button.addEventListener("pointerover", (event) => emitCursor("pointerover", event));
+  button.addEventListener("pointerout", (event) => emitCursor("pointerout", event));
+  button.addEventListener("pointerenter", (event) => emitCursor("pointerenter", event));
+  button.addEventListener("pointerleave", (event) => emitCursor("pointerleave", event));
+
+  let lastPointerMoveAt = -Infinity;
+  window.addEventListener("pointermove", (event) => {
+    const rect = button.getBoundingClientRect();
+    const margin = 8;
+    const isNearButton = event.clientX >= rect.left - margin
+      && event.clientX <= rect.right + margin
+      && event.clientY >= rect.top - margin
+      && event.clientY <= rect.bottom + margin;
+    if (!isNearButton || event.timeStamp - lastPointerMoveAt < 40) return;
+    lastPointerMoveAt = event.timeStamp;
+    emitCursor("pointermove", event);
+  }, true);
 
   button.addEventListener("animationstart", (event) => {
     emit("animationstart", { animationName: event.animationName });

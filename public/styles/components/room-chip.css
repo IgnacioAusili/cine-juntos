@@ -115,7 +115,7 @@
 @media (hover: hover) {
   .room-chip-code-button:hover .room-chip-copy-main,
   .room-chip-code-button:focus-visible .room-chip-copy-main {
-    transform: translateY(-1px);
+    --room-chip-copy-hover-offset: -1px;
   }
 }
 
@@ -143,7 +143,7 @@
   }
 
   .room-chip-code-button.is-touch-hover .room-chip-copy-main {
-    transform: translateY(-2px);
+    --room-chip-copy-hover-offset: -2px;
   }
 
   .room-chip-back-button:hover:not(.is-touch-hover):not(:focus-visible),
@@ -223,29 +223,35 @@
 }
 
 .room-chip-copy-main {
+  position: relative;
+  --room-chip-copy-hover-offset: 0px;
+  top: var(--room-chip-copy-hover-offset);
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  padding-right: 24px;
+  pointer-events: none;
   white-space: nowrap;
-  transition: transform 160ms ease;
+  transform: none;
+  transition: top 160ms ease;
 }
 
 .room-chip-copy.is-copy-animating .room-chip-copy-main {
   animation: roomChipCopyLift 760ms cubic-bezier(0.4, 0, 0.2, 1) both;
-  will-change: transform;
+  will-change: top;
 }
 
 @keyframes roomChipCopyLift {
   0% {
-    transform: translate3d(0, 0, 0);
+    top: var(--room-chip-copy-hover-offset);
   }
 
   34% {
-    transform: translate3d(0, -5px, 0);
+    top: calc(var(--room-chip-copy-hover-offset) - 4px);
   }
 
   100% {
-    transform: translate3d(0, 0, 0);
+    top: var(--room-chip-copy-hover-offset);
   }
 }
 
@@ -256,27 +262,31 @@
 }
 
 .room-chip-copy-confirm {
+  position: absolute;
+  top: 50%;
+  right: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transform: scale(0.85);
-  width: 0;
+  width: 18px;
+  height: 18px;
   overflow: hidden;
   transition:
     opacity 260ms ease,
-    transform 260ms ease,
-    width 380ms ease;
+    transform 260ms ease;
+  transform: translateY(-50%) scale(0.85);
+  visibility: hidden;
 }
 
 .room-chip-copy[data-copied="true"] .room-chip-copy-confirm {
   opacity: 1;
-  transform: scale(1);
-  width: 18px;
+  transform: translateY(-50%) scale(1);
+  visibility: visible;
 }
 
 .room-chip-copy[data-copied="false"] .room-chip-copy-confirm {
-  transition-delay: 0ms, 0ms, 120ms;
+  transition-delay: 0ms, 0ms;
 }
 
 .room-chip-copy-confirm svg {

@@ -1,5 +1,5 @@
 @import url("./components/app-status.css?v=20260910-status-glow-09");
-@import url("./components/room-chip.css?v=20260914-room-cursor-fix-01");
+@import url("./components/room-chip.css?v=20260915-room-hover-fix-04");
 @import url("./components/host-badge.css?v=20260904-help-invite-fixes-02");
 @import url("./components/buttons.css?v=20260829-touch-hover-01");
 @import url("./components/chat-collapse-handle.css?v=20260914-collapse-hover-reset-03");
@@ -10,4 +10,4 @@
 @import url("./components/emoji-popover.css?v=20260914-tooltip-single-path-01");
 @import url("./components/tooltip-layer.css?v=20260914-tooltip-single-path-01");
 @import url("./components/dialogs.css?v=20260914-console-scroll-fix-02");
-@import url("./components/mobile-debug.css?v=20260914-console-log-highlight-01");
+@import url("./components/mobile-debug.css?v=20260915-log-dialog-ui-05");

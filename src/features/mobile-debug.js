@@ -6,6 +6,8 @@ const SHARE_TITLE = "Log de diagnóstico de Cine Juntos";
 const SHARE_TEXT_FALLBACK = "Log de diagnóstico de Cine Juntos";
 let mobileDebugScrollPosition = null;
 let consoleLogCaptureInstalled = false;
+let mobileDebugRefreshTimer = 0;
+let mobileDebugCopyFeedbackTimer = 0;
 
 function isTestRoute() {
   return window.location.pathname === "/console"
@@ -91,12 +93,43 @@ function refreshLogViewer() {
   if (!dom.mobileDebugLog) return "";
   const { filter, text } = getFilteredLog();
   dom.mobileDebugLog.innerHTML = highlightLogText(text, filter);
+  const filterClearButton = document.querySelector("#mobileDebugFilterClearButton");
+  if (filterClearButton) filterClearButton.hidden = !dom.mobileDebugFilter?.value;
   return text;
 }
 
 function clearLogs() {
   clearClientLog();
   refreshLogViewer();
+}
+
+function startLiveLogViewer() {
+  window.clearInterval(mobileDebugRefreshTimer);
+  mobileDebugRefreshTimer = window.setInterval(refreshLogViewer, 250);
+}
+
+function stopLiveLogViewer() {
+  window.clearInterval(mobileDebugRefreshTimer);
+  mobileDebugRefreshTimer = 0;
+}
+
+function setCopyFeedback(state) {
+  const button = dom.mobileDebugCopyButton;
+  if (!button) return;
+
+  window.clearTimeout(mobileDebugCopyFeedbackTimer);
+  button.dataset.copyState = state;
+  button.setAttribute(
+    "aria-label",
+    state === "success" ? "Copiado" : state === "error" ? "Error al copiar" : "Copiar",
+  );
+
+  if (state !== "idle") {
+    mobileDebugCopyFeedbackTimer = window.setTimeout(() => {
+      button.dataset.copyState = "idle";
+      button.setAttribute("aria-label", "Copiar");
+    }, 2200);
+  }
 }
 
 function restoreMobileDebugScroll() {
@@ -113,22 +146,39 @@ function closeMobileDebugDialog() {
   });
 }
 
+function copyTextFallback(text) {
+  const fallbackInput = document.createElement("textarea");
+  fallbackInput.value = text;
+  fallbackInput.setAttribute("readonly", "");
+  fallbackInput.style.position = "fixed";
+  fallbackInput.style.opacity = "0";
+  document.body.appendChild(fallbackInput);
+  fallbackInput.select();
+  let copied = false;
+  try {
+    copied = document.execCommand("copy");
+  } catch {
+    copied = false;
+  }
+  fallbackInput.remove();
+  return copied;
+}
+
 async function copyLogs() {
   const text = refreshLogViewer();
+  let copied = false;
   try {
-    await navigator.clipboard.writeText(text);
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+      copied = true;
+    } else {
+      copied = copyTextFallback(text);
+    }
   } catch {
-    const fallbackInput = document.createElement("textarea");
-    fallbackInput.value = text;
-    fallbackInput.setAttribute("readonly", "");
-    fallbackInput.style.position = "fixed";
-    fallbackInput.style.opacity = "0";
-    document.body.appendChild(fallbackInput);
-    fallbackInput.select();
-    document.execCommand("copy");
-    fallbackInput.remove();
+    copied = copyTextFallback(text);
   }
-  logEvent("mobile-keyboard-debug", "test-ui:log-copied");
+  setCopyFeedback(copied ? "success" : "error");
+  logEvent("mobile-keyboard-debug", copied ? "test-ui:log-copied" : "test-ui:log-copy-failed");
 }
 
 function downloadLogs(text) {
@@ -199,6 +249,7 @@ export function wireMobileDebugTools() {
     mobileDebugScrollPosition = { left: window.scrollX, top: window.scrollY };
     refreshLogViewer();
     dom.mobileDebugDialog.showModal();
+    startLiveLogViewer();
     dom.mobileDebugCloseButton?.focus({ preventScroll: true });
     restoreMobileDebugScroll();
     requestAnimationFrame(restoreMobileDebugScroll);
@@ -209,7 +260,14 @@ export function wireMobileDebugTools() {
   mobileDebugShareButton?.addEventListener("click", shareLogs);
   dom.mobileDebugClearButton?.addEventListener("click", clearLogs);
   dom.mobileDebugFilter?.addEventListener("input", refreshLogViewer);
+  document.querySelector("#mobileDebugFilterClearButton")?.addEventListener("click", () => {
+    if (!dom.mobileDebugFilter) return;
+    dom.mobileDebugFilter.value = "";
+    refreshLogViewer();
+    dom.mobileDebugFilter.focus();
+  });
   dom.mobileDebugDialog.addEventListener("close", () => {
+    stopLiveLogViewer();
     restoreMobileDebugScroll();
     requestAnimationFrame(() => {
       restoreMobileDebugScroll();

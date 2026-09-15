@@ -24,7 +24,7 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap"
     />
     <link rel="icon" href="./public/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="./public/styles.css?v=20260915-image-lightbox-01" />
+    <link rel="stylesheet" href="./public/styles.css?v=20260915-room-hover-fix-04" />
   </head>
   <body class="is-lobby">
     <div class="app-shell">
@@ -860,13 +860,39 @@
           <span data-lucide="x" aria-hidden="true"></span>
         </button>
         <h2 id="mobileDebugTitle">Registros de la página</h2>
-        <label class="mobile-debug-filter" for="mobileDebugFilter">
-          <span>Filtrar</span>
-          <input id="mobileDebugFilter" type="search" placeholder="Buscar..." autocomplete="off" />
-        </label>
+        <div class="mobile-debug-filter">
+          <label class="mobile-debug-filter-label" for="mobileDebugFilter">Filtrar</label>
+          <span class="mobile-debug-filter-control">
+            <input id="mobileDebugFilter" type="search" placeholder="Buscar..." autocomplete="off" />
+            <button
+              id="mobileDebugFilterClearButton"
+              type="button"
+              class="mobile-debug-filter-clear"
+              aria-label="Cancelar filtro"
+              title="Cancelar filtro"
+              hidden
+            >
+              <span data-lucide="x" aria-hidden="true"></span>
+            </button>
+          </span>
+        </div>
         <pre id="mobileDebugLog" class="mobile-debug-log" role="textbox" aria-readonly="true" tabindex="0" aria-label="Registros de la página"></pre>
         <div class="dialog-actions">
-          <button id="mobileDebugCopyButton" type="button" class="button primary">Copiar</button>
+          <button
+            id="mobileDebugCopyButton"
+            type="button"
+            class="button primary mobile-debug-copy-button"
+            data-copy-state="idle"
+            aria-label="Copiar"
+          >
+            <span class="mobile-debug-copy-label">Copiar</span>
+            <span class="mobile-debug-copy-status mobile-debug-copy-success" aria-hidden="true">
+              <span data-lucide="check"></span>
+            </span>
+            <span class="mobile-debug-copy-status mobile-debug-copy-error" aria-hidden="true">
+              <span data-lucide="x"></span>
+            </span>
+          </button>
           <button id="mobileDebugShareButton" type="button" class="button">Compartir</button>
           <button id="mobileDebugClearButton" type="button" class="button">Eliminar</button>
         </div>
@@ -991,7 +1017,7 @@
     <script src="./public/dev-runtime.js?v=20260715-02"></script>
     <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script src="./public/firebase-config.js"></script>
-     <script type="module" src="./src/features/chat/image-lightbox.js?v=20260915-image-lightbox-04"></script>
-     <script type="module" src="./src/main.js?v=20260915-copy-animation-debug-03"></script>
+     <script type="module" src="./src/features/chat/image-lightbox.js?v=20260915-image-lightbox-13"></script>
+     <script type="module" src="./src/main.js?v=20260915-log-dialog-ui-01"></script>
   </body>
 </html>

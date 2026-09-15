@@ -38,16 +38,16 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js?v=20260914-system-message-roll-transition-05";
+} from "./features/chat/index.js?v=20260915-desktop-emoji-focus-02";
 import {
   initializePlayer,
   wirePlayerEvents,
-} from "./features/player/index.js?v=20260914-system-message-roll-transition-05";
+} from "./features/player/index.js?v=20260915-desktop-emoji-focus-01";
 import { wireMobileFullscreenOrientation } from "./features/player/mobile-fullscreen-orientation.js";
 import { wireMobileChatKeyboardControls } from "./features/player/mobile-chat-keyboard-controls.js?v=20260914-keyboard-player-controls-01";
 import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20260913-name-editor-keyboard-header-02";
 import { wireMobileLandscapeVideoSnap } from "./features/mobile-landscape-video-snap.js?v=20260910-mobile-portrait-no-snap-01";
-import { joinRoom, wireCopyAnimationDiagnostics, wireRoomEvents } from "./features/room.js?v=20260915-copy-animation-logs-02";
+import { joinRoom, wireCopyAnimationDiagnostics, wireRoomEvents } from "./features/room.js?v=20260915-desktop-emoji-focus-01";
 import { wireTouchHover } from "./core/touch-interactions.js?v=20260829-touch-hold-fix-01";
 import { installConsoleLogCapture, wireMobileDebugTools } from "./features/mobile-debug.js?v=20260915-log-dialog-ui-01";
 import { wireMobileKeyboardDiagnostics } from "./features/mobile-keyboard-diagnostics.js?v=20260911-ios-landscape-keyboard-diagnostics-01";

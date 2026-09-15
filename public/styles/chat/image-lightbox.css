@@ -68,11 +68,11 @@
   overflow: hidden;
   overscroll-behavior: contain;
   color: #fff;
-  background: rgba(4, 7, 9, 0.32);
+  background: rgba(4, 7, 9, 0.38);
 }
 
 .image-lightbox::backdrop {
-  background: rgba(0, 0, 0, 0.22);
+  background: rgba(0, 0, 0, 0.26);
 }
 
 .image-lightbox-surface {

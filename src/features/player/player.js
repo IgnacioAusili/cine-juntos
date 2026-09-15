@@ -18,7 +18,7 @@ import {
   refreshTooltipForTarget,
   setControlIcon,
 } from "../icons-tooltips.js?v=20260914-tooltip-single-path-01";
-import { scrollToVideoPosition, sendVideoEventMessage, setInsideChatVisible } from "../chat/index.js?v=20260914-system-message-roll-transition-05";
+import { scrollToVideoPosition, sendVideoEventMessage, setInsideChatVisible } from "../chat/index.js?v=20260915-desktop-emoji-focus-02";
 // Import circular intencional y seguro: estas funciones se invocan en runtime,
 // no durante la carga del modulo, y player-sync-logic.js a su vez importa
 // setVideoSource y waitForVideoMetadata desde aqui.
@@ -28,7 +28,7 @@ import {
   clearPlaybackRecoveryTracking,
   pauseRoomForPlaybackIssue,
   publishState,
-} from "./player-sync-logic.js?v=20260914-system-message-roll-transition-05";
+} from "./player-sync-logic.js?v=20260915-desktop-emoji-focus-01";
 
 import {
   showErrorDialog,

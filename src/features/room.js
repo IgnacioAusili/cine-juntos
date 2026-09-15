@@ -31,7 +31,7 @@ import {
   showSession,
   watchRoomEntryVideoFocus,
 } from "./session-ui.js?v=20260911-orientation-scroll-anchor-01";
-import { handleRemoteState } from "./player/index.js?v=20260914-system-message-roll-transition-05";
+import { handleRemoteState } from "./player/index.js?v=20260915-desktop-emoji-focus-01";
 import {
   renderMessage,
   beginSystemMessageHydration,
@@ -40,7 +40,7 @@ import {
   resetInsideUnread,
   resetPageUnread,
   renderReplyPreview,
-} from "./chat/index.js?v=20260914-system-message-roll-transition-05";
+} from "./chat/index.js?v=20260915-desktop-emoji-focus-02";
 
 const ACTIVE_TAB_KEY = "cine-juntos-active-tab";
 const ACTIVE_TAB_TTL_MS = 30000;

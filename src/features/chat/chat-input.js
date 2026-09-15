@@ -338,7 +338,11 @@ export function repositionEmojiPicker() {
 
   const anchorRect = anchor.getBoundingClientRect();
   if (anchorRect.bottom < 0 || anchorRect.top > window.innerHeight) {
-    hideEmojiPicker();
+    // En escritorio el picker no debe depender del foco ni del estado
+    // transitorio del composer: perder el foco puede sacar el ancla del
+    // viewport mientras el layout se acomoda. En móvil conservamos el cierre
+    // actual para no alterar el flujo del teclado virtual.
+    if (isMobileLayout()) hideEmojiPicker();
     return;
   }
 

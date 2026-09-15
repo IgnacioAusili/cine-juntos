@@ -13,7 +13,7 @@ import {
   updateCharCounter,
   wireFloatingComposerLayout,
   wireComposerScrollbar,
-} from "./chat-input.js?v=20260914-system-message-roll-transition-05";
+} from "./chat-input.js?v=20260915-desktop-emoji-focus-01";
 import { setReplyTarget } from "./chat-reply.js?v=20260914-system-message-roll-transition-05";
 import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20260913-taskbar-badge-01";
 import {
@@ -230,7 +230,7 @@ export {
   buildEmojiPicker,
   updateCharCounter,
   sendMessage,
-} from "./chat-input.js?v=20260914-system-message-roll-transition-05";
+} from "./chat-input.js?v=20260915-desktop-emoji-focus-01";
 export {
   beginSystemMessageHydration,
   finishSystemMessageHydration,
@@ -353,10 +353,7 @@ export function wireChatEvents() {
     [dom.messageEmojiButton, dom.messageInput],
     [dom.overlayEmojiButton, dom.overlayMessageInput],
   ].forEach(([button, input]) => {
-    const preserveInputFocus = (event) => {
-      if (!isMobileChatLayout()) return;
-      event.preventDefault();
-    };
+    const preserveInputFocus = (event) => event.preventDefault();
     button?.addEventListener("pointerdown", preserveInputFocus);
     button?.addEventListener("mousedown", preserveInputFocus);
     button?.addEventListener("focus", () => {

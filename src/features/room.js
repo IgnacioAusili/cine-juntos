@@ -31,7 +31,7 @@ import {
   showSession,
   watchRoomEntryVideoFocus,
 } from "./session-ui.js?v=20260911-orientation-scroll-anchor-01";
-import { handleRemoteState } from "./player/index.js?v=20260915-desktop-emoji-focus-01";
+import { handleRemoteState } from "./player/index.js?v=20260916-player-controls-hover-volume-rounded-02";
 import {
   renderMessage,
   beginSystemMessageHydration,
@@ -40,7 +40,7 @@ import {
   resetInsideUnread,
   resetPageUnread,
   renderReplyPreview,
-} from "./chat/index.js?v=20260915-desktop-emoji-focus-02";
+} from "./chat/index.js?v=20260916-image-preview-01";
 
 const ACTIVE_TAB_KEY = "cine-juntos-active-tab";
 const ACTIVE_TAB_TTL_MS = 30000;
@@ -48,6 +48,16 @@ const MAX_OPEN_TABS = 1;
 const ROOM_CREATE_ATTEMPTS_KEY = "cine-juntos-room-create-attempts";
 let inviteCopyFeedbackTimer = 0;
 let inviteCopyAnimationTimer = 0;
+let inviteCopyAnimationEndTarget = null;
+let inviteCopyAnimationEndHandler = null;
+
+function clearInviteCopyAnimationEndListener() {
+  if (inviteCopyAnimationEndTarget && inviteCopyAnimationEndHandler) {
+    inviteCopyAnimationEndTarget.removeEventListener("animationend", inviteCopyAnimationEndHandler);
+  }
+  inviteCopyAnimationEndTarget = null;
+  inviteCopyAnimationEndHandler = null;
+}
 
 function getTabId() {
   const stored = sessionStorage.getItem("cine-juntos-tab-id");
@@ -737,6 +747,7 @@ function setInviteCopyFeedback(active) {
   if (!dom.copyInviteButton) return;
   window.clearTimeout(inviteCopyFeedbackTimer);
   window.clearTimeout(inviteCopyAnimationTimer);
+  clearInviteCopyAnimationEndListener();
   dom.copyInviteButton.dataset.copied = active ? "true" : "false";
   dom.copyInviteButton.classList.remove("is-copy-animating");
   if (!active) return;
@@ -745,9 +756,35 @@ function setInviteCopyFeedback(active) {
   // el feedback anterior.
   void dom.copyInviteButton.offsetWidth;
   dom.copyInviteButton.classList.add("is-copy-animating");
-  inviteCopyAnimationTimer = window.setTimeout(() => {
+
+  const animationTarget = dom.copyInviteButton.querySelector(".room-chip-copy-main");
+  const finishCopyAnimation = (event) => {
+    if (event.animationName !== "roomChipCopyLift") return;
+    clearInviteCopyAnimationEndListener();
+    window.clearTimeout(inviteCopyAnimationTimer);
+    inviteCopyAnimationTimer = 0;
     dom.copyInviteButton?.classList.remove("is-copy-animating");
-  }, 800);
+  };
+
+  if (animationTarget) {
+    inviteCopyAnimationEndTarget = animationTarget;
+    inviteCopyAnimationEndHandler = finishCopyAnimation;
+    animationTarget.addEventListener("animationend", finishCopyAnimation);
+  }
+
+  // Fallback para navegadores que no entreguen animationend. Queda después
+  // de la duración CSS para no quitar el fill antes de alcanzar el offset final.
+  const animationDurationMs = animationTarget
+    ? Number.parseFloat(getComputedStyle(animationTarget).animationDuration) * 1000
+    : 0;
+  const fallbackDelayMs = Number.isFinite(animationDurationMs) && animationDurationMs > 0
+    ? animationDurationMs + 120
+    : 1200;
+  inviteCopyAnimationTimer = window.setTimeout(() => {
+    clearInviteCopyAnimationEndListener();
+    dom.copyInviteButton?.classList.remove("is-copy-animating");
+    inviteCopyAnimationTimer = 0;
+  }, fallbackDelayMs);
   inviteCopyFeedbackTimer = window.setTimeout(() => {
     if (dom.copyInviteButton) {
       dom.copyInviteButton.dataset.copied = "false";

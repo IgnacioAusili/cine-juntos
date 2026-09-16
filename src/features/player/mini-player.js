@@ -5,7 +5,7 @@ import { setSyncStatus } from "../session-ui.js?v=20260911-orientation-scroll-an
 import {
   createMiniPlayerSurface,
   installMiniPlayerWindowStyles,
-} from "./mini-player-controls.js?v=20260914-system-message-roll-transition-05";
+} from "./mini-player-controls.js?v=20260916-image-preview-01";
 import {
   mirrorMiniPlayerChatState,
 } from "./mini-player-chat.js?v=20260914-system-message-roll-transition-05";

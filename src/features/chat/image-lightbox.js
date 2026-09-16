@@ -219,7 +219,8 @@ function handleKeydown(event) {
 }
 
 document.addEventListener("click", (event) => {
-  const image = event.target.closest(".message-media-link > .message-media");
+  const link = event.target.closest(".message-media-link");
+  const image = link?.querySelector(":scope > .message-media");
   if (!image) return;
   event.preventDefault();
   event.stopPropagation();

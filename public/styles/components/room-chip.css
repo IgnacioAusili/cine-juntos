@@ -238,20 +238,20 @@
 
 .room-chip-copy.is-copy-animating .room-chip-copy-main {
   animation: roomChipCopyLift 760ms cubic-bezier(0.4, 0, 0.2, 1) both;
-  will-change: top;
+  will-change: transform;
 }
 
 @keyframes roomChipCopyLift {
   0% {
-    top: var(--room-chip-copy-hover-offset);
+    transform: translateY(0);
   }
 
   34% {
-    top: calc(var(--room-chip-copy-hover-offset) - 4px);
+    transform: translateY(-4px);
   }
 
   100% {
-    top: var(--room-chip-copy-hover-offset);
+    transform: translateY(0);
   }
 }
 

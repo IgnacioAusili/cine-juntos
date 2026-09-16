@@ -20,7 +20,7 @@ import {
 import { refreshTooltipForTarget } from "../icons-tooltips.js?v=20260914-tooltip-single-path-01";
 import { markParticipantActive } from "../presence.js?v=20260912-name-session-01";
 import { clearReplyTarget } from "./chat-reply.js?v=20260914-system-message-roll-transition-05";
-import { renderMessage } from "./chat-render.js?v=20260914-system-message-roll-transition-05";
+import { renderMessage } from "./chat-render.js?v=20260915-message-time-spacing-01";
 import {
   completeAutoOpenedChatResponse,
 } from "./chat-layout.js?v=20260914-fullscreen-dock-animation-16";
@@ -690,6 +690,8 @@ export function handlePasteEvent(event, isOverlay) {
         compressImageBase64(rawBase64, 800, 800, 0.7, (compressedBase64) => {
           const nextImages = (isOverlay ? state.chat.pendingOverlayImage : state.chat.pendingImage).slice(0, 2);
           if (nextImages.length >= 2) return;
+          const fingerprint = hashImageFingerprint(compressedBase64);
+          if (fingerprint && nextImages.some((image) => hashImageFingerprint(image) === fingerprint)) return;
           nextImages.push(compressedBase64);
           if (isOverlay) {
             state.chat.pendingOverlayImage = nextImages;

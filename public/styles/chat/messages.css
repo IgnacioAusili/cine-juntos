@@ -309,8 +309,8 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  width: fit-content;
-  max-width: min(100%, 320px);
+  width: 100%;
+  max-width: 100%;
   align-items: flex-start;
   gap: 3px;
 }
@@ -322,7 +322,7 @@
 }
 
 .message.mine.message--media-only {
-  align-items: flex-start;
+  align-items: flex-end;
   margin-inline-start: auto;
 }
 
@@ -335,7 +335,7 @@
 }
 
 .message.mine.message--media-only .message-media-row {
-  align-self: flex-start;
+  align-self: flex-end;
 }
 
 .message--media-only .message-media-strip {

@@ -18,7 +18,7 @@ import {
   refreshTooltipForTarget,
   setControlIcon,
 } from "../icons-tooltips.js?v=20260914-tooltip-single-path-01";
-import { scrollToVideoPosition, sendVideoEventMessage, setInsideChatVisible } from "../chat/index.js?v=20260915-desktop-emoji-focus-02";
+import { scrollToVideoPosition, sendVideoEventMessage, setInsideChatVisible } from "../chat/index.js?v=20260916-image-preview-01";
 // Import circular intencional y seguro: estas funciones se invocan en runtime,
 // no durante la carga del modulo, y player-sync-logic.js a su vez importa
 // setVideoSource y waitForVideoMetadata desde aqui.
@@ -28,7 +28,7 @@ import {
   clearPlaybackRecoveryTracking,
   pauseRoomForPlaybackIssue,
   publishState,
-} from "./player-sync-logic.js?v=20260915-desktop-emoji-focus-01";
+} from "./player-sync-logic.js?v=20260916-player-controls-hover-volume-rounded-02";
 
 import {
   showErrorDialog,
@@ -37,7 +37,7 @@ import {
   showSlowLoadDialog,
 } from "../session-ui.js?v=20260911-orientation-scroll-anchor-01";
 import { togglePageFullscreen } from "./fullscreen.js?v=20260914-empty-player-controls-visible-01";
-import { syncMiniPlayerButton } from "./mini-player.js?v=20260914-system-message-roll-transition-05";
+import { syncMiniPlayerButton } from "./mini-player.js?v=20260916-image-preview-01";
 import { shouldToggleMuteFromVolumeButton } from "./player-volume-layout.js?v=20260902-player-volume-layout-18";
 
 const SKIP_LOAD_REPLACE_DIALOG_KEY = "cine-juntos-skip-load-replace-dialog";
@@ -197,9 +197,14 @@ export function wirePlayerCoreEvents() {
       if (vol > 0 && dom.videoPlayer.muted) {
         dom.videoPlayer.muted = false;
       }
-      dom.playerVolumeInput.style.setProperty("--volume-progress", `${vol * 100}%`);
-      syncPlayerControls();
+      const progress = `${vol * 100}%`;
+      dom.playerVolumeInput.style.setProperty("--volume-progress", progress);
+      dom.playerVolumeInput.closest(".player-volume-slider-wrap")?.style.setProperty("--volume-progress", progress);
     }
+  });
+
+  dom.playerVolumeInput?.addEventListener("change", () => {
+    syncPlayerControls();
   });
 
   dom.playerVolumeInput?.addEventListener("pointerup", () => {
@@ -207,6 +212,7 @@ export function wirePlayerCoreEvents() {
     dom.playerVolumeGroup?.classList.remove("is-dragging");
     dom.playerFrame?.classList.remove("player-volume-control-dragging");
     dom.playerVolumeInput.blur();
+    syncPlayerControls();
     window.dispatchEvent(new Event("player-volume-drag-end"));
   });
 
@@ -218,6 +224,7 @@ export function wirePlayerCoreEvents() {
   dom.playerVolumeInput?.addEventListener("pointercancel", () => {
     dom.playerVolumeGroup?.classList.remove("is-dragging");
     dom.playerFrame?.classList.remove("player-volume-control-dragging");
+    syncPlayerControls();
     window.dispatchEvent(new Event("player-volume-drag-end"));
   });
 
@@ -236,7 +243,9 @@ export function wirePlayerCoreEvents() {
   dom.videoPlayer.addEventListener("volumechange", () => {
     if (dom.videoPlayer.volume > 0) lastAudibleVolume = dom.videoPlayer.volume;
     persistVolume(dom.videoPlayer.volume);
-    syncPlayerControls();
+    const isVolumeInputActive = document.activeElement === dom.playerVolumeInput
+      || dom.playerVolumeGroup?.classList.contains("is-dragging");
+    if (!isVolumeInputActive) syncPlayerControls();
   });
 
   dom.videoPlayer.addEventListener("play", () => {
@@ -1050,7 +1059,9 @@ function syncPlayerControls(forceSliderSync = false) {
       dom.playerVolumeInput.value = String(dom.videoPlayer.muted ? 0 : dom.videoPlayer.volume);
     }
     const currentVol = dom.videoPlayer.muted ? 0 : dom.videoPlayer.volume;
-    dom.playerVolumeInput.style.setProperty("--volume-progress", `${currentVol * 100}%`);
+    const progress = `${currentVol * 100}%`;
+    dom.playerVolumeInput.style.setProperty("--volume-progress", progress);
+    dom.playerVolumeInput.closest(".player-volume-slider-wrap")?.style.setProperty("--volume-progress", progress);
   }
 
   syncMobileCenterButtonTooltips();

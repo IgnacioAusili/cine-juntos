@@ -137,7 +137,10 @@ export function createSwipeReply(
     blockClick = false;
     setTransitions("");
     setState("idle");
-    try { captureTarget.setPointerCapture(event.pointerId); } catch { /* invalida */ }
+  }
+  function capturePointer() {
+    if (pointerId == null) return;
+    try { captureTarget.setPointerCapture(pointerId); } catch { /* invalida */ }
   }
   function cancelSwipe(shouldAnimate) {
     if (shouldAnimate && offset > 0) {
@@ -162,6 +165,7 @@ export function createSwipeReply(
       directionLocked = true;
       blockClick = true;
       setState("dragging");
+      capturePointer();
     }
     setTransitions("");
     offset = Math.max(0, Math.min(currentDx * swipeDirection, MAX_DRAG));

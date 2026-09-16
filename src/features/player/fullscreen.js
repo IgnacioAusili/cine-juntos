@@ -15,7 +15,7 @@ import {
   logEvent,
   state,
 } from "../../core/state.js?v=20260914-console-log-controls-01";
-import { isMiniPlayerActive } from "./mini-player.js?v=20260914-system-message-roll-transition-05";
+import { isMiniPlayerActive } from "./mini-player.js?v=20260916-image-preview-01";
 import {
   syncExternalChatCollapseHandleOffset,
   syncInsideChatPanelOffset,

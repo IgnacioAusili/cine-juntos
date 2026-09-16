@@ -13,7 +13,7 @@ import {
   updateCharCounter,
   wireFloatingComposerLayout,
   wireComposerScrollbar,
-} from "./chat-input.js?v=20260915-desktop-emoji-focus-01";
+} from "./chat-input.js?v=20260916-image-preview-01";
 import { setReplyTarget } from "./chat-reply.js?v=20260914-system-message-roll-transition-05";
 import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20260913-taskbar-badge-01";
 import {
@@ -230,19 +230,19 @@ export {
   buildEmojiPicker,
   updateCharCounter,
   sendMessage,
-} from "./chat-input.js?v=20260915-desktop-emoji-focus-01";
+} from "./chat-input.js?v=20260916-image-preview-01";
 export {
   beginSystemMessageHydration,
   finishSystemMessageHydration,
   renderMessage,
-} from "./chat-render.js?v=20260914-system-message-roll-transition-05";
+} from "./chat-render.js?v=20260915-message-time-spacing-01";
 export {
   clearReplyTarget,
   renderReplyPreview,
   scrollToMessage,
   setReplyTarget,
 } from "./chat-reply.js?v=20260914-system-message-roll-transition-05";
-export { sendVideoEventMessage } from "./chat-system-messages.js?v=20260914-system-message-roll-transition-05";
+export { sendVideoEventMessage } from "./chat-system-messages.js?v=20260915-image-standalone-reply-02";
 export {
   checkScrollPosition,
   resetInsideUnread,

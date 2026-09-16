@@ -220,7 +220,7 @@ export function formatTime(value) {
   return date.toLocaleTimeString("es-AR", {
     hour: "2-digit",
     minute: "2-digit",
-  }).replace(/\s*a\.\s*m\.?$/i, "a.m.").replace(/\s*p\.\s*m\.?$/i, "p.m.");
+  }).replace(/\s*a\.\s*m\.?$/i, " a.m.").replace(/\s*p\.\s*m\.?$/i, " p.m.");
 }
 
 export function formatSeconds(value) {

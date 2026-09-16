@@ -638,28 +638,26 @@
   body:not(.is-lobby) .player-volume-input {
     width: 60px;
     height: 28px;
-    background-size: 100% 3px;
-    background-position: center;
-    background-repeat: no-repeat;
+    background: transparent;
   }
 
   body:not(.is-lobby) .player-volume-input::-webkit-slider-runnable-track {
-    height: 3px;
+    height: var(--volume-track-height);
   }
 
   body:not(.is-lobby) .player-volume-input::-moz-range-track {
-    height: 3px;
+    height: var(--volume-track-height);
   }
 
   body:not(.is-lobby) .player-volume-input::-webkit-slider-thumb {
-    width: 8px;
-    height: 8px;
-    margin-top: -2.5px;
+    width: var(--volume-thumb-size);
+    height: var(--volume-thumb-size);
+    margin-top: calc((var(--volume-track-height) - var(--volume-thumb-size)) / 2);
   }
 
   body:not(.is-lobby) .player-volume-input::-moz-range-thumb {
-    width: 8px;
-    height: 8px;
+    width: var(--volume-thumb-size);
+    height: var(--volume-thumb-size);
   }
 
   /* El chat expandido ocupa la superficie del video; la flecha mantiene la
@@ -702,6 +700,17 @@
   @media (orientation: portrait) {
     body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-tools {
       padding-left: 38px;
+    }
+
+    /* La zona reservada del header mide 38px y no debe compartir el ajuste
+       del flex con el resto de sus controles: el círculo se centra sobre su
+       propia zona táctil para que el gap del header no lo desplace. */
+    body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="right"]
+      #collapseChatButton .chat-collapse-icon-anchor {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
     }
   }
 

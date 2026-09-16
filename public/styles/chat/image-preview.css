@@ -1,14 +1,17 @@
 .image-preview-container {
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
-  gap: 6px;
-  width: 100%;
-  padding: 6px;
+  align-items: center;
+  gap: 4px;
+  width: fit-content;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 4px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px dashed rgba(255, 255, 255, 0.15);
   border-radius: 6px;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 
 .image-preview-container[hidden] {
@@ -18,11 +21,11 @@
 .preview-box {
   position: relative;
   display: inline-block;
-  flex: 0 0 48px;
-  width: 48px;
-  height: 48px;
-  min-height: 48px;
-  border-radius: 6px;
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  min-height: 42px;
+  border-radius: 5px;
   overflow: hidden;
   border: 1px solid var(--line);
 }
@@ -38,9 +41,9 @@
   position: absolute;
   top: 2px;
   right: 2px;
-  width: 16px;
-  height: 16px;
-  min-height: 16px;
+  width: 14px;
+  height: 14px;
+  min-height: 14px;
   border-radius: 999px;
   background: rgba(0, 0, 0, 0.72);
   color: #fff;
@@ -53,8 +56,8 @@
 }
 
 .preview-remove-btn svg {
-  width: 10px;
-  height: 10px;
+  width: 9px;
+  height: 9px;
   stroke-width: 3;
 }
 

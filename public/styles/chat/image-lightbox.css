@@ -53,6 +53,7 @@
 
 .message-media-link {
   cursor: zoom-in;
+  touch-action: pan-y;
 }
 
 /* El visor vive en la capa superior del navegador y no dentro del chat. */
@@ -221,7 +222,7 @@
   padding: 68px 24px 28px;
   overflow: auto;
   overscroll-behavior: contain;
-  cursor: zoom-out;
+  cursor: default;
 }
 
 html.image-lightbox-open,

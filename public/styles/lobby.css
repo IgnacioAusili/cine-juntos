@@ -25,7 +25,7 @@
   border-block: 1px solid var(--glass-border);
   mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
-  transform: translateY(-20px);
+  transform: translateY(-26px);
 }
 
 .lobby-marquee-track {
@@ -107,7 +107,7 @@
 .lobby-hero {
   justify-self: center;
   align-self: center;
-  transform: translateY(-12px);
+  transform: translateY(-20px);
   display: grid;
   justify-items: start;
   grid-template-columns: auto minmax(0, 1fr);
@@ -695,7 +695,7 @@ body:not(.is-lobby) .live-badge {
   }
 
   .lobby-hero {
-    transform: translate(28px, -12px);
+    transform: translate(28px, -20px);
   }
 
   .lobby-title {

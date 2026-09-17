@@ -1,8 +1,8 @@
 @import url("./styles/tokens.css?v=20260913-noto-emoji-fullscreen-01");
 @import url("./styles/base.css?v=20260916-mobile-background-root-03");
 @import url("./styles/layout.css?v=20260914-room-cursor-fix-01");
-@import url("./styles/components.css?v=20260917-visual-scrollbar-06");
-@import url("./styles/lobby.css?v=20260917-lobby-hero-position-02");
+@import url("./styles/components.css?v=20260917-about-close-position-01");
+@import url("./styles/lobby.css?v=20260917-lobby-hero-position-04");
 @import url("./styles/player.css?v=20260916-player-controls-hover-volume-rounded-02");
 @import url("./styles/chat.css?v=20260916-image-preview-01");
 @import url("./styles/chat-overlay.css?v=20260914-overlay-composer-scrollbar-07");

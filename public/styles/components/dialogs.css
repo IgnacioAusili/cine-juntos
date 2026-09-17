@@ -44,7 +44,7 @@
 
 .about-dialog .dialog-close {
   right: 16px;
-  transform: translateX(8px);
+  transform: none;
 }
 
 .about-dialog-header {
@@ -340,7 +340,7 @@
 @media (min-width: 681px) {
   .about-dialog .dialog-close:hover,
   .about-dialog .dialog-close:focus-visible {
-    transform: translateX(8px);
+    transform: none;
   }
 }
 

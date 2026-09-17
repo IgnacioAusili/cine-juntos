@@ -1,0 +1,59 @@
+import {
+  dom,
+} from "../core/dom.js";
+import {
+  showErrorDialog,
+  showLoadReplaceDialog,
+  showResumeVideoDialog,
+  showSlowLoadDialog,
+} from "./session-ui.js?v=20260911-orientation-scroll-anchor-01";
+import { openLightboxForTest } from "./chat/image-lightbox.js?v=20260917-dialog-test-routes-01";
+
+export const DIALOG_TEST_ROUTES = Object.freeze({
+  about: "Sobre este proyecto",
+  error: "No se pudo cargar el video",
+  "slow-load": "La carga del video está tardando",
+  "confirm-load": "Cargar otro video",
+  resume: "Retomar reproducción",
+  "mobile-debug": "Registros de la página",
+  "image-lightbox": "Visor de imagen",
+});
+
+function getDialogTestName() {
+  const match = window.location.pathname.match(/^\/test\/dialog\/([^/]+)\/?$/);
+  return match ? decodeURIComponent(match[1]).toLowerCase() : "";
+}
+
+export function openDialogTestRoute() {
+  const name = getDialogTestName();
+  if (!name || !Object.hasOwn(DIALOG_TEST_ROUTES, name)) return;
+
+  switch (name) {
+    case "about":
+      dom.aboutButton?.click();
+      break;
+    case "error":
+      showErrorDialog("Este es un error de reproducción de prueba.");
+      break;
+    case "slow-load":
+      void showSlowLoadDialog("Este diálogo simula una carga de video lenta.");
+      break;
+    case "confirm-load":
+      void showLoadReplaceDialog("Este diálogo simula la carga de otro video.");
+      break;
+    case "resume":
+      void showResumeVideoDialog(
+        "Este video ya lo has reproducido antes en <span class=\"resume-time-tag\">1:23</span> ¿Quieres retomar desde ahí?",
+      );
+      break;
+    case "mobile-debug":
+      dom.mobileDebugDialog?.showModal();
+      dom.mobileDebugCloseButton?.focus();
+      break;
+    case "image-lightbox":
+      openLightboxForTest();
+      break;
+    default:
+      break;
+  }
+}

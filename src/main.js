@@ -19,6 +19,8 @@ import {
 import {
   wireLayoutMetrics,
 } from "./features/layout-metrics.js?v=20260913-bottom-chat-keyboard-arrow-fixed-04";
+import { wireLobbyKeyboardRestore } from "./features/lobby-keyboard.js?v=20260917-native-keyboard-flow-01";
+import { wireAboutDialogScrollbar } from "./features/about-dialog-scrollbar.js?v=20260917-visual-scrollbar-05";
 import {
   renderPresence,
   wireIdentityEvents,
@@ -49,8 +51,9 @@ import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.j
 import { wireMobileLandscapeVideoSnap } from "./features/mobile-landscape-video-snap.js?v=20260910-mobile-portrait-no-snap-01";
 import { joinRoom, wireCopyAnimationDiagnostics, wireRoomEvents } from "./features/room.js?v=20260916-copy-animation-end-fix-02";
 import { wireTouchHover } from "./core/touch-interactions.js?v=20260829-touch-hold-fix-01";
-import { installConsoleLogCapture, wireMobileDebugTools } from "./features/mobile-debug.js?v=20260915-log-dialog-ui-01";
+import { installConsoleLogCapture, wireMobileDebugTools } from "./features/mobile-debug.js?v=20260917-dialog-test-routes-01";
 import { wireMobileKeyboardDiagnostics } from "./features/mobile-keyboard-diagnostics.js?v=20260911-ios-landscape-keyboard-diagnostics-01";
+import { openDialogTestRoute } from "./features/dialog-test-routes.js?v=20260917-dialog-test-routes-01";
 
 const requestedRoom = normalizeRoomCode(new URLSearchParams(window.location.search).get("room") || "");
 
@@ -59,8 +62,10 @@ installConsoleLogCapture();
 document.body.classList.remove("app-ready");
 applyInitialDefaults();
 wireLayoutMetrics();
+wireLobbyKeyboardRestore();
 initializeUi();
 initializeAboutDialog();
+wireAboutDialogScrollbar();
 renderPresence();
 wireRoomEvents();
 wireCopyAnimationDiagnostics();
@@ -106,6 +111,7 @@ updateCollapseButton();
 updateCharCounter(dom.messageInput, false);
 updateCharCounter(dom.overlayMessageInput, true);
 window.addEventListener("load", hydrateIcons);
+window.addEventListener("load", openDialogTestRoute, { once: true });
 window.addEventListener("load", () => {
   document.body.classList.add("app-ready");
 });

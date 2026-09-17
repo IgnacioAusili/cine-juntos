@@ -31,7 +31,15 @@
   overflow-y: auto;
   overscroll-behavior: contain;
   padding: 28px 30px 26px;
-  scrollbar-gutter: stable;
+  scrollbar-gutter: auto;
+  scrollbar-width: none;
+  scrollbar-color: transparent transparent;
+}
+
+.about-dialog-card::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 .about-dialog .dialog-close {
@@ -140,22 +148,52 @@
 
 @media (max-width: 680px) {
   .about-dialog {
+    position: relative;
     width: calc(100% - 24px);
     max-height: calc(100dvh - 16px);
   }
 
   .about-dialog-card {
     max-height: calc(100dvh - 16px);
-    margin-right: -2px;
-    padding: 24px 20px 22px;
-    padding-right: 26px;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.34) transparent;
+    margin-right: 0;
+    padding: 26px 20px 24px;
+    padding-right: 28px;
+    touch-action: pan-y;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-gutter: auto;
+    scrollbar-width: none;
+    scrollbar-color: transparent transparent;
   }
 
   .about-dialog .dialog-close {
     right: 16px;
+    width: 24px;
+    height: 24px;
     transform: none;
+  }
+
+  .about-dialog .dialog-close svg {
+    width: 24px;
+    height: 24px;
+    stroke-width: 2;
+  }
+
+  .about-dialog-eyebrow {
+    font-size: 0.74rem;
+  }
+
+  .about-dialog h2 {
+    font-size: 1.42rem;
+  }
+
+  .about-dialog-intro {
+    margin-block: 22px 20px;
+    font-size: 0.98rem;
+    line-height: 1.6;
+  }
+
+  .about-dialog-details {
+    gap: 15px;
   }
 
   .about-dialog-details > div {
@@ -165,7 +203,8 @@
 
   .about-dialog-details dt {
     align-self: start;
-    font-size: 0.68rem;
+    transform: translateY(-3px);
+    font-size: 0.74rem;
     letter-spacing: 0.04em;
     line-height: 1.2;
     white-space: normal;
@@ -175,21 +214,59 @@
     width: 60px;
   }
 
-  .about-dialog-card::-webkit-scrollbar {
-    width: 8px;
+  .about-dialog-details dd {
+    font-size: 0.88rem;
+    line-height: 1.5;
   }
 
-  .about-dialog-card::-webkit-scrollbar-track {
-    margin-block: 8px;
+  .about-dialog-disclaimer {
+    margin-top: 20px;
+    font-size: 0.82rem;
+    line-height: 1.55;
+  }
+
+  .about-dialog-card::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+
+  .about-dialog-scrollbar {
+    position: absolute;
+    top: 40px;
+    right: 0;
+    bottom: 40px;
+    display: block;
+    width: 3px;
     border-radius: 999px;
     background: transparent;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 3;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 120ms ease, visibility 0s linear 120ms;
   }
 
-  .about-dialog-card::-webkit-scrollbar-thumb {
-    border: 2px solid transparent;
+  .about-dialog-scrollbar.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transition-delay: 0s;
+  }
+
+  .about-dialog-scrollbar[hidden] {
+    display: none;
+  }
+
+  .about-dialog-scrollbar-thumb {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 128px;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.22);
-    background-clip: padding-box;
+    background: rgba(82, 89, 96, 0.96);
+    will-change: transform;
   }
 }
 

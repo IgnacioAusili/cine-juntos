@@ -11,7 +11,8 @@ let mobileDebugCopyFeedbackTimer = 0;
 
 function isTestRoute() {
   return window.location.pathname === "/console"
-    || new URLSearchParams(window.location.search).has("console");
+    || new URLSearchParams(window.location.search).has("console")
+    || window.location.pathname.startsWith("/test/dialog/");
 }
 
 function formatConsoleArgument(value) {

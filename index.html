@@ -2,6 +2,7 @@
 <html lang="es">
   <head>
     <meta charset="utf-8" />
+    <base href="/" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, interactive-widget=resizes-content"
@@ -24,7 +25,7 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap"
     />
     <link rel="icon" href="./public/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="./public/styles.css?v=20260916-mobile-copy-animation-fix-02" />
+    <link rel="stylesheet" href="./public/styles.css?v=20260917-visual-scrollbar-06" />
   </head>
   <body class="is-lobby">
     <div class="app-shell">
@@ -105,10 +106,10 @@
             </h1>
             <p class="lobby-description">
               <span class="lobby-description-full">
-                Armá una sala, invitá a quien quieras y disfruten un video juntos mientras hablan por el chat
+                Una plataforma que ofrece salas compartidas para <span class="lobby-description-highlight">ver videos en tiempo real</span> y conversar,  creando un espacio cómodo y sencillo para disfrutar del contenido <span class="lobby-description-highlight">en compañía</span>
               </span>
               <span class="lobby-description-mobile">
-                Armá una sala, invitá a quien quieras y disfruten un video juntos mientras hablan por el chat
+                Una plataforma que ofrece salas compartidas para <span class="lobby-description-highlight">ver videos en tiempo real</span> y conversar,  creando un espacio cómodo y sencillo para disfrutar del contenido <span class="lobby-description-highlight">en compañía</span>
               </span>
             </p>
             <ul class="lobby-features">
@@ -960,7 +961,10 @@
             <dd>Frontend estático en HTML, CSS y JavaScript vanilla. Usa HTML5 Video, sincronización en tiempo real con <a href="https://firebase.google.com/docs/database/web/start?hl=es-419" target="_blank" rel="noopener noreferrer">Firebase Realtime</a> cuando está disponible y un transporte local como fallback.</dd>
           </div>
         </dl>
-        <p class="about-dialog-disclaimer"><strong>Disclaimer:</strong> El contenido y los enlaces utilizados pertenecen a quienes los aportan. Cada usuario debe contar con los derechos necesarios y es responsable de su uso del servicio y de sus mensajes. Este proyecto comunitario se ofrece bajo GPLv3, sin garantía de disponibilidad o funcionamiento ininterrumpido.</p>
+        <p class="about-dialog-disclaimer"><strong>Disclaimer:</strong> El contenido y los enlaces utilizados pertenecen a quienes los aportan. Cada usuario debe contar con los derechos necesarios y es responsable del uso que le da al servicio y de sus mensajes. Este proyecto comunitario se ofrece bajo GPLv3, sin garantía de disponibilidad o funcionamiento ininterrumpido.</p>
+      </div>
+      <div class="about-dialog-scrollbar" aria-hidden="true">
+        <span class="about-dialog-scrollbar-thumb"></span>
       </div>
     </dialog>
 
@@ -1017,7 +1021,7 @@
     <script src="./public/dev-runtime.js?v=20260715-02"></script>
     <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script src="./public/firebase-config.js"></script>
-     <script type="module" src="./src/features/chat/image-lightbox.js?v=20260915-image-lightbox-15"></script>
-     <script type="module" src="./src/main.js?v=20260916-copy-animation-end-fix-02"></script>
+     <script type="module" src="./src/features/chat/image-lightbox.js?v=20260917-dialog-test-routes-01"></script>
+     <script type="module" src="./src/main.js?v=20260917-visual-scrollbar-05"></script>
   </body>
 </html>

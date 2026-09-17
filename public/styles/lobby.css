@@ -107,6 +107,7 @@
 .lobby-hero {
   justify-self: center;
   align-self: center;
+  transform: translateY(-12px);
   display: grid;
   justify-items: start;
   grid-template-columns: auto minmax(0, 1fr);
@@ -178,6 +179,45 @@
   color: var(--text-soft);
   font-size: clamp(0.9rem, 1.2vw, 1rem);
   line-height: 1.5;
+  animation: lobby-description-enter 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.lobby-description-highlight {
+  color: var(--accent);
+  font-weight: 700;
+  background: linear-gradient(110deg, var(--accent) 0%, #fff 45%, var(--accent) 70%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: lobby-description-highlight 1100ms ease-out 450ms both;
+}
+
+@keyframes lobby-description-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes lobby-description-highlight {
+  from {
+    background-position: 100% center;
+  }
+  to {
+    background-position: 0% center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lobby-description,
+  .lobby-description-highlight {
+    animation: none;
+  }
 }
 
 /* Feature pills */
@@ -655,7 +695,7 @@ body:not(.is-lobby) .live-badge {
   }
 
   .lobby-hero {
-    transform: translateX(28px);
+    transform: translate(28px, -12px);
   }
 
   .lobby-title {

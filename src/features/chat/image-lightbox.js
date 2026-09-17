@@ -193,6 +193,20 @@ function openLightbox(image) {
   modal.querySelector("[data-lightbox-action='close']")?.focus();
 }
 
+export function openLightboxForTest({ src, alt = "Imagen ampliada de prueba" } = {}) {
+  const modal = ensureLightbox();
+  lastTrigger = null;
+  resetScale();
+  lightboxImage.src = src || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='960' height='540' viewBox='0 0 960 540'%3E%3Crect width='960' height='540' fill='%23252b31'/%3E%3Ctext x='480' y='285' fill='white' font-size='42' text-anchor='middle' font-family='sans-serif'%3EImagen de prueba%3C/text%3E%3C/svg%3E";
+  lightboxImage.alt = alt;
+  lightboxImage.addEventListener("load", () => applyInitialScale(modal), { once: true });
+  if (!modal.open) modal.showModal();
+  document.documentElement.classList.add("image-lightbox-open");
+  document.body.classList.add("image-lightbox-open");
+  if (lightboxImage.complete) applyInitialScale(modal);
+  modal.querySelector("[data-lightbox-action='close']")?.focus();
+}
+
 function closeLightbox() {
   if (!lightbox?.open) return;
   lightbox.close();

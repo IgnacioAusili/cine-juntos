@@ -293,18 +293,19 @@
   /* En pantallas chicas la entrada usa una sola columna real: el contenido
      no hereda el padding lateral del grid de escritorio ni el desplazamiento
      decorativo del boleto. */
-  /* El lobby no es una pantalla fija: en teléfonos bajos su contenido debe
-     ampliar el documento para que se pueda recorrer entero. Mantenerlo en
-     el alto del viewport dejaba partes del boleto fuera del scroll. */
+  /* En reposo el contenido entra completo; con el teclado el documento puede
+     crecer de forma natural para que Chrome desplace solo lo imprescindible. */
   body.is-lobby {
     height: auto;
-    min-height: 100%;
+    min-height: 100dvh;
     overflow-x: hidden;
     overflow-y: auto;
   }
 
   body.is-lobby .app-shell {
-    min-height: 100%;
+    height: auto;
+    min-height: 100dvh;
+    padding-bottom: 0;
     grid-template-rows: auto auto;
     align-content: start;
   }
@@ -318,10 +319,12 @@
   }
 
   .lobby-screen {
-    min-height: 0;
+    height: auto;
+    min-height: max(0px, calc(100dvh - var(--app-shell-gutter)));
     gap: 0;
-    grid-template-rows: auto auto auto;
-    align-content: start;
+    grid-template-rows: auto auto;
+    align-content: space-between;
+    padding-bottom: 8px;
   }
 
   .lobby-marquee {
@@ -330,12 +333,16 @@
 
   .lobby-grid {
     width: 100%;
-    gap: clamp(28px, 5vh, 38px);
+    min-height: 0;
+    gap: clamp(10px, 1.8vh, 16px);
+    align-content: start;
     padding-inline: 0;
+    transform: translateY(-8px);
   }
 
   .lobby-hero {
     width: min(360px, calc(100% - 32px));
+    position: relative;
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
     grid-template-areas:
@@ -345,14 +352,50 @@
     align-items: center;
     justify-items: start;
     column-gap: 14px;
-    row-gap: clamp(16px, 3vh, 22px);
+    row-gap: clamp(12px, 2vh, 16px);
     text-align: left;
     transform: translateY(-4px);
   }
 
+  /* Una guarda editorial completa el vacío entre la descripción y el boleto.
+     Es absoluta para no aumentar la altura del lobby ni crear scroll. */
+  .lobby-hero::before,
+  .lobby-hero::after {
+    position: absolute;
+    top: calc(100% - 8px);
+    left: 50%;
+    content: "";
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .lobby-hero::before {
+    width: clamp(190px, 58vw, 242px);
+    height: 16px;
+    transform: translateX(-50%);
+    background:
+      linear-gradient(90deg, transparent, rgba(240, 140, 58, 0.54) 19%, rgba(240, 140, 58, 0.54) 43%, transparent 49%) center / 100% 1px no-repeat,
+      linear-gradient(90deg, transparent 51%, rgba(47, 184, 164, 0.58) 57%, rgba(47, 184, 164, 0.58) 81%, transparent) center / 100% 1px no-repeat,
+      linear-gradient(90deg, transparent 27%, rgba(240, 140, 58, 0.28) 27.5%, transparent 28.5%, transparent 71.5%, rgba(47, 184, 164, 0.3) 72.5%, transparent 73%) center / 100% 9px no-repeat;
+  }
+
+  .lobby-hero::after {
+    width: 9px;
+    height: 9px;
+    border: 1px solid rgba(240, 140, 58, 0.78);
+    background: rgba(17, 22, 25, 0.94);
+    box-shadow: 0 0 0 3px rgba(17, 22, 25, 0.88), 0 0 12px rgba(240, 140, 58, 0.2);
+    transform: translate(-50%, 3px) rotate(45deg);
+  }
+
+  .lobby-hero > * {
+    position: relative;
+    z-index: 1;
+  }
+
   .lobby-title {
     grid-area: title;
-    font-size: clamp(4.3rem, 17vw, 5.5rem);
+    font-size: clamp(4.65rem, 18vw, 5.8rem);
     text-align: left;
     line-height: 0.92;
     margin-bottom: 0;
@@ -375,12 +418,19 @@
   .lobby-description {
     grid-area: description;
     justify-self: center;
-    width: min(42ch, calc(100% + 8px));
+    width: min(48ch, calc(100% + 32px));
     max-width: none;
-    font-size: 0.95rem;
-    line-height: 1.55;
+    font-size: 1.08rem;
+    line-height: 1.48;
     text-align: center;
     text-wrap: balance;
+    transform: translateY(-2px);
+  }
+
+  /* En móvil el hero no muestra la lista de prestaciones: el boleto de
+     entrada queda como la siguiente pieza visual, sin esa franja intermedia. */
+  .lobby-features {
+    display: none;
   }
 
   .lobby-description-full {
@@ -410,6 +460,8 @@
     text-overflow: clip;
     white-space: normal;
     transform: translateX(8px);
+    font-size: 0.56rem;
+    line-height: 1.35;
   }
 
   .lobby-features {
@@ -479,6 +531,37 @@
     transform: none;
   }
 
+  .lobby-ticket-body {
+    gap: 16px;
+    padding: 14px 14px 10px;
+  }
+
+  .lobby-ticket-label {
+    font-size: 1.02rem;
+  }
+
+  .lobby-ticket-hint {
+    font-size: 0.76rem;
+  }
+
+  .lobby-fields {
+    gap: 10px;
+  }
+
+  .lobby-fields input[type="text"] {
+    height: 42px;
+    min-height: 42px;
+    line-height: 42px;
+  }
+
+  .lobby-actions {
+    gap: 8px;
+  }
+
+  .lobby-actions > .button {
+    min-height: 42px;
+  }
+
   .lobby-fields input[type="text"] {
     --lobby-input-offset: 3px;
     width: calc(100% - var(--lobby-input-offset));
@@ -486,30 +569,50 @@
   }
 
   .lobby-footer {
-    display: flex;
+    display: grid;
     align-items: center;
-    justify-content: center;
-    gap: 16px;
-    width: min(380px, calc(100% - 28px));
-    align-self: start;
-    margin-top: 28px;
+    grid-template-columns: minmax(0, 1fr) 56px;
+    gap: 12px;
+    width: min(380px, 100%);
+    align-self: end;
+    margin-top: 0;
+    padding: 10px 0;
+    border: 0;
+    border-radius: 16px;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+
+  .lobby-footer .lobby-disclaimer {
+    width: auto;
+    transform: translateY(5px);
+    text-align: center;
   }
 
   .lobby-about-button {
     position: static;
-    flex: 0 0 36px;
+    justify-self: center;
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
     margin: 0;
-    transform: translateX(14px);
+    transform: translateY(5px);
+  }
+
+  .lobby-about-button svg {
+    width: 20px;
+    height: 20px;
   }
 
   .lobby-about-button:hover,
   .lobby-about-button:focus-visible {
-    transform: translate(14px, -2px);
+    transform: translateY(3px);
   }
 
   .lobby-about-button.is-touch-hover,
   .lobby-about-button.is-touch-hover:hover {
-    transform: translate(14px, -2px);
+    transform: translateY(3px);
   }
 
   /* Cargar usa el estado nativo de presión: evita que JS y :hover compitan
@@ -1029,18 +1132,20 @@
 }
 
 @media (max-width: 680px) and (max-height: 760px) {
+  /* En áreas visibles muy bajas el contenido sigue fluyendo, pero se reduce
+     el espacio estructural para que el lobby no necesite scroll en reposo. */
   .lobby-screen {
-    padding-bottom: clamp(6px, 1vh, 12px);
-    grid-template-rows: auto auto auto;
+    padding-bottom: 0;
+    grid-template-rows: auto auto;
   }
 
   .lobby-grid {
-    gap: clamp(20px, 3.2vh, 28px);
+    gap: clamp(10px, 1.8vh, 15px);
   }
 
   .lobby-hero {
     column-gap: 12px;
-    row-gap: clamp(14px, 2.3vh, 20px);
+    row-gap: clamp(10px, 1.8vh, 15px);
     transform: translateY(-8px);
   }
 
@@ -1050,13 +1155,14 @@
   }
 
   .lobby-title {
-    font-size: clamp(3.9rem, 15vw, 5.1rem);
+    font-size: clamp(3.9rem, 16vw, 5.2rem);
     line-height: 0.92;
   }
 
   .lobby-description {
-    font-size: 0.88rem;
+    font-size: 0.96rem;
     line-height: 1.45;
+    transform: translateY(-4px);
   }
 
   .lobby-features {
@@ -1089,11 +1195,11 @@
 
   .lobby-ticket-body {
     gap: 10px;
-    padding: 14px 14px 12px;
+    padding: 10px 12px 8px;
   }
 
   .lobby-ticket-head {
-    padding-bottom: 10px;
+    padding-bottom: 6px;
   }
 
   .lobby-ticket-label {
@@ -1116,6 +1222,16 @@
 
   .lobby-actions {
     gap: 6px;
+  }
+
+  .lobby-footer {
+    gap: 8px;
+    padding: 0;
+    transform: translateY(-16px);
+  }
+
+  .lobby-footer .lobby-disclaimer {
+    transform: none;
   }
 
   /* Los dos composers móviles comparten una única altura compacta. El

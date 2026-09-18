@@ -20,7 +20,9 @@ body.is-lobby .lobby-footer {
 }
 
 body.is-lobby .lobby-footer .lobby-disclaimer {
-  grid-column: 1;
+  /* El botón está fuera del flujo por ser fixed; el texto debe ocupar
+     toda la superficie del footer y no una primera columna ficticia. */
+  grid-column: 1 / -1;
   grid-row: 1;
   display: flex;
   align-items: center;

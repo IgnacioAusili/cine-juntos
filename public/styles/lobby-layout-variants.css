@@ -511,7 +511,7 @@
    título y las prestaciones, con el mismo espacio arriba y abajo. */
 @media (min-width: 861px) {
   body.is-lobby[data-lobby-layout="columns"] .lobby-hero {
-    --lobby-section-gap: 10px;
+    --lobby-section-gap: clamp(32px, 4.5vh, 48px);
     row-gap: var(--lobby-section-gap);
   }
 
@@ -566,12 +566,12 @@ body.is-lobby .lobby-screen {
   }
 
   body.is-lobby[data-lobby-layout="columns"] .lobby-hero {
-    transform: none;
+    transform: translateY(calc(-1 * clamp(30px, 5vh, 44px)));
   }
 }
 
 @media (min-width: 981px) {
   body.is-lobby[data-lobby-layout="columns"] .lobby-hero {
-    transform: translateX(28px);
+    transform: translate(28px, calc(-1 * clamp(30px, 5vh, 44px)));
   }
 }

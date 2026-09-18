@@ -48,6 +48,39 @@ video::-webkit-media-controls-fullscreen-button {
   display: none;
 }
 
+.player-loading-overlay {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(5, 6, 7, 0.18);
+  pointer-events: none;
+}
+
+.player-loading-spinner {
+  width: clamp(38px, 6vw, 66px);
+  height: clamp(38px, 6vw, 66px);
+  border: clamp(3px, 0.45vw, 5px) solid rgba(255, 255, 255, 0.2);
+  border-top-color: var(--accent);
+  border-right-color: rgba(240, 140, 58, 0.88);
+  border-radius: 50%;
+  box-shadow: 0 0 24px rgba(240, 140, 58, 0.24);
+  animation: playerLoadingSpin 850ms linear infinite;
+}
+
+@keyframes playerLoadingSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .player-loading-spinner {
+    animation-duration: 1800ms;
+  }
+}
+
 .empty-player {
   position: absolute;
   inset: 0;
@@ -149,7 +182,6 @@ video::-webkit-media-controls-fullscreen-button {
 .player-status-badge.video-status.loading .video-status-dot {
   --status-glow: rgba(245, 197, 24, 0.42);
   background: #f5c518;
-  animation: statusPulse 1.4s ease-in-out infinite;
 }
 
 .player-status-badge.video-status.loaded {
@@ -159,6 +191,24 @@ video::-webkit-media-controls-fullscreen-button {
 .player-status-badge.video-status.loaded .video-status-dot {
   --status-glow: rgba(56, 216, 121, 0.42);
   background: #38d879;
+}
+
+.player-status-badge.video-status.loading .video-status-dot,
+.player-status-badge.video-status.player-status-live .video-status-dot {
+  animation: playerLiveStatusPulse 1.25s ease-in-out infinite;
+}
+
+@keyframes playerLiveStatusPulse {
+  0%,
+  100% {
+    opacity: 0.42;
+    transform: scale(0.88);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
 }
 
 .player-status-badge.video-status.error {

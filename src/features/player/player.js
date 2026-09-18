@@ -28,7 +28,7 @@ import {
   clearPlaybackRecoveryTracking,
   pauseRoomForPlaybackIssue,
   publishState,
-} from "./player-sync-logic.js?v=20260916-player-controls-hover-volume-rounded-02";
+} from "./player-sync-logic.js?v=20260918-player-live-status-pulse-01";
 
 import {
   showErrorDialog,
@@ -305,7 +305,7 @@ export function wirePlayerCoreEvents() {
     state.player.hasPlayableVideo = true;
     isDurationShowingRemaining = false;
     dom.emptyPlayer.classList.add("hidden");
-    setVideoStatus("loaded", "Listo");
+    setVideoStatus("loading", "Cargando video");
     clearPlaybackErrorTracking();
     clearSlowLoadPromptTracking();
     announceVideoActivity();
@@ -317,6 +317,7 @@ export function wirePlayerCoreEvents() {
   dom.videoPlayer.addEventListener("loadeddata", () => {
     cancelPendingPlaybackIssueDetection();
     clearPlaybackErrorTracking();
+    setVideoStatus("loaded", dom.videoPlayer.paused ? "Listo" : "En vivo");
     attemptPlaybackRecovery("loadeddata");
     void prepareVideoFingerprintAndPrompt();
   });
@@ -324,12 +325,14 @@ export function wirePlayerCoreEvents() {
   dom.videoPlayer.addEventListener("canplay", () => {
     cancelPendingPlaybackIssueDetection();
     clearPlaybackErrorTracking();
+    setVideoStatus("loaded", dom.videoPlayer.paused ? "Listo" : "En vivo");
     attemptPlaybackRecovery("canplay");
   });
 
   dom.videoPlayer.addEventListener("playing", () => {
     cancelPendingPlaybackIssueDetection();
     clearPlaybackErrorTracking();
+    setVideoStatus("loaded", "En vivo");
     attemptPlaybackRecovery("playing");
   });
 
@@ -345,12 +348,19 @@ export function wirePlayerCoreEvents() {
 
   dom.videoPlayer.addEventListener("waiting", () => {
     logEvent("video", `Buffering local en ${formatSeconds(dom.videoPlayer.currentTime)}.`);
+    setVideoStatus("loading", "Cargando video");
     pauseRoomForPlaybackIssue("waiting");
   });
 
   dom.videoPlayer.addEventListener("stalled", () => {
     logEvent("video", `Video trabado localmente en ${formatSeconds(dom.videoPlayer.currentTime)}.`);
+    setVideoStatus("loading", "Cargando video");
     pauseRoomForPlaybackIssue("stalled");
+  });
+
+  dom.videoPlayer.addEventListener("loadstart", () => {
+    if (!dom.videoPlayer.currentSrc && !dom.videoPlayer.src) return;
+    setVideoStatus("loading", "Cargando video");
   });
 
   dom.videoPlayer.addEventListener("error", () => {
@@ -606,7 +616,18 @@ function announceVideoActivity() {
 
 export function setVideoStatus(videoState, text) {
   dom.syncStatus.className = `sync-status video-status player-status-badge ${videoState}`;
+  dom.syncStatus.classList.toggle(
+    "player-status-live",
+    videoState === "loaded" && text === "En vivo",
+  );
   dom.playerFrame?.classList.toggle("player-no-content", videoState === "empty");
+  if (dom.playerLoadingOverlay) {
+    dom.playerLoadingOverlay.hidden = videoState !== "loading";
+    dom.playerLoadingOverlay.setAttribute(
+      "aria-label",
+      videoState === "loading" ? (text || "Cargando video") : "",
+    );
+  }
   if (videoState === "empty") {
     dom.playerFrame?.classList.remove("player-overlay-suppressed", "player-cursor-hidden");
     dom.playerFrame?.classList.add("player-overlay-visible");

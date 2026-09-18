@@ -25,7 +25,7 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap"
     />
     <link rel="icon" href="./public/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="./public/styles.css?v=20260917-room-copy-feedback-fix-04" />
+    <link rel="stylesheet" href="./public/styles.css?v=20260918-player-live-loading-pulse-01" />
   </head>
   <body class="is-lobby">
     <div class="app-shell">
@@ -318,6 +318,16 @@
                 playsinline
                 preload="metadata"
               ></video>
+              <div
+                class="player-loading-overlay"
+                id="playerLoadingOverlay"
+                role="status"
+                aria-live="polite"
+                aria-label="Cargando video"
+                hidden
+              >
+                <span class="player-loading-spinner" aria-hidden="true"></span>
+              </div>
               <div
                 class="playback-gesture-indicator"
                 id="playbackGestureIndicator"
@@ -1027,6 +1037,6 @@
     <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script src="./public/firebase-config.js"></script>
      <script type="module" src="./src/features/chat/image-lightbox.js?v=20260917-dialog-test-routes-01"></script>
-     <script type="module" src="./src/main.js?v=20260917-room-copy-loading-copy-fix-02"></script>
+     <script type="module" src="./src/main.js?v=20260918-player-live-status-pulse-01"></script>
   </body>
 </html>

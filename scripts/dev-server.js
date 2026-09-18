@@ -107,8 +107,8 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // Las rutas de testeo de diálogos son rutas virtuales de la SPA.
-  if (url.pathname.startsWith("/test/dialog/")) {
+  // Las rutas de testeo son rutas virtuales de la SPA.
+  if (url.pathname.startsWith("/test/dialog/") || url.pathname.startsWith("/test/player/")) {
     url.pathname = "/index.html";
   }
 

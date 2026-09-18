@@ -31,7 +31,7 @@ import {
   showSession,
   watchRoomEntryVideoFocus,
 } from "./session-ui.js?v=20260911-orientation-scroll-anchor-01";
-import { handleRemoteState } from "./player/index.js?v=20260916-player-controls-hover-volume-rounded-02";
+import { handleRemoteState } from "./player/index.js?v=20260918-player-live-status-pulse-01";
 import {
   renderMessage,
   beginSystemMessageHydration,

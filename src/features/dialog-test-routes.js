@@ -6,7 +6,9 @@ import {
   showLoadReplaceDialog,
   showResumeVideoDialog,
   showSlowLoadDialog,
+  showSession,
 } from "./session-ui.js?v=20260911-orientation-scroll-anchor-01";
+import { setVideoStatus } from "./player/player.js?v=20260918-player-live-status-pulse-01";
 import { openLightboxForTest } from "./chat/image-lightbox.js?v=20260917-dialog-test-routes-01";
 
 export const DIALOG_TEST_ROUTES = Object.freeze({
@@ -19,12 +21,31 @@ export const DIALOG_TEST_ROUTES = Object.freeze({
   "image-lightbox": "Visor de imagen",
 });
 
+export const PLAYER_TEST_ROUTES = Object.freeze({
+  loading: "Reproductor en estado de carga",
+});
+
 function getDialogTestName() {
   const match = window.location.pathname.match(/^\/test\/dialog\/([^/]+)\/?$/);
   return match ? decodeURIComponent(match[1]).toLowerCase() : "";
 }
 
+function getPlayerTestName() {
+  const match = window.location.pathname.match(/^\/test\/player\/([^/]+)\/?$/);
+  return match ? decodeURIComponent(match[1]).toLowerCase() : "";
+}
+
 export function openDialogTestRoute() {
+  const playerTestName = getPlayerTestName();
+  if (playerTestName === "loading") {
+    showSession();
+    dom.emptyPlayer?.classList.add("hidden");
+    dom.videoPlayer?.removeAttribute("src");
+    setVideoStatus("loading", "Cargando video");
+    dom.playerFrame?.classList.add("player-overlay-visible");
+    return;
+  }
+
   const name = getDialogTestName();
   if (!name || !Object.hasOwn(DIALOG_TEST_ROUTES, name)) return;
 
@@ -42,6 +63,7 @@ export function openDialogTestRoute() {
       void showLoadReplaceDialog("Este diálogo simula la carga de otro video.");
       break;
     case "resume":
+      showSession();
       void showResumeVideoDialog(
         "Este video ya lo has reproducido antes en <span class=\"resume-time-tag\">1:23</span> ¿Quieres retomar desde ahí?",
       );

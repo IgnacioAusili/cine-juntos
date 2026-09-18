@@ -512,12 +512,11 @@
 @media (min-width: 861px) {
   body.is-lobby[data-lobby-layout="columns"] .lobby-hero {
     --lobby-section-gap: 10px;
-    --lobby-visible-gap-trim: clamp(4px, 0.8cqw, 6px);
     row-gap: var(--lobby-section-gap);
   }
 
   body.is-lobby[data-lobby-layout="columns"] .lobby-title {
-    margin-bottom: calc(-1 * var(--lobby-visible-gap-trim));
+    margin-bottom: 0;
     padding-bottom: 0;
   }
 
@@ -541,7 +540,7 @@
     font-size: var(--lobby-title-size);
     --lobby-title-lift: calc(var(--lobby-title-size) * 0.175);
     transform: translateY(calc(-1 * var(--lobby-title-lift)));
-    margin-bottom: calc(-1 * (var(--lobby-title-lift) + var(--lobby-visible-gap-trim)));
+    margin-bottom: calc(-1 * var(--lobby-title-lift));
   }
 }
 

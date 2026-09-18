@@ -4,7 +4,8 @@
 body.is-lobby .lobby-footer {
   --lobby-about-panel-size: 36px;
   position: fixed;
-  left: 50%;
+  left: 0;
+  right: 0;
   bottom: 8px;
   z-index: 7;
   display: grid;
@@ -13,9 +14,9 @@ body.is-lobby .lobby-footer {
   gap: 12px;
   width: min(980px, calc(100% - 40px));
   height: var(--lobby-about-panel-size);
-  margin: 0;
+  margin: 0 auto;
   padding-block: 0;
-  transform: translateX(-50%);
+  transform: none;
 }
 
 body.is-lobby .lobby-footer .lobby-disclaimer {
@@ -30,15 +31,18 @@ body.is-lobby .lobby-footer .lobby-disclaimer {
   margin: 0;
   overflow: hidden;
   line-height: 1.15;
-  transform: none;
+  /* La caja ya queda centrada por flex; este pequeño ajuste compensa el
+     centro óptico de la línea monoespaciada, que visualmente cae un poco alto. */
+  transform: translateY(clamp(1px, 0.12em, 2px));
 }
 
 body.is-lobby .lobby-about-button {
-  position: static;
+  position: fixed;
+  right: 8px;
+  bottom: 8px;
+  z-index: 8;
   grid-column: 2;
   grid-row: 1;
-  justify-self: center;
-  align-self: center;
   width: var(--lobby-about-panel-size);
   height: var(--lobby-about-panel-size);
   min-height: var(--lobby-about-panel-size);

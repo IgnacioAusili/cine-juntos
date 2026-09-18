@@ -669,7 +669,7 @@ body:not(.is-lobby) .live-badge {
   /* En escritorio priorizamos la lectura del hero y dejamos el boleto un
      poco más compacto para equilibrar ambas columnas. */
   .lobby-title {
-    font-size: clamp(3.9rem, 7.5vw, 6.8rem);
+    font-size: clamp(4.5rem, 8.6vw, 6.8rem);
   }
 
   .lobby-description {

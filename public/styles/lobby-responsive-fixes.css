@@ -127,22 +127,17 @@
   }
 
   body.is-lobby .lobby-grid {
-    align-self: center;
+    align-self: start;
     gap: 12px;
     margin-top: 0;
-  }
-
-  /* En alturas cortas las prestaciones son secundarias: ocultarlas deja
-     sitio real para el boleto y la información legal sin superponer capas. */
-  body.is-lobby .lobby-features {
-    display: none;
   }
 
   body.is-lobby .lobby-hero {
     grid-template-areas:
       "icon title"
-      "description description";
-    row-gap: 10px;
+      "description description"
+      "features features";
+    row-gap: clamp(6px, 1.6vh, 10px);
   }
 
   body.is-lobby .lobby-ticket-body {

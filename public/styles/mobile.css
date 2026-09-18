@@ -587,7 +587,7 @@
 
   .lobby-footer .lobby-disclaimer {
     width: auto;
-    transform: translateY(5px);
+    transform: translateY(10px);
     text-align: center;
   }
 
@@ -1235,7 +1235,7 @@
   }
 
   .lobby-footer .lobby-disclaimer {
-    transform: none;
+    transform: translateY(10px);
   }
 
   /* Los dos composers móviles comparten una única altura compacta. El

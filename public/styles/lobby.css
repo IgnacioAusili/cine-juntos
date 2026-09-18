@@ -255,6 +255,7 @@
   flex-direction: row;
   align-items: center;
   gap: 12px;
+  container-type: inline-size;
 }
 
 .lobby-feature-icon {
@@ -284,12 +285,34 @@
   gap: 2px;
   align-items: flex-start;
   text-align: left;
+  min-width: 0;
 }
 
 .lobby-feature-text strong {
   color: var(--text);
   font-size: 0.88rem;
   font-weight: 700;
+}
+
+.lobby-feature-title {
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.lobby-feature-title-short {
+  display: none;
+}
+
+@container (max-width: 159px) {
+  .lobby-feature-title-full {
+    display: none;
+  }
+
+  .lobby-feature-title-short {
+    display: inline;
+  }
 }
 
 .lobby-feature-text small {

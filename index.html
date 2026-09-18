@@ -25,7 +25,7 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap"
     />
     <link rel="icon" href="./public/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="./public/styles.css?v=20260917-about-close-position-01" />
+    <link rel="stylesheet" href="./public/styles.css?v=20260917-room-copy-feedback-fix-04" />
   </head>
   <body class="is-lobby">
     <div class="app-shell">
@@ -61,9 +61,11 @@
                     data-tooltip="Click para copiar código/invitación"
                   >
                     <span class="room-chip-copy-main">
-                      <span class="room-chip-code-text" id="roomBadge">Sin sala</span>
-                      <span class="room-chip-copy-confirm" aria-hidden="true">
-                        <span data-lucide="check"></span>
+                      <span class="room-chip-copy-motion">
+                        <span class="room-chip-code-text" id="roomBadge">Sin sala</span>
+                        <span class="room-chip-copy-confirm" aria-hidden="true">
+                          <span data-lucide="check"></span>
+                        </span>
                       </span>
                     </span>
                   </button>
@@ -126,7 +128,10 @@
               <li class="lobby-feature">
                 <span class="lobby-feature-icon" data-lucide="users"></span>
                 <span class="lobby-feature-text">
-                  <strong>Video comp.</strong>
+                  <strong class="lobby-feature-title">
+                    <span class="lobby-feature-title-full">Video compartido</span>
+                    <span class="lobby-feature-title-short" aria-hidden="true">Video comp.</span>
+                  </strong>
                   <small>
                     <span class="lobby-feature-description-full">Play, pausa, velocidad y seek sincronizados</span>
                     <span class="lobby-feature-description-mobile">Play, pausa y velocidad sincronizados</span>
@@ -1022,6 +1027,6 @@
     <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script src="./public/firebase-config.js"></script>
      <script type="module" src="./src/features/chat/image-lightbox.js?v=20260917-dialog-test-routes-01"></script>
-     <script type="module" src="./src/main.js?v=20260917-visual-scrollbar-05"></script>
+     <script type="module" src="./src/main.js?v=20260917-room-copy-loading-copy-fix-02"></script>
   </body>
 </html>

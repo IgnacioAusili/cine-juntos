@@ -261,242 +261,6 @@ export function wireRoomEvents() {
   });
 }
 
-const COPY_ANIMATION_DEBUG_TAG = "[cine-copy-animation-debug]";
-const COPY_CURSOR_DEBUG_TAG = "[cine-cursor-debug]";
-
-function isConsoleDiagnosticsRoute() {
-  return window.location.pathname === "/console"
-    || new URLSearchParams(window.location.search).has("console");
-}
-
-export function wireCopyAnimationDiagnostics() {
-  const button = dom.copyInviteButton;
-  if (!button || !isConsoleDiagnosticsRoute() || button.__copyAnimationDiagnosticsWired) return;
-  button.__copyAnimationDiagnosticsWired = true;
-
-  const main = button.querySelector(".room-chip-copy-main");
-  const confirmation = button.querySelector(".room-chip-copy-confirm");
-  const titleActions = button.closest(".room-chip-title-actions");
-  const title = button.closest(".room-chip-title");
-  const roomChip = button.closest(".room-chip");
-  const startedAt = performance.now();
-  let baseline = null;
-  let sampling = false;
-  let animationFrame = 0;
-  let lastSampleAt = -Infinity;
-  let samplingStartedAt = 0;
-
-  const round = (value) => Math.round(Number(value || 0) * 100) / 100;
-
-  const describeRect = (element) => {
-    if (!element) return null;
-    const rect = element.getBoundingClientRect();
-    return {
-      left: round(rect.left),
-      right: round(rect.right),
-      top: round(rect.top),
-      bottom: round(rect.bottom),
-      width: round(rect.width),
-      height: round(rect.height),
-    };
-  };
-
-  const describeStyle = (element) => {
-    if (!element) return null;
-    const style = getComputedStyle(element);
-    return {
-      transform: style.transform,
-      animationName: style.animationName,
-      animationDuration: style.animationDuration,
-      animationPlayState: style.animationPlayState,
-      transitionProperty: style.transitionProperty,
-      transitionDuration: style.transitionDuration,
-      transitionTimingFunction: style.transitionTimingFunction,
-      width: style.width,
-      display: style.display,
-    };
-  };
-
-  const getGeometry = () => ({
-    button: describeRect(button),
-    main: describeRect(main),
-    confirmation: describeRect(confirmation),
-    titleActions: describeRect(titleActions),
-    title: describeRect(title),
-    roomChip: describeRect(roomChip),
-  });
-
-  const getDeltas = (geometry) => {
-    if (!baseline || !geometry) return null;
-    return Object.fromEntries(
-      Object.entries(geometry).map(([name, rect]) => [
-        name,
-        rect && baseline[name]
-          ? {
-              left: round(rect.left - baseline[name].left),
-              right: round(rect.right - baseline[name].right),
-              width: round(rect.width - baseline[name].width),
-            }
-          : null,
-      ]),
-    );
-  };
-
-  const getAnimations = () => button.getAnimations({ subtree: true }).map((animation) => ({
-    target: animation.effect?.target?.className || animation.effect?.target?.id || null,
-    animationName: animation.animationName || null,
-    currentTime: animation.currentTime == null ? null : round(animation.currentTime),
-    playState: animation.playState,
-  }));
-
-  const snapshot = (eventName, extra = {}) => {
-    const geometry = getGeometry();
-    return {
-      tag: COPY_ANIMATION_DEBUG_TAG,
-      elapsedMs: Math.round(performance.now() - startedAt),
-      event: eventName,
-      dataCopied: button.dataset.copied || null,
-      className: button.className,
-      geometry,
-      deltasFromClick: getDeltas(geometry),
-      styles: {
-        button: describeStyle(button),
-        main: describeStyle(main),
-        confirmation: describeStyle(confirmation),
-      },
-      animations: getAnimations(),
-      ...extra,
-    };
-  };
-
-  const emit = (eventName, extra = {}) => {
-    const payload = snapshot(eventName, extra);
-    logEvent("copy-animation-debug", JSON.stringify(payload));
-  };
-
-  const getPointerTarget = (event) => {
-    const target = event?.target instanceof Element ? event.target : null;
-    const pointTarget = Number.isFinite(event?.clientX) && Number.isFinite(event?.clientY)
-      ? document.elementFromPoint(event.clientX, event.clientY)
-      : null;
-    const describeTarget = (element) => element
-      ? {
-          tag: element.tagName,
-          id: element.id || null,
-          className: typeof element.className === "string" ? element.className : null,
-          cursor: getComputedStyle(element).cursor,
-        }
-      : null;
-    return {
-      pointerType: event?.pointerType || null,
-      clientX: round(event?.clientX),
-      clientY: round(event?.clientY),
-      target: describeTarget(target),
-      relatedTarget: describeTarget(event?.relatedTarget instanceof Element ? event.relatedTarget : null),
-      elementFromPoint: describeTarget(pointTarget),
-      buttonHovered: button.matches(":hover"),
-      mainHovered: Boolean(main?.matches(":hover")),
-      buttonCursor: getComputedStyle(button).cursor,
-      mainCursor: main ? getComputedStyle(main).cursor : null,
-    };
-  };
-
-  const emitCursor = (eventName, event) => {
-    const payload = snapshot(eventName, {
-      cursor: getPointerTarget(event),
-    });
-    logEvent("cursor-debug", JSON.stringify({ ...payload, tag: COPY_CURSOR_DEBUG_TAG }));
-  };
-
-  const sample = (timestamp) => {
-    const elapsed = timestamp - samplingStartedAt;
-    if (timestamp - lastSampleAt >= 50 || elapsed >= 1400) {
-      lastSampleAt = timestamp;
-      emit("sample");
-    }
-    if (sampling && elapsed < 1450) {
-      animationFrame = window.requestAnimationFrame(sample);
-    } else {
-      sampling = false;
-      animationFrame = 0;
-      emit("sample-end");
-    }
-  };
-
-  const startSampling = () => {
-    if (sampling) return;
-    sampling = true;
-    samplingStartedAt = performance.now();
-    lastSampleAt = -Infinity;
-    animationFrame = window.requestAnimationFrame(sample);
-  };
-
-  button.addEventListener("click", () => {
-    baseline = getGeometry();
-    emit("click-baseline");
-  });
-
-  button.addEventListener("pointerover", (event) => emitCursor("pointerover", event));
-  button.addEventListener("pointerout", (event) => emitCursor("pointerout", event));
-  button.addEventListener("pointerenter", (event) => emitCursor("pointerenter", event));
-  button.addEventListener("pointerleave", (event) => emitCursor("pointerleave", event));
-
-  let lastPointerMoveAt = -Infinity;
-  window.addEventListener("pointermove", (event) => {
-    const rect = button.getBoundingClientRect();
-    const margin = 8;
-    const isNearButton = event.clientX >= rect.left - margin
-      && event.clientX <= rect.right + margin
-      && event.clientY >= rect.top - margin
-      && event.clientY <= rect.bottom + margin;
-    if (!isNearButton || event.timeStamp - lastPointerMoveAt < 40) return;
-    lastPointerMoveAt = event.timeStamp;
-    emitCursor("pointermove", event);
-  }, true);
-
-  button.addEventListener("animationstart", (event) => {
-    emit("animationstart", { animationName: event.animationName });
-    startSampling();
-  });
-  button.addEventListener("animationend", (event) => {
-    emit("animationend", { animationName: event.animationName });
-  });
-  main?.addEventListener("animationstart", (event) => {
-    emit("main-animationstart", { animationName: event.animationName });
-    startSampling();
-  });
-  main?.addEventListener("animationend", (event) => {
-    emit("main-animationend", { animationName: event.animationName });
-  });
-  confirmation?.addEventListener("transitionrun", (event) => {
-    emit("confirmation-transitionrun", { propertyName: event.propertyName });
-    startSampling();
-  });
-  confirmation?.addEventListener("transitionstart", (event) => {
-    emit("confirmation-transitionstart", { propertyName: event.propertyName });
-  });
-  confirmation?.addEventListener("transitionend", (event) => {
-    emit("confirmation-transitionend", { propertyName: event.propertyName });
-  });
-
-  const observer = new MutationObserver((records) => {
-    const changes = records.map((record) => ({
-      attributeName: record.attributeName,
-      value: record.target.getAttribute(record.attributeName),
-    }));
-    emit("mutation", { changes });
-    if (button.classList.contains("is-copy-animating") || button.dataset.copied === "true") {
-      startSampling();
-    }
-  });
-  observer.observe(button, {
-    attributes: true,
-    attributeFilter: ["class", "data-copied"],
-  });
-
-  emit("enabled");
-}
-
 export async function joinRoom(rawRoomCode, sourceButton = "join") {
   const roomCode = sanitizeRoomInput(rawRoomCode);
   if (!roomCode) {
@@ -645,12 +409,14 @@ export async function joinRoom(rawRoomCode, sourceButton = "join") {
 }
 
 export async function copyInvite() {
-  if (!state.session.activeRoom) {
+  const roomFromUrl = sanitizeRoomInput(new URL(window.location.href).searchParams.get("room"));
+  const roomCode = state.session.activeRoom || roomFromUrl;
+  if (!roomCode || dom.sessionView?.hidden) {
     setSyncStatus("Primero entra a una sala.");
     return;
   }
   const invite = new URL(window.location.href);
-  invite.searchParams.set("room", state.session.activeRoom);
+  invite.searchParams.set("room", roomCode);
   if (!await copyTextToClipboard(invite.toString())) {
     return;
   }
@@ -757,7 +523,9 @@ function setInviteCopyFeedback(active) {
   void dom.copyInviteButton.offsetWidth;
   dom.copyInviteButton.classList.add("is-copy-animating");
 
-  const animationTarget = dom.copyInviteButton.querySelector(".room-chip-copy-main");
+  const animationTarget = dom.copyInviteButton.querySelector(
+    ".room-chip-copy-motion, .room-chip-copy-main",
+  );
   const finishCopyAnimation = (event) => {
     if (event.animationName !== "roomChipCopyLift") return;
     clearInviteCopyAnimationEndListener();
@@ -789,7 +557,7 @@ function setInviteCopyFeedback(active) {
     if (dom.copyInviteButton) {
       dom.copyInviteButton.dataset.copied = "false";
     }
-  }, 950);
+  }, 1500);
 }
 
 function updateUrlRoom(roomCode) {

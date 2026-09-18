@@ -228,30 +228,37 @@
   top: var(--room-chip-copy-hover-offset);
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding-right: 24px;
   pointer-events: none;
   white-space: nowrap;
   transform: none;
   transition: top 160ms ease;
 }
 
-.room-chip-copy.is-copy-animating .room-chip-copy-main {
-  animation: roomChipCopyLift 760ms cubic-bezier(0.4, 0, 0.2, 1) both;
-  will-change: transform;
+.room-chip-copy-motion {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding-right: 24px;
+  white-space: nowrap;
+}
+
+.room-chip-copy.is-copy-animating .room-chip-copy-motion {
+  animation: roomChipCopyLift 520ms cubic-bezier(0.4, 0, 0.2, 1) both;
+  will-change: top;
 }
 
 @keyframes roomChipCopyLift {
   0% {
-    transform: translateY(0);
+    top: 0;
   }
 
-  34% {
-    transform: translateY(-4px);
+  50% {
+    top: -4px;
   }
 
   100% {
-    transform: translateY(0);
+    top: 0;
   }
 }
 
@@ -269,29 +276,33 @@
   align-items: center;
   justify-content: center;
   opacity: 0;
-  width: 18px;
-  height: 18px;
+  width: 22px;
+  height: 22px;
   overflow: hidden;
   transition:
-    opacity 260ms ease,
-    transform 260ms ease;
-  transform: translateY(-50%) scale(0.85);
+    opacity 420ms ease,
+    transform 420ms ease;
+  transform: translate(-6px, -50%);
   visibility: hidden;
 }
 
 .room-chip-copy[data-copied="true"] .room-chip-copy-confirm {
   opacity: 1;
-  transform: translateY(-50%) scale(1);
+  transform: translate(0, -50%);
   visibility: visible;
 }
 
 .room-chip-copy[data-copied="false"] .room-chip-copy-confirm {
-  transition-delay: 0ms, 0ms;
+  transition:
+    opacity 420ms ease,
+    transform 0ms linear 420ms;
+  transform: translate(-6px, -50%);
 }
 
 .room-chip-copy-confirm svg {
-  width: 14px;
-  height: 14px;
+  width: 18px;
+  height: 18px;
+  stroke-width: 3;
   color: #7ef0ab;
 }
 

@@ -1,0 +1,64 @@
+/* El pie legal y el botón de información comparten siempre una única
+   superficie. El texto se centra dentro de la altura real del botón. */
+
+body.is-lobby .lobby-footer {
+  --lobby-about-panel-size: 36px;
+  position: fixed;
+  left: 50%;
+  bottom: 8px;
+  z-index: 7;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--lobby-about-panel-size);
+  align-items: center;
+  gap: 12px;
+  width: min(980px, calc(100% - 40px));
+  height: var(--lobby-about-panel-size);
+  margin: 0;
+  padding-block: 0;
+  transform: translateX(-50%);
+}
+
+body.is-lobby .lobby-footer .lobby-disclaimer {
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  line-height: 1.15;
+  transform: none;
+}
+
+body.is-lobby .lobby-about-button {
+  position: static;
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: center;
+  align-self: center;
+  width: var(--lobby-about-panel-size);
+  height: var(--lobby-about-panel-size);
+  min-height: var(--lobby-about-panel-size);
+  margin: 0;
+  transform: none;
+}
+
+body.is-lobby .lobby-about-button:hover,
+body.is-lobby .lobby-about-button:focus-visible,
+body.is-lobby .lobby-about-button.is-touch-hover,
+body.is-lobby .lobby-about-button.is-touch-hover:hover {
+  transform: translateY(-2px);
+}
+
+@media (max-width: 680px) {
+  body.is-lobby .lobby-footer {
+    --lobby-about-panel-size: 42px;
+    grid-template-columns: minmax(0, 1fr) var(--lobby-about-panel-size);
+    width: min(420px, calc(100% - 32px));
+    bottom: 10px;
+    padding: 0;
+  }
+}

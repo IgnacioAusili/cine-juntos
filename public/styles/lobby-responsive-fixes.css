@@ -1,0 +1,200 @@
+/* Correcciones de composición del lobby para viewports intermedios y bajos.
+   Se carga al final para neutralizar desplazamientos decorativos que afectan
+   la posición real del contenido y el pie legal. */
+@media (min-width: 681px) and (max-width: 980px) {
+  body.is-lobby .lobby-screen {
+    grid-template-rows: auto auto auto;
+    align-content: start;
+  }
+  body.is-lobby .lobby-grid {
+    gap: clamp(14px, 2.5vh, 24px);
+  }
+  body.is-lobby .lobby-hero {
+    transform: none;
+  }
+
+  body.is-lobby .lobby-title {
+    font-size: clamp(4rem, 8vw, 6.8rem);
+  }
+
+  body.is-lobby .lobby-ticket {
+    justify-self: center;
+    transform: none;
+  }
+
+  body.is-lobby .lobby-footer,
+  body.is-lobby .lobby-footer .lobby-disclaimer {
+    transform: none;
+  }
+
+  body.is-lobby .lobby-disclaimer {
+    white-space: normal;
+  }
+}
+
+@media (max-width: 680px) {
+  body.is-lobby .lobby-screen {
+    grid-template-rows: auto auto auto;
+    align-content: start;
+    min-height: 100dvh;
+    padding-block: 0 10px;
+  }
+
+  body.is-lobby .lobby-grid {
+    gap: clamp(12px, 2vh, 16px);
+    transform: none;
+  }
+
+  body.is-lobby .lobby-hero {
+    width: min(580px, calc(100% - 32px));
+    column-gap: clamp(12px, 3vw, 20px);
+    transform: none;
+  }
+
+  body.is-lobby .lobby-title-icon {
+    width: clamp(72px, 16vw, 96px);
+    height: clamp(72px, 16vw, 96px);
+  }
+
+  body.is-lobby .lobby-title {
+    font-size: clamp(4rem, 15vw, 5.4rem);
+  }
+
+  body.is-lobby .lobby-description {
+    width: 100%;
+    transform: none;
+  }
+
+  body.is-lobby .lobby-ticket {
+    margin-top: 0;
+  }
+
+  body.is-lobby .lobby-ticket-body {
+    gap: 8px;
+    padding: 10px 12px 8px;
+  }
+
+  body.is-lobby .lobby-fields input[type="text"] {
+    height: 38px;
+    min-height: 38px;
+    line-height: 38px;
+  }
+
+  body.is-lobby .lobby-actions > .button {
+    min-height: 38px;
+  }
+
+  body.is-lobby .lobby-footer {
+    width: min(420px, calc(100% - 32px));
+    margin-top: 4px;
+    padding: 0;
+    transform: none;
+    grid-template-columns: minmax(0, 1fr) 44px;
+  }
+
+  body.is-lobby .lobby-footer .lobby-disclaimer {
+    transform: none;
+  }
+
+  body.is-lobby .lobby-about-button {
+    width: 38px;
+    height: 38px;
+    transform: translateY(6px);
+  }
+
+  body.is-lobby .lobby-about-button:hover,
+  body.is-lobby .lobby-about-button:focus-visible,
+  body.is-lobby .lobby-about-button.is-touch-hover,
+  body.is-lobby .lobby-about-button.is-touch-hover:hover {
+    transform: translateY(4px);
+  }
+}
+
+@media (min-width: 681px) and (max-width: 980px) and (max-height: 700px) {
+  body.is-lobby .lobby-screen {
+    position: relative;
+    grid-template-rows: minmax(0, 1fr) auto;
+    align-content: stretch;
+    gap: 0;
+    padding-block: 4px 10px;
+  }
+
+  body.is-lobby .lobby-marquee {
+    position: absolute;
+    inset-inline: 0;
+    top: 4px;
+    z-index: 0;
+  }
+
+  body.is-lobby .lobby-grid {
+    align-self: center;
+    gap: 12px;
+    margin-top: 0;
+  }
+
+  /* En alturas cortas las prestaciones son secundarias: ocultarlas deja
+     sitio real para el boleto y la información legal sin superponer capas. */
+  body.is-lobby .lobby-features {
+    display: none;
+  }
+
+  body.is-lobby .lobby-hero {
+    grid-template-areas:
+      "icon title"
+      "description description";
+    row-gap: 10px;
+  }
+
+  body.is-lobby .lobby-ticket-body {
+    gap: 6px;
+    padding: 12px 16px 10px;
+  }
+
+  body.is-lobby .lobby-fields {
+    gap: 6px;
+  }
+
+  body.is-lobby .lobby-fields input[type="text"] {
+    height: 34px;
+    min-height: 34px;
+    line-height: 34px;
+  }
+
+  body.is-lobby .lobby-actions > .button {
+    min-height: 36px;
+  }
+
+  body.is-lobby .lobby-footer {
+    align-self: end;
+    margin-top: 8px;
+    padding-inline: 12px;
+  }
+}
+
+@media (max-width: 680px) and (max-height: 760px) {
+  body.is-lobby .lobby-disclaimer-full {
+    display: none;
+  }
+
+  body.is-lobby .lobby-disclaimer-mobile {
+    display: inline;
+  }
+
+  body.is-lobby .lobby-ticket-body {
+    gap: 6px;
+    padding: 8px 12px 6px;
+  }
+
+  body.is-lobby .lobby-fields {
+    gap: 6px;
+  }
+
+  body.is-lobby .lobby-fields input[type="text"] {
+    height: 36px;
+    min-height: 36px;
+    line-height: 36px;
+  }
+  body.is-lobby .lobby-actions > .button {
+    min-height: 36px;
+  }
+}

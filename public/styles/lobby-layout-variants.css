@@ -1,0 +1,213 @@
+/* Selector experimental para comparar composiciones en el viewport de
+   escritorio intermedio. Fuera de ese rango no agrega controles visuales. */
+
+.lobby-layout-picker {
+  display: none;
+}
+
+@media (min-width: 681px) and (max-width: 980px) {
+  body.is-lobby .lobby-layout-picker {
+    position: fixed;
+    top: 36px;
+    right: 14px;
+    z-index: 10;
+    display: grid;
+    gap: 4px;
+    width: min(190px, calc(100vw - 28px));
+    padding: 6px 8px 7px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 10px;
+    background: rgba(13, 16, 19, 0.88);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(12px);
+  }
+
+  body.is-lobby .lobby-layout-picker label {
+    color: var(--muted-2);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  body.is-lobby .lobby-layout-picker select {
+    min-width: 0;
+    min-height: 30px;
+    padding: 0 28px 0 9px;
+    border-color: rgba(47, 184, 164, 0.42);
+    background-color: rgba(7, 9, 11, 0.78);
+    color: var(--text);
+    font-size: 0.72rem;
+  }
+
+  body.is-lobby .lobby-title {
+    font-size: clamp(4.25rem, 8.8vw, 7rem);
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-grid {
+    width: 100%;
+    grid-template-columns: minmax(0, 1fr) minmax(360px, 0.84fr);
+    align-items: center;
+    gap: clamp(14px, 2vw, 22px);
+    padding-inline: 10px;
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-hero {
+    width: 100%;
+    max-width: none;
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-title {
+    justify-self: start;
+    text-align: left;
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-ticket {
+    width: min(410px, 100%);
+    justify-self: center;
+  }
+
+  /* En dos columnas la franja de prestaciones no tiene ancho suficiente;
+     se reserva el espacio para que hero y boleto respiren. */
+  body.is-lobby[data-lobby-layout="columns"] .lobby-features {
+    display: none;
+  }
+
+  body.is-lobby[data-lobby-layout="hero"] .lobby-grid {
+    gap: 14px;
+  }
+
+  body.is-lobby[data-lobby-layout="hero"] .lobby-hero {
+    width: min(650px, calc(100% - 32px));
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "icon"
+      "title"
+      "description"
+      "features";
+    justify-items: center;
+    row-gap: 8px;
+    text-align: center;
+  }
+
+  body.is-lobby[data-lobby-layout="hero"] .lobby-title {
+    text-align: center;
+  }
+
+  body.is-lobby[data-lobby-layout="hero"] .lobby-features {
+    display: grid;
+    margin-top: 4px;
+  }
+
+  body.is-lobby[data-lobby-layout="hero"] .lobby-ticket {
+    width: min(430px, 100%);
+  }
+
+  body.is-lobby[data-lobby-layout="compact"] .lobby-screen {
+    padding-block: 2px 8px;
+  }
+
+  body.is-lobby[data-lobby-layout="compact"] .lobby-grid {
+    gap: 8px;
+    margin-top: 30px;
+  }
+
+  body.is-lobby[data-lobby-layout="compact"] .lobby-hero {
+    width: min(700px, calc(100% - 32px));
+    row-gap: 6px;
+  }
+
+  body.is-lobby[data-lobby-layout="compact"] .lobby-title {
+    font-size: clamp(3.7rem, 7vw, 5.8rem);
+  }
+
+  body.is-lobby[data-lobby-layout="compact"] .lobby-description {
+    font-size: 0.92rem;
+  }
+
+  body.is-lobby[data-lobby-layout="compact"] .lobby-ticket {
+    width: min(400px, 100%);
+  }
+}
+
+@media (min-width: 681px) and (max-width: 780px) {
+  /* Cuando ya no entran dos columnas cómodas, el boleto conserva la
+     composición móvil sin esperar a llegar al breakpoint de teléfono. */
+  body.is-lobby[data-lobby-layout="columns"] .lobby-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding-inline: 10px;
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-hero {
+    width: min(700px, calc(100% - 20px));
+    justify-self: center;
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-ticket {
+    grid-template-columns: 1fr;
+    grid-template-rows: 36px auto;
+    width: min(430px, 100%);
+    justify-self: center;
+    border-top-color: var(--glass-border-strong);
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-ticket-stub {
+    grid-column: 1;
+    grid-row: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 36px;
+    padding: 8px 14px;
+    border-right: 0;
+    border-bottom: 0;
+    writing-mode: horizontal-tb;
+    transform: none;
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-ticket-body {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-ticket-perforation {
+    top: 36px;
+    left: 50%;
+    width: 14px;
+    height: 14px;
+    box-shadow: none;
+    transform: translate(-50%, -50%);
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-ticket::after {
+    inset: 0;
+    left: 0;
+    width: auto;
+    height: auto;
+    border-radius: inherit;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), transparent 16%);
+    transform: none;
+  }
+}
+
+@media (min-width: 781px) and (max-width: 980px) {
+  body.is-lobby[data-lobby-layout="columns"] .lobby-ticket-body {
+    gap: 12px;
+    padding: 18px 18px 16px;
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-fields {
+    gap: 10px;
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-fields input[type="text"] {
+    height: 40px;
+    min-height: 40px;
+    line-height: 40px;
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-actions > .button {
+    min-height: 42px;
+  }
+}

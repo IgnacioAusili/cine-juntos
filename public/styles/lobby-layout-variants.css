@@ -486,3 +486,27 @@ body.is-lobby[data-lobby-ticket-stub="top"] .lobby-ticket::after {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), transparent 16%);
   transform: none;
 }
+
+/* El centrado se activa por la estructura calculada del hero, no por un
+   ancho fijo de viewport. */
+body.is-lobby .lobby-hero[data-title-placement="centered"] .lobby-title {
+  width: max-content;
+  max-width: 100%;
+  justify-self: center;
+  text-align: left;
+}
+
+body.is-lobby .lobby-hero[data-title-placement="centered"] {
+  position: relative;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "title"
+    "description"
+    "features";
+}
+
+body.is-lobby .lobby-hero[data-title-placement="centered"] .lobby-title-icon {
+  position: absolute;
+  margin: 0;
+  transform: none;
+}

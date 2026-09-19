@@ -21,3 +21,27 @@ export function syncLobbyTicketPlacement(screen, ticket) {
   document.body.dataset.lobbyTicketStub = stubMode;
   ticket.style.setProperty("translate", `${rightShift.toFixed(2)}px 0`);
 }
+
+export function syncLobbyTitlePlacement(screen, isSingleColumn) {
+  const hero = screen?.querySelector(".lobby-hero");
+  const title = hero?.querySelector(".lobby-title");
+  const icon = hero?.querySelector(".lobby-title-icon");
+  if (!hero) return;
+  if (!isSingleColumn || !title || !icon) {
+    delete hero.dataset.titlePlacement;
+    icon?.style.removeProperty("position");
+    icon?.style.removeProperty("left");
+    icon?.style.removeProperty("top");
+    return;
+  }
+
+  hero.dataset.titlePlacement = "centered";
+  icon.style.removeProperty("left");
+  icon.style.removeProperty("top");
+  const heroRect = hero.getBoundingClientRect();
+  const titleRect = title.getBoundingClientRect();
+  const iconRect = icon.getBoundingClientRect();
+  const gap = Number.parseFloat(getComputedStyle(hero).columnGap) || 14;
+  icon.style.setProperty("left", `${titleRect.left - heroRect.left - iconRect.width - gap}px`);
+  icon.style.setProperty("top", `${titleRect.top - heroRect.top + (titleRect.height - iconRect.height) / 2}px`);
+}

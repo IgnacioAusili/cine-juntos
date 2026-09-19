@@ -1,4 +1,4 @@
-import { resetLobbyTicketPlacement, syncLobbyTicketPlacement } from "./lobby-ticket-placement.js?v=20260918-lobby-ticket-placement-02";
+import { resetLobbyTicketPlacement, syncLobbyTicketPlacement, syncLobbyTitlePlacement } from "./lobby-ticket-placement.js?v=20260918-lobby-ticket-placement-04";
 
 const STORAGE_KEY = "cine-juntos-lobby-layout-variant";
 const DEFAULT_VARIANT = "columns";
@@ -140,7 +140,7 @@ function syncLobbyContentCenter() {
     ? [...screen.querySelectorAll(".lobby-hero, .lobby-ticket")]
     : [];
   const gridColumns = grid ? getComputedStyle(grid).gridTemplateColumns.trim().split(/\s+/) : [];
-  const isSingleColumn = gridColumns.length < 2;
+  const isSingleColumn = gridColumns.length < 2; syncLobbyTitlePlacement(screen, isSingleColumn);
 
   if (!isColumns || isSingleColumn || !marquee || !footer || !grid || content.length !== 2) {
     resetTitleFit(screen?.querySelector(".lobby-title")); resetLobbyTicketPlacement(screen, screen?.querySelector(".lobby-ticket"));

@@ -164,151 +164,7 @@
   }
 }
 
-@media (min-width: 681px) and (max-width: 860px) {
-  /* Cuando ya no entran dos columnas cómodas, el boleto conserva la
-     composición móvil sin esperar a llegar al breakpoint de teléfono. */
-  body.is-lobby[data-lobby-layout="columns"] .lobby-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
-    padding-inline: 10px;
-  }
-
-  body.is-lobby[data-lobby-layout="columns"] .lobby-hero {
-    width: min(700px, calc(100% - 20px));
-    justify-self: center;
-    justify-items: start;
-    text-align: left;
-  }
-
-  body.is-lobby[data-lobby-layout="columns"] .lobby-ticket {
-    grid-template-columns: 1fr;
-    grid-template-rows: 36px auto;
-    width: min(430px, 100%);
-    justify-self: center;
-    border-top-color: var(--glass-border-strong);
-  }
-
-  body.is-lobby[data-lobby-layout="columns"] .lobby-ticket-stub {
-    grid-column: 1;
-    grid-row: 1;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    min-height: 36px;
-    padding: 8px 14px;
-    border-right: 0;
-    border-bottom: 0;
-    writing-mode: horizontal-tb;
-    transform: none;
-  }
-
-  body.is-lobby[data-lobby-layout="columns"] .lobby-ticket-body {
-    grid-column: 1;
-    grid-row: 2;
-  }
-
-  body.is-lobby[data-lobby-layout="columns"] .lobby-ticket-perforation {
-    top: 36px;
-    left: 50%;
-    width: 14px;
-    height: 14px;
-    box-shadow: none;
-    transform: translate(-50%, -50%);
-  }
-
-  body.is-lobby[data-lobby-layout="columns"] .lobby-ticket::after {
-    inset: 0;
-    left: 0;
-    width: auto;
-    height: auto;
-    border-radius: inherit;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), transparent 16%);
-    transform: none;
-  }
-
-  /* En la transición a una sola columna se mantiene todo el contenido
-     visible con una escala compacta, en lugar de empujar el boleto fuera del
-     alto disponible. */
-  body.is-lobby[data-lobby-layout="columns"] .lobby-grid {
-    gap: 6px;
-    padding-inline: clamp(2px, 2vw, 10px);
-  }
-
-  body.is-lobby[data-lobby-layout="columns"] .lobby-hero {
-    row-gap: 6px;
-  }
-
-  body.is-lobby[data-lobby-layout="columns"] .lobby-title {
-    font-size: clamp(3.65rem, 11vw, 4.5rem);
-  }
-
-  body.is-lobby[data-lobby-layout="columns"] .lobby-title-icon {
-    width: clamp(88px, 13vw, 112px);
-    height: clamp(88px, 13vw, 112px);
-  }
-
-  body.is-lobby[data-lobby-layout="columns"] .lobby-description {
-    font-size: 0.82rem;
-    line-height: 1.28;
-  }
-
-  body.is-lobby[data-lobby-layout="columns"] .lobby-features {
-    margin-top: 4px;
-    padding-top: 8px;
-  }
-
-  body.is-lobby[data-lobby-layout="columns"] .lobby-feature-icon svg {
-    width: 16px;
-    height: 16px;
-  }
-
-  body.is-lobby[data-lobby-layout="columns"] .lobby-feature-text strong {
-    font-size: 0.7rem;
-  }
-
-  body.is-lobby[data-lobby-layout="columns"] .lobby-feature-text small {
-    font-size: 0.58rem;
-    line-height: 1.18;
-  }
-
-  body.is-lobby[data-lobby-layout="columns"] .lobby-ticket {
-    width: min(380px, calc(100% - 24px));
-    grid-template-rows: 30px auto;
-  }
-
-  body.is-lobby[data-lobby-layout="columns"] .lobby-ticket-body {
-    gap: 6px;
-    padding: 8px 10px 6px;
-  }
-
-  body.is-lobby[data-lobby-layout="columns"] .lobby-ticket-head {
-    padding-bottom: 4px;
-  }
-
-  body.is-lobby[data-lobby-layout="columns"] .lobby-ticket-label {
-    font-size: 0.9rem;
-  }
-
-  body.is-lobby[data-lobby-layout="columns"] .lobby-ticket-hint {
-    font-size: 0.68rem;
-  }
-
-  body.is-lobby[data-lobby-layout="columns"] .lobby-fields {
-    gap: 4px;
-  }
-
-  body.is-lobby[data-lobby-layout="columns"] .lobby-fields input[type="text"] {
-    height: 30px;
-    min-height: 30px;
-    line-height: 30px;
-  }
-
-  body.is-lobby[data-lobby-layout="columns"] .lobby-actions > .button {
-    min-height: 32px;
-  }
-}
-
-@media (min-width: 861px) and (max-width: 980px) {
+@media (min-width: 681px) and (max-width: 980px) {
   body.is-lobby[data-lobby-layout="columns"] .lobby-ticket-body {
     gap: 12px;
     padding: 18px 18px 16px;
@@ -332,7 +188,7 @@
 /* El rango intermedio conserva la composición de escritorio y la hace
    progresiva. El breakpoint de 980px anterior mezclaba el reset de una
    columna con el modo columns, centrando el hero y agrandando el boleto. */
-@media (min-width: 861px) and (max-width: 980px) {
+@media (min-width: 681px) and (max-width: 980px) {
   body.is-lobby .lobby-screen {
     align-content: start;
   }
@@ -417,7 +273,7 @@
 /* Override final del modo columns: estas reglas usan la misma especificidad
    que sus variantes anteriores para que la transición no herede el boleto
    grande ni la franja de prestaciones compacta. */
-@media (min-width: 861px) and (max-width: 980px) {
+@media (min-width: 681px) and (max-width: 980px) {
   body.is-lobby[data-lobby-layout="columns"] .lobby-grid {
     grid-template-columns: minmax(0, 1fr) clamp(360px, 40vw, 404px);
     align-items: start;
@@ -509,7 +365,7 @@
 
 /* Regla estructural final del hero: la descripción queda centrada entre el
    título y las prestaciones, con el mismo espacio arriba y abajo. */
-@media (min-width: 861px) {
+@media (min-width: 681px) {
   body.is-lobby[data-lobby-layout="columns"] .lobby-hero {
     --lobby-section-gap: clamp(32px, 4.5vh, 48px);
     row-gap: var(--lobby-section-gap);
@@ -550,7 +406,7 @@ body.is-lobby .lobby-screen {
   padding: 0;
 }
 
-@media (min-width: 861px) {
+@media (min-width: 681px) {
   body.is-lobby[data-lobby-layout="columns"] .lobby-grid {
     align-self: stretch;
     align-items: center;
@@ -574,4 +430,59 @@ body.is-lobby .lobby-screen {
   body.is-lobby[data-lobby-layout="columns"] .lobby-hero {
     transform: translate(28px, calc(-1 * clamp(30px, 5vh, 44px)));
   }
+}
+
+/* En columnas, el boleto conserva su anclaje al borde derecho disponible.
+   La decisión de pasar a otra composición queda a cargo del layout real,
+   no de un breakpoint fijo. */
+@media (min-width: 681px) {
+  body.is-lobby[data-lobby-layout="columns"] .lobby-ticket {
+    justify-self: end;
+  }
+}
+
+/* Cuando el espacio medido del lado derecho se agota, solo cambia la
+   orientación del stub naranja; el resto de la composición permanece igual. */
+body.is-lobby[data-lobby-ticket-stub="top"] .lobby-ticket {
+  grid-template-columns: 1fr;
+  grid-template-rows: 36px auto;
+  width: max(0px, calc(clamp(360px, 40vw, 404px) - 36px));
+}
+
+body.is-lobby[data-lobby-ticket-stub="top"] .lobby-ticket-stub {
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 36px;
+  padding: 8px 14px;
+  border-right: 0;
+  border-bottom: 0;
+  writing-mode: horizontal-tb;
+  transform: none;
+}
+
+body.is-lobby[data-lobby-ticket-stub="top"] .lobby-ticket-body {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+body.is-lobby[data-lobby-ticket-stub="top"] .lobby-ticket-perforation {
+  top: 36px;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  box-shadow: none;
+  transform: translate(-50%, -50%);
+}
+
+body.is-lobby[data-lobby-ticket-stub="top"] .lobby-ticket::after {
+  inset: 0;
+  left: 0;
+  width: auto;
+  height: auto;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), transparent 16%);
+  transform: none;
 }

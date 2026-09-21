@@ -36,16 +36,17 @@
   body.is-lobby .lobby-screen {
     grid-template-rows: auto auto auto;
     align-content: start;
-    min-height: 100dvh;
+    min-height: max(0px, calc(100dvh - var(--app-shell-gutter)));
     padding-block: 0 10px;
   }
 
   body.is-lobby .lobby-grid {
-    gap: clamp(12px, 2vh, 16px);
+    row-gap: var(--lobby-vertical-content-gap, clamp(12px, 2vh, 16px));
     transform: none;
   }
 
   body.is-lobby .lobby-hero {
+    container-type: inline-size;
     width: min(580px, calc(100% - 32px));
     column-gap: clamp(12px, 3vw, 20px);
     transform: none;
@@ -57,12 +58,27 @@
   }
 
   body.is-lobby .lobby-title {
-    font-size: clamp(4rem, 15vw, 5.4rem);
+    --lobby-title-size: clamp(4rem, 17cqw, 6.8rem);
+    font-size: var(--lobby-title-size);
+    --lobby-title-lift: 0px;
+    transform: translate(var(--lobby-title-group-shift), calc(-1 * var(--lobby-title-lift)));
+    margin-bottom: calc(-1 * var(--lobby-title-lift));
+  }
+
+  body.is-lobby .lobby-title-icon {
+    translate: var(--lobby-title-group-shift, 0px) 0;
   }
 
   body.is-lobby .lobby-description {
     width: 100%;
-    transform: none;
+    /* La animación base controla transform; translate permite sumar el
+       centrado geométrico sin que la animación lo sobrescriba. */
+    translate: 0 var(--lobby-description-separator-shift, 0px);
+  }
+
+  body.is-lobby .lobby-hero::before,
+  body.is-lobby .lobby-hero::after {
+    top: calc(100% - 8px + var(--lobby-description-separator-shift, 0px));
   }
 
   body.is-lobby .lobby-ticket {
@@ -85,7 +101,7 @@
   }
 
   body.is-lobby .lobby-footer {
-    width: min(420px, calc(100% - 32px));
+    width: min(980px, calc(100% - 32px));
     margin-top: 4px;
     padding: 0;
     transform: none;

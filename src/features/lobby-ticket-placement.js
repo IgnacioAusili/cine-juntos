@@ -1,4 +1,3 @@
-const TICKET_EDGE_MARGIN_PX = 5;
 const TICKET_TOP_TRIGGER_MARGIN_PX = 12;
 const TITLE_ICON_SCALE = 1.085;
 const TITLE_ICON_MIN_SIZE_PX = 56;
@@ -50,16 +49,32 @@ export function resetLobbyTicketPlacement(screen, ticket) {
 export function syncLobbyTicketPlacement(screen, ticket) {
   if (!screen || !ticket) return;
 
+  const hero = screen.querySelector(".lobby-hero");
+  if (!hero) return;
+
   // Medir sin el desplazamiento anterior evita acumular translate al redimensionar.
   ticket.style.removeProperty("translate");
   const screenRect = screen.getBoundingClientRect();
+  const heroRect = hero.getBoundingClientRect();
+  // El espacio visual disponible empieza en el borde visible del hero y
+  // termina en el borde útil del lobby. Usar la pista del grid ignoraba el
+  // desplazamiento visual del hero y dejaba más aire del lado derecho.
+  const availableLeft = heroRect.right;
+  const availableRight = screenRect.right;
+
+  if (!Number.isFinite(availableLeft) || !Number.isFinite(availableRight)) return;
+
   const ticketRect = ticket.getBoundingClientRect();
-  const rightSpace = screenRect.right - ticketRect.right;
+  const availableCenter = (availableLeft + availableRight) / 2;
+  const ticketCenter = (ticketRect.left + ticketRect.right) / 2;
+  const centerShift = availableCenter - ticketCenter;
+  const rightSpace = availableRight - ticketRect.right;
   const stubMode = rightSpace < TICKET_TOP_TRIGGER_MARGIN_PX ? "top" : "side";
-  const rightShift = Math.max(0, rightSpace - TICKET_EDGE_MARGIN_PX);
 
   document.body.dataset.lobbyTicketStub = stubMode;
-  ticket.style.setProperty("translate", `${rightShift.toFixed(2)}px 0`);
+  if (Math.abs(centerShift) > 0.01) {
+    ticket.style.setProperty("translate", `${centerShift.toFixed(2)}px 0`);
+  }
 }
 
 export function syncLobbyTitlePlacement(screen, isSingleColumn) {

@@ -432,12 +432,16 @@ body.is-lobby .lobby-screen {
   }
 }
 
-/* En columnas, el boleto conserva su anclaje al borde derecho disponible.
-   La decisión de pasar a otra composición queda a cargo del layout real,
+/* En columnas, el boleto se centra dentro de la segunda pista real del grid.
+   La decisión de pasar a otra composición queda a cargo del layout medido,
    no de un breakpoint fijo. */
 @media (min-width: 681px) {
   body.is-lobby[data-lobby-layout="columns"] .lobby-ticket {
-    justify-self: end;
+    justify-self: center;
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-grid {
+    column-gap: 10px;
   }
 }
 
@@ -485,6 +489,17 @@ body.is-lobby[data-lobby-ticket-stub="top"] .lobby-ticket::after {
   border-radius: inherit;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), transparent 16%);
   transform: none;
+}
+
+/* Ajustes derivados del layout real: en una sola columna la descripción gana
+   un poco de presencia y el texto legal se compacta para no competir con el
+   contenido principal. No depende de un breakpoint de viewport. */
+body.is-lobby[data-lobby-flow="single-column"] .lobby-description {
+  font-size: clamp(1rem, calc(1rem + 0.25cqw), 1.16rem);
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-disclaimer {
+  font-size: clamp(0.52rem, 0.68vw, 0.62rem);
 }
 
 /* El centrado se activa por la estructura calculada del hero, no por un

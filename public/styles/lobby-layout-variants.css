@@ -428,7 +428,7 @@ body.is-lobby .lobby-screen {
 
 @media (min-width: 981px) {
   body.is-lobby[data-lobby-layout="columns"] .lobby-hero {
-    transform: translate(28px, calc(-1 * clamp(30px, 5vh, 44px)));
+    transform: translateY(calc(-1 * clamp(30px, 5vh, 44px)));
   }
 }
 
@@ -441,7 +441,8 @@ body.is-lobby .lobby-screen {
   }
 
   body.is-lobby[data-lobby-layout="columns"] .lobby-grid {
-    column-gap: 10px;
+    column-gap: var(--lobby-grid-column-gap);
+    padding-inline: 0;
   }
 }
 
@@ -524,4 +525,9 @@ body.is-lobby .lobby-hero[data-title-placement="centered"] .lobby-title-icon {
   position: absolute;
   margin: 0;
   transform: none;
+}
+
+/* El margen lateral pertenece al app-shell; el grid del lobby no agrega otro. */
+body.is-lobby[data-lobby-layout] .lobby-grid {
+  padding-inline: 0;
 }

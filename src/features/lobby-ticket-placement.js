@@ -1,4 +1,3 @@
-const TICKET_TOP_TRIGGER_MARGIN_PX = 12;
 const TITLE_ICON_SCALE = 1.085;
 const TITLE_ICON_MIN_SIZE_PX = 56;
 const TITLE_ICON_MAX_SIZE_PX = 160;
@@ -64,15 +63,27 @@ export function syncLobbyTicketPlacement(screen, ticket) {
 
   if (!Number.isFinite(availableLeft) || !Number.isFinite(availableRight)) return;
 
+  // El modo horizontal reduce el ancho del boleto. Si el umbral se calcula
+  // sobre el modo actualmente aplicado, el boleto entra y sale del umbral en
+  // cada ciclo de ResizeObserver y parpadea entre ambas disposiciones.
+  // Medir siempre el estado lateral hace que la decisión sea estable.
+  document.body.removeAttribute("data-lobby-ticket-stub");
+  const sideTicketRect = ticket.getBoundingClientRect();
+  const availableWidth = availableRight - availableLeft;
+  const sideNeedsTopStub = sideTicketRect.width > availableWidth;
+  const stubMode = sideNeedsTopStub ? "top" : "side";
+  document.body.dataset.lobbyTicketStub = stubMode;
+
+  // El espacio visual no termina en el borde de la segunda pista: también
+  // incluye el margen que el grid deja hasta el borde útil del lobby. La
+  // pista centra el boleto solo en su propio ancho, por eso usamos su centro
+  // como posición inicial y corregimos contra los límites visuales reales.
   const ticketRect = ticket.getBoundingClientRect();
   const availableCenter = (availableLeft + availableRight) / 2;
   const ticketCenter = (ticketRect.left + ticketRect.right) / 2;
   const centerShift = availableCenter - ticketCenter;
-  const rightSpace = availableRight - ticketRect.right;
-  const stubMode = rightSpace < TICKET_TOP_TRIGGER_MARGIN_PX ? "top" : "side";
 
-  document.body.dataset.lobbyTicketStub = stubMode;
-  if (Math.abs(centerShift) > 0.01) {
+  if (Number.isFinite(centerShift) && Math.abs(centerShift) > 0.01) {
     ticket.style.setProperty("translate", `${centerShift.toFixed(2)}px 0`);
   }
 }

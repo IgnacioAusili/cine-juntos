@@ -89,11 +89,12 @@
 
 /* ===== Grid principal: hero | ticket ===== */
 .lobby-grid {
+  --lobby-grid-column-gap: 10px;
   display: grid;
   width: min(1220px, 100%);
   align-items: center;
   grid-template-columns: minmax(0, 1fr) minmax(420px, 0.9fr);
-  column-gap: 10px;
+  column-gap: var(--lobby-grid-column-gap);
   row-gap: clamp(36px, 4vw, 64px);
 }
 
@@ -713,12 +714,11 @@ body:not(.is-lobby) .live-badge {
   }
 
   .lobby-ticket {
-    transform: translateX(-16px) scale(0.95);
     transform-origin: right center;
   }
 
   .lobby-hero {
-    transform: translate(28px, -20px);
+    transform: translateY(-20px);
   }
 
   .lobby-title {

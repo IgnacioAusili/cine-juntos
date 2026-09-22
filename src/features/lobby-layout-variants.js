@@ -1,4 +1,4 @@
-import { resetLobbyTicketPlacement, syncLobbyTicketPlacement, syncLobbyTitlePlacement } from "./lobby-ticket-placement.js?v=20260921-lobby-ticket-visual-center-01";
+import { resetLobbyTicketPlacement, syncLobbyTicketPlacement, syncLobbyTitlePlacement } from "./lobby-ticket-placement.js?v=20260922-lobby-ticket-track-center-02";
 
 const STORAGE_KEY = "cine-juntos-lobby-layout-variant";
 const DEFAULT_VARIANT = "columns";
@@ -381,7 +381,10 @@ export function wireLobbyLayoutVariants() {
 
     if ("ResizeObserver" in window) {
       const observer = new ResizeObserver(scheduleLobbyContentCenter);
-      [screen, ...screen.querySelectorAll(".lobby-marquee, .lobby-footer, .lobby-grid, .lobby-hero, .lobby-ticket, .lobby-title")]
+      // Observar solo referencias externas al ajuste. El grid, el hero, el
+      // título y el boleto cambian de tamaño dentro de syncLobbyContentCenter;
+      // observarlos vuelve a disparar el mismo cálculo mientras se redimensiona.
+      [...screen.querySelectorAll(".lobby-marquee, .lobby-footer")]
         .forEach((element) => observer.observe(element));
     }
   }

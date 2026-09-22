@@ -48,20 +48,19 @@ export function resetLobbyTicketPlacement(screen, ticket) {
 export function syncLobbyTicketPlacement(screen, ticket) {
   if (!screen || !ticket) return;
 
-  const hero = screen.querySelector(".lobby-hero");
-  if (!hero) return;
+  const grid = screen.querySelector(".lobby-grid");
+  if (!grid) return;
 
-  // Medir sin el desplazamiento anterior evita acumular translate al redimensionar.
+  // El grid ya centra el boleto en su segunda pista. Quitar cualquier
+  // desplazamiento antiguo evita que el boleto quede corrido al redimensionar.
   ticket.style.removeProperty("translate");
-  const screenRect = screen.getBoundingClientRect();
-  const heroRect = hero.getBoundingClientRect();
-  // El espacio visual disponible empieza en el borde visible del hero y
-  // termina en el borde útil del lobby. Usar la pista del grid ignoraba el
-  // desplazamiento visual del hero y dejaba más aire del lado derecho.
-  const availableLeft = heroRect.right;
-  const availableRight = screenRect.right;
 
-  if (!Number.isFinite(availableLeft) || !Number.isFinite(availableRight)) return;
+  const columns = getComputedStyle(grid).gridTemplateColumns
+    .trim()
+    .split(/\s+/)
+    .map((track) => Number.parseFloat(track));
+  const ticketTrackWidth = columns[1];
+  if (!Number.isFinite(ticketTrackWidth)) return;
 
   // El modo horizontal reduce el ancho del boleto. Si el umbral se calcula
   // sobre el modo actualmente aplicado, el boleto entra y sale del umbral en
@@ -69,23 +68,9 @@ export function syncLobbyTicketPlacement(screen, ticket) {
   // Medir siempre el estado lateral hace que la decisión sea estable.
   document.body.removeAttribute("data-lobby-ticket-stub");
   const sideTicketRect = ticket.getBoundingClientRect();
-  const availableWidth = availableRight - availableLeft;
-  const sideNeedsTopStub = sideTicketRect.width > availableWidth;
+  const sideNeedsTopStub = sideTicketRect.width > ticketTrackWidth;
   const stubMode = sideNeedsTopStub ? "top" : "side";
   document.body.dataset.lobbyTicketStub = stubMode;
-
-  // El espacio visual no termina en el borde de la segunda pista: también
-  // incluye el margen que el grid deja hasta el borde útil del lobby. La
-  // pista centra el boleto solo en su propio ancho, por eso usamos su centro
-  // como posición inicial y corregimos contra los límites visuales reales.
-  const ticketRect = ticket.getBoundingClientRect();
-  const availableCenter = (availableLeft + availableRight) / 2;
-  const ticketCenter = (ticketRect.left + ticketRect.right) / 2;
-  const centerShift = availableCenter - ticketCenter;
-
-  if (Number.isFinite(centerShift) && Math.abs(centerShift) > 0.01) {
-    ticket.style.setProperty("translate", `${centerShift.toFixed(2)}px 0`);
-  }
 }
 
 export function syncLobbyTitlePlacement(screen, isSingleColumn) {

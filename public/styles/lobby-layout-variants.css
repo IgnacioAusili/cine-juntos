@@ -275,11 +275,11 @@
    grande ni la franja de prestaciones compacta. */
 @media (min-width: 681px) and (max-width: 980px) {
   body.is-lobby[data-lobby-layout="columns"] .lobby-grid {
-    grid-template-columns: minmax(0, 1fr) clamp(360px, 40vw, 404px);
+    grid-template-columns: minmax(0, 1fr) minmax(420px, 0.9fr);
     align-items: start;
-    gap: clamp(16px, 2.4vw, 28px);
+    gap: var(--lobby-grid-column-gap);
     margin-top: clamp(30px, 6vh, 40px);
-    padding-inline: clamp(8px, 1.6vw, 18px);
+    padding-inline: 0;
   }
 
   body.is-lobby[data-lobby-layout="columns"] .lobby-hero {
@@ -292,7 +292,7 @@
   }
 
   body.is-lobby[data-lobby-layout="columns"] .lobby-title {
-    --lobby-title-size: clamp(4.75rem, 9.6vw, 6.8rem);
+    --lobby-title-size: clamp(4.75rem, 11vw, 6.8rem);
     font-size: var(--lobby-title-size);
     justify-self: start;
     text-align: left;
@@ -336,20 +336,20 @@
   }
 
   body.is-lobby[data-lobby-layout="columns"] .lobby-ticket {
-    width: clamp(360px, 40vw, 404px);
-    justify-self: end;
-    align-self: start;
-    margin-top: clamp(64px, 18vh, 108px);
+    width: min(404px, 100%);
+    justify-self: center;
+    align-self: center;
+    margin-top: 0;
     transform: none;
   }
 
   body.is-lobby[data-lobby-layout="columns"] .lobby-ticket-body {
-    gap: clamp(8px, 1.2vw, 12px);
-    padding: 14px 18px 12px;
+    gap: 14px;
+    padding: 18px 18px 16px;
   }
 
   body.is-lobby[data-lobby-layout="columns"] .lobby-fields {
-    gap: 8px;
+    gap: 10px;
   }
 
   body.is-lobby[data-lobby-layout="columns"] .lobby-fields input[type="text"] {
@@ -388,11 +388,11 @@
   }
 }
 
-/* En escritorio el título se dibuja proporcionalmente hacia arriba; compensa
-   ese desplazamiento en el flujo para que el espacio visible siga siendo 10px. */
-@media (min-width: 981px) {
+/* El título se dibuja proporcionalmente hacia arriba; compensa ese
+   desplazamiento en el flujo para conservar una altura estable del hero. */
+@media (min-width: 681px) {
   body.is-lobby[data-lobby-layout="columns"] .lobby-title {
-    --lobby-title-size: clamp(4.75rem, 18cqw, 6.8rem);
+    --lobby-title-size: clamp(4.75rem, 11vw, 6.8rem);
     font-size: var(--lobby-title-size);
     --lobby-title-lift: calc(var(--lobby-title-size) * 0.175);
     transform: translateY(calc(-1 * var(--lobby-title-lift)));
@@ -424,6 +424,40 @@ body.is-lobby .lobby-screen {
   body.is-lobby[data-lobby-layout="columns"] .lobby-hero {
     transform: translateY(calc(-1 * clamp(30px, 5vh, 44px)));
   }
+}
+
+/* El boleto mantiene su geometría cuando el grid pasa de dos columnas a una.
+   El ancho solo se limita si el viewport es físicamente más angosto que el
+   boleto; la separación interior y los controles no dependen del layout. */
+body.is-lobby[data-lobby-flow="single-column"] .lobby-ticket {
+  width: min(404px, 100%);
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-ticket-body {
+  gap: 14px;
+  padding: 18px 18px 16px;
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-ticket-head {
+  padding-bottom: 12px;
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-fields {
+  gap: 10px;
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-fields input[type="text"] {
+  height: 40px;
+  min-height: 40px;
+  line-height: 40px;
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-actions {
+  gap: 8px;
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-actions > .button {
+  min-height: 42px;
 }
 
 @media (min-width: 981px) {
@@ -530,4 +564,69 @@ body.is-lobby .lobby-hero[data-title-placement="centered"] .lobby-title-icon {
 /* El margen lateral pertenece al app-shell; el grid del lobby no agrega otro. */
 body.is-lobby[data-lobby-layout] .lobby-grid {
   padding-inline: 0;
+}
+
+/* Mantiene estable la altura del hero mientras las columnas cambian de ancho. */
+@media (min-width: 681px) {
+  body.is-lobby[data-lobby-layout="columns"] .lobby-features {
+    gap: 14px clamp(8px, 1.2vw, 14px);
+    margin-top: 0;
+    padding-top: 16px;
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-feature {
+    gap: 12px;
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-feature-icon svg {
+    width: clamp(22px, 2.4vw, 25px);
+    height: clamp(22px, 2.4vw, 25px);
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-feature-text strong {
+    font-size: clamp(0.88rem, 1.6vw, 0.98rem);
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-feature-text small {
+    font-size: clamp(0.74rem, 1.35vw, 0.82rem);
+    line-height: 1.25;
+  }
+}
+
+/* Los tres espacios visibles son iguales: el gutter del app-shell forma parte
+   de cada margen exterior y se redistribuye entre el padding del grid y el gap. */
+@media (min-width: 681px) {
+  body.is-lobby[data-lobby-layout="columns"] .lobby-grid {
+    --lobby-hero-track-max: 658px;
+    --lobby-ticket-track-size: 404px;
+    --lobby-equal-horizontal-space: clamp(
+      8px,
+      min(
+        calc(33.333333vw - 330.333333px),
+        calc(10.526316vw - 77.842105px)
+      ),
+      52.666667px
+    );
+    /* En este layout el app-shell usa 10px: se reparte 1/3 hacia los márgenes
+       interiores y 2/3 hacia el centro para no alterar el ancho del hero. */
+    --lobby-shell-gutter-third: 3.333333px;
+    --lobby-shell-gutter-two-thirds: 6.666667px;
+    --lobby-grid-side-space: calc(
+      var(--lobby-equal-horizontal-space) - var(--lobby-shell-gutter-third)
+    );
+    --lobby-balanced-column-gap: calc(
+      var(--lobby-equal-horizontal-space) + var(--lobby-shell-gutter-two-thirds)
+    );
+    padding-inline: var(--lobby-grid-side-space);
+    grid-template-columns:
+      minmax(
+        0,
+        min(
+          var(--lobby-hero-track-max),
+          calc(100% - var(--lobby-balanced-column-gap) - var(--lobby-ticket-track-size))
+        )
+      )
+      var(--lobby-ticket-track-size);
+    column-gap: var(--lobby-balanced-column-gap);
+  }
 }

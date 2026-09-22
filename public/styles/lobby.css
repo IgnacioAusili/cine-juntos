@@ -306,7 +306,7 @@
   display: none;
 }
 
-@container (max-width: 159px) {
+@container (max-width: 145px) {
   .lobby-feature-title-full {
     display: none;
   }
@@ -674,7 +674,7 @@ body:not(.is-lobby) .live-badge {
   }
 
   .lobby-description {
-    font-size: clamp(1.05rem, 1.35vw, 1.12rem);
+    font-size: clamp(0.98rem, 1.2vw, 1.12rem);
   }
 
   .lobby-feature-icon svg {

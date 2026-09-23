@@ -21,6 +21,14 @@ body.is-lobby .lobby-footer {
   transform: none;
 }
 
+body.is-lobby[data-lobby-flow="single-column"] .lobby-footer {
+  --lobby-about-panel-size: 42px;
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-footer .lobby-disclaimer {
+  font-size: 0.6rem;
+}
+
 body.is-lobby .lobby-footer .lobby-disclaimer {
   /* El botón está fuera del flujo por ser fixed. El párrafo sigue siendo un
      bloque normal para que el enlace GPLv3 conserve el mismo flujo inline
@@ -67,7 +75,6 @@ body.is-lobby .lobby-about-button.is-touch-hover:hover {
 
 @media (max-width: 680px) {
   body.is-lobby .lobby-footer {
-    --lobby-about-panel-size: 42px;
     --lobby-footer-gap: 10px;
     grid-template-columns: minmax(0, 1fr) var(--lobby-about-panel-size);
     width: min(980px, calc(100% - 32px));

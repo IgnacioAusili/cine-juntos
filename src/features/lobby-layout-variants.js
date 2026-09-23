@@ -171,11 +171,24 @@ function syncLobbyContentCenter() {
   const content = screen
     ? [...screen.querySelectorAll(".lobby-hero, .lobby-ticket")]
     : [];
-  const gridColumns = grid ? getComputedStyle(grid).gridTemplateColumns.trim().split(/\s+/) : [];
-  const isSingleColumn = Boolean(grid) && gridColumns.length < 2;
-  document.body.dataset.lobbyFlow = isSingleColumn ? "single-column" : "columns";
   const hero = screen?.querySelector(".lobby-hero");
   const ticket = screen?.querySelector(".lobby-ticket");
+
+  // En el modo columns primero se prueba la composición real. Si un título
+  // de prestaciones queda recortado en su tarjeta, el ancho restante ya no
+  // alcanza para mostrar ambas columnas con claridad y el grid pasa a una.
+  if (isColumns && grid) document.body.dataset.lobbyFlow = "columns";
+  const gridColumns = grid ? getComputedStyle(grid).gridTemplateColumns.trim().split(/\s+/) : [];
+  const featureHeadings = hero ? [...hero.querySelectorAll(".lobby-feature-text strong")] : [];
+  const hasClippedFeatureHeading = featureHeadings.some((heading) => (
+    heading.getClientRects().length > 0
+      && heading.clientWidth > 0
+      && heading.scrollWidth > heading.clientWidth + 1
+  ));
+  const isSingleColumn = Boolean(grid) && (
+    gridColumns.length < 2 || (isColumns && hasClippedFeatureHeading)
+  );
+  document.body.dataset.lobbyFlow = isSingleColumn ? "single-column" : "columns";
   syncLobbyTitlePlacement(screen, isSingleColumn);
 
   if (!grid || content.length !== 2) {
@@ -198,7 +211,6 @@ function syncLobbyContentCenter() {
     // como si ocupara una segunda columna lateral.
     syncLobbyTitleFit(screen, hero, null);
     syncLobbyTitlePlacement(screen, true);
-    syncSingleColumnTitleLift(hero);
     syncSingleColumnTitleGroup(hero);
     syncSingleColumnContentGap(grid, ticket, footer);
     syncSingleColumnDescriptionPlacement(hero, ticket);

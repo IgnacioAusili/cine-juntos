@@ -51,7 +51,7 @@
     font-size: clamp(4.75rem, 18cqw, 6.8rem);
   }
 
-  body.is-lobby[data-lobby-layout="columns"] .lobby-grid {
+body.is-lobby[data-lobby-layout="columns"] .lobby-grid {
     width: 100%;
     grid-template-columns: minmax(0, 1fr) minmax(360px, 0.84fr);
     align-items: center;
@@ -162,6 +162,125 @@
   body.is-lobby[data-lobby-layout="compact"] .lobby-ticket {
     width: min(400px, 100%);
   }
+}
+
+/* El flujo dinámico apilado usa la misma presentación editorial que el lobby
+   vertical móvil, sin depender del breakpoint de ancho que activa esa vista. */
+body.is-lobby[data-lobby-flow="single-column"] {
+  height: auto;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .app-shell {
+  height: auto;
+  min-height: 100dvh;
+  padding-block-start: 10px;
+  padding-bottom: 0;
+  grid-template-rows: auto auto;
+  align-content: start;
+  gap: 0;
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .topbar,
+body.is-lobby[data-lobby-flow="single-column"] .lobby-marquee,
+body.is-lobby[data-lobby-flow="single-column"] .lobby-features {
+  display: none;
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-screen {
+  height: auto;
+  min-height: max(0px, calc(100dvh - var(--app-shell-gutter)));
+  gap: 0;
+  grid-template-rows: auto auto;
+  align-content: space-between;
+  padding-block: 0 8px;
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-grid {
+  width: 100%;
+  min-height: 0;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(10px, 1.8vh, 16px);
+  align-content: start;
+  justify-items: center;
+  padding-inline: 0;
+  transform: translateY(-8px);
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-hero {
+  container-type: inline-size;
+  position: relative;
+  display: grid;
+  width: min(580px, calc(100% - 32px));
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "title"
+    "description"
+    "features";
+  align-items: center;
+  justify-items: center;
+  column-gap: 14px;
+  row-gap: clamp(12px, 2vh, 16px);
+  text-align: left;
+  transform: translateY(-4px);
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-title {
+  grid-area: title;
+  font-size: clamp(4.65rem, 18cqw, 5.8rem);
+  line-height: 0.92;
+  margin-bottom: 0;
+  align-self: center;
+  text-align: left;
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-description {
+  grid-area: description;
+  justify-self: center;
+  width: calc(100% + 40px);
+  max-width: none;
+  font-size: 1.08rem;
+  line-height: 1.48;
+  text-align: center;
+  text-wrap: pretty;
+  white-space: normal;
+  transform: translateY(-2px);
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-hero::before,
+body.is-lobby[data-lobby-flow="single-column"] .lobby-hero::after {
+  position: absolute;
+  top: calc(100% - 8px);
+  left: 50%;
+  content: "";
+  pointer-events: none;
+  z-index: 0;
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-hero::before {
+  width: clamp(190px, 58cqw, 242px);
+  height: 16px;
+  transform: translateX(-50%);
+  background:
+    linear-gradient(90deg, transparent, rgba(240, 140, 58, 0.54) 19%, rgba(240, 140, 58, 0.54) 43%, transparent 49%) center / 100% 1px no-repeat,
+    linear-gradient(90deg, transparent 51%, rgba(47, 184, 164, 0.58) 57%, rgba(47, 184, 164, 0.58) 81%, transparent) center / 100% 1px no-repeat,
+    linear-gradient(90deg, transparent 27%, rgba(240, 140, 58, 0.28) 27.5%, transparent 28.5%, transparent 71.5%, rgba(47, 184, 164, 0.3) 72.5%, transparent 73%) center / 100% 9px no-repeat;
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-hero::after {
+  width: 9px;
+  height: 9px;
+  border: 1px solid rgba(240, 140, 58, 0.78);
+  background: rgba(17, 22, 25, 0.94);
+  box-shadow: 0 0 0 3px rgba(17, 22, 25, 0.88), 0 0 12px rgba(240, 140, 58, 0.2);
+  transform: translate(-50%, 3px) rotate(45deg);
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-hero > * {
+  position: relative;
+  z-index: 1;
 }
 
 @media (min-width: 681px) and (max-width: 980px) {
@@ -433,6 +552,12 @@ body.is-lobby[data-lobby-flow="single-column"] .lobby-ticket {
   width: min(404px, 100%);
 }
 
+/* El modo apilado se activa cuando el contenido real deja de caber en las
+   dos columnas, aunque el viewport siga teniendo más de 680px de ancho. */
+body.is-lobby[data-lobby-layout="columns"][data-lobby-flow="single-column"] .lobby-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 @media (min-width: 481px) and (max-width: 680px) {
   body.is-lobby[data-lobby-flow="single-column"] .lobby-ticket {
     grid-template-columns: 36px minmax(0, 1fr);
@@ -644,4 +769,41 @@ body.is-lobby[data-lobby-layout] .lobby-grid {
       var(--lobby-ticket-track-size);
     column-gap: var(--lobby-balanced-column-gap);
   }
+}
+
+/* Estos valores al final de la hoja neutralizan los retoques de la composición
+   horizontal aunque el apilado se active a un ancho intermedio. */
+body.is-lobby[data-lobby-flow="single-column"] .lobby-grid {
+  gap: var(--lobby-vertical-content-gap, clamp(10px, 1.8vh, 16px));
+  padding-inline: 0;
+  transform: translateY(-8px);
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-hero {
+  width: min(580px, calc(100% - 32px));
+  max-width: none;
+  column-gap: 14px;
+  row-gap: clamp(12px, 2vh, 16px);
+  transform: none;
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-title {
+  font-size: clamp(4.65rem, 18cqw, 5.8rem);
+  line-height: 0.92;
+  margin-bottom: 0;
+  padding-bottom: 0;
+  --lobby-title-lift: 0px;
+  transform: translate(var(--lobby-title-group-shift, 0px), 0);
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-description {
+  width: 100%;
+  max-width: none;
+  font-size: 1.08rem;
+  line-height: 1.48;
+  text-align: center;
+  text-wrap: pretty;
+  white-space: normal;
+  translate: none;
+  transform: translateY(-2px);
 }

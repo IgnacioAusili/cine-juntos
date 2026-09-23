@@ -162,6 +162,8 @@
   color: transparent;
   filter: drop-shadow(0 0 28px rgba(240, 140, 58, 0.4));
   animation: shimmerAmber 6s ease-in-out infinite;
+  /* Reserva aire tras la tinta para que el último glifo no toque el borde. */
+  padding-inline-end: 0.08em;
 }
 
 @keyframes shimmerAmber {

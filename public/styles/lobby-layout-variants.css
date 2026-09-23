@@ -433,6 +433,12 @@ body.is-lobby[data-lobby-flow="single-column"] .lobby-ticket {
   width: min(404px, 100%);
 }
 
+@media (min-width: 481px) and (max-width: 680px) {
+  body.is-lobby[data-lobby-flow="single-column"] .lobby-ticket {
+    grid-template-columns: 36px minmax(0, 1fr);
+  }
+}
+
 body.is-lobby[data-lobby-flow="single-column"] .lobby-ticket-body {
   gap: 14px;
   padding: 18px 18px 16px;
@@ -440,6 +446,14 @@ body.is-lobby[data-lobby-flow="single-column"] .lobby-ticket-body {
 
 body.is-lobby[data-lobby-flow="single-column"] .lobby-ticket-head {
   padding-bottom: 12px;
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-ticket-label {
+  font-size: 0.96rem;
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-ticket-hint {
+  font-size: 0.72rem;
 }
 
 body.is-lobby[data-lobby-flow="single-column"] .lobby-fields {
@@ -453,6 +467,7 @@ body.is-lobby[data-lobby-flow="single-column"] .lobby-fields input[type="text"] 
 }
 
 body.is-lobby[data-lobby-flow="single-column"] .lobby-actions {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 8px;
 }
 

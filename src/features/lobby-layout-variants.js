@@ -243,10 +243,21 @@ function syncLobbyContentCenter() {
   const contentBottom = Math.max(...contentRects.map((rect) => rect.bottom));
   const availableCenter = (marqueeRect.bottom + footerRect.top) / 2;
   const contentCenter = (contentTop + contentBottom) / 2;
-  const shift = availableCenter - contentCenter;
+  const contentShift = availableCenter - contentCenter;
 
-  if (Number.isFinite(shift)) {
-    grid.style.setProperty("--lobby-content-center-shift", `${shift.toFixed(2)}px`);
+  if (Number.isFinite(contentShift)) {
+    grid.style.setProperty("--lobby-content-center-shift", `${contentShift.toFixed(2)}px`);
+
+    // El hero puede tener un levantamiento visual propio; por eso centrar el
+    // grupo completo deja el boleto bajo su centro disponible. Alineamos el
+    // boleto con el punto medio real entre marquesina y pie, sin usar medidas
+    // fijas del viewport.
+    const centeredTicketRect = ticket.getBoundingClientRect();
+    const centeredTicketMiddle = (centeredTicketRect.top + centeredTicketRect.bottom) / 2;
+    const ticketShift = availableCenter - centeredTicketMiddle;
+    if (Number.isFinite(ticketShift)) {
+      ticket.style.setProperty("translate", `0px ${ticketShift.toFixed(2)}px`);
+    }
   }
 }
 

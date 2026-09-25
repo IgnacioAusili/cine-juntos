@@ -23,10 +23,32 @@ body.is-lobby .lobby-footer {
 
 body.is-lobby[data-lobby-flow="single-column"] .lobby-footer {
   --lobby-about-panel-size: 42px;
+  --lobby-footer-gap: 10px;
+  padding-inline: 0;
+  left: var(--app-shell-gutter, 10px);
+  right: 8px;
+  width: auto;
+  margin-inline: 0;
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-about-button svg {
+  width: 20px;
+  height: 20px;
 }
 
 body.is-lobby[data-lobby-flow="single-column"] .lobby-footer .lobby-disclaimer {
-  font-size: 0.6rem;
+  font-size: 0.56rem;
+  grid-column: 1;
+  padding-inline: 0;
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-about-button {
+  position: static;
+  right: auto;
+  bottom: auto;
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: end;
 }
 
 body.is-lobby .lobby-footer .lobby-disclaimer {

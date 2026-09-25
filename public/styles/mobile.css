@@ -572,7 +572,7 @@
   .lobby-footer {
     display: grid;
     align-items: center;
-    grid-template-columns: minmax(0, 1fr) 56px;
+    grid-template-columns: minmax(0, 1fr) var(--lobby-about-panel-size, 42px);
     gap: 12px;
     width: min(380px, 100%);
     align-self: end;

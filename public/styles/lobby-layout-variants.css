@@ -799,7 +799,7 @@ body.is-lobby[data-lobby-flow="single-column"] .lobby-title {
 body.is-lobby[data-lobby-flow="single-column"] .lobby-description {
   width: 100%;
   max-width: none;
-  font-size: 1.08rem;
+  font-size: 1rem;
   line-height: 1.48;
   text-align: center;
   text-wrap: pretty;

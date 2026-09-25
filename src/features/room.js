@@ -7,7 +7,7 @@ import {
   getDisplayName,
   LAST_ROOM_KEY,
   logEvent,
-} from "../core/state.js?v=20260912-name-session-01";
+} from "../core/state.js?v=20260914-console-log-controls-01";
 import {
   MAX_ROOM_PARTICIPANTS,
   ROOM_CREATE_ATTEMPT_LIMIT,
@@ -22,7 +22,7 @@ import {
   renderPresence,
   updateDisplayName,
 } from "./presence.js?v=20260912-name-session-01";
-import { setConnection } from "./icons-tooltips.js?v=20260912-continuous-bubble-04";
+import { setConnection } from "./icons-tooltips.js?v=20260914-tooltip-single-path-01";
 import {
   getUserScrollIntentVersion,
   setHostBadge,
@@ -31,7 +31,7 @@ import {
   showSession,
   watchRoomEntryVideoFocus,
 } from "./session-ui.js?v=20260911-orientation-scroll-anchor-01";
-import { handleRemoteState } from "./player/index.js?v=20260913-emoji-horizontal-pages-03";
+import { handleRemoteState } from "./player/index.js?v=20260918-player-live-status-pulse-01";
 import {
   renderMessage,
   beginSystemMessageHydration,
@@ -40,7 +40,7 @@ import {
   resetInsideUnread,
   resetPageUnread,
   renderReplyPreview,
-} from "./chat/index.js?v=20260914-fullscreen-dock-animation-01";
+} from "./chat/index.js?v=20260916-image-preview-01";
 
 const ACTIVE_TAB_KEY = "cine-juntos-active-tab";
 const ACTIVE_TAB_TTL_MS = 30000;
@@ -48,6 +48,16 @@ const MAX_OPEN_TABS = 1;
 const ROOM_CREATE_ATTEMPTS_KEY = "cine-juntos-room-create-attempts";
 let inviteCopyFeedbackTimer = 0;
 let inviteCopyAnimationTimer = 0;
+let inviteCopyAnimationEndTarget = null;
+let inviteCopyAnimationEndHandler = null;
+
+function clearInviteCopyAnimationEndListener() {
+  if (inviteCopyAnimationEndTarget && inviteCopyAnimationEndHandler) {
+    inviteCopyAnimationEndTarget.removeEventListener("animationend", inviteCopyAnimationEndHandler);
+  }
+  inviteCopyAnimationEndTarget = null;
+  inviteCopyAnimationEndHandler = null;
+}
 
 function getTabId() {
   const stored = sessionStorage.getItem("cine-juntos-tab-id");
@@ -399,12 +409,14 @@ export async function joinRoom(rawRoomCode, sourceButton = "join") {
 }
 
 export async function copyInvite() {
-  if (!state.session.activeRoom) {
+  const roomFromUrl = sanitizeRoomInput(new URL(window.location.href).searchParams.get("room"));
+  const roomCode = state.session.activeRoom || roomFromUrl;
+  if (!roomCode || dom.sessionView?.hidden) {
     setSyncStatus("Primero entra a una sala.");
     return;
   }
   const invite = new URL(window.location.href);
-  invite.searchParams.set("room", state.session.activeRoom);
+  invite.searchParams.set("room", roomCode);
   if (!await copyTextToClipboard(invite.toString())) {
     return;
   }
@@ -501,6 +513,7 @@ function setInviteCopyFeedback(active) {
   if (!dom.copyInviteButton) return;
   window.clearTimeout(inviteCopyFeedbackTimer);
   window.clearTimeout(inviteCopyAnimationTimer);
+  clearInviteCopyAnimationEndListener();
   dom.copyInviteButton.dataset.copied = active ? "true" : "false";
   dom.copyInviteButton.classList.remove("is-copy-animating");
   if (!active) return;
@@ -509,14 +522,42 @@ function setInviteCopyFeedback(active) {
   // el feedback anterior.
   void dom.copyInviteButton.offsetWidth;
   dom.copyInviteButton.classList.add("is-copy-animating");
-  inviteCopyAnimationTimer = window.setTimeout(() => {
+
+  const animationTarget = dom.copyInviteButton.querySelector(
+    ".room-chip-copy-motion, .room-chip-copy-main",
+  );
+  const finishCopyAnimation = (event) => {
+    if (event.animationName !== "roomChipCopyLift") return;
+    clearInviteCopyAnimationEndListener();
+    window.clearTimeout(inviteCopyAnimationTimer);
+    inviteCopyAnimationTimer = 0;
     dom.copyInviteButton?.classList.remove("is-copy-animating");
-  }, 800);
+  };
+
+  if (animationTarget) {
+    inviteCopyAnimationEndTarget = animationTarget;
+    inviteCopyAnimationEndHandler = finishCopyAnimation;
+    animationTarget.addEventListener("animationend", finishCopyAnimation);
+  }
+
+  // Fallback para navegadores que no entreguen animationend. Queda después
+  // de la duración CSS para no quitar el fill antes de alcanzar el offset final.
+  const animationDurationMs = animationTarget
+    ? Number.parseFloat(getComputedStyle(animationTarget).animationDuration) * 1000
+    : 0;
+  const fallbackDelayMs = Number.isFinite(animationDurationMs) && animationDurationMs > 0
+    ? animationDurationMs + 120
+    : 1200;
+  inviteCopyAnimationTimer = window.setTimeout(() => {
+    clearInviteCopyAnimationEndListener();
+    dom.copyInviteButton?.classList.remove("is-copy-animating");
+    inviteCopyAnimationTimer = 0;
+  }, fallbackDelayMs);
   inviteCopyFeedbackTimer = window.setTimeout(() => {
     if (dom.copyInviteButton) {
       dom.copyInviteButton.dataset.copied = "false";
     }
-  }, 950);
+  }, 1500);
 }
 
 function updateUrlRoom(roomCode) {

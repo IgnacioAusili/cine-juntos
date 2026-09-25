@@ -145,8 +145,11 @@
   overflow-x: auto;
   line-height: 1.2;
   white-space: nowrap;
-  transform: none;
-  transition: width 180ms ease, max-width 180ms ease;
+  /* El texto nativo del input queda apenas por debajo del nombre visible. */
+  transform: translateY(-1px);
+  /* El ancho del editor se recalcula al entrar en edición. Animarlo hace que
+     la fila centrada se desplace horizontalmente durante la transición. */
+  transition: none;
 }
 
 .chat-name-edit-row input[type="text"]:focus,
@@ -388,7 +391,7 @@
   display: inline-flex;
   align-items: center;
   color: #eef1f3;
-  font-size: 0.64rem;
+  font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -437,7 +440,7 @@
 }
 
 .session-toolbar-body input:focus {
-  border-color: rgba(240, 140, 58, 0.6);
+  border-color: var(--teal);
   background: rgba(6, 8, 10, 0.6);
   box-shadow: none;
 }

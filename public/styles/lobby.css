@@ -25,7 +25,7 @@
   border-block: 1px solid var(--glass-border);
   mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
-  transform: translateY(-20px);
+  transform: translateY(-26px);
 }
 
 .lobby-marquee-track {
@@ -89,12 +89,13 @@
 
 /* ===== Grid principal: hero | ticket ===== */
 .lobby-grid {
+  --lobby-grid-column-gap: 10px;
   display: grid;
   width: min(1220px, 100%);
   align-items: center;
   grid-template-columns: minmax(0, 1fr) minmax(420px, 0.9fr);
-  gap: clamp(36px, 4vw, 64px);
-  padding-inline: 20px;
+  column-gap: var(--lobby-grid-column-gap);
+  row-gap: clamp(36px, 4vw, 64px);
 }
 
 /* Composición base: hero centrado dentro de su columna y ticket a la derecha. */
@@ -107,6 +108,7 @@
 .lobby-hero {
   justify-self: center;
   align-self: center;
+  transform: translateY(-20px);
   display: grid;
   justify-items: start;
   grid-template-columns: auto minmax(0, 1fr);
@@ -116,7 +118,7 @@
     "features features";
   align-items: center;
   column-gap: 28px;
-  row-gap: 14px;
+  row-gap: clamp(32px, 4.5vh, 48px);
   width: min(760px, 100%);
   max-width: 760px;
 }
@@ -160,6 +162,8 @@
   color: transparent;
   filter: drop-shadow(0 0 28px rgba(240, 140, 58, 0.4));
   animation: shimmerAmber 6s ease-in-out infinite;
+  /* Reserva aire tras la tinta para que el último glifo no toque el borde. */
+  padding-inline-end: 0.08em;
 }
 
 @keyframes shimmerAmber {
@@ -178,6 +182,45 @@
   color: var(--text-soft);
   font-size: clamp(0.9rem, 1.2vw, 1rem);
   line-height: 1.5;
+  animation: lobby-description-enter 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.lobby-description-highlight {
+  color: var(--accent);
+  font-weight: 700;
+  background: linear-gradient(110deg, var(--accent) 0%, #fff 45%, var(--accent) 70%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: lobby-description-highlight 1100ms ease-out 450ms both;
+}
+
+@keyframes lobby-description-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes lobby-description-highlight {
+  from {
+    background-position: 100% center;
+  }
+  to {
+    background-position: 0% center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lobby-description,
+  .lobby-description-highlight {
+    animation: none;
+  }
 }
 
 /* Feature pills */
@@ -187,7 +230,7 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px 20px;
   width: 100%;
-  margin: 14px 0 0;
+  margin: 0;
   padding: 16px 0 0;
   list-style: none;
   position: relative;
@@ -215,6 +258,7 @@
   flex-direction: row;
   align-items: center;
   gap: 12px;
+  container-type: inline-size;
 }
 
 .lobby-feature-icon {
@@ -244,12 +288,34 @@
   gap: 2px;
   align-items: flex-start;
   text-align: left;
+  min-width: 0;
 }
 
 .lobby-feature-text strong {
   color: var(--text);
   font-size: 0.88rem;
   font-weight: 700;
+}
+
+.lobby-feature-title {
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.lobby-feature-title-short {
+  display: none;
+}
+
+@container (max-width: 145px) {
+  .lobby-feature-title-full {
+    display: none;
+  }
+
+  .lobby-feature-title-short {
+    display: inline;
+  }
 }
 
 .lobby-feature-text small {
@@ -300,9 +366,8 @@
 .lobby-ticket-stub {
   position: relative;
   z-index: 1;
-  display: grid;
-  align-content: space-between;
-  padding: 14px 0;
+  display: block;
+  padding: 0;
   border-right: 0;
   background:
     repeating-linear-gradient(
@@ -313,8 +378,6 @@
     rgba(14, 16, 20, 0.45);
   color: var(--amber);
   text-align: center;
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
 }
 
 /* Cuerpo principal del boleto */
@@ -342,6 +405,7 @@
 }
 
 .lobby-ticket-head {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -356,10 +420,65 @@
 }
 
 .lobby-ticket-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   color: var(--text);
-  font-size: 0.9rem;
+  font-size: 0.96rem;
   font-weight: 800;
   letter-spacing: -0.01em;
+}
+
+.lobby-ticket-mark {
+  display: inline-flex;
+  width: 15px;
+  height: 15px;
+  flex: 0 0 15px;
+  color: var(--amber);
+}
+
+.lobby-ticket-mark svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  stroke-width: 2;
+}
+
+.lobby-ticket-code {
+  position: absolute;
+  top: 1px;
+  right: 0;
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  width: clamp(66px, calc(100% - 202px), 128px);
+  color: rgba(225, 231, 231, 0.72);
+  opacity: 0.84;
+}
+
+.lobby-ticket-code-bars {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 352 / 22;
+  overflow: visible;
+  transform: scaleY(1.2);
+  transform-origin: center;
+}
+
+.lobby-ticket-code-bars path {
+  fill: currentColor;
+}
+
+.lobby-ticket-code-serial {
+  color: rgba(205, 215, 215, 0.56);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 0.36rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
 }
 
 .lobby-ticket-hint {
@@ -397,10 +516,14 @@
 }
 
 .lobby-fields input[type="text"] {
+  --lobby-input-offset: 3px;
+  appearance: none;
+  display: block;
   height: 40px;
   min-height: 40px;
   padding-block: 0;
-  line-height: 38px;
+  line-height: 40px;
+  text-align: start;
   box-shadow: none;
   background: rgba(7, 9, 11, 0.5);
 }
@@ -602,11 +725,11 @@ body:not(.is-lobby) .live-badge {
   /* En escritorio priorizamos la lectura del hero y dejamos el boleto un
      poco más compacto para equilibrar ambas columnas. */
   .lobby-title {
-    font-size: clamp(3.9rem, 7.5vw, 6.8rem);
+    font-size: clamp(4.5rem, 8.6vw, 6.8rem);
   }
 
   .lobby-description {
-    font-size: clamp(1.05rem, 1.35vw, 1.12rem);
+    font-size: clamp(0.98rem, 1.2vw, 1.12rem);
   }
 
   .lobby-feature-icon svg {
@@ -646,12 +769,11 @@ body:not(.is-lobby) .live-badge {
   }
 
   .lobby-ticket {
-    transform: translateX(-16px) scale(0.95);
     transform-origin: right center;
   }
 
   .lobby-hero {
-    transform: translateX(28px);
+    transform: translateY(-20px);
   }
 
   .lobby-title {
@@ -686,8 +808,8 @@ body:not(.is-lobby) .live-badge {
 
 /* Los campos sobresalen del cuerpo del boleto sin mover sus etiquetas ni los tags. */
 .lobby-fields input[type="text"] {
-  width: calc(100% - 6px);
-  transform: translateX(6px);
+  width: calc(100% - var(--lobby-input-offset));
+  transform: translateX(var(--lobby-input-offset));
 }
 
 @media (max-width: 680px) {

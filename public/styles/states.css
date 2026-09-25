@@ -440,6 +440,26 @@ body.fullscreen-mode .session-view[data-chat-dock="bottom"] {
     scroll-snap-type: y proximity;
   }
 
+  /* Durante la cortina el scroll intermedio es parte de la animación. Si el
+     shell conserva el snap de proximidad, Chrome salta a la siguiente sección
+     antes de que termine el frame y el video parece parpadear. */
+  body.fullscreen-mode .app-shell:has(
+    .session-view.chat-scroll-snap-locked[data-chat-dock="bottom"]
+  ) {
+    scroll-snap-type: none;
+  }
+
+  /* El dock inferior de fullscreen entra desde el borde inferior y se retira
+     desde la unión superior. Fuera de fullscreen se conserva la cortina
+     original del layout de escritorio. */
+  body.fullscreen-mode .session-view[data-chat-dock="bottom"].chat-bottom-pc-collapse-visual .chat-area {
+    clip-path: inset(var(--chat-bottom-curtain-clip, 0%) 0 0 0);
+  }
+
+  body.fullscreen-mode .session-view[data-chat-dock="bottom"].chat-bottom-pc-expand-visual .chat-area {
+    clip-path: inset(var(--chat-bottom-curtain-clip, 100%) 0 0 0);
+  }
+
   body.fullscreen-mode .session-view[data-chat-dock="bottom"] .video-area,
   body.fullscreen-mode .session-view[data-chat-dock="bottom"] .chat-area {
     scroll-snap-align: start;

@@ -99,12 +99,36 @@
   transition: none;
 }
 
+/* Durante un cambio de dock ninguna flecha pertenece a la vista activa.
+   Este bloqueo cubre también el instante posterior al colapso nativo, cuando
+   el chat desmontado volvería a mostrar su control de expansión. */
+.session-view.chat-dock-handle-switching .chat-collapse-hover-zone,
+.session-view.chat-dock-handle-switching .chat-collapse-handle,
+.session-view.chat-dock-handle-switching .chat-collapse-icon-anchor {
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: none !important;
+}
+
 .chat-collapse-handle:hover,
 .chat-collapse-handle.is-touch-hover,
 .chat-collapse-hover-zone.is-touch-hover .chat-collapse-handle,
 .chat-collapse-handle:focus-visible {
   color: #fff;
   background: transparent;
+}
+
+/* Al cambiar de estado el layout puede dejar :hover retenido sobre el
+   control que acaba de desaparecer. Mantener el estado base hasta el
+   siguiente movimiento real del puntero evita que el nuevo anclaje herede
+   el resaltado de la acción anterior. */
+.chat-collapse-handle.chat-collapse-hover-reset,
+.chat-collapse-handle.chat-collapse-hover-reset:hover,
+.chat-collapse-hover-zone.chat-collapse-hover-reset .chat-collapse-handle,
+.chat-collapse-hover-zone.chat-collapse-hover-reset:hover .chat-collapse-handle {
+  color: rgba(255, 255, 255, 0.78) !important;
+  background: transparent !important;
 }
 
 .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-handle {
@@ -281,5 +305,13 @@
   .session-view[data-chat-dock] .chat-collapse-handle:focus-visible .chat-collapse-icon-anchor {
     border-color: rgba(255, 255, 255, 0.38);
     background: rgba(32, 38, 43, 0.98);
+  }
+
+  .session-view[data-chat-dock] .chat-collapse-handle.chat-collapse-hover-reset .chat-collapse-icon-anchor,
+  .session-view[data-chat-dock] .chat-collapse-handle.chat-collapse-hover-reset:hover .chat-collapse-icon-anchor,
+  .session-view[data-chat-dock] .chat-collapse-hover-zone.chat-collapse-hover-reset .chat-collapse-handle .chat-collapse-icon-anchor,
+  .session-view[data-chat-dock] .chat-collapse-hover-zone.chat-collapse-hover-reset:hover .chat-collapse-handle .chat-collapse-icon-anchor {
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    background: rgba(20, 24, 28, 0.9) !important;
   }
 }

@@ -265,6 +265,7 @@
   .session-view[data-chat-dock="bottom"] .chat-name-field,
   .session-view[data-chat-dock="bottom"] .chat-name-edit-row,
   .session-view[data-chat-dock="bottom"] .chat-name-edit-row input[type="text"],
+  .session-view[data-chat-dock="bottom"] .chat-name-edit-row input[type="search"],
   .session-view[data-chat-dock="bottom"] .chat-name-confirm-button {
     transition: none !important;
   }

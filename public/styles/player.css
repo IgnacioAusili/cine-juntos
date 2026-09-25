@@ -48,6 +48,39 @@ video::-webkit-media-controls-fullscreen-button {
   display: none;
 }
 
+.player-loading-overlay {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(5, 6, 7, 0.18);
+  pointer-events: none;
+}
+
+.player-loading-spinner {
+  width: clamp(38px, 6vw, 66px);
+  height: clamp(38px, 6vw, 66px);
+  border: clamp(3px, 0.45vw, 5px) solid rgba(255, 255, 255, 0.2);
+  border-top-color: var(--accent);
+  border-right-color: rgba(240, 140, 58, 0.88);
+  border-radius: 50%;
+  box-shadow: 0 0 24px rgba(240, 140, 58, 0.24);
+  animation: playerLoadingSpin 850ms linear infinite;
+}
+
+@keyframes playerLoadingSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .player-loading-spinner {
+    animation-duration: 1800ms;
+  }
+}
+
 .empty-player {
   position: absolute;
   inset: 0;
@@ -149,7 +182,6 @@ video::-webkit-media-controls-fullscreen-button {
 .player-status-badge.video-status.loading .video-status-dot {
   --status-glow: rgba(245, 197, 24, 0.42);
   background: #f5c518;
-  animation: statusPulse 1.4s ease-in-out infinite;
 }
 
 .player-status-badge.video-status.loaded {
@@ -159,6 +191,24 @@ video::-webkit-media-controls-fullscreen-button {
 .player-status-badge.video-status.loaded .video-status-dot {
   --status-glow: rgba(56, 216, 121, 0.42);
   background: #38d879;
+}
+
+.player-status-badge.video-status.loading .video-status-dot,
+.player-status-badge.video-status.player-status-live .video-status-dot {
+  animation: playerLiveStatusPulse 1.25s ease-in-out infinite;
+}
+
+@keyframes playerLiveStatusPulse {
+  0%,
+  100% {
+    opacity: 0.42;
+    transform: scale(0.88);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
 }
 
 .player-status-badge.video-status.error {
@@ -645,6 +695,42 @@ video::-webkit-media-controls-fullscreen-button {
   border: 0;
   background: transparent;
   color: var(--accent-soft, #d8fff9);
+  transform: none;
+}
+
+/* El hitbox de cada comando permanece fijo mientras el contenido conserva el
+   pequeño lift visual del hover. Mover el botón completo con transform puede
+   cambiar la zona bajo el cursor, especialmente al entrar por un borde. */
+.player-frame[data-control-style="line"] .player-controls-bar .video-control-button {
+  top: 0;
+  transform: none;
+  transition:
+    background 0.18s,
+    color 0.18s,
+    border-color 0.18s;
+}
+
+.player-frame[data-control-style="line"] .player-controls-bar .video-control-button > svg,
+.player-frame[data-control-style="line"] .player-controls-bar .player-rate-trigger {
+  position: relative;
+  top: 0;
+  transition: top 0.1s ease;
+}
+
+.player-frame[data-control-style="line"] .player-controls-bar .video-control-button > .play-button-cooldown {
+  top: 0;
+  transform: translateY(0);
+  transition: transform 0.1s ease;
+}
+
+.player-frame[data-control-style="line"] .player-controls-bar .video-control-button:not(:disabled):is(:hover, :focus-visible) > svg,
+.player-frame[data-control-style="line"] .player-controls-bar .video-control-button.active:not(:disabled) > svg,
+.player-frame[data-control-style="line"] .player-controls-bar .player-select:not([data-disabled="true"]):is(:hover, :focus-within) .player-rate-trigger {
+  top: -1px;
+}
+
+.player-frame[data-control-style="line"] .player-controls-bar .video-control-button:not(:disabled):is(:hover, :focus-visible) > .play-button-cooldown,
+.player-frame[data-control-style="line"] .player-controls-bar .video-control-button.active:not(:disabled) > .play-button-cooldown {
   transform: translateY(-1px);
 }
 
@@ -675,7 +761,7 @@ video::-webkit-media-controls-fullscreen-button {
 .player-frame[data-control-style="line"] .player-controls-bar .player-select:not([data-disabled="true"]):hover,
 .player-frame[data-control-style="line"] .player-controls-bar .player-select:not([data-disabled="true"]):focus-within {
   color: var(--accent-soft, #d8fff9);
-  transform: translateY(-1px);
+  transform: none;
 }
 
 .player-frame[data-control-style="line"] .player-controls-bar .player-select:not([data-disabled="true"]):hover::after,
@@ -702,6 +788,10 @@ video::-webkit-media-controls-fullscreen-button {
 
 .player-frame[data-control-style="line"] .player-controls-bar .player-select::after {
   right: 4px;
+}
+
+.player-frame[data-control-style="line"] .player-controls-bar .player-select:not([data-disabled="true"]):is(:hover, :focus-within)::after {
+  top: calc(50% - 1px);
 }
 
 .player-frame[data-control-style="line"] .player-controls-bar .player-select select {
@@ -1001,42 +1091,39 @@ video::-webkit-media-controls-fullscreen-button {
 }
 
 .player-volume-input {
+  --volume-track-height: 5px;
+  --volume-thumb-size: 10px;
   --volume-progress: 100%;
   display: block;
   width: 60px;
-  height: 4px;
+  height: var(--volume-track-height);
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
   appearance: none;
   border-radius: 999px;
   outline: 0;
-  background:
-    linear-gradient(
-      90deg,
-      var(--accent-2) 0,
-      var(--accent-2) var(--volume-progress),
-      rgba(255, 255, 255, 0.18) var(--volume-progress),
-      rgba(255, 255, 255, 0.18) 100%
-    );
+  background: transparent;
   cursor: pointer;
 }
 
 .player-volume-input::-webkit-slider-runnable-track {
-  height: 4px;
+  height: var(--volume-track-height);
   border-radius: 999px;
   background: transparent;
 }
 
 .player-volume-input::-moz-range-track {
-  height: 4px;
+  height: var(--volume-track-height);
   border: 0;
   border-radius: 999px;
   background: transparent;
 }
 
 .player-volume-input::-webkit-slider-thumb {
-  width: 8px;
-  height: 8px;
-  margin-top: -2px;
+  width: var(--volume-thumb-size);
+  height: var(--volume-thumb-size);
+  margin-top: calc((var(--volume-track-height) - var(--volume-thumb-size)) / 2);
   appearance: none;
   border: 0;
   border-radius: 999px;
@@ -1044,8 +1131,8 @@ video::-webkit-media-controls-fullscreen-button {
 }
 
 .player-volume-input::-moz-range-thumb {
-  width: 8px;
-  height: 8px;
+  width: var(--volume-thumb-size);
+  height: var(--volume-thumb-size);
   border: 0;
   border-radius: 999px;
   background: #fff;

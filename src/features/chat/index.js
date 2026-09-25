@@ -1,6 +1,6 @@
 // Coordinacion general del chat: cableado de eventos, layout y reexport de submodulos.
 import { dom } from "../../core/dom.js";
-import { logEvent, state } from "../../core/state.js?v=20260912-name-session-01";
+import { logEvent, state } from "../../core/state.js?v=20260914-console-log-controls-01";
 import { CHAT_DOCK_META } from "../../core/utils.js";
 import {
   autoResizeMessageInput,
@@ -13,8 +13,8 @@ import {
   updateCharCounter,
   wireFloatingComposerLayout,
   wireComposerScrollbar,
-} from "./chat-input.js?v=20260914-fullscreen-dock-animation-01";
-import { setReplyTarget } from "./chat-reply.js?v=20260826-reply-sync-close-03";
+} from "./chat-input.js?v=20260916-image-preview-01";
+import { setReplyTarget } from "./chat-reply.js?v=20260914-system-message-roll-transition-05";
 import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20260913-taskbar-badge-01";
 import {
   copyMessageText,
@@ -32,12 +32,68 @@ import {
   setInsideChatVisible,
   syncExternalChatCollapseHandleOffset,
   syncChatAutoExpandControls,
-} from "./chat-layout.js?v=20260914-fullscreen-dock-animation-01";
+} from "./chat-layout.js?v=20260914-fullscreen-dock-animation-16";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 import { focusChatInput } from "./chat-input-focus.js";
-import { hideTooltip } from "../icons-tooltips.js?v=20260912-continuous-bubble-04";
+import { hideTooltip } from "../icons-tooltips.js?v=20260914-tooltip-single-path-01";
 
 const MOBILE_CHAT_LAYOUT_QUERY = "(max-width: 980px)";
+const COLLAPSE_HOVER_RESET_CLASS = "chat-collapse-hover-reset";
+let collapseHoverResetListenerAttached = false;
+
+function getCollapseHoverTargets() {
+  return [...new Set(
+    [dom.collapseChatButton, dom.expandChatButton]
+      .filter(Boolean)
+      .flatMap((button) => [button, button.closest(".chat-collapse-hover-zone")])
+      .filter(Boolean),
+  )];
+}
+
+function isPointerInsideCollapseTarget(event) {
+  if (!Number.isFinite(event?.clientX) || !Number.isFinite(event?.clientY)) {
+    return false;
+  }
+
+  return getCollapseHoverTargets().some((target) => {
+    const rect = target.getBoundingClientRect();
+    return (
+      rect.width > 0
+      && rect.height > 0
+      && event.clientX >= rect.left
+      && event.clientX <= rect.right
+      && event.clientY >= rect.top
+      && event.clientY <= rect.bottom
+    );
+  });
+}
+
+function clearCollapseHandleHoverReset(event) {
+  // El layout puede dejar :hover retenido en la flecha que acaba de moverse.
+  // No reactivamos :hover mientras el puntero esté fuera de las zonas: ese
+  // movimiento puede ser justamente el que dejó al navegador con el estado
+  // pseudoactivo obsoleto. La limpieza ocurre al entrar realmente al nuevo
+  // control, donde :hover vuelve a ser intencional.
+  if (!isPointerInsideCollapseTarget(event)) return;
+
+  getCollapseHoverTargets().forEach((target) => {
+    target.classList.remove(COLLAPSE_HOVER_RESET_CLASS);
+  });
+  collapseHoverResetListenerAttached = false;
+  document.removeEventListener("pointermove", clearCollapseHandleHoverReset);
+}
+
+function suppressCollapseHandleHover() {
+  getCollapseHoverTargets().forEach((target) => {
+    target.classList.add(COLLAPSE_HOVER_RESET_CLASS);
+  });
+
+  if (collapseHoverResetListenerAttached) return;
+  collapseHoverResetListenerAttached = true;
+  document.addEventListener("pointermove", clearCollapseHandleHoverReset, {
+    passive: true,
+  });
+}
 
 function isMobileChatLayout() {
   return Boolean(
@@ -174,19 +230,19 @@ export {
   buildEmojiPicker,
   updateCharCounter,
   sendMessage,
-} from "./chat-input.js?v=20260914-fullscreen-dock-animation-01";
+} from "./chat-input.js?v=20260916-image-preview-01";
 export {
   beginSystemMessageHydration,
   finishSystemMessageHydration,
   renderMessage,
-} from "./chat-render.js?v=20260904-mobile-landscape-bottom-chat-07";
+} from "./chat-render.js?v=20260915-message-time-spacing-01";
 export {
   clearReplyTarget,
   renderReplyPreview,
   scrollToMessage,
   setReplyTarget,
-} from "./chat-reply.js?v=20260826-reply-sync-close-03";
-export { sendVideoEventMessage } from "./chat-system-messages.js?v=20260904-mobile-landscape-bottom-chat-07";
+} from "./chat-reply.js?v=20260914-system-message-roll-transition-05";
+export { sendVideoEventMessage } from "./chat-system-messages.js?v=20260915-image-standalone-reply-02";
 export {
   checkScrollPosition,
   resetInsideUnread,
@@ -209,7 +265,7 @@ export {
   setInsideChatVisible,
   syncChatAutoExpandControls,
   updateCollapseButton,
-} from "./chat-layout.js?v=20260914-fullscreen-dock-animation-01";
+} from "./chat-layout.js?v=20260914-fullscreen-dock-animation-16";
 
 export function wireChatEvents() {
   syncChatAutoExpandControls();
@@ -233,6 +289,10 @@ export function wireChatEvents() {
     }
   }
   window.addEventListener("chat-layout-settled", syncExternalChatCollapseHandleOffset, { passive: true });
+  // Una transición puede generar pointermove mientras la zona vieja se
+  // desmonta. Volver a aplicar el reset al asentarse garantiza que la flecha
+  // nueva no herede el hover de la acción anterior.
+  window.addEventListener("chat-layout-settled", suppressCollapseHandleHover, { passive: true });
   window.addEventListener("scroll", syncExternalChatCollapseHandleOffset, { passive: true });
   window.requestAnimationFrame(syncExternalChatCollapseHandleOffset);
 
@@ -279,6 +339,7 @@ export function wireChatEvents() {
     });
 
     button.addEventListener("click", () => {
+      suppressCollapseHandleHover();
       hideTooltip(true);
       if (isBottomChatKeyboardOpen()) {
         toggleExternalChatCollapseAfterKeyboardCloses();
@@ -292,10 +353,7 @@ export function wireChatEvents() {
     [dom.messageEmojiButton, dom.messageInput],
     [dom.overlayEmojiButton, dom.overlayMessageInput],
   ].forEach(([button, input]) => {
-    const preserveInputFocus = (event) => {
-      if (!isMobileChatLayout()) return;
-      event.preventDefault();
-    };
+    const preserveInputFocus = (event) => event.preventDefault();
     button?.addEventListener("pointerdown", preserveInputFocus);
     button?.addEventListener("mousedown", preserveInputFocus);
     button?.addEventListener("focus", () => {

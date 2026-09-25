@@ -33,6 +33,38 @@
   max-width: 0;
 }
 
+.player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"] .player-volume-slider-wrap {
+  position: relative;
+  --volume-track-height: 5px;
+  --volume-progress: 100%;
+}
+
+.player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"] .player-volume-slider-wrap::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: 50%;
+  right: 0;
+  left: 0;
+  height: var(--volume-track-height);
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--accent-2) 0,
+    var(--accent-2) var(--volume-progress),
+    rgba(255, 255, 255, 0.18) var(--volume-progress),
+    rgba(255, 255, 255, 0.18) 100%
+  );
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"] .player-volume-input {
+  position: relative;
+  z-index: 1;
+  background: transparent;
+}
+
 .player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"]:is(:hover, :focus-within, .is-touch-hover, .volume-hovered) {
   gap: var(--player-controls-item-gap);
 }
@@ -88,8 +120,8 @@
   z-index: 1;
   width: 46px;
   min-width: 46px;
-  height: 5px;
-  min-height: 5px;
+  height: var(--volume-track-height);
+  min-height: var(--volume-track-height);
   margin: 0 !important;
   box-sizing: border-box;
   touch-action: none;
@@ -106,20 +138,20 @@
 }
 
 .player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="vertical"] .player-volume-input::-webkit-slider-runnable-track {
-  height: 5px;
+  height: var(--volume-track-height);
 }
 
 .player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="vertical"] .player-volume-input::-moz-range-track {
-  height: 5px;
+  height: var(--volume-track-height);
 }
 
 .player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="vertical"] .player-volume-input::-webkit-slider-thumb {
-  width: 10px;
-  height: 10px;
-  margin-top: -2.5px;
+  width: var(--volume-thumb-size);
+  height: var(--volume-thumb-size);
+  margin-top: calc((var(--volume-track-height) - var(--volume-thumb-size)) / 2);
 }
 
 .player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="vertical"] .player-volume-input::-moz-range-thumb {
-  width: 10px;
-  height: 10px;
+  width: var(--volume-thumb-size);
+  height: var(--volume-thumb-size);
 }

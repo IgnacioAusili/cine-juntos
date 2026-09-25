@@ -1,7 +1,7 @@
 import {
   animateCollapsedSystemMessageAdvance,
   settleSystemMessageRoll,
-} from "./system-message-roll.js?v=20260823-system-message-drum-09";
+} from "./system-message-roll.js?v=20260914-system-message-roll-transition-05";
 
 const SYSTEM_GROUP_MIN_SIZE = 3;
 const SYSTEM_GROUP_TRANSITION_MS = 180;
@@ -256,10 +256,12 @@ function ensureGroupHeader(items) {
 
 function captureSystemTextSnapshot(item) {
   const target = item?.querySelector(".message-system-text");
+  const bubble = item?.querySelector(".message-system-bubble");
   if (!target) return null;
   return {
     markup: target.cloneNode(true),
     rect: target.getBoundingClientRect(),
+    bubbleRect: bubble?.getBoundingClientRect() || null,
   };
 }
 

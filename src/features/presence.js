@@ -4,7 +4,7 @@ import {
   getDisplayName,
   getTransportNow,
   logEvent,
-} from "../core/state.js?v=20260912-name-session-01";
+} from "../core/state.js?v=20260914-console-log-controls-01";
 import {
   DISPLAY_NAME_MAX_LENGTH,
   DISPLAY_NAME_MIN_LENGTH,
@@ -15,7 +15,7 @@ import { makeGuestName, makeParticipantLabel } from "../core/utils.js";
 import {
   hideTooltip,
   setControlIcon,
-} from "./icons-tooltips.js?v=20260912-continuous-bubble-04";
+} from "./icons-tooltips.js?v=20260914-tooltip-single-path-01";
 import {
   isTouchPointer,
   TOUCH_LONG_PRESS_DELAY_MS,

@@ -1,13 +1,42 @@
 import { dom } from "../core/dom.js";
-import { getClientLogText, logEvent } from "../core/state.js?v=20260912-name-session-01";
+import { clearClientLog, getClientLogText, logEvent } from "../core/state.js?v=20260914-console-log-controls-01";
 
 const LOG_FILE_NAME = "cine-juntos-log.txt";
 const SHARE_TITLE = "Log de diagnóstico de Cine Juntos";
 const SHARE_TEXT_FALLBACK = "Log de diagnóstico de Cine Juntos";
+let mobileDebugScrollPosition = null;
+let consoleLogCaptureInstalled = false;
+let mobileDebugRefreshTimer = 0;
+let mobileDebugCopyFeedbackTimer = 0;
 
 function isTestRoute() {
   return window.location.pathname === "/console"
-    || new URLSearchParams(window.location.search).has("console");
+    || new URLSearchParams(window.location.search).has("console")
+    || window.location.pathname.startsWith("/test/dialog/");
+}
+
+function formatConsoleArgument(value) {
+  if (typeof value === "string") return value;
+  if (value instanceof Error) return `${value.name}: ${value.message}`;
+  try {
+    const serialized = JSON.stringify(value);
+    return serialized === undefined ? String(value) : serialized;
+  } catch {
+    return String(value);
+  }
+}
+
+export function installConsoleLogCapture() {
+  if (!isTestRoute() || consoleLogCaptureInstalled) return;
+  consoleLogCaptureInstalled = true;
+
+  const nativeConsoleLog = console.log.bind(console);
+  console.log = (...args) => {
+    logEvent("console.log", args.map(formatConsoleArgument).join(" "));
+    nativeConsoleLog(...args);
+  };
+
+  nativeConsoleLog("[console-capture] enabled for the /console route");
 }
 
 function syncDebugButtonVisibility() {
@@ -15,21 +44,142 @@ function syncDebugButtonVisibility() {
   dom.mobileDebugButton.hidden = dom.sessionView.hidden;
 }
 
-function refreshLogTextarea() {
-  if (dom.mobileDebugLog) dom.mobileDebugLog.value = getClientLogText();
+function getFilteredLog() {
+  const filter = dom.mobileDebugFilter?.value.trim().toLocaleLowerCase("es-AR") || "";
+  const text = getClientLogText();
+  return {
+    filter,
+    text: filter
+      ? text.split("\n").filter((line) => line.toLocaleLowerCase("es-AR").includes(filter)).join("\n")
+      : text,
+  };
+}
+
+function escapeHtml(value) {
+  return value.replace(/[&<>"']/g, (character) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;",
+  })[character]);
+}
+
+function highlightLogLine(line, filter) {
+  if (!filter) return escapeHtml(line);
+
+  const normalizedLine = line.toLocaleLowerCase("es-AR");
+  let searchStart = 0;
+  let lastIndex = 0;
+  let highlightedLine = "";
+
+  while (searchStart < normalizedLine.length) {
+    const matchIndex = normalizedLine.indexOf(filter, searchStart);
+    if (matchIndex === -1) break;
+    highlightedLine += escapeHtml(line.slice(lastIndex, matchIndex));
+    highlightedLine += "<mark>" + escapeHtml(line.slice(matchIndex, matchIndex + filter.length)) + "</mark>";
+    lastIndex = matchIndex + filter.length;
+    searchStart = lastIndex;
+  }
+
+  return highlightedLine + escapeHtml(line.slice(lastIndex));
+}
+
+function highlightLogText(text, filter) {
+  if (!text) return "";
+  return text.split("\n").map((line) => highlightLogLine(line, filter)).join("\n");
+}
+
+function refreshLogViewer() {
+  if (!dom.mobileDebugLog) return "";
+  const { filter, text } = getFilteredLog();
+  dom.mobileDebugLog.innerHTML = highlightLogText(text, filter);
+  const filterClearButton = document.querySelector("#mobileDebugFilterClearButton");
+  if (filterClearButton) filterClearButton.hidden = !dom.mobileDebugFilter?.value;
+  return text;
+}
+
+function clearLogs() {
+  clearClientLog();
+  refreshLogViewer();
+}
+
+function startLiveLogViewer() {
+  window.clearInterval(mobileDebugRefreshTimer);
+  mobileDebugRefreshTimer = window.setInterval(refreshLogViewer, 250);
+}
+
+function stopLiveLogViewer() {
+  window.clearInterval(mobileDebugRefreshTimer);
+  mobileDebugRefreshTimer = 0;
+}
+
+function setCopyFeedback(state) {
+  const button = dom.mobileDebugCopyButton;
+  if (!button) return;
+
+  window.clearTimeout(mobileDebugCopyFeedbackTimer);
+  button.dataset.copyState = state;
+  button.setAttribute(
+    "aria-label",
+    state === "success" ? "Copiado" : state === "error" ? "Error al copiar" : "Copiar",
+  );
+
+  if (state !== "idle") {
+    mobileDebugCopyFeedbackTimer = window.setTimeout(() => {
+      button.dataset.copyState = "idle";
+      button.setAttribute("aria-label", "Copiar");
+    }, 2200);
+  }
+}
+
+function restoreMobileDebugScroll() {
+  if (!mobileDebugScrollPosition) return;
+  window.scrollTo(mobileDebugScrollPosition.left, mobileDebugScrollPosition.top);
+}
+
+function closeMobileDebugDialog() {
+  dom.mobileDebugDialog.close();
+  restoreMobileDebugScroll();
+  requestAnimationFrame(() => {
+    restoreMobileDebugScroll();
+    mobileDebugScrollPosition = null;
+  });
+}
+
+function copyTextFallback(text) {
+  const fallbackInput = document.createElement("textarea");
+  fallbackInput.value = text;
+  fallbackInput.setAttribute("readonly", "");
+  fallbackInput.style.position = "fixed";
+  fallbackInput.style.opacity = "0";
+  document.body.appendChild(fallbackInput);
+  fallbackInput.select();
+  let copied = false;
+  try {
+    copied = document.execCommand("copy");
+  } catch {
+    copied = false;
+  }
+  fallbackInput.remove();
+  return copied;
 }
 
 async function copyLogs() {
-  refreshLogTextarea();
-  const text = dom.mobileDebugLog?.value || "";
+  const text = refreshLogViewer();
+  let copied = false;
   try {
-    await navigator.clipboard.writeText(text);
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+      copied = true;
+    } else {
+      copied = copyTextFallback(text);
+    }
   } catch {
-    dom.mobileDebugLog?.select();
-    document.execCommand("copy");
-    dom.mobileDebugLog?.setSelectionRange(text.length, text.length);
+    copied = copyTextFallback(text);
   }
-  logEvent("mobile-keyboard-debug", "test-ui:log-copied");
+  setCopyFeedback(copied ? "success" : "error");
+  logEvent("mobile-keyboard-debug", copied ? "test-ui:log-copied" : "test-ui:log-copy-failed");
 }
 
 function downloadLogs(text) {
@@ -43,8 +193,7 @@ function downloadLogs(text) {
 }
 
 async function shareLogs() {
-  refreshLogTextarea();
-  const text = dom.mobileDebugLog?.value || "";
+  const text = refreshLogViewer();
   const file = typeof File === "function"
     ? new File([text], LOG_FILE_NAME, { type: "text/plain" })
     : null;
@@ -98,14 +247,35 @@ export function wireMobileDebugTools() {
   observer.observe(dom.sessionView, { attributes: true, attributeFilter: ["hidden"] });
 
   dom.mobileDebugButton.addEventListener("click", () => {
-    refreshLogTextarea();
+    mobileDebugScrollPosition = { left: window.scrollX, top: window.scrollY };
+    refreshLogViewer();
     dom.mobileDebugDialog.showModal();
+    startLiveLogViewer();
+    dom.mobileDebugCloseButton?.focus({ preventScroll: true });
+    restoreMobileDebugScroll();
+    requestAnimationFrame(restoreMobileDebugScroll);
     dom.mobileDebugLog?.scrollTo(0, dom.mobileDebugLog.scrollHeight);
   });
-  dom.mobileDebugCloseButton?.addEventListener("click", () => dom.mobileDebugDialog.close());
+  dom.mobileDebugCloseButton?.addEventListener("click", closeMobileDebugDialog);
   dom.mobileDebugCopyButton?.addEventListener("click", copyLogs);
   mobileDebugShareButton?.addEventListener("click", shareLogs);
+  dom.mobileDebugClearButton?.addEventListener("click", clearLogs);
+  dom.mobileDebugFilter?.addEventListener("input", refreshLogViewer);
+  document.querySelector("#mobileDebugFilterClearButton")?.addEventListener("click", () => {
+    if (!dom.mobileDebugFilter) return;
+    dom.mobileDebugFilter.value = "";
+    refreshLogViewer();
+    dom.mobileDebugFilter.focus();
+  });
+  dom.mobileDebugDialog.addEventListener("close", () => {
+    stopLiveLogViewer();
+    restoreMobileDebugScroll();
+    requestAnimationFrame(() => {
+      restoreMobileDebugScroll();
+      mobileDebugScrollPosition = null;
+    });
+  });
   dom.mobileDebugDialog.addEventListener("click", (event) => {
-    if (event.target === dom.mobileDebugDialog) dom.mobileDebugDialog.close();
+    if (event.target === dom.mobileDebugDialog) closeMobileDebugDialog();
   });
 }

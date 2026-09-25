@@ -1,5 +1,5 @@
 import { dom } from "../core/dom.js";
-import { state } from "../core/state.js?v=20260912-name-session-01";
+import { state } from "../core/state.js?v=20260914-console-log-controls-01";
 import {
   buildContinuousBubblePath,
   clampBubbleTailCenter,
@@ -44,7 +44,11 @@ function createBubbleChrome(className, zIndex) {
   svg.append(path);
   svg.style.zIndex = String(zIndex);
   svg.setAttribute("aria-hidden", "true");
-  document.body.append(svg);
+  // El chrome tiene que pertenecer al app-shell para mantenerse dentro de la
+  // top layer cuando el shell entra en fullscreen nativo. Así no hace falta
+  // volver a dibujar la cola con un pseudo-elemento CSS distinto.
+  const chromeHost = document.querySelector(".app-shell") || document.body;
+  chromeHost.append(svg);
   return { svg, path };
 }
 
@@ -555,6 +559,29 @@ function getTooltipAnchor(source) {
   return source.closest?.(TOOLTIP_ANCHOR_SELECTOR) || source;
 }
 
+function getTooltipAnchorRect(anchor) {
+  const anchorRect = anchor.getBoundingClientRect();
+  if (!anchor.classList?.contains("presence-pill")) return anchorRect;
+
+  const visibleParts = [...anchor.querySelectorAll(".presence-dot, .presence-self-label, #participantCount, #overlayParticipantCount")]
+    .map((part) => part.getBoundingClientRect())
+    .filter((rect) => rect.width > 0 && rect.height > 0);
+  if (!visibleParts.length) return anchorRect;
+
+  const top = Math.min(...visibleParts.map((rect) => rect.top));
+  const right = Math.max(...visibleParts.map((rect) => rect.right));
+  const bottom = Math.max(...visibleParts.map((rect) => rect.bottom));
+  const left = Math.min(...visibleParts.map((rect) => rect.left));
+  return {
+    top,
+    right,
+    bottom,
+    left,
+    width: right - left,
+    height: bottom - top,
+  };
+}
+
 function isButtonTooltipContext(context) {
   return Boolean(context?.anchor?.matches?.("button, [role='button']"));
 }
@@ -625,7 +652,7 @@ function showTooltip(context) {
 }
 
 function positionTooltip(anchor) {
-  const rect = anchor.getBoundingClientRect();
+  const rect = getTooltipAnchorRect(anchor);
   const tooltipRect = dom.tooltipLayer.getBoundingClientRect();
   const tooltipVisualHeight = tooltipRect.height + TOOLTIP_TAIL_HEIGHT_PX;
   const maxLeft = Math.max(TOOLTIP_VIEWPORT_PADDING, window.innerWidth - tooltipRect.width - TOOLTIP_VIEWPORT_PADDING);

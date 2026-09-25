@@ -9,20 +9,20 @@ import {
 import {
   hideTooltip,
   setControlIcon,
-} from "../icons-tooltips.js?v=20260912-continuous-bubble-04";
+} from "../icons-tooltips.js?v=20260914-tooltip-single-path-01";
 import { setSyncStatus } from "../session-ui.js?v=20260911-orientation-scroll-anchor-01";
 import {
   logEvent,
   state,
-} from "../../core/state.js?v=20260912-name-session-01";
-import { isMiniPlayerActive } from "./mini-player.js?v=20260910-player-tooltip-chain-01";
+} from "../../core/state.js?v=20260914-console-log-controls-01";
+import { isMiniPlayerActive } from "./mini-player.js?v=20260916-image-preview-01";
 import {
   syncExternalChatCollapseHandleOffset,
   syncInsideChatPanelOffset,
   cancelExternalChatAutoCollapse,
   forceExternalChatCollapsed,
   updateCollapseButton,
-} from "../chat/chat-layout.js?v=20260914-fullscreen-dock-animation-01";
+} from "../chat/chat-layout.js?v=20260914-fullscreen-dock-animation-16";
 import { withShortcutHint } from "../../core/utils.js";
 import {
   captureFullscreenScroll,
@@ -144,6 +144,9 @@ function wirePlayerOverlayControls({ togglePlayback } = {}) {
 
   const scheduleHide = (delay = PLAYER_OVERLAY_IDLE_MS) => {
     clearHideTimer();
+    // Sin contenido, la barra es parte del estado vacío del reproductor y no
+    // debe desaparecer por inactividad ni por una interacción con el video.
+    if (dom.playerFrame.classList.contains("player-no-content")) return;
     if (keepOverlayWhilePaused()) return;
     const safeDelay = delay > 0 ? delay : PLAYER_OVERLAY_IDLE_MS;
     hideTimer = window.setTimeout(() => {
@@ -466,6 +469,12 @@ function wirePlayerOverlayControls({ togglePlayback } = {}) {
       && (event?.type === "mousedown" || event?.type === "mouseenter")
     ) return;
     dom.playerFrame.classList.remove("player-cursor-hidden");
+    if (dom.playerFrame.classList.contains("player-no-content")) {
+      clearHideTimer();
+      dom.playerFrame.classList.remove("player-overlay-suppressed");
+      setOverlayVisible(true);
+      return;
+    }
     if (
       target === dom.videoPlayer
       && dom.playerFrame.classList.contains("player-overlay-suppressed")

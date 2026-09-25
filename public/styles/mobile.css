@@ -293,18 +293,19 @@
   /* En pantallas chicas la entrada usa una sola columna real: el contenido
      no hereda el padding lateral del grid de escritorio ni el desplazamiento
      decorativo del boleto. */
-  /* El lobby no es una pantalla fija: en teléfonos bajos su contenido debe
-     ampliar el documento para que se pueda recorrer entero. Mantenerlo en
-     el alto del viewport dejaba partes del boleto fuera del scroll. */
+  /* En reposo el contenido entra completo; con el teclado el documento puede
+     crecer de forma natural para que Chrome desplace solo lo imprescindible. */
   body.is-lobby {
     height: auto;
-    min-height: 100%;
+    min-height: 100dvh;
     overflow-x: hidden;
     overflow-y: auto;
   }
 
   body.is-lobby .app-shell {
-    min-height: 100%;
+    height: auto;
+    min-height: 100dvh;
+    padding-bottom: 0;
     grid-template-rows: auto auto;
     align-content: start;
   }
@@ -318,10 +319,12 @@
   }
 
   .lobby-screen {
-    min-height: 0;
+    height: auto;
+    min-height: max(0px, calc(100dvh - var(--app-shell-gutter)));
     gap: 0;
-    grid-template-rows: auto auto auto;
-    align-content: start;
+    grid-template-rows: auto auto;
+    align-content: space-between;
+    padding-bottom: 8px;
   }
 
   .lobby-marquee {
@@ -330,12 +333,16 @@
 
   .lobby-grid {
     width: 100%;
-    gap: clamp(28px, 5vh, 38px);
+    min-height: 0;
+    gap: clamp(10px, 1.8vh, 16px);
+    align-content: start;
     padding-inline: 0;
+    transform: translateY(-8px);
   }
 
   .lobby-hero {
     width: min(360px, calc(100% - 32px));
+    position: relative;
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
     grid-template-areas:
@@ -345,14 +352,50 @@
     align-items: center;
     justify-items: start;
     column-gap: 14px;
-    row-gap: clamp(16px, 3vh, 22px);
+    row-gap: clamp(12px, 2vh, 16px);
     text-align: left;
     transform: translateY(-4px);
   }
 
+  /* Una guarda editorial completa el vacío entre la descripción y el boleto.
+     Es absoluta para no aumentar la altura del lobby ni crear scroll. */
+  .lobby-hero::before,
+  .lobby-hero::after {
+    position: absolute;
+    top: calc(100% - 8px);
+    left: 50%;
+    content: "";
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .lobby-hero::before {
+    width: clamp(190px, 58vw, 242px);
+    height: 16px;
+    transform: translateX(-50%);
+    background:
+      linear-gradient(90deg, transparent, rgba(240, 140, 58, 0.54) 19%, rgba(240, 140, 58, 0.54) 43%, transparent 49%) center / 100% 1px no-repeat,
+      linear-gradient(90deg, transparent 51%, rgba(47, 184, 164, 0.58) 57%, rgba(47, 184, 164, 0.58) 81%, transparent) center / 100% 1px no-repeat,
+      linear-gradient(90deg, transparent 27%, rgba(240, 140, 58, 0.28) 27.5%, transparent 28.5%, transparent 71.5%, rgba(47, 184, 164, 0.3) 72.5%, transparent 73%) center / 100% 9px no-repeat;
+  }
+
+  .lobby-hero::after {
+    width: 9px;
+    height: 9px;
+    border: 1px solid rgba(240, 140, 58, 0.78);
+    background: rgba(17, 22, 25, 0.94);
+    box-shadow: 0 0 0 3px rgba(17, 22, 25, 0.88), 0 0 12px rgba(240, 140, 58, 0.2);
+    transform: translate(-50%, 3px) rotate(45deg);
+  }
+
+  .lobby-hero > * {
+    position: relative;
+    z-index: 1;
+  }
+
   .lobby-title {
     grid-area: title;
-    font-size: clamp(4.3rem, 17vw, 5.5rem);
+    font-size: clamp(4.65rem, 18vw, 5.8rem);
     text-align: left;
     line-height: 0.92;
     margin-bottom: 0;
@@ -375,12 +418,20 @@
   .lobby-description {
     grid-area: description;
     justify-self: center;
-    width: min(42ch, calc(100% + 8px));
+    width: calc(100% + 40px);
     max-width: none;
-    font-size: 0.95rem;
-    line-height: 1.55;
+    font-size: 1.08rem;
+    line-height: 1.48;
     text-align: center;
-    text-wrap: balance;
+    text-wrap: pretty;
+    white-space: normal;
+    transform: translateY(-2px);
+  }
+
+  /* En móvil el hero no muestra la lista de prestaciones: el boleto de
+     entrada queda como la siguiente pieza visual, sin esa franja intermedia. */
+  .lobby-features {
+    display: none;
   }
 
   .lobby-description-full {
@@ -410,6 +461,8 @@
     text-overflow: clip;
     white-space: normal;
     transform: translateX(8px);
+    font-size: 0.56rem;
+    line-height: 1.35;
   }
 
   .lobby-features {
@@ -479,36 +532,88 @@
     transform: none;
   }
 
+  .lobby-ticket-body {
+    gap: 16px;
+    padding: 14px 14px 10px;
+  }
+
+  .lobby-ticket-label {
+    font-size: 1.02rem;
+  }
+
+  .lobby-ticket-hint {
+    font-size: 0.76rem;
+  }
+
+  .lobby-fields {
+    gap: 10px;
+  }
+
   .lobby-fields input[type="text"] {
-    width: calc(100% - 5px);
-    transform: translateX(5px);
+    height: 42px;
+    min-height: 42px;
+    line-height: 42px;
+  }
+
+  .lobby-actions {
+    gap: 8px;
+  }
+
+  .lobby-actions > .button {
+    min-height: 42px;
+  }
+
+  .lobby-fields input[type="text"] {
+    --lobby-input-offset: 3px;
+    width: calc(100% - var(--lobby-input-offset));
+    transform: translateX(var(--lobby-input-offset));
   }
 
   .lobby-footer {
-    display: flex;
+    display: grid;
     align-items: center;
-    justify-content: center;
-    gap: 16px;
-    width: min(380px, calc(100% - 28px));
-    align-self: start;
-    margin-top: 28px;
+    grid-template-columns: minmax(0, 1fr) var(--lobby-about-panel-size, 42px);
+    gap: 12px;
+    width: min(380px, 100%);
+    align-self: end;
+    margin-top: 0;
+    padding: 10px 0;
+    border: 0;
+    border-radius: 16px;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+
+  .lobby-footer .lobby-disclaimer {
+    width: auto;
+    transform: translateY(10px);
+    text-align: center;
   }
 
   .lobby-about-button {
     position: static;
-    flex: 0 0 36px;
+    justify-self: center;
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
     margin: 0;
-    transform: translateX(14px);
+    transform: translateY(5px);
+  }
+
+  .lobby-about-button svg {
+    width: 20px;
+    height: 20px;
   }
 
   .lobby-about-button:hover,
   .lobby-about-button:focus-visible {
-    transform: translate(14px, -2px);
+    transform: translateY(3px);
   }
 
   .lobby-about-button.is-touch-hover,
   .lobby-about-button.is-touch-hover:hover {
-    transform: translate(14px, -2px);
+    transform: translateY(3px);
   }
 
   /* Cargar usa el estado nativo de presión: evita que JS y :hover compitan
@@ -637,28 +742,26 @@
   body:not(.is-lobby) .player-volume-input {
     width: 60px;
     height: 28px;
-    background-size: 100% 3px;
-    background-position: center;
-    background-repeat: no-repeat;
+    background: transparent;
   }
 
   body:not(.is-lobby) .player-volume-input::-webkit-slider-runnable-track {
-    height: 3px;
+    height: var(--volume-track-height);
   }
 
   body:not(.is-lobby) .player-volume-input::-moz-range-track {
-    height: 3px;
+    height: var(--volume-track-height);
   }
 
   body:not(.is-lobby) .player-volume-input::-webkit-slider-thumb {
-    width: 8px;
-    height: 8px;
-    margin-top: -2.5px;
+    width: var(--volume-thumb-size);
+    height: var(--volume-thumb-size);
+    margin-top: calc((var(--volume-track-height) - var(--volume-thumb-size)) / 2);
   }
 
   body:not(.is-lobby) .player-volume-input::-moz-range-thumb {
-    width: 8px;
-    height: 8px;
+    width: var(--volume-thumb-size);
+    height: var(--volume-thumb-size);
   }
 
   /* El chat expandido ocupa la superficie del video; la flecha mantiene la
@@ -701,6 +804,17 @@
   @media (orientation: portrait) {
     body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-tools {
       padding-left: 38px;
+    }
+
+    /* La zona reservada del header mide 38px y no debe compartir el ajuste
+       del flex con el resto de sus controles: el círculo se centra sobre su
+       propia zona táctil para que el gap del header no lo desplace. */
+    body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="right"]
+      #collapseChatButton .chat-collapse-icon-anchor {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
     }
   }
 
@@ -1008,14 +1122,6 @@
     background: rgba(47, 184, 164, 0.14);
   }
 
-  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-collapse-handle:hover .chat-collapse-icon-anchor,
-  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-collapse-handle.is-touch-hover .chat-collapse-icon-anchor,
-  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-collapse-hover-zone.is-touch-hover .chat-collapse-icon-anchor,
-  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-collapse-handle:focus-visible .chat-collapse-icon-anchor {
-    border-color: rgba(255, 255, 255, 0.38);
-    background: rgba(32, 38, 43, 0.98);
-  }
-
   /* El mini-reproductor fijo acompaña al chat inferior sin cubrir su
      cabecera, que conserva las acciones de usuario y dock. */
   .mini-player-scroll {
@@ -1027,18 +1133,20 @@
 }
 
 @media (max-width: 680px) and (max-height: 760px) {
+  /* En áreas visibles muy bajas el contenido sigue fluyendo, pero se reduce
+     el espacio estructural para que el lobby no necesite scroll en reposo. */
   .lobby-screen {
-    padding-bottom: clamp(6px, 1vh, 12px);
-    grid-template-rows: auto auto auto;
+    padding-bottom: 0;
+    grid-template-rows: auto auto;
   }
 
   .lobby-grid {
-    gap: clamp(20px, 3.2vh, 28px);
+    gap: clamp(10px, 1.8vh, 15px);
   }
 
   .lobby-hero {
     column-gap: 12px;
-    row-gap: clamp(14px, 2.3vh, 20px);
+    row-gap: clamp(10px, 1.8vh, 15px);
     transform: translateY(-8px);
   }
 
@@ -1048,13 +1156,17 @@
   }
 
   .lobby-title {
-    font-size: clamp(3.9rem, 15vw, 5.1rem);
+    font-size: clamp(3.9rem, 16vw, 5.2rem);
     line-height: 0.92;
   }
 
-  .lobby-description {
-    font-size: 0.88rem;
-    line-height: 1.45;
+    .lobby-description {
+      width: calc(100% + 48px);
+      font-size: 0.82rem;
+      line-height: 1.45;
+    text-wrap: pretty;
+    white-space: normal;
+    transform: translateY(-4px);
   }
 
   .lobby-features {
@@ -1087,15 +1199,15 @@
 
   .lobby-ticket-body {
     gap: 10px;
-    padding: 14px 14px 12px;
+    padding: 10px 12px 8px;
   }
 
   .lobby-ticket-head {
-    padding-bottom: 10px;
+    padding-bottom: 6px;
   }
 
   .lobby-ticket-label {
-    font-size: 0.84rem;
+    font-size: 0.9rem;
   }
 
   .lobby-ticket-hint {
@@ -1109,11 +1221,21 @@
   .lobby-fields input[type="text"] {
     height: 36px;
     min-height: 36px;
-    line-height: 34px;
+    line-height: 36px;
   }
 
   .lobby-actions {
     gap: 6px;
+  }
+
+  .lobby-footer {
+    gap: 8px;
+    padding: 0;
+    transform: translateY(-16px);
+  }
+
+  .lobby-footer .lobby-disclaimer {
+    transform: translateY(10px);
   }
 
   /* Los dos composers móviles comparten una única altura compacta. El
@@ -1314,6 +1436,30 @@
   }
 }
 
+/* El teclado ocupa parte del viewport móvil y no debe tapar la barra del
+   reproductor. La clase se aplica mientras se conserva el estado original
+   para restaurarlo cuando el teclado se cierra, incluso sin contenido. */
+@media (max-width: 980px) {
+  body:not(.is-lobby):not(.fullscreen-mode)
+    .session-view[data-chat-dock] .player-frame.player-controls-keyboard-hidden
+    .player-bottom-actions,
+  body:not(.is-lobby):not(.fullscreen-mode)
+    .session-view[data-chat-dock] .player-frame.player-controls-keyboard-hidden
+    .player-center-actions {
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      opacity 180ms ease,
+      transform 180ms ease;
+  }
+
+  body:not(.is-lobby):not(.fullscreen-mode)
+    .session-view[data-chat-dock] .player-frame.player-controls-keyboard-hidden
+    .player-bottom-actions {
+    transform: translateY(6px);
+  }
+}
+
 /* Al abrir el teclado del chat inferior, Chrome reduce el viewport de layout.
    La pagina conserva su altura estructural y solo se comprime la segunda fila:
    el reproductor no cambia de tamaño ni el documento se desplaza para mostrar
@@ -1459,58 +1605,6 @@
 @media (max-width: 980px) and (orientation: portrait) {
   body:not(.is-lobby) .session-view .player-frame:not(.mini-player-surface) {
     border-top: 0 !important;
-  }
-}
-
-/* En fullscreen móvil el workspace es una superficie fija por encima del
-   app-shell. El picker global quedaba fuera de esa superficie: el DOM lo
-   mostraba, pero no llegaba a pintarse ni a recibir el toque. chat-input.js
-   lo porta dentro de la superficie activa; aquí recuperamos su chrome porque
-   el SVG decorativo global tampoco puede cruzar ese contexto de apilado. */
-@media (max-width: 980px) {
-  body.fullscreen-mode .chat-area > .emoji-popover,
-  body.fullscreen-mode .player-frame > .emoji-popover {
-    width: 228px;
-    max-width: calc(100vw - 16px);
-    border: 1px solid var(--emoji-popover-border);
-    border-radius: var(--emoji-popover-radius);
-    background: var(--emoji-popover-background);
-    box-shadow: 0 12px 28px rgb(0 0 0 / 32%);
-  }
-
-  body.fullscreen-mode .chat-area > .emoji-popover::after,
-  body.fullscreen-mode .player-frame > .emoji-popover::after {
-    content: "";
-    position: absolute;
-    z-index: -1;
-    width: var(--emoji-popover-tail-height);
-    height: var(--emoji-popover-tail-height);
-    background: var(--emoji-popover-background);
-    border: 1px solid var(--emoji-popover-border);
-    transform: rotate(45deg);
-    pointer-events: none;
-  }
-
-  body.fullscreen-mode .chat-area > .emoji-popover[data-placement="top"]::after,
-  body.fullscreen-mode .player-frame > .emoji-popover[data-placement="top"]::after {
-    right: auto;
-    bottom: -5px;
-    left: calc(var(--emoji-popover-anchor-x) - 4px);
-    border-top: 0;
-    border-left: 0;
-  }
-
-  body.fullscreen-mode .chat-area > .emoji-popover[data-placement="bottom"]::after,
-  body.fullscreen-mode .player-frame > .emoji-popover[data-placement="bottom"]::after {
-    top: -5px;
-    right: auto;
-    left: calc(var(--emoji-popover-anchor-x) - 4px);
-    border-right: 0;
-    border-bottom: 0;
-  }
-
-  body.fullscreen-mode .emoji-popover-svg {
-    display: none !important;
   }
 }
 

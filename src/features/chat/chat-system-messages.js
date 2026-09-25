@@ -3,10 +3,10 @@ import {
   getDisplayName,
   getTransportNow,
   logEvent,
-} from "../../core/state.js?v=20260912-name-session-01";
+} from "../../core/state.js?v=20260914-console-log-controls-01";
 import { formatClockTime } from "../../core/utils.js";
 import { createRandomId } from "../../core/random-id.js?v=20260902-mobile-real-browser-02";
-import { renderMessage } from "./chat-render.js?v=20260904-mobile-landscape-bottom-chat-07";
+import { renderMessage } from "./chat-render.js?v=20260915-message-time-spacing-01";
 
 /**
  * Genera y envía un mensaje de sistema al chat describiendo un evento de video.

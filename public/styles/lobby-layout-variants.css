@@ -193,8 +193,9 @@ body.is-lobby[data-lobby-flow="single-column"] .lobby-screen {
   height: auto;
   min-height: max(0px, calc(100dvh - var(--app-shell-gutter)));
   gap: 0;
-  grid-template-rows: auto auto;
-  align-content: space-between;
+  /* El pie es fixed y la marquesina está oculta: solo queda una fila en flujo. */
+  grid-template-rows: auto;
+  align-content: start;
   padding-block: 0 8px;
 }
 

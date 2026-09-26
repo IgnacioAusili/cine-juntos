@@ -180,11 +180,18 @@ function syncLobbyContentCenter() {
   if (isColumns && grid) document.body.dataset.lobbyFlow = "columns";
   const gridColumns = grid ? getComputedStyle(grid).gridTemplateColumns.trim().split(/\s+/) : [];
   const featureHeadings = hero ? [...hero.querySelectorAll(".lobby-feature-text strong")] : [];
-  const hasClippedFeatureHeading = featureHeadings.some((heading) => (
-    heading.getClientRects().length > 0
-      && heading.clientWidth > 0
-      && heading.scrollWidth > heading.clientWidth + 1
-  ));
+  const hasClippedFeatureHeading = featureHeadings.some((heading) => {
+    if (heading.getClientRects().length === 0 || heading.clientWidth === 0) return false;
+
+    const compactTitle = heading.querySelector(".lobby-feature-title-short");
+    const compactTitleIsVisible = compactTitle?.getClientRects().length > 0;
+    const isClipped = heading.scrollWidth > heading.clientWidth + 1;
+
+    // El título largo ya se recorta de forma intencional y tiene una versión
+    // corta para este espacio. Pasa a vertical cuando también se desborda la
+    // versión corta que realmente ve el usuario.
+    return isClipped && (!compactTitle || compactTitleIsVisible);
+  });
   const isSingleColumn = Boolean(grid) && (
     gridColumns.length < 2 || (isColumns && hasClippedFeatureHeading)
   );
@@ -215,6 +222,7 @@ function syncLobbyContentCenter() {
     syncSingleColumnContentGap(grid, ticket, footer);
     syncSingleColumnDescriptionPlacement(hero, ticket);
     syncLobbyTitlePlacement(screen, true);
+    syncSingleColumnTicketPlacement(hero, ticket, footer);
     return;
   }
 
@@ -313,6 +321,26 @@ function syncSingleColumnContentGap(grid, ticket, footer) {
   grid.style.setProperty("--lobby-vertical-content-gap", `${gap.toFixed(2)}px`);
 }
 
+function syncSingleColumnTicketPlacement(hero, ticket, footer) {
+  if (!hero || !ticket || !footer) return;
+
+  const heroRect = hero.getBoundingClientRect();
+  const ticketRect = ticket.getBoundingClientRect();
+  const footerRect = footer.getBoundingClientRect();
+  const legalText = footer.querySelector(".lobby-disclaimer");
+  const lowerVisibleBoundary = legalText?.getBoundingClientRect().top ?? footerRect.top;
+  const availableHeight = lowerVisibleBoundary - heroRect.bottom;
+  const freeSpace = availableHeight - ticketRect.height;
+  if (!Number.isFinite(freeSpace) || freeSpace <= 0) return;
+
+  const targetTicketTop = heroRect.bottom + freeSpace / 2;
+
+  const ticketShift = targetTicketTop - ticketRect.top;
+  if (Number.isFinite(ticketShift)) {
+    ticket.style.setProperty("translate", `0px ${ticketShift.toFixed(2)}px`);
+  }
+}
+
 function getTitleGlyphTopOffset(title) {
   const line = title.querySelector(".lobby-title-line");
   if (!line) return 0;
@@ -394,12 +422,110 @@ function resetSingleColumnDescriptionPlacement(hero) {
   hero?.style.removeProperty("--lobby-description-separator-shift");
 }
 
+function wireLobbyMarqueeEmojis(screen) {
+  const track = screen?.querySelector(".lobby-marquee-track");
+  const sets = [...(track?.querySelectorAll(".marquee-set") || [])];
+  if (sets.length < 4) return;
+
+  const emojiGroup = sets[0].querySelector(".marquee-emojis");
+  const phrases = [...sets[0].querySelectorAll(".live, .marquee-fixed, .marquee-message")]
+    .map((phrase) => ({ text: phrase.textContent, className: phrase.className }));
+  const emojis = (emojiGroup?.dataset.emojis || "").split(",").filter(Boolean);
+  if (phrases.length < 2 || emojis.length < 3) return;
+
+  const shuffle = (items) => {
+    const result = [...items];
+    for (let index = result.length - 1; index > 0; index -= 1) {
+      const swapIndex = Math.floor(Math.random() * (index + 1));
+      [result[index], result[swapIndex]] = [result[swapIndex], result[index]];
+    }
+    return result;
+  };
+
+  const phraseKey = (order) => order.map(({ className, text }) => `${className}:${text}`).join("\u001f");
+  const emojiKey = (order) => order.join("\u001f");
+  const currentPhraseOrder = (set) => [...set.querySelectorAll(".live, .marquee-fixed, .marquee-message")]
+    .map((phrase) => ({ text: phrase.textContent, className: phrase.className }));
+  const currentEmojiOrder = (set) => [...set.querySelectorAll(".marquee-emoji")]
+    .map((emoji) => emoji.textContent);
+
+  const chooseDifferentOrder = (items, count, keyFor, forbiddenKeys) => {
+    const forbidden = new Set(forbiddenKeys);
+    let candidate = [];
+    for (let attempt = 0; attempt < 32; attempt += 1) {
+      candidate = shuffle(items).slice(0, count);
+      if (!forbidden.has(keyFor(candidate))) return candidate;
+    }
+
+    const base = shuffle(items);
+    for (let offset = 1; offset < base.length; offset += 1) {
+      candidate = [...base.slice(offset), ...base.slice(0, offset)].slice(0, count);
+      if (!forbidden.has(keyFor(candidate))) return candidate;
+    }
+    return candidate;
+  };
+
+  const renderSet = (set, phraseOrder, emojiOrder) => {
+    const phraseNodes = phraseOrder.map(({ text, className }) => {
+      const item = document.createElement("span");
+      item.className = className;
+      item.textContent = text;
+      return item;
+    });
+    const newEmojiGroup = document.createElement("span");
+    newEmojiGroup.className = "marquee-emojis";
+    newEmojiGroup.dataset.emojis = emojis.join(",");
+    newEmojiGroup.setAttribute("aria-hidden", "true");
+    newEmojiGroup.replaceChildren(...emojiOrder.map((emoji) => {
+      const item = document.createElement("span");
+      item.className = "marquee-emoji";
+      item.textContent = emoji;
+      return item;
+    }));
+
+    set.querySelector(".marquee-emojis")?.replaceWith(newEmojiGroup);
+    [...set.querySelectorAll(".live, .marquee-fixed, .marquee-message")].forEach((node) => node.remove());
+    set.prepend(...phraseNodes);
+    phraseNodes.at(-1)?.after(newEmojiGroup);
+  };
+
+  const initialPhraseOrder = shuffle(phrases);
+  const initialEmojiOrder = shuffle(emojis);
+  sets.forEach((set, setIndex) => {
+    const phraseOrder = initialPhraseOrder.map((_, index) => initialPhraseOrder[(index + setIndex) % initialPhraseOrder.length]);
+    const emojiOrder = Array.from({ length: 3 }, (_, index) => initialEmojiOrder[(setIndex + index) % initialEmojiOrder.length]);
+    renderSet(set, phraseOrder, emojiOrder);
+  });
+
+  track.addEventListener("animationiteration", () => {
+    const currentSets = [...track.querySelectorAll(".marquee-set")];
+    const outgoingSets = currentSets.slice(0, 2);
+    const nextBatch = currentSets.slice(2);
+    const forbiddenPhraseOrders = nextBatch.map((set) => phraseKey(currentPhraseOrder(set)));
+    const forbiddenEmojiOrders = nextBatch.map((set) => emojiKey(currentEmojiOrder(set)));
+
+    outgoingSets.forEach((set) => {
+      forbiddenPhraseOrders.push(phraseKey(currentPhraseOrder(set)));
+      const nextPhraseOrder = chooseDifferentOrder(phrases, phrases.length, phraseKey, forbiddenPhraseOrders);
+      forbiddenPhraseOrders.push(phraseKey(nextPhraseOrder));
+
+      forbiddenEmojiOrders.push(emojiKey(currentEmojiOrder(set)));
+      const nextEmojiOrder = chooseDifferentOrder(emojis, 3, emojiKey, forbiddenEmojiOrders);
+      forbiddenEmojiOrders.push(emojiKey(nextEmojiOrder));
+
+      renderSet(set, nextPhraseOrder, nextEmojiOrder);
+      track.append(set);
+    });
+  });
+}
+
 export function wireLobbyLayoutVariants() {
   const select = document.querySelector("#lobbyLayoutVariant");
   applyVariant(select, getSavedVariant());
 
   const screen = document.querySelector("#lobbyScreen");
   if (screen) {
+    wireLobbyMarqueeEmojis(screen);
     window.addEventListener("resize", scheduleLobbyContentCenter, { passive: true });
 
     if ("ResizeObserver" in window) {

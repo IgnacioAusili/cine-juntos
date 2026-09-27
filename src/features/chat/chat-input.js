@@ -20,17 +20,17 @@ import {
 import { refreshTooltipForTarget } from "../icons-tooltips.js?v=20260914-tooltip-single-path-01";
 import { markParticipantActive } from "../presence.js?v=20260912-name-session-01";
 import { clearReplyTarget } from "./chat-reply.js?v=20260914-system-message-roll-transition-05";
-import { renderMessage } from "./chat-render.js?v=20260915-message-time-spacing-01";
+import { renderMessage } from "./chat-render.js?v=20260927-chat-header-collapse-fit-01";
 import {
   completeAutoOpenedChatResponse,
-} from "./chat-layout.js?v=20260914-fullscreen-dock-animation-16";
-import { queuePinnedChatScrollSync, isPinnedToBottom } from "./chat-scroll-sync.js?v=20260904-mobile-landscape-bottom-chat-07";
+} from "./chat-layout.js?v=20260927-chat-header-collapse-fit-02";
+import { queuePinnedChatScrollSync, isPinnedToBottom } from "./chat-scroll-sync.js?v=20260927-chat-header-collapse-fit-01";
 import { focusChatInput } from "./chat-input-focus.js";
 import {
   compressImageBase64,
   renderImagePreview,
   clearPendingImage,
-} from "./image-compress.js";
+} from "./image-compress.js?v=20260927-chat-header-collapse-fit-01";
 
 const floatingComposerObservers = new WeakMap();
 const scrollbarDragState = new WeakMap();

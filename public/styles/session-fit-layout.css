@@ -1,0 +1,94 @@
+.session-view {
+  --session-layout-mode: side-by-side;
+}
+
+/* El navegador envuelve video y chat según su tamaño intrínseco. JavaScript
+   solo refleja la posición resultante para conservar los controles adecuados. */
+.session-view[data-chat-dock="right"] .workspace {
+  flex-wrap: wrap;
+}
+
+.session-view[data-chat-dock="right"] .video-area {
+  min-width: min-content;
+}
+
+.session-view.layout-fit-check[data-chat-dock="right"] .workspace,
+.session-view.layout-fit-check[data-chat-dock="right"] .chat-area {
+  transition: none !important;
+}
+
+.session-view.layout-stacked {
+  --session-layout-mode: stacked;
+  height: auto;
+  min-height: calc(var(--app-viewport-height) - 84px);
+}
+
+.session-view.chat-collapse-in-header:not(.chat-collapsed)[data-chat-dock="right"] .chat-tools {
+  box-sizing: border-box;
+  padding-left: 38px;
+}
+
+.session-view.chat-collapse-in-header:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone {
+  top: var(--chat-right-collapse-handle-top, 19px);
+  right: auto;
+  bottom: auto;
+  left: 8px;
+  width: 30px;
+  height: 30px;
+  transform: translateY(-50%);
+}
+
+.session-view.chat-collapse-in-header:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-handle {
+  width: 30px;
+  height: 30px;
+}
+
+.session-view.chat-collapse-in-header:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-icon-anchor {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 1;
+}
+
+.session-view.layout-stacked[data-chat-dock] .workspace {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: minmax(360px, 58vh) minmax(360px, 42vh);
+  grid-template-areas:
+    "video"
+    "chat";
+}
+
+.session-view.layout-stacked[data-chat-dock="right"] .chat-area {
+  flex: none;
+  width: auto;
+}
+
+.session-view.layout-stacked[data-chat-dock="bottom"] .workspace {
+  grid-template-rows: var(--app-viewport-height) var(--app-viewport-height);
+}
+
+.session-view.layout-stacked[data-chat-dock="bottom"] .workspace {
+  height: auto;
+  row-gap: 0;
+  grid-template-rows:
+    minmax(300px, calc(var(--app-viewport-height) - (var(--app-shell-gutter) * 2)))
+    minmax(0, calc(var(--app-viewport-height) - var(--app-shell-gutter)));
+}
+
+.session-view.layout-stacked.chat-collapsed[data-chat-dock] .workspace {
+  row-gap: 0;
+  grid-template-rows: minmax(360px, 58vh) 0px;
+  grid-template-areas:
+    "video"
+    "chat";
+}
+
+.session-view.layout-stacked.chat-collapsed[data-chat-dock="bottom"] .workspace {
+  grid-template-rows: var(--app-viewport-height) 0px;
+}
+
+.session-view.layout-stacked.chat-collapsed[data-chat-dock="bottom"] .workspace {
+  grid-template-rows: minmax(0, 1fr) 0px;
+}

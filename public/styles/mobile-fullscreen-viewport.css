@@ -1,5 +1,5 @@
 /* El fullscreen movil debe resolver video y chat contra el viewport visual. */
-@media (max-width: 980px) {
+@media (hover: none) and (pointer: coarse) {
   body.fullscreen-mode .app-shell {
     width: var(--app-viewport-width, 100vw) !important;
     height: var(--app-viewport-height) !important;

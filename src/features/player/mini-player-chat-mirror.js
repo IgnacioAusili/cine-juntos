@@ -1,6 +1,6 @@
 import { clearReplyTarget, setReplyTarget } from "../chat/chat-reply.js?v=20260914-system-message-roll-transition-05";
 import { wireMessageInteractions } from "../chat/chat-message-interactions.js?v=20260915-image-standalone-reply-02";
-import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js?v=20260914-fullscreen-dock-animation-16";
+import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js?v=20260927-chat-header-collapse-fit-02";
 import { state } from "../../core/state.js?v=20260914-console-log-controls-01";
 import { focusChatInput } from "../chat/chat-input-focus.js";
 

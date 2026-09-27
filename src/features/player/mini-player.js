@@ -5,11 +5,11 @@ import { setSyncStatus } from "../session-ui.js?v=20260911-orientation-scroll-an
 import {
   createMiniPlayerSurface,
   installMiniPlayerWindowStyles,
-} from "./mini-player-controls.js?v=20260916-image-preview-01";
+} from "./mini-player-controls.js?v=20260927-chat-header-collapse-fit-01";
 import {
   mirrorMiniPlayerChatState,
-} from "./mini-player-chat.js?v=20260914-system-message-roll-transition-05";
-import { movePlayerInterface } from "./mini-player-interface.js?v=20260914-system-message-roll-transition-05";
+} from "./mini-player-chat.js?v=20260927-chat-header-collapse-fit-01";
+import { movePlayerInterface } from "./mini-player-interface.js?v=20260927-chat-header-collapse-fit-01";
 import { trackMiniPlayerReturnHint } from "./mini-player-return-hint.js";
 import { clampMiniPlayerPosition, wireMiniPlayerDrag } from "./mini-player-drag.js?v=20260808-scroll-mini-player-02";
 

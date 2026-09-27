@@ -1,3 +1,6 @@
+@import url("./session-fit-layout.css?v=20260927-chat-header-collapse-fit-01");
+@import url("./session-layout-controls.css?v=20260927-chat-header-collapse-fit-01");
+
 @media (max-width: 1100px) {
   .session-toolbar {
     width: 100%;
@@ -7,70 +10,6 @@
     min-width: 0;
     justify-content: space-between;
   }
-}
-
-@media (max-width: 980px) {
-  .session-view {
-    height: auto;
-    min-height: calc(var(--app-viewport-height) - 84px);
-  }
-
-  .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone {
-    top: 58%;
-    right: auto;
-    bottom: auto;
-    left: 50%;
-    width: 48px;
-    height: 30px;
-    transform: translate(-50%, -50%);
-  }
-
-  .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-icon-anchor {
-    opacity: 1;
-  }
-
-  .session-view[data-chat-dock] .workspace {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: minmax(360px, 58vh) minmax(360px, 42vh);
-    grid-template-areas:
-      "video"
-      "chat";
-  }
-
-  .session-view[data-chat-dock="right"] .chat-area {
-    flex: none;
-    width: auto;
-  }
-
-  .session-view[data-chat-dock="bottom"] .workspace {
-    grid-template-rows: var(--app-viewport-height) var(--app-viewport-height);
-  }
-
-  .session-view[data-chat-dock="bottom"] .workspace {
-    height: auto;
-    row-gap: 0;
-    grid-template-rows:
-      minmax(300px, calc(var(--app-viewport-height) - (var(--app-shell-gutter) * 2)))
-      minmax(0, calc(var(--app-viewport-height) - var(--app-shell-gutter)));
-  }
-
-  .session-view.chat-collapsed[data-chat-dock] .workspace {
-    row-gap: 0;
-    grid-template-rows: minmax(360px, 58vh) 0px;
-    grid-template-areas:
-      "video"
-      "chat";
-  }
-
-  .session-view.chat-collapsed[data-chat-dock="bottom"] .workspace {
-    grid-template-rows: var(--app-viewport-height) 0px;
-  }
-
-  .session-view.chat-collapsed[data-chat-dock="bottom"] .workspace {
-    grid-template-rows: minmax(0, 1fr) 0px;
-  }
-
 }
 
 @media (max-width: 680px) {
@@ -101,7 +40,7 @@
 
   .room-chip-title {
     gap: 8px;
-    font-size: clamp(1.55rem, 8vw, 2rem);
+    font-size: 2rem;
   }
 
   .room-chip-title-actions {
@@ -174,147 +113,5 @@
     right: 18px;
     left: auto;
     width: min(250px, calc(100% - 10px));
-  }
-}
-
-/* En escritorio el control del chat interno queda más visible dentro del
-   reproductor. Este ajuste no modifica tablet ni móvil. */
-@media (min-width: 981px) {
-  .player-actions {
-    top: 5px;
-    right: 8px;
-  }
-
-  #playerChatToggleButton {
-    width: 36px;
-    min-height: 36px;
-    flex-basis: 36px;
-    margin-top: 2px;
-  }
-
-  #playerChatToggleButton > svg {
-    width: 20px;
-    height: 20px;
-  }
-
-  /* En PC las zonas de contraer/expandir no necesitan ocupar todo el borde
-     vertical: el ícono queda centrado dentro de un área más corta. */
-  .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone,
-  .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-hover-zone {
-    top: 50%;
-    right: 24px;
-    bottom: auto;
-    height: 72px;
-    transform: translateY(-50%);
-  }
-
-  .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-hover-zone {
-    right: 9px;
-    width: 28px;
-  }
-
-  .session-view.chat-collapsed[data-chat-dock="bottom"] .chat-collapse-hover-zone {
-    top: var(--chat-bottom-dock-collapsed-handle-top, 0px);
-  }
-
-  .session-view:not(.chat-collapsed)[data-chat-dock="bottom"] .chat-name-field {
-    transform: none;
-  }
-
-  .session-view[data-chat-dock="bottom"] .chat-tools {
-    min-height: 40px;
-    padding-top: 4px;
-    padding-bottom: 4px;
-    padding-right: 120px;
-    grid-template-columns: auto minmax(0, 1fr) 140px;
-  }
-
-  .session-view[data-chat-dock="bottom"] .chat-tools > * {
-    transform: none;
-  }
-
-  .session-view[data-chat-dock="bottom"] .chat-tools-actions {
-    position: absolute;
-    top: 50%;
-    right: 8px;
-    transform: translateY(-50%);
-  }
-
-  .session-view[data-chat-dock="bottom"] .chat-name-edit-row {
-    width: 100%;
-    max-width: 100%;
-    justify-content: flex-end;
-    position: relative;
-    box-sizing: border-box;
-    padding-inline-end: 26px;
-  }
-
-  .session-view[data-chat-dock="bottom"] .chat-name-field {
-    max-width: 100%;
-  }
-
-  .session-view[data-chat-dock="bottom"] .chat-name-edit-row .chat-name-confirm-button {
-    position: absolute;
-    inset-inline-end: 0;
-    top: 50%;
-    transform: translateY(-50%);
-  }
-
-  /* En la edición inferior de PC el botón queda anclado; el cambio de
-     texto no debe animar el ancho ni provocar reflow visible del control. */
-  .session-view[data-chat-dock="bottom"] .chat-name-field,
-  .session-view[data-chat-dock="bottom"] .chat-name-edit-row,
-  .session-view[data-chat-dock="bottom"] .chat-name-edit-row input[type="text"],
-  .session-view[data-chat-dock="bottom"] .chat-name-edit-row input[type="search"],
-  .session-view[data-chat-dock="bottom"] .chat-name-confirm-button {
-    transition: none !important;
-  }
-
-  .session-view[data-chat-dock="bottom"] .chat-collapse-handle {
-    /* El área hover puede seguir siendo más amplia, pero el botón debe
-       coincidir con el círculo visual definido para PC. */
-    width: 28px;
-    height: 28px;
-  }
-
-  .session-view:not(.chat-collapsed)[data-chat-dock="bottom"] .chat-collapse-hover-zone {
-    transform: translate(-50%, calc(-50% - 2px));
-  }
-
-}
-
-/* En PC el chat lateral se contrae desde el borde medio del panel. El
-   anclaje superior al header pertenece únicamente a la variante móvil. */
-@media (min-width: 981px) {
-  /* Durante el cambio inferior -> lateral la flecha de contraer todavía no
-     pertenece a la posición final. Mantenerla oculta hasta que termine la
-     transición evita que aparezca adelantada sobre el panel en movimiento. */
-  .session-view.chat-dock-switching[data-chat-dock="right"]
-    .chat-collapse-hover-zone[data-chat-control="collapse"] {
-    visibility: hidden;
-    opacity: 0 !important;
-    pointer-events: none;
-  }
-
-  /* La flecha de expandir del dock lateral sigue disponible aunque el
-     reproductor no tenga contenido ni active su overlay de controles. */
-  .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-handle {
-    opacity: 1 !important;
-    cursor: pointer;
-  }
-
-  .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone {
-    top: 50% !important;
-    right: auto !important;
-    bottom: auto !important;
-    left: calc(100% - var(--chat-panel-width)) !important;
-    width: 30px !important;
-    height: 40px !important;
-    transform: translate(-50%, -50%) !important;
-  }
-
-  .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-handle {
-    width: 30px !important;
-    height: 40px !important;
   }
 }

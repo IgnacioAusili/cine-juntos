@@ -14,7 +14,7 @@ import {
   resetInsideUnread,
   resetPageUnread,
   syncUnreadBadgesWithVisibility,
-} from "./unread-counters.js?v=20260913-taskbar-badge-01";
+} from "./unread-counters.js?v=20260927-chat-header-collapse-fit-01";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 import { focusChatInput } from "./chat-input-focus.js";
 import { restorePageScrollAfterRightChatCollapse } from "./chat-scroll-preservation.js?v=20260910-mobile-chat-scroll-lock-01";
@@ -50,6 +50,8 @@ const BOTTOM_TO_RIGHT_LAYOUT_MS = RIGHT_CHAT_LAYOUT_TRANSITION_MS;
 // en el que ambos estados aparezcan juntos.
 const FULLSCREEN_DOCK_OUT_MS = 260;
 const FULLSCREEN_DOCK_IN_MS = 320;
+let responsiveSessionLayoutObserver = null;
+let responsiveSessionLayoutFrame = 0;
 
 let layoutAdjustmentTimer = 0;
 let collapseHandleOffsetTimer = 0;
@@ -69,8 +71,87 @@ function getVideoAreaRect() {
   return rect.width > 0 && rect.height > 0 ? rect : null;
 }
 
-function isMobileLayoutViewport() {
-  return window.matchMedia("(max-width: 980px)").matches;
+function isStackedSessionLayout() {
+  if (!dom.sessionView) return false;
+  return getComputedStyle(dom.sessionView)
+    .getPropertyValue("--session-layout-mode")
+    .trim() === "stacked";
+}
+
+function setResponsiveSessionLayout(stacked) {
+  if (!dom.sessionView) return;
+  dom.sessionView.classList.toggle("layout-stacked", stacked);
+  dom.sessionView.style.setProperty(
+    "--session-layout-mode",
+    stacked ? "stacked" : "side-by-side",
+  );
+}
+
+function measureResponsiveSessionLayout() {
+  if (!dom.sessionView || !dom.workspace) return;
+
+  const isCoarsePointer = window.matchMedia(
+    "(hover: none) and (pointer: coarse)",
+  ).matches;
+  if (dom.sessionView.dataset.chatDock !== "right" || isCoarsePointer) {
+    setResponsiveSessionLayout(isCoarsePointer);
+    syncExternalChatCollapseHandleOffset();
+    return;
+  }
+
+  if (
+    dom.sessionView.classList.contains("chat-collapsed")
+    || dom.sessionView.classList.contains("chat-layout-transitioning")
+    || dom.sessionView.classList.contains("chat-dock-switching")
+  ) return;
+
+  const temporaryClasses = [
+    "layout-stacked",
+  ].filter((className) => dom.sessionView.classList.contains(className));
+  dom.sessionView.classList.add("layout-fit-check");
+  temporaryClasses.forEach((className) => dom.sessionView.classList.remove(className));
+
+  const videoRect = dom.videoArea?.getBoundingClientRect();
+  const chatRect = dom.chatArea?.getBoundingClientRect();
+  const stacked = Boolean(
+    videoRect
+      && chatRect
+      && chatRect.width > 0
+      && chatRect.top > videoRect.top + 1,
+  );
+
+  dom.sessionView.classList.remove("layout-fit-check");
+  temporaryClasses.forEach((className) => dom.sessionView.classList.add(className));
+  setResponsiveSessionLayout(stacked);
+  syncExternalChatCollapseHandleOffset();
+}
+
+function scheduleResponsiveSessionLayoutMeasure() {
+  if (responsiveSessionLayoutFrame) return;
+  responsiveSessionLayoutFrame = window.requestAnimationFrame(() => {
+    responsiveSessionLayoutFrame = 0;
+    measureResponsiveSessionLayout();
+  });
+}
+
+export function wireResponsiveSessionLayout() {
+  if (!dom.sessionView || !dom.workspace) return;
+
+  scheduleResponsiveSessionLayoutMeasure();
+  if ("ResizeObserver" in window && !responsiveSessionLayoutObserver) {
+    responsiveSessionLayoutObserver = new ResizeObserver(
+      scheduleResponsiveSessionLayoutMeasure,
+    );
+    responsiveSessionLayoutObserver.observe(dom.workspace);
+  }
+  window.addEventListener("resize", scheduleResponsiveSessionLayoutMeasure, {
+    passive: true,
+  });
+  window.addEventListener(
+    "chat-layout-settled",
+    scheduleResponsiveSessionLayoutMeasure,
+    { passive: true },
+  );
 }
 
 function isMobilePortraitChatViewport() {
@@ -79,13 +160,15 @@ function isMobilePortraitChatViewport() {
 
 function isMobileLandscapeRightDock() {
   return (dom.sessionView?.dataset.chatDock || "right") === "right"
-    && window.matchMedia("(max-width: 980px) and (orientation: landscape)").matches;
+    && isStackedSessionLayout()
+    && window.matchMedia("(orientation: landscape)").matches;
 }
 
 function isMobileLandscapeFullscreenBottomDock() {
   return (dom.sessionView?.dataset.chatDock || "right") === "bottom"
     && isFullscreenPageActive()
-    && window.matchMedia("(max-width: 980px) and (orientation: landscape)").matches;
+    && isStackedSessionLayout()
+    && window.matchMedia("(orientation: landscape)").matches;
 }
 
 function isMobilePortraitRightDock() {
@@ -100,7 +183,7 @@ function animateExternalChatLayoutFrom(previousRect) {
   if (!dom.sessionView || !dom.videoArea || !previousRect) return;
 
   if (
-    isMobileLayoutViewport()
+    isStackedSessionLayout()
     && (dom.sessionView.dataset.chatDock || "right") === "bottom"
   ) {
     return;
@@ -526,10 +609,41 @@ export function syncExternalChatCollapseHandleOffset() {
   if (!dom.sessionView || !dom.workspace || !dom.chatArea) return;
   if (dom.sessionView.classList.contains("chat-layout-transitioning")) return;
 
+  if (dom.sessionView.dataset.chatDock === "bottom") {
+    dom.sessionView.classList.remove("chat-collapse-in-header");
+    dom.sessionView.style.removeProperty("--chat-right-collapse-handle-top");
+  }
+
   if ((dom.sessionView.dataset.chatDock || "right") !== "bottom") {
+    const isRightDock = dom.sessionView.dataset.chatDock === "right";
+    const isExpanded = !dom.sessionView.classList.contains("chat-collapsed");
+    const chatHeader = dom.chatArea.querySelector(".chat-tools");
+    const chatRect = dom.chatArea.getBoundingClientRect();
+    const isHeaderAnchoredLayout = Boolean(
+      isRightDock
+        && isExpanded
+        && chatHeader
+        && isStackedSessionLayout()
+        && chatRect.height > 0,
+    );
+    dom.sessionView.classList.toggle("chat-collapse-in-header", isHeaderAnchoredLayout);
+    if (isHeaderAnchoredLayout) {
+      const headerRect = chatHeader.getBoundingClientRect();
+      const handleTop = Math.max(
+        0,
+        Math.round(headerRect.top - chatRect.top + headerRect.height / 2),
+      );
+      dom.sessionView.style.setProperty(
+        "--chat-right-collapse-handle-top",
+        `${handleTop}px`,
+      );
+    } else {
+      dom.sessionView.style.removeProperty("--chat-right-collapse-handle-top");
+    }
+
     const isMobileRightDock =
-      (dom.sessionView.dataset.chatDock || "right") === "right"
-      && window.matchMedia("(max-width: 980px)").matches;
+      isRightDock
+      && isStackedSessionLayout();
     const isPortraitMobileRightDock =
       isMobileRightDock
       && window.matchMedia("(orientation: portrait)").matches;
@@ -573,7 +687,8 @@ export function syncExternalChatCollapseHandleOffset() {
     window.matchMedia("(max-width: 680px) and (orientation: portrait)").matches;
   const isLandscapeMobileFullscreenBottomDock =
     isFullscreenPageActive()
-    && window.matchMedia("(max-width: 980px) and (orientation: landscape)").matches;
+    && isStackedSessionLayout()
+    && window.matchMedia("(orientation: landscape)").matches;
   const parsedDockGap = Number.parseFloat(
     getComputedStyle(dom.sessionView).getPropertyValue("--chat-bottom-dock-gap"),
   );
@@ -692,7 +807,7 @@ export function setChatDock(dock, options = {}) {
     && currentDock === "bottom"
     && nextDock === "right"
     && isFullscreenPageActive()
-    && window.matchMedia("(min-width: 981px)").matches
+    && !isStackedSessionLayout()
   ) {
     animateFullscreenBottomToRightWithNativeCollapse();
     return;
@@ -802,7 +917,7 @@ function animateFullscreenDockSwitch(nextDock) {
   // que ocultaba el chat pero dejaba el video fijo hasta el cambio de dock.
   if (
     nextDock === "bottom"
-    && window.matchMedia("(min-width: 981px)").matches
+    && !isStackedSessionLayout()
     && dom.sessionView.dataset.chatDock === "right"
   ) {
     animateFullscreenRightToBottomWithNativeCollapse();
@@ -1156,11 +1271,10 @@ function cancelBottomChatTransition() {
 }
 
 function isDesktopBottomDock() {
-  const isLandscapeMobile = window.matchMedia?.(
-    "(max-width: 980px) and (orientation: landscape)",
-  ).matches === true;
+  const isLandscapeMobile = isStackedSessionLayout()
+    && window.matchMedia("(orientation: landscape)").matches;
   return dom.sessionView?.dataset.chatDock === "bottom"
-    && (!isMobileLayoutViewport() || isLandscapeMobile);
+    && (!isStackedSessionLayout() || isLandscapeMobile);
 }
 
 function completeDesktopBottomChatTransition(transition) {
@@ -1465,7 +1579,7 @@ function getBottomDockVideoScrollTop() {
   // borde superior del viewport. El gutter ya no forma parte del espacio
   // visible, por lo que restarlo deja el reproductor desplazado al contraer.
   const mobileViewport = window.matchMedia("(max-width: 680px)").matches
-    || window.matchMedia("(max-width: 980px) and (orientation: landscape)").matches;
+    || (isStackedSessionLayout() && window.matchMedia("(orientation: landscape)").matches);
   const topOffset = isFullscreenPageActive() || mobileViewport ? 0 : gutter;
   return Math.max(0, Math.round(getElementPageTop(dom.videoArea) - topOffset));
 }
@@ -1735,12 +1849,14 @@ export function updateCollapseButton() {
   const dock = dom.sessionView.dataset.chatDock || "right";
   const isPortraitMobileRightDock =
     dock === "right"
-    && window.matchMedia("(max-width: 980px) and (orientation: portrait)").matches;
+    && isStackedSessionLayout()
+    && window.matchMedia("(orientation: portrait)").matches;
   const isFullscreenLandscapeBottomDock =
     dock === "bottom"
     && isFullscreenPageActive()
-    && window.matchMedia("(max-width: 980px) and (orientation: landscape)").matches;
-  const isDesktopLayout = window.matchMedia("(min-width: 981px)").matches;
+    && isStackedSessionLayout()
+    && window.matchMedia("(orientation: landscape)").matches;
+  const isDesktopLayout = !isStackedSessionLayout();
   const iconName = isFullscreenLandscapeBottomDock
     ? collapsed
       ? "arrow-up"

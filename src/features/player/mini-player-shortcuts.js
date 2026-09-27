@@ -1,5 +1,5 @@
 import { dom } from "../../core/dom.js";
-import { toggleMiniChatOverlay } from "./mini-player-chat-mirror.js?v=20260915-image-standalone-reply-02";
+import { toggleMiniChatOverlay } from "./mini-player-chat-mirror.js?v=20260927-chat-header-collapse-fit-01";
 
 const SEEK_STEP_SECONDS = 5;
 const VOLUME_STEP = 0.05;

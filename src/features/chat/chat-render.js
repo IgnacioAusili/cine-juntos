@@ -10,7 +10,7 @@ import {
   handleIncomingUnread,
   handleIncomingPageUnread,
   incrementScrollIndicator,
-} from "./unread-counters.js?v=20260913-taskbar-badge-01";
+} from "./unread-counters.js?v=20260927-chat-header-collapse-fit-01";
 import { setReplyTarget, scrollToMessage } from "./chat-reply.js?v=20260914-system-message-roll-transition-05";
 import {
   animateExpandedSystemMessageRemoval,

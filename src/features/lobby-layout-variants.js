@@ -204,6 +204,8 @@ function syncLobbyContentCenter() {
     resetSingleColumnTitleLift(hero);
     resetSingleColumnTitleGroup(hero);
     resetSingleColumnDescriptionPlacement(hero);
+    syncLobbyTextDensity(hero, footer);
+    syncLobbyTicketInlinePadding(ticket);
     grid?.style.setProperty("--lobby-content-center-shift", "0px");
     return;
   }
@@ -219,8 +221,11 @@ function syncLobbyContentCenter() {
     syncLobbyTitleFit(screen, hero, null);
     syncLobbyTitlePlacement(screen, true);
     syncSingleColumnTitleGroup(hero);
-    syncSingleColumnContentGap(grid, ticket, footer);
     syncSingleColumnDescriptionPlacement(hero, ticket);
+    syncLobbyTextDensity(hero, footer);
+    syncSingleColumnDescriptionPlacement(hero, ticket);
+    syncLobbyTicketInlinePadding(ticket);
+    syncSingleColumnContentGap(grid, ticket, footer);
     syncLobbyTitlePlacement(screen, true);
     syncSingleColumnTicketPlacement(hero, ticket, footer);
     return;
@@ -241,6 +246,8 @@ function syncLobbyContentCenter() {
   // anterior al cambiar de viewport o al cambiar la variante.
   grid.style.setProperty("--lobby-content-center-shift", "0px");
   syncLobbyTicketPlacement(screen, ticket);
+  syncLobbyTicketInlinePadding(ticket);
+  syncLobbyTextDensity(hero, footer);
   syncLobbyTitleFit(screen, hero, ticket);
   syncLobbyTitlePlacement(screen, false);
 
@@ -284,6 +291,11 @@ function syncSingleColumnDescriptionPlacement(hero, ticket) {
   const description = hero.querySelector(".lobby-description");
   if (!title || !description) return;
 
+  const descriptionWidth = Math.max(hero.clientWidth, ticket.clientWidth);
+  if (descriptionWidth > 0) {
+    description.style.setProperty("--lobby-description-fit-width", `${descriptionWidth.toFixed(2)}px`);
+  }
+
   const separatorStyle = getComputedStyle(hero, "::before");
   const separatorTop = Number.parseFloat(separatorStyle.top);
   const separatorHeight = Number.parseFloat(separatorStyle.height);
@@ -324,16 +336,121 @@ function syncSingleColumnContentGap(grid, ticket, footer) {
 function syncSingleColumnTicketPlacement(hero, ticket, footer) {
   if (!hero || !ticket || !footer) return;
 
+  const fitProperties = [
+    "--lobby-ticket-fit-height",
+    "--lobby-ticket-fit-padding-top",
+    "--lobby-ticket-fit-padding-bottom",
+    "--lobby-ticket-fit-body-gap",
+    "--lobby-ticket-fit-head-padding",
+    "--lobby-ticket-fit-fields-gap",
+    "--lobby-ticket-fit-control-height",
+    "--lobby-ticket-fit-action-height",
+    "--lobby-ticket-fit-stub-inset",
+  ];
+  fitProperties.forEach((property) => ticket.style.removeProperty(property));
+
+  const body = ticket.querySelector(".lobby-ticket-body");
+  const head = ticket.querySelector(".lobby-ticket-head");
+  const fields = ticket.querySelector(".lobby-fields");
+  const controls = [...(fields?.querySelectorAll('input[type="text"]') || [])];
+  const actionButtons = [...ticket.querySelectorAll(".lobby-actions > .button")];
   const heroRect = hero.getBoundingClientRect();
-  const ticketRect = ticket.getBoundingClientRect();
+  const baseTicketHeight = ticket.getBoundingClientRect().height;
   const footerRect = footer.getBoundingClientRect();
   const legalText = footer.querySelector(".lobby-disclaimer");
   const lowerVisibleBoundary = legalText?.getBoundingClientRect().top ?? footerRect.top;
-  const availableHeight = lowerVisibleBoundary - heroRect.bottom;
-  const freeSpace = availableHeight - ticketRect.height;
-  if (!Number.isFinite(freeSpace) || freeSpace <= 0) return;
+  const availableHeight = Math.max(0, lowerVisibleBoundary - heroRect.bottom);
+  const minimumGap = Math.min(9, availableHeight / 4);
+  const targetTicketHeight = Math.min(
+    baseTicketHeight,
+    Math.max(0, availableHeight - minimumGap * 2),
+  );
+  let remainingCompression = Math.max(0, baseTicketHeight - targetTicketHeight);
 
-  const targetTicketTop = heroRect.bottom + freeSpace / 2;
+  if (remainingCompression > 0) {
+    // Primero reducimos el boleto completo (la franja naranja se acorta con él).
+    ticket.style.setProperty("--lobby-ticket-fit-height", `${targetTicketHeight.toFixed(2)}px`);
+    const stubInset = Math.min(10, (baseTicketHeight - targetTicketHeight) / 2);
+    if (stubInset > 0) {
+      ticket.style.setProperty("--lobby-ticket-fit-stub-inset", `${stubInset.toFixed(2)}px`);
+    }
+
+    if (body && head && fields && controls.length) {
+      const bodyStyle = getComputedStyle(body);
+      const headStyle = getComputedStyle(head);
+      const fieldsStyle = getComputedStyle(fields);
+      const topPadding = Number.parseFloat(bodyStyle.paddingTop) || 0;
+      const bottomPadding = Number.parseFloat(bodyStyle.paddingBottom) || 0;
+      const bodyGap = Number.parseFloat(bodyStyle.rowGap) || 0;
+      const headPadding = Number.parseFloat(headStyle.paddingBottom) || 0;
+      const fieldsGap = Number.parseFloat(fieldsStyle.rowGap) || 0;
+      const controlHeight = Number.parseFloat(getComputedStyle(controls[0]).height) || 0;
+      const actionHeight = Number.parseFloat(getComputedStyle(actionButtons[0]).height) || 0;
+      const fieldsGapCount = Math.max(0, fields.children.length - 1);
+
+      // Después del alto exterior, quitamos relleno vertical y solo luego
+      // reducimos separaciones y controles si todavía no alcanza.
+      const topPaddingCapacity = Math.max(0, topPadding - Math.min(4, topPadding));
+      const bottomPaddingCapacity = Math.max(0, bottomPadding - Math.min(4, bottomPadding));
+      const paddingCapacity = topPaddingCapacity + bottomPaddingCapacity;
+      const paddingReduction = Math.min(remainingCompression, paddingCapacity);
+      if (paddingReduction > 0 && paddingCapacity > 0) {
+        const topReduction = paddingReduction * (topPaddingCapacity / paddingCapacity);
+        const bottomReduction = paddingReduction - topReduction;
+        ticket.style.setProperty(
+          "--lobby-ticket-fit-padding-top",
+          `${(topPadding - topReduction).toFixed(2)}px`,
+        );
+        ticket.style.setProperty(
+          "--lobby-ticket-fit-padding-bottom",
+          `${(bottomPadding - bottomReduction).toFixed(2)}px`,
+        );
+        remainingCompression -= paddingReduction;
+      }
+
+      const reduceRepeatedSpace = (property, base, minimum, count = 1) => {
+        if (remainingCompression <= 0 || count <= 0) return;
+        const perItemCapacity = Math.max(0, base - minimum);
+        const perItemReduction = Math.min(perItemCapacity, remainingCompression / count);
+        if (perItemReduction <= 0) return;
+        ticket.style.setProperty(property, `${(base - perItemReduction).toFixed(2)}px`);
+        remainingCompression -= perItemReduction * count;
+      };
+
+      reduceRepeatedSpace(
+        "--lobby-ticket-fit-body-gap",
+        bodyGap,
+        Math.min(2, bodyGap),
+      );
+      reduceRepeatedSpace(
+        "--lobby-ticket-fit-head-padding",
+        headPadding,
+        Math.min(0, headPadding),
+      );
+      reduceRepeatedSpace(
+        "--lobby-ticket-fit-fields-gap",
+        fieldsGap,
+        Math.min(2, fieldsGap),
+        fieldsGapCount,
+      );
+      reduceRepeatedSpace(
+        "--lobby-ticket-fit-control-height",
+        controlHeight,
+        Math.min(28, controlHeight),
+        controls.length,
+      );
+      reduceRepeatedSpace(
+        "--lobby-ticket-fit-action-height",
+        actionHeight,
+        Math.min(34, actionHeight),
+        actionButtons.length,
+      );
+    }
+  }
+
+  const ticketRect = ticket.getBoundingClientRect();
+  const freeSpace = lowerVisibleBoundary - heroRect.bottom - ticketRect.height;
+  const targetTicketTop = heroRect.bottom + Math.max(0, freeSpace / 2);
 
   const ticketShift = targetTicketTop - ticketRect.top;
   if (Number.isFinite(ticketShift)) {
@@ -420,6 +537,48 @@ function resetSingleColumnTitleGroup(hero) {
 
 function resetSingleColumnDescriptionPlacement(hero) {
   hero?.style.removeProperty("--lobby-description-separator-shift");
+  hero?.querySelector(".lobby-description")?.style.removeProperty("--lobby-description-fit-width");
+}
+
+function getTextLineCount(element) {
+  if (!element || element.getClientRects().length === 0) return 0;
+
+  const lineHeight = Number.parseFloat(getComputedStyle(element).lineHeight);
+  const height = element.getBoundingClientRect().height;
+  if (!Number.isFinite(lineHeight) || lineHeight <= 0) return 0;
+  return Math.max(1, Math.round(height / lineHeight));
+}
+
+function syncTextDensity(element, compactAtLines) {
+  if (!element) return;
+
+  // Medimos siempre el tamaño base para que el cambio no oscile al recalcular.
+  element.removeAttribute("data-lobby-text-density");
+  if (getTextLineCount(element) >= compactAtLines) {
+    element.dataset.lobbyTextDensity = "compact";
+  }
+}
+
+function syncLobbyTextDensity(hero, footer) {
+  syncTextDensity(hero?.querySelector(".lobby-description"), 3);
+  syncTextDensity(footer?.querySelector(".lobby-disclaimer"), 3);
+}
+
+function syncLobbyTicketInlinePadding(ticket) {
+  const body = ticket?.querySelector(".lobby-ticket-body");
+  const stub = ticket?.querySelector(".lobby-ticket-stub");
+  if (!body || !stub) return;
+
+  ticket.style.removeProperty("--lobby-ticket-fit-padding-inline");
+  const stubRect = stub.getBoundingClientRect();
+  if (stubRect.width <= stubRect.height) return;
+
+  const basePadding = Number.parseFloat(getComputedStyle(body).paddingInlineStart) || 0;
+  const ticketWidth = ticket.getBoundingClientRect().width;
+  const targetPadding = Math.min(basePadding, Math.max(10, Math.min(14, ticketWidth * 0.035)));
+  if (targetPadding < basePadding) {
+    ticket.style.setProperty("--lobby-ticket-fit-padding-inline", `${targetPadding.toFixed(2)}px`);
+  }
 }
 
 function wireLobbyMarqueeEmojis(screen) {

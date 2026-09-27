@@ -433,6 +433,15 @@
   display: block;
   padding: 0;
   border-right: 0;
+  background: transparent;
+  color: var(--amber);
+  text-align: center;
+}
+
+.lobby-ticket-stub::before {
+  position: absolute;
+  z-index: 0;
+  inset: var(--lobby-ticket-fit-stub-inset, 0px) 0;
   background:
     repeating-linear-gradient(
       45deg,
@@ -440,8 +449,8 @@
       transparent 6px 12px
     ),
     rgba(14, 16, 20, 0.45);
-  color: var(--amber);
-  text-align: center;
+  content: "";
+  pointer-events: none;
 }
 
 /* Cuerpo principal del boleto */
@@ -941,7 +950,7 @@ body:not(.is-lobby) .live-badge {
   }
 
   .lobby-ticket-perforation {
-    top: 36px;
+    top: calc(36px - var(--lobby-ticket-fit-stub-inset, 0px));
     left: 50%;
     width: 14px;
     height: 14px;

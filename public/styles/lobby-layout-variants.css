@@ -266,8 +266,7 @@ body.is-lobby[data-lobby-flow="single-column"] .lobby-hero::before {
   transform: translateX(-50%);
   background:
     linear-gradient(90deg, transparent, rgba(240, 140, 58, 0.54) 19%, rgba(240, 140, 58, 0.54) 43%, transparent 49%) center / 100% 1px no-repeat,
-    linear-gradient(90deg, transparent 51%, rgba(47, 184, 164, 0.58) 57%, rgba(47, 184, 164, 0.58) 81%, transparent) center / 100% 1px no-repeat,
-    linear-gradient(90deg, transparent 27%, rgba(240, 140, 58, 0.28) 27.5%, transparent 28.5%, transparent 71.5%, rgba(47, 184, 164, 0.3) 72.5%, transparent 73%) center / 100% 9px no-repeat;
+    linear-gradient(90deg, transparent 51%, rgba(47, 184, 164, 0.58) 57%, rgba(47, 184, 164, 0.58) 81%, transparent) center / 100% 1px no-repeat;
 }
 
 body.is-lobby[data-lobby-flow="single-column"] .lobby-hero::after {
@@ -551,6 +550,9 @@ body.is-lobby .lobby-screen {
    boleto; la separación interior y los controles no dependen del layout. */
 body.is-lobby[data-lobby-flow="single-column"] .lobby-ticket {
   width: min(404px, 100%);
+  height: var(--lobby-ticket-fit-height, auto);
+  min-height: 0;
+  grid-template-rows: minmax(0, 1fr);
 }
 
 /* El modo apilado se activa cuando el contenido real deja de caber en las
@@ -566,12 +568,16 @@ body.is-lobby[data-lobby-layout="columns"][data-lobby-flow="single-column"] .lob
 }
 
 body.is-lobby[data-lobby-flow="single-column"] .lobby-ticket-body {
-  gap: 14px;
-  padding: 18px 18px 16px;
+  min-height: 0;
+  gap: var(--lobby-ticket-fit-body-gap, 14px);
+  padding:
+    var(--lobby-ticket-fit-padding-top, 18px)
+    var(--lobby-ticket-fit-padding-inline, 18px)
+    var(--lobby-ticket-fit-padding-bottom, 16px);
 }
 
 body.is-lobby[data-lobby-flow="single-column"] .lobby-ticket-head {
-  padding-bottom: 12px;
+  padding-bottom: var(--lobby-ticket-fit-head-padding, 12px);
 }
 
 body.is-lobby[data-lobby-flow="single-column"] .lobby-ticket-label {
@@ -583,13 +589,13 @@ body.is-lobby[data-lobby-flow="single-column"] .lobby-ticket-hint {
 }
 
 body.is-lobby[data-lobby-flow="single-column"] .lobby-fields {
-  gap: 10px;
+  gap: var(--lobby-ticket-fit-fields-gap, 10px);
 }
 
 body.is-lobby[data-lobby-flow="single-column"] .lobby-fields input[type="text"] {
-  height: 40px;
-  min-height: 40px;
-  line-height: 40px;
+  height: var(--lobby-ticket-fit-control-height, 40px);
+  min-height: var(--lobby-ticket-fit-control-height, 40px);
+  line-height: var(--lobby-ticket-fit-control-height, 40px);
 }
 
 body.is-lobby[data-lobby-flow="single-column"] .lobby-actions {
@@ -598,7 +604,7 @@ body.is-lobby[data-lobby-flow="single-column"] .lobby-actions {
 }
 
 body.is-lobby[data-lobby-flow="single-column"] .lobby-actions > .button {
-  min-height: 42px;
+  min-height: var(--lobby-ticket-fit-action-height, 42px);
 }
 
 @media (min-width: 981px) {
@@ -625,7 +631,7 @@ body.is-lobby[data-lobby-flow="single-column"] .lobby-actions > .button {
    orientación del stub naranja; el resto de la composición permanece igual. */
 body.is-lobby[data-lobby-ticket-stub="top"] .lobby-ticket {
   grid-template-columns: 1fr;
-  grid-template-rows: 36px auto;
+  grid-template-rows: 36px minmax(0, 1fr);
   width: max(0px, calc(clamp(360px, 40vw, 404px) - 36px));
 }
 
@@ -646,10 +652,11 @@ body.is-lobby[data-lobby-ticket-stub="top"] .lobby-ticket-stub {
 body.is-lobby[data-lobby-ticket-stub="top"] .lobby-ticket-body {
   grid-column: 1;
   grid-row: 2;
+  padding-inline: var(--lobby-ticket-fit-padding-inline, 18px);
 }
 
 body.is-lobby[data-lobby-ticket-stub="top"] .lobby-ticket-perforation {
-  top: 36px;
+  top: calc(36px - var(--lobby-ticket-fit-stub-inset, 0px));
   left: 50%;
   width: 14px;
   height: 14px;
@@ -798,7 +805,7 @@ body.is-lobby[data-lobby-flow="single-column"] .lobby-title {
 }
 
 body.is-lobby[data-lobby-flow="single-column"] .lobby-description {
-  width: 100%;
+  width: var(--lobby-description-fit-width, 100%);
   max-width: none;
   font-size: 1rem;
   line-height: 1.48;
@@ -807,4 +814,18 @@ body.is-lobby[data-lobby-flow="single-column"] .lobby-description {
   white-space: normal;
   translate: none;
   transform: translateY(-2px);
+}
+
+body.is-lobby .lobby-description[data-lobby-text-density="compact"] {
+  font-size: 0.95rem;
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-footer .lobby-disclaimer[data-lobby-text-density="compact"] {
+  font-size: clamp(0.49rem, 0.64vw, 0.58rem);
+}
+
+@media (max-width: 480px) {
+  body.is-lobby[data-lobby-flow="single-column"] .lobby-ticket {
+    grid-template-rows: 36px minmax(0, 1fr);
+  }
 }

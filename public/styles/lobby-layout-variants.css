@@ -630,8 +630,9 @@ body.is-lobby[data-lobby-flow="single-column"] .lobby-actions > .button {
 /* Cuando el espacio medido del lado derecho se agota, solo cambia la
    orientación del stub naranja; el resto de la composición permanece igual. */
 body.is-lobby[data-lobby-ticket-stub="top"] .lobby-ticket {
+  --lobby-ticket-top-stub-height: 36px;
   grid-template-columns: 1fr;
-  grid-template-rows: 36px minmax(0, 1fr);
+  grid-template-rows: var(--lobby-ticket-fit-stub-height, var(--lobby-ticket-top-stub-height)) minmax(0, 1fr);
   width: max(0px, calc(clamp(360px, 40vw, 404px) - 36px));
 }
 
@@ -641,8 +642,8 @@ body.is-lobby[data-lobby-ticket-stub="top"] .lobby-ticket-stub {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 36px;
-  padding: 8px 14px;
+  min-height: var(--lobby-ticket-fit-stub-height, var(--lobby-ticket-top-stub-height));
+  padding: 4px 14px;
   border-right: 0;
   border-bottom: 0;
   writing-mode: horizontal-tb;
@@ -656,7 +657,7 @@ body.is-lobby[data-lobby-ticket-stub="top"] .lobby-ticket-body {
 }
 
 body.is-lobby[data-lobby-ticket-stub="top"] .lobby-ticket-perforation {
-  top: calc(36px - var(--lobby-ticket-fit-stub-inset, 0px));
+  top: var(--lobby-ticket-fit-stub-height, var(--lobby-ticket-top-stub-height));
   left: 50%;
   width: 14px;
   height: 14px;
@@ -820,12 +821,35 @@ body.is-lobby .lobby-description[data-lobby-text-density="compact"] {
   font-size: 0.95rem;
 }
 
+body.is-lobby .lobby-description[data-lobby-text-density="dense"] {
+  font-size: 0.9rem;
+  line-height: 1.44;
+}
+
 body.is-lobby[data-lobby-flow="single-column"] .lobby-footer .lobby-disclaimer[data-lobby-text-density="compact"] {
   font-size: clamp(0.49rem, 0.64vw, 0.58rem);
 }
 
 @media (max-width: 480px) {
   body.is-lobby[data-lobby-flow="single-column"] .lobby-ticket {
-    grid-template-rows: 36px minmax(0, 1fr);
+    --lobby-ticket-top-stub-height: 32px;
+    grid-template-rows: var(--lobby-ticket-fit-stub-height, var(--lobby-ticket-top-stub-height)) minmax(0, 1fr);
   }
+
+  body.is-lobby[data-lobby-flow="single-column"] .lobby-ticket-stub {
+    min-height: var(--lobby-ticket-fit-stub-height, var(--lobby-ticket-top-stub-height));
+    padding: 4px 14px;
+  }
+
+  body.is-lobby[data-lobby-flow="single-column"] .lobby-ticket-perforation {
+    top: var(--lobby-ticket-fit-stub-height, var(--lobby-ticket-top-stub-height));
+  }
+}
+
+body.is-lobby .lobby-about-button {
+  transition: scale 160ms ease, transform 160ms ease, background 160ms ease, border-color 160ms ease;
+}
+
+body.is-lobby[data-lobby-about-contact="true"] .lobby-about-button {
+  scale: 0.9;
 }

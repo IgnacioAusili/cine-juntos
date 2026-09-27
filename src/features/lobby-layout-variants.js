@@ -1,4 +1,4 @@
-import { resetLobbyTicketPlacement, syncLobbyTicketPlacement, syncLobbyTitlePlacement } from "./lobby-ticket-placement.js?v=20260922-lobby-ticket-track-center-02";
+import { resetLobbyTicketPlacement, syncLobbyTicketPlacement, syncLobbyTitlePlacement } from "./lobby-ticket-placement.js?v=20260922-lobby-ticket-track-center-03";
 
 const STORAGE_KEY = "cine-juntos-lobby-layout-variant";
 const DEFAULT_VARIANT = "columns";
@@ -196,9 +196,11 @@ function syncLobbyContentCenter() {
     gridColumns.length < 2 || (isColumns && hasClippedFeatureHeading)
   );
   document.body.dataset.lobbyFlow = isSingleColumn ? "single-column" : "columns";
+  if (!isSingleColumn) resetLobbyAboutButtonContact();
   syncLobbyTitlePlacement(screen, isSingleColumn);
 
   if (!grid || content.length !== 2) {
+    resetLobbyAboutButtonContact();
     resetTitleFit(screen?.querySelector(".lobby-title"));
     resetLobbyTicketPlacement(screen, ticket);
     resetSingleColumnTitleLift(hero);
@@ -226,8 +228,8 @@ function syncLobbyContentCenter() {
     syncSingleColumnDescriptionPlacement(hero, ticket);
     syncLobbyTicketInlinePadding(ticket);
     syncSingleColumnContentGap(grid, ticket, footer);
-    syncLobbyTitlePlacement(screen, true);
     syncSingleColumnTicketPlacement(hero, ticket, footer);
+    syncLobbyAboutButtonContact(ticket, footer);
     return;
   }
 
@@ -315,6 +317,41 @@ function syncSingleColumnDescriptionPlacement(hero, ticket) {
   }
 }
 
+function resetLobbyAboutButtonContact() {
+  delete document.body.dataset.lobbyAboutContact;
+}
+
+function syncLobbyAboutButtonContact(ticket, footer) {
+  const button = footer?.querySelector(".lobby-about-button");
+  if (!ticket || !button || button.getClientRects().length === 0) {
+    resetLobbyAboutButtonContact();
+    return;
+  }
+
+  const renderedScale = Number.parseFloat(getComputedStyle(button).scale);
+  const scale = Number.isFinite(renderedScale) && renderedScale > 0 ? renderedScale : 1;
+  const buttonRect = button.getBoundingClientRect();
+  const centerX = (buttonRect.left + buttonRect.right) / 2;
+  const centerY = (buttonRect.top + buttonRect.bottom) / 2;
+  const unscaledWidth = buttonRect.width / scale;
+  const unscaledHeight = buttonRect.height / scale;
+  const baseButtonRect = {
+    left: centerX - unscaledWidth / 2,
+    right: centerX + unscaledWidth / 2,
+    top: centerY - unscaledHeight / 2,
+    bottom: centerY + unscaledHeight / 2,
+  };
+  const ticketRect = ticket.getBoundingClientRect();
+  const contactTolerance = 1;
+  const touchesButton = ticketRect.left <= baseButtonRect.right + contactTolerance
+    && ticketRect.right >= baseButtonRect.left - contactTolerance
+    && ticketRect.top <= baseButtonRect.bottom + contactTolerance
+    && ticketRect.bottom >= baseButtonRect.top - contactTolerance;
+
+  if (touchesButton) document.body.dataset.lobbyAboutContact = "true";
+  else resetLobbyAboutButtonContact();
+}
+
 function syncSingleColumnContentGap(grid, ticket, footer) {
   if (!grid || !ticket || !footer) return;
 
@@ -338,6 +375,7 @@ function syncSingleColumnTicketPlacement(hero, ticket, footer) {
 
   const fitProperties = [
     "--lobby-ticket-fit-height",
+    "--lobby-ticket-fit-stub-height",
     "--lobby-ticket-fit-padding-top",
     "--lobby-ticket-fit-padding-bottom",
     "--lobby-ticket-fit-body-gap",
@@ -350,10 +388,19 @@ function syncSingleColumnTicketPlacement(hero, ticket, footer) {
   fitProperties.forEach((property) => ticket.style.removeProperty(property));
 
   const body = ticket.querySelector(".lobby-ticket-body");
+  const stub = ticket.querySelector(".lobby-ticket-stub");
   const head = ticket.querySelector(".lobby-ticket-head");
   const fields = ticket.querySelector(".lobby-fields");
   const controls = [...(fields?.querySelectorAll('input[type="text"]') || [])];
   const actionButtons = [...ticket.querySelectorAll(".lobby-actions > .button")];
+  const stubRect = stub?.getBoundingClientRect();
+  const hasTopStub = Boolean(stubRect && stubRect.width > stubRect.height);
+  if (body && hasTopStub) {
+    const sidePadding = Number.parseFloat(getComputedStyle(body).paddingInlineStart);
+    if (Number.isFinite(sidePadding)) {
+      ticket.style.setProperty("--lobby-ticket-fit-padding-top", `${sidePadding.toFixed(2)}px`);
+    }
+  }
   const heroRect = hero.getBoundingClientRect();
   const baseTicketHeight = ticket.getBoundingClientRect().height;
   const footerRect = footer.getBoundingClientRect();
@@ -370,6 +417,14 @@ function syncSingleColumnTicketPlacement(hero, ticket, footer) {
   if (remainingCompression > 0) {
     // Primero reducimos el boleto completo (la franja naranja se acorta con él).
     ticket.style.setProperty("--lobby-ticket-fit-height", `${targetTicketHeight.toFixed(2)}px`);
+    if (hasTopStub && stubRect) {
+      const stubReduction = Math.min(6, remainingCompression * 0.18);
+      ticket.style.setProperty(
+        "--lobby-ticket-fit-stub-height",
+        `${Math.max(28, stubRect.height - stubReduction).toFixed(2)}px`,
+      );
+      remainingCompression -= stubReduction;
+    }
     const stubInset = Math.min(10, (baseTicketHeight - targetTicketHeight) / 2);
     if (stubInset > 0) {
       ticket.style.setProperty("--lobby-ticket-fit-stub-inset", `${stubInset.toFixed(2)}px`);
@@ -392,10 +447,11 @@ function syncSingleColumnTicketPlacement(hero, ticket, footer) {
       // reducimos separaciones y controles si todavía no alcanza.
       const topPaddingCapacity = Math.max(0, topPadding - Math.min(4, topPadding));
       const bottomPaddingCapacity = Math.max(0, bottomPadding - Math.min(4, bottomPadding));
-      const paddingCapacity = topPaddingCapacity + bottomPaddingCapacity;
+      const paddingCapacity = (hasTopStub ? 0 : topPaddingCapacity) + bottomPaddingCapacity;
       const paddingReduction = Math.min(remainingCompression, paddingCapacity);
       if (paddingReduction > 0 && paddingCapacity > 0) {
-        const topReduction = paddingReduction * (topPaddingCapacity / paddingCapacity);
+        const effectiveTopPaddingCapacity = hasTopStub ? 0 : topPaddingCapacity;
+        const topReduction = paddingReduction * (effectiveTopPaddingCapacity / paddingCapacity);
         const bottomReduction = paddingReduction - topReduction;
         ticket.style.setProperty(
           "--lobby-ticket-fit-padding-top",
@@ -510,10 +566,9 @@ function syncSingleColumnTitleGroup(hero) {
   const heroRect = hero.getBoundingClientRect();
   const titleRect = title.getBoundingClientRect();
   const iconRect = icon.getBoundingClientRect();
-  const gap = Number.parseFloat(getComputedStyle(hero).columnGap) || 0;
   const visible = getVisibleRect(title);
-  const groupLeft = titleRect.left - iconRect.width - gap;
-  const groupRight = titleRect.right;
+  const groupLeft = Math.min(titleRect.left, iconRect.left);
+  const groupRight = Math.max(titleRect.right, iconRect.right);
   const leftLimit = Math.max(heroRect.left, visible.left);
   const rightLimit = Math.min(heroRect.right, visible.right);
   const shift = groupLeft < leftLimit
@@ -554,9 +609,9 @@ function syncTextDensity(element, compactAtLines) {
 
   // Medimos siempre el tamaño base para que el cambio no oscile al recalcular.
   element.removeAttribute("data-lobby-text-density");
-  if (getTextLineCount(element) >= compactAtLines) {
-    element.dataset.lobbyTextDensity = "compact";
-  }
+  const lineCount = getTextLineCount(element);
+  if (lineCount >= compactAtLines + 1) element.dataset.lobbyTextDensity = "dense";
+  else if (lineCount >= compactAtLines) element.dataset.lobbyTextDensity = "compact";
 }
 
 function syncLobbyTextDensity(hero, footer) {

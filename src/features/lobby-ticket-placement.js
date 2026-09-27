@@ -115,6 +115,8 @@ export function syncLobbyTitlePlacement(screen, isSingleColumn) {
   }
 
   hero.dataset.titlePlacement = "centered";
+  // Evita medir con el desplazamiento del ciclo anterior al recolocar el ícono.
+  hero.style.removeProperty("--lobby-title-group-shift");
   icon.style.removeProperty("left");
   icon.style.removeProperty("top");
   const heroRect = hero.getBoundingClientRect();

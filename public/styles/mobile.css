@@ -127,8 +127,6 @@
   }
 
   body:not(.is-lobby) .player-frame .overlay-message-form .input-wrapper .emoji-trigger {
-    right: 34px;
-    bottom: 0;
     width: 24px;
     min-height: 34px;
     height: 34px;
@@ -137,8 +135,6 @@
   }
 
   body:not(.is-lobby) .player-frame .overlay-message-form .input-wrapper .send {
-    right: 0;
-    bottom: 0;
     width: 34px;
     min-height: 34px;
     height: 34px;
@@ -769,15 +765,15 @@
     top: var(--chat-right-collapse-handle-top, 19px);
     right: auto;
     bottom: auto;
-    left: 8px;
-    width: 30px;
-    height: 30px;
+    left: var(--chat-right-collapse-handle-left, 6px);
+    width: var(--chat-right-collapse-handle-size, 26px);
+    height: var(--chat-right-collapse-handle-size, 26px);
     transform: translateY(-50%);
   }
 
   body:not(.is-lobby) .session-view.chat-collapse-in-header:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-handle {
-    width: 30px;
-    height: 30px;
+    width: var(--chat-right-collapse-handle-size, 26px);
+    height: var(--chat-right-collapse-handle-size, 26px);
   }
 
   body:not(.is-lobby) .session-view.chat-collapse-in-header:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-icon-anchor {
@@ -810,27 +806,6 @@
     box-shadow:
       0 4px 14px rgba(0, 0, 0, 0.35),
       inset 0 1px 0 rgba(255, 255, 255, 0.08);
-    transform: none;
-  }
-
-  /* La flecha de expandir no debe reservar una franja de todo el alto:
-     esa franja se superpone con el botón del chat-overlay en la esquina
-     superior derecha. El área táctil queda concentrada alrededor de la
-     propia flecha. */
-  body:not(.is-lobby) .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-hover-zone {
-    top: 50%;
-    right: 0;
-    bottom: auto;
-    left: auto;
-    width: 44px;
-    height: 44px;
-    transform: translateY(-50%);
-    border-radius: 0;
-  }
-
-  body:not(.is-lobby) .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-handle {
-    width: 44px;
-    height: 44px;
   }
 
   /* Si la flecha de expandir está oculta, su área ampliada tampoco debe
@@ -939,14 +914,12 @@
     max-height: 66px;
     padding-top: 5px;
     padding-bottom: 5px;
-    padding-right: 64px;
+    padding-right: 6px;
   }
 
   /* Los botones conservan la altura de una sola línea aunque el textarea se
      expanda. El envío también toma el espacio libre hasta el borde derecho. */
   body:not(.is-lobby) .player-frame .overlay-message-form .input-wrapper .emoji-trigger {
-    right: 34px;
-    bottom: 0;
     width: 24px;
     min-height: 30px;
     height: 30px;
@@ -955,8 +928,6 @@
   }
 
   body:not(.is-lobby) .player-frame .overlay-message-form .input-wrapper .send {
-    right: 0;
-    bottom: 0;
     width: 34px;
     min-height: 30px;
     height: 30px;
@@ -1056,16 +1027,6 @@
     .chat-collapse-hover-zone[data-chat-control="collapse"] {
     top: 0 !important;
     transform: translate(-50%, -50%) !important;
-  }
-
-  /* El estado del reproductor conserva el mismo tamaño en portrait y
-     landscape para que "Sin contenido" no cambie al rotar o abrir el teclado. */
-  body:not(.is-lobby) .player-status-badge {
-    height: auto;
-    min-height: 24px;
-    max-width: min(200px, calc(100% - 72px));
-    padding: 0;
-    font-size: 0.82rem;
   }
 
   body:not(.is-lobby) #playerChatToggleButton {

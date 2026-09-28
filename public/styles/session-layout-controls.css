@@ -16,18 +16,12 @@
   height: 20px;
 }
 
-.session-view:not(.layout-stacked):not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone,
-.session-view:not(.layout-stacked).chat-collapsed[data-chat-dock="right"] .chat-collapse-hover-zone {
+.session-view:not(.layout-stacked):not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone {
   top: 50%;
   right: 24px;
   bottom: auto;
   height: 72px;
   transform: translateY(-50%);
-}
-
-.session-view:not(.layout-stacked).chat-collapsed[data-chat-dock="right"] .chat-collapse-hover-zone {
-  right: 9px;
-  width: 28px;
 }
 
 .session-view:not(.layout-stacked).chat-collapsed[data-chat-dock="bottom"] .chat-collapse-hover-zone {
@@ -60,7 +54,7 @@
 .session-view:not(.layout-stacked)[data-chat-dock="bottom"] .chat-name-edit-row {
   width: 100%;
   max-width: 100%;
-  justify-content: flex-end;
+  justify-content: center;
   position: relative;
   box-sizing: border-box;
   padding-inline-end: 26px;
@@ -132,15 +126,15 @@
   top: var(--chat-right-collapse-handle-top, 19px) !important;
   right: auto !important;
   bottom: auto !important;
-  left: 8px !important;
-  width: 30px !important;
-  height: 30px !important;
+  left: var(--chat-right-collapse-handle-left, 4px) !important;
+  width: var(--chat-right-collapse-handle-size, 28px) !important;
+  height: var(--chat-right-collapse-handle-size, 28px) !important;
   transform: translateY(-50%) !important;
 }
 
 .session-view.chat-collapse-in-header:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-handle {
-  width: 30px !important;
-  height: 30px !important;
+  width: var(--chat-right-collapse-handle-size, 28px) !important;
+  height: var(--chat-right-collapse-handle-size, 28px) !important;
 }
 
 .session-view.chat-collapse-in-header:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-icon-anchor {

@@ -17,7 +17,7 @@
   --session-header-gap: var(--app-shell-gutter);
   --workspace-gap: 10px;
   --chat-handle-gap: 22px;
-  --chat-handle-gap-collapsed: 16px;
+  --chat-handle-gap-collapsed: 4px;
   --chat-panel-width: 320px;
 
   /* ===== Cinema Lounge: capa visual nueva ===== */

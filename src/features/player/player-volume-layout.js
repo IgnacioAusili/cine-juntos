@@ -1,14 +1,16 @@
 const VOLUME_OPEN_CLASS = "is-volume-slider-open";
 const VOLUME_LAYOUT_ATTRIBUTE = "data-volume-slider-layout";
-// El popup es una ayuda temporal: cada interaccion vuelve a contar este
-// segundo, pero sin actividad se oculta rapidamente para no tapar la barra.
-const VOLUME_HIDE_DELAY_MS = 1000;
+const VOLUME_BUTTON_ACTION_DELAY_MS = 350;
+// El popup permanece disponible unos segundos despues de la ultima
+// interaccion, y mientras el puntero o el foco sigan dentro del control.
+const VOLUME_HIDE_DELAY_MS = 3200;
 const VOLUME_VERTICAL_DENSITIES = new Set(["volume", "compact", "scroll"]);
 const MOBILE_VIEWPORT_QUERY = "(max-width: 680px), (hover: none) and (pointer: coarse)";
 const wiredGroups = new WeakSet();
 const observedRoots = new WeakSet();
 const observedDocuments = new WeakSet();
 const hideTimers = new WeakMap();
+const pendingVolumeButtonActions = new WeakMap();
 
 export function wirePlayerVolumeLayouts() {
   observePlayerVolumeLayouts(document);
@@ -26,14 +28,35 @@ export function observePlayerVolumeLayouts(root) {
   observer.observe(root, { childList: true, subtree: true });
 }
 
-export function shouldToggleMuteFromVolumeButton(group) {
+export function shouldToggleMuteFromVolumeButton(group, event) {
   if (!isVolumeSliderVertical(group)) return true;
-  if (!group.classList.contains(VOLUME_OPEN_CLASS)) {
-    openVolumeSlider(group);
+
+  const view = group.ownerDocument.defaultView || window;
+  const pendingAction = pendingVolumeButtonActions.get(group);
+  const isKeyboardActivation = event?.detail === 0;
+  const isDoubleClick = Number(event?.detail) >= 2;
+
+  if (isKeyboardActivation) {
+    cancelPendingVolumeButtonAction(group);
+    if (group.classList.contains(VOLUME_OPEN_CLASS)) closeVolumeSlider(group);
+    else openVolumeSlider(group);
     return false;
   }
-  closeVolumeSlider(group);
-  return true;
+
+  if (pendingAction || isDoubleClick) {
+    cancelPendingVolumeButtonAction(group);
+    closeVolumeSlider(group);
+    return true;
+  }
+
+  const shouldClose = group.classList.contains(VOLUME_OPEN_CLASS);
+  const timer = view.setTimeout(() => {
+    pendingVolumeButtonActions.delete(group);
+    if (shouldClose) closeVolumeSlider(group);
+    else openVolumeSlider(group);
+  }, VOLUME_BUTTON_ACTION_DELAY_MS);
+  pendingVolumeButtonActions.set(group, { timer, view });
+  return false;
 }
 
 export function isVolumeSliderVertical(group) {
@@ -114,11 +137,12 @@ function wireDocument(doc) {
 
   doc.addEventListener("pointerdown", (event) => {
     let closedAny = false;
-    doc.querySelectorAll?.(`.${VOLUME_OPEN_CLASS}`).forEach((group) => {
-      if (!group.contains(event.target)) {
-        closeVolumeSlider(group);
-        closedAny = true;
-      }
+    doc.querySelectorAll?.(".player-volume-group").forEach((group) => {
+      if (group.contains(event.target)) return;
+      cancelPendingVolumeButtonAction(group);
+      if (!group.classList.contains(VOLUME_OPEN_CLASS)) return;
+      closeVolumeSlider(group);
+      closedAny = true;
     });
     if (!closedAny) return;
     const view = doc.defaultView || window;
@@ -145,10 +169,11 @@ function wireDocument(doc) {
   doc.addEventListener("click", (event) => {
     consumeSuppressedEvent(event);
   }, true);
-  doc.addEventListener("keydown", (event) => {
-    if (event.key !== "Escape") return;
-    doc.querySelectorAll?.(`.${VOLUME_OPEN_CLASS}`).forEach(closeVolumeSlider);
-  }, true);
+    doc.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape") return;
+      doc.querySelectorAll?.(".player-volume-group").forEach(cancelPendingVolumeButtonAction);
+      doc.querySelectorAll?.(`.${VOLUME_OPEN_CLASS}`).forEach(closeVolumeSlider);
+    }, true);
 }
 
 function wireVolumeGroup(group) {
@@ -161,22 +186,35 @@ function wireVolumeGroup(group) {
   const input = group.querySelector(".player-volume-input");
   let activeSliderPointerId = null;
 
-  group.addEventListener("pointerdown", (event) => {
-    if (!event.target.closest?.(".player-volume-slider-wrap")) return;
-    if (isVolumeSliderVertical(group)) openVolumeSlider(group);
-    else scheduleHide(group);
+  group.addEventListener("pointerenter", (event) => {
+    if (event.pointerType !== "mouse") return;
+    clearHideTimer(group);
   });
+  group.addEventListener("pointerleave", (event) => {
+    if (event.pointerType !== "mouse" || activeSliderPointerId != null) return;
+    if (group.classList.contains(VOLUME_OPEN_CLASS)) scheduleHide(group);
+  });
+  group.addEventListener("focusout", (event) => {
+    if (!isVolumeSliderVertical(group)) return;
+    if (event.relatedTarget && group.contains(event.relatedTarget)) return;
+    if (activeSliderPointerId == null && group.classList.contains(VOLUME_OPEN_CLASS)) {
+      scheduleHide(group);
+    }
+  });
+
   group.addEventListener("focusin", (event) => {
     if (event.target !== input) return;
     if (isVolumeSliderVertical(group)) openVolumeSlider(group);
   });
   group.addEventListener("input", () => {
-    if (isVolumeSliderVertical(group)) scheduleHide(group);
+    if (isVolumeSliderVertical(group)) clearHideTimer(group);
   });
   input?.addEventListener("pointerdown", (event) => {
     if (!isVolumeSliderVertical(group)) return;
+    cancelPendingVolumeButtonAction(group);
     activeSliderPointerId = event.pointerId;
     openVolumeSlider(group);
+    clearHideTimer(group);
     try {
       input.setPointerCapture?.(event.pointerId);
     } catch {
@@ -187,7 +225,7 @@ function wireVolumeGroup(group) {
   input?.addEventListener("pointermove", (event) => {
     if (activeSliderPointerId !== event.pointerId) return;
     event.preventDefault();
-    scheduleHide(group);
+    clearHideTimer(group);
   }, { passive: false });
   const releaseSliderPointer = (event) => {
     if (activeSliderPointerId !== event.pointerId) return;
@@ -195,19 +233,24 @@ function wireVolumeGroup(group) {
     if (input?.hasPointerCapture?.(event.pointerId)) {
       input.releasePointerCapture(event.pointerId);
     }
-    scheduleHide(group);
+    if (event.pointerType !== "mouse") scheduleHide(group);
   };
   input?.addEventListener("pointerup", releaseSliderPointer);
   input?.addEventListener("pointercancel", releaseSliderPointer);
-  group.addEventListener("pointerup", () => {
-    if (group.classList.contains(VOLUME_OPEN_CLASS)) scheduleHide(group);
+  group.addEventListener("pointerup", (event) => {
+    if (event.pointerType !== "mouse"
+      && group.classList.contains(VOLUME_OPEN_CLASS)
+      && activeSliderPointerId == null) {
+      // En pantallas táctiles no hay hover que mantenga abierto el panel.
+      scheduleHide(group);
+    }
   });
   group.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
       closeVolumeSlider(group);
       return;
     }
-    if (group.classList.contains(VOLUME_OPEN_CLASS)) scheduleHide(group);
+    if (group.classList.contains(VOLUME_OPEN_CLASS)) clearHideTimer(group);
   });
 
   if (typeof MutationObserver === "function") {
@@ -233,24 +276,60 @@ function syncVolumeSliderLayout(group, bar) {
   if (isMobileViewport && group.dataset.volumeSliderLayout) return;
   const useVertical = VOLUME_VERTICAL_DENSITIES.has(bar.dataset.controlDensity);
   const layout = useVertical ? "vertical" : "horizontal";
-  if (group.dataset.volumeSliderLayout === layout) return;
+  if (group.dataset.volumeSliderLayout === layout) {
+    syncVolumeButtonLabel(group);
+    return;
+  }
+  cancelPendingVolumeButtonAction(group);
   group.dataset.volumeSliderLayout = layout;
   if (layout === "horizontal") closeVolumeSlider(group);
+  syncVolumeButtonLabel(group);
 }
 
 function openVolumeSlider(group) {
   clearHideTimer(group);
   group.classList.add(VOLUME_OPEN_CLASS);
   group.querySelector(".video-control-button")?.setAttribute("aria-expanded", "true");
-  scheduleHide(group);
+  syncVolumeButtonLabel(group);
+  const view = group.ownerDocument.defaultView || window;
+  const hasMouseHover = view.matchMedia?.("(hover: hover) and (pointer: fine)").matches
+    && group.matches(":hover");
+  const activeElement = group.ownerDocument.activeElement;
+  const sliderHasFocus = activeElement === group.querySelector(".player-volume-input");
+  if (!hasMouseHover && !sliderHasFocus) scheduleHide(group);
+}
+
+function cancelPendingVolumeButtonAction(group) {
+  const pending = pendingVolumeButtonActions.get(group);
+  if (!pending) return;
+  pending.view.clearTimeout(pending.timer);
+  pendingVolumeButtonActions.delete(group);
 }
 
 function closeVolumeSlider(group) {
   clearHideTimer(group);
   group.classList.remove(VOLUME_OPEN_CLASS);
   group.querySelector(".video-control-button")?.setAttribute("aria-expanded", "false");
+  syncVolumeButtonLabel(group);
   const active = group.ownerDocument.activeElement;
   if (active && active !== group.querySelector(".video-control-button") && group.contains(active)) active.blur();
+}
+
+function syncVolumeButtonLabel(group) {
+  const button = group.querySelector(".video-control-button");
+  if (!button) return;
+  const opensVolumeSlider = isVolumeSliderVertical(group);
+  if (!opensVolumeSlider
+    && button.getAttribute("aria-label") !== "Ajustar volumen"
+    && button.dataset.tooltip !== "Ajustar volumen") return;
+  const isMuted = Boolean(group.closest(".player-frame")?.querySelector("video")?.muted)
+    || Number(group.closest(".player-frame")?.querySelector("video")?.volume) === 0;
+  const label = opensVolumeSlider
+    ? "Ajustar volumen"
+    : isMuted ? "Activar sonido (M)" : "Silenciar (M)";
+  button.setAttribute("aria-label", label);
+  button.dataset.tooltip = label;
+  button.removeAttribute("title");
 }
 
 function scheduleHide(group) {

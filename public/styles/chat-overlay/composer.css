@@ -222,6 +222,35 @@
   isolation: isolate;
 }
 
+/* El composer real del reproductor replica el flujo del chat externo: los
+   controles ocupan su espacio y quedan alineados al final de la fila. Así
+   conservan el centro de una línea cuando el textarea crece hacia arriba. */
+.player-frame .overlay-message-form .input-wrapper {
+  align-items: flex-end;
+}
+
+.player-frame .overlay-message-form .input-wrapper .icon-button {
+  position: static;
+  right: auto;
+  bottom: auto;
+  align-self: flex-end;
+  margin: 0 0 1px;
+  transform: none;
+}
+
+.player-frame .overlay-message-form .input-wrapper .send {
+  position: relative;
+  right: auto;
+  bottom: auto;
+  align-self: flex-end;
+  margin: 0 6px 1px 0;
+  transform: none;
+}
+
+.player-frame .overlay-message-form .input-wrapper textarea {
+  padding-right: 6px;
+}
+
 .overlay-message-form .input-wrapper .send > svg.composer-progress-ring {
   position: absolute;
   left: calc(50% + 1px);

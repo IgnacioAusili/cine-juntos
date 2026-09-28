@@ -1,6 +1,14 @@
 :root {
   --app-viewport-height: 100vh;
   --session-toolbar-height: 0px;
+  --session-page-background:
+    radial-gradient(circle at 18% -8%, rgba(240, 140, 58, 0.18), transparent 42%),
+    radial-gradient(circle at 92% 8%, rgba(47, 184, 164, 0.13), transparent 44%),
+    radial-gradient(circle at 50% 108%, rgba(240, 140, 58, 0.08), transparent 50%),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+    var(--bg);
+  --session-page-background-size: auto, auto, auto, 56px 56px, 56px 56px, auto;
 }
 
 * {
@@ -13,7 +21,9 @@
 
 html {
   height: 100%;
-  background: var(--bg);
+  background: var(--session-page-background);
+  background-size: var(--session-page-background-size);
+  background-attachment: fixed;
   scrollbar-width: none;
 }
 
@@ -46,24 +56,8 @@ body {
   min-height: var(--app-viewport-height);
   margin: 0;
   overflow-y: auto;
-  background:
-    /* Mesh glow superior: luz de proyector ambar */
-    radial-gradient(circle at 18% -8%, rgba(240, 140, 58, 0.18), transparent 42%),
-    /* Glow teal lateral, contrapunto frio */
-    radial-gradient(circle at 92% 8%, rgba(47, 184, 164, 0.13), transparent 44%),
-    /* Brillo tenue abajo-centro */
-    radial-gradient(circle at 50% 108%, rgba(240, 140, 58, 0.08), transparent 50%),
-    /* Rejilla tecnica fina */
-    linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px),
-    var(--bg);
-  background-size:
-    auto,
-    auto,
-    auto,
-    56px 56px,
-    56px 56px,
-    auto;
+  background: var(--session-page-background);
+  background-size: var(--session-page-background-size);
   background-attachment: fixed;
   color: var(--text);
 }

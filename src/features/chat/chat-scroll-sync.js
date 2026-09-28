@@ -1,4 +1,4 @@
-import { checkScrollPosition } from "./unread-counters.js?v=20260927-chat-header-collapse-fit-01";
+import { checkScrollPosition } from "./unread-counters.js?v=20260928-chat-dock-sequence-01";
 
 const pendingScrollSync = new WeakMap();
 const DEFAULT_PIN_THRESHOLD = 10;

@@ -12,15 +12,15 @@
 
 .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-hover-zone {
   position: absolute;
-  top: 0;
-  right: 4px;
-  bottom: 0;
+  top: var(--chat-right-mobile-collapsed-handle-top, 50%);
+  right: var(--chat-handle-gap-collapsed, 16px);
+  bottom: auto;
   left: auto;
-  width: 14px;
-  height: 100%;
+  width: 44px;
+  height: 44px;
   min-width: 0;
-  transform: none;
-  border-radius: 6px 0 0 6px;
+  transform: translateY(-50%);
+  border-radius: 0;
   transition: opacity 160ms ease, color 160ms ease, background 160ms ease;
 }
 

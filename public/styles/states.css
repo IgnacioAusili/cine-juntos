@@ -231,16 +231,6 @@ body.fullscreen-mode .session-view[data-chat-dock="right"] .chat-collapse-hover-
   transform: translateY(-50%);
 }
 
-body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-hover-zone {
-  top: 50%;
-  right: 0;
-  bottom: auto;
-  left: auto;
-  width: var(--chat-handle-gap-collapsed);
-  height: 52px;
-  transform: translateY(-50%);
-}
-
 body.fullscreen-mode .player-chat {
   top: var(--inside-chat-top-offset, 56px);
   right: 24px;
@@ -348,15 +338,6 @@ body.fullscreen-mode .app-shell:fullscreen .session-view.chat-collapsed[data-cha
     min-width: 0;
   }
 
-  /* En fullscreen el viewport coincide con el borde del shell. Repetimos la
-     separación de la variante normal para que la flecha no quede pegada al
-     borde derecho. */
-  body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-hover-zone,
-  body.fullscreen-mode .app-shell:fullscreen .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-hover-zone {
-    right: 9px;
-    width: 28px;
-    height: 72px;
-  }
 }
 
 body.fullscreen-mode .session-view[data-chat-dock="right"] .video-area {

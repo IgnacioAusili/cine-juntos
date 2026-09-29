@@ -15,14 +15,14 @@ import {
   logEvent,
   state,
 } from "../../core/state.js?v=20260914-console-log-controls-01";
-import { isMiniPlayerActive } from "./mini-player.js?v=20260928-chat-dock-sequence-01";
+import { isMiniPlayerActive } from "./mini-player.js?v=20260928-system-group-toggle-anchor-01-volume-popup-arrow-hide-01";
 import {
   syncExternalChatCollapseHandleOffset,
   syncInsideChatPanelOffset,
   cancelExternalChatAutoCollapse,
   forceExternalChatCollapsed,
   updateCollapseButton,
-} from "../chat/chat-layout.js?v=20260928-chat-dock-sequence-01";
+} from "../chat/chat-layout.js?v=20260928-system-group-toggle-anchor-01";
 import { withShortcutHint } from "../../core/utils.js";
 import {
   captureFullscreenScroll,
@@ -617,7 +617,7 @@ function isPageFullscreenActive() {
 
 function isChatScrollSnapEnabled() {
   return dom.sessionView?.dataset.chatDock === "bottom"
-    && !window.matchMedia("(max-width: 980px)").matches;
+    && dom.sessionView.classList.contains("chat-bottom-snap-enabled");
 }
 
 function getDocumentTop(element) {

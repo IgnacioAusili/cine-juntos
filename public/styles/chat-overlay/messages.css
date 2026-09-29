@@ -480,13 +480,13 @@
   max-width: min(100%, 420px);
 }
 
-.overlay-messages .message.system .message-system-bubble::before,
-.overlay-messages .message.system .message-system-bubble::after {
-  content: "";
+.overlay-messages .message.system .message-system-line {
+  display: block;
   flex: 0 0 var(--system-line-reserve);
   width: var(--system-line-reserve);
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.26), transparent);
+  pointer-events: none;
 }
 
 .overlay-messages .message.system .message-system-text {

@@ -4,21 +4,56 @@
 @import url("./styles/components.css?v=20260927-chat-collapse-handle-general-02");
 @import url("./styles/lobby.css?v=20260926-lobby-ticket-visual-fit-01");
 @import url("./styles/player.css?v=20260927-video-status-text-offset-01");
-@import url("./styles/chat.css?v=20260916-image-preview-01");
-@import url("./styles/chat-overlay.css?v=20260927-overlay-three-lines-01-reply-full-row-01");
+@import url("./styles/chat.css?v=20260928-system-group-toggle-anchor-01");
+@import url("./styles/chat-overlay.css?v=20260928-system-group-toggle-anchor-01");
 @import url("./styles/chat/image-lightbox.css?v=20260915-image-lightbox-cursor-01");
-@import url("./styles/states.css?v=20260927-chat-collapse-handle-general-02");
-@import url("./styles/responsive.css?v=20260928-chat-name-input-alignment-01-stack-bottom-edge-02-composer-inset-02");
+@import url("./styles/states.css?v=20260928-panel-fit-chat-snap-01");
+@import url("./styles/responsive.css?v=20260928-full-viewport-panels-03");
 @import url("./styles/mini-player.css?v=20260905-overlay-height-cap-03");
-@import url("./styles/mobile.css?v=20260927-overlay-flex-flow-01");
-  @import url("./styles/mobile-landscape.css?v=20260927-overlay-flex-flow-01");
+@import url("./styles/mobile.css?v=20260928-dynamic-chat-name-01");
+  @import url("./styles/mobile-landscape.css?v=20260928-dynamic-chat-name-01");
   @import url("./styles/mobile-landscape-chat.css?v=20260913-chat-arrow-fixed-02");
 @import url("./styles/mobile-fullscreen-viewport.css?v=20260927-chat-header-collapse-fit-01");
 @import url("./styles/mini-player-adjustments.css?v=20260905-overlay-height-cap-03");
 @import url("./styles/player-controls-layout.css?v=20260902-player-controls-layout-17");
 @import url("./styles/player-controls-density.css?v=20260831-player-controls-density-14");
-@import url("./styles/player-volume-layout.css?v=20260927-player-volume-usability-01");
+@import url("./styles/player-volume-layout.css?v=20260928-volume-popup-arrow-hide-01");
 @import url("./styles/player-volume-mobile.css?v=20260927-player-volume-usability-01");
 @import url("./styles/lobby-responsive-fixes.css?v=20260924-lobby-footer-no-padding-01");
 @import url("./styles/lobby-layout-variants.css?v=20260926-lobby-ticket-details-07");
 @import url("./styles/lobby-footer-panel.css?v=20260926-lobby-footer-10px-01");
+
+/* El nombre se ajusta al espacio real que queda entre presencia, acciones y
+   la flecha visible, sin desplazamientos fijos por orientación o resolución. */
+.chat-tools > .chat-name-field {
+  position: absolute !important;
+  top: 50% !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: var(--chat-name-available-left, 0px) !important;
+  width: var(--chat-name-available-width, 100%) !important;
+  height: auto !important;
+  max-width: var(--chat-name-available-width, 100%) !important;
+  align-items: center !important;
+  justify-self: stretch !important;
+  transform: translateY(-50%) !important;
+  box-sizing: border-box;
+}
+
+.chat-name-field > .chat-name-editor {
+  width: 100%;
+  max-width: 100%;
+  justify-items: center;
+}
+
+.chat-name-field .chat-name-display-row,
+.chat-name-field .chat-name-edit-row {
+  width: 100%;
+  max-width: 100%;
+  justify-content: center;
+}
+
+.chat-name-field .chat-name-display {
+  flex: 0 1 auto;
+  text-align: center;
+}

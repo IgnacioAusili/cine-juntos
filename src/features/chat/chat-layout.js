@@ -14,7 +14,7 @@ import {
   resetInsideUnread,
   resetPageUnread,
   syncUnreadBadgesWithVisibility,
-} from "./unread-counters.js?v=20260928-chat-dock-sequence-01";
+} from "./unread-counters.js?v=20260928-system-group-toggle-anchor-01";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 import { focusChatInput } from "./chat-input-focus.js";
 import { restorePageScrollAfterRightChatCollapse } from "./chat-scroll-preservation.js?v=20260910-mobile-chat-scroll-lock-01";

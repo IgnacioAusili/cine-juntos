@@ -1,7 +1,7 @@
 const SYSTEM_ROLL_FACE_COUNT = 5;
 const SYSTEM_ROLL_ANGLE = 360 / SYSTEM_ROLL_FACE_COUNT;
-const SYSTEM_ROLL_DURATION_MS = 650;
-const SYSTEM_ROLL_ROTATION_DELAY_MS = 520;
+const SYSTEM_ROLL_DURATION_MS = 1000;
+const SYSTEM_ROLL_ROTATION_DELAY_MS = 100;
 const SYSTEM_ROLL_ROTATION_DURATION_MS =
   SYSTEM_ROLL_DURATION_MS - SYSTEM_ROLL_ROTATION_DELAY_MS;
 const SYSTEM_ROLL_SIZE_TRANSITION_MS = 180;
@@ -43,6 +43,13 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
   const originalStyle = nextText.getAttribute("style");
   const bubble = nextText.closest(".message-system-bubble");
   const originalBubbleStyle = bubble?.getAttribute("style");
+  const groupItem = nextText.closest(".message.system");
+  const hadGroupTransitionClass = groupItem?.classList.contains("system-group-transitioning") ?? false;
+  const originalBubbleColor = bubble ? getComputedStyle(bubble).color : "";
+  const lineElements = bubble
+    ? Array.from(bubble.querySelectorAll(".message-system-line"))
+    : [];
+  const originalLineStyles = lineElements.map((line) => line.getAttribute("style"));
   const nextBubbleRect = bubble?.getBoundingClientRect();
   const previousBubbleAnimation = bubble && systemRollBubbleAnimations.get(bubble);
   previousBubbleAnimation?.cancel();
@@ -57,8 +64,12 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
     nextBubbleRect?.width || 0,
     previousSnapshot.bubbleRect?.width || 0,
   );
+  const previousBubbleWidth = previousSnapshot.bubbleRect?.width || nextBubbleRect?.width || 0;
+  const lineDisplacement = Math.max(0, (bubbleWidth - previousBubbleWidth) / 2);
   const row = nextText.closest(".system-message-row");
   const previousMarkup = previousSnapshot.markup.cloneNode(true);
+
+  groupItem?.classList.add("system-group-transitioning");
 
   const drum = document.createElement("span");
   drum.className = "system-message-roll-drum";
@@ -93,6 +104,9 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
   if (bubble && bubbleWidth > 0) {
     bubble.style.setProperty("width", `${bubbleWidth}px`);
   }
+  if (bubble && originalBubbleColor) {
+    bubble.style.setProperty("color", originalBubbleColor, "important");
+  }
   nextText.replaceChildren(drum);
   row?.classList.add("system-message-rolling");
 
@@ -116,12 +130,32 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
       fill: "both",
     },
   );
+  const lineAnimations = [];
+  if (lineDisplacement > 0.5 && lineElements.length >= 2) {
+    const lineAnimationOptions = {
+      duration: SYSTEM_ROLL_ROTATION_DURATION_MS,
+      delay: SYSTEM_ROLL_ROTATION_DELAY_MS,
+      easing: "cubic-bezier(.65, -.15, .25, 1.15)",
+      fill: "both",
+    };
+    const lineBefore = lineElements[0];
+    const lineAfter = lineElements.at(-1);
+    const beforeStart = `translateX(${lineDisplacement}px)`;
+    const afterStart = `translateX(-${lineDisplacement}px)`;
+    lineBefore.style.transform = beforeStart;
+    lineAfter.style.transform = afterStart;
+    lineAnimations.push(
+      lineBefore.animate(
+        [{ transform: beforeStart }, { transform: "translateX(0px)" }],
+        lineAnimationOptions,
+      ),
+      lineAfter.animate(
+        [{ transform: afterStart }, { transform: "translateX(0px)" }],
+        lineAnimationOptions,
+      ),
+    );
+  }
 
-  const maskTimer = window.setTimeout(() => {
-    if (systemRollAnimations.get(nextText)) {
-      nextText.classList.add("system-message-roll-soft-edge");
-    }
-  }, SYSTEM_ROLL_ROTATION_DELAY_MS);
   const record = { animation, cleanup: null };
   systemRollAnimations.set(nextText, record);
   let cleanupStarted = false;
@@ -138,12 +172,18 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
     bubbleFinalized = true;
     bubbleSizeAnimation?.cancel();
     textSizeAnimation?.cancel();
+    lineAnimations.forEach((lineAnimation) => lineAnimation.cancel());
+    lineElements.forEach((line, index) => {
+      const originalLineStyle = originalLineStyles[index];
+      if (originalLineStyle === null) line.removeAttribute("style");
+      else line.setAttribute("style", originalLineStyle);
+    });
     nextText.replaceChildren(...originalNodes);
     if (originalStyle === null) nextText.removeAttribute("style");
     else nextText.setAttribute("style", originalStyle);
     nextText.classList.remove("system-message-roll-viewport");
-    nextText.classList.remove("system-message-roll-soft-edge");
     row?.classList.remove("system-message-rolling");
+    if (!hadGroupTransitionClass) groupItem?.classList.remove("system-group-transitioning");
     if (bubble) {
       if (originalBubbleStyle === null) bubble.removeAttribute("style");
       else bubble.setAttribute("style", originalBubbleStyle);
@@ -209,7 +249,6 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
       return;
     }
     cleanupStarted = true;
-    window.clearTimeout(maskTimer);
     if (immediate) {
       cancelSizeAnimations();
       finalizeBubble();

@@ -19,18 +19,18 @@ import {
 } from "../session-ui.js?v=20260911-orientation-scroll-anchor-01";
 import { refreshTooltipForTarget } from "../icons-tooltips.js?v=20260914-tooltip-single-path-01";
 import { markParticipantActive } from "../presence.js?v=20260912-name-session-01";
-import { clearReplyTarget } from "./chat-reply.js?v=20260914-system-message-roll-transition-05";
-import { renderMessage } from "./chat-render.js?v=20260928-chat-dock-sequence-01";
+import { clearReplyTarget } from "./chat-reply.js?v=20260928-system-group-toggle-anchor-01";
+import { renderMessage } from "./chat-render.js?v=20260928-system-group-toggle-anchor-01";
 import {
   completeAutoOpenedChatResponse,
-} from "./chat-layout.js?v=20260928-chat-dock-sequence-01";
-import { queuePinnedChatScrollSync, isPinnedToBottom } from "./chat-scroll-sync.js?v=20260928-chat-dock-sequence-01";
+} from "./chat-layout.js?v=20260928-system-group-toggle-anchor-01";
+import { queuePinnedChatScrollSync, isPinnedToBottom } from "./chat-scroll-sync.js?v=20260928-system-group-toggle-anchor-01";
 import { focusChatInput } from "./chat-input-focus.js";
 import {
   compressImageBase64,
   renderImagePreview,
   clearPendingImage,
-} from "./image-compress.js?v=20260928-chat-dock-sequence-01";
+} from "./image-compress.js?v=20260928-system-group-toggle-anchor-01";
 
 const floatingComposerObservers = new WeakMap();
 const scrollbarDragState = new WeakMap();

@@ -2,14 +2,16 @@
   --session-layout-mode: side-by-side;
 }
 
-/* El navegador envuelve video y chat según su tamaño intrínseco. JavaScript
-   solo refleja la posición resultante para conservar los controles adecuados. */
+/* El ancho intrínseco del video depende de su resolución de origen y puede
+   empujar el chat debajo al llegar loadedmetadata. Usamos una base flexible
+   y mantenemos dos columnas mientras cada una pueda ocupar el ancho del chat. */
 .session-view[data-chat-dock="right"] .workspace {
   flex-wrap: wrap;
 }
 
 .session-view[data-chat-dock="right"] .video-area {
-  min-width: min-content;
+  flex: 1 1 0px;
+  min-width: min(100%, var(--chat-panel-width));
 }
 
 .session-view.layout-fit-check[data-chat-dock="right"] .workspace,
@@ -93,30 +95,44 @@
   grid-template-rows: minmax(0, 1fr) 0px;
 }
 
-/* Si el video no conserva su proporcion con el chat visible, deja asomar los
-   primeros 10px del header en la union. El panel mide 10px menos que el
-   viewport y reutiliza el gutter inferior del shell para cerrar el scroll. */
+/* En el modo apilado, los paneles y el padding del workspace siguen los insets
+   reales del shell. El input conserva su inset propio aunque desaparezca el
+   margen inferior o superior de la página. */
 body:not(.is-lobby)
 .session-view.layout-component-stack[data-chat-dock="bottom"] .workspace {
   --component-stack-chat-header-inset: 10px;
+  --component-stack-viewport-bottom-inset:
+    var(--component-stack-chat-header-inset);
   height: auto;
   min-height: 0;
-  padding-top: var(--app-shell-gutter);
+  padding-top: var(
+    --component-stack-viewport-top-inset,
+    var(--app-shell-gutter)
+  );
   row-gap: 0;
   grid-template-rows:
     minmax(
       0px,
       calc(
         var(--app-viewport-height)
-        - var(--app-shell-gutter)
-        - var(--component-stack-chat-header-inset)
+        - var(
+          --component-stack-viewport-top-inset,
+          var(--app-shell-gutter)
+        )
+        - var(
+          --component-stack-viewport-bottom-inset,
+          var(--component-stack-chat-header-inset)
+        )
       )
     )
     minmax(
       0px,
       calc(
         var(--app-viewport-height)
-        - var(--component-stack-chat-header-inset)
+        - var(
+          --component-stack-viewport-bottom-inset,
+          var(--component-stack-chat-header-inset)
+        )
       )
     );
 }
@@ -156,8 +172,14 @@ body:not(.is-lobby)
       0px,
       calc(
         var(--app-viewport-height)
-        - var(--app-shell-gutter)
-        - var(--component-stack-chat-header-inset)
+        - var(
+          --component-stack-viewport-top-inset,
+          var(--app-shell-gutter)
+        )
+        - var(
+          --component-stack-viewport-bottom-inset,
+          var(--component-stack-chat-header-inset)
+        )
       )
     )
     0px;

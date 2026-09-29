@@ -1,5 +1,6 @@
 const VOLUME_OPEN_CLASS = "is-volume-slider-open";
 const VOLUME_LAYOUT_ATTRIBUTE = "data-volume-slider-layout";
+const VOLUME_ARROW_OVERLAP_CLASS = "is-volume-popup-overlapping";
 const VOLUME_BUTTON_ACTION_DELAY_MS = 350;
 // El popup permanece disponible unos segundos despues de la ultima
 // interaccion, y mientras el puntero o el foco sigan dentro del control.
@@ -11,6 +12,8 @@ const observedRoots = new WeakSet();
 const observedDocuments = new WeakSet();
 const hideTimers = new WeakMap();
 const pendingVolumeButtonActions = new WeakMap();
+const overlappingVolumeArrowZones = new WeakMap();
+const volumeLayoutSchedulers = new WeakMap();
 
 export function wirePlayerVolumeLayouts() {
   observePlayerVolumeLayouts(document);
@@ -182,7 +185,13 @@ function wireVolumeGroup(group) {
   if (!bar) return;
   wiredGroups.add(group);
   const view = group.ownerDocument.defaultView || window;
-  const schedule = createFrameScheduler(() => syncVolumeSliderLayout(group, bar), view);
+  const schedule = createFrameScheduler(() => {
+    syncVolumeSliderLayout(group, bar);
+    syncVolumeArrowVisibility(group);
+    // El chat puede mover la flecha durante una transicion sin cambiar su tamano.
+    if (group.classList.contains(VOLUME_OPEN_CLASS)) schedule();
+  }, view);
+  volumeLayoutSchedulers.set(group, schedule);
   const input = group.querySelector(".player-volume-input");
   let activeSliderPointerId = null;
 
@@ -262,8 +271,18 @@ function wireVolumeGroup(group) {
     observer.observe(bar);
     const zone = bar.querySelector(".player-controls-scroll-zone");
     if (zone) observer.observe(zone);
+    const chatHandleZone = getActiveChatHandleZone(group);
+    if (chatHandleZone) observer.observe(chatHandleZone);
   } else {
     view.addEventListener("resize", schedule, { passive: true });
+  }
+  const sessionView = group.closest(".session-view");
+  if (sessionView && typeof MutationObserver === "function") {
+    const observer = new MutationObserver(schedule);
+    observer.observe(sessionView, {
+      attributes: true,
+      attributeFilter: ["class", "style", "data-chat-dock"],
+    });
   }
   schedule();
 }
@@ -290,6 +309,8 @@ function openVolumeSlider(group) {
   clearHideTimer(group);
   group.classList.add(VOLUME_OPEN_CLASS);
   group.querySelector(".video-control-button")?.setAttribute("aria-expanded", "true");
+  syncVolumeArrowVisibility(group);
+  volumeLayoutSchedulers.get(group)?.();
   syncVolumeButtonLabel(group);
   const view = group.ownerDocument.defaultView || window;
   const hasMouseHover = view.matchMedia?.("(hover: hover) and (pointer: fine)").matches
@@ -309,10 +330,47 @@ function cancelPendingVolumeButtonAction(group) {
 function closeVolumeSlider(group) {
   clearHideTimer(group);
   group.classList.remove(VOLUME_OPEN_CLASS);
+  syncVolumeArrowVisibility(group);
   group.querySelector(".video-control-button")?.setAttribute("aria-expanded", "false");
   syncVolumeButtonLabel(group);
   const active = group.ownerDocument.activeElement;
   if (active && active !== group.querySelector(".video-control-button") && group.contains(active)) active.blur();
+}
+
+function syncVolumeArrowVisibility(group) {
+  const previousZone = overlappingVolumeArrowZones.get(group);
+  previousZone?.classList.remove(VOLUME_ARROW_OVERLAP_CLASS);
+  overlappingVolumeArrowZones.delete(group);
+  if (!group.classList.contains(VOLUME_OPEN_CLASS) || !isVolumeSliderVertical(group)) return;
+
+  const popup = group.querySelector(".player-volume-slider-wrap");
+  const button = getActiveChatHandleButton(group);
+  const handleZone = button?.closest(".chat-collapse-hover-zone");
+  if (!popup || !button || !handleZone) return;
+
+  const popupRect = popup.getBoundingClientRect();
+  const arrowRect = button.getBoundingClientRect();
+  if (popupRect.width <= 0 || popupRect.height <= 0 || arrowRect.width <= 0 || arrowRect.height <= 0) return;
+
+  const overlapsHorizontally = popupRect.left < arrowRect.right && popupRect.right > arrowRect.left;
+  const overlapsVertically = popupRect.top < arrowRect.bottom && popupRect.bottom > arrowRect.top;
+  if (!overlapsHorizontally || !overlapsVertically) return;
+
+  handleZone.classList.add(VOLUME_ARROW_OVERLAP_CLASS);
+  overlappingVolumeArrowZones.set(group, handleZone);
+}
+
+function getActiveChatHandleButton(group) {
+  const sessionView = group.closest(".session-view");
+  if (!sessionView) return null;
+  const buttonId = sessionView.classList.contains("chat-collapsed")
+    ? "#expandChatButton"
+    : "#collapseChatButton";
+  return sessionView.querySelector(buttonId) || null;
+}
+
+function getActiveChatHandleZone(group) {
+  return getActiveChatHandleButton(group)?.closest(".chat-collapse-hover-zone") || null;
 }
 
 function syncVolumeButtonLabel(group) {

@@ -1,7 +1,7 @@
 import {
   animateCollapsedSystemMessageAdvance,
   settleSystemMessageRoll,
-} from "./system-message-roll.js?v=20260914-system-message-roll-transition-05";
+} from "./system-message-roll.js?v=20260928-system-group-toggle-anchor-01";
 
 const SYSTEM_GROUP_MIN_SIZE = 3;
 const SYSTEM_GROUP_TRANSITION_MS = 180;
@@ -45,10 +45,22 @@ export function scheduleSystemMessageCollapse(container, { animateIncoming = fal
   applyGroupState(header, state?.expanded ?? false);
 
   if (previousSnapshot) {
-    animateCollapsedSystemMessageAdvance(
+    // La primera reubicación del selector ocurre con el alto natural de la
+    // fila entrante. La ruleta puede ampliarla enseguida para conservar el
+    // alto multilínea anterior; eso cambia el 50% del anclaje vertical. Mide
+    // antes de iniciar la ruleta y vuelve a anclar tras fijar ese alto para
+    // que la traslación inicial se calcule sobre la geometría ya estable.
+    const selectorRectBeforeRoll = header.getBoundingClientRect();
+    const rollAnimation = animateCollapsedSystemMessageAdvance(
       previousSnapshot,
       items.at(-1)?.querySelector(".message-system-text"),
     );
+    if (rollAnimation && selectorRectBeforeRoll) {
+      moveGroupToggle(header, items.at(-1), {
+        animate: true,
+        previousRect: selectorRectBeforeRoll,
+      });
+    }
   }
 
   if (animateIncoming && hadExistingHeader && wasExpanded) {

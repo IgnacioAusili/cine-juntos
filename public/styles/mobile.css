@@ -966,15 +966,6 @@
     transform: none;
   }
 
-  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-name-field {
-    justify-self: center;
-    transform: translateX(-12px);
-  }
-
-  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-name-field .label-row {
-    transform: translate(-4px, -1px);
-  }
-
   body:not(.is-lobby) .session-view.chat-header-collapsed[data-chat-dock="bottom"] .chat-tools {
     min-height: 0;
     height: auto;
@@ -1012,12 +1003,6 @@
      la de expandir conserva su anclaje propio cuando el chat está cerrado. */
   body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"] .chat-collapse-hover-zone {
     transform: translate(-50%, calc(-50% + 12px));
-  }
-
-  /* La flecha de expandir debe quedar separada de la barra de controles del
-     reproductor; elevar su anclaje evita que ambas superficies se monten. */
-  body:not(.is-lobby) .session-view.chat-collapsed[data-chat-dock="bottom"] .chat-collapse-hover-zone {
-    top: calc(var(--chat-bottom-dock-collapsed-handle-top, calc(100dvh - 16px)) - 22px);
   }
 
   /* Al abrir el teclado el alto del chat cambia, pero la flecha del header

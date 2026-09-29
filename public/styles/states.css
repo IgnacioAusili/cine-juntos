@@ -413,11 +413,12 @@ body.fullscreen-mode .session-view[data-chat-dock="bottom"] {
   margin-inline: calc(var(--app-shell-gutter) * -1);
 }
 
-/* El snap de la pagina solo aporta en escritorio con el chat inferior. En
-   movil y en el dock lateral dejamos que el scroll siga siendo libre para no
-   mover el video al abrir, cerrar o cambiar de modo. */
-@media (min-width: 981px) {
-  body.fullscreen-mode .app-shell:has(.session-view[data-chat-dock="bottom"]) {
+/* El snap acompaña los paneles inferiores solo cuando, por su tamaño real,
+   no entran juntos en el viewport. El dock lateral y móvil quedan libres. */
+@media (hover: hover) and (pointer: fine) {
+  body.fullscreen-mode .app-shell:has(
+    .session-view.chat-bottom-snap-enabled[data-chat-dock="bottom"]
+  ) {
     scroll-snap-type: y proximity;
   }
 
@@ -425,7 +426,7 @@ body.fullscreen-mode .session-view[data-chat-dock="bottom"] {
      shell conserva el snap de proximidad, Chrome salta a la siguiente sección
      antes de que termine el frame y el video parece parpadear. */
   body.fullscreen-mode .app-shell:has(
-    .session-view.chat-scroll-snap-locked[data-chat-dock="bottom"]
+    .session-view.chat-scroll-snap-locked.chat-bottom-snap-enabled[data-chat-dock="bottom"]
   ) {
     scroll-snap-type: none;
   }
@@ -441,13 +442,13 @@ body.fullscreen-mode .session-view[data-chat-dock="bottom"] {
     clip-path: inset(var(--chat-bottom-curtain-clip, 100%) 0 0 0);
   }
 
-  body.fullscreen-mode .session-view[data-chat-dock="bottom"] .video-area,
-  body.fullscreen-mode .session-view[data-chat-dock="bottom"] .chat-area {
+  body.fullscreen-mode .session-view.chat-bottom-snap-enabled[data-chat-dock="bottom"] .video-area,
+  body.fullscreen-mode .session-view.chat-bottom-snap-enabled[data-chat-dock="bottom"] .chat-area {
     scroll-snap-align: start;
     scroll-snap-stop: normal;
   }
 
-  body.fullscreen-mode .session-view[data-chat-dock="bottom"] .session-toolbar {
+  body.fullscreen-mode .session-view.chat-bottom-snap-enabled[data-chat-dock="bottom"] .session-toolbar {
     scroll-snap-align: start;
     scroll-snap-stop: normal;
   }

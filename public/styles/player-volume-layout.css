@@ -164,6 +164,17 @@
   clip-path: inset(0);
 }
 
+.session-view[data-chat-dock] .chat-collapse-hover-zone.is-volume-popup-overlapping {
+  pointer-events: none !important;
+}
+
+.session-view[data-chat-dock] .chat-collapse-hover-zone.is-volume-popup-overlapping .chat-collapse-handle,
+.session-view[data-chat-dock] .chat-collapse-hover-zone.is-volume-popup-overlapping .chat-collapse-icon-anchor {
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
 .player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="vertical"] .player-volume-input::-webkit-slider-runnable-track {
   height: var(--volume-track-height);
 }

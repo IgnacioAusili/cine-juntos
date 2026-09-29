@@ -1,8 +1,8 @@
 @import url("./chat-overlay/shell.css?v=20260910-mobile-chat-side-placement-02");
 @import url("./chat-overlay/header.css");
-@import url("./chat-overlay/messages.css?v=20260927-overlay-reply-full-row-01");
+@import url("./chat-overlay/messages.css?v=20260928-system-group-toggle-anchor-01");
 @import url("./chat-overlay/composer.css?v=20260927-overlay-flex-flow-02");
 @import url("./chat-overlay/composer-scrollbar.css?v=20260927-overlay-three-lines-01");
 @import url("./chat-overlay/sync-status.css");
-@import url("./chat/system-message-groups.css?v=20260824-reply-direction-01");
-@import url("./chat/system-message-roll.css?v=20260914-system-message-roll-transition-05");
+@import url("./chat/system-message-groups.css?v=20260928-system-group-toggle-anchor-01");
+@import url("./chat/system-message-roll.css?v=20260928-system-group-toggle-anchor-01");

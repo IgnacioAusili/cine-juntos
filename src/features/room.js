@@ -31,7 +31,7 @@ import {
   showSession,
   watchRoomEntryVideoFocus,
 } from "./session-ui.js?v=20260911-orientation-scroll-anchor-01";
-import { handleRemoteState } from "./player/index.js?v=20260928-chat-dock-sequence-01";
+import { handleRemoteState } from "./player/index.js?v=20260928-panel-fit-chat-snap-01-volume-popup-arrow-hide-01";
 import {
   renderMessage,
   beginSystemMessageHydration,
@@ -40,7 +40,7 @@ import {
   resetInsideUnread,
   resetPageUnread,
   renderReplyPreview,
-} from "./chat/index.js?v=20260928-chat-dock-sequence-01";
+} from "./chat/index.js?v=20260928-system-group-toggle-anchor-01";
 
 const ACTIVE_TAB_KEY = "cine-juntos-active-tab";
 const ACTIVE_TAB_TTL_MS = 30000;

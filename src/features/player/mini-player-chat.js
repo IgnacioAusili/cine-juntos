@@ -1,7 +1,7 @@
 import {
   syncMiniChatAutoExpand,
   toggleMiniChatOverlay,
-} from "./mini-player-chat-mirror.js?v=20260928-chat-dock-sequence-01";
+} from "./mini-player-chat-mirror.js?v=20260928-system-group-toggle-anchor-01";
 import { state } from "../../core/state.js?v=20260914-console-log-controls-01";
 
 export function mirrorMiniPlayerChatState(surface, visible = true) {

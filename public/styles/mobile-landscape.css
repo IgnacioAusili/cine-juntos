@@ -147,17 +147,6 @@
     height: 32px;
   }
 
-  /* El nombre no debe quedar debajo del control central: su borde derecho
-     queda anclado a la izquierda del círculo, aunque cambie el ancho del
-     viewport o el largo del nombre. */
-  html.viewport-landscape body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"] .chat-name-field:has(.chat-name-editor[data-editing="false"]) {
-    position: absolute;
-    right: calc(50% + 25px);
-    justify-self: unset;
-    max-width: calc(50% - 50px);
-    transform: none;
-  }
-
   html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-tools {
     box-sizing: border-box;
     min-height: 0;
@@ -248,14 +237,7 @@
   html.viewport-landscape body:not(.is-lobby)
     .session-view[data-chat-dock="bottom"] .chat-tools > .presence-pill,
   html.viewport-landscape body:not(.is-lobby)
-    .session-view[data-chat-dock="bottom"] .chat-tools > .chat-name-field,
-  html.viewport-landscape body:not(.is-lobby)
     .session-view[data-chat-dock="bottom"] .chat-tools > .chat-tools-actions {
-    transform: translateY(2px) !important;
-  }
-
-  html.viewport-landscape body.fullscreen-mode
-    .session-view[data-chat-dock="bottom"] .chat-tools > .chat-name-field:has(.chat-name-editor[data-editing="false"]) {
     transform: translateY(2px) !important;
   }
 
@@ -837,19 +819,6 @@
     .session-view[data-chat-dock="bottom"] .chat-collapse-hover-zone.is-transitioning .chat-collapse-icon-anchor {
     visibility: visible;
     opacity: 1 !important;
-  }
-
-  html.viewport-landscape body.fullscreen-mode
-    .session-view[data-chat-dock="bottom"] .chat-name-field:has(.chat-name-editor[data-editing="false"]) {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    right: calc(50% + 70px) !important;
-    height: auto;
-    justify-self: unset;
-    align-items: center;
-    max-width: calc(50% - 140px) !important;
-    transform: none !important;
   }
 
 }

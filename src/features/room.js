@@ -31,7 +31,7 @@ import {
   showSession,
   watchRoomEntryVideoFocus,
 } from "./session-ui.js?v=20260911-orientation-scroll-anchor-01";
-import { handleRemoteState } from "./player/index.js?v=20260928-panel-fit-chat-snap-01-volume-popup-arrow-hide-01";
+import { handleRemoteState } from "./player/index.js?v=20260928-panel-fit-chat-snap-01-volume-popup-arrow-hide-01-player-controls-layout-reflow-fix-01-video-snap-align-panel-edge-01-responsive-reflow-01-pc-snap-scope-01";
 import {
   renderMessage,
   beginSystemMessageHydration,

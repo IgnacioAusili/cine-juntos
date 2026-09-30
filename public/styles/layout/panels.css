@@ -133,38 +133,36 @@
   opacity: 1;
 }
 
-/* En PC el scroll y la cortina son fases consecutivas: el panel debe seguir
-   siendo completamente opaco mientras se comprime visualmente. La opacidad
-   pertenece sólo al estado final de la grilla, no a la animación vertical. */
+/* La opacidad del estado final se aplica sin transición en pantallas amplias. */
 @media (min-width: 681px) {
   .session-view.chat-collapsed[data-chat-dock="bottom"] .chat-area {
     opacity: 0;
     transition: none;
   }
+}
 
-  .session-view[data-chat-dock="bottom"].chat-bottom-pc-collapse-visual .chat-area {
-    clip-path: inset(0 0 var(--chat-bottom-curtain-clip, 0%) 0);
-    opacity: 1;
-    transform: none;
-    transition: none;
-    will-change: clip-path;
-  }
+.session-view[data-chat-dock="bottom"].chat-bottom-pc-collapse-visual .chat-area {
+  clip-path: inset(0 0 var(--chat-bottom-curtain-clip, 0%) 0);
+  opacity: 1;
+  transform: none;
+  transition: none;
+  will-change: clip-path;
+}
 
-  .session-view[data-chat-dock="bottom"].chat-bottom-pc-collapse-visual.chat-bottom-curtain-active .chat-area {
-    clip-path: inset(0 0 var(--chat-bottom-curtain-clip, 100%) 0);
-    opacity: 1;
-  }
+.session-view[data-chat-dock="bottom"].chat-bottom-pc-collapse-visual.chat-bottom-curtain-active .chat-area {
+  clip-path: inset(0 0 var(--chat-bottom-curtain-clip, 100%) 0);
+  opacity: 1;
+}
 
-  .session-view[data-chat-dock="bottom"].chat-bottom-pc-expand-visual .chat-area {
-    clip-path: inset(0 0 var(--chat-bottom-curtain-clip, 100%) 0);
-    opacity: 1;
-    transform: none;
-    transition: none;
-    will-change: clip-path;
-  }
+.session-view[data-chat-dock="bottom"].chat-bottom-pc-expand-visual .chat-area {
+  clip-path: inset(0 0 var(--chat-bottom-curtain-clip, 100%) 0);
+  opacity: 1;
+  transform: none;
+  transition: none;
+  will-change: clip-path;
+}
 
-  .session-view[data-chat-dock="bottom"].chat-bottom-pc-expand-visual.chat-bottom-curtain-active .chat-area {
-    clip-path: inset(0 0 var(--chat-bottom-curtain-clip, 0%) 0);
-    opacity: 1;
-  }
+.session-view[data-chat-dock="bottom"].chat-bottom-pc-expand-visual.chat-bottom-curtain-active .chat-area {
+  clip-path: inset(0 0 var(--chat-bottom-curtain-clip, 0%) 0);
+  opacity: 1;
 }

@@ -1,4 +1,4 @@
-import { observePlayerControlLayouts } from "./player-controls-layout.js?v=20260902-player-controls-layout-17";
+import { observePlayerControlLayouts } from "./player-controls-layout.js?v=20260929-player-controls-layout-resize-reflow-02";
 import { observePlayerVolumeLayouts } from "./player-volume-layout.js?v=20260928-volume-popup-arrow-hide-01";
 
 export function installMiniPlayerWindowStyles(targetDocument) {

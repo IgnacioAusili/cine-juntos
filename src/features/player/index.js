@@ -1,8 +1,8 @@
 // Coordinacion general del player: reexporta sync de video y fullscreen sin romper imports existentes.
-import { wireFullscreenEvents } from "./fullscreen.js?v=20260928-panel-fit-chat-snap-01-volume-popup-arrow-hide-01";
-import { wireMiniPlayerEvents } from "./mini-player.js?v=20260928-system-group-toggle-anchor-01-volume-popup-arrow-hide-01";
-import { wirePlayerCoreEvents } from "./player.js?v=20260928-panel-fit-chat-snap-01-volume-popup-arrow-hide-01";
-import { wirePlayerControlLayouts } from "./player-controls-layout.js?v=20260902-player-controls-layout-17";
+import { wireFullscreenEvents } from "./fullscreen.js?v=20260929-video-snap-align-panel-edge-01-resize-reflow-01-pc-snap-scope-01";
+import { wireMiniPlayerEvents } from "./mini-player.js?v=20260929-mini-player-resize-reflow-01";
+import { wirePlayerCoreEvents } from "./player.js?v=20260929-player-modules-resize-reflow-01-pc-snap-scope-01";
+import { wirePlayerControlLayouts } from "./player-controls-layout.js?v=20260929-player-controls-layout-resize-reflow-02";
 import { wirePlayerVolumeLayouts } from "./player-volume-layout.js?v=20260928-volume-popup-arrow-hide-01";
 
 export {
@@ -12,16 +12,16 @@ export {
   setVideoSource,
   setVideoStatus,
   waitForVideoMetadata,
-} from "./player.js?v=20260928-panel-fit-chat-snap-01-volume-popup-arrow-hide-01";
+} from "./player.js?v=20260929-player-modules-resize-reflow-01-pc-snap-scope-01";
 export {
   handleRemoteState,
   publishState,
-} from "./player-sync-logic.js?v=20260928-system-group-toggle-anchor-01-volume-popup-arrow-hide-01";
+} from "./player-sync-logic.js?v=20260929-player-sync-logic-resize-reflow-01";
 export {
   handleFullscreenChange,
   snapFullscreenScroll,
   togglePageFullscreen,
-} from "./fullscreen.js?v=20260928-panel-fit-chat-snap-01-volume-popup-arrow-hide-01";
+} from "./fullscreen.js?v=20260929-video-snap-align-panel-edge-01-resize-reflow-01-pc-snap-scope-01";
 
 export function wirePlayerEvents() {
   const playerInteractions = wirePlayerCoreEvents();

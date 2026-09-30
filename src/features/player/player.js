@@ -28,7 +28,7 @@ import {
   clearPlaybackRecoveryTracking,
   pauseRoomForPlaybackIssue,
   publishState,
-} from "./player-sync-logic.js?v=20260928-system-group-toggle-anchor-01-volume-popup-arrow-hide-01";
+} from "./player-sync-logic.js?v=20260929-player-sync-logic-resize-reflow-01";
 
 import {
   showErrorDialog,
@@ -36,8 +36,8 @@ import {
   showResumeVideoDialog,
   showSlowLoadDialog,
 } from "../session-ui.js?v=20260911-orientation-scroll-anchor-01";
-import { togglePageFullscreen } from "./fullscreen.js?v=20260928-panel-fit-chat-snap-01-volume-popup-arrow-hide-01";
-import { syncMiniPlayerButton } from "./mini-player.js?v=20260928-system-group-toggle-anchor-01-volume-popup-arrow-hide-01";
+import { togglePageFullscreen } from "./fullscreen.js?v=20260929-video-snap-align-panel-edge-01-resize-reflow-01-pc-snap-scope-01";
+import { syncMiniPlayerButton } from "./mini-player.js?v=20260929-mini-player-resize-reflow-01";
 import { shouldToggleMuteFromVolumeButton } from "./player-volume-layout.js?v=20260928-volume-popup-arrow-hide-01";
 
 const SKIP_LOAD_REPLACE_DIALOG_KEY = "cine-juntos-skip-load-replace-dialog";

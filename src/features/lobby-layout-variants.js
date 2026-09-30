@@ -151,7 +151,7 @@ function syncLobbyTitleFit(screen, hero, ticket) {
 
   if (titleNeedsLayoutFitting(title, hero, ticket, layoutTicket, footer)) return;
 
-  for (let attempt = 0; attempt < 8; attempt += 1) {
+  for (let attempt = 0; attempt < 5; attempt += 1) {
     const middle = (low + high) / 2;
     if (needsFitting(middle)) high = middle;
     else low = middle;
@@ -162,6 +162,7 @@ function syncLobbyTitleFit(screen, hero, ticket) {
 
 function syncLobbyContentCenter() {
   lobbyCenterFrame = 0;
+  if (!document.body.classList.contains("is-lobby")) return;
 
   const isColumns = document.body.dataset.lobbyLayout === "columns";
   const screen = document.querySelector("#lobbyScreen");
@@ -225,7 +226,6 @@ function syncLobbyContentCenter() {
     syncSingleColumnTitleGroup(hero);
     syncSingleColumnDescriptionPlacement(hero, ticket);
     syncLobbyTextDensity(hero, footer);
-    syncSingleColumnDescriptionPlacement(hero, ticket);
     syncLobbyTicketInlinePadding(ticket);
     syncSingleColumnContentGap(grid, ticket, footer);
     syncSingleColumnTicketPlacement(hero, ticket, footer);
@@ -741,6 +741,19 @@ export function wireLobbyLayoutVariants() {
   if (screen) {
     wireLobbyMarqueeEmojis(screen);
     window.addEventListener("resize", scheduleLobbyContentCenter, { passive: true });
+
+    if (typeof MutationObserver === "function") {
+      let wasLobbyVisible = document.body.classList.contains("is-lobby");
+      const visibilityObserver = new MutationObserver(() => {
+        const isLobbyVisible = document.body.classList.contains("is-lobby");
+        if (isLobbyVisible && !wasLobbyVisible) scheduleLobbyContentCenter();
+        wasLobbyVisible = isLobbyVisible;
+      });
+      visibilityObserver.observe(document.body, {
+        attributes: true,
+        attributeFilter: ["class"],
+      });
+    }
 
     if ("ResizeObserver" in window) {
       const observer = new ResizeObserver(scheduleLobbyContentCenter);

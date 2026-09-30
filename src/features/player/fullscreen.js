@@ -15,7 +15,7 @@ import {
   logEvent,
   state,
 } from "../../core/state.js?v=20260914-console-log-controls-01";
-import { isMiniPlayerActive } from "./mini-player.js?v=20260928-system-group-toggle-anchor-01-volume-popup-arrow-hide-01";
+import { isMiniPlayerActive } from "./mini-player.js?v=20260929-mini-player-resize-reflow-01";
 import {
   syncExternalChatCollapseHandleOffset,
   syncInsideChatPanelOffset,
@@ -636,7 +636,11 @@ function getFullscreenSnapPoints() {
   const points = [getDocumentTop(dom.workspace)];
 
   if (dock === "bottom" && dom.videoArea) {
-    points.push(getDocumentTop(dom.videoArea) - gutter);
+    // En el stack responsivo el panel va al borde del viewport; en la vista
+    // normal se conserva el gutter que ya usaba el snap de escritorio.
+    const videoTop = getDocumentTop(dom.videoArea);
+    const stackUsesEdgeToEdge = dom.sessionView.classList.contains("layout-component-stack");
+    points.push(stackUsesEdgeToEdge ? videoTop : videoTop - gutter);
   }
 
   if (!collapsed) {

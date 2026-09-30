@@ -1,3 +1,6 @@
+import { syncComponentStackChatHandle } from "./component-stack-controls.js?v=20260928-chat-aspect-layout-01";
+import { syncComponentStackShellInsets } from "./component-stack-insets.js?v=20260929-edge-to-edge-stack-inset-01";
+
 const sessionView = document.querySelector("#sessionView");
 const appShell = document.querySelector(".app-shell");
 const workspace = sessionView?.querySelector(".workspace");
@@ -10,7 +13,7 @@ const DEFAULT_VIDEO_ASPECT_RATIO = 16 / 9;
 
 let pendingFrame = 0;
 let expandedChatTransitionPending = false;
-let revealExpandedChatAfterMeasure = false;
+let pendingScrollTarget = "";
 
 function getVideoAspectRatio() {
   if (videoPlayer?.videoWidth > 0 && videoPlayer.videoHeight > 0) {
@@ -32,7 +35,6 @@ function needsFullPanelLayout() {
     || !chatArea
     || sessionView.dataset.chatDock !== "bottom"
     || sessionView.classList.contains("chat-collapsed")
-    || !window.matchMedia("(hover: hover) and (pointer: fine)").matches
   ) return false;
 
   const wasExpanded = sessionView.classList.contains(FULL_PANEL_LAYOUT_CLASS);
@@ -74,73 +76,47 @@ function syncBottomDockSnapMode() {
   sessionView?.classList.toggle("chat-bottom-snap-enabled", needsScrollSnap);
 }
 
-function syncComponentStackShellInsets() {
-  if (!appShell || !workspace) return;
-
-  const shellStyle = getComputedStyle(appShell);
-  const bottomPadding = Number.parseFloat(shellStyle.paddingBottom);
-  const topPadding = Number.parseFloat(shellStyle.paddingTop);
-  const inset = Number.isFinite(bottomPadding) ? Math.max(0, bottomPadding) : 0;
-  const topInset = Number.isFinite(topPadding) ? Math.max(0, topPadding) : 0;
-  const insetValue = `${inset}px`;
-  const topInsetValue = `${topInset}px`;
-
-  if (
-    workspace.style.getPropertyValue("--component-stack-viewport-bottom-inset")
-    !== insetValue
-  ) {
-    workspace.style.setProperty("--component-stack-viewport-bottom-inset", insetValue);
-  }
-
-  if (
-    workspace.style.getPropertyValue("--component-stack-viewport-top-inset")
-    !== topInsetValue
-  ) {
-    workspace.style.setProperty("--component-stack-viewport-top-inset", topInsetValue);
-  }
-}
-
 function measureComponentLayout() {
   pendingFrame = 0;
-  syncComponentStackShellInsets();
+  syncComponentStackShellInsets(appShell, sessionView, workspace);
+  const wasStacked = sessionView?.classList.contains(FULL_PANEL_LAYOUT_CLASS);
   const shouldStack = needsFullPanelLayout();
-
-  if (
-    shouldStack
-    && sessionView?.dataset.chatDock === "bottom"
-    && !sessionView.classList.contains("chat-collapsed")
-  ) {
-    // Al estrechar o cambiar el alto del viewport, las filas responsive pueden
-    // mover la unión aunque el chat ya estuviera abierto. Mantener el panel
-    // alineado al inicio oculta el video completo en el dock inferior.
-    revealExpandedChatAfterMeasure = true;
+  if (shouldStack && !wasStacked && !pendingScrollTarget) {
+    pendingScrollTarget = "center-video";
   }
 
   sessionView?.classList.toggle(FULL_PANEL_LAYOUT_CLASS, shouldStack);
+  syncComponentStackChatHandle(sessionView, chatArea);
   syncBottomDockSnapMode();
 
-  if (!revealExpandedChatAfterMeasure) return;
-  revealExpandedChatAfterMeasure = false;
+  const scrollTarget = pendingScrollTarget;
+  pendingScrollTarget = "";
+  if (!scrollTarget) return;
 
   if (
-    !shouldStack
-    || sessionView?.classList.contains("chat-collapsed")
-    || sessionView?.dataset.chatDock !== "bottom"
+    !sessionView
+    || sessionView.dataset.chatDock !== "bottom"
   ) return;
 
   window.requestAnimationFrame(() => {
-    if (
-      sessionView?.classList.contains(FULL_PANEL_LAYOUT_CLASS)
-      && !sessionView.classList.contains("chat-collapsed")
-      && sessionView.dataset.chatDock === "bottom"
-    ) {
+    if (sessionView?.dataset.chatDock !== "bottom") return;
+
+    const isCollapsed = sessionView.classList.contains("chat-collapsed");
+    const isStacked = sessionView.classList.contains(FULL_PANEL_LAYOUT_CLASS);
+    if (scrollTarget === "reveal-chat" && isStacked && !isCollapsed) {
       chatArea.scrollIntoView({ block: "start", inline: "nearest", behavior: "auto" });
+    } else if (scrollTarget === "center-video" && (isStacked || isCollapsed)) {
+      videoArea.scrollIntoView({ block: "center", inline: "nearest", behavior: "auto" });
     }
   });
 }
 
-function scheduleComponentLayoutMeasure(revealExpandedChat = false) {
-  if (revealExpandedChat) revealExpandedChatAfterMeasure = true;
+function scheduleComponentLayoutMeasure(scrollTarget = "") {
+  if (scrollTarget === "reveal-chat") {
+    pendingScrollTarget = "reveal-chat";
+  } else if (scrollTarget === "center-video" && pendingScrollTarget !== "reveal-chat") {
+    pendingScrollTarget = "center-video";
+  }
   if (pendingFrame) return;
   pendingFrame = window.requestAnimationFrame(measureComponentLayout);
 }
@@ -161,6 +137,7 @@ if (sessionView && workspace && videoPlayer && playerFrame && chatArea) {
     let shouldMeasure = false;
     let shouldReveal = false;
 
+    let shouldCenterVideo = false;
     for (const record of records) {
       if (record.attributeName !== "class") continue;
 
@@ -187,10 +164,17 @@ if (sessionView && workspace && videoPlayer && playerFrame && chatArea) {
         shouldReveal = true;
       }
 
-      if (justCollapsed) shouldMeasure = true;
+      if (justCollapsed) {
+        shouldMeasure = true;
+        shouldCenterVideo = true;
+      }
     }
 
-    if (shouldMeasure) scheduleComponentLayoutMeasure(shouldReveal);
+    if (shouldMeasure) {
+      scheduleComponentLayoutMeasure(
+        shouldReveal ? "reveal-chat" : shouldCenterVideo ? "center-video" : "",
+      );
+    }
   });
   layoutStateObserver.observe(sessionView, {
     attributes: true,
@@ -198,10 +182,16 @@ if (sessionView && workspace && videoPlayer && playerFrame && chatArea) {
     attributeOldValue: true,
   });
 
-  videoPlayer.addEventListener("loadedmetadata", scheduleComponentLayoutMeasure);
-  window.addEventListener("resize", scheduleComponentLayoutMeasure, { passive: true });
-  window.addEventListener("chat-layout-settled", scheduleComponentLayoutMeasure, {
+  videoPlayer.addEventListener("loadedmetadata", () => {
+    scheduleComponentLayoutMeasure("center-video");
+  });
+  window.addEventListener("resize", () => {
+    scheduleComponentLayoutMeasure("center-video");
+  }, { passive: true });
+  window.addEventListener("chat-layout-settled", () => {
+    scheduleComponentLayoutMeasure("center-video");
+  }, {
     passive: true,
   });
-  scheduleComponentLayoutMeasure();
+  scheduleComponentLayoutMeasure("center-video");
 }

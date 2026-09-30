@@ -5,7 +5,7 @@ import { setSyncStatus } from "../session-ui.js?v=20260911-orientation-scroll-an
 import {
   createMiniPlayerSurface,
   installMiniPlayerWindowStyles,
-} from "./mini-player-controls.js?v=20260928-volume-popup-arrow-hide-01";
+} from "./mini-player-controls.js?v=20260929-mini-player-controls-resize-reflow-01";
 import {
   mirrorMiniPlayerChatState,
 } from "./mini-player-chat.js?v=20260928-system-group-toggle-anchor-01";

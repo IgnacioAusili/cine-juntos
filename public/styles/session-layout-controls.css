@@ -57,18 +57,10 @@
   justify-content: center;
   position: relative;
   box-sizing: border-box;
-  padding-inline-end: 26px;
 }
 
 .session-view:not(.layout-stacked)[data-chat-dock="bottom"] .chat-name-field {
   max-width: 100%;
-}
-
-.session-view:not(.layout-stacked)[data-chat-dock="bottom"] .chat-name-edit-row .chat-name-confirm-button {
-  position: absolute;
-  inset-inline-end: 0;
-  top: 50%;
-  transform: translateY(-50%);
 }
 
 .session-view:not(.layout-stacked)[data-chat-dock="bottom"] .chat-name-field,

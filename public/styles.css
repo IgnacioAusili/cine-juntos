@@ -1,6 +1,6 @@
 @import url("./styles/tokens.css?v=20260927-chat-collapse-handle-general-03");
 @import url("./styles/base.css?v=20260928-session-page-background-01");
-@import url("./styles/layout.css?v=20260928-chat-name-input-alignment-01");
+@import url("./styles/layout.css?v=20260929-bottom-collapse-clip-01");
 @import url("./styles/components.css?v=20260927-chat-collapse-handle-general-02");
 @import url("./styles/lobby.css?v=20260926-lobby-ticket-visual-fit-01");
 @import url("./styles/player.css?v=20260927-video-status-text-offset-01");
@@ -8,7 +8,7 @@
 @import url("./styles/chat-overlay.css?v=20260928-system-group-toggle-anchor-01");
 @import url("./styles/chat/image-lightbox.css?v=20260915-image-lightbox-cursor-01");
 @import url("./styles/states.css?v=20260928-panel-fit-chat-snap-01");
-@import url("./styles/responsive.css?v=20260928-full-viewport-panels-03");
+@import url("./styles/responsive.css?v=20260930-chat-name-check-spacing-01");
 @import url("./styles/mini-player.css?v=20260905-overlay-height-cap-03");
 @import url("./styles/mobile.css?v=20260928-dynamic-chat-name-01");
   @import url("./styles/mobile-landscape.css?v=20260928-dynamic-chat-name-01");
@@ -56,4 +56,37 @@
 .chat-name-field .chat-name-display {
   flex: 0 1 auto;
   text-align: center;
+}
+
+/* La medición de proporción decide cuándo apilar los paneles. En ese estado,
+   la flecha acompaña al header real del chat y la pista queda sobre los botones. */
+body:not(.is-lobby)
+  .session-view.layout-component-stack:not(.chat-collapsed)[data-chat-dock="bottom"]
+  .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-bottom-actions {
+  /* El mínimo general de 112px deja un hueco grande cuando la pista se ancla
+     al inicio del pie. La fila y su padding determinan la altura necesaria. */
+  min-height: 0;
+}
+
+body:not(.is-lobby)
+  .session-view.layout-component-stack:not(.chat-collapsed)[data-chat-dock="bottom"]
+  .chat-area > .chat-collapse-hover-zone[data-chat-control="collapse"] {
+  top: var(--component-stack-chat-header-handle-top, var(--chat-bottom-dock-handle-top, 0px));
+  transform: translate(-50%, -50%);
+}
+
+body:not(.is-lobby)
+  .session-view.layout-component-stack:not(.chat-collapsed)[data-chat-dock="bottom"]
+  .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-progress-group {
+  right: 0;
+  bottom: 100%;
+  left: 0;
+  z-index: 2;
+}
+
+/* Al arrastrar la barra de tiempo, despejar suavemente la union entre video y chat. */
+.session-view:not(.chat-collapsed)[data-chat-dock="bottom"]:has(.player-frame.player-seek-control-dragging)
+  .chat-collapse-hover-zone[data-chat-control="collapse"] {
+  opacity: 0;
+  pointer-events: none;
 }

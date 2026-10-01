@@ -38,14 +38,15 @@ body.is-lobby[data-lobby-flow="single-column"] .lobby-about-button svg {
 
 body.is-lobby[data-lobby-flow="single-column"] .lobby-footer .lobby-disclaimer {
   font-size: 0.56rem;
-  grid-column: 1;
-  padding-inline: 0;
+  grid-column: 1 / -1;
+  padding-inline-end: calc(var(--lobby-about-panel-size) + var(--lobby-footer-gap));
 }
 
 body.is-lobby[data-lobby-flow="single-column"] .lobby-about-button {
-  position: static;
-  right: auto;
-  bottom: auto;
+  /* El panel deja 10 px al borde; el botón conserva su anclaje original de 8 px. */
+  position: absolute;
+  right: -2px;
+  bottom: 0;
   grid-column: 2;
   grid-row: 1;
   justify-self: end;
@@ -103,4 +104,15 @@ body.is-lobby .lobby-about-button.is-touch-hover:hover {
     bottom: 10px;
     padding: 0;
   }
+}
+
+/* El pie ocupa el ancho real del viewport y conserva solo 10 px de margen
+   exterior; evita acumular el padding y los márgenes de las reglas base. */
+body.is-lobby .lobby-footer,
+body.is-lobby[data-lobby-flow="single-column"] .lobby-footer {
+  left: 10px;
+  right: 10px;
+  width: auto;
+  margin-inline: 0;
+  padding-inline: 0;
 }

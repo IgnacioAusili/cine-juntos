@@ -1,4 +1,4 @@
-import { resetLobbyTicketPlacement, syncLobbyTicketPlacement, syncLobbyTitlePlacement } from "./lobby-ticket-placement.js?v=20260922-lobby-ticket-track-center-02";
+import { resetLobbyTicketPlacement, syncLobbyTicketPlacement, syncLobbyTitlePlacement } from "./lobby-ticket-placement.js?v=20260922-lobby-ticket-track-center-03";
 
 const STORAGE_KEY = "cine-juntos-lobby-layout-variant";
 const DEFAULT_VARIANT = "columns";
@@ -151,7 +151,7 @@ function syncLobbyTitleFit(screen, hero, ticket) {
 
   if (titleNeedsLayoutFitting(title, hero, ticket, layoutTicket, footer)) return;
 
-  for (let attempt = 0; attempt < 8; attempt += 1) {
+  for (let attempt = 0; attempt < 5; attempt += 1) {
     const middle = (low + high) / 2;
     if (needsFitting(middle)) high = middle;
     else low = middle;
@@ -162,6 +162,7 @@ function syncLobbyTitleFit(screen, hero, ticket) {
 
 function syncLobbyContentCenter() {
   lobbyCenterFrame = 0;
+  if (!document.body.classList.contains("is-lobby")) return;
 
   const isColumns = document.body.dataset.lobbyLayout === "columns";
   const screen = document.querySelector("#lobbyScreen");
@@ -180,23 +181,34 @@ function syncLobbyContentCenter() {
   if (isColumns && grid) document.body.dataset.lobbyFlow = "columns";
   const gridColumns = grid ? getComputedStyle(grid).gridTemplateColumns.trim().split(/\s+/) : [];
   const featureHeadings = hero ? [...hero.querySelectorAll(".lobby-feature-text strong")] : [];
-  const hasClippedFeatureHeading = featureHeadings.some((heading) => (
-    heading.getClientRects().length > 0
-      && heading.clientWidth > 0
-      && heading.scrollWidth > heading.clientWidth + 1
-  ));
+  const hasClippedFeatureHeading = featureHeadings.some((heading) => {
+    if (heading.getClientRects().length === 0 || heading.clientWidth === 0) return false;
+
+    const compactTitle = heading.querySelector(".lobby-feature-title-short");
+    const compactTitleIsVisible = compactTitle?.getClientRects().length > 0;
+    const isClipped = heading.scrollWidth > heading.clientWidth + 1;
+
+    // El título largo ya se recorta de forma intencional y tiene una versión
+    // corta para este espacio. Pasa a vertical cuando también se desborda la
+    // versión corta que realmente ve el usuario.
+    return isClipped && (!compactTitle || compactTitleIsVisible);
+  });
   const isSingleColumn = Boolean(grid) && (
     gridColumns.length < 2 || (isColumns && hasClippedFeatureHeading)
   );
   document.body.dataset.lobbyFlow = isSingleColumn ? "single-column" : "columns";
+  if (!isSingleColumn) resetLobbyAboutButtonContact();
   syncLobbyTitlePlacement(screen, isSingleColumn);
 
   if (!grid || content.length !== 2) {
+    resetLobbyAboutButtonContact();
     resetTitleFit(screen?.querySelector(".lobby-title"));
     resetLobbyTicketPlacement(screen, ticket);
     resetSingleColumnTitleLift(hero);
     resetSingleColumnTitleGroup(hero);
     resetSingleColumnDescriptionPlacement(hero);
+    syncLobbyTextDensity(hero, footer);
+    syncLobbyTicketInlinePadding(ticket);
     grid?.style.setProperty("--lobby-content-center-shift", "0px");
     return;
   }
@@ -212,9 +224,12 @@ function syncLobbyContentCenter() {
     syncLobbyTitleFit(screen, hero, null);
     syncLobbyTitlePlacement(screen, true);
     syncSingleColumnTitleGroup(hero);
-    syncSingleColumnContentGap(grid, ticket, footer);
     syncSingleColumnDescriptionPlacement(hero, ticket);
-    syncLobbyTitlePlacement(screen, true);
+    syncLobbyTextDensity(hero, footer);
+    syncLobbyTicketInlinePadding(ticket);
+    syncSingleColumnContentGap(grid, ticket, footer);
+    syncSingleColumnTicketPlacement(hero, ticket, footer);
+    syncLobbyAboutButtonContact(ticket, footer);
     return;
   }
 
@@ -233,6 +248,8 @@ function syncLobbyContentCenter() {
   // anterior al cambiar de viewport o al cambiar la variante.
   grid.style.setProperty("--lobby-content-center-shift", "0px");
   syncLobbyTicketPlacement(screen, ticket);
+  syncLobbyTicketInlinePadding(ticket);
+  syncLobbyTextDensity(hero, footer);
   syncLobbyTitleFit(screen, hero, ticket);
   syncLobbyTitlePlacement(screen, false);
 
@@ -276,6 +293,11 @@ function syncSingleColumnDescriptionPlacement(hero, ticket) {
   const description = hero.querySelector(".lobby-description");
   if (!title || !description) return;
 
+  const descriptionWidth = Math.max(hero.clientWidth, ticket.clientWidth);
+  if (descriptionWidth > 0) {
+    description.style.setProperty("--lobby-description-fit-width", `${descriptionWidth.toFixed(2)}px`);
+  }
+
   const separatorStyle = getComputedStyle(hero, "::before");
   const separatorTop = Number.parseFloat(separatorStyle.top);
   const separatorHeight = Number.parseFloat(separatorStyle.height);
@@ -295,6 +317,41 @@ function syncSingleColumnDescriptionPlacement(hero, ticket) {
   }
 }
 
+function resetLobbyAboutButtonContact() {
+  delete document.body.dataset.lobbyAboutContact;
+}
+
+function syncLobbyAboutButtonContact(ticket, footer) {
+  const button = footer?.querySelector(".lobby-about-button");
+  if (!ticket || !button || button.getClientRects().length === 0) {
+    resetLobbyAboutButtonContact();
+    return;
+  }
+
+  const renderedScale = Number.parseFloat(getComputedStyle(button).scale);
+  const scale = Number.isFinite(renderedScale) && renderedScale > 0 ? renderedScale : 1;
+  const buttonRect = button.getBoundingClientRect();
+  const centerX = (buttonRect.left + buttonRect.right) / 2;
+  const centerY = (buttonRect.top + buttonRect.bottom) / 2;
+  const unscaledWidth = buttonRect.width / scale;
+  const unscaledHeight = buttonRect.height / scale;
+  const baseButtonRect = {
+    left: centerX - unscaledWidth / 2,
+    right: centerX + unscaledWidth / 2,
+    top: centerY - unscaledHeight / 2,
+    bottom: centerY + unscaledHeight / 2,
+  };
+  const ticketRect = ticket.getBoundingClientRect();
+  const contactTolerance = 1;
+  const touchesButton = ticketRect.left <= baseButtonRect.right + contactTolerance
+    && ticketRect.right >= baseButtonRect.left - contactTolerance
+    && ticketRect.top <= baseButtonRect.bottom + contactTolerance
+    && ticketRect.bottom >= baseButtonRect.top - contactTolerance;
+
+  if (touchesButton) document.body.dataset.lobbyAboutContact = "true";
+  else resetLobbyAboutButtonContact();
+}
+
 function syncSingleColumnContentGap(grid, ticket, footer) {
   if (!grid || !ticket || !footer) return;
 
@@ -311,6 +368,150 @@ function syncSingleColumnContentGap(grid, ticket, footer) {
 
   const gap = Math.max(0, baseGap - overlap);
   grid.style.setProperty("--lobby-vertical-content-gap", `${gap.toFixed(2)}px`);
+}
+
+function syncSingleColumnTicketPlacement(hero, ticket, footer) {
+  if (!hero || !ticket || !footer) return;
+
+  const fitProperties = [
+    "--lobby-ticket-fit-height",
+    "--lobby-ticket-fit-stub-height",
+    "--lobby-ticket-fit-padding-top",
+    "--lobby-ticket-fit-padding-bottom",
+    "--lobby-ticket-fit-body-gap",
+    "--lobby-ticket-fit-head-padding",
+    "--lobby-ticket-fit-fields-gap",
+    "--lobby-ticket-fit-control-height",
+    "--lobby-ticket-fit-action-height",
+    "--lobby-ticket-fit-stub-inset",
+  ];
+  fitProperties.forEach((property) => ticket.style.removeProperty(property));
+
+  const body = ticket.querySelector(".lobby-ticket-body");
+  const stub = ticket.querySelector(".lobby-ticket-stub");
+  const head = ticket.querySelector(".lobby-ticket-head");
+  const fields = ticket.querySelector(".lobby-fields");
+  const controls = [...(fields?.querySelectorAll('input[type="text"]') || [])];
+  const actionButtons = [...ticket.querySelectorAll(".lobby-actions > .button")];
+  const stubRect = stub?.getBoundingClientRect();
+  const hasTopStub = Boolean(stubRect && stubRect.width > stubRect.height);
+  if (body && hasTopStub) {
+    const sidePadding = Number.parseFloat(getComputedStyle(body).paddingInlineStart);
+    if (Number.isFinite(sidePadding)) {
+      ticket.style.setProperty("--lobby-ticket-fit-padding-top", `${sidePadding.toFixed(2)}px`);
+    }
+  }
+  const heroRect = hero.getBoundingClientRect();
+  const baseTicketHeight = ticket.getBoundingClientRect().height;
+  const footerRect = footer.getBoundingClientRect();
+  const legalText = footer.querySelector(".lobby-disclaimer");
+  const lowerVisibleBoundary = legalText?.getBoundingClientRect().top ?? footerRect.top;
+  const availableHeight = Math.max(0, lowerVisibleBoundary - heroRect.bottom);
+  const minimumGap = Math.min(9, availableHeight / 4);
+  const targetTicketHeight = Math.min(
+    baseTicketHeight,
+    Math.max(0, availableHeight - minimumGap * 2),
+  );
+  let remainingCompression = Math.max(0, baseTicketHeight - targetTicketHeight);
+
+  if (remainingCompression > 0) {
+    // Primero reducimos el boleto completo (la franja naranja se acorta con él).
+    ticket.style.setProperty("--lobby-ticket-fit-height", `${targetTicketHeight.toFixed(2)}px`);
+    if (hasTopStub && stubRect) {
+      const stubReduction = Math.min(6, remainingCompression * 0.18);
+      ticket.style.setProperty(
+        "--lobby-ticket-fit-stub-height",
+        `${Math.max(28, stubRect.height - stubReduction).toFixed(2)}px`,
+      );
+      remainingCompression -= stubReduction;
+    }
+    const stubInset = Math.min(10, (baseTicketHeight - targetTicketHeight) / 2);
+    if (stubInset > 0) {
+      ticket.style.setProperty("--lobby-ticket-fit-stub-inset", `${stubInset.toFixed(2)}px`);
+    }
+
+    if (body && head && fields && controls.length) {
+      const bodyStyle = getComputedStyle(body);
+      const headStyle = getComputedStyle(head);
+      const fieldsStyle = getComputedStyle(fields);
+      const topPadding = Number.parseFloat(bodyStyle.paddingTop) || 0;
+      const bottomPadding = Number.parseFloat(bodyStyle.paddingBottom) || 0;
+      const bodyGap = Number.parseFloat(bodyStyle.rowGap) || 0;
+      const headPadding = Number.parseFloat(headStyle.paddingBottom) || 0;
+      const fieldsGap = Number.parseFloat(fieldsStyle.rowGap) || 0;
+      const controlHeight = Number.parseFloat(getComputedStyle(controls[0]).height) || 0;
+      const actionHeight = Number.parseFloat(getComputedStyle(actionButtons[0]).height) || 0;
+      const fieldsGapCount = Math.max(0, fields.children.length - 1);
+
+      // Después del alto exterior, quitamos relleno vertical y solo luego
+      // reducimos separaciones y controles si todavía no alcanza.
+      const topPaddingCapacity = Math.max(0, topPadding - Math.min(4, topPadding));
+      const bottomPaddingCapacity = Math.max(0, bottomPadding - Math.min(4, bottomPadding));
+      const paddingCapacity = (hasTopStub ? 0 : topPaddingCapacity) + bottomPaddingCapacity;
+      const paddingReduction = Math.min(remainingCompression, paddingCapacity);
+      if (paddingReduction > 0 && paddingCapacity > 0) {
+        const effectiveTopPaddingCapacity = hasTopStub ? 0 : topPaddingCapacity;
+        const topReduction = paddingReduction * (effectiveTopPaddingCapacity / paddingCapacity);
+        const bottomReduction = paddingReduction - topReduction;
+        ticket.style.setProperty(
+          "--lobby-ticket-fit-padding-top",
+          `${(topPadding - topReduction).toFixed(2)}px`,
+        );
+        ticket.style.setProperty(
+          "--lobby-ticket-fit-padding-bottom",
+          `${(bottomPadding - bottomReduction).toFixed(2)}px`,
+        );
+        remainingCompression -= paddingReduction;
+      }
+
+      const reduceRepeatedSpace = (property, base, minimum, count = 1) => {
+        if (remainingCompression <= 0 || count <= 0) return;
+        const perItemCapacity = Math.max(0, base - minimum);
+        const perItemReduction = Math.min(perItemCapacity, remainingCompression / count);
+        if (perItemReduction <= 0) return;
+        ticket.style.setProperty(property, `${(base - perItemReduction).toFixed(2)}px`);
+        remainingCompression -= perItemReduction * count;
+      };
+
+      reduceRepeatedSpace(
+        "--lobby-ticket-fit-body-gap",
+        bodyGap,
+        Math.min(2, bodyGap),
+      );
+      reduceRepeatedSpace(
+        "--lobby-ticket-fit-head-padding",
+        headPadding,
+        Math.min(0, headPadding),
+      );
+      reduceRepeatedSpace(
+        "--lobby-ticket-fit-fields-gap",
+        fieldsGap,
+        Math.min(2, fieldsGap),
+        fieldsGapCount,
+      );
+      reduceRepeatedSpace(
+        "--lobby-ticket-fit-control-height",
+        controlHeight,
+        Math.min(28, controlHeight),
+        controls.length,
+      );
+      reduceRepeatedSpace(
+        "--lobby-ticket-fit-action-height",
+        actionHeight,
+        Math.min(34, actionHeight),
+        actionButtons.length,
+      );
+    }
+  }
+
+  const ticketRect = ticket.getBoundingClientRect();
+  const freeSpace = lowerVisibleBoundary - heroRect.bottom - ticketRect.height;
+  const targetTicketTop = heroRect.bottom + Math.max(0, freeSpace / 2);
+
+  const ticketShift = targetTicketTop - ticketRect.top;
+  if (Number.isFinite(ticketShift)) {
+    ticket.style.setProperty("translate", `0px ${ticketShift.toFixed(2)}px`);
+  }
 }
 
 function getTitleGlyphTopOffset(title) {
@@ -365,10 +566,9 @@ function syncSingleColumnTitleGroup(hero) {
   const heroRect = hero.getBoundingClientRect();
   const titleRect = title.getBoundingClientRect();
   const iconRect = icon.getBoundingClientRect();
-  const gap = Number.parseFloat(getComputedStyle(hero).columnGap) || 0;
   const visible = getVisibleRect(title);
-  const groupLeft = titleRect.left - iconRect.width - gap;
-  const groupRight = titleRect.right;
+  const groupLeft = Math.min(titleRect.left, iconRect.left);
+  const groupRight = Math.max(titleRect.right, iconRect.right);
   const leftLimit = Math.max(heroRect.left, visible.left);
   const rightLimit = Math.min(heroRect.right, visible.right);
   const shift = groupLeft < leftLimit
@@ -392,6 +592,145 @@ function resetSingleColumnTitleGroup(hero) {
 
 function resetSingleColumnDescriptionPlacement(hero) {
   hero?.style.removeProperty("--lobby-description-separator-shift");
+  hero?.querySelector(".lobby-description")?.style.removeProperty("--lobby-description-fit-width");
+}
+
+function getTextLineCount(element) {
+  if (!element || element.getClientRects().length === 0) return 0;
+
+  const lineHeight = Number.parseFloat(getComputedStyle(element).lineHeight);
+  const height = element.getBoundingClientRect().height;
+  if (!Number.isFinite(lineHeight) || lineHeight <= 0) return 0;
+  return Math.max(1, Math.round(height / lineHeight));
+}
+
+function syncTextDensity(element, compactAtLines) {
+  if (!element) return;
+
+  // Medimos siempre el tamaño base para que el cambio no oscile al recalcular.
+  element.removeAttribute("data-lobby-text-density");
+  const lineCount = getTextLineCount(element);
+  if (lineCount >= compactAtLines + 1) element.dataset.lobbyTextDensity = "dense";
+  else if (lineCount >= compactAtLines) element.dataset.lobbyTextDensity = "compact";
+}
+
+function syncLobbyTextDensity(hero, footer) {
+  syncTextDensity(hero?.querySelector(".lobby-description"), 3);
+  syncTextDensity(footer?.querySelector(".lobby-disclaimer"), 3);
+}
+
+function syncLobbyTicketInlinePadding(ticket) {
+  const body = ticket?.querySelector(".lobby-ticket-body");
+  const stub = ticket?.querySelector(".lobby-ticket-stub");
+  if (!body || !stub) return;
+
+  ticket.style.removeProperty("--lobby-ticket-fit-padding-inline");
+  const stubRect = stub.getBoundingClientRect();
+  if (stubRect.width <= stubRect.height) return;
+
+  const basePadding = Number.parseFloat(getComputedStyle(body).paddingInlineStart) || 0;
+  const ticketWidth = ticket.getBoundingClientRect().width;
+  const targetPadding = Math.min(basePadding, Math.max(10, Math.min(14, ticketWidth * 0.035)));
+  if (targetPadding < basePadding) {
+    ticket.style.setProperty("--lobby-ticket-fit-padding-inline", `${targetPadding.toFixed(2)}px`);
+  }
+}
+
+function wireLobbyMarqueeEmojis(screen) {
+  const track = screen?.querySelector(".lobby-marquee-track");
+  const sets = [...(track?.querySelectorAll(".marquee-set") || [])];
+  if (sets.length < 4) return;
+
+  const emojiGroup = sets[0].querySelector(".marquee-emojis");
+  const phrases = [...sets[0].querySelectorAll(".live, .marquee-fixed, .marquee-message")]
+    .map((phrase) => ({ text: phrase.textContent, className: phrase.className }));
+  const emojis = (emojiGroup?.dataset.emojis || "").split(",").filter(Boolean);
+  if (phrases.length < 2 || emojis.length < 3) return;
+
+  const shuffle = (items) => {
+    const result = [...items];
+    for (let index = result.length - 1; index > 0; index -= 1) {
+      const swapIndex = Math.floor(Math.random() * (index + 1));
+      [result[index], result[swapIndex]] = [result[swapIndex], result[index]];
+    }
+    return result;
+  };
+
+  const phraseKey = (order) => order.map(({ className, text }) => `${className}:${text}`).join("\u001f");
+  const emojiKey = (order) => order.join("\u001f");
+  const currentPhraseOrder = (set) => [...set.querySelectorAll(".live, .marquee-fixed, .marquee-message")]
+    .map((phrase) => ({ text: phrase.textContent, className: phrase.className }));
+  const currentEmojiOrder = (set) => [...set.querySelectorAll(".marquee-emoji")]
+    .map((emoji) => emoji.textContent);
+
+  const chooseDifferentOrder = (items, count, keyFor, forbiddenKeys) => {
+    const forbidden = new Set(forbiddenKeys);
+    let candidate = [];
+    for (let attempt = 0; attempt < 32; attempt += 1) {
+      candidate = shuffle(items).slice(0, count);
+      if (!forbidden.has(keyFor(candidate))) return candidate;
+    }
+
+    const base = shuffle(items);
+    for (let offset = 1; offset < base.length; offset += 1) {
+      candidate = [...base.slice(offset), ...base.slice(0, offset)].slice(0, count);
+      if (!forbidden.has(keyFor(candidate))) return candidate;
+    }
+    return candidate;
+  };
+
+  const renderSet = (set, phraseOrder, emojiOrder) => {
+    const phraseNodes = phraseOrder.map(({ text, className }) => {
+      const item = document.createElement("span");
+      item.className = className;
+      item.textContent = text;
+      return item;
+    });
+    const newEmojiGroup = document.createElement("span");
+    newEmojiGroup.className = "marquee-emojis";
+    newEmojiGroup.dataset.emojis = emojis.join(",");
+    newEmojiGroup.setAttribute("aria-hidden", "true");
+    newEmojiGroup.replaceChildren(...emojiOrder.map((emoji) => {
+      const item = document.createElement("span");
+      item.className = "marquee-emoji";
+      item.textContent = emoji;
+      return item;
+    }));
+
+    set.querySelector(".marquee-emojis")?.replaceWith(newEmojiGroup);
+    [...set.querySelectorAll(".live, .marquee-fixed, .marquee-message")].forEach((node) => node.remove());
+    set.prepend(...phraseNodes);
+    phraseNodes.at(-1)?.after(newEmojiGroup);
+  };
+
+  const initialPhraseOrder = shuffle(phrases);
+  const initialEmojiOrder = shuffle(emojis);
+  sets.forEach((set, setIndex) => {
+    const phraseOrder = initialPhraseOrder.map((_, index) => initialPhraseOrder[(index + setIndex) % initialPhraseOrder.length]);
+    const emojiOrder = Array.from({ length: 3 }, (_, index) => initialEmojiOrder[(setIndex + index) % initialEmojiOrder.length]);
+    renderSet(set, phraseOrder, emojiOrder);
+  });
+
+  track.addEventListener("animationiteration", () => {
+    const currentSets = [...track.querySelectorAll(".marquee-set")];
+    const outgoingSets = currentSets.slice(0, 2);
+    const nextBatch = currentSets.slice(2);
+    const forbiddenPhraseOrders = nextBatch.map((set) => phraseKey(currentPhraseOrder(set)));
+    const forbiddenEmojiOrders = nextBatch.map((set) => emojiKey(currentEmojiOrder(set)));
+
+    outgoingSets.forEach((set) => {
+      forbiddenPhraseOrders.push(phraseKey(currentPhraseOrder(set)));
+      const nextPhraseOrder = chooseDifferentOrder(phrases, phrases.length, phraseKey, forbiddenPhraseOrders);
+      forbiddenPhraseOrders.push(phraseKey(nextPhraseOrder));
+
+      forbiddenEmojiOrders.push(emojiKey(currentEmojiOrder(set)));
+      const nextEmojiOrder = chooseDifferentOrder(emojis, 3, emojiKey, forbiddenEmojiOrders);
+      forbiddenEmojiOrders.push(emojiKey(nextEmojiOrder));
+
+      renderSet(set, nextPhraseOrder, nextEmojiOrder);
+      track.append(set);
+    });
+  });
 }
 
 export function wireLobbyLayoutVariants() {
@@ -400,7 +739,21 @@ export function wireLobbyLayoutVariants() {
 
   const screen = document.querySelector("#lobbyScreen");
   if (screen) {
+    wireLobbyMarqueeEmojis(screen);
     window.addEventListener("resize", scheduleLobbyContentCenter, { passive: true });
+
+    if (typeof MutationObserver === "function") {
+      let wasLobbyVisible = document.body.classList.contains("is-lobby");
+      const visibilityObserver = new MutationObserver(() => {
+        const isLobbyVisible = document.body.classList.contains("is-lobby");
+        if (isLobbyVisible && !wasLobbyVisible) scheduleLobbyContentCenter();
+        wasLobbyVisible = isLobbyVisible;
+      });
+      visibilityObserver.observe(document.body, {
+        attributes: true,
+        attributeFilter: ["class"],
+      });
+    }
 
     if ("ResizeObserver" in window) {
       const observer = new ResizeObserver(scheduleLobbyContentCenter);

@@ -8,7 +8,7 @@
   display: none;
 }
 
-@media (max-width: 980px) {
+@media (hover: none) and (pointer: coarse) {
   /* En móvil vertical el documento debe seguir exactamente el recorrido que
      hace el dedo. Ningún contenedor de la composición puede atraerlo a una
      sección cercana al terminar el gesto. */
@@ -127,8 +127,6 @@
   }
 
   body:not(.is-lobby) .player-frame .overlay-message-form .input-wrapper .emoji-trigger {
-    right: 34px;
-    bottom: 0;
     width: 24px;
     min-height: 34px;
     height: 34px;
@@ -137,8 +135,6 @@
   }
 
   body:not(.is-lobby) .player-frame .overlay-message-form .input-wrapper .send {
-    right: 0;
-    bottom: 0;
     width: 34px;
     min-height: 34px;
     height: 34px;
@@ -180,7 +176,7 @@
    antes de cambiar de composición y el nuevo panel entra desde su borde.
    La prioridad alta mantiene estas fases por encima de las reglas de layout
    que fuerzan opacity: 1 mientras se sincronizan los controles. */
-@media (max-width: 980px) {
+@media (hover: none) and (pointer: coarse) {
   body.fullscreen-mode
     .session-view.chat-dock-mobile-transition-out
     .chat-area {
@@ -251,7 +247,7 @@
 /* El dock inferior móvil cambia la altura del video y del chat en un único
    movimiento. La fila se interpola al mismo tiempo que la cortina del chat;
    así no queda una pausa entre ambos estados. */
-@media (max-width: 980px) {
+@media (hover: none) and (pointer: coarse) {
   body:not(.is-lobby) .session-view[data-chat-dock="bottom"].chat-bottom-mobile-collapse-visual .workspace,
   body:not(.is-lobby) .session-view[data-chat-dock="bottom"].chat-bottom-mobile-expand-visual .workspace {
     transition: none !important;
@@ -375,8 +371,7 @@
     transform: translateX(-50%);
     background:
       linear-gradient(90deg, transparent, rgba(240, 140, 58, 0.54) 19%, rgba(240, 140, 58, 0.54) 43%, transparent 49%) center / 100% 1px no-repeat,
-      linear-gradient(90deg, transparent 51%, rgba(47, 184, 164, 0.58) 57%, rgba(47, 184, 164, 0.58) 81%, transparent) center / 100% 1px no-repeat,
-      linear-gradient(90deg, transparent 27%, rgba(240, 140, 58, 0.28) 27.5%, transparent 28.5%, transparent 71.5%, rgba(47, 184, 164, 0.3) 72.5%, transparent 73%) center / 100% 9px no-repeat;
+      linear-gradient(90deg, transparent 51%, rgba(47, 184, 164, 0.58) 57%, rgba(47, 184, 164, 0.58) 81%, transparent) center / 100% 1px no-repeat;
   }
 
   .lobby-hero::after {
@@ -766,22 +761,22 @@
 
   /* El chat expandido ocupa la superficie del video; la flecha mantiene la
      misma pieza circular que el estado contraído y queda separada del borde. */
-  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone {
-    top: 1px;
+  body:not(.is-lobby) .session-view.chat-collapse-in-header:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone {
+    top: var(--chat-right-collapse-handle-top, 19px);
     right: auto;
     bottom: auto;
-    left: 8px;
-    width: 22px;
-    height: 40px;
-    transform: none;
+    left: var(--chat-right-collapse-handle-left, 6px);
+    width: var(--chat-right-collapse-handle-size, 26px);
+    height: var(--chat-right-collapse-handle-size, 26px);
+    transform: translateY(-50%);
   }
 
-  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-handle {
-    width: 22px;
-    height: 40px;
+  body:not(.is-lobby) .session-view.chat-collapse-in-header:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-handle {
+    width: var(--chat-right-collapse-handle-size, 26px);
+    height: var(--chat-right-collapse-handle-size, 26px);
   }
 
-  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-icon-anchor {
+  body:not(.is-lobby) .session-view.chat-collapse-in-header:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-icon-anchor {
     width: 26px;
     height: 26px;
     flex-basis: 26px;
@@ -795,27 +790,10 @@
 
   /* La flecha ocupa los primeros 32px del header; el contenido comienza
      después de esa reserva para que ningún control quede debajo del círculo. */
-  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-tools > .presence-pill {
+  body:not(.is-lobby) .session-view.chat-collapse-in-header:not(.chat-collapsed)[data-chat-dock="right"] .chat-tools > .presence-pill {
     transform: none;
     position: relative;
     z-index: 13;
-  }
-
-  @media (orientation: portrait) {
-    body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-tools {
-      padding-left: 38px;
-    }
-
-    /* La zona reservada del header mide 38px y no debe compartir el ajuste
-       del flex con el resto de sus controles: el círculo se centra sobre su
-       propia zona táctil para que el gap del header no lo desplace. */
-    body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="right"]
-      #collapseChatButton .chat-collapse-icon-anchor {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
   }
 
   body:not(.is-lobby) .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-icon-anchor {
@@ -828,27 +806,6 @@
     box-shadow:
       0 4px 14px rgba(0, 0, 0, 0.35),
       inset 0 1px 0 rgba(255, 255, 255, 0.08);
-    transform: none;
-  }
-
-  /* La flecha de expandir no debe reservar una franja de todo el alto:
-     esa franja se superpone con el botón del chat-overlay en la esquina
-     superior derecha. El área táctil queda concentrada alrededor de la
-     propia flecha. */
-  body:not(.is-lobby) .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-hover-zone {
-    top: 50%;
-    right: 0;
-    bottom: auto;
-    left: auto;
-    width: 44px;
-    height: 44px;
-    transform: translateY(-50%);
-    border-radius: 0;
-  }
-
-  body:not(.is-lobby) .session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-handle {
-    width: 44px;
-    height: 44px;
   }
 
   /* Si la flecha de expandir está oculta, su área ampliada tampoco debe
@@ -957,14 +914,12 @@
     max-height: 66px;
     padding-top: 5px;
     padding-bottom: 5px;
-    padding-right: 64px;
+    padding-right: 6px;
   }
 
   /* Los botones conservan la altura de una sola línea aunque el textarea se
      expanda. El envío también toma el espacio libre hasta el borde derecho. */
   body:not(.is-lobby) .player-frame .overlay-message-form .input-wrapper .emoji-trigger {
-    right: 34px;
-    bottom: 0;
     width: 24px;
     min-height: 30px;
     height: 30px;
@@ -973,8 +928,6 @@
   }
 
   body:not(.is-lobby) .player-frame .overlay-message-form .input-wrapper .send {
-    right: 0;
-    bottom: 0;
     width: 34px;
     min-height: 30px;
     height: 30px;
@@ -1011,15 +964,6 @@
   body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-tools > * {
     align-self: center;
     transform: none;
-  }
-
-  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-name-field {
-    justify-self: center;
-    transform: translateX(-12px);
-  }
-
-  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-name-field .label-row {
-    transform: translate(-4px, -1px);
   }
 
   body:not(.is-lobby) .session-view.chat-header-collapsed[data-chat-dock="bottom"] .chat-tools {
@@ -1061,12 +1005,6 @@
     transform: translate(-50%, calc(-50% + 12px));
   }
 
-  /* La flecha de expandir debe quedar separada de la barra de controles del
-     reproductor; elevar su anclaje evita que ambas superficies se monten. */
-  body:not(.is-lobby) .session-view.chat-collapsed[data-chat-dock="bottom"] .chat-collapse-hover-zone {
-    top: calc(var(--chat-bottom-dock-collapsed-handle-top, calc(100dvh - 16px)) - 22px);
-  }
-
   /* Al abrir el teclado el alto del chat cambia, pero la flecha del header
      debe seguir centrada exactamente sobre la unión entre video y chat. */
   html.bottom-chat-keyboard-open body:not(.is-lobby)
@@ -1074,16 +1012,6 @@
     .chat-collapse-hover-zone[data-chat-control="collapse"] {
     top: 0 !important;
     transform: translate(-50%, -50%) !important;
-  }
-
-  /* El estado del reproductor conserva el mismo tamaño en portrait y
-     landscape para que "Sin contenido" no cambie al rotar o abrir el teclado. */
-  body:not(.is-lobby) .player-status-badge {
-    height: auto;
-    min-height: 24px;
-    max-width: min(200px, calc(100% - 72px));
-    padding: 0;
-    font-size: 0.82rem;
   }
 
   body:not(.is-lobby) #playerChatToggleButton {
@@ -1439,7 +1367,7 @@
 /* El teclado ocupa parte del viewport móvil y no debe tapar la barra del
    reproductor. La clase se aplica mientras se conserva el estado original
    para restaurarlo cuando el teclado se cierra, incluso sin contenido. */
-@media (max-width: 980px) {
+@media (hover: none) and (pointer: coarse) {
   body:not(.is-lobby):not(.fullscreen-mode)
     .session-view[data-chat-dock] .player-frame.player-controls-keyboard-hidden
     .player-bottom-actions,
@@ -1533,7 +1461,7 @@
    móvil. Cuando Chrome muestra el teclado, la barra del navegador deja una
    zona web muy baja; el chat enfocado debe ocupar esa zona, no conservar las
    dos filas completas del layout apaisado y quedar debajo del teclado. */
-@media (max-width: 980px) {
+@media (hover: none) and (pointer: coarse) {
   html.viewport-landscape.bottom-chat-keyboard-open body:not(.is-lobby)
     .session-view.chat-header-collapsed[data-chat-dock="bottom"] .chat-tools {
     min-height: 0 !important;
@@ -1602,7 +1530,7 @@
 
 /* Esta anulación queda al final de la hoja para ganar también sobre el borde
    estructural del frame definido en la variante de viewport móvil compacto. */
-@media (max-width: 980px) and (orientation: portrait) {
+@media (hover: none) and (pointer: coarse) and (orientation: portrait) {
   body:not(.is-lobby) .session-view .player-frame:not(.mini-player-surface) {
     border-top: 0 !important;
   }

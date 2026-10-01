@@ -1,4 +1,4 @@
-import { checkScrollPosition } from "./unread-counters.js?v=20260913-taskbar-badge-01";
+import { checkScrollPosition } from "./unread-counters.js?v=20261001-bottom-chat-expand-02";
 
 const pendingScrollSync = new WeakMap();
 const DEFAULT_PIN_THRESHOLD = 10;

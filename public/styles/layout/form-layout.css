@@ -129,7 +129,7 @@
   flex: 0 1 auto;
   field-sizing: fixed;
   width: 0;
-  height: 1.2em;
+  height: 1.5em;
   max-width: none;
   min-height: 0;
   border: 0 !important;
@@ -143,10 +143,8 @@
   box-sizing: border-box;
   align-self: center;
   overflow-x: auto;
-  line-height: 1.2;
+  line-height: 1.3;
   white-space: nowrap;
-  /* El texto nativo del input queda apenas por debajo del nombre visible. */
-  transform: translateY(-1px);
   /* El ancho del editor se recalcula al entrar en edición. Animarlo hace que
      la fila centrada se desplace horizontalmente durante la transición. */
   transition: none;

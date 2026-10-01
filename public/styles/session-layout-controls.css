@@ -1,0 +1,154 @@
+/* Los controles de panel lateral siguen el modo que quedó en una sola fila. */
+.session-view:not(.layout-stacked) .player-actions {
+  top: 5px;
+  right: 8px;
+}
+
+.session-view:not(.layout-stacked) #playerChatToggleButton {
+  width: 36px;
+  min-height: 36px;
+  flex-basis: 36px;
+  margin-top: 2px;
+}
+
+.session-view:not(.layout-stacked) #playerChatToggleButton > svg {
+  width: 20px;
+  height: 20px;
+}
+
+.session-view:not(.layout-stacked):not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone {
+  top: 50%;
+  right: 24px;
+  bottom: auto;
+  height: 72px;
+  transform: translateY(-50%);
+}
+
+.session-view:not(.layout-stacked).chat-collapsed[data-chat-dock="bottom"] .chat-collapse-hover-zone {
+  top: var(--chat-bottom-dock-collapsed-handle-top, 0px);
+}
+
+.session-view:not(.layout-stacked):not(.chat-collapsed)[data-chat-dock="bottom"] .chat-name-field {
+  transform: none;
+}
+
+.session-view:not(.layout-stacked)[data-chat-dock="bottom"] .chat-tools {
+  min-height: 40px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-right: 120px;
+  grid-template-columns: auto minmax(0, 1fr) 140px;
+}
+
+/* El modo apilado agrega un píxel vertical arriba y abajo al header. Mantener
+   esa misma separación mientras la página conserva su gutter evita que el
+   cambio de proporción del reproductor compacte el chat antes de tiempo. */
+@media (min-width: 681px) {
+  .session-view:not(.layout-stacked)[data-chat-dock="bottom"] .chat-tools {
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+}
+
+.session-view:not(.layout-stacked)[data-chat-dock="bottom"] .chat-tools > * {
+  transform: none;
+}
+
+.session-view:not(.layout-stacked)[data-chat-dock="bottom"] .chat-tools-actions {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+}
+
+/* El SVG de 24px queda centrado dentro del botón de 36px y suma 6px vacíos
+   junto al borde derecho. Alinear el icono al final elimina ese espacio sin
+   reducir el área clickeable del control. */
+.session-view[data-chat-dock="bottom"] #dockChatButton {
+  justify-content: flex-end;
+}
+
+.session-view:not(.layout-stacked)[data-chat-dock="bottom"] .chat-name-edit-row {
+  width: 100%;
+  max-width: 100%;
+  justify-content: center;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.session-view:not(.layout-stacked)[data-chat-dock="bottom"] .chat-name-field {
+  max-width: 100%;
+}
+
+.session-view:not(.layout-stacked)[data-chat-dock="bottom"] .chat-name-field,
+.session-view:not(.layout-stacked)[data-chat-dock="bottom"] .chat-name-edit-row,
+.session-view:not(.layout-stacked)[data-chat-dock="bottom"] .chat-name-edit-row input[type="text"],
+.session-view:not(.layout-stacked)[data-chat-dock="bottom"] .chat-name-edit-row input[type="search"],
+.session-view:not(.layout-stacked)[data-chat-dock="bottom"] .chat-name-confirm-button {
+  transition: none !important;
+}
+
+.session-view:not(.layout-stacked)[data-chat-dock="bottom"] .chat-collapse-handle {
+  width: 28px;
+  height: 28px;
+}
+
+.session-view:not(.layout-stacked):not(.chat-collapsed)[data-chat-dock="bottom"] .chat-collapse-hover-zone {
+  transform: translate(-50%, calc(-50% - 2px));
+}
+
+.session-view:not(.layout-stacked).chat-dock-switching[data-chat-dock="right"]
+  .chat-collapse-hover-zone[data-chat-control="collapse"] {
+  visibility: hidden;
+  opacity: 0 !important;
+  pointer-events: none;
+}
+
+.session-view:not(.layout-stacked).chat-collapsed[data-chat-dock="right"] .chat-collapse-handle {
+  opacity: 1 !important;
+  cursor: pointer;
+}
+
+.session-view:not(.layout-stacked):not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone {
+  top: 50% !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: calc(100% - var(--chat-panel-width)) !important;
+  width: 30px !important;
+  height: 40px !important;
+  transform: translate(-50%, -50%) !important;
+}
+
+.session-view:not(.layout-stacked):not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-handle {
+  width: 30px !important;
+  height: 40px !important;
+}
+
+/* Cuando el layout ubica la flecha en el header, esta regla debe prevalecer
+   sobre el anclaje lateral anterior, que tiene !important en sus propiedades. */
+.session-view.chat-collapse-in-header:not(.chat-collapsed)[data-chat-dock="right"] .chat-tools {
+  box-sizing: border-box !important;
+  padding-inline-start: 38px !important;
+}
+
+.session-view.chat-collapse-in-header:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone {
+  top: var(--chat-right-collapse-handle-top, 19px) !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: var(--chat-right-collapse-handle-left, 4px) !important;
+  width: var(--chat-right-collapse-handle-size, 28px) !important;
+  height: var(--chat-right-collapse-handle-size, 28px) !important;
+  transform: translateY(-50%) !important;
+}
+
+.session-view.chat-collapse-in-header:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-handle {
+  width: var(--chat-right-collapse-handle-size, 28px) !important;
+  height: var(--chat-right-collapse-handle-size, 28px) !important;
+}
+
+.session-view.chat-collapse-in-header:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-icon-anchor {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+}

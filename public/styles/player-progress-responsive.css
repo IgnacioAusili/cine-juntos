@@ -1,0 +1,22 @@
+/* En vista vertical estrecha, anclar la pista a la fila de controles mantiene
+   su longitud estable. z-index:auto no crea un contexto de apilado, así que la
+   pista conserva su nivel independiente sobre los botones. */
+@media (max-width: 680px) and (orientation: portrait) {
+  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-controls-bar {
+    position: relative;
+    z-index: auto;
+  }
+
+  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-progress-group {
+    right: 0;
+    left: 0;
+  }
+
+  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-progress-group::before {
+    top: calc(50% - 1px);
+    height: 3px;
+  }
+}

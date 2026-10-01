@@ -18,7 +18,7 @@ import {
   refreshTooltipForTarget,
   setControlIcon,
 } from "../icons-tooltips.js?v=20260914-tooltip-single-path-01";
-import { scrollToVideoPosition, sendVideoEventMessage, setInsideChatVisible } from "../chat/index.js?v=20260916-image-preview-01";
+import { scrollToVideoPosition, sendVideoEventMessage, setInsideChatVisible } from "../chat/index.js?v=20260930-emoji-picker-dismiss-on-scroll-01-pending-image-lightbox-01-system-row-fixed-center-02-bottom-chat-expand-02";
 // Import circular intencional y seguro: estas funciones se invocan en runtime,
 // no durante la carga del modulo, y player-sync-logic.js a su vez importa
 // setVideoSource y waitForVideoMetadata desde aqui.
@@ -28,7 +28,7 @@ import {
   clearPlaybackRecoveryTracking,
   pauseRoomForPlaybackIssue,
   publishState,
-} from "./player-sync-logic.js?v=20260918-player-live-status-pulse-01";
+} from "./player-sync-logic.js?v=20260930-chat-accessibility-focus-01-pending-image-lightbox-01-bottom-chat-expand-02";
 
 import {
   showErrorDialog,
@@ -36,9 +36,9 @@ import {
   showResumeVideoDialog,
   showSlowLoadDialog,
 } from "../session-ui.js?v=20260911-orientation-scroll-anchor-01";
-import { togglePageFullscreen } from "./fullscreen.js?v=20260914-empty-player-controls-visible-01";
-import { syncMiniPlayerButton } from "./mini-player.js?v=20260916-image-preview-01";
-import { shouldToggleMuteFromVolumeButton } from "./player-volume-layout.js?v=20260902-player-volume-layout-18";
+import { togglePageFullscreen } from "./fullscreen.js?v=20260930-chat-accessibility-focus-01-bottom-chat-expand-02";
+import { syncMiniPlayerButton } from "./mini-player.js?v=20260930-chat-accessibility-focus-01-pending-image-lightbox-01-preview-size-center-01-overlay-image-size-01-bottom-chat-expand-02";
+import { shouldToggleMuteFromVolumeButton } from "./player-volume-layout.js?v=20260928-volume-popup-arrow-hide-01";
 
 const SKIP_LOAD_REPLACE_DIALOG_KEY = "cine-juntos-skip-load-replace-dialog";
 const VIDEO_RESUME_STORAGE_KEY = "cine-juntos-video-resume-times";
@@ -176,8 +176,8 @@ export function wirePlayerCoreEvents() {
     syncPlayerControls();
   });
 
-  dom.playerMuteButton?.addEventListener("click", () => {
-    if (!shouldToggleMuteFromVolumeButton(dom.playerVolumeGroup)) return;
+  dom.playerMuteButton?.addEventListener("click", (event) => {
+    if (!shouldToggleMuteFromVolumeButton(dom.playerVolumeGroup, event)) return;
     const isEffectivelyMuted = dom.videoPlayer.muted || dom.videoPlayer.volume === 0;
     if (isEffectivelyMuted) {
       dom.videoPlayer.volume = lastAudibleVolume > 0 ? lastAudibleVolume : 1;
@@ -1062,11 +1062,14 @@ function syncPlayerControls(forceSliderSync = false) {
   if (dom.playerMuteButton) {
     const icon = dom.playerMuteButton.querySelector("[data-lucide]");
     const isMuted = dom.videoPlayer.muted || dom.videoPlayer.volume === 0;
+    const opensVolumeSlider = dom.playerVolumeGroup?.dataset.volumeSliderLayout === "vertical";
     const nextIcon = isMuted ? "volume-x" : dom.videoPlayer.volume < 0.5 ? "volume-1" : "volume-2";
     if (icon && icon.getAttribute("data-lucide") !== nextIcon) {
       setControlIcon(dom.playerMuteButton, nextIcon);
     }
-    const tooltip = withShortcutHint(isMuted ? "Activar sonido" : "Silenciar", "M");
+    const tooltip = opensVolumeSlider
+      ? "Ajustar volumen"
+      : withShortcutHint(isMuted ? "Activar sonido" : "Silenciar", "M");
     dom.playerMuteButton.dataset.tooltip = tooltip;
     dom.playerMuteButton.setAttribute("aria-label", tooltip);
     dom.playerMuteButton.removeAttribute("title");

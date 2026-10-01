@@ -1,0 +1,186 @@
+.session-view {
+  --session-layout-mode: side-by-side;
+}
+
+/* El ancho intrínseco del video depende de su resolución de origen y puede
+   empujar el chat debajo al llegar loadedmetadata. Usamos una base flexible
+   y mantenemos dos columnas mientras cada una pueda ocupar el ancho del chat. */
+.session-view[data-chat-dock="right"] .workspace {
+  flex-wrap: wrap;
+}
+
+.session-view[data-chat-dock="right"] .video-area {
+  flex: 1 1 0px;
+  min-width: min(100%, var(--chat-panel-width));
+}
+
+.session-view.layout-fit-check[data-chat-dock="right"] .workspace,
+.session-view.layout-fit-check[data-chat-dock="right"] .chat-area {
+  transition: none !important;
+}
+
+.session-view.layout-stacked {
+  --session-layout-mode: stacked;
+  height: auto;
+  min-height: calc(var(--app-viewport-height) - 84px);
+}
+
+.session-view.chat-collapse-in-header:not(.chat-collapsed)[data-chat-dock="right"] .chat-tools {
+  box-sizing: border-box;
+  padding-left: 38px;
+}
+
+.session-view.chat-collapse-in-header:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone {
+  top: var(--chat-right-collapse-handle-top, 19px);
+  right: auto;
+  bottom: auto;
+  left: var(--chat-right-collapse-handle-left, 4px);
+  width: var(--chat-right-collapse-handle-size, 28px);
+  height: var(--chat-right-collapse-handle-size, 28px);
+  transform: translateY(-50%);
+}
+
+.session-view.chat-collapse-in-header:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-handle {
+  width: var(--chat-right-collapse-handle-size, 28px);
+  height: var(--chat-right-collapse-handle-size, 28px);
+}
+
+.session-view.chat-collapse-in-header:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-icon-anchor {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 1;
+}
+
+.session-view.layout-stacked[data-chat-dock] .workspace {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: minmax(360px, 58vh) minmax(360px, 42vh);
+  grid-template-areas:
+    "video"
+    "chat";
+}
+
+.session-view.layout-stacked[data-chat-dock="right"] .chat-area {
+  flex: none;
+  width: auto;
+}
+
+.session-view.layout-stacked[data-chat-dock="bottom"] .workspace {
+  grid-template-rows: var(--app-viewport-height) var(--app-viewport-height);
+}
+
+.session-view.layout-stacked[data-chat-dock="bottom"] .workspace {
+  height: auto;
+  row-gap: 0;
+  grid-template-rows:
+    minmax(300px, calc(var(--app-viewport-height) - (var(--app-shell-gutter) * 2)))
+    minmax(0, calc(var(--app-viewport-height) - var(--app-shell-gutter)));
+}
+
+.session-view.layout-stacked.chat-collapsed[data-chat-dock] .workspace {
+  row-gap: 0;
+  grid-template-rows: minmax(360px, 58vh) 0px;
+  grid-template-areas:
+    "video"
+    "chat";
+}
+
+.session-view.layout-stacked.chat-collapsed[data-chat-dock="bottom"] .workspace {
+  grid-template-rows: var(--app-viewport-height) 0px;
+}
+
+.session-view.layout-stacked.chat-collapsed[data-chat-dock="bottom"] .workspace {
+  grid-template-rows: minmax(0, 1fr) 0px;
+}
+
+/* En el modo apilado, los paneles y el padding del workspace siguen los insets
+   reales del shell. El input conserva su inset propio aunque desaparezca el
+   margen inferior o superior de la página. */
+body:not(.is-lobby)
+.session-view.layout-component-stack[data-chat-dock="bottom"] .workspace {
+  --component-stack-chat-header-inset: 10px;
+  --component-stack-viewport-bottom-inset:
+    var(--component-stack-chat-header-inset);
+  height: auto;
+  min-height: 0;
+  padding-top: var(
+    --component-stack-viewport-top-inset,
+    var(--app-shell-gutter)
+  );
+  row-gap: 0;
+  grid-template-rows:
+    minmax(
+      0px,
+      calc(
+        var(--app-viewport-height)
+        - var(
+          --component-stack-viewport-top-inset,
+          var(--app-shell-gutter)
+        )
+        - var(
+          --component-stack-viewport-bottom-inset,
+          var(--component-stack-chat-header-inset)
+        )
+      )
+    )
+    minmax(
+      0px,
+      calc(
+        var(--app-viewport-height)
+        - var(
+          --component-stack-viewport-bottom-inset,
+          var(--component-stack-chat-header-inset)
+        )
+      )
+    );
+}
+
+body:not(.is-lobby)
+  .session-view.layout-component-stack[data-chat-dock="bottom"] .chat-area {
+  box-sizing: border-box;
+  padding-top: 0;
+  grid-template-rows: minmax(min-content, auto) minmax(0, 1fr);
+}
+
+body:not(.is-lobby)
+  .session-view.layout-component-stack[data-chat-dock="bottom"] .chat-tools {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+body:not(.is-lobby)
+  .session-view.layout-component-stack[data-chat-dock="bottom"] .chat-area > .message-form {
+  left: clamp(24px, 7%, 94px);
+  right: clamp(24px, 7%, 94px);
+  bottom: var(--component-stack-chat-header-inset);
+}
+
+body:not(.is-lobby)
+  .session-view.layout-component-stack[data-chat-dock="bottom"] .chat-tools-actions {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+body:not(.is-lobby)
+  .session-view.layout-component-stack.chat-collapsed[data-chat-dock="bottom"] .workspace {
+  padding-bottom: 0;
+  row-gap: 0;
+  grid-template-rows:
+    minmax(
+      0px,
+      calc(
+        var(--app-viewport-height)
+        - var(
+          --component-stack-viewport-top-inset,
+          var(--app-shell-gutter)
+        )
+        - var(
+          --component-stack-viewport-bottom-inset,
+          var(--component-stack-chat-header-inset)
+        )
+      )
+    )
+    0px;
+}

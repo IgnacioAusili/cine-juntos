@@ -54,10 +54,37 @@ function wireControlBar(bar) {
   });
 
   if (typeof MutationObserver === "function") {
-    const layoutObserver = new MutationObserver(schedule);
+    const layoutObserver = new MutationObserver((records) => {
+      const previousStyles = new Map();
+      let hasRelevantMutation = false;
+
+      for (const record of records) {
+        if (record.type === "attributes" && record.attributeName === "style") {
+          if (!previousStyles.has(record.target)) {
+            previousStyles.set(record.target, record.oldValue);
+          }
+          continue;
+        }
+
+        hasRelevantMutation = true;
+        break;
+      }
+
+      if (!hasRelevantMutation) {
+        hasRelevantMutation = [...previousStyles].some(
+          ([target, previousStyle]) => target.getAttribute("style") !== previousStyle,
+        );
+      }
+
+      // syncControlBar temporarily changes inline styles to measure candidate
+      // densities, then restores them. Ignore those net-zero mutations so the
+      // observer does not schedule the same measurement forever.
+      if (hasRelevantMutation) schedule();
+    });
     layoutObserver.observe(bar, {
       attributes: true,
       attributeFilter: ["disabled", "hidden", "style"],
+      attributeOldValue: true,
       childList: true,
       subtree: true,
     });
@@ -96,35 +123,55 @@ function syncControlBar(bar, scrollZone, scrollWindow, indicator) {
     return;
   }
 
-  let selectedDensity = DENSITIES[DENSITIES.length - 1];
+  const currentDensityIndex = DENSITIES.indexOf(bar.dataset.controlDensity);
+  let selectedDensityIndex = currentDensityIndex >= 0 ? currentDensityIndex : 0;
   const originalBarStyle = bar.getAttribute("style");
+  const measurementStyles = getComputedStyle(bar);
+  const baseGap = Number.parseFloat(
+    measurementStyles.getPropertyValue("--player-controls-comfortable-gap"),
+  ) || 8;
+  const defaultButtonSize = Number.parseFloat(
+    measurementStyles.getPropertyValue("--player-controls-default-button-size"),
+  ) || 32;
   const measuredButtons = [...bar.querySelectorAll(
     '.video-control-button:not([data-play-button-cooldown="true"])',
   )];
   const originalButtonStyles = measuredButtons.map((button) => button.getAttribute("style"));
+  const fitsDensity = (densityIndex) => {
+    const density = DENSITIES[densityIndex];
+    if (density === "scroll") return true;
+
+    // Conserva la densidad actual y prueba primero el escalón vecino. En los
+    // cambios pequeños de ancho esto evita volver a medir desde comfortable
+    // hasta scroll en cada frame de resize.
+    applyControlDensityMeasurement(bar, density, measuredButtons, baseGap, defaultButtonSize);
+    return canFitControlStage(bar, scrollWindow);
+  };
   try {
-    for (const density of DENSITIES) {
-      // La prueba usa variables temporales. No escribe data-control-density en
-      // cada candidato, porque ese atributo es observado por otros controles
-      // y podia reiniciar el popup aunque el resultado final no cambiara.
-      applyControlDensityMeasurement(bar, density, measuredButtons);
-      if (density === "scroll" || canFitControlStage(bar, scrollWindow, density)) {
-        selectedDensity = density;
-        break;
+    if (fitsDensity(selectedDensityIndex)) {
+      // Si el ancho creció, relaja de a un escalón y conserva el más amplio
+      // que todavía cabe.
+      for (let index = selectedDensityIndex - 1; index >= 0; index -= 1) {
+        if (!fitsDensity(index)) break;
+        selectedDensityIndex = index;
+      }
+    } else {
+      // Si el ancho se redujo, compacta desde la densidad actual hasta que
+      // quepa; scroll es el último escalón y no necesita otra medición.
+      for (let index = selectedDensityIndex + 1; index < DENSITIES.length; index += 1) {
+        selectedDensityIndex = index;
+        if (fitsDensity(index)) break;
       }
     }
   } finally {
     restoreStyleAttribute(bar, originalBarStyle);
     measuredButtons.forEach((button, index) => restoreStyleAttribute(button, originalButtonStyles[index]));
   }
-  applyControlDensity(bar, selectedDensity);
+  applyControlDensity(bar, DENSITIES[selectedDensityIndex]);
   syncScrollIndicator(scrollZone, scrollWindow, indicator);
 }
 
-function applyControlDensityMeasurement(bar, density, buttons) {
-  const baseGap = Number.parseFloat(
-    getComputedStyle(bar).getPropertyValue("--player-controls-comfortable-gap"),
-  ) || 8;
+function applyControlDensityMeasurement(bar, density, buttons, baseGap, defaultButtonSize) {
   const gap = density === "comfortable"
     ? baseGap
     : ["close", "volume"].includes(density)
@@ -132,9 +179,6 @@ function applyControlDensityMeasurement(bar, density, buttons) {
       : ["tight"].includes(density)
         ? 4
         : 3;
-  const defaultButtonSize = Number.parseFloat(
-    getComputedStyle(bar).getPropertyValue("--player-controls-default-button-size"),
-  ) || 32;
   const buttonSize = ["compact", "scroll"].includes(density)
     ? 28
     : defaultButtonSize;
@@ -156,7 +200,7 @@ function restoreStyleAttribute(element, value) {
 }
 
 function applyControlDensity(bar, density) {
-  bar.dataset.controlDensity = density;
+  if (bar.dataset.controlDensity !== density) bar.dataset.controlDensity = density;
   const volumeGroup = bar.querySelector(".player-volume-group");
   if (!volumeGroup) return;
 
@@ -180,7 +224,7 @@ function applyControlDensity(bar, density) {
   }
 }
 
-function canFitControlStage(bar, scrollWindow, density = bar.dataset.controlDensity) {
+function canFitControlStage(bar, scrollWindow) {
   if (isBarOverflowing(bar) || hasStableTrackOverflow(scrollWindow)) return false;
   return canFitHorizontalVolume(bar, scrollWindow);
 }

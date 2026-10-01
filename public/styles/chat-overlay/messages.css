@@ -21,7 +21,7 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 82%;
+  max-width: 100%;
   align-items: flex-start;
   margin-bottom: 6px;
 }
@@ -268,6 +268,21 @@
   max-width: calc(50% - 3px);
 }
 
+/* Una imagen suelta usa su ancho natural; el límite de 50% se reserva para pares. */
+.overlay-messages .message--media-only .message-media-strip--standalone {
+  width: fit-content;
+  max-width: min(100%, 200px);
+}
+
+.overlay-messages .message--media-only .message-media-strip--standalone .message-media-link:only-child {
+  flex: 0 1 200px;
+  max-width: min(100%, 200px);
+}
+
+.overlay-messages .message--media-only .message-media-strip--standalone .message-media {
+  max-height: 160px;
+}
+
 .overlay-messages .message-media-row {
   position: relative;
   display: flex;
@@ -296,8 +311,8 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  width: fit-content;
-  max-width: min(100%, 320px);
+  width: 100%;
+  max-width: 100%;
   align-items: flex-start;
   gap: 3px;
 }
@@ -318,10 +333,11 @@
 
 .overlay-messages .message--media-only .message-media-row {
   align-self: flex-start;
+  max-width: min(100%, 320px);
 }
 
 .overlay-messages .message.mine.message--media-only .message-media-row {
-  align-self: flex-start;
+  align-self: flex-end;
 }
 
 .overlay-messages .message--media-only .message-media-strip {
@@ -479,13 +495,13 @@
   max-width: min(100%, 420px);
 }
 
-.overlay-messages .message.system .message-system-bubble::before,
-.overlay-messages .message.system .message-system-bubble::after {
-  content: "";
+.overlay-messages .message.system .message-system-line {
+  display: block;
   flex: 0 0 var(--system-line-reserve);
   width: var(--system-line-reserve);
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.26), transparent);
+  pointer-events: none;
 }
 
 .overlay-messages .message.system .message-system-text {

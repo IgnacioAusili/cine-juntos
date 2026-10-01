@@ -1,12 +1,14 @@
 const SYSTEM_ROLL_FACE_COUNT = 5;
 const SYSTEM_ROLL_ANGLE = 360 / SYSTEM_ROLL_FACE_COUNT;
-const SYSTEM_ROLL_DURATION_MS = 650;
-const SYSTEM_ROLL_ROTATION_DELAY_MS = 520;
+const SYSTEM_ROLL_DURATION_MS = 1000;
+const SYSTEM_ROLL_ROTATION_DELAY_MS = 100;
 const SYSTEM_ROLL_ROTATION_DURATION_MS =
   SYSTEM_ROLL_DURATION_MS - SYSTEM_ROLL_ROTATION_DELAY_MS;
 const SYSTEM_ROLL_SIZE_TRANSITION_MS = 180;
 const systemRollAnimations = new WeakMap();
 const systemRollBubbleAnimations = new WeakMap();
+const systemMessageRowAnchors = new WeakMap();
+const systemMessageRowAnchorAnimations = new WeakMap();
 
 /**
  * Hace avanzar el texto visible de un grupo contraído con la misma rueda 3D
@@ -16,7 +18,19 @@ const systemRollBubbleAnimations = new WeakMap();
  */
 export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText) {
   if (!previousSnapshot?.markup || !nextText) return null;
-  if (window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) return null;
+  if (window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) {
+    const row = nextText.closest(".system-message-row");
+    const previousRowRect = previousSnapshot.rowRect || previousSnapshot.bubbleRect;
+    const currentRowRect = row?.getBoundingClientRect();
+    if (row && previousRowRect && currentRowRect) {
+      const anchor = getSystemMessageRowAnchorState(row);
+      const previousCenter = previousRowRect.top + previousRowRect.height / 2;
+      const currentCenter = currentRowRect.top + currentRowRect.height / 2;
+      const offset = getNumericComputedStyle(row, "top") + previousCenter - currentCenter - anchor.baseTop;
+      setSystemMessageRowAnchorOffset(row, anchor, offset);
+    }
+    return null;
+  }
 
   settleSystemMessageRoll(nextText);
 
@@ -43,7 +57,16 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
   const originalStyle = nextText.getAttribute("style");
   const bubble = nextText.closest(".message-system-bubble");
   const originalBubbleStyle = bubble?.getAttribute("style");
+  const groupItem = nextText.closest(".message.system");
+  const hadGroupTransitionClass = groupItem?.classList.contains("system-group-transitioning") ?? false;
+  const originalBubbleColor = bubble ? getComputedStyle(bubble).color : "";
+  const lineElements = bubble
+    ? Array.from(bubble.querySelectorAll(".message-system-line"))
+    : [];
+  const originalLineStyles = lineElements.map((line) => line.getAttribute("style"));
   const nextBubbleRect = bubble?.getBoundingClientRect();
+  const row = nextText.closest(".system-message-row");
+  const nextRowRect = row?.getBoundingClientRect() || null;
   const previousBubbleAnimation = bubble && systemRollBubbleAnimations.get(bubble);
   previousBubbleAnimation?.cancel();
   if (bubble && systemRollBubbleAnimations.get(bubble) === previousBubbleAnimation) {
@@ -57,8 +80,11 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
     nextBubbleRect?.width || 0,
     previousSnapshot.bubbleRect?.width || 0,
   );
-  const row = nextText.closest(".system-message-row");
+  const previousBubbleWidth = previousSnapshot.bubbleRect?.width || nextBubbleRect?.width || 0;
+  const lineDisplacement = Math.max(0, (bubbleWidth - previousBubbleWidth) / 2);
   const previousMarkup = previousSnapshot.markup.cloneNode(true);
+
+  groupItem?.classList.add("system-group-transitioning");
 
   const drum = document.createElement("span");
   drum.className = "system-message-roll-drum";
@@ -93,8 +119,34 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
   if (bubble && bubbleWidth > 0) {
     bubble.style.setProperty("width", `${bubbleWidth}px`);
   }
+  if (bubble && originalBubbleColor) {
+    bubble.style.setProperty("color", originalBubbleColor, "important");
+  }
   nextText.replaceChildren(drum);
   row?.classList.add("system-message-rolling");
+
+  // El renglón crece alrededor del centro que tenía el mensaje anterior. Así
+  // las líneas y el selector permanecen en su eje; no se los anima siguiendo
+  // el aumento de alto del texto.
+  let rowAnchorState = null;
+  let rowAnchorStartOffset = 0;
+  let rowAnchorFinalOffset = 0;
+  let rowAnchorAnimation = null;
+  const previousRowRect = previousSnapshot.rowRect || previousSnapshot.bubbleRect;
+  const rowRectAtReservedSize = row?.getBoundingClientRect();
+  if (row && previousRowRect && rowRectAtReservedSize) {
+    rowAnchorState = getSystemMessageRowAnchorState(row);
+    const previousCenter = previousRowRect.top + previousRowRect.height / 2;
+    const currentCenter = rowRectAtReservedSize.top + rowRectAtReservedSize.height / 2;
+    const currentTop = getNumericComputedStyle(row, "top");
+    const rowHeightChange = Math.max(
+      0,
+      rowRectAtReservedSize.height - (nextRowRect?.height || rowRectAtReservedSize.height),
+    );
+    rowAnchorStartOffset = currentTop + previousCenter - currentCenter - rowAnchorState.baseTop;
+    rowAnchorFinalOffset = rowAnchorStartOffset + rowHeightChange / 2;
+    setSystemMessageRowAnchorOffset(row, rowAnchorState, rowAnchorStartOffset);
+  }
 
   const initialTransform =
     "translateX(-50%) translateZ(calc(var(--system-roll-radius) * -1)) rotateX(0deg)";
@@ -116,12 +168,32 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
       fill: "both",
     },
   );
+  const lineAnimations = [];
+  if (lineDisplacement > 0.5 && lineElements.length >= 2) {
+    const lineAnimationOptions = {
+      duration: SYSTEM_ROLL_ROTATION_DURATION_MS,
+      delay: SYSTEM_ROLL_ROTATION_DELAY_MS,
+      easing: "cubic-bezier(.65, -.15, .25, 1.15)",
+      fill: "both",
+    };
+    const lineBefore = lineElements[0];
+    const lineAfter = lineElements.at(-1);
+    const beforeStart = `translateX(${lineDisplacement}px)`;
+    const afterStart = `translateX(-${lineDisplacement}px)`;
+    lineBefore.style.transform = beforeStart;
+    lineAfter.style.transform = afterStart;
+    lineAnimations.push(
+      lineBefore.animate(
+        [{ transform: beforeStart }, { transform: "translateX(0px)" }],
+        lineAnimationOptions,
+      ),
+      lineAfter.animate(
+        [{ transform: afterStart }, { transform: "translateX(0px)" }],
+        lineAnimationOptions,
+      ),
+    );
+  }
 
-  const maskTimer = window.setTimeout(() => {
-    if (systemRollAnimations.get(nextText)) {
-      nextText.classList.add("system-message-roll-soft-edge");
-    }
-  }, SYSTEM_ROLL_ROTATION_DELAY_MS);
   const record = { animation, cleanup: null };
   systemRollAnimations.set(nextText, record);
   let cleanupStarted = false;
@@ -138,12 +210,22 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
     bubbleFinalized = true;
     bubbleSizeAnimation?.cancel();
     textSizeAnimation?.cancel();
+    rowAnchorAnimation?.cancel();
+    if (row && systemMessageRowAnchorAnimations.get(row) === rowAnchorAnimation) {
+      systemMessageRowAnchorAnimations.delete(row);
+    }
+    lineAnimations.forEach((lineAnimation) => lineAnimation.cancel());
+    lineElements.forEach((line, index) => {
+      const originalLineStyle = originalLineStyles[index];
+      if (originalLineStyle === null) line.removeAttribute("style");
+      else line.setAttribute("style", originalLineStyle);
+    });
     nextText.replaceChildren(...originalNodes);
     if (originalStyle === null) nextText.removeAttribute("style");
     else nextText.setAttribute("style", originalStyle);
     nextText.classList.remove("system-message-roll-viewport");
-    nextText.classList.remove("system-message-roll-soft-edge");
     row?.classList.remove("system-message-rolling");
+    if (!hadGroupTransitionClass) groupItem?.classList.remove("system-group-transitioning");
     if (bubble) {
       if (originalBubbleStyle === null) bubble.removeAttribute("style");
       else bubble.setAttribute("style", originalBubbleStyle);
@@ -157,6 +239,10 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
   const cancelSizeAnimations = () => {
     bubbleSizeAnimation?.cancel();
     textSizeAnimation?.cancel();
+    rowAnchorAnimation?.cancel();
+    if (row && systemMessageRowAnchorAnimations.get(row) === rowAnchorAnimation) {
+      systemMessageRowAnchorAnimations.delete(row);
+    }
   };
   const startSizeTransition = () => {
     const finalTextWidth = Math.max(1, nextRect.width);
@@ -169,6 +255,32 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
       fill: "forwards",
     };
     const animations = [];
+    if (
+      row && rowAnchorState && Math.abs(rowAnchorFinalOffset - rowAnchorStartOffset) > 0.5
+    ) {
+      setSystemMessageRowAnchorOffset(row, rowAnchorState, rowAnchorFinalOffset);
+      rowAnchorAnimation = row.animate(
+        [
+          {
+            top: `${rowAnchorState.baseTop + rowAnchorStartOffset}px`,
+            marginBottom: `${rowAnchorState.baseMarginBottom + rowAnchorStartOffset}px`,
+          },
+          {
+            top: `${rowAnchorState.baseTop + rowAnchorFinalOffset}px`,
+            marginBottom: `${rowAnchorState.baseMarginBottom + rowAnchorFinalOffset}px`,
+          },
+        ],
+        transition,
+      );
+      systemMessageRowAnchorAnimations.set(row, rowAnchorAnimation);
+      const rowAnimation = rowAnchorAnimation;
+      rowAnimation.finished.then(() => {
+        if (systemMessageRowAnchorAnimations.get(row) !== rowAnimation) return;
+        rowAnimation.cancel();
+        systemMessageRowAnchorAnimations.delete(row);
+      }, () => undefined);
+      animations.push(rowAnchorAnimation);
+    }
     if (
       bubble &&
       (bubbleWidth > finalBubbleWidth + 0.5 || bubbleHeight > finalBubbleHeight + 0.5)
@@ -209,7 +321,6 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
       return;
     }
     cleanupStarted = true;
-    window.clearTimeout(maskTimer);
     if (immediate) {
       cancelSizeAnimations();
       finalizeBubble();
@@ -227,4 +338,60 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
 export function settleSystemMessageRoll(target) {
   const record = systemRollAnimations.get(target);
   record?.cleanup?.({ immediate: true });
+}
+
+/** Devuelve una fila de sistema a su posición natural al expandir el grupo. */
+export function resetSystemMessageRowAnchor(target) {
+  const row = target?.matches?.(".system-message-row")
+    ? target
+    : target?.querySelector?.(".system-message-row");
+  if (!row) return;
+
+  const animation = systemMessageRowAnchorAnimations.get(row);
+  animation?.cancel();
+  if (systemMessageRowAnchorAnimations.get(row) === animation) {
+    systemMessageRowAnchorAnimations.delete(row);
+  }
+  const state = systemMessageRowAnchors.get(row);
+  if (!state) return;
+
+  restoreInlineProperty(row, "top", state.originalTop);
+  restoreInlineProperty(row, "margin-bottom", state.originalMarginBottom);
+  systemMessageRowAnchors.delete(row);
+}
+
+function getSystemMessageRowAnchorState(row) {
+  let state = systemMessageRowAnchors.get(row);
+  if (state) return state;
+
+  const computed = getComputedStyle(row);
+  state = {
+    originalTop: captureInlineProperty(row, "top"),
+    originalMarginBottom: captureInlineProperty(row, "margin-bottom"),
+    baseTop: Number.parseFloat(computed.top) || 0,
+    baseMarginBottom: Number.parseFloat(computed.marginBottom) || 0,
+  };
+  systemMessageRowAnchors.set(row, state);
+  return state;
+}
+
+function setSystemMessageRowAnchorOffset(row, state, offset) {
+  row.style.setProperty("top", `${state.baseTop + offset}px`);
+  row.style.setProperty("margin-bottom", `${state.baseMarginBottom + offset}px`);
+}
+
+function captureInlineProperty(element, property) {
+  return {
+    value: element.style.getPropertyValue(property),
+    priority: element.style.getPropertyPriority(property),
+  };
+}
+
+function restoreInlineProperty(element, property, original) {
+  if (original.value) element.style.setProperty(property, original.value, original.priority);
+  else element.style.removeProperty(property);
+}
+
+function getNumericComputedStyle(element, property) {
+  return Number.parseFloat(getComputedStyle(element).getPropertyValue(property)) || 0;
 }

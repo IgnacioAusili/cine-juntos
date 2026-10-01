@@ -13,9 +13,9 @@ import {
   updateCharCounter,
   wireFloatingComposerLayout,
   wireComposerScrollbar,
-} from "./chat-input.js?v=20260916-image-preview-01";
-import { setReplyTarget } from "./chat-reply.js?v=20260914-system-message-roll-transition-05";
-import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20260913-taskbar-badge-01";
+} from "./chat-input.js?v=20260930-chat-accessibility-focus-01-pending-image-lightbox-01-system-row-fixed-center-02-bottom-chat-expand-02";
+import { setReplyTarget } from "./chat-reply.js?v=20260930-system-row-fixed-center-01";
+import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20261001-bottom-chat-expand-02";
 import {
   copyMessageText,
   hideMessageMenu,
@@ -32,7 +32,8 @@ import {
   setInsideChatVisible,
   syncExternalChatCollapseHandleOffset,
   syncChatAutoExpandControls,
-} from "./chat-layout.js?v=20260914-fullscreen-dock-animation-16";
+  wireResponsiveSessionLayout,
+} from "./chat-layout.js?v=20260930-chat-accessibility-focus-01-single-phase-bottom-expand-02";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 import { focusChatInput } from "./chat-input-focus.js";
 import { hideTooltip } from "../icons-tooltips.js?v=20260914-tooltip-single-path-01";
@@ -230,24 +231,24 @@ export {
   buildEmojiPicker,
   updateCharCounter,
   sendMessage,
-} from "./chat-input.js?v=20260916-image-preview-01";
+} from "./chat-input.js?v=20260930-chat-accessibility-focus-01-pending-image-lightbox-01-system-row-fixed-center-02-bottom-chat-expand-02";
 export {
   beginSystemMessageHydration,
   finishSystemMessageHydration,
   renderMessage,
-} from "./chat-render.js?v=20260915-message-time-spacing-01";
+} from "./chat-render.js?v=20261001-bottom-chat-expand-02";
 export {
   clearReplyTarget,
   renderReplyPreview,
   scrollToMessage,
   setReplyTarget,
-} from "./chat-reply.js?v=20260914-system-message-roll-transition-05";
-export { sendVideoEventMessage } from "./chat-system-messages.js?v=20260915-image-standalone-reply-02";
+} from "./chat-reply.js?v=20260930-system-row-fixed-center-01";
+export { sendVideoEventMessage } from "./chat-system-messages.js?v=20261001-bottom-chat-expand-02";
 export {
   checkScrollPosition,
   resetInsideUnread,
   resetPageUnread,
-} from "./unread-counters.js?v=20260913-taskbar-badge-01";
+} from "./unread-counters.js?v=20261001-bottom-chat-expand-02";
 export {
   copyMessageText,
   hideMessageMenu,
@@ -265,10 +266,11 @@ export {
   setInsideChatVisible,
   syncChatAutoExpandControls,
   updateCollapseButton,
-} from "./chat-layout.js?v=20260914-fullscreen-dock-animation-16";
+} from "./chat-layout.js?v=20260930-chat-accessibility-focus-01-single-phase-bottom-expand-02";
 
 export function wireChatEvents() {
   syncChatAutoExpandControls();
+  wireResponsiveSessionLayout();
   wireFloatingComposerLayout();
 
   if ("ResizeObserver" in window && dom.workspace) {
@@ -395,10 +397,11 @@ export function wireChatEvents() {
 
   window.addEventListener(
     "scroll",
-    () => {
-      repositionEmojiPicker();
+    (event) => {
+      if (event.target.closest?.(".emoji-popover")) return;
+      hideEmojiPicker();
     },
-    { passive: true },
+    { passive: true, capture: true },
   );
   window.addEventListener("resize", repositionEmojiPicker, { passive: true });
   window.visualViewport?.addEventListener("resize", repositionEmojiPicker, {

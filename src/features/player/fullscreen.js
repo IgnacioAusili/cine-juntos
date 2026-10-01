@@ -15,14 +15,14 @@ import {
   logEvent,
   state,
 } from "../../core/state.js?v=20260914-console-log-controls-01";
-import { isMiniPlayerActive } from "./mini-player.js?v=20260916-image-preview-01";
+import { isMiniPlayerActive } from "./mini-player.js?v=20260930-chat-accessibility-focus-01-pending-image-lightbox-01-preview-size-center-01-overlay-image-size-01-bottom-chat-expand-02";
 import {
   syncExternalChatCollapseHandleOffset,
   syncInsideChatPanelOffset,
   cancelExternalChatAutoCollapse,
   forceExternalChatCollapsed,
   updateCollapseButton,
-} from "../chat/chat-layout.js?v=20260914-fullscreen-dock-animation-16";
+} from "../chat/chat-layout.js?v=20260930-chat-accessibility-focus-01-single-phase-bottom-expand-02";
 import { withShortcutHint } from "../../core/utils.js";
 import {
   captureFullscreenScroll,
@@ -617,7 +617,7 @@ function isPageFullscreenActive() {
 
 function isChatScrollSnapEnabled() {
   return dom.sessionView?.dataset.chatDock === "bottom"
-    && !window.matchMedia("(max-width: 980px)").matches;
+    && dom.sessionView.classList.contains("chat-bottom-snap-enabled");
 }
 
 function getDocumentTop(element) {
@@ -636,7 +636,11 @@ function getFullscreenSnapPoints() {
   const points = [getDocumentTop(dom.workspace)];
 
   if (dock === "bottom" && dom.videoArea) {
-    points.push(getDocumentTop(dom.videoArea) - gutter);
+    // En el stack responsivo el panel va al borde del viewport; en la vista
+    // normal se conserva el gutter que ya usaba el snap de escritorio.
+    const videoTop = getDocumentTop(dom.videoArea);
+    const stackUsesEdgeToEdge = dom.sessionView.classList.contains("layout-component-stack");
+    points.push(stackUsesEdgeToEdge ? videoTop : videoTop - gutter);
   }
 
   if (!collapsed) {

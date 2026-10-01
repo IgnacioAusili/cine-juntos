@@ -10,15 +10,15 @@ import {
   handleIncomingUnread,
   handleIncomingPageUnread,
   incrementScrollIndicator,
-} from "./unread-counters.js?v=20260913-taskbar-badge-01";
-import { setReplyTarget, scrollToMessage } from "./chat-reply.js?v=20260914-system-message-roll-transition-05";
+} from "./unread-counters.js?v=20261001-bottom-chat-expand-02";
+import { setReplyTarget, scrollToMessage } from "./chat-reply.js?v=20260930-system-row-fixed-center-01";
 import {
   animateExpandedSystemMessageRemoval,
   captureExpandedSystemMessageRemoval,
   prepareSystemMessageRemoval,
   refreshSystemMessageGroup,
   scheduleSystemMessageCollapse,
-} from "./system-message-groups.js?v=20260914-system-message-roll-transition-05";
+} from "./system-message-groups.js?v=20260930-system-row-fixed-center-01";
 
 const EMOJI_ONLY_PATTERN = /^(?:[\s\p{Extended_Pictographic}\p{Emoji_Presentation}\p{Emoji_Modifier}\uFE0F\u200D\u20E3])+$/u;
 const EMOJI_GLYPH_PATTERN = /[\p{Extended_Pictographic}\p{Emoji_Presentation}]/u;
@@ -234,7 +234,17 @@ function appendMessageNow(container, message, { animateSystemGroups = true } = {
   }
 
   if (!isMediaOnly) appendMessageMedia(content, messageImages);
-  bubble.append(content);
+  if (message.system) {
+    const lineBefore = document.createElement("span");
+    lineBefore.className = "message-system-line message-system-line-before";
+    lineBefore.setAttribute("aria-hidden", "true");
+    const lineAfter = document.createElement("span");
+    lineAfter.className = "message-system-line message-system-line-after";
+    lineAfter.setAttribute("aria-hidden", "true");
+    bubble.append(lineBefore, content, lineAfter);
+  } else {
+    bubble.append(content);
+  }
   if (message.system) {
     const bubbleRow = document.createElement("div");
     bubbleRow.className = "message-bubble-row system-message-row";
@@ -398,8 +408,14 @@ function fitSystemMessageBubble(itemOrBubble) {
     }
 
     const bubbleStyle = getComputedStyle(bubble);
-    const beforeWidth = Number.parseFloat(getComputedStyle(bubble, "::before").width) || 0;
-    const afterWidth = Number.parseFloat(getComputedStyle(bubble, "::after").width) || 0;
+    const lineElements = bubble.querySelectorAll(".message-system-line");
+    const beforeWidth = lineElements[0]
+      ? Number.parseFloat(getComputedStyle(lineElements[0]).width) || 0
+      : 0;
+    const lastLine = lineElements[lineElements.length - 1];
+    const afterWidth = lastLine
+      ? Number.parseFloat(getComputedStyle(lastLine).width) || 0
+      : 0;
     const gap = Number.parseFloat(bubbleStyle.columnGap || bubbleStyle.gap) || 0;
     const nextWidth = Math.min(
       naturalWidth,

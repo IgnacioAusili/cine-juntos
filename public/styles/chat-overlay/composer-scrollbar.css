@@ -1,8 +1,8 @@
-/* El shell del textarea ocupa también el espacio visual de los botones, que
-   se posicionan de forma absoluta. El scrollbar debe quedar en el hueco
-   reservado justo antes del emoji y del envío. */
+/* Los botones del overlay siguen en el flujo del flex, igual que los del chat
+   externo; el shell termina antes de ellos y el scrollbar queda junto a ese
+   borde. */
 .overlay-message-form .composer-scrollbar {
-  right: 64px;
+  right: 1px;
   z-index: 2;
 }
 
@@ -12,18 +12,17 @@
   right: 1px;
 }
 
-/* El placeholder queda centrado en la fila compacta y los controles siguen
-   el centro real del composer también cuando el textarea crece. */
+/* El placeholder queda centrado en la fila compacta. */
 .overlay-message-form .input-wrapper textarea {
   padding-top: 7px;
   padding-bottom: 7px;
 }
 
-.overlay-message-form .input-wrapper .icon-button,
-.overlay-message-form .input-wrapper .send {
-  top: 50%;
-  bottom: auto !important;
-  transform: translateY(-50%);
+/* El textarea conserva tres renglones visibles; desde ahí usa su scroll
+   interno y mantiene el cursor a la vista al escribir. */
+#overlayMessageInput {
+  max-height: calc(3lh + 14px);
+  overflow-y: auto;
 }
 
 @media (max-width: 980px) {
@@ -32,8 +31,12 @@
     padding-bottom: 5px;
   }
 
+  #overlayMessageInput {
+    max-height: calc(3lh + 10px);
+  }
+
   .overlay-message-form .composer-scrollbar {
-    right: 60px;
+    right: 1px;
   }
 }
 

@@ -1,6 +1,7 @@
 .room-chip {
   display: flex;
   width: 100%;
+  container: room-chip / inline-size;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
@@ -48,11 +49,24 @@
   gap: 6px;
   margin: 0;
   color: #f3f5f7;
-  font-size: clamp(1.75rem, 3vw, 2.35rem);
+  font-size: 2rem;
   line-height: 1;
   font-weight: 700;
   letter-spacing: -0.03em;
   text-shadow: none;
+}
+
+.room-chip-title-prefix,
+.room-chip-title-actions {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+@container room-chip (max-width: 360px) {
+  .room-chip-title-prefix,
+  .room-chip-title-actions {
+    font-size: clamp(1.4rem, 8cqi, 1.8rem);
+  }
 }
 
 .room-chip-status-inline {

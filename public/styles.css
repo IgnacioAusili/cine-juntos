@@ -1,24 +1,194 @@
-@import url("./styles/tokens.css?v=20260913-noto-emoji-fullscreen-01");
-@import url("./styles/base.css?v=20260916-mobile-background-root-03");
-@import url("./styles/layout.css?v=20260914-room-cursor-fix-01");
-@import url("./styles/components.css?v=20260918-about-desktop-wide-04");
-@import url("./styles/lobby.css?v=20260924-lobby-ticket-decor-13");
-@import url("./styles/player.css?v=20260918-player-live-loading-pulse-01");
-@import url("./styles/chat.css?v=20260916-image-preview-01");
-@import url("./styles/chat-overlay.css?v=20260914-overlay-composer-scrollbar-07");
-@import url("./styles/chat/image-lightbox.css?v=20260915-image-lightbox-cursor-01");
-@import url("./styles/states.css?v=20260914-fullscreen-dock-animation-16");
-@import url("./styles/responsive.css?v=20260914-name-editor-search-transition-01");
+@import url("./styles/tokens.css?v=20260927-chat-collapse-handle-general-03");
+@import url("./styles/base.css?v=20260928-session-page-background-01");
+@import url("./styles/layout.css?v=20260929-bottom-collapse-clip-01");
+@import url("./styles/components.css?v=20260927-chat-collapse-handle-general-02");
+@import url("./styles/lobby.css?v=20260926-lobby-ticket-visual-fit-01");
+@import url("./styles/player.css?v=20260927-video-status-text-offset-01");
+@import url("./styles/chat.css?v=20260930-system-row-fixed-center-01-pending-image-lightbox-01-preview-size-center-01-hidden-scrollbar-02");
+@import url("./styles/chat-overlay.css?v=20260930-system-row-fixed-center-01-overlay-media-alignment-02-message-time-color-01-overlay-image-size-01");
+@import url("./styles/chat/image-lightbox.css?v=20260915-image-lightbox-cursor-01-pending-image-lightbox-01");
+@import url("./styles/states.css?v=20260928-panel-fit-chat-snap-01");
+@import url("./styles/responsive.css?v=20260930-chat-name-check-spacing-01-chat-header-icon-end-align-02-chat-header-gutter-spacing-01");
 @import url("./styles/mini-player.css?v=20260905-overlay-height-cap-03");
-@import url("./styles/mobile.css?v=20260924-mobile-footer-grid-01");
-  @import url("./styles/mobile-landscape.css?v=20260913-chat-arrow-fixed-02");
+@import url("./styles/mobile.css?v=20260928-dynamic-chat-name-01");
+  @import url("./styles/mobile-landscape.css?v=20260928-dynamic-chat-name-01");
   @import url("./styles/mobile-landscape-chat.css?v=20260913-chat-arrow-fixed-02");
-@import url("./styles/mobile-fullscreen-viewport.css?v=20260902-mobile-fullscreen-viewport-03");
+@import url("./styles/mobile-fullscreen-viewport.css?v=20260927-chat-header-collapse-fit-01");
 @import url("./styles/mini-player-adjustments.css?v=20260905-overlay-height-cap-03");
 @import url("./styles/player-controls-layout.css?v=20260902-player-controls-layout-17");
 @import url("./styles/player-controls-density.css?v=20260831-player-controls-density-14");
-@import url("./styles/player-volume-layout.css?v=20260916-player-controls-hover-volume-rounded-04");
-@import url("./styles/player-volume-mobile.css?v=20260916-player-controls-hover-volume-rounded-04");
+@import url("./styles/player-volume-layout.css?v=20260928-volume-popup-arrow-hide-01");
+@import url("./styles/player-volume-mobile.css?v=20260927-player-volume-usability-01");
 @import url("./styles/lobby-responsive-fixes.css?v=20260924-lobby-footer-no-padding-01");
-@import url("./styles/lobby-layout-variants.css?v=20260924-lobby-portrait-type-01");
-@import url("./styles/lobby-footer-panel.css?v=20260924-lobby-footer-no-gutter-01");
+@import url("./styles/lobby-layout-variants.css?v=20260926-lobby-ticket-details-07");
+@import url("./styles/lobby-footer-panel.css?v=20260926-lobby-footer-10px-01");
+@import url("./styles/player-progress-responsive.css?v=20260930-player-progress-stable-01");
+
+/* El nombre se ajusta al espacio real que queda entre presencia, acciones y
+   la flecha visible, sin desplazamientos fijos por orientación o resolución. */
+.chat-tools > .chat-name-field {
+  --chat-name-control-width: 20px;
+  --chat-name-control-gap: 6px;
+  position: absolute !important;
+  top: calc(50% + var(--component-stack-chat-header-visual-center-offset, 0px)) !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: var(--chat-name-available-left, 0px) !important;
+  width: var(--chat-name-available-width, 100%) !important;
+  height: auto !important;
+  max-width: var(--chat-name-available-width, 100%) !important;
+  align-items: center !important;
+  justify-self: stretch !important;
+  transform: translateY(-50%) !important;
+  box-sizing: border-box;
+}
+
+.chat-name-field > .chat-name-editor {
+  width: 100%;
+  max-width: 100%;
+  justify-items: center;
+}
+
+.chat-name-field .chat-name-display-row,
+.chat-name-field .chat-name-edit-row {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  column-gap: var(--chat-name-control-gap);
+  width: 100%;
+  max-width: 100%;
+  justify-content: center;
+}
+
+.chat-name-field .chat-name-display {
+  grid-column: 2;
+  justify-self: center;
+  flex: none;
+  text-align: center;
+}
+
+.chat-name-field .chat-name-edit-button,
+.chat-name-field .chat-name-confirm-button {
+  grid-column: 3;
+  width: var(--chat-name-control-width);
+  justify-self: start;
+}
+
+.chat-name-field .chat-name-edit-row #nameInput {
+  grid-column: 2;
+  justify-self: center;
+}
+
+/* En un cambio a un dock aún no medido, ocultarlo hasta guardar la geometría
+   definitiva evita que aparezca en una posición transitoria. */
+.chat-name-field[data-chat-name-layout-pending="true"] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* La medición de proporción decide cuándo apilar los paneles. En ese estado,
+   la flecha acompaña al header real del chat y la pista queda sobre los botones. */
+body:not(.is-lobby)
+  .session-view.layout-component-stack:not(.chat-collapsed)[data-chat-dock="bottom"]
+  .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-bottom-actions {
+  /* El mínimo general de 112px deja un hueco grande cuando la pista se ancla
+     al inicio del pie. La fila y su padding determinan la altura necesaria. */
+  min-height: 0;
+}
+
+body:not(.is-lobby)
+  .session-view.layout-component-stack:not(.chat-collapsed)[data-chat-dock="bottom"]
+  .chat-area > .chat-collapse-hover-zone[data-chat-control="collapse"] {
+  top: var(--component-stack-chat-header-handle-top, var(--chat-bottom-dock-handle-top, 0px));
+  transform: translate(-50%, -50%);
+}
+
+body:not(.is-lobby)
+  .session-view.layout-component-stack:not(.chat-collapsed)[data-chat-dock="bottom"]
+  .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-progress-group {
+  right: 0;
+  bottom: 100%;
+  left: 0;
+  z-index: 2;
+}
+
+/* Al arrastrar la barra de tiempo, despejar suavemente la union entre video y chat. */
+.session-view:not(.chat-collapsed)[data-chat-dock="bottom"]:has(.player-frame.player-seek-control-dragging)
+  .chat-collapse-hover-zone[data-chat-control="collapse"] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.session-view.component-layout-measuring,
+.session-view.component-layout-measuring *,
+.session-view.component-layout-measuring::before,
+.session-view.component-layout-measuring::after,
+.session-view.component-layout-measuring *::before,
+.session-view.component-layout-measuring *::after {
+  transition: none !important;
+}
+
+@media (max-width: 680px) and (orientation: landscape) {
+  /* El stack usa un header más compacto que los 38px del layout landscape;
+     la misma medida fija la fila y centra el control de colapso. */
+  :root body:not(.is-lobby) .app-shell
+    .session-view.layout-component-stack[data-chat-dock="bottom"] .chat-area {
+    --component-stack-chat-header-height: 34px;
+    grid-template-rows: var(--component-stack-chat-header-height) minmax(0, 1fr);
+  }
+
+  :root body:not(.is-lobby) .app-shell
+    .session-view.layout-component-stack[data-chat-dock="bottom"] .chat-tools {
+    box-sizing: border-box;
+    height: var(--component-stack-chat-header-height);
+    min-height: var(--component-stack-chat-header-height);
+    max-height: var(--component-stack-chat-header-height);
+  }
+
+  :root body:not(.is-lobby) .app-shell
+    .session-view:not(.chat-collapsed)[data-chat-dock="bottom"] .chat-tools {
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+
+  :root body:not(.is-lobby) .app-shell
+    .session-view.layout-component-stack:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .chat-area > .chat-collapse-hover-zone[data-chat-control="collapse"] {
+    top: var(
+      --component-stack-chat-header-handle-top,
+      calc(var(--component-stack-chat-header-height) / 2)
+    );
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    :root body:not(.is-lobby) .app-shell
+      .session-view.layout-component-stack:not(.chat-collapsed)[data-chat-dock="bottom"] .chat-tools {
+      --component-stack-chat-header-vertical-padding: 5px;
+      padding-top: var(--component-stack-chat-header-vertical-padding);
+      padding-bottom: var(--component-stack-chat-header-vertical-padding);
+    }
+
+    :root body:not(.is-lobby) .app-shell
+      .session-view.layout-component-stack:not(.chat-collapsed)[data-chat-dock="bottom"]
+      .chat-tools > .presence-pill {
+      height: calc(
+        var(--component-stack-chat-header-height)
+        - var(--component-stack-chat-header-vertical-padding)
+        - var(--component-stack-chat-header-vertical-padding)
+      );
+      min-height: 0;
+      transform: translateY(var(--component-stack-chat-header-visual-center-offset, 0px));
+    }
+
+    :root body:not(.is-lobby) .app-shell
+      .session-view.layout-component-stack:not(.chat-collapsed)[data-chat-dock="bottom"]
+      .chat-tools #participantCount {
+      transform: none;
+    }
+
+    :root body:not(.is-lobby) .app-shell
+      .session-view.layout-component-stack:not(.chat-collapsed)[data-chat-dock="bottom"]
+      .chat-tools > .chat-tools-actions {
+      top: calc(50% + var(--component-stack-chat-header-visual-center-offset, 0px));
+    }
+  }
+}

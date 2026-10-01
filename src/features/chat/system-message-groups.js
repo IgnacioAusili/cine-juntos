@@ -1,7 +1,8 @@
 import {
   animateCollapsedSystemMessageAdvance,
+  resetSystemMessageRowAnchor,
   settleSystemMessageRoll,
-} from "./system-message-roll.js?v=20260914-system-message-roll-transition-05";
+} from "./system-message-roll.js?v=20260930-system-row-fixed-center-01";
 
 const SYSTEM_GROUP_MIN_SIZE = 3;
 const SYSTEM_GROUP_TRANSITION_MS = 180;
@@ -42,7 +43,11 @@ export function scheduleSystemMessageCollapse(container, { animateIncoming = fal
   const previousSnapshot = animateIncoming && previousVisibleItem && !groupTransitions.has(header)
     ? captureSystemTextSnapshot(previousVisibleItem)
     : null;
-  applyGroupState(header, state?.expanded ?? false);
+  // Durante la ruleta el centro del renglón queda fijo; no hagas que el
+  // selector persiga el cambio de altura del texto.
+  applyGroupState(header, state?.expanded ?? false, {
+    animateSelector: !previousSnapshot,
+  });
 
   if (previousSnapshot) {
     animateCollapsedSystemMessageAdvance(
@@ -236,7 +241,11 @@ function findGroupToggle(items) {
 function clearShortGroup(items) {
   const header = findGroupToggle(items);
   if (header) removeGroupHeader(header);
-  items.forEach((item) => item.classList.remove("system-group-collapsed-item", "system-group-last"));
+  items.forEach((item) => {
+    settleSystemMessageRoll(item.querySelector(".message-system-text"));
+    resetSystemMessageRowAnchor(item);
+    item.classList.remove("system-group-collapsed-item", "system-group-last");
+  });
 }
 
 function ensureGroupHeader(items) {
@@ -257,11 +266,13 @@ function ensureGroupHeader(items) {
 function captureSystemTextSnapshot(item) {
   const target = item?.querySelector(".message-system-text");
   const bubble = item?.querySelector(".message-system-bubble");
+  const row = item?.querySelector(".system-message-row");
   if (!target) return null;
   return {
     markup: target.cloneNode(true),
     rect: target.getBoundingClientRect(),
     bubbleRect: bubble?.getBoundingClientRect() || null,
+    rowRect: row?.getBoundingClientRect() || null,
   };
 }
 
@@ -298,12 +309,20 @@ function bindGroupHeader(header, items = getGroupItems(header)) {
 function applyGroupState(
   header,
   expanded,
-  { animate = false, preserveSelectorHighlight = false } = {},
+  {
+    animate = false,
+    preserveSelectorHighlight = false,
+    animateSelector = true,
+  } = {},
 ) {
   const items = getGroupItems(header);
   if (items.length < SYSTEM_GROUP_MIN_SIZE) {
     removeGroupHeader(header);
-    items.forEach((item) => item.classList.remove("system-group-collapsed-item", "system-group-last"));
+    items.forEach((item) => {
+      settleSystemMessageRoll(item.querySelector(".message-system-text"));
+      resetSystemMessageRowAnchor(item);
+      item.classList.remove("system-group-collapsed-item", "system-group-last");
+    });
     return;
   }
 
@@ -321,12 +340,21 @@ function applyGroupState(
   // un rectángulo vacío y la animación arranca desde un punto incorrecto.
   const selectorRect = header.isConnected ? header.getBoundingClientRect() : null;
 
+  // Al expandir, cada mensaje vuelve a su posición natural. También se limpia
+  // cualquier fila que pase a quedar oculta tras actualizar el grupo.
+  items.forEach((item) => {
+    if (expanded || item !== lastItem) {
+      settleSystemMessageRoll(item.querySelector(".message-system-text"));
+      resetSystemMessageRowAnchor(item);
+    }
+  });
+
   const state = getGroupState(header) || {};
   state.expanded = Boolean(expanded);
   groupStates.set(header, state);
 
   applyStructuralGroupState(header, items, expanded, {
-    animateSelector: true,
+    animateSelector,
     selectorRect,
   });
 

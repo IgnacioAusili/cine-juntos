@@ -14,7 +14,7 @@ import {
   resetInsideUnread,
   resetPageUnread,
   syncUnreadBadgesWithVisibility,
-} from "./unread-counters.js?v=20260913-taskbar-badge-01";
+} from "./unread-counters.js?v=20261001-bottom-chat-expand-02";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 import { focusChatInput } from "./chat-input-focus.js";
 import { restorePageScrollAfterRightChatCollapse } from "./chat-scroll-preservation.js?v=20260910-mobile-chat-scroll-lock-01";
@@ -50,6 +50,8 @@ const BOTTOM_TO_RIGHT_LAYOUT_MS = RIGHT_CHAT_LAYOUT_TRANSITION_MS;
 // en el que ambos estados aparezcan juntos.
 const FULLSCREEN_DOCK_OUT_MS = 260;
 const FULLSCREEN_DOCK_IN_MS = 320;
+let responsiveSessionLayoutObserver = null;
+let responsiveSessionLayoutFrame = 0;
 
 let layoutAdjustmentTimer = 0;
 let collapseHandleOffsetTimer = 0;
@@ -57,7 +59,7 @@ let expandScrollTimer = 0;
 let chatScrollSnapLockTimer = 0;
 let chatUserScrollUnlockTimer = 0;
 let pendingBottomToRightSwitch = null;
-let pendingFullscreenDockSwitch = null;
+let pendingChatDockSwitch = null;
 let externalChatVisualMotionTimer = 0;
 let bottomChatTransition = null;
 let pendingRightDockCollapseScrollTop = null;
@@ -69,8 +71,87 @@ function getVideoAreaRect() {
   return rect.width > 0 && rect.height > 0 ? rect : null;
 }
 
-function isMobileLayoutViewport() {
-  return window.matchMedia("(max-width: 980px)").matches;
+function isStackedSessionLayout() {
+  if (!dom.sessionView) return false;
+  return getComputedStyle(dom.sessionView)
+    .getPropertyValue("--session-layout-mode")
+    .trim() === "stacked";
+}
+
+function setResponsiveSessionLayout(stacked) {
+  if (!dom.sessionView) return;
+  dom.sessionView.classList.toggle("layout-stacked", stacked);
+  dom.sessionView.style.setProperty(
+    "--session-layout-mode",
+    stacked ? "stacked" : "side-by-side",
+  );
+}
+
+function measureResponsiveSessionLayout() {
+  if (!dom.sessionView || !dom.workspace) return;
+
+  const isCoarsePointer = window.matchMedia(
+    "(hover: none) and (pointer: coarse)",
+  ).matches;
+  if (dom.sessionView.dataset.chatDock !== "right" || isCoarsePointer) {
+    setResponsiveSessionLayout(isCoarsePointer);
+    syncExternalChatCollapseHandleOffset();
+    return;
+  }
+
+  if (
+    dom.sessionView.classList.contains("chat-collapsed")
+    || dom.sessionView.classList.contains("chat-layout-transitioning")
+    || dom.sessionView.classList.contains("chat-dock-switching")
+  ) return;
+
+  const temporaryClasses = [
+    "layout-stacked",
+  ].filter((className) => dom.sessionView.classList.contains(className));
+  dom.sessionView.classList.add("layout-fit-check");
+  temporaryClasses.forEach((className) => dom.sessionView.classList.remove(className));
+
+  const videoRect = dom.videoArea?.getBoundingClientRect();
+  const chatRect = dom.chatArea?.getBoundingClientRect();
+  const stacked = Boolean(
+    videoRect
+      && chatRect
+      && chatRect.width > 0
+      && chatRect.top > videoRect.top + 1,
+  );
+
+  dom.sessionView.classList.remove("layout-fit-check");
+  temporaryClasses.forEach((className) => dom.sessionView.classList.add(className));
+  setResponsiveSessionLayout(stacked);
+  syncExternalChatCollapseHandleOffset();
+}
+
+function scheduleResponsiveSessionLayoutMeasure() {
+  if (responsiveSessionLayoutFrame) return;
+  responsiveSessionLayoutFrame = window.requestAnimationFrame(() => {
+    responsiveSessionLayoutFrame = 0;
+    measureResponsiveSessionLayout();
+  });
+}
+
+export function wireResponsiveSessionLayout() {
+  if (!dom.sessionView || !dom.workspace) return;
+
+  scheduleResponsiveSessionLayoutMeasure();
+  if ("ResizeObserver" in window && !responsiveSessionLayoutObserver) {
+    responsiveSessionLayoutObserver = new ResizeObserver(
+      scheduleResponsiveSessionLayoutMeasure,
+    );
+    responsiveSessionLayoutObserver.observe(dom.workspace);
+  }
+  window.addEventListener("resize", scheduleResponsiveSessionLayoutMeasure, {
+    passive: true,
+  });
+  window.addEventListener(
+    "chat-layout-settled",
+    scheduleResponsiveSessionLayoutMeasure,
+    { passive: true },
+  );
 }
 
 function isMobilePortraitChatViewport() {
@@ -79,13 +160,15 @@ function isMobilePortraitChatViewport() {
 
 function isMobileLandscapeRightDock() {
   return (dom.sessionView?.dataset.chatDock || "right") === "right"
-    && window.matchMedia("(max-width: 980px) and (orientation: landscape)").matches;
+    && isStackedSessionLayout()
+    && window.matchMedia("(orientation: landscape)").matches;
 }
 
 function isMobileLandscapeFullscreenBottomDock() {
   return (dom.sessionView?.dataset.chatDock || "right") === "bottom"
     && isFullscreenPageActive()
-    && window.matchMedia("(max-width: 980px) and (orientation: landscape)").matches;
+    && isStackedSessionLayout()
+    && window.matchMedia("(orientation: landscape)").matches;
 }
 
 function isMobilePortraitRightDock() {
@@ -100,7 +183,7 @@ function animateExternalChatLayoutFrom(previousRect) {
   if (!dom.sessionView || !dom.videoArea || !previousRect) return;
 
   if (
-    isMobileLayoutViewport()
+    isStackedSessionLayout()
     && (dom.sessionView.dataset.chatDock || "right") === "bottom"
   ) {
     return;
@@ -371,9 +454,9 @@ function setCollapseHandleTransitioning(
     // del cambio de dock (por ejemplo, lateral -> inferior). Mantener los
     // handles bloqueados mientras haya un switch pendiente evita que reaparezca
     // la flecha de la superficie que todavía se está desmontando.
-    if (pendingFullscreenDockSwitch || pendingBottomToRightSwitch) {
+    if (pendingChatDockSwitch || pendingBottomToRightSwitch) {
       state.chat.collapseHandleTransitionTimer = window.setTimeout(() => {
-        if (pendingFullscreenDockSwitch || pendingBottomToRightSwitch) {
+        if (pendingChatDockSwitch || pendingBottomToRightSwitch) {
           setCollapseHandleTransitioning(true, 80);
         } else {
           setCollapseHandleTransitioning(false);
@@ -526,10 +609,69 @@ export function syncExternalChatCollapseHandleOffset() {
   if (!dom.sessionView || !dom.workspace || !dom.chatArea) return;
   if (dom.sessionView.classList.contains("chat-layout-transitioning")) return;
 
+  if (dom.sessionView.dataset.chatDock === "bottom") {
+    dom.sessionView.classList.remove("chat-collapse-in-header");
+    dom.sessionView.style.removeProperty("--chat-right-collapse-handle-top");
+    dom.sessionView.style.removeProperty("--chat-right-collapse-handle-left");
+    dom.sessionView.style.removeProperty("--chat-right-collapse-handle-size");
+  }
+
   if ((dom.sessionView.dataset.chatDock || "right") !== "bottom") {
+    const isRightDock = dom.sessionView.dataset.chatDock === "right";
+    const isExpanded = !dom.sessionView.classList.contains("chat-collapsed");
+    const chatHeader = dom.chatArea.querySelector(".chat-tools");
+    const chatRect = dom.chatArea.getBoundingClientRect();
+    const isHeaderAnchoredLayout = Boolean(
+      isRightDock
+        && isExpanded
+        && chatHeader
+        && isStackedSessionLayout()
+        && chatRect.height > 0,
+    );
+    dom.sessionView.classList.toggle("chat-collapse-in-header", isHeaderAnchoredLayout);
+    if (isHeaderAnchoredLayout) {
+      const headerRect = chatHeader.getBoundingClientRect();
+      const chatStyles = getComputedStyle(dom.chatArea);
+      const chatBorderTop = Number.parseFloat(chatStyles.borderTopWidth) || 0;
+      const chatBorderLeft = Number.parseFloat(chatStyles.borderLeftWidth) || 0;
+      const firstHeaderControlRect = chatHeader.firstElementChild?.getBoundingClientRect();
+      const iconAnchor = dom.collapseChatButton?.querySelector(".chat-collapse-icon-anchor");
+      const iconAnchorRect = iconAnchor?.getBoundingClientRect();
+      const iconAnchorSize =
+        iconAnchorRect?.width
+        || Number.parseFloat(iconAnchor ? getComputedStyle(iconAnchor).width : "")
+        || 28;
+      const leadingSpace = firstHeaderControlRect
+        ? Math.max(0, firstHeaderControlRect.left - headerRect.left)
+        : iconAnchorSize;
+      const handleLeft =
+        headerRect.left - chatRect.left - chatBorderLeft
+        + Math.max(0, (leadingSpace - iconAnchorSize) / 2);
+      const handleTop = Math.max(
+        0,
+        headerRect.top - chatRect.top - chatBorderTop + headerRect.height / 2,
+      );
+      dom.sessionView.style.setProperty(
+        "--chat-right-collapse-handle-left",
+        `${handleLeft}px`,
+      );
+      dom.sessionView.style.setProperty(
+        "--chat-right-collapse-handle-size",
+        `${iconAnchorSize}px`,
+      );
+      dom.sessionView.style.setProperty(
+        "--chat-right-collapse-handle-top",
+        `${handleTop}px`,
+      );
+    } else {
+      dom.sessionView.style.removeProperty("--chat-right-collapse-handle-top");
+      dom.sessionView.style.removeProperty("--chat-right-collapse-handle-left");
+      dom.sessionView.style.removeProperty("--chat-right-collapse-handle-size");
+    }
+
     const isMobileRightDock =
-      (dom.sessionView.dataset.chatDock || "right") === "right"
-      && window.matchMedia("(max-width: 980px)").matches;
+      isRightDock
+      && isStackedSessionLayout();
     const isPortraitMobileRightDock =
       isMobileRightDock
       && window.matchMedia("(orientation: portrait)").matches;
@@ -573,7 +715,8 @@ export function syncExternalChatCollapseHandleOffset() {
     window.matchMedia("(max-width: 680px) and (orientation: portrait)").matches;
   const isLandscapeMobileFullscreenBottomDock =
     isFullscreenPageActive()
-    && window.matchMedia("(max-width: 980px) and (orientation: landscape)").matches;
+    && isStackedSessionLayout()
+    && window.matchMedia("(orientation: landscape)").matches;
   const parsedDockGap = Number.parseFloat(
     getComputedStyle(dom.sessionView).getPropertyValue("--chat-bottom-dock-gap"),
   );
@@ -685,14 +828,14 @@ export function setChatDock(dock, options = {}) {
   const currentDock = dom.sessionView?.dataset.chatDock || "right";
   const centeredVideoScrollTop = getBottomToRightScrollTop();
 
-  if (!options.skipTransition && pendingFullscreenDockSwitch) return;
+  if (!options.skipTransition && pendingChatDockSwitch) return;
 
   if (
     !options.skipTransition
     && currentDock === "bottom"
     && nextDock === "right"
     && isFullscreenPageActive()
-    && window.matchMedia("(min-width: 981px)").matches
+    && !isStackedSessionLayout()
   ) {
     animateFullscreenBottomToRightWithNativeCollapse();
     return;
@@ -719,6 +862,17 @@ export function setChatDock(dock, options = {}) {
     && !dom.sessionView?.classList.contains("chat-collapsed")
   ) {
     animateFullscreenDockSwitch(nextDock);
+    return;
+  }
+
+  if (
+    !options.skipTransition
+    && currentDock === "right"
+    && nextDock === "bottom"
+    && !dom.sessionView.classList.contains("chat-collapsed")
+    && !isMobilePortraitChatViewport()
+  ) {
+    animateRightToBottomWithNativeCollapse();
     return;
   }
 
@@ -802,10 +956,10 @@ function animateFullscreenDockSwitch(nextDock) {
   // que ocultaba el chat pero dejaba el video fijo hasta el cambio de dock.
   if (
     nextDock === "bottom"
-    && window.matchMedia("(min-width: 981px)").matches
+    && !isStackedSessionLayout()
     && dom.sessionView.dataset.chatDock === "right"
   ) {
-    animateFullscreenRightToBottomWithNativeCollapse();
+    animateRightToBottomWithNativeCollapse();
     return;
   }
 
@@ -814,7 +968,7 @@ function animateFullscreenDockSwitch(nextDock) {
     outTimerId: 0,
     inTimerId: 0,
   };
-  pendingFullscreenDockSwitch = transition;
+  pendingChatDockSwitch = transition;
   keepChatDockHandlesHidden();
   setCollapseHandleTransitioning(
     true,
@@ -829,10 +983,10 @@ function animateFullscreenDockSwitch(nextDock) {
   // aplicar la clase y el cambio de dock queda después de que termina.
   void chatArea.offsetWidth;
   window.requestAnimationFrame(() => {
-    if (pendingFullscreenDockSwitch !== transition) return;
+    if (pendingChatDockSwitch !== transition) return;
     sessionView.classList.add("chat-dock-mobile-transition-out-active");
     transition.outTimerId = window.setTimeout(() => {
-      if (pendingFullscreenDockSwitch !== transition) return;
+      if (pendingChatDockSwitch !== transition) return;
 
       sessionView.classList.remove(
         "chat-dock-mobile-transition-out",
@@ -847,7 +1001,7 @@ function animateFullscreenDockSwitch(nextDock) {
       // fuera de fullscreen. Reutilizarla acá mantiene el mismo despliegue y
       // hace que el scroll acompañe al panel hasta la unión inferior.
       if (nextDock === "bottom" && isDesktopBottomDock()) {
-        pendingFullscreenDockSwitch = null;
+        pendingChatDockSwitch = null;
         animateDesktopBottomChatExpand();
         scheduleChatDockHandlesReveal(BOTTOM_CHAT_CURTAIN_MS + 80);
         return;
@@ -860,11 +1014,11 @@ function animateFullscreenDockSwitch(nextDock) {
       sessionView.classList.add("chat-dock-mobile-transition-in");
       void chatArea.offsetWidth;
       window.requestAnimationFrame(() => {
-        if (pendingFullscreenDockSwitch !== transition) return;
+        if (pendingChatDockSwitch !== transition) return;
         sessionView.classList.add("chat-dock-mobile-transition-in-active");
         transition.inTimerId = window.setTimeout(() => {
-          if (pendingFullscreenDockSwitch !== transition) return;
-          pendingFullscreenDockSwitch = null;
+          if (pendingChatDockSwitch !== transition) return;
+          pendingChatDockSwitch = null;
           scheduleChatDockHandlesReveal(FULLSCREEN_DOCK_IN_MS + 80);
           sessionView.classList.remove(
             "chat-dock-mobile-transition-in",
@@ -879,11 +1033,11 @@ function animateFullscreenDockSwitch(nextDock) {
   });
 }
 
-function animateFullscreenRightToBottomWithNativeCollapse() {
+function animateRightToBottomWithNativeCollapse() {
   const transition = {
     switchTimerId: 0,
   };
-  pendingFullscreenDockSwitch = transition;
+  pendingChatDockSwitch = transition;
   keepChatDockHandlesHidden();
 
   // Es el mismo cambio que ejecuta el botón "Contraer chat". Al terminar la
@@ -891,8 +1045,8 @@ function animateFullscreenRightToBottomWithNativeCollapse() {
   // que setExternalChatCollapsed(false) ejecute su expansión natural.
   setExternalChatCollapsed(true, { source: "dock-switch" });
   transition.switchTimerId = window.setTimeout(() => {
-    if (pendingFullscreenDockSwitch !== transition) return;
-    pendingFullscreenDockSwitch = null;
+    if (pendingChatDockSwitch !== transition) return;
+    pendingChatDockSwitch = null;
     setChatDock("bottom", {
       skipTransition: true,
       preserveScroll: true,
@@ -907,7 +1061,7 @@ function animateFullscreenBottomToRightWithNativeCollapse() {
   const transition = {
     switchTimerId: 0,
   };
-  pendingFullscreenDockSwitch = transition;
+  pendingChatDockSwitch = transition;
   keepChatDockHandlesHidden();
 
   // Primero se ejecuta la cortina natural del dock inferior. El dock lateral
@@ -915,8 +1069,8 @@ function animateFullscreenBottomToRightWithNativeCollapse() {
   // con la transición natural de expansión del panel.
   setExternalChatCollapsed(true, { source: "dock-switch" });
   transition.switchTimerId = window.setTimeout(() => {
-    if (pendingFullscreenDockSwitch !== transition) return;
-    pendingFullscreenDockSwitch = null;
+    if (pendingChatDockSwitch !== transition) return;
+    pendingChatDockSwitch = null;
     setChatDock("right", {
       skipTransition: true,
       preserveScroll: true,
@@ -1146,21 +1300,49 @@ function clearBottomChatTransitionVisuals() {
   }
 }
 
+function lockBottomChatScrollAnchoring(transition) {
+  const scrollContainer = isFullscreenPageActive()
+    ? getPageScrollContainer()
+    : document.scrollingElement || document.documentElement;
+  if (!scrollContainer?.style) return;
+
+  transition.scrollAnchorContainer = scrollContainer;
+  transition.previousScrollAnchor = scrollContainer.style.getPropertyValue("overflow-anchor");
+  transition.previousScrollAnchorPriority = scrollContainer.style.getPropertyPriority("overflow-anchor");
+  scrollContainer.style.setProperty("overflow-anchor", "none");
+}
+
+function restoreBottomChatScrollAnchoring(transition) {
+  const scrollContainer = transition?.scrollAnchorContainer;
+  if (!scrollContainer?.style) return;
+
+  if (transition.previousScrollAnchor) {
+    scrollContainer.style.setProperty(
+      "overflow-anchor",
+      transition.previousScrollAnchor,
+      transition.previousScrollAnchorPriority,
+    );
+  } else {
+    scrollContainer.style.removeProperty("overflow-anchor");
+  }
+  transition.scrollAnchorContainer = null;
+}
+
 function cancelBottomChatTransition() {
   if (bottomChatTransition) {
     window.cancelAnimationFrame(bottomChatTransition.frameId);
     window.clearTimeout(bottomChatTransition.timeoutId);
+    restoreBottomChatScrollAnchoring(bottomChatTransition);
     bottomChatTransition = null;
   }
   clearBottomChatTransitionVisuals();
 }
 
 function isDesktopBottomDock() {
-  const isLandscapeMobile = window.matchMedia?.(
-    "(max-width: 980px) and (orientation: landscape)",
-  ).matches === true;
+  const isLandscapeMobile = isStackedSessionLayout()
+    && window.matchMedia("(orientation: landscape)").matches;
   return dom.sessionView?.dataset.chatDock === "bottom"
-    && (!isMobileLayoutViewport() || isLandscapeMobile);
+    && (!isStackedSessionLayout() || isLandscapeMobile);
 }
 
 function completeDesktopBottomChatTransition(transition) {
@@ -1168,6 +1350,7 @@ function completeDesktopBottomChatTransition(transition) {
 
   window.cancelAnimationFrame(transition.frameId);
   window.clearTimeout(transition.timeoutId);
+  restoreBottomChatScrollAnchoring(transition);
   bottomChatTransition = null;
   setCollapseHandleTransitioning(false);
   scheduleExternalChatCollapseHandleOffset();
@@ -1235,6 +1418,7 @@ function completeMobileBottomChatTransition(transition) {
 
   window.cancelAnimationFrame(transition.frameId);
   window.clearTimeout(transition.timeoutId);
+  restoreBottomChatScrollAnchoring(transition);
   bottomChatTransition = null;
   setCollapseHandleTransitioning(false);
   scheduleExternalChatCollapseHandleOffset();
@@ -1312,6 +1496,7 @@ function animateDesktopBottomChatCollapse(targetScrollTop) {
     targetScrollTop,
   };
   bottomChatTransition = transition;
+  lockBottomChatScrollAnchoring(transition);
   setCollapseHandleTransitioning(
     true,
     BOTTOM_CHAT_CURTAIN_MS + BOTTOM_CHAT_SCROLL_TIMEOUT_MS + 80,
@@ -1339,10 +1524,14 @@ function animateDesktopBottomChatExpand() {
     frameId: 0,
     timeoutId: 0,
     startedAt: performance.now(),
-    startScrollTop: 0,
+    // Guardar el anclaje antes de abrir la segunda fila. De lo contrario el
+    // scroll anchoring del navegador desplaza la página durante el reflow y la
+    // animación empieza desde una posición intermedia, mostrando dos etapas.
+    startScrollTop: getPageScrollTop(),
     targetScrollTop: 0,
   };
   bottomChatTransition = transition;
+  lockBottomChatScrollAnchoring(transition);
   dom.sessionView.classList.add("chat-bottom-pc-expand-visual");
   setDesktopBottomChatCurtainProgress(100);
   // Se reserva la fila completa con la cortina cerrada. Desde el primer frame
@@ -1352,8 +1541,10 @@ function animateDesktopBottomChatExpand() {
     true,
     BOTTOM_CHAT_CURTAIN_MS + BOTTOM_CHAT_SCROLL_TIMEOUT_MS + 80,
   );
-  transition.startScrollTop = getPageScrollTop();
   transition.targetScrollTop = getBottomDockChatScrollTop();
+  // Eliminar el ajuste automático de scroll que produjo el reflow antes del
+  // primer repintado, para que la cortina y el scroll recorran una sola fase.
+  scrollPageTo(transition.startScrollTop, "auto");
   void dom.chatArea.offsetWidth;
   transition.startedAt = performance.now();
   transition.frameId = window.requestAnimationFrame(() => {
@@ -1381,6 +1572,7 @@ function animateBottomChatCollapse(targetScrollTop) {
     targetScrollTop,
   };
   bottomChatTransition = transition;
+  lockBottomChatScrollAnchoring(transition);
   setCollapseHandleTransitioning(
     true,
     BOTTOM_CHAT_CURTAIN_MS + BOTTOM_CHAT_SCROLL_TIMEOUT_MS + 80,
@@ -1429,6 +1621,7 @@ function animateBottomChatExpand() {
     targetScrollTop: getBottomDockChatScrollTop(),
   };
   bottomChatTransition = transition;
+  lockBottomChatScrollAnchoring(transition);
   dom.sessionView.classList.add("chat-bottom-mobile-expand-visual");
   void dom.workspace?.offsetWidth;
   // Primero se reserva la fila completa con el contenido todavía oculto;
@@ -1465,7 +1658,7 @@ function getBottomDockVideoScrollTop() {
   // borde superior del viewport. El gutter ya no forma parte del espacio
   // visible, por lo que restarlo deja el reproductor desplazado al contraer.
   const mobileViewport = window.matchMedia("(max-width: 680px)").matches
-    || window.matchMedia("(max-width: 980px) and (orientation: landscape)").matches;
+    || (isStackedSessionLayout() && window.matchMedia("(orientation: landscape)").matches);
   const topOffset = isFullscreenPageActive() || mobileViewport ? 0 : gutter;
   return Math.max(0, Math.round(getElementPageTop(dom.videoArea) - topOffset));
 }
@@ -1552,6 +1745,7 @@ export function forceExternalChatCollapsed() {
   state.chat.autoOpenedExternal = false;
   cancelBottomChatTransition();
   clearBottomChatTransitionVisuals();
+  focusOutsideChatAreaBeforeHiding();
   dom.chatArea.style.setProperty("transition", "none");
   dom.sessionView.classList.add("chat-collapsed");
   dom.chatArea.setAttribute("aria-hidden", "true");
@@ -1566,6 +1760,7 @@ export function forceExternalChatCollapsed() {
 
 function applyExternalChatCollapsed(collapsed) {
   const previousVideoRect = getVideoAreaRect();
+  if (collapsed) focusOutsideChatAreaBeforeHiding();
   clearAutoCollapseTimer(false);
   if (collapsed) cancelIdentityEditing();
   if (chatScrollSnapLockTimer) {
@@ -1596,9 +1791,6 @@ function applyExternalChatCollapsed(collapsed) {
   animateExternalChatLayoutFrom(previousVideoRect);
 
   if (dom.chatArea) {
-    if (collapsed && dom.chatArea.contains(document.activeElement) && !isMobileLandscapeRightDock()) {
-      dom.videoPlayer?.focus({ preventScroll: true });
-    }
     dom.chatArea.setAttribute("aria-hidden", String(collapsed));
     if (collapsed) {
       dom.chatArea.setAttribute("inert", "");
@@ -1662,9 +1854,26 @@ function applyExternalChatCollapsed(collapsed) {
   }
 }
 
+function focusOutsideChatAreaBeforeHiding() {
+  const chatArea = dom.chatArea;
+  if (!chatArea?.contains(document.activeElement)) return;
+
+  const focusTarget = [dom.playerChatToggleButton, dom.playerPlayButton].find((element) => {
+    if (!element?.isConnected || element.disabled || !element.getClientRects().length) return false;
+    if (element.closest("[hidden], [inert], [aria-hidden='true']")) return false;
+    return window.getComputedStyle(element).visibility !== "hidden";
+  });
+  focusTarget?.focus({ preventScroll: true });
+
+  if (chatArea.contains(document.activeElement)) {
+    document.activeElement.blur?.();
+  }
+}
+
 export function restoreExternalChatCollapsed() {
   if (localStorage.getItem(EXTERNAL_CHAT_COLLAPSED_KEY) !== "1") return;
 
+  focusOutsideChatAreaBeforeHiding();
   dom.sessionView.classList.add("chat-collapsed");
   dom.chatArea?.setAttribute("aria-hidden", "true");
   dom.chatArea?.setAttribute("inert", "");
@@ -1735,12 +1944,14 @@ export function updateCollapseButton() {
   const dock = dom.sessionView.dataset.chatDock || "right";
   const isPortraitMobileRightDock =
     dock === "right"
-    && window.matchMedia("(max-width: 980px) and (orientation: portrait)").matches;
+    && isStackedSessionLayout()
+    && window.matchMedia("(orientation: portrait)").matches;
   const isFullscreenLandscapeBottomDock =
     dock === "bottom"
     && isFullscreenPageActive()
-    && window.matchMedia("(max-width: 980px) and (orientation: landscape)").matches;
-  const isDesktopLayout = window.matchMedia("(min-width: 981px)").matches;
+    && isStackedSessionLayout()
+    && window.matchMedia("(orientation: landscape)").matches;
+  const isDesktopLayout = !isStackedSessionLayout();
   const iconName = isFullscreenLandscapeBottomDock
     ? collapsed
       ? "arrow-up"

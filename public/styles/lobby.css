@@ -31,9 +31,10 @@
 .lobby-marquee-track {
   display: inline-flex;
   align-items: center;
-  gap: 36px;
+  gap: 0;
   white-space: nowrap;
-  width: 100%;
+  width: max-content;
+  flex: 0 0 max-content;
   min-height: 30px;
   padding-block: 0;
   color: var(--text-faint);
@@ -42,12 +43,56 @@
   letter-spacing: 0.22em;
   line-height: 1;
   text-transform: uppercase;
-  animation: marqueeScroll 50s linear infinite;
+  animation: marqueeScroll 80s linear infinite;
 }
 
 .lobby-marquee-track > span {
   display: inline-flex;
   align-items: center;
+}
+
+.lobby-marquee-track > .marquee-set {
+  gap: 36px;
+  margin-inline-end: 36px;
+}
+
+.lobby-marquee-track .marquee-emojis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 0 0 4.5em;
+  width: 4.5em;
+  font-size: 1.25em;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.lobby-marquee-track .marquee-emoji {
+  display: inline-flex;
+  flex: 0 0 1.2em;
+  width: 1.2em;
+  align-items: center;
+  justify-content: center;
+  animation: marqueeEmojiPop 500ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.lobby-marquee-track .marquee-emoji:nth-child(2) {
+  animation-delay: 70ms;
+}
+
+.lobby-marquee-track .marquee-emoji:nth-child(3) {
+  animation-delay: 140ms;
+}
+
+@keyframes marqueeEmojiPop {
+  from {
+    opacity: 0;
+    transform: translateY(5px) scale(0.65) rotate(-12deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0);
+  }
 }
 
 .lobby-marquee-track span.live {
@@ -196,6 +241,13 @@
   animation: lobby-description-highlight 1100ms ease-out 450ms both;
 }
 
+.lobby-description-accent {
+  color: var(--teal);
+  font-weight: 700;
+  text-shadow: 0 0 14px var(--teal-glow);
+  animation: lobby-description-accent 900ms ease-out 650ms both;
+}
+
 @keyframes lobby-description-enter {
   from {
     opacity: 0;
@@ -216,9 +268,21 @@
   }
 }
 
+@keyframes lobby-description-accent {
+  from {
+    opacity: 0.35;
+    text-shadow: 0 0 0 var(--teal-glow);
+  }
+  to {
+    opacity: 1;
+    text-shadow: 0 0 14px var(--teal-glow);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .lobby-description,
-  .lobby-description-highlight {
+  .lobby-description-highlight,
+  .lobby-description-accent {
     animation: none;
   }
 }
@@ -369,6 +433,15 @@
   display: block;
   padding: 0;
   border-right: 0;
+  background: transparent;
+  color: var(--amber);
+  text-align: center;
+}
+
+.lobby-ticket-stub::before {
+  position: absolute;
+  z-index: 0;
+  inset: var(--lobby-ticket-fit-stub-inset, 0px) 0;
   background:
     repeating-linear-gradient(
       45deg,
@@ -376,8 +449,8 @@
       transparent 6px 12px
     ),
     rgba(14, 16, 20, 0.45);
-  color: var(--amber);
-  text-align: center;
+  content: "";
+  pointer-events: none;
 }
 
 /* Cuerpo principal del boleto */
@@ -877,7 +950,7 @@ body:not(.is-lobby) .live-badge {
   }
 
   .lobby-ticket-perforation {
-    top: 36px;
+    top: calc(36px - var(--lobby-ticket-fit-stub-inset, 0px));
     left: 50%;
     width: 14px;
     height: 14px;

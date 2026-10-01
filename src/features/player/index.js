@@ -1,9 +1,9 @@
 // Coordinacion general del player: reexporta sync de video y fullscreen sin romper imports existentes.
-import { wireFullscreenEvents } from "./fullscreen.js?v=20260914-system-message-roll-transition-05";
-import { wireMiniPlayerEvents } from "./mini-player.js?v=20260916-image-preview-01";
-import { wirePlayerCoreEvents } from "./player.js?v=20260918-player-live-status-pulse-01";
-import { wirePlayerControlLayouts } from "./player-controls-layout.js?v=20260902-player-controls-layout-17";
-import { wirePlayerVolumeLayouts } from "./player-volume-layout.js?v=20260902-player-volume-layout-18";
+import { wireFullscreenEvents } from "./fullscreen.js?v=20260930-chat-accessibility-focus-01-bottom-chat-expand-02";
+import { wireMiniPlayerEvents } from "./mini-player.js?v=20260930-chat-accessibility-focus-01-pending-image-lightbox-01-preview-size-center-01-overlay-image-size-01-bottom-chat-expand-02";
+import { wirePlayerCoreEvents } from "./player.js?v=20260930-chat-accessibility-focus-01-pending-image-lightbox-01-bottom-chat-expand-02";
+import { wirePlayerControlLayouts } from "./player-controls-layout.js?v=20260929-player-controls-layout-resize-reflow-02";
+import { wirePlayerVolumeLayouts } from "./player-volume-layout.js?v=20260928-volume-popup-arrow-hide-01";
 
 export {
   initializePlayer,
@@ -12,16 +12,16 @@ export {
   setVideoSource,
   setVideoStatus,
   waitForVideoMetadata,
-} from "./player.js?v=20260918-player-live-status-pulse-01";
+} from "./player.js?v=20260930-chat-accessibility-focus-01-pending-image-lightbox-01-bottom-chat-expand-02";
 export {
   handleRemoteState,
   publishState,
-} from "./player-sync-logic.js?v=20260918-player-live-status-pulse-01";
+} from "./player-sync-logic.js?v=20260930-chat-accessibility-focus-01-pending-image-lightbox-01-bottom-chat-expand-02";
 export {
   handleFullscreenChange,
   snapFullscreenScroll,
   togglePageFullscreen,
-} from "./fullscreen.js?v=20260914-system-message-roll-transition-05";
+} from "./fullscreen.js?v=20260930-chat-accessibility-focus-01-bottom-chat-expand-02";
 
 export function wirePlayerEvents() {
   const playerInteractions = wirePlayerCoreEvents();

@@ -14,9 +14,8 @@
     />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' https://unpkg.com https://www.gstatic.com https://apis.google.com https://cinecompartidopagina-default-rtdb.firebaseio.com https://*.firebaseio.com https://*.firebasedatabase.app; script-src-elem 'self' https://unpkg.com https://www.gstatic.com https://apis.google.com https://cinecompartidopagina-default-rtdb.firebaseio.com https://*.firebaseio.com https://*.firebasedatabase.app; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src-elem 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' http: https: data: blob:; media-src 'self' http: https: blob: data:; connect-src 'self' https://unpkg.com http://localhost:* http://127.0.0.1:* https://www.gstatic.com https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; object-src 'none'; base-uri 'self'; form-action 'self'"
+      content="default-src 'self'; script-src 'self' https://www.gstatic.com https://apis.google.com https://cinecompartidopagina-default-rtdb.firebaseio.com https://*.firebaseio.com https://*.firebasedatabase.app; script-src-elem 'self' https://www.gstatic.com https://apis.google.com https://cinecompartidopagina-default-rtdb.firebaseio.com https://*.firebaseio.com https://*.firebasedatabase.app; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src-elem 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' http: https: data: blob:; media-src 'self' http: https: blob: data:; frame-src 'self' https://cinecompartidopagina.firebaseapp.com https://*.firebaseapp.com https://*.firebaseio.com; connect-src 'self' http://localhost:* http://127.0.0.1:* https://www.gstatic.com https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; object-src 'none'; base-uri 'self'; form-action 'self'"
     />
-    <link rel="preconnect" href="https://unpkg.com" />
     <link rel="preconnect" href="https://www.gstatic.com" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -25,7 +24,7 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap"
     />
     <link rel="icon" href="./public/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="./public/styles.css?v=20260924-lobby-footer-no-padding-01" />
+    <link rel="stylesheet" href="./public/styles.css?v=20260930-chat-layout-no-flicker-compact-header-05-overlay-media-alignment-02-message-time-color-01-pending-image-lightbox-01-preview-size-center-01-overlay-image-size-01-chat-header-padding-effective-01-header-visual-center-01-system-row-fixed-center-01-hidden-scrollbar-02-chat-header-icon-end-align-02-chat-dock-name-transition-03-chat-header-gutter-spacing-01-player-progress-stable-01" />
   </head>
   <body class="is-lobby">
     <div class="app-shell">
@@ -51,7 +50,7 @@
                 <span class="app-status room-chip-status-inline" id="connectionStatus" role="button" tabindex="0" data-state="starting" data-tooltip="Conectando con la sala" aria-label="Estado de la aplicación: Iniciando. Conectando con la sala">
                   <span class="status-dot app-status-dot" aria-hidden="true"></span>
                 </span>
-                SALA
+                <span class="room-chip-title-prefix">SALA</span>
                 <span class="room-chip-title-actions">
                   <button
                     class="room-chip-code room-chip-copy room-chip-code-button"
@@ -90,7 +89,7 @@
       <section class="lobby-screen" id="lobbyScreen" aria-label="Entrada a sala">
         <div class="lobby-marquee" aria-hidden="true">
           <span class="lobby-marquee-track">
-            <span class="live">En vivo</span><span>Salas publicas</span><span>Video compartido</span><span>Chat integrado</span><span>Entrada libre</span><span class="spacer"></span><span class="live">En vivo</span><span>Salas publicas</span><span>Video compartido</span><span>Chat integrado</span><span>Entrada libre</span><span class="spacer"></span><span class="live">En vivo</span><span>Salas publicas</span><span>Video compartido</span><span>Chat integrado</span><span>Entrada libre</span><span class="spacer"></span><span class="live">En vivo</span><span>Salas publicas</span><span>Video compartido</span><span>Chat integrado</span><span>Entrada libre</span><span class="spacer"></span>
+            <span class="marquee-set"><span class="live">En vivo</span><span class="marquee-fixed">Salas publicas</span><span class="marquee-fixed">Chat integrado</span><span class="marquee-message">Elegí lo que querés ver</span><span class="marquee-message">Compartí con amigos</span><span class="marquee-message">Disfrutá</span><span class="marquee-emojis" data-emojis="🎬,🍿,✨,🎥,💬,💚,🌟" aria-hidden="true">🎬 🍿 ✨</span><span class="spacer"></span></span><span class="marquee-set"><span class="live">En vivo</span><span class="marquee-fixed">Salas publicas</span><span class="marquee-fixed">Chat integrado</span><span class="marquee-message">Elegí lo que querés ver</span><span class="marquee-message">Compartí con amigos</span><span class="marquee-message">Disfrutá</span><span class="marquee-emojis" data-emojis="🎬,🍿,✨,🎥,💬,💚,🌟" aria-hidden="true">🎬 🍿 ✨</span><span class="spacer"></span></span><span class="marquee-set"><span class="live">En vivo</span><span class="marquee-fixed">Salas publicas</span><span class="marquee-fixed">Chat integrado</span><span class="marquee-message">Elegí lo que querés ver</span><span class="marquee-message">Compartí con amigos</span><span class="marquee-message">Disfrutá</span><span class="marquee-emojis" data-emojis="🎬,🍿,✨,🎥,💬,💚,🌟" aria-hidden="true">🎬 🍿 ✨</span><span class="spacer"></span></span><span class="marquee-set"><span class="live">En vivo</span><span class="marquee-fixed">Salas publicas</span><span class="marquee-fixed">Chat integrado</span><span class="marquee-message">Elegí lo que querés ver</span><span class="marquee-message">Compartí con amigos</span><span class="marquee-message">Disfrutá</span><span class="marquee-emojis" data-emojis="🎬,🍿,✨,🎥,💬,💚,🌟" aria-hidden="true">🎬 🍿 ✨</span><span class="spacer"></span></span>
           </span>
         </div>
 
@@ -108,10 +107,10 @@
             </h1>
             <p class="lobby-description">
               <span class="lobby-description-full">
-                Espacio compartido para <span class="lobby-description-highlight">ver contenido en tiempo real</span> y conversar al momento sobre ello, creando una forma cómoda para disfrutar del contenido <span class="lobby-description-highlight">en compañía</span>
+                Espacio compartido para <span class="lobby-description-highlight">ver</span>, junto a <span class="lobby-description-accent">otras personas</span> y en tiempo real, el <span class="lobby-description-accent">contenido</span> que quieran, mientras <span class="lobby-description-highlight">conversan</span> sobre lo que están viendo
               </span>
               <span class="lobby-description-mobile">
-                Espacio compartido para <span class="lobby-description-highlight">ver contenido en tiempo real</span> y conversar al momento sobre ello, creando una forma cómoda para disfrutar del contenido <span class="lobby-description-highlight">en compañía</span>
+                Espacio compartido para <span class="lobby-description-highlight">ver</span>, junto a <span class="lobby-description-accent">otras personas</span> y en tiempo real, el <span class="lobby-description-accent">contenido</span> que quieran, mientras <span class="lobby-description-highlight">conversan</span> sobre lo que están viendo
               </span>
             </p>
             <ul class="lobby-features">
@@ -972,11 +971,9 @@
           </div>
         </div>
         <p id="aboutDialogDescription" class="about-dialog-intro">
-          Cine Juntos es un proyecto open source planteado como una base para la visualización compartida de contenido. No incorpora ningún sistema de publicidad ni restricciones propias más allá de las limitaciones de los servicios utilizados para su funcionamiento.<br /><br />
-          Esta página funciona como una demostración funcional del proyecto y tiene como objetivo presentar de forma práctica su propuesta y funcionamiento. Si bien no está concebida como una plataforma orientada al uso cotidiano o a un entorno de producción, sus funcionalidades se encuentran implementadas y pueden utilizarse.<br /><br />
-          Se trata de un diseño básica orientado al uso personal y a grupos pequeños, que puede modificarse, adaptarse y alojarse según las necesidades de quien quiera utilizarla.<br /><br />
-          En cuanto a su funcionamiento, permite crear salas virtuales mediante la generación de un código de acceso, que puede compartirse con otras personas para que se incorporen a la misma sala. Una vez dentro, los participantes pueden reproducir de forma sincronizada contenido proporcionado por ellos mismos, utilizando archivos o enlaces directos alojados en servidores o redes de distribución de contenido (CDN).<br /><br />
-          Cada sala integra la reproducción sincronizada combinado de un chat, permitiendo a sus participantes interactuar y compartir el momento de la visualización desde un mismo lugar :).
+          Cine Juntos es un proyecto de código abierto (open source) concebido como una base con el propósito de la visualización sincronizada de contenido entre múltiples usuarios de manera comoda y sencilla. De manera tal, permite crear salas con un chat integrado, elegir el contenido a ver y cargarlo en un reproductor que tiene sus funciones sincronizadas entre todos los usuarios: reproducción, velocidad, pausa, etc. No incorpora publicidad ni restricciones propias, más allá de las limitaciones de los servicios utilizados o que utilice el usuario.<br /><br />
+          Esta página funciona como una demostración funcional del proyecto. Las salas se crean mediante un código de acceso que puede compartirse con otras personas, la reproduccion se sincroniza mediante Firebase Realtime y se puede incorporar el contenido a partir de archivos o enlaces directos alojados en servidores o CDN.<br /><br />
+          El proyecto puede modificarse, adaptarse y alojarse según las necesidades del que quiera usarlo.
         </p>
         <dl class="about-dialog-details">
           <div>
@@ -996,7 +993,7 @@
             <dd>Frontend estático en HTML, CSS y JavaScript vanilla. Usa HTML5 Video, sincronización en tiempo real con <a href="https://firebase.google.com/docs/database/web/start?hl=es-419" target="_blank" rel="noopener noreferrer">Firebase Realtime</a> cuando está disponible y un transporte local como fallback.</dd>
           </div>
         </dl>
-        <p class="about-dialog-disclaimer"><strong>Disclaimer:</strong> El contenido y los enlaces utilizados pertenecen a quienes los aportan. Cada usuario debe contar con los derechos necesarios y es responsable del uso que le da al servicio y de sus mensajes. Este proyecto comunitario se ofrece bajo GPLv3, sin garantía de disponibilidad o funcionamiento ininterrumpido.</p>
+        <p class="about-dialog-disclaimer"><strong>Disclaimer:</strong> Esta página funciona como una demostración del proyecto y no está destinada a ser un producto final. El contenido y los enlaces utilizados pertenecen a quienes los aportan. Cada usuario debe contar con los derechos necesarios y es responsable del uso que le da al servicio y de sus mensajes. Este proyecto comunitario se ofrece bajo GPLv3, sin garantía de disponibilidad o funcionamiento ininterrumpido.</p>
       </div>
       <div class="about-dialog-scrollbar" aria-hidden="true">
         <span class="about-dialog-scrollbar-thumb"></span>
@@ -1054,9 +1051,11 @@
     </dialog>
 
     <script src="./public/dev-runtime.js?v=20260715-02"></script>
-    <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script defer src="./public/vendor/lucide-0.468.0/lucide.min.js?v=20260929-local-lucide-01"></script>
     <script src="./public/firebase-config.js"></script>
-     <script type="module" src="./src/features/chat/image-lightbox.js?v=20260917-dialog-test-routes-01"></script>
-    <script type="module" src="./src/main.js?v=20260924-lobby-ticket-vertical-center-01"></script>
+    <script type="module" src="./src/features/chat/image-lightbox.js?v=20260917-dialog-test-routes-01-lightbox-scroll-preserve-01"></script>
+    <script type="module" src="./src/main.js?v=20261001-bottom-chat-expand-03"></script>
+    <script type="module" src="./src/features/chat/component-aspect-layout.js?v=20260930-stack-measure-no-flicker-02-header-visual-center-02"></script>
+    <script type="module" src="./src/features/chat/chat-name-layout.js?v=20260930-stable-name-editor-layout-11-dock-cache"></script>
   </body>
 </html>

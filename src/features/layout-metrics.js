@@ -181,11 +181,6 @@ function captureBottomChatKeyboardHandlePosition() {
     "transition",
     "opacity 180ms ease, color 160ms ease, background 160ms ease",
   );
-  if (document.documentElement.classList.contains("viewport-landscape")) {
-    // Primero se desvanece en su posición anterior; el reanclaje se aplica
-    // mientras está invisible para evitar el salto visible al abrir el IME.
-    handleZone.style.setProperty("opacity", "0");
-  }
 }
 
 function restoreBottomChatKeyboardHandlePosition() {
@@ -672,9 +667,9 @@ function alignBottomChatKeyboardViewport() {
   const videoRect = dom.videoArea?.getBoundingClientRect();
   const chatRect = dom.chatArea?.getBoundingClientRect();
   if (anchoredHandleZone && chatRect && (videoRect?.height > 0 || isBottomChatKeyboardOpen())) {
-    // Cuando el IME colapsa el video, la unión pasa a ser el borde superior
-    // del chat. Mantener el centro dentro del workspace evita que la flecha
-    // conserve el top anterior y desaparezca fuera del viewport reducido.
+    // Cuando el viewport del teclado colapsa el video, la unión pasa a ser
+    // el borde superior del chat. Mantener el centro dentro del workspace
+    // evita que la flecha conserve el top anterior y salga del viewport.
     const positioningParent = anchoredHandleZone.offsetParent || dom.workspace;
     const positioningParentRect = positioningParent?.getBoundingClientRect();
     if (!positioningParentRect) return;
@@ -690,8 +685,8 @@ function alignBottomChatKeyboardViewport() {
     const maxCenter = Math.max(minCenter, positioningParentRect.height - halfHandle);
     const boundedCenter = Math.min(maxCenter, Math.max(minCenter, desiredCenter));
     if (document.documentElement.classList.contains("viewport-landscape")) {
-      // La posición ya fue aplicada mientras el handle estaba oculto. Solo
-      // animar la aparición evita que viaje desde el borde del video.
+      // Animar la opacidad después de calcular el anclaje evita ocultar la
+      // flecha durante el foco previo a un cambio real del viewport.
       anchoredHandleZone.style.setProperty(
         "transition",
         "opacity 180ms ease, color 160ms ease, background 160ms ease",
@@ -703,9 +698,8 @@ function alignBottomChatKeyboardViewport() {
     );
     anchoredHandleZone.style.setProperty("bottom", "auto");
     if (document.documentElement.classList.contains("viewport-landscape")) {
-      // La posición ya está corregida; desde aquí la transición solo afecta
-      // la opacidad y evita que la flecha quede invisible si Chrome emite
-      // varios resize mientras termina de abrir el teclado.
+      // Reafirmar visibilidad después del reanclaje evita que la flecha quede
+      // invisible si Chrome emite varios resize al abrir el teclado.
       anchoredHandleZone.style.setProperty("opacity", "1");
     }
   }

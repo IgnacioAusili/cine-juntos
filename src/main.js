@@ -18,7 +18,7 @@ import {
 } from "./features/icons-tooltips.js?v=20260914-tooltip-single-path-01";
 import {
   wireLayoutMetrics,
-} from "./features/layout-metrics.js?v=20260913-bottom-chat-keyboard-arrow-fixed-04";
+} from "./features/layout-metrics.js?v=20261001-bottom-chat-focus-arrow-visible-01";
 import { wireLobbyKeyboardRestore } from "./features/lobby-keyboard.js?v=20260917-native-keyboard-flow-01";
 import { wireAboutDialogScrollbar } from "./features/about-dialog-scrollbar.js?v=20260917-visual-scrollbar-05";
 import {

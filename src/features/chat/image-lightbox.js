@@ -12,6 +12,45 @@ let panY = 0;
 let activePointerId = null;
 let panStart = null;
 let lastTrigger = null;
+let scrollPositionsBeforeLightbox = null;
+
+function captureScrollPositions(target) {
+  const positions = [];
+  const pageScroller = document.scrollingElement;
+  if (pageScroller) {
+    positions.push({
+      element: pageScroller,
+      left: window.scrollX || pageScroller.scrollLeft || 0,
+      top: window.scrollY || pageScroller.scrollTop || 0,
+    });
+  }
+
+  for (let element = target?.parentElement; element; element = element.parentElement) {
+    const isPageScroller = element === pageScroller;
+    const canScroll = element.scrollHeight > element.clientHeight
+      || element.scrollWidth > element.clientWidth;
+    if (!isPageScroller && canScroll) {
+      positions.push({ element, left: element.scrollLeft, top: element.scrollTop });
+    }
+    if (element === document.body) break;
+  }
+
+  return positions;
+}
+
+function restoreScrollPositions(positions) {
+  if (!positions?.length) return;
+
+  const restore = () => {
+    for (const { element, left, top } of positions) {
+      element.scrollLeft = left;
+      element.scrollTop = top;
+    }
+  };
+
+  restore();
+  window.requestAnimationFrame(restore);
+}
 
 function ensureLightbox() {
   if (lightbox) return lightbox;
@@ -182,6 +221,7 @@ function resetScale(nextScale = 1) {
 function openLightbox(image) {
   const modal = ensureLightbox();
   lastTrigger = image.closest(".message-media-link") || image;
+  scrollPositionsBeforeLightbox = captureScrollPositions(lastTrigger);
   resetScale();
   lightboxImage.src = image.currentSrc || image.src;
   lightboxImage.alt = image.alt || "Imagen ampliada";
@@ -190,12 +230,14 @@ function openLightbox(image) {
   document.documentElement.classList.add("image-lightbox-open");
   document.body.classList.add("image-lightbox-open");
   if (lightboxImage.complete) applyInitialScale(modal);
-  modal.querySelector("[data-lightbox-action='close']")?.focus();
+  modal.querySelector("[data-lightbox-action='close']")?.focus({ preventScroll: true });
+  restoreScrollPositions(scrollPositionsBeforeLightbox);
 }
 
 export function openLightboxForTest({ src, alt = "Imagen ampliada de prueba" } = {}) {
   const modal = ensureLightbox();
   lastTrigger = null;
+  scrollPositionsBeforeLightbox = captureScrollPositions(null);
   resetScale();
   lightboxImage.src = src || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='960' height='540' viewBox='0 0 960 540'%3E%3Crect width='960' height='540' fill='%23252b31'/%3E%3Ctext x='480' y='285' fill='white' font-size='42' text-anchor='middle' font-family='sans-serif'%3EImagen de prueba%3C/text%3E%3C/svg%3E";
   lightboxImage.alt = alt;
@@ -204,17 +246,21 @@ export function openLightboxForTest({ src, alt = "Imagen ampliada de prueba" } =
   document.documentElement.classList.add("image-lightbox-open");
   document.body.classList.add("image-lightbox-open");
   if (lightboxImage.complete) applyInitialScale(modal);
-  modal.querySelector("[data-lightbox-action='close']")?.focus();
+  modal.querySelector("[data-lightbox-action='close']")?.focus({ preventScroll: true });
+  restoreScrollPositions(scrollPositionsBeforeLightbox);
 }
 
 function closeLightbox() {
   if (!lightbox?.open) return;
+  const scrollPositions = scrollPositionsBeforeLightbox;
   lightbox.close();
   document.documentElement.classList.remove("image-lightbox-open");
   document.body.classList.remove("image-lightbox-open");
   lightboxImage?.removeAttribute("src");
-  lastTrigger?.focus?.();
+  lastTrigger?.focus?.({ preventScroll: true });
+  restoreScrollPositions(scrollPositions);
   lastTrigger = null;
+  scrollPositionsBeforeLightbox = null;
   resetScale();
 }
 

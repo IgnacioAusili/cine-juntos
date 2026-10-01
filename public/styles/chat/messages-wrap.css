@@ -6,6 +6,8 @@
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   --chat-scrollbar-visual-end: calc(100% - var(--chat-message-bottom-reserve, 132px) + 2px);
   --chat-scrollbar-visual-gap: 8px;
   --chat-scrollbar-visual-inset: 5px;
@@ -36,6 +38,17 @@
   touch-action: none;
   cursor: default;
   user-select: none;
+}
+
+.messages-wrap::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+/* El historial sigue desplazándose con rueda y gesto, pero nunca muestra una
+   pista lateral personalizada dentro del chat. */
+.messages-wrap > .chat-scrollbar {
+  display: none;
 }
 
 .messages-wrap[data-scrollbar-visible="true"] .chat-scrollbar {

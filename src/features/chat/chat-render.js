@@ -10,15 +10,15 @@ import {
   handleIncomingUnread,
   handleIncomingPageUnread,
   incrementScrollIndicator,
-} from "./unread-counters.js?v=20260928-system-group-toggle-anchor-01";
-import { setReplyTarget, scrollToMessage } from "./chat-reply.js?v=20260928-system-group-toggle-anchor-01";
+} from "./unread-counters.js?v=20261001-bottom-chat-expand-02";
+import { setReplyTarget, scrollToMessage } from "./chat-reply.js?v=20260930-system-row-fixed-center-01";
 import {
   animateExpandedSystemMessageRemoval,
   captureExpandedSystemMessageRemoval,
   prepareSystemMessageRemoval,
   refreshSystemMessageGroup,
   scheduleSystemMessageCollapse,
-} from "./system-message-groups.js?v=20260928-system-group-toggle-anchor-01";
+} from "./system-message-groups.js?v=20260930-system-row-fixed-center-01";
 
 const EMOJI_ONLY_PATTERN = /^(?:[\s\p{Extended_Pictographic}\p{Emoji_Presentation}\p{Emoji_Modifier}\uFE0F\u200D\u20E3])+$/u;
 const EMOJI_GLYPH_PATTERN = /[\p{Extended_Pictographic}\p{Emoji_Presentation}]/u;

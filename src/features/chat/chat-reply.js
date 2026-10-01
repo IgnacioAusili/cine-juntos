@@ -3,7 +3,7 @@ import { state } from "../../core/state.js?v=20260914-console-log-controls-01";
 import { hideTooltip } from "../icons-tooltips.js?v=20260914-tooltip-single-path-01";
 import { truncateText } from "./chat-content-parser.js?v=20260810-chat-fixes-02";
 import { getParticipantAccent } from "./chat-participant-color.js";
-import { expandSystemMessageGroupForItem } from "./system-message-groups.js?v=20260928-system-group-toggle-anchor-01";
+import { expandSystemMessageGroupForItem } from "./system-message-groups.js?v=20260930-system-row-fixed-center-01";
 import { focusChatInput } from "./chat-input-focus.js";
 
 const pendingReplyPreviewHides = new WeakMap();

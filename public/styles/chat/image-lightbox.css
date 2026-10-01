@@ -52,8 +52,12 @@
 }
 
 .message-media-link {
-  cursor: zoom-in;
+  cursor: pointer;
   touch-action: pan-y;
+}
+
+.player-frame.player-cursor-hidden .message-media-link {
+  cursor: pointer;
 }
 
 /* El visor vive en la capa superior del navegador y no dentro del chat. */

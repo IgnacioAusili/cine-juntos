@@ -268,6 +268,21 @@
   max-width: calc(50% - 3px);
 }
 
+/* Una imagen suelta usa su ancho natural; el límite de 50% se reserva para pares. */
+.overlay-messages .message--media-only .message-media-strip--standalone {
+  width: fit-content;
+  max-width: min(100%, 200px);
+}
+
+.overlay-messages .message--media-only .message-media-strip--standalone .message-media-link:only-child {
+  flex: 0 1 200px;
+  max-width: min(100%, 200px);
+}
+
+.overlay-messages .message--media-only .message-media-strip--standalone .message-media {
+  max-height: 160px;
+}
+
 .overlay-messages .message-media-row {
   position: relative;
   display: flex;

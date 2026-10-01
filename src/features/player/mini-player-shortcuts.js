@@ -1,5 +1,5 @@
 import { dom } from "../../core/dom.js";
-import { toggleMiniChatOverlay } from "./mini-player-chat-mirror.js?v=20260928-system-group-toggle-anchor-01";
+import { toggleMiniChatOverlay } from "./mini-player-chat-mirror.js?v=20260930-chat-accessibility-focus-01-system-row-fixed-center-02-bottom-chat-expand-02";
 
 const SEEK_STEP_SECONDS = 5;
 const VOLUME_STEP = 0.05;

@@ -1,0 +1,10 @@
+/* La hora de un mensaje compuesto solo por imagen acompaña el tono de su burbuja. */
+.player-frame[data-chat-style="panel"] .overlay-messages .message.mine.message--media-only .message-time-anchor {
+  border-color: rgba(47, 184, 164, 0.42);
+  background: rgba(47, 184, 164, 0.32);
+}
+
+.player-frame[data-chat-style="float"] .overlay-messages .message.mine.message--media-only .message-time-anchor {
+  border-color: rgba(47, 184, 164, 0.34);
+  background: rgba(47, 184, 164, 0.24);
+}

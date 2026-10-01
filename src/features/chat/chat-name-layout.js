@@ -1,14 +1,34 @@
 const CHAT_TOOLS_SELECTOR = ".chat-tools";
 const NAME_FIELD_SELECTOR = ".chat-name-field";
 const COLLAPSE_ANCHOR_SELECTOR = ".chat-collapse-hover-zone .chat-collapse-icon-anchor";
+const CHAT_LAYOUT_TRANSITION_CLASSES = [
+  "chat-layout-transitioning",
+  "chat-dock-handle-switching",
+  "chat-dock-switching",
+  "chat-dock-switching-entered",
+  "chat-dock-mobile-transition-out",
+  "chat-dock-mobile-transition-out-active",
+  "chat-dock-mobile-transition-in",
+  "chat-dock-mobile-transition-in-active",
+  "chat-bottom-mobile-expand-visual",
+  "chat-bottom-mobile-curtain-active",
+];
+const CHAT_DOCK_SWITCH_CLASSES = [
+  "chat-dock-switching",
+  "chat-dock-mobile-transition-out",
+  "chat-dock-mobile-transition-out-active",
+  "chat-dock-mobile-transition-in",
+  "chat-dock-mobile-transition-in-active",
+];
 
 let scheduledFrame = 0;
-let transitionFrame = 0;
 const nameAreaReservations = new WeakMap();
 const collapseAnchorReservations = new WeakMap();
 const resizeObserver = new ResizeObserver(scheduleLayout);
 const layoutObserver = new MutationObserver(handleLayoutMutations);
 const domObserver = new MutationObserver(handleDomMutations);
+const nameMeasureCanvas = document.createElement("canvas");
+const nameMeasureContext = nameMeasureCanvas.getContext("2d");
 
 function rectOf(element) {
   return element?.getBoundingClientRect?.() ?? null;
@@ -27,6 +47,12 @@ function isDisplayed(element) {
   return Boolean(rect && rect.width > 0 && rect.height > 0);
 }
 
+function hasLayoutBox(element) {
+  if (!element?.isConnected || getComputedStyle(element).display === "none") return false;
+  const rect = rectOf(element);
+  return Boolean(rect && rect.width > 0 && rect.height > 0);
+}
+
 function setLayoutValue(element, property, value) {
   const normalized = `${Math.round(value * 100) / 100}px`;
   if (element.style.getPropertyValue(property) !== normalized) {
@@ -37,6 +63,86 @@ function setLayoutValue(element, property, value) {
 function clearLayoutValues(field) {
   field.style.removeProperty("--chat-name-available-left");
   field.style.removeProperty("--chat-name-available-width");
+}
+
+function getNameAreaReservations(owner) {
+  let reservations = nameAreaReservations.get(owner);
+  if (!reservations) {
+    reservations = new Map();
+    nameAreaReservations.set(owner, reservations);
+  }
+  return reservations;
+}
+
+function getNameAreaContextKey(sessionView) {
+  const dock = sessionView?.dataset.chatDock || "default";
+  const layout = [
+    sessionView?.classList.contains("layout-stacked") ? "stacked" : "side",
+    sessionView?.classList.contains("layout-component-stack") ? "component-stack" : "component-side",
+  ].join(":");
+  return `${dock}:${layout}:${Math.round(window.innerWidth)}:${Math.round(window.innerHeight)}`;
+}
+
+function syncDisplayNameWidth(field) {
+  const display = field?.querySelector("#nameDisplay");
+  const row = display?.closest(".chat-name-display-row");
+  const editButton = row?.querySelector(".chat-name-edit-button");
+  if (!display || !row || !editButton) return;
+
+  const rowRect = rectOf(row);
+  if (!rowRect || rowRect.width <= 0) return;
+
+  const rowStyle = getComputedStyle(row);
+  const horizontalPadding = Number.parseFloat(rowStyle.paddingInlineStart || "0")
+    + Number.parseFloat(rowStyle.paddingInlineEnd || "0");
+  const rowGap = Number.parseFloat(rowStyle.columnGap || rowStyle.gap || "0") || 0;
+  const buttonWidth = editButton.getBoundingClientRect().width || 20;
+  const maxWidth = Math.max(
+    0,
+    Math.floor(rowRect.width - horizontalPadding - 2 * (buttonWidth + rowGap)),
+  );
+  const normalized = `${maxWidth}px`;
+  if (display.style.maxWidth !== normalized) display.style.maxWidth = normalized;
+}
+
+function syncEditingNameInputWidth(field) {
+  const editor = field?.querySelector(".chat-name-editor");
+  const input = field?.querySelector("#nameInput");
+  const display = field?.querySelector("#nameDisplay");
+  const row = input?.closest(".chat-name-edit-row");
+  const confirmButton = row?.querySelector(".chat-name-confirm-button");
+  if (
+    editor?.dataset.editing !== "true"
+    || !input
+    || !display
+    || !row
+    || !confirmButton
+    || !nameMeasureContext
+  ) return;
+
+  const rowRect = rectOf(row);
+  if (!rowRect || rowRect.width <= 0) return;
+
+  const rowStyle = getComputedStyle(row);
+  const horizontalPadding = Number.parseFloat(rowStyle.paddingInlineStart || "0")
+    + Number.parseFloat(rowStyle.paddingInlineEnd || "0");
+  const rowGap = Number.parseFloat(rowStyle.columnGap || rowStyle.gap || "0") || 0;
+  const buttonWidth = confirmButton.getBoundingClientRect().width || 20;
+  const maxWidth = Math.max(
+    0,
+    Math.floor(rowRect.width - horizontalPadding - 2 * (buttonWidth + rowGap)),
+  );
+
+  const displayStyle = getComputedStyle(display);
+  nameMeasureContext.font = displayStyle.font;
+  nameMeasureContext.fontKerning = "normal";
+  const text = input.value || display.textContent || " ";
+  const textWidth = Math.max(24, nameMeasureContext.measureText(text).width);
+  const targetWidth = Math.min(textWidth, maxWidth);
+
+  input.style.width = `${targetWidth.toFixed(2)}px`;
+  input.style.maxWidth = `${maxWidth}px`;
+  input.scrollLeft = textWidth > maxWidth ? input.scrollWidth : 0;
 }
 
 function createAnchorReservation(headerRect, anchorRect) {
@@ -100,10 +206,13 @@ function projectAnchorReservation(reservation, headerRect) {
 }
 
 function isLayoutAnimating(sessionView) {
-  return sessionView.classList.contains("chat-layout-transitioning")
-    || sessionView.classList.contains("chat-dock-handle-switching")
+  return CHAT_LAYOUT_TRANSITION_CLASSES.some((className) => sessionView.classList.contains(className))
     || [...sessionView.querySelectorAll(".chat-collapse-hover-zone.is-transitioning")]
       .some((zone) => getComputedStyle(zone).display !== "none");
+}
+
+function isDockSwitching(sessionView) {
+  return CHAT_DOCK_SWITCH_CLASSES.some((className) => sessionView?.classList.contains(className));
 }
 
 function isHandleLayoutTransitioning(sessionView) {
@@ -142,18 +251,17 @@ function getCollapseAnchorRect(sessionView, headerRect) {
     return headerAnchorRect;
   }
 
-  const anchor = [...sessionView.querySelectorAll(COLLAPSE_ANCHOR_SELECTOR)].find((candidate) => {
-    if (!isDisplayed(candidate)) return false;
-    const rect = rectOf(candidate);
-    return rect.bottom > headerRect.top && rect.top < headerRect.bottom;
-  });
-  const anchorRect = rectOf(anchor);
-  if (anchorRect) {
+  const activeControl = sessionView.classList.contains("chat-collapsed") ? "expand" : "collapse";
+  const activeAnchor = sessionView.querySelector(
+    `.chat-collapse-hover-zone[data-chat-control="${activeControl}"] .chat-collapse-icon-anchor`,
+  );
+  const anchorRect = rectOf(activeAnchor);
+  if (hasLayoutBox(activeAnchor)) {
     collapseAnchorReservations.set(sessionView, createAnchorReservation(headerRect, anchorRect));
     return anchorRect;
   }
 
-  if (isTransitioning && reservation) {
+  if (reservation) {
     return projectAnchorReservation(reservation, headerRect);
   }
   return null;
@@ -179,54 +287,69 @@ function actionControlsRect(actions) {
 function layoutNameField(tools) {
   const field = tools.querySelector(NAME_FIELD_SELECTOR);
   const headerRect = rectOf(tools);
-  if (!field || !headerRect || headerRect.width <= 0 || headerRect.height <= 0) {
-    if (field) clearLayoutValues(field);
+  if (!field) return;
+
+  const sessionView = tools.closest(".session-view");
+  const reservationOwner = sessionView || tools;
+  const reservations = getNameAreaReservations(reservationOwner);
+  const reservationKey = getNameAreaContextKey(sessionView);
+  const previousNameArea = reservations.get(reservationKey);
+  const isAnimating = sessionView && isLayoutAnimating(sessionView);
+  const isSwitchingDock = isDockSwitching(sessionView);
+
+  if (!headerRect || headerRect.width <= 0 || headerRect.height <= 0) {
+    if (previousNameArea) {
+      setLayoutValue(field, "--chat-name-available-left", previousNameArea.left);
+      setLayoutValue(field, "--chat-name-available-width", previousNameArea.width);
+      field.removeAttribute("data-chat-name-layout-pending");
+    } else {
+      clearLayoutValues(field);
+      if (isSwitchingDock) field.setAttribute("data-chat-name-layout-pending", "true");
+      else field.removeAttribute("data-chat-name-layout-pending");
+    }
     return;
   }
 
-  const sessionView = tools.closest(".session-view");
-  const previousNameArea = sessionView ? nameAreaReservations.get(field) : null;
-  const isAnimating = sessionView && isLayoutAnimating(sessionView);
-  const isChatCollapsed = sessionView?.classList.contains("chat-collapsed")
-    || sessionView?.classList.contains("chat-header-collapsed");
-  const arrow = getCollapseAnchorRect(sessionView, headerRect);
-  const collapsedHeaderContextMatches = previousNameArea
+  if (isAnimating && previousNameArea) {
+    setLayoutValue(field, "--chat-name-available-left", previousNameArea.left);
+    setLayoutValue(field, "--chat-name-available-width", previousNameArea.width);
+    return;
+  }
+
+  const sameLayoutContext = previousNameArea
     && previousNameArea.dock === sessionView?.dataset.chatDock
     && Math.abs(headerRect.width - previousNameArea.headerWidth) <= 3
     && Math.abs(window.innerWidth - previousNameArea.viewportWidth) <= 3
     && Math.abs(window.innerHeight - previousNameArea.viewportHeight) <= 3;
-  const keepCollapsedHeaderArea = isChatCollapsed
-    && previousNameArea?.hasHeaderArrow
-    && collapsedHeaderContextMatches;
-  if (previousNameArea && (isAnimating || keepCollapsedHeaderArea)) {
-    const reservedNameArea = previousNameArea;
-    setLayoutValue(field, "--chat-name-available-left", reservedNameArea.left);
-    setLayoutValue(field, "--chat-name-available-width", reservedNameArea.width);
+
+  if (sameLayoutContext) {
+    // Conserva la posición entre aperturas mientras los límites disponibles
+    // tengan el mismo tamaño, aunque la flecha o los controles cambien de estado.
+    setLayoutValue(field, "--chat-name-available-left", previousNameArea.left);
+    setLayoutValue(field, "--chat-name-available-width", previousNameArea.width);
+    field.removeAttribute("data-chat-name-layout-pending");
     return;
   }
 
   const headerStyle = getComputedStyle(tools);
   const edgeGap = Math.max(0, Number.parseFloat(headerStyle.columnGap) || 0);
   const borderLeft = Number.parseFloat(headerStyle.borderLeftWidth) || 0;
-  let availableStart = headerRect.left + borderLeft + (Number.parseFloat(headerStyle.paddingLeft) || 0);
-  let availableEnd = headerRect.right - (Number.parseFloat(headerStyle.borderRightWidth) || 0)
-    - (Number.parseFloat(headerStyle.paddingRight) || 0);
-
+  const borderRight = Number.parseFloat(headerStyle.borderRightWidth) || 0;
+  const paddingLeft = Number.parseFloat(headerStyle.paddingLeft) || 0;
+  const paddingRight = Number.parseFloat(headerStyle.paddingRight) || 0;
+  const arrow = getCollapseAnchorRect(sessionView, headerRect);
   const presence = tools.querySelector(".presence-pill");
-  if (isDisplayed(presence)) {
-    const rect = rectOf(presence);
-    if (rect.bottom > headerRect.top && rect.top < headerRect.bottom) {
-      availableStart = Math.max(availableStart, rect.right + edgeGap);
-    }
+  const presenceRect = isDisplayed(presence) ? rectOf(presence) : null;
+  const actionsRect = actionControlsRect(tools.querySelector(".chat-tools-actions"));
+  let availableStart = headerRect.left + borderLeft + paddingLeft;
+  let availableEnd = headerRect.right - borderRight - paddingRight;
+
+  if (presenceRect && presenceRect.bottom > headerRect.top && presenceRect.top < headerRect.bottom) {
+    availableStart = Math.max(availableStart, presenceRect.right + edgeGap);
   }
 
-  const actions = tools.querySelector(".chat-tools-actions");
-  const actionsRect = actionControlsRect(actions);
-  if (actionsRect) {
-    const rect = actionsRect;
-    if (rect.bottom > headerRect.top && rect.top < headerRect.bottom) {
-      availableEnd = Math.min(availableEnd, rect.left - edgeGap);
-    }
+  if (actionsRect && actionsRect.bottom > headerRect.top && actionsRect.top < headerRect.bottom) {
+    availableEnd = Math.min(availableEnd, actionsRect.left - edgeGap);
   }
 
   if (arrow) {
@@ -250,20 +373,29 @@ function layoutNameField(tools) {
     left: availableStart - containingBlockLeft,
     width: availableEnd - availableStart,
     headerWidth: headerRect.width,
-    hasHeaderArrow: Boolean(arrow),
     viewportWidth: window.innerWidth,
     viewportHeight: window.innerHeight,
     dock: sessionView?.dataset.chatDock,
   };
   setLayoutValue(field, "--chat-name-available-left", nameArea.left);
   setLayoutValue(field, "--chat-name-available-width", nameArea.width);
-  if (sessionView && !isAnimating) {
-    nameAreaReservations.set(field, nameArea);
+  // La reserva es por dock y variante de layout: al alternar entre vistas
+  // conocidas se reutiliza su geometría y no se recalcula al volver a abrir.
+  reservations.set(reservationKey, nameArea);
+  if (isAnimating && isSwitchingDock && !previousNameArea) {
+    field.setAttribute("data-chat-name-layout-pending", "true");
+  } else if (!isAnimating) {
+    field.removeAttribute("data-chat-name-layout-pending");
   }
 }
 
 function layoutAllNameFields() {
-  document.querySelectorAll(CHAT_TOOLS_SELECTOR).forEach(layoutNameField);
+  document.querySelectorAll(CHAT_TOOLS_SELECTOR).forEach((tools) => {
+    const field = tools.querySelector(NAME_FIELD_SELECTOR);
+    layoutNameField(tools);
+    syncDisplayNameWidth(field);
+    syncEditingNameInputWidth(field);
+  });
 }
 
 function scheduleLayout() {
@@ -336,23 +468,17 @@ function refreshObservedElements() {
   observeAttributes(document.body, ["class"]);
 }
 
-function trackHandleTransition(event) {
-  if (!(event.target instanceof Element) || !event.target.closest(".chat-collapse-hover-zone")) return;
-  if (transitionFrame) return;
-
-  const tick = () => {
-    layoutAllNameFields();
-    const movingHandles = [...document.querySelectorAll(".chat-collapse-hover-zone")]
-      .some((handle) => handle.getAnimations({ subtree: true }).some((animation) => animation.playState === "running"));
-    transitionFrame = movingHandles ? requestAnimationFrame(tick) : 0;
-  };
-  transitionFrame = requestAnimationFrame(tick);
-}
-
 function wireChatNameLayout() {
   refreshObservedElements();
   domObserver.observe(document.body, { childList: true, subtree: true });
-  document.addEventListener("transitionrun", trackHandleTransition, true);
+  document.addEventListener("focusin", (event) => {
+    if (!(event.target instanceof Element) || !event.target.matches("#nameInput")) return;
+    syncEditingNameInputWidth(event.target.closest(NAME_FIELD_SELECTOR));
+  });
+  document.addEventListener("input", (event) => {
+    if (!(event.target instanceof Element) || !event.target.matches("#nameInput")) return;
+    syncEditingNameInputWidth(event.target.closest(NAME_FIELD_SELECTOR));
+  });
   document.addEventListener("transitionend", scheduleLayout, true);
   document.addEventListener("transitioncancel", scheduleLayout, true);
   window.addEventListener("chat-layout-settled", scheduleLayout);

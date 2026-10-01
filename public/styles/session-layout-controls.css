@@ -40,6 +40,16 @@
   grid-template-columns: auto minmax(0, 1fr) 140px;
 }
 
+/* El modo apilado agrega un píxel vertical arriba y abajo al header. Mantener
+   esa misma separación mientras la página conserva su gutter evita que el
+   cambio de proporción del reproductor compacte el chat antes de tiempo. */
+@media (min-width: 681px) {
+  .session-view:not(.layout-stacked)[data-chat-dock="bottom"] .chat-tools {
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+}
+
 .session-view:not(.layout-stacked)[data-chat-dock="bottom"] .chat-tools > * {
   transform: none;
 }
@@ -49,6 +59,13 @@
   top: 50%;
   right: 8px;
   transform: translateY(-50%);
+}
+
+/* El SVG de 24px queda centrado dentro del botón de 36px y suma 6px vacíos
+   junto al borde derecho. Alinear el icono al final elimina ese espacio sin
+   reducir el área clickeable del control. */
+.session-view[data-chat-dock="bottom"] #dockChatButton {
+  justify-content: flex-end;
 }
 
 .session-view:not(.layout-stacked)[data-chat-dock="bottom"] .chat-name-edit-row {

@@ -1,4 +1,4 @@
-import { syncComponentStackChatHandle } from "./component-stack-controls.js?v=20260928-chat-aspect-layout-01";
+import { syncComponentStackChatHandle } from "./component-stack-controls.js?v=20260930-header-visual-center-offset-02";
 import { syncComponentStackShellInsets } from "./component-stack-insets.js?v=20260929-edge-to-edge-stack-inset-01";
 
 const sessionView = document.querySelector("#sessionView");
@@ -14,6 +14,30 @@ const DEFAULT_VIDEO_ASPECT_RATIO = 16 / 9;
 let pendingFrame = 0;
 let expandedChatTransitionPending = false;
 let pendingScrollTarget = "";
+let measuringExpandedTarget = false;
+
+function capturePageScrollPosition() {
+  const isFullscreen = Boolean(document.fullscreenElement)
+    || document.body.classList.contains("fullscreen-mode");
+  const container = isFullscreen ? appShell : null;
+  return {
+    container,
+    top: container ? container.scrollTop : window.scrollY,
+  };
+}
+
+function restorePageScrollPosition(position) {
+  if (!position) return;
+
+  const currentTop = position.container ? position.container.scrollTop : window.scrollY;
+  if (Math.abs(currentTop - position.top) < 1) return;
+
+  if (position.container) {
+    position.container.scrollTop = position.top;
+  } else {
+    window.scrollTo({ top: position.top, behavior: "instant" });
+  }
+}
 
 function getVideoAspectRatio() {
   if (videoPlayer?.videoWidth > 0 && videoPlayer.videoHeight > 0) {
@@ -34,12 +58,26 @@ function needsFullPanelLayout() {
     || !playerFrame
     || !chatArea
     || sessionView.dataset.chatDock !== "bottom"
-    || sessionView.classList.contains("chat-collapsed")
   ) return false;
 
+  const wasCollapsed = sessionView.classList.contains("chat-collapsed");
   const wasExpanded = sessionView.classList.contains(FULL_PANEL_LAYOUT_CLASS);
+  const preservedScrollPosition = wasCollapsed || wasExpanded
+    ? capturePageScrollPosition()
+    : null;
+  const shouldSuppressTransitions = wasCollapsed || wasExpanded;
+  if (shouldSuppressTransitions) {
+    sessionView.classList.add("component-layout-measuring");
+    // Aplicar la regla antes de tocar el layout: si el navegador anima el
+    // estado temporal, el reproductor parpadea con su tamaño completo.
+    void getComputedStyle(sessionView).transitionProperty;
+  }
+  if (wasCollapsed) measuringExpandedTarget = true;
   if (wasExpanded) sessionView.classList.remove(FULL_PANEL_LAYOUT_CLASS);
+  if (wasCollapsed) sessionView.classList.remove("chat-collapsed");
 
+  // Medir la geometría que tendrá el dock al expandirse evita que el chat
+  // abra primero con las filas compactas y cambie de layout al terminar.
   const videoRect = playerFrame.getBoundingClientRect();
   const chatRect = chatArea.getBoundingClientRect();
   const requiredVideoHeight = videoRect.width / getVideoAspectRatio();
@@ -51,7 +89,19 @@ function needsFullPanelLayout() {
     && videoRect.height < requiredVideoHeight,
   );
 
+  if (wasCollapsed) {
+    sessionView.classList.add("chat-collapsed");
+    // The temporary state is synchronous. Let its class mutations reach the
+    // observer before allowing it to react to real expand/collapse actions.
+    queueMicrotask(() => {
+      measuringExpandedTarget = false;
+    });
+  }
   if (wasExpanded) sessionView.classList.add(FULL_PANEL_LAYOUT_CLASS);
+  restorePageScrollPosition(preservedScrollPosition);
+  if (shouldSuppressTransitions) {
+    sessionView.classList.remove("component-layout-measuring");
+  }
   return shouldExpand;
 }
 
@@ -80,8 +130,15 @@ function measureComponentLayout() {
   pendingFrame = 0;
   syncComponentStackShellInsets(appShell, sessionView, workspace);
   const wasStacked = sessionView?.classList.contains(FULL_PANEL_LAYOUT_CLASS);
-  const shouldStack = needsFullPanelLayout();
-  if (shouldStack && !wasStacked && !pendingScrollTarget) {
+  const shouldStack = sessionView?.classList.contains("chat-layout-transitioning")
+    ? Boolean(wasStacked)
+    : needsFullPanelLayout();
+  if (
+    shouldStack
+    && !wasStacked
+    && !sessionView.classList.contains("chat-collapsed")
+    && !pendingScrollTarget
+  ) {
     pendingScrollTarget = "center-video";
   }
 
@@ -104,7 +161,10 @@ function measureComponentLayout() {
     const isCollapsed = sessionView.classList.contains("chat-collapsed");
     const isStacked = sessionView.classList.contains(FULL_PANEL_LAYOUT_CLASS);
     if (scrollTarget === "reveal-chat" && isStacked && !isCollapsed) {
-      chatArea.scrollIntoView({ block: "start", inline: "nearest", behavior: "auto" });
+      const chatTop = chatArea.getBoundingClientRect().top;
+      if (Math.abs(chatTop) > 1) {
+        chatArea.scrollIntoView({ block: "start", inline: "nearest", behavior: "auto" });
+      }
     } else if (scrollTarget === "center-video" && (isStacked || isCollapsed)) {
       videoArea.scrollIntoView({ block: "center", inline: "nearest", behavior: "auto" });
     }
@@ -133,6 +193,8 @@ if (sessionView && workspace && videoPlayer && playerFrame && chatArea) {
   });
 
   const layoutStateObserver = new MutationObserver((records) => {
+    if (measuringExpandedTarget) return;
+
     const currentClasses = new Set(sessionView.className.split(/\s+/));
     let shouldMeasure = false;
     let shouldReveal = false;

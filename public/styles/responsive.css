@@ -1,5 +1,5 @@
 @import url("./session-fit-layout.css?v=20260928-full-viewport-panels-03");
-@import url("./session-layout-controls.css?v=20260930-chat-name-check-spacing-01");
+@import url("./session-layout-controls.css?v=20260930-chat-name-check-spacing-01-chat-header-icon-end-align-02-chat-header-gutter-spacing-01");
 
 @media (max-width: 1100px) {
   .session-toolbar {

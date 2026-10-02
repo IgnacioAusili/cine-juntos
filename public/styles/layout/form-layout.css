@@ -7,6 +7,7 @@
 }
 
 .chat-tools {
+  --chat-tools-inline-gutter: 8px;
   position: relative;
   z-index: 1;
   display: grid;
@@ -14,7 +15,7 @@
   gap: 6px;
   grid-template-columns: auto minmax(0, 1fr) auto;
   width: 100%;
-  padding: 2px 8px;
+  padding: 2px var(--chat-tools-inline-gutter);
 }
 
 /* Aisla el layout del header del reflow del panel durante la animacion
@@ -36,6 +37,9 @@
 }
 
 .chat-tools-actions {
+  /* El nombre del chat se posiciona de forma absoluta para centrarlo; por eso
+     no ocupa la columna intermedia y hay que reservar explícitamente la final. */
+  grid-column: 3;
   display: inline-flex;
   min-width: 0;
   align-items: center;
@@ -84,6 +88,10 @@
   overflow: hidden;
   align-items: center;
   gap: 6px;
+  transition:
+    opacity 180ms ease,
+    clip-path 180ms ease,
+    visibility 0s linear;
 }
 
 .chat-name-display-row {
@@ -172,7 +180,7 @@
   box-shadow: none;
   color: var(--text);
   transform: none;
-  transition: color 140ms ease, filter 140ms ease;
+  transition: color 140ms ease, filter 180ms ease;
 }
 
 .chat-name-edit-button:disabled {
@@ -228,13 +236,17 @@
   color: var(--danger);
 }
 
-.chat-name-edit-button:not(:disabled):hover,
-.chat-name-edit-button:not(:disabled):focus-visible,
-.chat-name-edit-button:not(:disabled).is-touch-hover,
 .chat-name-confirm-button:hover,
 .chat-name-confirm-button:focus-visible,
 .chat-name-confirm-button.is-touch-hover {
   filter: brightness(1.18);
+}
+
+.chat-name-edit-button:not(:disabled):hover,
+.chat-name-edit-button:not(:disabled):focus-visible,
+.chat-name-edit-button:not(:disabled).is-touch-hover {
+  color: #ffffff;
+  filter: brightness(1.08) drop-shadow(0 0 3px rgba(255, 255, 255, 0.82));
 }
 
 @media (hover: none) {
@@ -249,6 +261,12 @@
   .chat-name-confirm-button.is-touch-hover:hover {
     filter: brightness(1.18);
   }
+
+  .chat-name-edit-button:not(:disabled).is-touch-hover,
+  .chat-name-edit-button:not(:disabled).is-touch-hover:hover {
+    color: #ffffff;
+    filter: brightness(1.08) drop-shadow(0 0 3px rgba(255, 255, 255, 0.82));
+  }
 }
 
 .chat-name-edit-button svg,
@@ -260,6 +278,48 @@
 .chat-name-confirm-button svg {
   width: 16px;
   height: 16px;
+}
+
+@keyframes chat-name-confirm-check-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.7) rotate(-22deg);
+  }
+
+  72% {
+    opacity: 1;
+    transform: scale(1.12) rotate(3deg);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+
+@keyframes chat-name-confirm-invalid-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.7) rotate(22deg);
+  }
+
+  72% {
+    opacity: 1;
+    transform: scale(1.12) rotate(-3deg);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+
+.chat-name-editor[data-editing="true"] .chat-name-confirm-button.is-valid svg {
+  animation: chat-name-confirm-check-appear 240ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.chat-name-editor[data-editing="true"] .chat-name-confirm-button.is-invalid svg {
+  animation: chat-name-confirm-invalid-appear 240ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
 .chat-name-editor[data-editing="true"] .chat-name-display-row {
@@ -276,6 +336,27 @@
   clip-path: inset(0 0 0 0);
   translate: none;
   transition-delay: 0s;
+}
+
+.chat-name-editor:not([data-editing="true"]) .chat-name-edit-row,
+.chat-name-editor[data-editing="true"] .chat-name-display-row {
+  transition-delay: 0s, 0s, 180ms;
+}
+
+.chat-name-editor[data-editing="true"] .chat-name-edit-row,
+.chat-name-editor:not([data-editing="true"]) .chat-name-display-row {
+  transition-delay: 0s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-name-display-row,
+  .chat-name-edit-row {
+    transition: none;
+  }
+
+  .chat-name-confirm-button svg {
+    animation: none !important;
+  }
 }
 
 @keyframes chat-name-commit-reveal {

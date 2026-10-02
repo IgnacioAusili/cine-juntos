@@ -57,15 +57,8 @@
 .session-view:not(.layout-stacked)[data-chat-dock="bottom"] .chat-tools-actions {
   position: absolute;
   top: 50%;
-  right: 8px;
+  right: var(--chat-tools-inline-gutter, 8px);
   transform: translateY(-50%);
-}
-
-/* El SVG de 24px queda centrado dentro del botón de 36px y suma 6px vacíos
-   junto al borde derecho. Alinear el icono al final elimina ese espacio sin
-   reducir el área clickeable del control. */
-.session-view[data-chat-dock="bottom"] #dockChatButton {
-  justify-content: flex-end;
 }
 
 .session-view:not(.layout-stacked)[data-chat-dock="bottom"] .chat-name-edit-row {
@@ -81,7 +74,6 @@
 }
 
 .session-view:not(.layout-stacked)[data-chat-dock="bottom"] .chat-name-field,
-.session-view:not(.layout-stacked)[data-chat-dock="bottom"] .chat-name-edit-row,
 .session-view:not(.layout-stacked)[data-chat-dock="bottom"] .chat-name-edit-row input[type="text"],
 .session-view:not(.layout-stacked)[data-chat-dock="bottom"] .chat-name-edit-row input[type="search"],
 .session-view:not(.layout-stacked)[data-chat-dock="bottom"] .chat-name-confirm-button {

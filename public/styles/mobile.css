@@ -947,7 +947,8 @@
 
   body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-tools {
     gap: 4px;
-    padding-inline: 4px;
+    --chat-tools-inline-gutter: 4px;
+    padding-inline: var(--chat-tools-inline-gutter);
   }
 
   body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-tools-actions {

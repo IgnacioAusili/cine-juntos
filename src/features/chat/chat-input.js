@@ -17,20 +17,20 @@ import { createRandomId } from "../../core/random-id.js?v=20260902-mobile-real-b
 import {
   setSyncStatus,
 } from "../session-ui.js?v=20260911-orientation-scroll-anchor-01";
-import { refreshTooltipForTarget } from "../icons-tooltips.js?v=20260914-tooltip-single-path-01";
-import { markParticipantActive } from "../presence.js?v=20260912-name-session-01";
-import { clearReplyTarget } from "./chat-reply.js?v=20260930-system-row-fixed-center-01";
-import { renderMessage } from "./chat-render.js?v=20261001-bottom-chat-expand-02";
+import { refreshTooltipForTarget } from "../icons-tooltips.js?v=20260914-tooltip-single-path-01-tooltip-focus-restore-skip-01";
+import { markParticipantActive } from "../presence.js?v=20260912-name-session-01-tooltip-focus-restore-skip-01";
+import { clearReplyTarget } from "./chat-reply.js?v=20260930-system-row-fixed-center-01-tooltip-focus-restore-skip-01";
+import { renderMessage } from "./chat-render.js?v=20261001-bottom-chat-expand-02-tooltip-focus-restore-skip-01";
 import {
   completeAutoOpenedChatResponse,
-} from "./chat-layout.js?v=20260930-chat-accessibility-focus-01-single-phase-bottom-expand-02";
-import { queuePinnedChatScrollSync, isPinnedToBottom } from "./chat-scroll-sync.js?v=20261001-bottom-chat-expand-02";
+} from "./chat-layout.js?v=20260930-chat-accessibility-focus-01-single-phase-bottom-expand-02-tooltip-focus-restore-skip-01";
+import { queuePinnedChatScrollSync, isPinnedToBottom } from "./chat-scroll-sync.js?v=20261001-bottom-chat-expand-02-tooltip-focus-restore-skip-01";
 import { focusChatInput } from "./chat-input-focus.js";
 import {
   compressImageBase64,
   renderImagePreview,
   clearPendingImage,
-} from "./image-compress.js?v=20261001-bottom-chat-expand-02";
+} from "./image-compress.js?v=20261001-bottom-chat-expand-02-tooltip-focus-restore-skip-01";
 
 const floatingComposerObservers = new WeakMap();
 const scrollbarDragState = new WeakMap();

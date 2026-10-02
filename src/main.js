@@ -15,7 +15,7 @@ import {
   hydrateIcons,
   initializeUi,
   setConnection,
-} from "./features/icons-tooltips.js?v=20260914-tooltip-single-path-01";
+} from "./features/icons-tooltips.js?v=20260914-tooltip-single-path-01-tooltip-focus-restore-skip-01";
 import {
   wireLayoutMetrics,
 } from "./features/layout-metrics.js?v=20261001-bottom-chat-focus-arrow-visible-01";
@@ -24,7 +24,7 @@ import { wireAboutDialogScrollbar } from "./features/about-dialog-scrollbar.js?v
 import {
   renderPresence,
   wireIdentityEvents,
-} from "./features/presence.js?v=20260913-name-confirm-icon-01";
+} from "./features/presence.js?v=20260913-name-confirm-icon-01-tooltip-focus-restore-skip-01";
 import {
   showLobby,
   initializeAboutDialog,
@@ -40,20 +40,20 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js?v=20260930-emoji-picker-dismiss-on-scroll-01-pending-image-lightbox-01-system-row-fixed-center-02-bottom-chat-expand-02";
+} from "./features/chat/index.js?v=20260930-emoji-picker-dismiss-on-scroll-01-pending-image-lightbox-01-system-row-fixed-center-02-bottom-chat-expand-02-tooltip-focus-restore-skip-01";
 import {
   initializePlayer,
   wirePlayerEvents,
-} from "./features/player/index.js?v=20260930-chat-accessibility-focus-01-pending-image-lightbox-01-preview-size-center-01-overlay-image-size-01-bottom-chat-expand-02";
+} from "./features/player/index.js?v=20260930-chat-accessibility-focus-01-pending-image-lightbox-01-preview-size-center-01-overlay-image-size-01-bottom-chat-expand-02-tooltip-focus-restore-skip-01-presence-svg-remove-scale-01";
 import { wireMobileFullscreenOrientation } from "./features/player/mobile-fullscreen-orientation.js";
 import { wireMobileChatKeyboardControls } from "./features/player/mobile-chat-keyboard-controls.js?v=20260914-keyboard-player-controls-01";
-import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20260913-name-editor-keyboard-header-02";
+import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20260913-name-editor-keyboard-header-02-tooltip-focus-restore-skip-01";
 import { wireMobileLandscapeVideoSnap } from "./features/mobile-landscape-video-snap.js?v=20260910-mobile-portrait-no-snap-01";
-import { joinRoom, wireRoomEvents } from "./features/room.js?v=20261001-bottom-chat-expand-03";
+import { joinRoom, wireRoomEvents } from "./features/room.js?v=20261001-bottom-chat-expand-03-tooltip-focus-restore-skip-01-presence-svg-remove-scale-01";
 import { wireTouchHover } from "./core/touch-interactions.js?v=20260829-touch-hold-fix-01";
 import { installConsoleLogCapture, wireMobileDebugTools } from "./features/mobile-debug.js?v=20260917-dialog-test-routes-01";
 import { wireMobileKeyboardDiagnostics } from "./features/mobile-keyboard-diagnostics.js?v=20260911-ios-landscape-keyboard-diagnostics-01";
-import { openDialogTestRoute } from "./features/dialog-test-routes.js?v=20261001-bottom-chat-expand-02";
+import { openDialogTestRoute } from "./features/dialog-test-routes.js?v=20261001-bottom-chat-expand-02-tooltip-focus-restore-skip-01-presence-svg-remove-scale-01";
 import { wireLobbyLayoutVariants } from "./features/lobby-layout-variants.js?v=20260929-lobby-layout-resize-reflow-01";
 
 const requestedRoom = normalizeRoomCode(new URLSearchParams(window.location.search).get("room") || "");

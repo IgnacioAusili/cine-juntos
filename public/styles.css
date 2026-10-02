@@ -1,18 +1,18 @@
 @import url("./styles/tokens.css?v=20260927-chat-collapse-handle-general-03");
 @import url("./styles/base.css?v=20260928-session-page-background-01");
-@import url("./styles/layout.css?v=20260929-bottom-collapse-clip-01");
-@import url("./styles/components.css?v=20260927-chat-collapse-handle-general-02");
+@import url("./styles/layout.css?v=20260929-bottom-collapse-clip-01-chat-tools-shared-gutter-01-chat-actions-grid-end-01-name-editor-crossfade-01");
+@import url("./styles/components.css?v=20260927-chat-collapse-handle-general-02-dock-button-active-excluded-01-all-buttons-active-stationary-01-dock-button-width-matches-icon-01-presence-pill-padding-00-dock-button-hover-circle-01-presence-pill-people-icon-00-dock-hover-no-background-01-presence-dot-corner-size-01-presence-icon-size-18-presence-icon-taller-dot-07-presence-icon-height-22-presence-icon-height-26-presence-svg-remove-scale-01");
 @import url("./styles/lobby.css?v=20260926-lobby-ticket-visual-fit-01");
 @import url("./styles/player.css?v=20260927-video-status-text-offset-01");
 @import url("./styles/chat.css?v=20260930-system-row-fixed-center-01-pending-image-lightbox-01-preview-size-center-01-hidden-scrollbar-02");
 @import url("./styles/chat-overlay.css?v=20260930-system-row-fixed-center-01-overlay-media-alignment-02-message-time-color-01-overlay-image-size-01");
 @import url("./styles/chat/image-lightbox.css?v=20260915-image-lightbox-cursor-01-pending-image-lightbox-01");
 @import url("./styles/states.css?v=20260928-panel-fit-chat-snap-01");
-@import url("./styles/responsive.css?v=20260930-chat-name-check-spacing-01-chat-header-icon-end-align-02-chat-header-gutter-spacing-01");
+@import url("./styles/responsive.css?v=20260930-chat-name-check-spacing-01-chat-header-icon-end-align-02-chat-header-gutter-spacing-01-dock-hover-icon-centered-02-chat-tools-shared-gutter-02-dock-button-width-matches-icon-01-name-editor-crossfade-01");
 @import url("./styles/mini-player.css?v=20260905-overlay-height-cap-03");
-@import url("./styles/mobile.css?v=20260928-dynamic-chat-name-01");
-  @import url("./styles/mobile-landscape.css?v=20260928-dynamic-chat-name-01");
-  @import url("./styles/mobile-landscape-chat.css?v=20260913-chat-arrow-fixed-02");
+@import url("./styles/mobile.css?v=20260928-dynamic-chat-name-01-chat-tools-shared-gutter-01");
+  @import url("./styles/mobile-landscape.css?v=20260928-dynamic-chat-name-01-chat-tools-shared-gutter-01");
+  @import url("./styles/mobile-landscape-chat.css?v=20260913-chat-arrow-fixed-02-dynamic-name-center-01");
 @import url("./styles/mobile-fullscreen-viewport.css?v=20260927-chat-header-collapse-fit-01");
 @import url("./styles/mini-player-adjustments.css?v=20260905-overlay-height-cap-03");
 @import url("./styles/player-controls-layout.css?v=20260902-player-controls-layout-17");
@@ -76,6 +76,25 @@
 .chat-name-field .chat-name-edit-row #nameInput {
   grid-column: 2;
   justify-self: center;
+}
+
+/* En el dock lateral, el lápiz integra el control visible del nombre. */
+.session-view[data-chat-dock="right"] .chat-name-field .chat-name-display-row {
+  display: flex !important;
+  justify-content: center;
+  gap: var(--chat-name-control-gap);
+}
+
+.session-view[data-chat-dock="right"] .chat-name-field .chat-name-display {
+  grid-column: auto;
+  justify-self: auto;
+  flex: 0 1 auto;
+  width: auto;
+}
+
+.session-view[data-chat-dock="right"] .chat-name-field .chat-name-edit-button {
+  grid-column: auto;
+  justify-self: auto;
 }
 
 /* En un cambio a un dock aún no medido, ocultarlo hasta guardar la geometría

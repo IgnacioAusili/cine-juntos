@@ -97,9 +97,13 @@ function syncDisplayNameWidth(field) {
     + Number.parseFloat(rowStyle.paddingInlineEnd || "0");
   const rowGap = Number.parseFloat(rowStyle.columnGap || rowStyle.gap || "0") || 0;
   const buttonWidth = editButton.getBoundingClientRect().width || 20;
+  const isRightDock = row.closest(".session-view")?.dataset.chatDock === "right";
+  // En el dock lateral se centra el conjunto; en el inferior el grid deja
+  // espacio simétrico alrededor del nombre y mantiene la reserva en ambos lados.
+  const reservedControlSides = isRightDock ? 1 : 2;
   const maxWidth = Math.max(
     0,
-    Math.floor(rowRect.width - horizontalPadding - 2 * (buttonWidth + rowGap)),
+    Math.floor(rowRect.width - horizontalPadding - reservedControlSides * (buttonWidth + rowGap)),
   );
   const normalized = `${maxWidth}px`;
   if (display.style.maxWidth !== normalized) display.style.maxWidth = normalized;
@@ -136,7 +140,9 @@ function syncEditingNameInputWidth(field) {
   const displayStyle = getComputedStyle(display);
   nameMeasureContext.font = displayStyle.font;
   nameMeasureContext.fontKerning = "normal";
-  const text = input.value || display.textContent || " ";
+  // Mientras se edita, el nombre guardado no debe volver a ensanchar un input
+  // que el usuario acaba de vaciar; el espacio mínimo lo cubre el fallback.
+  const text = input.value || " ";
   const textWidth = Math.max(24, nameMeasureContext.measureText(text).width);
   const targetWidth = Math.min(textWidth, maxWidth);
 
@@ -316,21 +322,8 @@ function layoutNameField(tools) {
     return;
   }
 
-  const sameLayoutContext = previousNameArea
-    && previousNameArea.dock === sessionView?.dataset.chatDock
-    && Math.abs(headerRect.width - previousNameArea.headerWidth) <= 3
-    && Math.abs(window.innerWidth - previousNameArea.viewportWidth) <= 3
-    && Math.abs(window.innerHeight - previousNameArea.viewportHeight) <= 3;
-
-  if (sameLayoutContext) {
-    // Conserva la posición entre aperturas mientras los límites disponibles
-    // tengan el mismo tamaño, aunque la flecha o los controles cambien de estado.
-    setLayoutValue(field, "--chat-name-available-left", previousNameArea.left);
-    setLayoutValue(field, "--chat-name-available-width", previousNameArea.width);
-    field.removeAttribute("data-chat-name-layout-pending");
-    return;
-  }
-
+  // El tamaño del header puede estabilizarse antes que la posición real de
+  // presencia y acciones. Fuera de una animación, vuelve a medir ambos bordes.
   const headerStyle = getComputedStyle(tools);
   const edgeGap = Math.max(0, Number.parseFloat(headerStyle.columnGap) || 0);
   const borderLeft = Number.parseFloat(headerStyle.borderLeftWidth) || 0;
@@ -352,7 +345,13 @@ function layoutNameField(tools) {
     availableEnd = Math.min(availableEnd, actionsRect.left - edgeGap);
   }
 
-  if (arrow) {
+  if (
+    arrow
+    && arrow.bottom > headerRect.top
+    && arrow.top < headerRect.bottom
+  ) {
+    // En el dock lateral la flecha queda a media altura del panel, fuera de
+    // esta fila; solo reserva espacio si realmente cruza el header.
     const arrowRect = arrow;
     if (arrowRect.right > availableStart && arrowRect.left < availableEnd) {
       const leftEnd = Math.min(availableEnd, arrowRect.left - edgeGap);
@@ -372,10 +371,6 @@ function layoutNameField(tools) {
   const nameArea = {
     left: availableStart - containingBlockLeft,
     width: availableEnd - availableStart,
-    headerWidth: headerRect.width,
-    viewportWidth: window.innerWidth,
-    viewportHeight: window.innerHeight,
-    dock: sessionView?.dataset.chatDock,
   };
   setLayoutValue(field, "--chat-name-available-left", nameArea.left);
   setLayoutValue(field, "--chat-name-available-width", nameArea.width);

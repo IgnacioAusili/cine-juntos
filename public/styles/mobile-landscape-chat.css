@@ -5,16 +5,15 @@
   html.viewport-landscape body:not(.is-lobby)
     .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
     .chat-collapse-hover-zone {
-    /* La fila del header mide 38px: el control queda centrado en su mitad,
-       no sobre la unión superior entre video y chat. */
-    top: calc(38px / 2);
-    transform: translate(-50%, calc(-50% + 2px));
+    /* Sigue el centro medido de la fila activa del nombre, incluso al editar. */
+    top: var(--chat-bottom-dock-handle-top, 0px);
+    transform: translate(-50%, -50%);
   }
 
   html.viewport-landscape body.fullscreen-mode
     .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
     .chat-collapse-hover-zone[data-chat-control="collapse"] {
-    top: calc(38px / 2);
-    transform: translate(-50%, calc(-50% + 2px));
+    top: var(--chat-bottom-dock-handle-top, 0px);
+    transform: translate(-50%, -50%);
   }
 }

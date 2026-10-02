@@ -13,9 +13,9 @@ import {
   updateCharCounter,
   wireFloatingComposerLayout,
   wireComposerScrollbar,
-} from "./chat-input.js?v=20260930-chat-accessibility-focus-01-pending-image-lightbox-01-system-row-fixed-center-02-bottom-chat-expand-02";
-import { setReplyTarget } from "./chat-reply.js?v=20260930-system-row-fixed-center-01";
-import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20261001-bottom-chat-expand-02";
+} from "./chat-input.js?v=20260930-chat-accessibility-focus-01-pending-image-lightbox-01-system-row-fixed-center-02-bottom-chat-expand-02-tooltip-focus-restore-skip-01";
+import { setReplyTarget } from "./chat-reply.js?v=20260930-system-row-fixed-center-01-tooltip-focus-restore-skip-01";
+import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20261001-bottom-chat-expand-02-tooltip-focus-restore-skip-01";
 import {
   copyMessageText,
   hideMessageMenu,
@@ -33,10 +33,10 @@ import {
   syncExternalChatCollapseHandleOffset,
   syncChatAutoExpandControls,
   wireResponsiveSessionLayout,
-} from "./chat-layout.js?v=20260930-chat-accessibility-focus-01-single-phase-bottom-expand-02";
+} from "./chat-layout.js?v=20260930-chat-accessibility-focus-01-single-phase-bottom-expand-02-tooltip-focus-restore-skip-01";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 import { focusChatInput } from "./chat-input-focus.js";
-import { hideTooltip } from "../icons-tooltips.js?v=20260914-tooltip-single-path-01";
+import { hideTooltip } from "../icons-tooltips.js?v=20260914-tooltip-single-path-01-tooltip-focus-restore-skip-01";
 
 const MOBILE_CHAT_LAYOUT_QUERY = "(max-width: 980px)";
 const COLLAPSE_HOVER_RESET_CLASS = "chat-collapse-hover-reset";
@@ -231,24 +231,24 @@ export {
   buildEmojiPicker,
   updateCharCounter,
   sendMessage,
-} from "./chat-input.js?v=20260930-chat-accessibility-focus-01-pending-image-lightbox-01-system-row-fixed-center-02-bottom-chat-expand-02";
+} from "./chat-input.js?v=20260930-chat-accessibility-focus-01-pending-image-lightbox-01-system-row-fixed-center-02-bottom-chat-expand-02-tooltip-focus-restore-skip-01";
 export {
   beginSystemMessageHydration,
   finishSystemMessageHydration,
   renderMessage,
-} from "./chat-render.js?v=20261001-bottom-chat-expand-02";
+} from "./chat-render.js?v=20261001-bottom-chat-expand-02-tooltip-focus-restore-skip-01";
 export {
   clearReplyTarget,
   renderReplyPreview,
   scrollToMessage,
   setReplyTarget,
-} from "./chat-reply.js?v=20260930-system-row-fixed-center-01";
-export { sendVideoEventMessage } from "./chat-system-messages.js?v=20261001-bottom-chat-expand-02";
+} from "./chat-reply.js?v=20260930-system-row-fixed-center-01-tooltip-focus-restore-skip-01";
+export { sendVideoEventMessage } from "./chat-system-messages.js?v=20261001-bottom-chat-expand-02-tooltip-focus-restore-skip-01";
 export {
   checkScrollPosition,
   resetInsideUnread,
   resetPageUnread,
-} from "./unread-counters.js?v=20261001-bottom-chat-expand-02";
+} from "./unread-counters.js?v=20261001-bottom-chat-expand-02-tooltip-focus-restore-skip-01";
 export {
   copyMessageText,
   hideMessageMenu,
@@ -266,7 +266,7 @@ export {
   setInsideChatVisible,
   syncChatAutoExpandControls,
   updateCollapseButton,
-} from "./chat-layout.js?v=20260930-chat-accessibility-focus-01-single-phase-bottom-expand-02";
+} from "./chat-layout.js?v=20260930-chat-accessibility-focus-01-single-phase-bottom-expand-02-tooltip-focus-restore-skip-01";
 
 export function wireChatEvents() {
   syncChatAutoExpandControls();

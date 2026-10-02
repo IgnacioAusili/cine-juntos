@@ -481,6 +481,7 @@ export function wireTooltipEvents() {
   });
 
   document.addEventListener("focusin", (event) => {
+    if (event.__skipTooltipForRestoredFocus) return;
     if (performance.now() < suppressFocusTooltipUntil) return;
     const context = getTooltipContext(event.target);
     if (context) showTooltip(context);

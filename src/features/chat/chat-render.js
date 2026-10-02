@@ -1,7 +1,7 @@
 import { dom } from "../../core/dom.js";
 import { state, logEvent } from "../../core/state.js?v=20260914-console-log-controls-01";
 import { MAX_RENDERED_MESSAGES, formatTime, formatClockTime } from "../../core/utils.js?v=20260915-message-time-spacing-01";
-import { markParticipantActive, rememberParticipant } from "../presence.js?v=20260912-name-session-01";
+import { markParticipantActive, rememberParticipant } from "../presence.js?v=20260912-name-session-01-tooltip-focus-restore-skip-01";
 import { wireMessageInteractions } from "./chat-message-interactions.js?v=20260915-image-standalone-reply-02";
 import { appendMessageContent, truncateText } from "./chat-content-parser.js?v=20260810-chat-fixes-02";
 import { getParticipantAccent } from "./chat-participant-color.js";
@@ -10,8 +10,8 @@ import {
   handleIncomingUnread,
   handleIncomingPageUnread,
   incrementScrollIndicator,
-} from "./unread-counters.js?v=20261001-bottom-chat-expand-02";
-import { setReplyTarget, scrollToMessage } from "./chat-reply.js?v=20260930-system-row-fixed-center-01";
+} from "./unread-counters.js?v=20261001-bottom-chat-expand-02-tooltip-focus-restore-skip-01";
+import { setReplyTarget, scrollToMessage } from "./chat-reply.js?v=20260930-system-row-fixed-center-01-tooltip-focus-restore-skip-01";
 import {
   animateExpandedSystemMessageRemoval,
   captureExpandedSystemMessageRemoval,

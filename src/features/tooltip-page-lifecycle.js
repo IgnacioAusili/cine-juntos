@@ -1,4 +1,4 @@
-import { hideTooltip } from "./icons-tooltips.js?v=20260914-tooltip-single-path-01";
+import { hideTooltip } from "./icons-tooltips.js?v=20260914-tooltip-single-path-01-tooltip-focus-restore-skip-01";
 
 let suppressRestoredFocusTooltip = false;
 
@@ -18,14 +18,11 @@ document.addEventListener("visibilitychange", () => {
 });
 
 // Algunos navegadores restauran el foco DOM al volver a la pestaña y emiten
-// focusin otra vez, aunque el usuario no haya enfocado el elemento de nuevo.
-// Se deja continuar el evento para que la app actualice el foco, pero se
-// cancela el tooltip antes del siguiente frame.
-document.addEventListener("focusin", () => {
+// focusin aunque el usuario no haya enfocado el elemento de nuevo. Se marca
+// el evento para que el manejador central no abra un tooltip por ese foco.
+document.addEventListener("focusin", (event) => {
   if (!suppressRestoredFocusTooltip || document.hidden) return;
-  queueMicrotask(() => {
-    if (suppressRestoredFocusTooltip) hideTooltip(true);
-  });
+  event.__skipTooltipForRestoredFocus = true;
 }, true);
 
 document.addEventListener("keydown", (event) => {

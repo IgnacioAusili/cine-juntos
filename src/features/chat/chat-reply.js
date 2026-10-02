@@ -1,6 +1,6 @@
 import { dom } from "../../core/dom.js";
 import { state } from "../../core/state.js?v=20260914-console-log-controls-01";
-import { hideTooltip } from "../icons-tooltips.js?v=20260914-tooltip-single-path-01";
+import { hideTooltip } from "../icons-tooltips.js?v=20260914-tooltip-single-path-01-tooltip-focus-restore-skip-01";
 import { truncateText } from "./chat-content-parser.js?v=20260810-chat-fixes-02";
 import { getParticipantAccent } from "./chat-participant-color.js";
 import { expandSystemMessageGroupForItem } from "./system-message-groups.js?v=20260930-system-row-fixed-center-01";

@@ -21,8 +21,8 @@ import {
   renderMembers,
   renderPresence,
   updateDisplayName,
-} from "./presence.js?v=20260912-name-session-01";
-import { setConnection } from "./icons-tooltips.js?v=20260914-tooltip-single-path-01";
+} from "./presence.js?v=20260912-name-session-01-tooltip-focus-restore-skip-01";
+import { setConnection } from "./icons-tooltips.js?v=20260914-tooltip-single-path-01-tooltip-focus-restore-skip-01";
 import {
   getUserScrollIntentVersion,
   setHostBadge,
@@ -31,7 +31,7 @@ import {
   showSession,
   watchRoomEntryVideoFocus,
 } from "./session-ui.js?v=20260911-orientation-scroll-anchor-01";
-import { handleRemoteState } from "./player/index.js?v=20260930-chat-accessibility-focus-01-pending-image-lightbox-01-preview-size-center-01-overlay-image-size-01-bottom-chat-expand-02";
+import { handleRemoteState } from "./player/index.js?v=20260930-chat-accessibility-focus-01-pending-image-lightbox-01-preview-size-center-01-overlay-image-size-01-bottom-chat-expand-02-tooltip-focus-restore-skip-01-presence-svg-remove-scale-01";
 import {
   renderMessage,
   beginSystemMessageHydration,
@@ -40,7 +40,7 @@ import {
   resetInsideUnread,
   resetPageUnread,
   renderReplyPreview,
-} from "./chat/index.js?v=20260930-emoji-picker-dismiss-on-scroll-01-pending-image-lightbox-01-system-row-fixed-center-02-bottom-chat-expand-02";
+} from "./chat/index.js?v=20260930-emoji-picker-dismiss-on-scroll-01-pending-image-lightbox-01-system-row-fixed-center-02-bottom-chat-expand-02-tooltip-focus-restore-skip-01";
 
 const ACTIVE_TAB_KEY = "cine-juntos-active-tab";
 const ACTIVE_TAB_TTL_MS = 30000;

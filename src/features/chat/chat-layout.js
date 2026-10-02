@@ -2,19 +2,19 @@
 import { dom } from "../../core/dom.js";
 import { state, logEvent } from "../../core/state.js?v=20260914-console-log-controls-01";
 import { CHAT_DOCKS, CHAT_DOCK_META, withShortcutHint } from "../../core/utils.js";
-import { hydrateIcons, hideTooltip, refreshTooltipForTarget } from "../icons-tooltips.js?v=20260914-tooltip-single-path-01";
+import { hydrateIcons, hideTooltip, refreshTooltipForTarget } from "../icons-tooltips.js?v=20260914-tooltip-single-path-01-tooltip-focus-restore-skip-01";
 import { focusFullscreenWorkspace } from "../session-ui.js?v=20260911-orientation-scroll-anchor-01";
 import {
   cancelIdentityEditing,
   syncNameInputWidth,
-} from "../presence.js?v=20260912-name-session-01";
+} from "../presence.js?v=20260912-name-session-01-tooltip-focus-restore-skip-01";
 import {
   isExternalChatVisibleToUser,
   isInsideChatVisibleToUser,
   resetInsideUnread,
   resetPageUnread,
   syncUnreadBadgesWithVisibility,
-} from "./unread-counters.js?v=20261001-bottom-chat-expand-02";
+} from "./unread-counters.js?v=20261001-bottom-chat-expand-02-tooltip-focus-restore-skip-01";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 import { focusChatInput } from "./chat-input-focus.js";
 import { restorePageScrollAfterRightChatCollapse } from "./chat-scroll-preservation.js?v=20260910-mobile-chat-scroll-lock-01";

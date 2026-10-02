@@ -24,7 +24,7 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap"
     />
     <link rel="icon" href="./public/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="./public/styles.css?v=20260930-chat-layout-no-flicker-compact-header-05-overlay-media-alignment-02-message-time-color-01-pending-image-lightbox-01-preview-size-center-01-overlay-image-size-01-chat-header-padding-effective-01-header-visual-center-01-system-row-fixed-center-01-hidden-scrollbar-02-chat-header-icon-end-align-02-chat-dock-name-transition-03-chat-header-gutter-spacing-01-player-progress-stable-01" />
+    <link rel="stylesheet" href="./public/styles.css?v=20260930-chat-layout-no-flicker-compact-header-05-overlay-media-alignment-02-message-time-color-01-pending-image-lightbox-01-preview-size-center-01-overlay-image-size-01-chat-header-padding-effective-01-header-visual-center-01-system-row-fixed-center-01-hidden-scrollbar-02-chat-header-icon-end-align-02-chat-dock-name-transition-03-chat-header-gutter-spacing-01-player-progress-stable-01-dock-hover-icon-centered-01-dock-button-active-stationary-01-chat-tools-shared-gutter-02-dock-button-active-excluded-01-all-buttons-active-stationary-01-dynamic-name-arrow-center-01-chat-actions-grid-end-01-dock-button-width-matches-icon-01-presence-pill-padding-00-dock-button-hover-circle-01-presence-pill-people-icon-00-dock-hover-no-background-01-presence-dot-corner-size-01-name-editor-crossfade-01-presence-icon-size-18-presence-dot-taller-dot-07-presence-icon-height-22-presence-icon-height-26-name-edit-pair-centered-01-presence-svg-remove-scale-01" />
   </head>
   <body class="is-lobby">
     <div class="app-shell">
@@ -567,7 +567,10 @@
                     aria-label="Usuarios conectados"
                     data-tooltip="Conectados: vos"
                   >
-                    <span class="status-dot presence-dot" aria-hidden="true"></span>
+                    <span class="presence-icon-wrap" aria-hidden="true">
+                      <span class="presence-users-icon" data-lucide="users"></span>
+                      <span class="status-dot presence-dot"></span>
+                    </span>
                     <span class="presence-self-label" id="overlayPresenceSelfLabel" hidden></span>
                     <span id="overlayParticipantCount">1</span>
                   </button>
@@ -690,7 +693,10 @@
                 aria-label="Usuarios conectados"
                 data-tooltip="Conectados: vos"
               >
-                <span class="status-dot presence-dot" aria-hidden="true"></span>
+                <span class="presence-icon-wrap" aria-hidden="true">
+                  <span class="presence-users-icon" data-lucide="users"></span>
+                  <span class="status-dot presence-dot"></span>
+                </span>
                 <span class="presence-self-label" id="presenceSelfLabel" hidden></span>
                 <span id="participantCount">1</span>
               </button>
@@ -1054,9 +1060,10 @@
     <script defer src="./public/vendor/lucide-0.468.0/lucide.min.js?v=20260929-local-lucide-01"></script>
     <script src="./public/firebase-config.js"></script>
     <script type="module" src="./src/features/chat/image-lightbox.js?v=20260917-dialog-test-routes-01-lightbox-scroll-preserve-01"></script>
-    <script type="module" src="./src/features/tooltip-page-lifecycle.js?v=20261001-tooltip-page-restore-01"></script>
-    <script type="module" src="./src/main.js?v=20261001-bottom-chat-focus-arrow-visible-01"></script>
+    <script type="module" src="./src/features/tooltip-page-lifecycle.js?v=20261001-tooltip-focus-restore-02"></script>
+    <script type="module" src="./src/main.js?v=20261001-bottom-chat-focus-arrow-visible-01-tooltip-focus-restore-skip-01-presence-svg-remove-scale-01"></script>
     <script type="module" src="./src/features/chat/component-aspect-layout.js?v=20260930-stack-measure-no-flicker-02-header-visual-center-02"></script>
-    <script type="module" src="./src/features/chat/chat-name-layout.js?v=20260930-stable-name-editor-layout-11-dock-cache"></script>
+    <script type="module" src="./src/features/chat/chat-name-layout.js?v=20261002-name-field-live-header-bounds-04-name-edit-pair-centered-01-empty-editor-min-width-01"></script>
+    <script type="module" src="./src/features/chat/name-handle-alignment.js?v=20261001-dynamic-name-center-01"></script>
   </body>
 </html>

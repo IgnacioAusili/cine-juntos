@@ -15,14 +15,14 @@ import {
   logEvent,
   state,
 } from "../../core/state.js?v=20260914-console-log-controls-01";
-import { isMiniPlayerActive } from "./mini-player.js?v=20261003-name-editor-commit-stable-return-04";
+import { isMiniPlayerActive } from "./mini-player.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-system-roll-height-exact-01-system-roll-text-billboard-01";
 import {
   syncExternalChatCollapseHandleOffset,
   syncInsideChatPanelOffset,
   cancelExternalChatAutoCollapse,
   forceExternalChatCollapsed,
   updateCollapseButton,
-} from "../chat/chat-layout.js?v=20261003-name-editor-commit-stable-return-04";
+} from "../chat/chat-layout.js?v=20261003-name-editor-curtain-cancel-esc-blur-03";
 import { withShortcutHint } from "../../core/utils.js";
 import {
   captureFullscreenScroll,
@@ -53,6 +53,14 @@ function getFullscreenScrollMax() {
 
   const container = getFullscreenScrollContainer();
   return Math.max(0, (container.scrollHeight || 0) - (container.clientHeight || 0));
+}
+
+function getFullscreenViewportHeight() {
+  if (isPageFullscreenActive()) {
+    const containerHeight = getFullscreenScrollContainer()?.clientHeight || 0;
+    if (containerHeight > 0) return containerHeight;
+  }
+  return window.visualViewport?.height || window.innerHeight;
 }
 
 function getElementScrollTop(element) {
@@ -636,11 +644,22 @@ function getFullscreenSnapPoints() {
   const points = [getDocumentTop(dom.workspace)];
 
   if (dock === "bottom" && dom.videoArea) {
-    // En el stack responsivo el panel va al borde del viewport; en la vista
-    // normal se conserva el gutter que ya usaba el snap de escritorio.
     const videoTop = getDocumentTop(dom.videoArea);
-    const stackUsesEdgeToEdge = dom.sessionView.classList.contains("layout-component-stack");
-    points.push(stackUsesEdgeToEdge ? videoTop : videoTop - gutter);
+    const videoHeight = dom.videoArea.getBoundingClientRect().height;
+    const viewportHeight = getFullscreenViewportHeight();
+    // Centrar desde las medidas reales mantiene márgenes iguales aunque el
+    // layout ajuste el panel por el header, el gutter o el aspect ratio.
+    const videoCenterPoint = Math.round(videoTop + (videoHeight - viewportHeight) / 2);
+    const nearbyWorkspacePointIndex = points.findIndex(
+      (point) => Math.abs(point - videoCenterPoint) <= FULLSCREEN_SNAP_THRESHOLD,
+    );
+    if (nearbyWorkspacePointIndex >= 0) {
+      // El inicio del workspace y el centro del video pueden quedar a pocos
+      // píxeles; el ancla centrada debe ganar en ese caso.
+      points[nearbyWorkspacePointIndex] = videoCenterPoint;
+    } else {
+      points.push(videoCenterPoint);
+    }
   }
 
   if (!collapsed) {

@@ -636,16 +636,38 @@ function syncLobbyTicketInlinePadding(ticket) {
   }
 }
 
-function wireLobbyMarqueeEmojis(screen) {
+const LOBBY_MARQUEE_EXTRA_MESSAGES = [
+  "Dale play",
+  "¿Qué vemos hoy?",
+  "Estreno",
+  "Luz, cámara, acción",
+  "El plan es ver una peli",
+  "¿Te sumás a la función?",
+  "Sin spoilers",
+];
+const LOBBY_MARQUEE_SPEED_PX_PER_SECOND = 26;
+
+function wireLobbyMarqueeContent(screen) {
   const track = screen?.querySelector(".lobby-marquee-track");
   const sets = [...(track?.querySelectorAll(".marquee-set") || [])];
   if (sets.length < 4) return;
 
   const emojiGroup = sets[0].querySelector(".marquee-emojis");
-  const phrases = [...sets[0].querySelectorAll(".live, .marquee-fixed, .marquee-message")]
-    .map((phrase) => ({ text: phrase.textContent, className: phrase.className }));
+  const liveOption = sets[0].querySelector(".live");
+  const fixedTexts = [...sets[0].querySelectorAll(".marquee-fixed")]
+    .map((text) => ({ text: text.textContent, className: text.className }));
+  const messageSlots = [...sets[0].querySelectorAll(".marquee-message")];
+  const messageOptions = [
+    ...messageSlots.map((message) => ({ text: message.textContent, className: message.className })),
+    { text: liveOption?.textContent || "En vivo", className: "live" },
+    ...LOBBY_MARQUEE_EXTRA_MESSAGES.map((text) => ({
+      text,
+      className: text === "Estreno" ? "marquee-premiere" : "marquee-message",
+    })),
+  ];
   const emojis = (emojiGroup?.dataset.emojis || "").split(",").filter(Boolean);
-  if (phrases.length < 2 || emojis.length < 3) return;
+  const variableTextCount = messageSlots.length + 1;
+  if (fixedTexts.length < 1 || messageSlots.length < 1 || !liveOption || emojis.length < 3) return;
 
   const shuffle = (items) => {
     const result = [...items];
@@ -658,7 +680,7 @@ function wireLobbyMarqueeEmojis(screen) {
 
   const phraseKey = (order) => order.map(({ className, text }) => `${className}:${text}`).join("\u001f");
   const emojiKey = (order) => order.join("\u001f");
-  const currentPhraseOrder = (set) => [...set.querySelectorAll(".live, .marquee-fixed, .marquee-message")]
+  const currentPhraseOrder = (set) => [...set.querySelectorAll(".live, .marquee-fixed, .marquee-message, .marquee-premiere")]
     .map((phrase) => ({ text: phrase.textContent, className: phrase.className }));
   const currentEmojiOrder = (set) => [...set.querySelectorAll(".marquee-emoji")]
     .map((emoji) => emoji.textContent);
@@ -675,6 +697,40 @@ function wireLobbyMarqueeEmojis(screen) {
     for (let offset = 1; offset < base.length; offset += 1) {
       candidate = [...base.slice(offset), ...base.slice(0, offset)].slice(0, count);
       if (!forbidden.has(keyFor(candidate))) return candidate;
+    }
+    return candidate;
+  };
+
+  const createTextOrder = (previousOrder = [], excludedClasses = []) => {
+    const selectedMessages = [];
+    const excluded = new Set(excludedClasses);
+    const previousHasLive = previousOrder.some((option) => option.className === "live");
+    const previousHasPremiere = previousOrder.some((option) => option.className === "marquee-premiere");
+    for (const option of shuffle(messageOptions)) {
+      if (excluded.has(option.className)) continue;
+      if (previousHasLive && option.className === "marquee-premiere") continue;
+      if (previousHasPremiere && option.className === "live") continue;
+      const conflictsWithPremiere = option.className === "live"
+        && selectedMessages.some((selected) => selected.className === "marquee-premiere");
+      const conflictsWithLive = option.className === "marquee-premiere"
+        && selectedMessages.some((selected) => selected.className === "live");
+      if (conflictsWithPremiere || conflictsWithLive) continue;
+      selectedMessages.push(option);
+      if (selectedMessages.length === variableTextCount) break;
+    }
+    return shuffle([...fixedTexts, ...selectedMessages]);
+  };
+  const chooseDifferentTextOrder = (forbiddenKeys, previousOrder = [], excludedClasses = []) => {
+    const forbidden = new Set(forbiddenKeys);
+    let candidate = createTextOrder(previousOrder, excludedClasses);
+    for (let attempt = 0; attempt < 32; attempt += 1) {
+      if (!forbidden.has(phraseKey(candidate))) return candidate;
+      candidate = createTextOrder(previousOrder, excludedClasses);
+    }
+
+    for (let offset = 1; offset < candidate.length; offset += 1) {
+      const rotated = [...candidate.slice(offset), ...candidate.slice(0, offset)];
+      if (!forbidden.has(phraseKey(rotated))) return rotated;
     }
     return candidate;
   };
@@ -698,39 +754,94 @@ function wireLobbyMarqueeEmojis(screen) {
     }));
 
     set.querySelector(".marquee-emojis")?.replaceWith(newEmojiGroup);
-    [...set.querySelectorAll(".live, .marquee-fixed, .marquee-message")].forEach((node) => node.remove());
+    [...set.querySelectorAll(".live, .marquee-fixed, .marquee-message, .marquee-premiere")]
+      .forEach((node) => node.remove());
     set.prepend(...phraseNodes);
     phraseNodes.at(-1)?.after(newEmojiGroup);
   };
 
-  const initialPhraseOrder = shuffle(phrases);
-  const initialEmojiOrder = shuffle(emojis);
+  const initialPhraseOrders = [];
+  const initialEmojiOrders = [];
   sets.forEach((set, setIndex) => {
-    const phraseOrder = initialPhraseOrder.map((_, index) => initialPhraseOrder[(index + setIndex) % initialPhraseOrder.length]);
-    const emojiOrder = Array.from({ length: 3 }, (_, index) => initialEmojiOrder[(setIndex + index) % initialEmojiOrder.length]);
+    const allPreviousBatchesHaveLive = initialPhraseOrders.length === sets.length - 1
+      && initialPhraseOrders.every((order) => order.some((item) => item.className === "live"));
+    const phraseOrder = chooseDifferentTextOrder(
+      initialPhraseOrders.map(phraseKey),
+      initialPhraseOrders[setIndex - 1] || [],
+      allPreviousBatchesHaveLive ? ["live"] : [],
+    );
+    const emojiOrder = chooseDifferentOrder(
+      emojis,
+      3,
+      emojiKey,
+      initialEmojiOrders.map(emojiKey),
+    );
+    initialPhraseOrders.push(phraseOrder);
+    initialEmojiOrders.push(emojiOrder);
     renderSet(set, phraseOrder, emojiOrder);
   });
 
-  track.addEventListener("animationiteration", () => {
+  const getStepDistance = (firstSet) => {
+    const marginInlineEnd = Number.parseFloat(getComputedStyle(firstSet).marginInlineEnd) || 0;
+    return firstSet.getBoundingClientRect().width + marginInlineEnd;
+  };
+
+  let activeAnimation = null;
+  const animateNextSet = () => {
     const currentSets = [...track.querySelectorAll(".marquee-set")];
-    const outgoingSets = currentSets.slice(0, 2);
-    const nextBatch = currentSets.slice(2);
-    const forbiddenPhraseOrders = nextBatch.map((set) => phraseKey(currentPhraseOrder(set)));
-    const forbiddenEmojiOrders = nextBatch.map((set) => emojiKey(currentEmojiOrder(set)));
+    const incomingSet = currentSets[0];
+    if (!incomingSet || currentSets.length < 2) return;
 
-    outgoingSets.forEach((set) => {
-      forbiddenPhraseOrders.push(phraseKey(currentPhraseOrder(set)));
-      const nextPhraseOrder = chooseDifferentOrder(phrases, phrases.length, phraseKey, forbiddenPhraseOrders);
-      forbiddenPhraseOrders.push(phraseKey(nextPhraseOrder));
+    const stepDistance = getStepDistance(incomingSet);
+    if (stepDistance <= 0) return;
 
-      forbiddenEmojiOrders.push(emojiKey(currentEmojiOrder(set)));
-      const nextEmojiOrder = chooseDifferentOrder(emojis, 3, emojiKey, forbiddenEmojiOrders);
-      forbiddenEmojiOrders.push(emojiKey(nextEmojiOrder));
-
-      renderSet(set, nextPhraseOrder, nextEmojiOrder);
-      track.append(set);
+    const animation = track.animate([
+      { transform: "translateX(0px)" },
+      { transform: `translateX(-${stepDistance.toFixed(2)}px)` },
+    ], {
+      duration: (stepDistance / LOBBY_MARQUEE_SPEED_PX_PER_SECOND) * 1000,
+      easing: "linear",
+      fill: "forwards",
     });
-  });
+    activeAnimation = animation;
+
+    animation.onfinish = () => {
+      if (activeAnimation !== animation) return;
+
+      const outgoingSet = track.querySelector(".marquee-set");
+      if (!outgoingSet || outgoingSet !== incomingSet) return;
+
+      const remainingSets = [...track.querySelectorAll(".marquee-set")].slice(1);
+      const forbiddenPhraseOrders = remainingSets.map((set) => phraseKey(currentPhraseOrder(set)));
+      const forbiddenEmojiOrders = remainingSets.map((set) => emojiKey(currentEmojiOrder(set)));
+      forbiddenPhraseOrders.push(phraseKey(currentPhraseOrder(outgoingSet)));
+      forbiddenEmojiOrders.push(emojiKey(currentEmojiOrder(outgoingSet)));
+
+      // La tanda entrante ya está en el borde izquierdo al terminar este paso.
+      // Rotar el DOM y reiniciar el transform en el mismo turno conserva esa
+      // posición mientras la tanda saliente vuelve fuera del recorte.
+      track.append(outgoingSet);
+      animation.cancel();
+      track.style.transform = "translateX(0px)";
+
+      const previousPhraseOrder = currentPhraseOrder(remainingSets.at(-1));
+      const allRemainingBatchesHaveLive = remainingSets.length > 0
+        && remainingSets.every((set) => Boolean(set.querySelector(".live")));
+      const nextPhraseOrder = chooseDifferentTextOrder(
+        forbiddenPhraseOrders,
+        previousPhraseOrder,
+        allRemainingBatchesHaveLive ? ["live"] : [],
+      );
+      const nextEmojiOrder = chooseDifferentOrder(emojis, 3, emojiKey, forbiddenEmojiOrders);
+      renderSet(outgoingSet, nextPhraseOrder, nextEmojiOrder);
+
+      activeAnimation = null;
+      animateNextSet();
+    };
+  };
+
+  track.style.transform = "translateX(0px)";
+  animateNextSet();
 }
 
 export function wireLobbyLayoutVariants() {
@@ -739,7 +850,7 @@ export function wireLobbyLayoutVariants() {
 
   const screen = document.querySelector("#lobbyScreen");
   if (screen) {
-    wireLobbyMarqueeEmojis(screen);
+    wireLobbyMarqueeContent(screen);
     window.addEventListener("resize", scheduleLobbyContentCenter, { passive: true });
 
     if (typeof MutationObserver === "function") {

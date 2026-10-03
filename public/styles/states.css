@@ -442,7 +442,11 @@ body.fullscreen-mode .session-view[data-chat-dock="bottom"] {
     clip-path: inset(var(--chat-bottom-curtain-clip, 100%) 0 0 0);
   }
 
-  body.fullscreen-mode .session-view.chat-bottom-snap-enabled[data-chat-dock="bottom"] .video-area,
+  body.fullscreen-mode .session-view.chat-bottom-snap-enabled[data-chat-dock="bottom"] .video-area {
+    scroll-snap-align: center;
+    scroll-snap-stop: normal;
+  }
+
   body.fullscreen-mode .session-view.chat-bottom-snap-enabled[data-chat-dock="bottom"] .chat-area {
     scroll-snap-align: start;
     scroll-snap-stop: normal;

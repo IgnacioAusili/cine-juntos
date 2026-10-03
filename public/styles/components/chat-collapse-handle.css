@@ -26,6 +26,12 @@
   contain: layout;
 }
 
+/* The seam handle extends into the message viewport. Keep its header above
+   positioned message content so the visible half remains clickable. */
+.session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-tools {
+  z-index: 2;
+}
+
 /* Cada estado tiene su propio control: el botón de contraer vive en el
    header y el de expandir conserva su anclaje junto a la barra del video. */
 .session-view:not(.chat-collapsed)

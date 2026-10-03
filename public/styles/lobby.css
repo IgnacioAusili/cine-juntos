@@ -43,7 +43,6 @@
   letter-spacing: 0.22em;
   line-height: 1;
   text-transform: uppercase;
-  animation: marqueeScroll 80s linear infinite;
 }
 
 .lobby-marquee-track > span {
@@ -118,13 +117,14 @@
   flex-shrink: 0;
 }
 
-@keyframes marqueeScroll {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
+.lobby-marquee-track span.marquee-premiere {
+  color: #ff5364;
+  font-family: Impact, "Arial Narrow", sans-serif;
+  font-size: 1.08em;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-shadow: 0 0 0.25em rgb(255 62 82 / 24%);
+  transform: translateY(0.045em);
 }
 
 .lobby-marquee-track span.spacer {

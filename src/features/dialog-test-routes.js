@@ -8,7 +8,7 @@ import {
   showSlowLoadDialog,
   showSession,
 } from "./session-ui.js?v=20260911-orientation-scroll-anchor-01";
-import { setVideoStatus } from "./player/player.js?v=20261003-name-editor-commit-stable-return-04";
+import { setVideoStatus } from "./player/player.js?v=20261003-desktop-video-snap-center-01";
 import { openLightboxForTest } from "./chat/image-lightbox.js?v=20260917-dialog-test-routes-01-lightbox-scroll-preserve-01";
 
 export const DIALOG_TEST_ROUTES = Object.freeze({

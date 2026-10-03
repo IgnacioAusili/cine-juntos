@@ -1,5 +1,5 @@
 import { dom } from "../../core/dom.js";
-import { toggleMiniChatOverlay } from "./mini-player-chat-mirror.js?v=20261003-name-editor-commit-stable-return-04";
+import { toggleMiniChatOverlay } from "./mini-player-chat-mirror.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-system-roll-height-exact-01-system-roll-text-billboard-01";
 
 const SEEK_STEP_SECONDS = 5;
 const VOLUME_STEP = 0.05;

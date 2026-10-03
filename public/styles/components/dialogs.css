@@ -148,20 +148,51 @@
 
 @media (min-width: 681px) {
   .about-dialog {
-    width: min(760px, calc(100% - 32px));
-    max-width: 760px;
-    max-height: calc(100dvh - 32px);
+    width: min(800px, calc(100% - 48px));
+    max-width: 800px;
+    max-height: calc(100dvh - 64px);
     transform: scale(1.03);
   }
 
   .about-dialog-card {
-    max-height: calc(100dvh - 32px);
-    overflow: hidden;
-    padding: 24px 28px 22px;
+    max-height: calc(100dvh - 64px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 0 20px 16px;
+  }
+
+  .about-dialog-sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-inline: -20px;
+    padding: 12px 20px 10px;
+    border-bottom: 1px solid var(--glass-border);
+    background: linear-gradient(145deg, rgba(27, 31, 35, 0.99), rgba(11, 15, 18, 0.99));
   }
 
   .about-dialog-header {
+    flex: 1 1 auto;
+    min-width: 0;
     gap: 11px;
+    padding-right: 0;
+  }
+
+  .about-dialog-sticky-header .dialog-close {
+    position: static;
+    flex: 0 0 36px;
+    width: 36px;
+    height: 36px;
+    margin-left: auto;
+  }
+
+  .about-dialog-sticky-header .dialog-close svg {
+    width: 28px;
+    height: 28px;
+    stroke-width: 2;
   }
 
   .about-dialog-intro {

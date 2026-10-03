@@ -7,14 +7,14 @@ import { focusFullscreenWorkspace } from "../session-ui.js?v=20260911-orientatio
 import {
   cancelIdentityEditing,
   syncNameInputWidth,
-} from "../presence.js?v=20261003-name-editor-commit-stable-return-04";
+} from "../presence.js?v=20261003-name-editor-curtain-cancel-esc-blur-03";
 import {
   isExternalChatVisibleToUser,
   isInsideChatVisibleToUser,
   resetInsideUnread,
   resetPageUnread,
   syncUnreadBadgesWithVisibility,
-} from "./unread-counters.js?v=20261003-name-editor-commit-stable-return-04";
+} from "./unread-counters.js?v=20261003-name-editor-curtain-cancel-esc-blur-03";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 import { focusChatInput } from "./chat-input-focus.js";
 import { restorePageScrollAfterRightChatCollapse } from "./chat-scroll-preservation.js?v=20260910-mobile-chat-scroll-lock-01";

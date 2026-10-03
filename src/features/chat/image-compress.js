@@ -3,7 +3,7 @@ import { state } from "../../core/state.js?v=20260914-console-log-controls-01";
 import {
   isPinnedToBottom,
   queuePinnedChatScrollSync,
-} from "./chat-scroll-sync.js?v=20261003-name-editor-commit-stable-return-04";
+} from "./chat-scroll-sync.js?v=20261003-name-editor-curtain-cancel-esc-blur-03";
 
 export function compressImageBase64(base64Str, maxWidth, maxHeight, quality, callback) {
   const img = new Image();

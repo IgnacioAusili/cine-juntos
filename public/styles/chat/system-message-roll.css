@@ -44,6 +44,22 @@
   -webkit-backface-visibility: hidden;
 }
 
+.system-message-roll-content {
+  position: relative;
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  color: inherit;
+  font: inherit;
+  line-height: inherit;
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
 .message.system .system-message-row.system-message-rolling {
   overflow: hidden;
   perspective: 900px;

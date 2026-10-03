@@ -39,6 +39,7 @@ let confirmNameLongPressPointerId = null;
 let confirmNameLongPressStart = null;
 let suppressNextConfirmNameClick = false;
 let suppressNextConfirmNameClickResetTimer = null;
+let nameCommitRevealTimer = null;
 const recentActivityByParticipantId = new Map();
 
 function getPendingDisplayName() {
@@ -443,13 +444,28 @@ export function markParticipantActive(participantId, participantName = "") {
   renderPresence();
 }
 
-function setIdentityEditing(isEditing, { preserveCommittedName = false } = {}) {
+function clearNameCommitReveal(editor = dom.chatNameField) {
+  if (nameCommitRevealTimer !== null) {
+    window.clearTimeout(nameCommitRevealTimer);
+    nameCommitRevealTimer = null;
+  }
+  editor?.classList.remove("name-commit-stable", "name-commit-reveal");
+}
+
+function setIdentityEditing(
+  isEditing,
+  { preserveCommittedName = false, animateReveal = false } = {},
+) {
   const editor = dom.chatNameField;
   if (!editor) return;
   if (isEditing && state.chat.nameChangeCount >= NAME_CHANGE_LIMIT) return;
 
-  if (isEditing && editor.classList.contains("name-commit-stable")) {
-    editor.classList.remove("name-commit-stable");
+  if (
+    isEditing
+    && (editor.classList.contains("name-commit-stable")
+      || editor.classList.contains("name-commit-reveal"))
+  ) {
+    clearNameCommitReveal(editor);
     window.requestAnimationFrame(() => {
       window.requestAnimationFrame(() => setIdentityEditing(true));
     });
@@ -457,14 +473,22 @@ function setIdentityEditing(isEditing, { preserveCommittedName = false } = {}) {
   }
 
   editor.classList.toggle("name-commit-stable", !isEditing && preserveCommittedName);
+  editor.classList.toggle("name-commit-reveal", !isEditing && preserveCommittedName && animateReveal);
   editor.dataset.editing = isEditing ? "true" : "false";
   editor.parentElement?.setAttribute("data-editing", isEditing ? "true" : "false");
 
   if (!isEditing) {
     if (preserveCommittedName) {
-      window.requestAnimationFrame(() => {
-        window.requestAnimationFrame(() => editor.classList.remove("name-commit-stable"));
-      });
+      if (animateReveal) {
+        nameCommitRevealTimer = window.setTimeout(() => {
+          nameCommitRevealTimer = null;
+          if (editor.dataset.editing !== "true") clearNameCommitReveal(editor);
+        }, 780);
+      } else {
+        window.requestAnimationFrame(() => {
+          window.requestAnimationFrame(() => editor.classList.remove("name-commit-stable"));
+        });
+      }
     }
     dom.nameInput.value = getDisplayName();
     syncNameInputWidth();
@@ -485,10 +509,13 @@ function setIdentityEditing(isEditing, { preserveCommittedName = false } = {}) {
 
 function cancelIdentityEditing() {
   if (dom.chatNameField?.dataset.editing !== "true") return;
-  setIdentityEditing(false);
+  delete dom.nameInput.dataset.commitOnBlur;
+  setIdentityEditing(false, { preserveCommittedName: true });
+  dom.nameInput.blur();
 }
 
 function commitDisplayNameChange() {
+  delete dom.nameInput.dataset.commitOnBlur;
   if (state.chat.nameChangeCount >= NAME_CHANGE_LIMIT) {
     setIdentityEditing(false);
     return;
@@ -497,7 +524,7 @@ function commitDisplayNameChange() {
   const previousName = getDisplayName();
   const requestedName = getPendingDisplayName();
   if (requestedName === previousName) {
-    setIdentityEditing(false);
+    setIdentityEditing(false, { preserveCommittedName: true });
     return;
   }
   if (requestedName.length < DISPLAY_NAME_MIN_LENGTH) {
@@ -526,7 +553,7 @@ function commitDisplayNameChange() {
   }
   syncEditNameButtonState();
   syncConfirmNameButtonState();
-  setIdentityEditing(false, { preserveCommittedName: true });
+  setIdentityEditing(false, { preserveCommittedName: true, animateReveal: nameChanged });
 }
 
 export function renderMembers(members) {
@@ -695,24 +722,19 @@ export function wireIdentityEvents() {
     }
   });
 
-  dom.nameInput.addEventListener("blur", (event) => {
+  dom.nameInput.addEventListener("blur", () => {
     if (dom.nameInput.dataset.commitOnBlur === "1") {
       delete dom.nameInput.dataset.commitOnBlur;
       return;
     }
-
-    if (event.relatedTarget instanceof HTMLElement && dom.chatNameField?.contains(event.relatedTarget)) {
-      return;
-    }
-
     cancelIdentityEditing();
   });
 
   document.addEventListener("pointerdown", (event) => {
     if (dom.chatNameField?.dataset.editing !== "true") return;
-    if (!(event.target instanceof HTMLElement)) return;
+    if (!(event.target instanceof Node)) return;
     if (dom.chatNameField.contains(event.target)) return;
-    dom.nameInput.blur();
+    cancelIdentityEditing();
   });
 
   dom.nameInput.addEventListener("input", () => {

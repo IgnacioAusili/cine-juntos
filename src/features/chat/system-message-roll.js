@@ -46,8 +46,10 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
     ? Math.max(1, Math.round(nextRect.height / lineHeight))
     : 1;
   const nextWidth = Math.max(1, nextRect.width);
+  // El redondeo por líneas puede perder los decimales de la caja real y
+  // obligar al texto a crecer de golpe al restaurarlo al terminar el giro.
   const nextHeight = Number.isFinite(lineHeight) && lineHeight > 0
-    ? Math.max(lineHeight, lineCount * lineHeight)
+    ? Math.max(lineHeight, lineCount * lineHeight, nextRect.height)
     : Math.max(1, nextRect.height);
   const width = Math.max(nextWidth, previousRect?.width || 0);
   const height = Math.max(nextHeight, previousRect?.height || 0);
@@ -91,16 +93,26 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
   drum.style.setProperty("--system-roll-radius", `${radius}px`);
   drum.style.setProperty("--system-roll-angle", `${SYSTEM_ROLL_ANGLE}deg`);
   drum.style.setProperty("--system-roll-visual-width", `${visualWidth}px`);
+  const faceContents = [];
 
   for (let index = 0; index < SYSTEM_ROLL_FACE_COUNT; index += 1) {
     const face = document.createElement("span");
     face.className = "system-message-roll-face";
     face.style.setProperty("--system-roll-index", String(index));
+    let contentNodes = null;
 
     if (index === 0) {
-      face.append(...Array.from(previousMarkup.childNodes).map((node) => node.cloneNode(true)));
+      contentNodes = Array.from(previousMarkup.childNodes).map((node) => node.cloneNode(true));
     } else if (index === SYSTEM_ROLL_FACE_COUNT - 1) {
-      face.append(...originalNodes.map((node) => node.cloneNode(true)));
+      contentNodes = originalNodes.map((node) => node.cloneNode(true));
+    }
+
+    if (contentNodes) {
+      const content = document.createElement("span");
+      content.className = "system-message-roll-content";
+      content.append(...contentNodes);
+      face.append(content);
+      faceContents.push({ content, index });
     }
 
     drum.append(face);
@@ -152,6 +164,12 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
     "translateX(-50%) translateZ(calc(var(--system-roll-radius) * -1)) rotateX(0deg)";
   const finalTransform =
     `translateX(-50%) translateZ(calc(var(--system-roll-radius) * -1)) rotateX(${SYSTEM_ROLL_ANGLE}deg)`;
+  const rotationOptions = {
+    duration: SYSTEM_ROLL_ROTATION_DURATION_MS,
+    delay: SYSTEM_ROLL_ROTATION_DELAY_MS,
+    easing: "cubic-bezier(.65, -.15, .25, 1.15)",
+    fill: "both",
+  };
   const animation = drum.animate(
     [
       {
@@ -161,13 +179,21 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
         transform: finalTransform,
       },
     ],
-    {
-      duration: SYSTEM_ROLL_ROTATION_DURATION_MS,
-      delay: SYSTEM_ROLL_ROTATION_DELAY_MS,
-      easing: "cubic-bezier(.65, -.15, .25, 1.15)",
-      fill: "both",
-    },
+    rotationOptions,
   );
+  // El cilindro mantiene su giro 3D, pero las caras tipográficas se
+  // contrarrotan al mismo ritmo para que las letras no se aplasten al pasar.
+  const contentAnimations = faceContents.map(({ content, index }) => {
+    const angleBefore = index * SYSTEM_ROLL_ANGLE;
+    const angleAfter = angleBefore + SYSTEM_ROLL_ANGLE;
+    return content.animate(
+      [
+        { transform: `rotateX(${-angleBefore}deg)` },
+        { transform: `rotateX(${-angleAfter}deg)` },
+      ],
+      rotationOptions,
+    );
+  });
   const lineAnimations = [];
   if (lineDisplacement > 0.5 && lineElements.length >= 2) {
     const lineAnimationOptions = {
@@ -210,6 +236,7 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
     bubbleFinalized = true;
     bubbleSizeAnimation?.cancel();
     textSizeAnimation?.cancel();
+    contentAnimations.forEach((contentAnimation) => contentAnimation.cancel());
     rowAnchorAnimation?.cancel();
     if (row && systemMessageRowAnchorAnimations.get(row) === rowAnchorAnimation) {
       systemMessageRowAnchorAnimations.delete(row);

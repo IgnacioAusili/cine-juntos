@@ -8,8 +8,8 @@ import {
 } from "./mini-player-controls.js?v=20260929-mini-player-controls-resize-reflow-01-pending-image-lightbox-01-preview-size-center-01-overlay-image-size-01-presence-svg-remove-scale-01";
 import {
   mirrorMiniPlayerChatState,
-} from "./mini-player-chat.js?v=20260930-chat-accessibility-focus-01-bottom-chat-expand-02-tooltip-focus-restore-skip-01";
-import { movePlayerInterface } from "./mini-player-interface.js?v=20260930-chat-accessibility-focus-01-bottom-chat-expand-02-tooltip-focus-restore-skip-01";
+} from "./mini-player-chat.js?v=20261003-name-editor-commit-stable-return-04";
+import { movePlayerInterface } from "./mini-player-interface.js?v=20261003-name-editor-commit-stable-return-04";
 import { trackMiniPlayerReturnHint } from "./mini-player-return-hint.js";
 import { clampMiniPlayerPosition, wireMiniPlayerDrag } from "./mini-player-drag.js?v=20260808-scroll-mini-player-02";
 

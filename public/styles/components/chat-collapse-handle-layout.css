@@ -70,7 +70,7 @@
 
 .session-view[data-chat-dock="bottom"] .chat-collapse-hover-zone {
   z-index: 40;
-  top: var(--chat-bottom-dock-handle-top, 0px);
+  top: 0;
   left: 50%;
   right: auto;
   bottom: auto;

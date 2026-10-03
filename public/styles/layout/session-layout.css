@@ -88,9 +88,9 @@
     opacity 250ms ease;
 }
 
+/* El toolbar absoluto ya ocupa el espacio sobre la primera fila; no sumar otro inset arriba. */
 .session-view[data-chat-dock="bottom"] .workspace {
   height: auto;
-  padding-top: var(--app-shell-gutter);
   row-gap: 0;
   /* La fila del chat cambia de alto, pero el reproductor conserva la misma
      medida. Animar la grilla igualmente interpolaba ambas filas y producía
@@ -182,7 +182,6 @@ body:not(.fullscreen-mode) .app-shell:not(:fullscreen)
 .session-view.chat-collapsed[data-chat-dock="bottom"] .workspace {
   height: calc(var(--app-viewport-height) - var(--app-shell-gutter));
   min-height: 0;
-  padding-top: var(--app-shell-gutter);
   row-gap: 0;
   grid-template-rows: minmax(0, 1fr) 0px;
   grid-template-areas:

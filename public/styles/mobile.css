@@ -790,7 +790,7 @@
 
   /* La flecha ocupa los primeros 32px del header; el contenido comienza
      después de esa reserva para que ningún control quede debajo del círculo. */
-  body:not(.is-lobby) .session-view.chat-collapse-in-header:not(.chat-collapsed)[data-chat-dock="right"] .chat-tools > .presence-pill {
+  body:not(.is-lobby) .session-view.chat-collapse-in-header:not(.chat-collapsed)[data-chat-dock="right"] .chat-tools-leading > .presence-pill {
     transform: none;
     position: relative;
     z-index: 13;

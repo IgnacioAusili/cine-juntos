@@ -166,3 +166,9 @@
   clip-path: inset(0 0 var(--chat-bottom-curtain-clip, 0%) 0);
   opacity: 1;
 }
+
+/* El compositor aparece cuando el cambio de dock termina de asentar también
+   la posición del panel inferior en el viewport. */
+.session-view.chat-bottom-composer-settling .chat-area > .message-form {
+  visibility: hidden;
+}

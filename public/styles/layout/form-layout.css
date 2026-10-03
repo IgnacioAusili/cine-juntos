@@ -89,8 +89,7 @@
   align-items: center;
   gap: 6px;
   transition:
-    opacity 180ms ease,
-    clip-path 180ms ease,
+    opacity 140ms ease,
     visibility 0s linear;
 }
 
@@ -115,7 +114,6 @@
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  clip-path: inset(0 100% 0 0);
   padding: 0;
   width: fit-content;
   max-width: 100%;
@@ -326,26 +324,39 @@
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  clip-path: inset(0 100% 0 0);
 }
 
 .chat-name-editor[data-editing="true"] .chat-name-edit-row {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
-  clip-path: inset(0 0 0 0);
   translate: none;
   transition-delay: 0s;
 }
 
 .chat-name-editor:not([data-editing="true"]) .chat-name-edit-row,
 .chat-name-editor[data-editing="true"] .chat-name-display-row {
-  transition-delay: 0s, 0s, 180ms;
+  transition-delay: 0s, 140ms;
 }
 
 .chat-name-editor[data-editing="true"] .chat-name-edit-row,
 .chat-name-editor:not([data-editing="true"]) .chat-name-display-row {
   transition-delay: 0s;
+}
+
+/* Al confirmar, mostrar el nombre guardado sin animar su opacidad desde cero. */
+.chat-name-editor.name-commit-stable:not([data-editing="true"]) .chat-name-display-row {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition: none;
+}
+
+.chat-name-editor.name-commit-stable:not([data-editing="true"]) .chat-name-edit-row {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -357,22 +368,6 @@
   .chat-name-confirm-button svg {
     animation: none !important;
   }
-}
-
-@keyframes chat-name-commit-reveal {
-  from {
-    clip-path: inset(0 100% 0 0);
-    opacity: 0;
-  }
-
-  to {
-    clip-path: inset(0 0 0 0);
-    opacity: 1;
-  }
-}
-
-.chat-name-editor.name-commit-reveal .chat-name-display {
-  animation: chat-name-commit-reveal 240ms ease both;
 }
 
 .source-strip {

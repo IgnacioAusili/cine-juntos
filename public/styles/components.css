@@ -1,9 +1,9 @@
 @import url("./components/app-status.css?v=20260910-status-glow-09");
-@import url("./components/room-chip.css?v=20260927-room-chip-no-shrink-01");
+@import url("./components/room-chip.css?v=20261003-room-chip-descenders-01");
 @import url("./components/host-badge.css?v=20260904-help-invite-fixes-02");
 @import url("./components/buttons.css?v=20260829-touch-hover-01-dock-button-active-excluded-01-all-buttons-active-stationary-01-dock-button-width-matches-icon-01-dock-button-hover-circle-01-dock-hover-no-background-01");
 @import url("./components/chat-collapse-handle.css?v=20260927-chat-collapse-responsive-01");
-@import url("./components/chat-collapse-handle-layout.css?v=20260927-chat-collapse-handle-general-02");
+@import url("./components/chat-collapse-handle-layout.css?v=20260927-chat-collapse-handle-general-02-arrow-in-header-flow-01");
 @import url("./components/chat-collapse-handle-visual.css?v=20260927-chat-collapse-responsive-01");
 @import url("./components/chat-auto-switch.css");
 @import url("./components/presence.css?v=20260910-status-glow-09-presence-pill-padding-00-presence-pill-people-icon-00-presence-dot-corner-size-01-presence-icon-size-18-presence-icon-taller-dot-07-presence-icon-height-22-presence-icon-height-26-presence-svg-remove-scale-01");

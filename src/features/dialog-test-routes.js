@@ -8,7 +8,7 @@ import {
   showSlowLoadDialog,
   showSession,
 } from "./session-ui.js?v=20260911-orientation-scroll-anchor-01";
-import { setVideoStatus } from "./player/player.js?v=20260930-chat-accessibility-focus-01-pending-image-lightbox-01-bottom-chat-expand-02-tooltip-focus-restore-skip-01-presence-svg-remove-scale-01";
+import { setVideoStatus } from "./player/player.js?v=20261003-name-editor-commit-stable-return-04";
 import { openLightboxForTest } from "./chat/image-lightbox.js?v=20260917-dialog-test-routes-01-lightbox-scroll-preserve-01";
 
 export const DIALOG_TEST_ROUTES = Object.freeze({

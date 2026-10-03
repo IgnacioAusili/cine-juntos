@@ -129,6 +129,10 @@ function captureBottomChatKeyboardHandlePosition() {
   const handleZone = activeHandleButton?.closest(".chat-collapse-hover-zone");
   if (
     !handleZone
+    // The expanded bottom-dock arrow now belongs to the header grid. Keep it
+    // there on input focus; workspace anchoring uses a different coordinate
+    // space and would pull the arrow out of its centered column.
+    || handleZone.parentElement?.classList.contains("chat-tools")
     || !isMobileLayout()
     || dom.sessionView?.dataset.chatDock !== "bottom"
     || bottomChatKeyboardHandleAnchor?.handleZone === handleZone

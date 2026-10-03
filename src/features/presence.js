@@ -29,7 +29,6 @@ import {
 const RECENT_ACTIVITY_WINDOW_MS = 30000;
 const DESKTOP_BOTTOM_NAME_GAP_PX = 8;
 const DESKTOP_BOTTOM_NAME_ARROW_GAP_PX = 120;
-const DESKTOP_BOTTOM_EDIT_MARGIN_PX = 12;
 const CONFIRM_NAME_HOLD_MOVE_TOLERANCE_PX = 10;
 
 let nameInputMeasureCanvas = null;
@@ -243,10 +242,7 @@ function syncDesktopBottomNameField(textWidth, isEditing) {
   const rowStyle = row ? window.getComputedStyle(row) : null;
   const rowGap = Number.parseFloat(rowStyle?.columnGap || rowStyle?.gap || "0") || 0;
   const buttonWidth = button?.getBoundingClientRect().width || 20;
-  const maxFieldWidth = Math.max(
-    0,
-    geometry.maxFieldWidth - (isEditing ? DESKTOP_BOTTOM_EDIT_MARGIN_PX : 0),
-  );
+  const maxFieldWidth = Math.max(0, geometry.maxFieldWidth);
   const naturalWidth = Math.ceil(textWidth + buttonWidth + rowGap);
   const targetWidth = Math.min(naturalWidth, maxFieldWidth);
 
@@ -293,7 +289,6 @@ function getNameInputAvailableWidth() {
         0,
         Math.floor(
           geometry.maxFieldWidth
-          - DESKTOP_BOTTOM_EDIT_MARGIN_PX
           - confirmWidth
           - rowGap,
         ),
@@ -448,21 +443,29 @@ export function markParticipantActive(participantId, participantName = "") {
   renderPresence();
 }
 
-function setIdentityEditing(isEditing, { animateReveal = false } = {}) {
-  if (!dom.chatNameField) return;
+function setIdentityEditing(isEditing, { preserveCommittedName = false } = {}) {
+  const editor = dom.chatNameField;
+  if (!editor) return;
   if (isEditing && state.chat.nameChangeCount >= NAME_CHANGE_LIMIT) return;
-  dom.chatNameField.classList.remove("name-commit-reveal");
-  dom.chatNameField.dataset.editing = isEditing ? "true" : "false";
-  dom.chatNameField.parentElement?.setAttribute("data-editing", isEditing ? "true" : "false");
 
-  if (!isEditing && animateReveal) {
-    dom.chatNameField.classList.add("name-commit-reveal");
-    window.setTimeout(() => {
-      dom.chatNameField?.classList.remove("name-commit-reveal");
-    }, 260);
+  if (isEditing && editor.classList.contains("name-commit-stable")) {
+    editor.classList.remove("name-commit-stable");
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => setIdentityEditing(true));
+    });
+    return;
   }
 
+  editor.classList.toggle("name-commit-stable", !isEditing && preserveCommittedName);
+  editor.dataset.editing = isEditing ? "true" : "false";
+  editor.parentElement?.setAttribute("data-editing", isEditing ? "true" : "false");
+
   if (!isEditing) {
+    if (preserveCommittedName) {
+      window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => editor.classList.remove("name-commit-stable"));
+      });
+    }
     dom.nameInput.value = getDisplayName();
     syncNameInputWidth();
     syncConfirmNameButtonState();
@@ -523,7 +526,7 @@ function commitDisplayNameChange() {
   }
   syncEditNameButtonState();
   syncConfirmNameButtonState();
-  setIdentityEditing(false, { animateReveal: true });
+  setIdentityEditing(false, { preserveCommittedName: true });
 }
 
 export function renderMembers(members) {

@@ -261,7 +261,7 @@
     align-items: center;
     gap: 12px;
     flex: 0 0 auto;
-    padding: 6px 12px 8px;
+    padding: 12px 12px 8px;
   }
 
   .about-dialog-header {
@@ -290,7 +290,7 @@
     min-height: 0;
     overflow-y: auto;
     overscroll-behavior: contain;
-    padding: 0 12px 4px;
+    padding: 0 12px 12px;
     scrollbar-width: none;
     scrollbar-color: transparent transparent;
   }

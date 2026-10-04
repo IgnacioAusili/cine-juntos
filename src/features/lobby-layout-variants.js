@@ -804,6 +804,82 @@ function wireLobbyMarqueeContent(screen) {
   };
 
   let activeAnimation = null;
+  let activeIncomingSet = null;
+  const isLobbyMarqueeVisible = () => (
+    !screen.hidden
+    && document.body.classList.contains("is-lobby")
+    && document.visibilityState !== "hidden"
+  );
+
+  function finishMarqueeStep(animation, incomingSet) {
+    if (activeAnimation !== animation) return;
+
+    const outgoingSet = track.querySelector(".marquee-set");
+    if (!outgoingSet || outgoingSet !== incomingSet) return;
+
+    const remainingSets = [...track.querySelectorAll(".marquee-set")].slice(1);
+    const forbiddenPhraseOrders = remainingSets.map((set) => phraseSetKey(currentPhraseOrder(set)));
+    const forbiddenEmojiOrders = remainingSets.map((set) => emojiKey(currentEmojiOrder(set)));
+    forbiddenPhraseOrders.push(phraseSetKey(currentPhraseOrder(outgoingSet)));
+    forbiddenEmojiOrders.push(emojiKey(currentEmojiOrder(outgoingSet)));
+
+    // La tanda entrante ya está en el borde izquierdo al terminar este paso.
+    // Rotar el DOM y reiniciar el transform en el mismo turno conserva esa
+    // posición mientras la tanda saliente vuelve fuera del recorte.
+    track.append(outgoingSet);
+    animation.cancel();
+    track.style.transform = "translateX(0px)";
+
+    const liveCount = remainingSets.filter((set) => set.querySelector(".live")).length;
+    const nextPhraseOrder = chooseDifferentTextOrder(
+      forbiddenPhraseOrders,
+      liveCount === 0,
+      liveCount >= 2,
+    );
+    const nextEmojiOrder = chooseDifferentOrder(emojis, 3, emojiKey, forbiddenEmojiOrders);
+    rememberPhraseOrder(nextPhraseOrder);
+    renderSet(outgoingSet, nextPhraseOrder, nextEmojiOrder);
+
+    activeAnimation = null;
+    activeIncomingSet = null;
+    animateNextSet();
+  }
+
+  const syncMarqueePlayback = () => {
+    if (!activeAnimation) return;
+
+    const endTime = activeAnimation.effect?.getComputedTiming().endTime;
+    const isAtEnd = Number.isFinite(endTime) && activeAnimation.currentTime >= endTime;
+
+    if (isLobbyMarqueeVisible()) {
+      if (isAtEnd) {
+        // play() reiniciaría un tramo pausado que ya terminó; procesarlo aquí
+        // mantiene el orden visual y continúa desde la tanda siguiente.
+        finishMarqueeStep(activeAnimation, activeIncomingSet);
+      } else if (activeAnimation.playState === "paused") {
+        activeAnimation.play();
+      }
+    } else if (activeAnimation.playState === "finished") {
+      finishMarqueeStep(activeAnimation, activeIncomingSet);
+    } else if (
+      activeAnimation.playState === "running"
+      || activeAnimation.playState === "pending"
+    ) {
+      activeAnimation.pause();
+    }
+  };
+
+  const marqueeVisibilityObserver = new MutationObserver(syncMarqueePlayback);
+  marqueeVisibilityObserver.observe(screen, {
+    attributes: true,
+    attributeFilter: ["hidden"],
+  });
+  marqueeVisibilityObserver.observe(document.body, {
+    attributes: true,
+    attributeFilter: ["class"],
+  });
+  document.addEventListener("visibilitychange", syncMarqueePlayback);
+
   const animateNextSet = () => {
     const currentSets = [...track.querySelectorAll(".marquee-set")];
     const incomingSet = currentSets[0];
@@ -821,39 +897,9 @@ function wireLobbyMarqueeContent(screen) {
       fill: "forwards",
     });
     activeAnimation = animation;
-
-    animation.onfinish = () => {
-      if (activeAnimation !== animation) return;
-
-      const outgoingSet = track.querySelector(".marquee-set");
-      if (!outgoingSet || outgoingSet !== incomingSet) return;
-
-      const remainingSets = [...track.querySelectorAll(".marquee-set")].slice(1);
-      const forbiddenPhraseOrders = remainingSets.map((set) => phraseSetKey(currentPhraseOrder(set)));
-      const forbiddenEmojiOrders = remainingSets.map((set) => emojiKey(currentEmojiOrder(set)));
-      forbiddenPhraseOrders.push(phraseSetKey(currentPhraseOrder(outgoingSet)));
-      forbiddenEmojiOrders.push(emojiKey(currentEmojiOrder(outgoingSet)));
-
-      // La tanda entrante ya está en el borde izquierdo al terminar este paso.
-      // Rotar el DOM y reiniciar el transform en el mismo turno conserva esa
-      // posición mientras la tanda saliente vuelve fuera del recorte.
-      track.append(outgoingSet);
-      animation.cancel();
-      track.style.transform = "translateX(0px)";
-
-      const liveCount = remainingSets.filter((set) => set.querySelector(".live")).length;
-      const nextPhraseOrder = chooseDifferentTextOrder(
-        forbiddenPhraseOrders,
-        liveCount === 0,
-        liveCount >= 2,
-      );
-      const nextEmojiOrder = chooseDifferentOrder(emojis, 3, emojiKey, forbiddenEmojiOrders);
-      rememberPhraseOrder(nextPhraseOrder);
-      renderSet(outgoingSet, nextPhraseOrder, nextEmojiOrder);
-
-      activeAnimation = null;
-      animateNextSet();
-    };
+    activeIncomingSet = incomingSet;
+    syncMarqueePlayback();
+    animation.onfinish = () => finishMarqueeStep(animation, incomingSet);
   };
 
   track.style.transform = "translateX(0px)";

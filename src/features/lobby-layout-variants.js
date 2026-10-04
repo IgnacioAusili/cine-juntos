@@ -644,6 +644,12 @@ const LOBBY_MARQUEE_EXTRA_MESSAGES = [
   "El plan es ver una peli",
   "¿Te sumás a la función?",
   "Sin spoilers",
+  "Una más y nos vamos",
+  "Que empiece la historia",
+  "Ponete cómodo",
+  "Maratón",
+  "Suspenso",
+  "Ciencia ficción",
 ];
 const LOBBY_MARQUEE_SPEED_PX_PER_SECOND = 26;
 
@@ -654,8 +660,6 @@ function wireLobbyMarqueeContent(screen) {
 
   const emojiGroup = sets[0].querySelector(".marquee-emojis");
   const liveOption = sets[0].querySelector(".live");
-  const fixedTexts = [...sets[0].querySelectorAll(".marquee-fixed")]
-    .map((text) => ({ text: text.textContent, className: text.className }));
   const messageSlots = [...sets[0].querySelectorAll(".marquee-message")];
   const messageOptions = [
     ...messageSlots.map((message) => ({ text: message.textContent, className: message.className })),
@@ -667,7 +671,7 @@ function wireLobbyMarqueeContent(screen) {
   ];
   const emojis = (emojiGroup?.dataset.emojis || "").split(",").filter(Boolean);
   const variableTextCount = messageSlots.length + 1;
-  if (fixedTexts.length < 1 || messageSlots.length < 1 || !liveOption || emojis.length < 3) return;
+  if (messageSlots.length < 1 || !liveOption || emojis.length < 3) return;
 
   const shuffle = (items) => {
     const result = [...items];
@@ -678,12 +682,24 @@ function wireLobbyMarqueeContent(screen) {
     return result;
   };
 
-  const phraseKey = (order) => order.map(({ className, text }) => `${className}:${text}`).join("\u001f");
+  const phraseSetKey = (order) => order
+    .map(({ className, text }) => `${className}:${text}`)
+    .sort()
+    .join("\u001f");
   const emojiKey = (order) => order.join("\u001f");
-  const currentPhraseOrder = (set) => [...set.querySelectorAll(".live, .marquee-fixed, .marquee-message, .marquee-premiere")]
+  const currentPhraseOrder = (set) => [...set.querySelectorAll(".live, .marquee-message, .marquee-premiere")]
     .map((phrase) => ({ text: phrase.textContent, className: phrase.className }));
   const currentEmojiOrder = (set) => [...set.querySelectorAll(".marquee-emoji")]
     .map((emoji) => emoji.textContent);
+  const recentPhraseOrders = [];
+  const rememberPhraseOrder = (order) => {
+    recentPhraseOrders.push(order.map(({ text, className }) => ({ text, className })));
+    if (recentPhraseOrders.length > 8) recentPhraseOrders.shift();
+  };
+  const phraseOverlapCount = (first, second) => {
+    const secondTexts = new Set(second.map((option) => option.text));
+    return first.filter((option) => secondTexts.has(option.text)).length;
+  };
 
   const chooseDifferentOrder = (items, count, keyFor, forbiddenKeys) => {
     const forbidden = new Set(forbiddenKeys);
@@ -701,38 +717,39 @@ function wireLobbyMarqueeContent(screen) {
     return candidate;
   };
 
-  const createTextOrder = (previousOrder = [], excludedClasses = []) => {
-    const selectedMessages = [];
-    const excluded = new Set(excludedClasses);
-    const previousHasLive = previousOrder.some((option) => option.className === "live");
-    const previousHasPremiere = previousOrder.some((option) => option.className === "marquee-premiere");
-    for (const option of shuffle(messageOptions)) {
-      if (excluded.has(option.className)) continue;
-      if (previousHasLive && option.className === "marquee-premiere") continue;
-      if (previousHasPremiere && option.className === "live") continue;
-      const conflictsWithPremiere = option.className === "live"
-        && selectedMessages.some((selected) => selected.className === "marquee-premiere");
-      const conflictsWithLive = option.className === "marquee-premiere"
-        && selectedMessages.some((selected) => selected.className === "live");
-      if (conflictsWithPremiere || conflictsWithLive) continue;
-      selectedMessages.push(option);
-      if (selectedMessages.length === variableTextCount) break;
-    }
-    return shuffle([...fixedTexts, ...selectedMessages]);
-  };
-  const chooseDifferentTextOrder = (forbiddenKeys, previousOrder = [], excludedClasses = []) => {
-    const forbidden = new Set(forbiddenKeys);
-    let candidate = createTextOrder(previousOrder, excludedClasses);
-    for (let attempt = 0; attempt < 32; attempt += 1) {
-      if (!forbidden.has(phraseKey(candidate))) return candidate;
-      candidate = createTextOrder(previousOrder, excludedClasses);
+  const chooseDifferentTextOrder = (forbiddenKeys, requireLive = false, excludeLive = false) => {
+    const recentOrders = recentPhraseOrders.slice(-3);
+    const forbidden = new Set([
+      ...forbiddenKeys,
+      ...recentOrders.map(phraseSetKey),
+    ]);
+    const recentComparisonOrders = recentOrders.slice(-2);
+    const maxRecentOverlap = Math.floor(variableTextCount / 2);
+    const candidateKeys = new Set();
+    const candidates = [];
+
+    for (let attempt = 0; attempt < 256; attempt += 1) {
+      const order = shuffle(messageOptions).slice(0, variableTextCount);
+      const key = phraseSetKey(order);
+      if (candidateKeys.has(key)) continue;
+      candidateKeys.add(key);
+      if (forbidden.has(key)) continue;
+      if (requireLive && !order.some((option) => option.className === "live")) continue;
+      if (excludeLive && order.some((option) => option.className === "live")) continue;
+      if (recentComparisonOrders.some((recent) => phraseOverlapCount(order, recent) > maxRecentOverlap)) continue;
+
+      const score = recentOrders.reduce((total, recent, index) => (
+        total + phraseOverlapCount(order, recent) * (index + 1)
+      ), 0);
+      candidates.push({ order, score });
     }
 
-    for (let offset = 1; offset < candidate.length; offset += 1) {
-      const rotated = [...candidate.slice(offset), ...candidate.slice(0, offset)];
-      if (!forbidden.has(phraseKey(rotated))) return rotated;
-    }
-    return candidate;
+    if (candidates.length === 0) return shuffle(messageOptions).slice(0, variableTextCount);
+    const bestScore = Math.min(...candidates.map(({ score }) => score));
+    const bestOrders = candidates
+      .filter(({ score }) => score === bestScore)
+      .map(({ order }) => order);
+    return shuffle(bestOrders[Math.floor(Math.random() * bestOrders.length)]);
   };
 
   const renderSet = (set, phraseOrder, emojiOrder) => {
@@ -754,7 +771,7 @@ function wireLobbyMarqueeContent(screen) {
     }));
 
     set.querySelector(".marquee-emojis")?.replaceWith(newEmojiGroup);
-    [...set.querySelectorAll(".live, .marquee-fixed, .marquee-message, .marquee-premiere")]
+    [...set.querySelectorAll(".live, .marquee-message, .marquee-premiere")]
       .forEach((node) => node.remove());
     set.prepend(...phraseNodes);
     phraseNodes.at(-1)?.after(newEmojiGroup);
@@ -763,12 +780,11 @@ function wireLobbyMarqueeContent(screen) {
   const initialPhraseOrders = [];
   const initialEmojiOrders = [];
   sets.forEach((set, setIndex) => {
-    const allPreviousBatchesHaveLive = initialPhraseOrders.length === sets.length - 1
-      && initialPhraseOrders.every((order) => order.some((item) => item.className === "live"));
+    const liveCount = initialPhraseOrders.filter((order) => order.some((item) => item.className === "live")).length;
     const phraseOrder = chooseDifferentTextOrder(
-      initialPhraseOrders.map(phraseKey),
-      initialPhraseOrders[setIndex - 1] || [],
-      allPreviousBatchesHaveLive ? ["live"] : [],
+      initialPhraseOrders.map(phraseSetKey),
+      setIndex === sets.length - 1 && liveCount === 0,
+      liveCount >= 2,
     );
     const emojiOrder = chooseDifferentOrder(
       emojis,
@@ -777,6 +793,7 @@ function wireLobbyMarqueeContent(screen) {
       initialEmojiOrders.map(emojiKey),
     );
     initialPhraseOrders.push(phraseOrder);
+    rememberPhraseOrder(phraseOrder);
     initialEmojiOrders.push(emojiOrder);
     renderSet(set, phraseOrder, emojiOrder);
   });
@@ -812,9 +829,9 @@ function wireLobbyMarqueeContent(screen) {
       if (!outgoingSet || outgoingSet !== incomingSet) return;
 
       const remainingSets = [...track.querySelectorAll(".marquee-set")].slice(1);
-      const forbiddenPhraseOrders = remainingSets.map((set) => phraseKey(currentPhraseOrder(set)));
+      const forbiddenPhraseOrders = remainingSets.map((set) => phraseSetKey(currentPhraseOrder(set)));
       const forbiddenEmojiOrders = remainingSets.map((set) => emojiKey(currentEmojiOrder(set)));
-      forbiddenPhraseOrders.push(phraseKey(currentPhraseOrder(outgoingSet)));
+      forbiddenPhraseOrders.push(phraseSetKey(currentPhraseOrder(outgoingSet)));
       forbiddenEmojiOrders.push(emojiKey(currentEmojiOrder(outgoingSet)));
 
       // La tanda entrante ya está en el borde izquierdo al terminar este paso.
@@ -824,15 +841,14 @@ function wireLobbyMarqueeContent(screen) {
       animation.cancel();
       track.style.transform = "translateX(0px)";
 
-      const previousPhraseOrder = currentPhraseOrder(remainingSets.at(-1));
-      const allRemainingBatchesHaveLive = remainingSets.length > 0
-        && remainingSets.every((set) => Boolean(set.querySelector(".live")));
+      const liveCount = remainingSets.filter((set) => set.querySelector(".live")).length;
       const nextPhraseOrder = chooseDifferentTextOrder(
         forbiddenPhraseOrders,
-        previousPhraseOrder,
-        allRemainingBatchesHaveLive ? ["live"] : [],
+        liveCount === 0,
+        liveCount >= 2,
       );
       const nextEmojiOrder = chooseDifferentOrder(emojis, 3, emojiKey, forbiddenEmojiOrders);
+      rememberPhraseOrder(nextPhraseOrder);
       renderSet(outgoingSet, nextPhraseOrder, nextEmojiOrder);
 
       activeAnimation = null;

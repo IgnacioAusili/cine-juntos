@@ -27,7 +27,7 @@ import { withShortcutHint } from "../../core/utils.js";
 import {
   captureFullscreenScroll,
   restoreFullscreenScroll,
-} from "./fullscreen-scroll.js?v=20260913-fullscreen-scroll-user-interrupt-01";
+} from "./fullscreen-scroll.js?v=20260913-fullscreen-scroll-user-interrupt-01-video-snap-10px-fullscreen-bleed-01";
 
 const PLAYER_OVERLAY_IDLE_MS = 3000;
 const PLAYER_OVERLAY_LEAVE_HIDE_DELAY_MS = 800;
@@ -782,7 +782,13 @@ export function handleFullscreenChange() {
   dom.pageFullscreenButton.removeAttribute("title");
   dom.pageFullscreenButton.setAttribute("aria-label", tooltip);
   setControlIcon(dom.pageFullscreenButton, isFullscreen ? "minimize" : "maximize");
-  restoreFullscreenScroll(isFullscreen);
+  const fullscreenVideoScrollTop = isFullscreen
+    && dom.sessionView?.dataset.chatDock === "bottom"
+    && window.matchMedia("(hover: hover) and (pointer: fine)").matches
+    && dom.videoArea
+    ? getDocumentTop(dom.videoArea)
+    : null;
+  restoreFullscreenScroll(isFullscreen, fullscreenVideoScrollTop);
   syncInsideChatPanelOffset();
   // El fullscreen cambia el origen y las filas del layout móvil. Recalcular
   // también el anclaje del control externo evita que la flecha del chat

@@ -481,6 +481,47 @@ body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="bottom"] .work
   grid-template-rows: var(--app-viewport-height) 0;
 }
 
+/* En PC, el dock inferior fullscreen muestra primero el reproductor a sangre:
+   el header de la página y el gutter del shell no deben restarle viewport.
+   El chat permanece como la sección siguiente del scroll del shell. */
+@media (hover: hover) and (pointer: fine) {
+  body.fullscreen-mode .app-shell:has(.session-view[data-chat-dock="bottom"]) {
+    width: 100%;
+    max-width: none;
+    height: var(--app-viewport-height);
+    min-height: var(--app-viewport-height);
+    margin: 0;
+    padding: 0;
+    gap: 0;
+    grid-template-rows: minmax(0, 1fr);
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  body.fullscreen-mode .app-shell:has(.session-view[data-chat-dock="bottom"]) .topbar {
+    display: none;
+  }
+
+  body.fullscreen-mode .session-view[data-chat-dock="bottom"] {
+    width: 100%;
+    margin-inline: 0;
+  }
+
+  body.fullscreen-mode .session-view[data-chat-dock="bottom"] .workspace {
+    margin-top: 0;
+  }
+
+  body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="bottom"] .workspace {
+    grid-template-rows: minmax(0, 1fr) 0;
+  }
+
+  /* La barra queda fuera de la superficie de video; no debe ganar el snap
+     del viewport cuando el panel inferior está en fullscreen. */
+  body.fullscreen-mode .session-view.chat-bottom-snap-enabled[data-chat-dock="bottom"] .session-toolbar {
+    scroll-snap-align: none;
+  }
+}
+
 /* El cambio de dock en fullscreen conserva las mismas dos fases del layout
    normal: ocultar por el borde de la superficie actual, cambiar la grilla y
    revelar el nuevo panel desde su borde. */

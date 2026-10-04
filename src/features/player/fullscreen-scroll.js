@@ -61,19 +61,24 @@ export function captureFullscreenScroll(isEntering) {
     && pageWasAtBottomBeforeFullscreen;
 }
 
-export function restoreFullscreenScroll(isFullscreen) {
+export function restoreFullscreenScroll(isFullscreen, preferredFullscreenScrollTop = null) {
   if (pendingScrollTop == null) return;
 
   const savedScrollTop = pendingScrollTop;
   const restoreAtBottom = pendingRestoreAtBottom;
+  const fullscreenScrollTop = Number.isFinite(preferredFullscreenScrollTop)
+    ? Math.max(0, preferredFullscreenScrollTop)
+    : savedScrollTop;
   pendingScrollTop = null;
   pendingRestoreAtBottom = false;
 
   const restore = () => {
     const maxScroll = getScrollMax(isFullscreen);
-    const top = !isFullscreen && restoreAtBottom
-      ? maxScroll
-      : Math.min(savedScrollTop, maxScroll);
+    const top = isFullscreen
+      ? Math.min(fullscreenScrollTop, maxScroll)
+      : restoreAtBottom
+        ? maxScroll
+        : Math.min(savedScrollTop, maxScroll);
     if (isFullscreen) {
       getScrollContainer().scrollTo({ top, behavior: "auto" });
       return;

@@ -13,8 +13,8 @@ import {
   updateCharCounter,
   wireFloatingComposerLayout,
   wireComposerScrollbar,
-} from "./chat-input.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-system-roll-height-exact-01-system-roll-text-billboard-01";
-import { setReplyTarget } from "./chat-reply.js?v=20260930-system-row-fixed-center-01-tooltip-focus-restore-skip-01-system-roll-height-exact-01-system-roll-text-billboard-01";
+} from "./chat-input.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-02";
+import { setReplyTarget } from "./chat-reply.js?v=20260930-system-row-fixed-center-01-tooltip-focus-restore-skip-01-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-02";
 import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20261003-name-editor-curtain-cancel-esc-blur-03";
 import {
   copyMessageText,
@@ -231,19 +231,19 @@ export {
   buildEmojiPicker,
   updateCharCounter,
   sendMessage,
-} from "./chat-input.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-system-roll-height-exact-01-system-roll-text-billboard-01";
+} from "./chat-input.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-02";
 export {
   beginSystemMessageHydration,
   finishSystemMessageHydration,
   renderMessage,
-} from "./chat-render.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-system-roll-height-exact-01-system-roll-text-billboard-01";
+} from "./chat-render.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-02";
 export {
   clearReplyTarget,
   renderReplyPreview,
   scrollToMessage,
   setReplyTarget,
-} from "./chat-reply.js?v=20260930-system-row-fixed-center-01-tooltip-focus-restore-skip-01-system-roll-height-exact-01-system-roll-text-billboard-01";
-export { sendVideoEventMessage } from "./chat-system-messages.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-system-roll-height-exact-01-system-roll-text-billboard-01";
+} from "./chat-reply.js?v=20260930-system-row-fixed-center-01-tooltip-focus-restore-skip-01-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-02";
+export { sendVideoEventMessage } from "./chat-system-messages.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-02";
 export {
   checkScrollPosition,
   resetInsideUnread,

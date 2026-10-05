@@ -1,10 +1,11 @@
 const SYSTEM_ROLL_FACE_COUNT = 5;
 const SYSTEM_ROLL_ANGLE = 360 / SYSTEM_ROLL_FACE_COUNT;
-const SYSTEM_ROLL_DURATION_MS = 1000;
-const SYSTEM_ROLL_ROTATION_DELAY_MS = 100;
+const SYSTEM_ROLL_DURATION_MS = 700;
+const SYSTEM_ROLL_ROTATION_DELAY_MS = 0;
 const SYSTEM_ROLL_ROTATION_DURATION_MS =
   SYSTEM_ROLL_DURATION_MS - SYSTEM_ROLL_ROTATION_DELAY_MS;
-const SYSTEM_ROLL_SIZE_TRANSITION_MS = 180;
+const SYSTEM_ROLL_SIZE_TRANSITION_MS = 140;
+const SYSTEM_ROLL_EASING = "cubic-bezier(0.45, 0, 0.55, 1)";
 const systemRollAnimations = new WeakMap();
 const systemRollBubbleAnimations = new WeakMap();
 const systemMessageRowAnchors = new WeakMap();
@@ -54,7 +55,13 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
   const width = Math.max(nextWidth, previousRect?.width || 0);
   const height = Math.max(nextHeight, previousRect?.height || 0);
   const visualWidth = width;
-  const radius = height / (2 * Math.tan(Math.PI / SYSTEM_ROLL_FACE_COUNT));
+  // Separa suficientemente las caras en 3D incluso cuando ambos textos son
+  // multilinea; el radio tangente original las hacía cruzarse al inicio y
+  // volver a acercarse al final del giro.
+  const separationGap = Number.isFinite(lineHeight) && lineHeight > 0
+    ? lineHeight * 0.4
+    : 6;
+  const radius = (height + separationGap) / Math.sin(SYSTEM_ROLL_ANGLE * Math.PI / 180);
   const originalNodes = Array.from(nextText.childNodes);
   const originalStyle = nextText.getAttribute("style");
   const bubble = nextText.closest(".message-system-bubble");
@@ -93,8 +100,6 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
   drum.style.setProperty("--system-roll-radius", `${radius}px`);
   drum.style.setProperty("--system-roll-angle", `${SYSTEM_ROLL_ANGLE}deg`);
   drum.style.setProperty("--system-roll-visual-width", `${visualWidth}px`);
-  const faceContents = [];
-
   for (let index = 0; index < SYSTEM_ROLL_FACE_COUNT; index += 1) {
     const face = document.createElement("span");
     face.className = "system-message-roll-face";
@@ -112,7 +117,6 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
       content.className = "system-message-roll-content";
       content.append(...contentNodes);
       face.append(content);
-      faceContents.push({ content, index });
     }
 
     drum.append(face);
@@ -167,7 +171,7 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
   const rotationOptions = {
     duration: SYSTEM_ROLL_ROTATION_DURATION_MS,
     delay: SYSTEM_ROLL_ROTATION_DELAY_MS,
-    easing: "cubic-bezier(.65, -.15, .25, 1.15)",
+    easing: SYSTEM_ROLL_EASING,
     fill: "both",
   };
   const animation = drum.animate(
@@ -181,25 +185,14 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
     ],
     rotationOptions,
   );
-  // El cilindro mantiene su giro 3D, pero las caras tipográficas se
-  // contrarrotan al mismo ritmo para que las letras no se aplasten al pasar.
-  const contentAnimations = faceContents.map(({ content, index }) => {
-    const angleBefore = index * SYSTEM_ROLL_ANGLE;
-    const angleAfter = angleBefore + SYSTEM_ROLL_ANGLE;
-    return content.animate(
-      [
-        { transform: `rotateX(${-angleBefore}deg)` },
-        { transform: `rotateX(${-angleAfter}deg)` },
-      ],
-      rotationOptions,
-    );
-  });
+  // El texto rota unido a su cara: contrarrotarlo lo mantenía casi frontal y
+  // hacía que la ruleta se percibiera como un simple desplazamiento vertical.
   const lineAnimations = [];
   if (lineDisplacement > 0.5 && lineElements.length >= 2) {
     const lineAnimationOptions = {
       duration: SYSTEM_ROLL_ROTATION_DURATION_MS,
       delay: SYSTEM_ROLL_ROTATION_DELAY_MS,
-      easing: "cubic-bezier(.65, -.15, .25, 1.15)",
+      easing: SYSTEM_ROLL_EASING,
       fill: "both",
     };
     const lineBefore = lineElements[0];
@@ -236,7 +229,6 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
     bubbleFinalized = true;
     bubbleSizeAnimation?.cancel();
     textSizeAnimation?.cancel();
-    contentAnimations.forEach((contentAnimation) => contentAnimation.cancel());
     rowAnchorAnimation?.cancel();
     if (row && systemMessageRowAnchorAnimations.get(row) === rowAnchorAnimation) {
       systemMessageRowAnchorAnimations.delete(row);
@@ -278,7 +270,7 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
     const finalBubbleHeight = nextBubbleRect?.height || bubbleHeight;
     const transition = {
       duration: SYSTEM_ROLL_SIZE_TRANSITION_MS,
-      easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+      easing: SYSTEM_ROLL_EASING,
       fill: "forwards",
     };
     const animations = [];

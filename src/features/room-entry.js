@@ -19,7 +19,7 @@ import {
   showSession,
   watchRoomEntryVideoFocus,
 } from "./session-ui.js?v=20260911-orientation-scroll-anchor-01";
-import { handleRemoteState } from "./player/index.js?v=20261003-desktop-video-snap-center-01-system-roll-height-exact-01-system-roll-text-billboard-01-video-snap-10px-fullscreen-bleed-01";
+import { handleRemoteState } from "./player/index.js?v=20261003-desktop-video-snap-center-01-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-02-video-snap-10px-fullscreen-bleed-01-seek-tooltip-stable-01";
 import {
   beginSystemMessageHydration,
   finishSystemMessageHydration,
@@ -28,7 +28,7 @@ import {
   resetInsideUnread,
   resetPageUnread,
   setInsideChatVisible,
-} from "./chat/index.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-system-roll-height-exact-01-system-roll-text-billboard-01";
+} from "./chat/index.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-02";
 import {
   getRoomTabLimitConflictCount,
   writeActiveTabRecord,

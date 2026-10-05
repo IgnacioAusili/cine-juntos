@@ -40,20 +40,20 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-system-roll-height-exact-01-system-roll-text-billboard-01";
+} from "./features/chat/index.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-02";
 import {
   initializePlayer,
   wirePlayerEvents,
-} from "./features/player/index.js?v=20261003-desktop-video-snap-center-01-system-roll-height-exact-01-system-roll-text-billboard-01-video-snap-10px-fullscreen-bleed-01";
+} from "./features/player/index.js?v=20261003-desktop-video-snap-center-01-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-02-video-snap-10px-fullscreen-bleed-01-seek-tooltip-stable-01";
 import { wireMobileFullscreenOrientation } from "./features/player/mobile-fullscreen-orientation.js";
 import { wireMobileChatKeyboardControls } from "./features/player/mobile-chat-keyboard-controls.js?v=20260914-keyboard-player-controls-01";
 import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20260913-name-editor-keyboard-header-02-tooltip-focus-restore-skip-01";
 import { wireMobileLandscapeVideoSnap } from "./features/mobile-landscape-video-snap.js?v=20260910-mobile-portrait-no-snap-01";
-import { joinRoom, wireRoomEvents } from "./features/room.js?v=20261004-room-join-race-01";
+import { joinRoom, wireRoomEvents } from "./features/room.js?v=20261004-room-join-race-01-seek-tooltip-stable-01";
 import { wireTouchHover } from "./core/touch-interactions.js?v=20260829-touch-hold-fix-01";
 import { installConsoleLogCapture, wireMobileDebugTools } from "./features/mobile-debug.js?v=20260917-dialog-test-routes-01";
 import { wireMobileKeyboardDiagnostics } from "./features/mobile-keyboard-diagnostics.js?v=20260911-ios-landscape-keyboard-diagnostics-01";
-import { openDialogTestRoute } from "./features/dialog-test-routes.js?v=20261003-desktop-video-snap-center-01-video-snap-10px-fullscreen-bleed-01";
+import { openDialogTestRoute } from "./features/dialog-test-routes.js?v=20261003-desktop-video-snap-center-01-video-snap-10px-fullscreen-bleed-01-seek-tooltip-stable-01";
 import { wireLobbyLayoutVariants } from "./features/lobby-layout-variants.js?v=20261003-marquee-random-phrase-pool-seamless-live-premiere-05-selected-copy-01-marquee-pause-offscreen-step-boundary-02";
 
 const requestedRoom = normalizeRoomCode(new URLSearchParams(window.location.search).get("room") || "");

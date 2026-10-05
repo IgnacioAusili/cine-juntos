@@ -11,14 +11,14 @@ import {
   handleIncomingPageUnread,
   incrementScrollIndicator,
 } from "./unread-counters.js?v=20261003-name-editor-curtain-cancel-esc-blur-03";
-import { setReplyTarget, scrollToMessage } from "./chat-reply.js?v=20260930-system-row-fixed-center-01-tooltip-focus-restore-skip-01-system-roll-height-exact-01-system-roll-text-billboard-01";
+import { setReplyTarget, scrollToMessage } from "./chat-reply.js?v=20260930-system-row-fixed-center-01-tooltip-focus-restore-skip-01-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-02";
 import {
   animateExpandedSystemMessageRemoval,
   captureExpandedSystemMessageRemoval,
   prepareSystemMessageRemoval,
   refreshSystemMessageGroup,
   scheduleSystemMessageCollapse,
-} from "./system-message-groups.js?v=20261003-system-roll-height-exact-01-system-roll-text-billboard-01";
+} from "./system-message-groups.js?v=20261003-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-02";
 
 const EMOJI_ONLY_PATTERN = /^(?:[\s\p{Extended_Pictographic}\p{Emoji_Presentation}\p{Emoji_Modifier}\uFE0F\u200D\u20E3])+$/u;
 const EMOJI_GLYPH_PATTERN = /[\p{Extended_Pictographic}\p{Emoji_Presentation}]/u;

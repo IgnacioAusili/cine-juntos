@@ -1,6 +1,6 @@
 import { dom } from "../core/dom.js";
 import { updateDisplayName } from "./presence.js?v=20261003-name-editor-curtain-cancel-esc-blur-03";
-import { joinRoom } from "./room-entry.js?v=20261004-room-join-race-01";
+import { joinRoom } from "./room-entry.js?v=20261004-room-join-race-01-seek-tooltip-stable-01";
 import { leaveRoom } from "./room-exit.js?v=20261004-room-join-race-01";
 import { copyInvite } from "./room-invite.js?v=20261004-room-join-race-01";
 import {

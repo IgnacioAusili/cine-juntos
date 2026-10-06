@@ -7,6 +7,7 @@ let lightbox = null;
 let lightboxImage = null;
 let zoomLabel = null;
 let scale = 1;
+let initialScale = 1;
 let panX = 0;
 let panY = 0;
 let activePointerId = null;
@@ -64,7 +65,7 @@ function ensureLightbox() {
       <div class="image-lightbox-toolbar" aria-label="Controles de zoom">
         <div class="image-lightbox-zoom-controls">
           <button class="image-lightbox-button" type="button" data-lightbox-action="zoom-out" aria-label="Alejar imagen"><span class="image-lightbox-icon" data-lucide="minus" aria-hidden="true"></span></button>
-          <span class="image-lightbox-zoom-label" aria-live="polite">100%</span>
+          <button class="image-lightbox-button image-lightbox-zoom-label" type="button" data-lightbox-action="reset-zoom" aria-live="polite">100%</button>
           <button class="image-lightbox-button" type="button" data-lightbox-action="zoom-in" aria-label="Acercar imagen"><span class="image-lightbox-icon" data-lucide="plus" aria-hidden="true"></span></button>
         </div>
       </div>
@@ -97,6 +98,8 @@ function ensureLightbox() {
       changeScale(SCALE_STEP);
     } else if (action === "zoom-out") {
       changeScale(-SCALE_STEP);
+    } else if (action === "reset-zoom") {
+      resetScale(initialScale);
     }
   });
   lightbox.addEventListener("cancel", (event) => {
@@ -130,7 +133,8 @@ function getInitialScale(modal) {
 }
 
 function applyInitialScale(modal) {
-  resetScale(getInitialScale(modal));
+  initialScale = getInitialScale(modal);
+  resetScale(initialScale);
 }
 
 function getPanLimits() {
@@ -222,6 +226,7 @@ function openLightbox(image) {
   const modal = ensureLightbox();
   lastTrigger = image.closest(".message-media-link") || image;
   scrollPositionsBeforeLightbox = captureScrollPositions(lastTrigger);
+  initialScale = 1;
   resetScale();
   lightboxImage.src = image.currentSrc || image.src;
   lightboxImage.alt = image.alt || "Imagen ampliada";
@@ -238,6 +243,7 @@ export function openLightboxForTest({ src, alt = "Imagen ampliada de prueba" } =
   const modal = ensureLightbox();
   lastTrigger = null;
   scrollPositionsBeforeLightbox = captureScrollPositions(null);
+  initialScale = 1;
   resetScale();
   lightboxImage.src = src || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='960' height='540' viewBox='0 0 960 540'%3E%3Crect width='960' height='540' fill='%23252b31'/%3E%3Ctext x='480' y='285' fill='white' font-size='42' text-anchor='middle' font-family='sans-serif'%3EImagen de prueba%3C/text%3E%3C/svg%3E";
   lightboxImage.alt = alt;
@@ -261,6 +267,7 @@ function closeLightbox() {
   restoreScrollPositions(scrollPositions);
   lastTrigger = null;
   scrollPositionsBeforeLightbox = null;
+  initialScale = 1;
   resetScale();
 }
 

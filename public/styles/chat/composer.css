@@ -140,13 +140,30 @@
     padding-bottom: 4px;
   }
 
-  /* En el dock inferior el campo de una línea iguala la altura de los botones;
-     su padding compacto centra el texto sin alterar el autoajuste multilinea. */
-  .session-view[data-chat-dock="bottom"]
-    .message-form .input-wrapper:not([data-expanded="true"]) #messageInput {
+  /* Ambos docks usan la misma altura de una línea; el autoajuste multilinea
+     sigue controlando el campo cuando el contenido crece. */
+  .session-view .chat-area > .message-form
+    .input-wrapper:not([data-expanded="true"]) #messageInput {
     height: 32px !important;
     min-height: 32px;
     padding-block: 6px;
+  }
+
+  .session-view[data-chat-dock] .chat-area > .message-form
+    .input-wrapper:not([data-expanded="true"]) {
+    align-items: center;
+  }
+
+  .session-view[data-chat-dock] .chat-area > .message-form
+    .input-wrapper:not([data-expanded="true"]) .textarea-shell #messageInput {
+    align-self: center;
+  }
+
+  .session-view[data-chat-dock] .chat-area > .message-form
+    .input-wrapper:not([data-expanded="true"]) .emoji-trigger,
+  .session-view[data-chat-dock] .chat-area > .message-form
+    .input-wrapper:not([data-expanded="true"]) .send {
+    margin-bottom: 0;
   }
 }
 

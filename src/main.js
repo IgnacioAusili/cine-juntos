@@ -53,7 +53,7 @@ import { joinRoom, wireRoomEvents } from "./features/room.js?v=20261004-room-joi
 import { wireTouchHover } from "./core/touch-interactions.js?v=20260829-touch-hold-fix-01";
 import { installConsoleLogCapture, wireMobileDebugTools } from "./features/mobile-debug.js?v=20260917-dialog-test-routes-01";
 import { wireMobileKeyboardDiagnostics } from "./features/mobile-keyboard-diagnostics.js?v=20260911-ios-landscape-keyboard-diagnostics-01";
-import { openDialogTestRoute } from "./features/dialog-test-routes.js?v=20261003-desktop-video-snap-center-01-video-snap-10px-fullscreen-bleed-01-seek-tooltip-stable-01";
+import { openDialogTestRoute } from "./features/dialog-test-routes.js?v=20261003-desktop-video-snap-center-01-video-snap-10px-fullscreen-bleed-01-seek-tooltip-stable-01-lightbox-initial-zoom-reset-01";
 import { wireLobbyLayoutVariants } from "./features/lobby-layout-variants.js?v=20261003-marquee-random-phrase-pool-seamless-live-premiere-05-selected-copy-01-marquee-pause-offscreen-step-boundary-02";
 
 const requestedRoom = normalizeRoomCode(new URLSearchParams(window.location.search).get("room") || "");

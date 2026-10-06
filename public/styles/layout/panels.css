@@ -167,8 +167,9 @@
   opacity: 1;
 }
 
-/* El compositor aparece cuando el cambio de dock termina de asentar también
-   la posición del panel inferior en el viewport. */
-.session-view.chat-bottom-composer-settling .chat-area > .message-form {
+/* El input se revela una vez que el panel y el scroll llegan juntos a la
+   posición final. Así no aparece en un punto intermedio y vuelve a moverse. */
+.session-view[data-chat-dock="bottom"].chat-bottom-pc-expand-visual .chat-area > .message-form,
+.session-view[data-chat-dock="bottom"].chat-bottom-mobile-expand-visual .chat-area > .message-form {
   visibility: hidden;
 }

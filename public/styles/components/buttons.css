@@ -63,11 +63,6 @@
   transform: translateY(0);
 }
 
-.button:active,
-.icon-button:active {
-  transform: translateY(1px);
-}
-
 .button[data-loading="true"] {
   position: relative;
   cursor: progress;
@@ -199,8 +194,8 @@
 }
 
 .dock-button {
-  flex: 0 0 36px;
-  width: 36px;
+  flex: 0 0 24px;
+  width: 24px;
   height: 36px;
   min-height: 36px;
   display: inline-flex;
@@ -220,7 +215,7 @@
 
 .dock-button:hover,
 .dock-button:focus-visible {
-  background: rgba(255, 255, 255, 0.08);
+  background: transparent;
   color: #ffffff;
   box-shadow: none;
   transform: none;

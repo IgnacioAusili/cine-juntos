@@ -24,7 +24,7 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap"
     />
     <link rel="icon" href="./public/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="./public/styles.css?v=20260930-chat-layout-no-flicker-compact-header-05-overlay-media-alignment-02-message-time-color-01-pending-image-lightbox-01-preview-size-center-01-overlay-image-size-01-chat-header-padding-effective-01-header-visual-center-01-system-row-fixed-center-01-hidden-scrollbar-02-chat-header-icon-end-align-02-chat-dock-name-transition-03-chat-header-gutter-spacing-01-player-progress-stable-01" />
+    <link rel="stylesheet" href="./public/styles.css?v=20261006-composer-controls-centered-both-docks-01-lightbox-native-modal-scroll-lock-01" />
   </head>
   <body class="is-lobby">
     <div class="app-shell">
@@ -89,7 +89,7 @@
       <section class="lobby-screen" id="lobbyScreen" aria-label="Entrada a sala">
         <div class="lobby-marquee" aria-hidden="true">
           <span class="lobby-marquee-track">
-            <span class="marquee-set"><span class="live">En vivo</span><span class="marquee-fixed">Salas publicas</span><span class="marquee-fixed">Chat integrado</span><span class="marquee-message">Elegí lo que querés ver</span><span class="marquee-message">Compartí con amigos</span><span class="marquee-message">Disfrutá</span><span class="marquee-emojis" data-emojis="🎬,🍿,✨,🎥,💬,💚,🌟" aria-hidden="true">🎬 🍿 ✨</span><span class="spacer"></span></span><span class="marquee-set"><span class="live">En vivo</span><span class="marquee-fixed">Salas publicas</span><span class="marquee-fixed">Chat integrado</span><span class="marquee-message">Elegí lo que querés ver</span><span class="marquee-message">Compartí con amigos</span><span class="marquee-message">Disfrutá</span><span class="marquee-emojis" data-emojis="🎬,🍿,✨,🎥,💬,💚,🌟" aria-hidden="true">🎬 🍿 ✨</span><span class="spacer"></span></span><span class="marquee-set"><span class="live">En vivo</span><span class="marquee-fixed">Salas publicas</span><span class="marquee-fixed">Chat integrado</span><span class="marquee-message">Elegí lo que querés ver</span><span class="marquee-message">Compartí con amigos</span><span class="marquee-message">Disfrutá</span><span class="marquee-emojis" data-emojis="🎬,🍿,✨,🎥,💬,💚,🌟" aria-hidden="true">🎬 🍿 ✨</span><span class="spacer"></span></span><span class="marquee-set"><span class="live">En vivo</span><span class="marquee-fixed">Salas publicas</span><span class="marquee-fixed">Chat integrado</span><span class="marquee-message">Elegí lo que querés ver</span><span class="marquee-message">Compartí con amigos</span><span class="marquee-message">Disfrutá</span><span class="marquee-emojis" data-emojis="🎬,🍿,✨,🎥,💬,💚,🌟" aria-hidden="true">🎬 🍿 ✨</span><span class="spacer"></span></span>
+            <span class="marquee-set"><span class="live">En vivo</span><span class="marquee-message">Salas publicas</span><span class="marquee-message">Chat integrado</span><span class="marquee-message">Elegí lo que querés ver</span><span class="marquee-message">Compartí con amigos</span><span class="marquee-message">Disfrutá</span><span class="marquee-emojis" data-emojis="🎬,🍿,✨,🎥,💬,💚,🌟" aria-hidden="true">🎬 🍿 ✨</span><span class="spacer"></span></span><span class="marquee-set"><span class="live">En vivo</span><span class="marquee-message">Salas publicas</span><span class="marquee-message">Chat integrado</span><span class="marquee-message">Elegí lo que querés ver</span><span class="marquee-message">Compartí con amigos</span><span class="marquee-message">Disfrutá</span><span class="marquee-emojis" data-emojis="🎬,🍿,✨,🎥,💬,💚,🌟" aria-hidden="true">🎬 🍿 ✨</span><span class="spacer"></span></span><span class="marquee-set"><span class="live">En vivo</span><span class="marquee-message">Salas publicas</span><span class="marquee-message">Chat integrado</span><span class="marquee-message">Elegí lo que querés ver</span><span class="marquee-message">Compartí con amigos</span><span class="marquee-message">Disfrutá</span><span class="marquee-emojis" data-emojis="🎬,🍿,✨,🎥,💬,💚,🌟" aria-hidden="true">🎬 🍿 ✨</span><span class="spacer"></span></span><span class="marquee-set"><span class="live">En vivo</span><span class="marquee-message">Salas publicas</span><span class="marquee-message">Chat integrado</span><span class="marquee-message">Elegí lo que querés ver</span><span class="marquee-message">Compartí con amigos</span><span class="marquee-message">Disfrutá</span><span class="marquee-emojis" data-emojis="🎬,🍿,✨,🎥,💬,💚,🌟" aria-hidden="true">🎬 🍿 ✨</span><span class="spacer"></span></span>
           </span>
         </div>
 
@@ -567,7 +567,10 @@
                     aria-label="Usuarios conectados"
                     data-tooltip="Conectados: vos"
                   >
-                    <span class="status-dot presence-dot" aria-hidden="true"></span>
+                    <span class="presence-icon-wrap" aria-hidden="true">
+                      <span class="presence-users-icon" data-lucide="users"></span>
+                      <span class="status-dot presence-dot"></span>
+                    </span>
                     <span class="presence-self-label" id="overlayPresenceSelfLabel" hidden></span>
                     <span id="overlayParticipantCount">1</span>
                   </button>
@@ -683,62 +686,84 @@
 
           <aside class="chat-area" aria-label="Chat de la sala">
             <div class="chat-tools">
-              <button
-                class="presence-pill"
-                id="presencePill"
-                type="button"
-                aria-label="Usuarios conectados"
-                data-tooltip="Conectados: vos"
-              >
-                <span class="status-dot presence-dot" aria-hidden="true"></span>
-                <span class="presence-self-label" id="presenceSelfLabel" hidden></span>
-                <span id="participantCount">1</span>
-              </button>
-              <div class="chat-name-field">
-                <div class="chat-name-editor" id="chatNameField" data-editing="false">
-                  <div class="chat-name-display-row">
-                    <span
-                      class="chat-name-display"
-                      id="nameDisplay"
-                      data-tooltip="Nombre visible para los participantes de la sala"
-                    >Invitado</span>
-                    <button
-                      class="chat-name-edit-button"
-                      id="editNameButton"
-                      type="button"
-                      aria-label="Editar nombre"
-                      title="Editar nombre"
-                      data-tooltip="Editar nombre"
-                    >
-                      <span data-lucide="pencil"></span>
-                    </button>
-                  </div>
-                  <div class="chat-name-edit-row">
-                    <input
-                      id="nameInput"
-                      type="search"
-                      autocomplete="off"
-                      enterkeyhint="done"
-                      autocapitalize="off"
-                      spellcheck="false"
-                      data-bwignore="true"
-                      data-lpignore="true"
-                      maxlength="20"
-                      aria-label="Nombre visible para los participantes de la sala"
-                      data-tooltip="Nombre visible para los participantes de la sala"
-                    />
-                    <button
-                      class="chat-name-confirm-button"
-                      id="confirmNameButton"
-                      type="button"
-                      aria-label="Aceptar nombre"
-                      title="Aceptar nombre"
-                      data-tooltip="Aceptar nombre (Enter)"
-                    >
-                      <span data-lucide="check"></span>
-                    </button>
+              <div class="chat-tools-leading">
+                <button
+                  class="presence-pill"
+                  id="presencePill"
+                  type="button"
+                  aria-label="Usuarios conectados"
+                  data-tooltip="Conectados: vos"
+                >
+                  <span class="presence-icon-wrap" aria-hidden="true">
+                    <span class="presence-users-icon" data-lucide="users"></span>
+                    <span class="status-dot presence-dot"></span>
+                  </span>
+                  <span class="presence-self-label" id="presenceSelfLabel" hidden></span>
+                  <span id="participantCount">1</span>
+                </button>
+                <div class="chat-name-field">
+                  <div class="chat-name-editor" id="chatNameField" data-editing="false">
+                    <div class="chat-name-display-row">
+                      <span
+                        class="chat-name-display"
+                        id="nameDisplay"
+                        data-tooltip="Nombre visible para los participantes de la sala"
+                      >Invitado</span>
+                      <button
+                        class="chat-name-edit-button"
+                        id="editNameButton"
+                        type="button"
+                        aria-label="Editar nombre"
+                        title="Editar nombre"
+                        data-tooltip="Editar nombre"
+                      >
+                        <span data-lucide="pencil"></span>
+                      </button>
+                    </div>
+                    <div class="chat-name-edit-row">
+                      <input
+                        id="nameInput"
+                        type="search"
+                        autocomplete="off"
+                        enterkeyhint="done"
+                        autocapitalize="off"
+                        spellcheck="false"
+                        data-bwignore="true"
+                        data-lpignore="true"
+                        maxlength="20"
+                        aria-label="Nombre visible para los participantes de la sala"
+                        data-tooltip="Nombre visible para los participantes de la sala"
+                      />
+                      <button
+                        class="chat-name-confirm-button"
+                        id="confirmNameButton"
+                        type="button"
+                        aria-label="Aceptar nombre"
+                        title="Aceptar nombre"
+                        data-tooltip="Aceptar nombre (Enter)"
+                      >
+                        <span data-lucide="check"></span>
+                      </button>
+                    </div>
                   </div>
                 </div>
+              </div>
+              <div
+                class="chat-collapse-hover-zone chat-collapse-hover-zone-collapse"
+                data-chat-control="collapse"
+              >
+                <button
+                  class="chat-collapse-handle"
+                  id="collapseChatButton"
+                  type="button"
+                  aria-label="Contraer chat"
+                  title="Contraer chat"
+                  tabindex="-1"
+                >
+                  <span class="chat-collapse-icon-anchor">
+                    <span data-lucide="arrow-right"></span>
+                  </span>
+                </button>
               </div>
               <div class="chat-tools-actions">
                 <button
@@ -771,24 +796,6 @@
                   <span data-lucide="panel-right"></span>
                 </button>
               </div>
-            </div>
-
-            <div
-              class="chat-collapse-hover-zone chat-collapse-hover-zone-collapse"
-              data-chat-control="collapse"
-            >
-              <button
-                class="chat-collapse-handle"
-                id="collapseChatButton"
-                type="button"
-                aria-label="Contraer chat"
-                title="Contraer chat"
-                tabindex="-1"
-              >
-                <span class="chat-collapse-icon-anchor">
-                  <span data-lucide="arrow-right"></span>
-                </span>
-              </button>
             </div>
 
             <div class="messages-wrap">
@@ -960,40 +967,54 @@
       aria-describedby="aboutDialogDescription"
     >
       <div class="about-dialog-card">
-        <button id="closeAboutDialogButton" type="button" class="dialog-close" aria-label="Cerrar información" data-tooltip="Cerrar (Esc)">
-          <span data-lucide="x" aria-hidden="true"></span>
-        </button>
-        <div class="about-dialog-header">
-          <span class="about-dialog-icon" aria-hidden="true" data-lucide="circle-alert"></span>
-          <div>
-            <p class="about-dialog-eyebrow">Cine Juntos</p>
-            <h2 id="aboutDialogTitle">Sobre este proyecto</h2>
+        <div class="about-dialog-fixed-header">
+          <div class="about-dialog-header">
+            <span class="about-dialog-icon" aria-hidden="true" data-lucide="circle-alert"></span>
+            <div>
+              <p class="about-dialog-eyebrow">Cine Juntos</p>
+              <h2 id="aboutDialogTitle">Sobre este proyecto</h2>
+            </div>
           </div>
+          <button id="closeAboutDialogButton" type="button" class="dialog-close" aria-label="Cerrar información" data-tooltip="Cerrar (Esc)">
+            <span data-lucide="x" aria-hidden="true"></span>
+          </button>
         </div>
-        <p id="aboutDialogDescription" class="about-dialog-intro">
-          Cine Juntos es un proyecto de código abierto (open source) concebido como una base con el propósito de la visualización sincronizada de contenido entre múltiples usuarios de manera comoda y sencilla. De manera tal, permite crear salas con un chat integrado, elegir el contenido a ver y cargarlo en un reproductor que tiene sus funciones sincronizadas entre todos los usuarios: reproducción, velocidad, pausa, etc. No incorpora publicidad ni restricciones propias, más allá de las limitaciones de los servicios utilizados o que utilice el usuario.<br /><br />
-          Esta página funciona como una demostración funcional del proyecto. Las salas se crean mediante un código de acceso que puede compartirse con otras personas, la reproduccion se sincroniza mediante Firebase Realtime y se puede incorporar el contenido a partir de archivos o enlaces directos alojados en servidores o CDN.<br /><br />
-          El proyecto puede modificarse, adaptarse y alojarse según las necesidades del que quiera usarlo.
-        </p>
-        <dl class="about-dialog-details">
-          <div>
-            <dt>Autor</dt>
-            <dd>Ignacio Ausili</dd>
+        <div class="about-dialog-content">
+          <div id="aboutDialogDescription" class="about-dialog-intro">
+            <p class="about-dialog-description-lead">Cine Juntos es un proyecto de código abierto (open source) concebido como una base con el propósito de la visualización sincronizada de contenido entre múltiples usuarios de manera comoda y sencilla. De manera tal, permite crear salas con un chat integrado, elegir el contenido a ver y cargarlo en un reproductor que tiene sus funciones sincronizadas entre todos los usuarios: reproducción, velocidad, pausa, etc.</p>
+            <div class="about-dialog-disclosure">
+              <button class="about-dialog-disclosure-toggle" type="button" aria-expanded="false" aria-controls="aboutDialogDescriptionRest">
+                <span class="about-dialog-disclosure-label about-dialog-disclosure-label-more">Mostrar la descripción completa</span>
+                <span class="about-dialog-disclosure-control" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="m6 9 6 6 6-6" /></svg>
+                </span>
+              </button>
+              <div id="aboutDialogDescriptionRest" class="about-dialog-disclosure-content" hidden tabindex="-1">
+                <p>Las salas se crean mediante un código de acceso que puede compartirse con otras personas, la reproduccion se sincroniza mediante Firebase Realtime y se puede incorporar el contenido a partir de archivos o enlaces directos alojados en servidores o CDN. Esta demo se publica en GitHub Pages mediante GitHub Actions.</p>
+                <p>Esta página funciona como una demostración funcional del proyecto. No incorpora publicidad ni restricciones propias, más allá de las limitaciones de los servicios utilizados o que utilice el usuario. El proyecto puede modificarse, adaptarse y alojarse según las necesidades del que quiera usarlo.</p>
+              </div>
+            </div>
           </div>
-          <div>
-            <dt>GitHub</dt>
-            <dd><a href="https://github.com/IgnacioAusili/cine-juntos" target="_blank" rel="noopener noreferrer">github.com/IgnacioAusili/cine-juntos</a></dd>
-          </div>
-          <div>
-            <dt>Licencia</dt>
-            <dd><a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener noreferrer">GNU GPLv3</a></dd>
-          </div>
-          <div>
-            <dt>Parte técnica</dt>
-            <dd>Frontend estático en HTML, CSS y JavaScript vanilla. Usa HTML5 Video, sincronización en tiempo real con <a href="https://firebase.google.com/docs/database/web/start?hl=es-419" target="_blank" rel="noopener noreferrer">Firebase Realtime</a> cuando está disponible y un transporte local como fallback.</dd>
-          </div>
-        </dl>
-        <p class="about-dialog-disclaimer"><strong>Disclaimer:</strong> Esta página funciona como una demostración del proyecto y no está destinada a ser un producto final. El contenido y los enlaces utilizados pertenecen a quienes los aportan. Cada usuario debe contar con los derechos necesarios y es responsable del uso que le da al servicio y de sus mensajes. Este proyecto comunitario se ofrece bajo GPLv3, sin garantía de disponibilidad o funcionamiento ininterrumpido.</p>
+          <dl class="about-dialog-details">
+            <div>
+              <dt>Autor</dt>
+              <dd>Ignacio Ausili</dd>
+            </div>
+            <div>
+              <dt>GitHub</dt>
+              <dd><a href="https://github.com/IgnacioAusili/cine-juntos" target="_blank" rel="noopener noreferrer">github.com/IgnacioAusili/cine-juntos</a></dd>
+            </div>
+            <div>
+              <dt>Licencia</dt>
+              <dd><a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener noreferrer">GNU GPLv3</a></dd>
+            </div>
+            <div>
+              <dt>Parte técnica</dt>
+              <dd>Frontend estático en HTML, CSS y JavaScript vanilla. Usa HTML5 Video, sincronización en tiempo real con <a href="https://firebase.google.com/docs/database/web/start?hl=es-419" target="_blank" rel="noopener noreferrer">Firebase Realtime</a> cuando está disponible y un transporte local como fallback.</dd>
+            </div>
+          </dl>
+          <p class="about-dialog-disclaimer"><strong>Disclaimer:</strong> Esta página funciona como una demostración del proyecto y no está destinada a ser un producto final. El contenido y los enlaces utilizados pertenecen a quienes los aportan. Cada usuario debe contar con los derechos necesarios y es responsable del uso que le da al servicio y de sus mensajes. Este proyecto comunitario se ofrece bajo GPLv3, sin garantía de disponibilidad o funcionamiento ininterrumpido.</p>
+        </div>
       </div>
       <div class="about-dialog-scrollbar" aria-hidden="true">
         <span class="about-dialog-scrollbar-thumb"></span>
@@ -1053,9 +1074,9 @@
     <script src="./public/dev-runtime.js?v=20260715-02"></script>
     <script defer src="./public/vendor/lucide-0.468.0/lucide.min.js?v=20260929-local-lucide-01"></script>
     <script src="./public/firebase-config.js"></script>
-    <script type="module" src="./src/features/chat/image-lightbox.js?v=20260917-dialog-test-routes-01-lightbox-scroll-preserve-01"></script>
-    <script type="module" src="./src/main.js?v=20261001-bottom-chat-expand-03"></script>
-    <script type="module" src="./src/features/chat/component-aspect-layout.js?v=20260930-stack-measure-no-flicker-02-header-visual-center-02"></script>
-    <script type="module" src="./src/features/chat/chat-name-layout.js?v=20260930-stable-name-editor-layout-11-dock-cache"></script>
+    <script type="module" src="./src/features/chat/image-lightbox.js?v=20261006-lightbox-native-modal-scroll-lock-01"></script>
+    <script type="module" src="./src/features/tooltip-page-lifecycle.js?v=20261001-tooltip-focus-restore-02"></script>
+    <script type="module" src="./src/main.js?v=20261003-desktop-video-snap-center-01-name-editor-curtain-cancel-esc-blur-03-marquee-one-set-per-iteration-01-system-roll-height-exact-01-marquee-random-phrase-pool-seamless-live-premiere-05-selected-copy-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-02-video-snap-10px-fullscreen-bleed-01-about-dialog-side-padding-12-19-marquee-pause-offscreen-step-boundary-02-room-join-race-01-seek-tooltip-stable-01-lightbox-initial-zoom-reset-01-room-scroll-lock-01-native-modal-scroll-lock-01"></script>
+    <script type="module" src="./src/features/chat/component-aspect-layout.js?v=20261004-empty-player-start-scroll-01"></script>
   </body>
 </html>

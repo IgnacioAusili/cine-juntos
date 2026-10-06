@@ -15,7 +15,7 @@ import { makeGuestName, makeParticipantLabel } from "../core/utils.js";
 import {
   hideTooltip,
   setControlIcon,
-} from "./icons-tooltips.js?v=20260914-tooltip-single-path-01";
+} from "./icons-tooltips.js?v=20260914-tooltip-single-path-01-tooltip-focus-restore-skip-01";
 import {
   isTouchPointer,
   TOUCH_LONG_PRESS_DELAY_MS,
@@ -29,7 +29,6 @@ import {
 const RECENT_ACTIVITY_WINDOW_MS = 30000;
 const DESKTOP_BOTTOM_NAME_GAP_PX = 8;
 const DESKTOP_BOTTOM_NAME_ARROW_GAP_PX = 120;
-const DESKTOP_BOTTOM_EDIT_MARGIN_PX = 12;
 const CONFIRM_NAME_HOLD_MOVE_TOLERANCE_PX = 10;
 
 let nameInputMeasureCanvas = null;
@@ -40,6 +39,7 @@ let confirmNameLongPressPointerId = null;
 let confirmNameLongPressStart = null;
 let suppressNextConfirmNameClick = false;
 let suppressNextConfirmNameClickResetTimer = null;
+let nameCommitRevealTimer = null;
 const recentActivityByParticipantId = new Map();
 
 function getPendingDisplayName() {
@@ -243,10 +243,7 @@ function syncDesktopBottomNameField(textWidth, isEditing) {
   const rowStyle = row ? window.getComputedStyle(row) : null;
   const rowGap = Number.parseFloat(rowStyle?.columnGap || rowStyle?.gap || "0") || 0;
   const buttonWidth = button?.getBoundingClientRect().width || 20;
-  const maxFieldWidth = Math.max(
-    0,
-    geometry.maxFieldWidth - (isEditing ? DESKTOP_BOTTOM_EDIT_MARGIN_PX : 0),
-  );
+  const maxFieldWidth = Math.max(0, geometry.maxFieldWidth);
   const naturalWidth = Math.ceil(textWidth + buttonWidth + rowGap);
   const targetWidth = Math.min(naturalWidth, maxFieldWidth);
 
@@ -293,7 +290,6 @@ function getNameInputAvailableWidth() {
         0,
         Math.floor(
           geometry.maxFieldWidth
-          - DESKTOP_BOTTOM_EDIT_MARGIN_PX
           - confirmWidth
           - rowGap,
         ),
@@ -448,21 +444,52 @@ export function markParticipantActive(participantId, participantName = "") {
   renderPresence();
 }
 
-function setIdentityEditing(isEditing, { animateReveal = false } = {}) {
-  if (!dom.chatNameField) return;
-  if (isEditing && state.chat.nameChangeCount >= NAME_CHANGE_LIMIT) return;
-  dom.chatNameField.classList.remove("name-commit-reveal");
-  dom.chatNameField.dataset.editing = isEditing ? "true" : "false";
-  dom.chatNameField.parentElement?.setAttribute("data-editing", isEditing ? "true" : "false");
+function clearNameCommitReveal(editor = dom.chatNameField) {
+  if (nameCommitRevealTimer !== null) {
+    window.clearTimeout(nameCommitRevealTimer);
+    nameCommitRevealTimer = null;
+  }
+  editor?.classList.remove("name-commit-stable", "name-commit-reveal");
+}
 
-  if (!isEditing && animateReveal) {
-    dom.chatNameField.classList.add("name-commit-reveal");
-    window.setTimeout(() => {
-      dom.chatNameField?.classList.remove("name-commit-reveal");
-    }, 260);
+function setIdentityEditing(
+  isEditing,
+  { preserveCommittedName = false, animateReveal = false } = {},
+) {
+  const editor = dom.chatNameField;
+  if (!editor) return;
+  if (isEditing && state.chat.nameChangeCount >= NAME_CHANGE_LIMIT) return;
+
+  if (
+    isEditing
+    && (editor.classList.contains("name-commit-stable")
+      || editor.classList.contains("name-commit-reveal"))
+  ) {
+    clearNameCommitReveal(editor);
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => setIdentityEditing(true));
+    });
+    return;
   }
 
+  editor.classList.toggle("name-commit-stable", !isEditing && preserveCommittedName);
+  editor.classList.toggle("name-commit-reveal", !isEditing && preserveCommittedName && animateReveal);
+  editor.dataset.editing = isEditing ? "true" : "false";
+  editor.parentElement?.setAttribute("data-editing", isEditing ? "true" : "false");
+
   if (!isEditing) {
+    if (preserveCommittedName) {
+      if (animateReveal) {
+        nameCommitRevealTimer = window.setTimeout(() => {
+          nameCommitRevealTimer = null;
+          if (editor.dataset.editing !== "true") clearNameCommitReveal(editor);
+        }, 780);
+      } else {
+        window.requestAnimationFrame(() => {
+          window.requestAnimationFrame(() => editor.classList.remove("name-commit-stable"));
+        });
+      }
+    }
     dom.nameInput.value = getDisplayName();
     syncNameInputWidth();
     syncConfirmNameButtonState();
@@ -482,10 +509,13 @@ function setIdentityEditing(isEditing, { animateReveal = false } = {}) {
 
 function cancelIdentityEditing() {
   if (dom.chatNameField?.dataset.editing !== "true") return;
-  setIdentityEditing(false);
+  delete dom.nameInput.dataset.commitOnBlur;
+  setIdentityEditing(false, { preserveCommittedName: true });
+  dom.nameInput.blur();
 }
 
 function commitDisplayNameChange() {
+  delete dom.nameInput.dataset.commitOnBlur;
   if (state.chat.nameChangeCount >= NAME_CHANGE_LIMIT) {
     setIdentityEditing(false);
     return;
@@ -494,7 +524,7 @@ function commitDisplayNameChange() {
   const previousName = getDisplayName();
   const requestedName = getPendingDisplayName();
   if (requestedName === previousName) {
-    setIdentityEditing(false);
+    setIdentityEditing(false, { preserveCommittedName: true });
     return;
   }
   if (requestedName.length < DISPLAY_NAME_MIN_LENGTH) {
@@ -523,7 +553,7 @@ function commitDisplayNameChange() {
   }
   syncEditNameButtonState();
   syncConfirmNameButtonState();
-  setIdentityEditing(false, { animateReveal: true });
+  setIdentityEditing(false, { preserveCommittedName: true, animateReveal: nameChanged });
 }
 
 export function renderMembers(members) {
@@ -692,24 +722,19 @@ export function wireIdentityEvents() {
     }
   });
 
-  dom.nameInput.addEventListener("blur", (event) => {
+  dom.nameInput.addEventListener("blur", () => {
     if (dom.nameInput.dataset.commitOnBlur === "1") {
       delete dom.nameInput.dataset.commitOnBlur;
       return;
     }
-
-    if (event.relatedTarget instanceof HTMLElement && dom.chatNameField?.contains(event.relatedTarget)) {
-      return;
-    }
-
     cancelIdentityEditing();
   });
 
   document.addEventListener("pointerdown", (event) => {
     if (dom.chatNameField?.dataset.editing !== "true") return;
-    if (!(event.target instanceof HTMLElement)) return;
+    if (!(event.target instanceof Node)) return;
     if (dom.chatNameField.contains(event.target)) return;
-    dom.nameInput.blur();
+    cancelIdentityEditing();
   });
 
   dom.nameInput.addEventListener("input", () => {

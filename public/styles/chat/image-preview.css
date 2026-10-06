@@ -21,10 +21,11 @@
 .preview-box {
   position: relative;
   display: inline-block;
-  flex: 0 0 80px;
-  width: 80px;
+  flex: 0 1 120px;
+  width: 120px;
   height: 62px;
   min-height: 62px;
+  min-width: 0;
   border-radius: 5px;
   overflow: hidden;
   border: 1px solid var(--line);
@@ -52,9 +53,9 @@
   top: 2px;
   right: 2px;
   box-sizing: border-box;
-  width: 22px;
-  height: 22px;
-  min-height: 22px;
+  width: 14px;
+  height: 14px;
+  min-height: 14px;
   border-radius: 999px;
   background: rgba(0, 0, 0, 0.72);
   color: #fff;
@@ -70,9 +71,9 @@
 .preview-remove-btn svg {
   display: block;
   flex: none;
-  width: 12px;
-  height: 12px;
-  stroke-width: 3;
+  width: 10px;
+  height: 10px;
+  stroke-width: 2.5;
 }
 
 .preview-remove-btn:hover {

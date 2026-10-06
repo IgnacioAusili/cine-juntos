@@ -8,8 +8,8 @@ import {
   showSlowLoadDialog,
   showSession,
 } from "./session-ui.js?v=20260911-orientation-scroll-anchor-01";
-import { setVideoStatus } from "./player/player.js?v=20260930-chat-accessibility-focus-01-pending-image-lightbox-01-bottom-chat-expand-02";
-import { openLightboxForTest } from "./chat/image-lightbox.js?v=20260917-dialog-test-routes-01-lightbox-scroll-preserve-01";
+import { setVideoStatus } from "./player/player.js?v=20261003-desktop-video-snap-center-01-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-02-video-snap-10px-fullscreen-bleed-01-seek-tooltip-stable-01";
+import { openLightboxForTest } from "./chat/image-lightbox.js?v=20261006-lightbox-native-modal-scroll-lock-01";
 
 export const DIALOG_TEST_ROUTES = Object.freeze({
   about: "Sobre este proyecto",

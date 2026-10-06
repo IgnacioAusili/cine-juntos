@@ -1,15 +1,15 @@
 import { dom } from "../../core/dom.js";
 import { state, logEvent } from "../../core/state.js?v=20260914-console-log-controls-01";
-import { setControlIcon } from "../icons-tooltips.js?v=20260914-tooltip-single-path-01";
+import { setControlIcon } from "../icons-tooltips.js?v=20260914-tooltip-single-path-01-tooltip-focus-restore-skip-01";
 import { setSyncStatus } from "../session-ui.js?v=20260911-orientation-scroll-anchor-01";
 import {
   createMiniPlayerSurface,
   installMiniPlayerWindowStyles,
-} from "./mini-player-controls.js?v=20260929-mini-player-controls-resize-reflow-01-pending-image-lightbox-01-preview-size-center-01-overlay-image-size-01";
+} from "./mini-player-controls.js?v=20260929-mini-player-controls-resize-reflow-01-pending-image-lightbox-01-preview-size-center-01-overlay-image-size-01-presence-svg-remove-scale-01";
 import {
   mirrorMiniPlayerChatState,
-} from "./mini-player-chat.js?v=20260930-chat-accessibility-focus-01-bottom-chat-expand-02";
-import { movePlayerInterface } from "./mini-player-interface.js?v=20260930-chat-accessibility-focus-01-bottom-chat-expand-02";
+} from "./mini-player-chat.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-02";
+import { movePlayerInterface } from "./mini-player-interface.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-02";
 import { trackMiniPlayerReturnHint } from "./mini-player-return-hint.js";
 import { clampMiniPlayerPosition, wireMiniPlayerDrag } from "./mini-player-drag.js?v=20260808-scroll-mini-player-02";
 

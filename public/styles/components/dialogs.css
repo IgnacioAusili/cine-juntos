@@ -83,8 +83,100 @@
 .about-dialog-intro {
   margin: 20px 0 18px;
   color: var(--text-soft);
-  font-size: 0.9rem;
+  font-size: 0.86rem;
   line-height: 1.55;
+}
+
+.about-dialog-description-lead {
+  margin: 0;
+  -webkit-mask-image: linear-gradient(180deg, #000 calc(100% - 18px), transparent 100%);
+  mask-image: linear-gradient(180deg, #000 calc(100% - 18px), transparent 100%);
+}
+
+.about-dialog-intro.is-expanded .about-dialog-description-lead {
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+.about-dialog-disclosure {
+  margin-top: -10px;
+}
+
+.about-dialog-disclosure-toggle {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  width: 100%;
+  min-height: 46px;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 10px 0 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  color: var(--muted-2);
+  cursor: pointer;
+  appearance: none;
+}
+
+.about-dialog-disclosure-control {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  color: var(--text-soft);
+  transition: border-color 160ms ease, color 160ms ease, transform 180ms ease;
+}
+
+.about-dialog-disclosure-control svg {
+  width: 19px;
+  height: 19px;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.about-dialog-disclosure-toggle:hover .about-dialog-disclosure-control,
+.about-dialog-disclosure-toggle:focus-visible .about-dialog-disclosure-control {
+  color: var(--amber);
+}
+
+.about-dialog-disclosure-toggle:focus-visible {
+  border-radius: 999px;
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
+}
+
+.about-dialog-disclosure-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+.about-dialog-disclosure-toggle[hidden],
+.about-dialog-disclosure-content[hidden] {
+  display: none;
+}
+
+.about-dialog-disclosure-content {
+  margin-top: 20px;
+  padding-top: 8px;
+}
+
+.about-dialog-disclosure-content p {
+  margin: 0;
+}
+
+.about-dialog-disclosure-content p + p {
+  margin-top: 14px;
 }
 
 .about-dialog-details {
@@ -138,7 +230,7 @@
 .about-dialog-disclaimer {
   margin: 18px 0 0;
   color: var(--muted-2);
-  font-size: 0.76rem;
+  font-size: 0.72rem;
   line-height: 1.5;
 }
 
@@ -148,24 +240,69 @@
 
 @media (min-width: 681px) {
   .about-dialog {
-    width: min(760px, calc(100% - 32px));
-    max-width: 760px;
-    max-height: calc(100dvh - 32px);
+    width: min(800px, calc(100% - 48px));
+    max-width: 800px;
+    max-height: calc(100dvh - 64px);
     transform: scale(1.03);
   }
 
   .about-dialog-card {
-    max-height: calc(100dvh - 32px);
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100dvh - 66px);
     overflow: hidden;
-    padding: 24px 28px 22px;
+    padding: 0;
+  }
+
+  .about-dialog-fixed-header {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 0 0 auto;
+    padding: 12px 12px 8px;
   }
 
   .about-dialog-header {
+    flex: 1 1 auto;
+    min-width: 0;
     gap: 11px;
+    padding-right: 0;
+  }
+
+  .about-dialog-fixed-header .dialog-close {
+    position: static;
+    flex: 0 0 36px;
+    width: 36px;
+    height: 36px;
+    margin-left: auto;
+  }
+
+  .about-dialog-fixed-header .dialog-close svg {
+    width: 28px;
+    height: 28px;
+    stroke-width: 2;
+  }
+
+  .about-dialog-content {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 0 12px 12px;
+    scrollbar-width: none;
+    scrollbar-color: transparent transparent;
+  }
+
+  .about-dialog-content::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
   }
 
   .about-dialog-intro {
-    margin: 16px 0 14px;
+    margin: 0 0 14px;
     line-height: 1.4;
   }
 
@@ -226,7 +363,7 @@
 
   .about-dialog-intro {
     margin-block: 22px 20px;
-    font-size: 0.98rem;
+    font-size: 0.94rem;
     line-height: 1.6;
   }
 
@@ -259,7 +396,7 @@
 
   .about-dialog-disclaimer {
     margin-top: 20px;
-    font-size: 0.82rem;
+    font-size: 0.78rem;
     line-height: 1.55;
   }
 

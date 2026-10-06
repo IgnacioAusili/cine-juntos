@@ -38,8 +38,26 @@
   text-align: center;
   white-space: normal;
   overflow-wrap: anywhere;
+  /* Conserva el plano tipográfico en la orientación 3D de cada cara. */
+  transform-style: preserve-3d;
   transform: rotateX(calc(var(--system-roll-index) * var(--system-roll-angle)))
     translateZ(var(--system-roll-radius));
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.system-message-roll-content {
+  position: relative;
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  color: inherit;
+  font: inherit;
+  line-height: inherit;
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  transform-style: preserve-3d;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 }

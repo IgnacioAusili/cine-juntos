@@ -15,18 +15,74 @@
   font-size: 0.74rem;
   font-weight: 700;
   line-height: 1;
-  padding: 0 4px;
+  padding: 0;
+}
+
+.presence-icon-wrap {
+  position: relative;
+  display: inline-flex;
+  width: 18px;
+  height: 26px;
+  flex: 0 0 18px;
+  align-items: center;
+  justify-content: center;
+}
+
+.presence-users-icon,
+.presence-users-icon svg {
+  display: block;
+  width: 18px;
+  height: 26px;
+}
+
+.presence-pill .presence-dot {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 18px;
+  height: 26px;
+  flex: 0 0 18px;
+  background: transparent;
+}
+
+.presence-pill .presence-dot::before {
+  inset: auto;
+  top: -1px;
+  right: -1px;
+  z-index: 0;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--presence-dot-color);
+  opacity: 0.35;
+  filter: blur(1.5px);
+}
+
+.presence-pill .presence-dot::after {
+  content: "";
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  z-index: 1;
+  box-sizing: border-box;
+  width: 7px;
+  height: 7px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--presence-dot-color);
+  pointer-events: none;
 }
 
 .presence-dot {
+  --presence-dot-color: #38d879;
   --status-glow: rgba(56, 216, 121, 0.38);
   border-radius: 999px;
   background: #38d879;
 }
 
 .presence-pill[data-state="solo"] .presence-dot {
+  --presence-dot-color: #e06b6b;
   --status-glow: rgba(224, 107, 107, 0.4);
-  background: #e06b6b;
 }
 
 .presence-self-label,

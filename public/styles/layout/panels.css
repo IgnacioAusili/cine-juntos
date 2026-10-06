@@ -166,3 +166,10 @@
   clip-path: inset(0 0 var(--chat-bottom-curtain-clip, 0%) 0);
   opacity: 1;
 }
+
+/* El input se revela una vez que el panel y el scroll llegan juntos a la
+   posición final. Así no aparece en un punto intermedio y vuelve a moverse. */
+.session-view[data-chat-dock="bottom"].chat-bottom-pc-expand-visual .chat-area > .message-form,
+.session-view[data-chat-dock="bottom"].chat-bottom-mobile-expand-visual .chat-area > .message-form {
+  visibility: hidden;
+}

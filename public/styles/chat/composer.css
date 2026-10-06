@@ -2,7 +2,7 @@
   position: absolute;
   left: 18px;
   right: 18px;
-  bottom: 20px;
+  bottom: var(--chat-composer-edge-inset, 20px);
   z-index: 4;
   display: flex;
   flex-direction: column;
@@ -14,6 +14,12 @@
   background: transparent;
   border: 0;
   box-shadow: none;
+}
+
+/* El chat lateral acerca el composer al borde del panel con el mismo margen
+   en cualquier viewport; el anclaje sigue a la caja real del contenedor. */
+.session-view[data-chat-dock="right"] .chat-area {
+  --chat-composer-edge-inset: 10px;
 }
 
 .session-view[data-chat-dock="bottom"] .chat-area > .message-form {
@@ -132,6 +138,32 @@
   .message-form .input-wrapper[data-expanded="true"] textarea {
     padding-top: 2px;
     padding-bottom: 4px;
+  }
+
+  /* Ambos docks usan la misma altura de una línea; el autoajuste multilinea
+     sigue controlando el campo cuando el contenido crece. */
+  .session-view .chat-area > .message-form
+    .input-wrapper:not([data-expanded="true"]) #messageInput {
+    height: 32px !important;
+    min-height: 32px;
+    padding-block: 6px;
+  }
+
+  .session-view[data-chat-dock] .chat-area > .message-form
+    .input-wrapper:not([data-expanded="true"]) {
+    align-items: center;
+  }
+
+  .session-view[data-chat-dock] .chat-area > .message-form
+    .input-wrapper:not([data-expanded="true"]) .textarea-shell #messageInput {
+    align-self: center;
+  }
+
+  .session-view[data-chat-dock] .chat-area > .message-form
+    .input-wrapper:not([data-expanded="true"]) .emoji-trigger,
+  .session-view[data-chat-dock] .chat-area > .message-form
+    .input-wrapper:not([data-expanded="true"]) .send {
+    margin-bottom: 0;
   }
 }
 

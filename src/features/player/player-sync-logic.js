@@ -12,12 +12,12 @@ import {
   SEND_THROTTLE_MS,
   formatSeconds,
 } from "../../core/utils.js";
-import { markParticipantActive, rememberParticipant } from "../presence.js?v=20260912-name-session-01";
+import { markParticipantActive, rememberParticipant } from "../presence.js?v=20261003-name-editor-curtain-cancel-esc-blur-03";
 import { setSyncStatus } from "../session-ui.js?v=20260911-orientation-scroll-anchor-01";
-import { sendVideoEventMessage, renderMessage } from "../chat/index.js?v=20260930-emoji-picker-dismiss-on-scroll-01-pending-image-lightbox-01-system-row-fixed-center-02-bottom-chat-expand-02";
+import { sendVideoEventMessage, renderMessage } from "../chat/index.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-02";
 // Import circular intencional y seguro: estas funciones se invocan en runtime,
 // no durante la carga del modulo, y player.js a su vez importa publishState.
-import { clearVideoSource, setVideoSource, waitForVideoMetadata } from "./player.js?v=20260930-chat-accessibility-focus-01-pending-image-lightbox-01-bottom-chat-expand-02";
+import { clearVideoSource, setVideoSource, waitForVideoMetadata } from "./player.js?v=20261003-desktop-video-snap-center-01-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-02-video-snap-10px-fullscreen-bleed-01-seek-tooltip-stable-01";
 
 const PLAYBACK_ISSUE_SYNC_COOLDOWN_MS = 2200;
 // Los eventos waiting/stalled también se disparan por pequeños saltos de red.

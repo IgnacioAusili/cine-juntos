@@ -17,8 +17,8 @@ import {
   hideTooltip,
   refreshTooltipForTarget,
   setControlIcon,
-} from "../icons-tooltips.js?v=20260914-tooltip-single-path-01";
-import { scrollToVideoPosition, sendVideoEventMessage, setInsideChatVisible } from "../chat/index.js?v=20260930-emoji-picker-dismiss-on-scroll-01-pending-image-lightbox-01-system-row-fixed-center-02-bottom-chat-expand-02";
+} from "../icons-tooltips.js?v=20260914-tooltip-single-path-01-tooltip-focus-restore-skip-01";
+import { scrollToVideoPosition, sendVideoEventMessage, setInsideChatVisible } from "../chat/index.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-02";
 // Import circular intencional y seguro: estas funciones se invocan en runtime,
 // no durante la carga del modulo, y player-sync-logic.js a su vez importa
 // setVideoSource y waitForVideoMetadata desde aqui.
@@ -28,7 +28,7 @@ import {
   clearPlaybackRecoveryTracking,
   pauseRoomForPlaybackIssue,
   publishState,
-} from "./player-sync-logic.js?v=20260930-chat-accessibility-focus-01-pending-image-lightbox-01-bottom-chat-expand-02";
+} from "./player-sync-logic.js?v=20261003-desktop-video-snap-center-01-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-02-video-snap-10px-fullscreen-bleed-01-seek-tooltip-stable-01";
 
 import {
   showErrorDialog,
@@ -36,8 +36,8 @@ import {
   showResumeVideoDialog,
   showSlowLoadDialog,
 } from "../session-ui.js?v=20260911-orientation-scroll-anchor-01";
-import { togglePageFullscreen } from "./fullscreen.js?v=20260930-chat-accessibility-focus-01-bottom-chat-expand-02";
-import { syncMiniPlayerButton } from "./mini-player.js?v=20260930-chat-accessibility-focus-01-pending-image-lightbox-01-preview-size-center-01-overlay-image-size-01-bottom-chat-expand-02";
+import { togglePageFullscreen } from "./fullscreen.js?v=20261003-desktop-video-snap-center-01-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-02-video-snap-10px-fullscreen-bleed-01";
+import { syncMiniPlayerButton } from "./mini-player.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-02";
 import { shouldToggleMuteFromVolumeButton } from "./player-volume-layout.js?v=20260928-volume-popup-arrow-hide-01";
 
 const SKIP_LOAD_REPLACE_DIALOG_KEY = "cine-juntos-skip-load-replace-dialog";
@@ -1381,7 +1381,8 @@ function wireSeekTooltipEvents() {
     }
     if (seekPointerId !== null && seekPointerId !== event.pointerId) return;
 
-    hideTooltip(true);
+    const isSeekTooltipAlreadyVisible = Boolean(seekTooltipPoint && !dom.tooltipLayer.hidden);
+    if (!isSeekTooltipAlreadyVisible) hideTooltip(true);
     setSeekDragActive(true);
     window.dispatchEvent(new Event("player-seek-drag-start"));
     seekPointerId = event.pointerId;
@@ -1398,7 +1399,17 @@ function wireSeekTooltipEvents() {
     if (seekPointerId === null || event.pointerId !== seekPointerId) return;
     setSeekDragActive(false);
     seekPointerId = null;
-    hideSeekTooltip();
+    const rect = dom.playerSeekInput.getBoundingClientRect();
+    const pointerRemainsOverSeekInput = event.pointerType === "mouse"
+      && event.clientX >= rect.left
+      && event.clientX <= rect.right
+      && event.clientY >= rect.top
+      && event.clientY <= rect.bottom;
+    if (pointerRemainsOverSeekInput) {
+      queueSeekTooltipFromPointer(event);
+    } else {
+      hideSeekTooltip();
+    }
     window.dispatchEvent(new Event("player-seek-drag-end"));
   };
 

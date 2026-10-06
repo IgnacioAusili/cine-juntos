@@ -2,22 +2,26 @@
 import { dom } from "../../core/dom.js";
 import { state, logEvent } from "../../core/state.js?v=20260914-console-log-controls-01";
 import { CHAT_DOCKS, CHAT_DOCK_META, withShortcutHint } from "../../core/utils.js";
-import { hydrateIcons, hideTooltip, refreshTooltipForTarget } from "../icons-tooltips.js?v=20260914-tooltip-single-path-01";
+import { hydrateIcons, hideTooltip, refreshTooltipForTarget } from "../icons-tooltips.js?v=20260914-tooltip-single-path-01-tooltip-focus-restore-skip-01";
 import { focusFullscreenWorkspace } from "../session-ui.js?v=20260911-orientation-scroll-anchor-01";
 import {
   cancelIdentityEditing,
   syncNameInputWidth,
-} from "../presence.js?v=20260912-name-session-01";
+} from "../presence.js?v=20261003-name-editor-curtain-cancel-esc-blur-03";
 import {
   isExternalChatVisibleToUser,
   isInsideChatVisibleToUser,
   resetInsideUnread,
   resetPageUnread,
   syncUnreadBadgesWithVisibility,
-} from "./unread-counters.js?v=20261001-bottom-chat-expand-02";
+} from "./unread-counters.js?v=20261003-name-editor-curtain-cancel-esc-blur-03";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 import { focusChatInput } from "./chat-input-focus.js";
 import { restorePageScrollAfterRightChatCollapse } from "./chat-scroll-preservation.js?v=20260910-mobile-chat-scroll-lock-01";
+import {
+  CHAT_DOCK_TRANSITIONS,
+  resolveChatDockTransition,
+} from "./dock-transition-router.js?v=20261002-chat-dock-transition-router-01";
 import {
   preserveInsideChatPanelPlacementWhileClosing,
   syncInsideChatPanelPlacement,
@@ -823,69 +827,45 @@ export function setInsideChatStyle(style) {
   logEvent("ui", `Estilo de chat interno: ${nextStyle}.`);
 }
 
+function dispatchChatDockTransition(currentDock, nextDock, options, videoScrollTop) {
+  const transition = resolveChatDockTransition({
+    currentDock,
+    nextDock,
+    skipTransition: options.skipTransition,
+    isCollapsed: dom.sessionView?.classList.contains("chat-collapsed") || false,
+    isFullscreen: isFullscreenPageActive(),
+    isStacked: isStackedSessionLayout(),
+    isMobilePortrait: isMobilePortraitChatViewport(),
+  });
+
+  switch (transition) {
+    case CHAT_DOCK_TRANSITIONS.FULLSCREEN_BOTTOM_TO_RIGHT:
+      animateFullscreenBottomToRightWithNativeCollapse();
+      return true;
+    case CHAT_DOCK_TRANSITIONS.BOTTOM_TO_RIGHT:
+      scheduleBottomToRightSwitch(nextDock, videoScrollTop);
+      return true;
+    case CHAT_DOCK_TRANSITIONS.RIGHT_TO_BOTTOM_NATIVE:
+      animateRightToBottomWithNativeCollapse();
+      return true;
+    case CHAT_DOCK_TRANSITIONS.RIGHT_TO_BOTTOM_MOBILE:
+      animateRightToBottomSwitch(nextDock);
+      return true;
+    case CHAT_DOCK_TRANSITIONS.FULLSCREEN:
+      animateFullscreenDockSwitch(nextDock);
+      return true;
+    default:
+      return false;
+  }
+}
+
 export function setChatDock(dock, options = {}) {
   const nextDock = CHAT_DOCKS.includes(dock) ? dock : "right";
   const currentDock = dom.sessionView?.dataset.chatDock || "right";
   const centeredVideoScrollTop = getBottomToRightScrollTop();
 
   if (!options.skipTransition && pendingChatDockSwitch) return;
-
-  if (
-    !options.skipTransition
-    && currentDock === "bottom"
-    && nextDock === "right"
-    && isFullscreenPageActive()
-    && !isStackedSessionLayout()
-  ) {
-    animateFullscreenBottomToRightWithNativeCollapse();
-    return;
-  }
-
-  // El cambio inferior → lateral ya tiene un motor que espera a que el
-  // viewport vuelva a la posición del video y luego anima el ancho del panel
-  // junto con la reducción del video. También debe ser el camino de
-  // fullscreen: cambiar primero el dock hacía que el video se redujera de
-  // golpe, antes de que el chat empezara a entrar.
-  if (
-    !options.skipTransition
-    && currentDock === "bottom"
-    && nextDock === "right"
-  ) {
-    scheduleBottomToRightSwitch(nextDock, centeredVideoScrollTop);
-    return;
-  }
-
-  if (
-    !options.skipTransition
-    && currentDock !== nextDock
-    && isFullscreenPageActive()
-    && !dom.sessionView?.classList.contains("chat-collapsed")
-  ) {
-    animateFullscreenDockSwitch(nextDock);
-    return;
-  }
-
-  if (
-    !options.skipTransition
-    && currentDock === "right"
-    && nextDock === "bottom"
-    && !dom.sessionView.classList.contains("chat-collapsed")
-    && !isMobilePortraitChatViewport()
-  ) {
-    animateRightToBottomWithNativeCollapse();
-    return;
-  }
-
-  if (
-    !options.skipTransition
-    && currentDock === "right"
-    && nextDock === "bottom"
-    && isMobilePortraitChatViewport()
-    && !dom.sessionView.classList.contains("chat-collapsed")
-  ) {
-    animateRightToBottomSwitch(nextDock);
-    return;
-  }
+  if (dispatchChatDockTransition(currentDock, nextDock, options, centeredVideoScrollTop)) return;
 
   // El paso al dock inferior no interpola la grilla, pero sí mueve el
   // viewport. Congelar las mediciones auxiliares evita lecturas de layout
@@ -947,19 +927,6 @@ export function setChatDock(dock, options = {}) {
 function animateFullscreenDockSwitch(nextDock) {
   if (!dom.sessionView || !dom.chatArea) {
     setChatDock(nextDock, { skipTransition: true, preserveScroll: true });
-    return;
-  }
-
-  // En PC el botón de contraer ya contiene la transición correcta del dock
-  // lateral: la grilla reduce la columna y el video ocupa ese espacio al
-  // mismo tiempo. Reutilizar ese motor evita una segunda animación paralela
-  // que ocultaba el chat pero dejaba el video fijo hasta el cambio de dock.
-  if (
-    nextDock === "bottom"
-    && !isStackedSessionLayout()
-    && dom.sessionView.dataset.chatDock === "right"
-  ) {
-    animateRightToBottomWithNativeCollapse();
     return;
   }
 

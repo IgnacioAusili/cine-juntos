@@ -9,25 +9,25 @@ import {
 import {
   hideTooltip,
   setControlIcon,
-} from "../icons-tooltips.js?v=20260914-tooltip-single-path-01";
+} from "../icons-tooltips.js?v=20260914-tooltip-single-path-01-tooltip-focus-restore-skip-01";
 import { setSyncStatus } from "../session-ui.js?v=20260911-orientation-scroll-anchor-01";
 import {
   logEvent,
   state,
 } from "../../core/state.js?v=20260914-console-log-controls-01";
-import { isMiniPlayerActive } from "./mini-player.js?v=20260930-chat-accessibility-focus-01-pending-image-lightbox-01-preview-size-center-01-overlay-image-size-01-bottom-chat-expand-02";
+import { isMiniPlayerActive } from "./mini-player.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-02";
 import {
   syncExternalChatCollapseHandleOffset,
   syncInsideChatPanelOffset,
   cancelExternalChatAutoCollapse,
   forceExternalChatCollapsed,
   updateCollapseButton,
-} from "../chat/chat-layout.js?v=20260930-chat-accessibility-focus-01-single-phase-bottom-expand-02";
+} from "../chat/chat-layout.js?v=20261003-name-editor-curtain-cancel-esc-blur-03";
 import { withShortcutHint } from "../../core/utils.js";
 import {
   captureFullscreenScroll,
   restoreFullscreenScroll,
-} from "./fullscreen-scroll.js?v=20260913-fullscreen-scroll-user-interrupt-01";
+} from "./fullscreen-scroll.js?v=20260913-fullscreen-scroll-user-interrupt-01-video-snap-10px-fullscreen-bleed-01";
 
 const PLAYER_OVERLAY_IDLE_MS = 3000;
 const PLAYER_OVERLAY_LEAVE_HIDE_DELAY_MS = 800;
@@ -53,6 +53,14 @@ function getFullscreenScrollMax() {
 
   const container = getFullscreenScrollContainer();
   return Math.max(0, (container.scrollHeight || 0) - (container.clientHeight || 0));
+}
+
+function getFullscreenViewportHeight() {
+  if (isPageFullscreenActive()) {
+    const containerHeight = getFullscreenScrollContainer()?.clientHeight || 0;
+    if (containerHeight > 0) return containerHeight;
+  }
+  return window.visualViewport?.height || window.innerHeight;
 }
 
 function getElementScrollTop(element) {
@@ -636,11 +644,22 @@ function getFullscreenSnapPoints() {
   const points = [getDocumentTop(dom.workspace)];
 
   if (dock === "bottom" && dom.videoArea) {
-    // En el stack responsivo el panel va al borde del viewport; en la vista
-    // normal se conserva el gutter que ya usaba el snap de escritorio.
     const videoTop = getDocumentTop(dom.videoArea);
-    const stackUsesEdgeToEdge = dom.sessionView.classList.contains("layout-component-stack");
-    points.push(stackUsesEdgeToEdge ? videoTop : videoTop - gutter);
+    const videoHeight = dom.videoArea.getBoundingClientRect().height;
+    const viewportHeight = getFullscreenViewportHeight();
+    // Centrar desde las medidas reales mantiene márgenes iguales aunque el
+    // layout ajuste el panel por el header, el gutter o el aspect ratio.
+    const videoCenterPoint = Math.round(videoTop + (videoHeight - viewportHeight) / 2);
+    const nearbyWorkspacePointIndex = points.findIndex(
+      (point) => Math.abs(point - videoCenterPoint) <= FULLSCREEN_SNAP_THRESHOLD,
+    );
+    if (nearbyWorkspacePointIndex >= 0) {
+      // El inicio del workspace y el centro del video pueden quedar a pocos
+      // píxeles; el ancla centrada debe ganar en ese caso.
+      points[nearbyWorkspacePointIndex] = videoCenterPoint;
+    } else {
+      points.push(videoCenterPoint);
+    }
   }
 
   if (!collapsed) {
@@ -763,7 +782,13 @@ export function handleFullscreenChange() {
   dom.pageFullscreenButton.removeAttribute("title");
   dom.pageFullscreenButton.setAttribute("aria-label", tooltip);
   setControlIcon(dom.pageFullscreenButton, isFullscreen ? "minimize" : "maximize");
-  restoreFullscreenScroll(isFullscreen);
+  const fullscreenVideoScrollTop = isFullscreen
+    && dom.sessionView?.dataset.chatDock === "bottom"
+    && window.matchMedia("(hover: hover) and (pointer: fine)").matches
+    && dom.videoArea
+    ? getDocumentTop(dom.videoArea)
+    : null;
+  restoreFullscreenScroll(isFullscreen, fullscreenVideoScrollTop);
   syncInsideChatPanelOffset();
   // El fullscreen cambia el origen y las filas del layout móvil. Recalcular
   // también el anclaje del control externo evita que la flecha del chat

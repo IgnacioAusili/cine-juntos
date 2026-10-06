@@ -28,9 +28,13 @@ function captureScrollPositions(target) {
 
   for (let element = target?.parentElement; element; element = element.parentElement) {
     const isPageScroller = element === pageScroller;
+    const isBody = element === document.body;
     const canScroll = element.scrollHeight > element.clientHeight
       || element.scrollWidth > element.clientWidth;
-    if (!isPageScroller && canScroll) {
+    // body puede reflejar el scroll del viewport con un scrollTop distinto
+    // (normalmente 0). Guardarlo aparte del scrollingElement y restaurarlo
+    // después puede devolver toda la página al inicio.
+    if (!isPageScroller && !isBody && canScroll) {
       positions.push({ element, left: element.scrollLeft, top: element.scrollTop });
     }
     if (element === document.body) break;
@@ -232,8 +236,6 @@ function openLightbox(image) {
   lightboxImage.alt = image.alt || "Imagen ampliada";
   lightboxImage.addEventListener("load", () => applyInitialScale(modal), { once: true });
   if (!modal.open) modal.showModal();
-  document.documentElement.classList.add("image-lightbox-open");
-  document.body.classList.add("image-lightbox-open");
   if (lightboxImage.complete) applyInitialScale(modal);
   modal.querySelector("[data-lightbox-action='close']")?.focus({ preventScroll: true });
   restoreScrollPositions(scrollPositionsBeforeLightbox);
@@ -249,8 +251,6 @@ export function openLightboxForTest({ src, alt = "Imagen ampliada de prueba" } =
   lightboxImage.alt = alt;
   lightboxImage.addEventListener("load", () => applyInitialScale(modal), { once: true });
   if (!modal.open) modal.showModal();
-  document.documentElement.classList.add("image-lightbox-open");
-  document.body.classList.add("image-lightbox-open");
   if (lightboxImage.complete) applyInitialScale(modal);
   modal.querySelector("[data-lightbox-action='close']")?.focus({ preventScroll: true });
   restoreScrollPositions(scrollPositionsBeforeLightbox);
@@ -260,8 +260,6 @@ function closeLightbox() {
   if (!lightbox?.open) return;
   const scrollPositions = scrollPositionsBeforeLightbox;
   lightbox.close();
-  document.documentElement.classList.remove("image-lightbox-open");
-  document.body.classList.remove("image-lightbox-open");
   lightboxImage?.removeAttribute("src");
   lastTrigger?.focus?.({ preventScroll: true });
   restoreScrollPositions(scrollPositions);

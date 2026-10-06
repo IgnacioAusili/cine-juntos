@@ -71,7 +71,7 @@
   padding: 0;
   border: 0;
   overflow: hidden;
-  overscroll-behavior: contain;
+  overscroll-behavior: none;
   color: #fff;
   background: rgba(4, 7, 9, 0.38);
 }
@@ -227,12 +227,6 @@
   overflow: auto;
   overscroll-behavior: contain;
   cursor: default;
-}
-
-html.image-lightbox-open,
-body.image-lightbox-open {
-  overflow: hidden !important;
-  overscroll-behavior: none;
 }
 
 .image-lightbox-image {

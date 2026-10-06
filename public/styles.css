@@ -6,7 +6,7 @@
 @import url("./styles/player.css?v=20260927-video-status-text-offset-01");
 @import url("./styles/chat.css?v=20261006-composer-controls-centered-both-docks-01");
 @import url("./styles/chat-overlay.css?v=20260930-system-row-fixed-center-01-overlay-media-alignment-02-message-time-color-01-overlay-image-size-01-system-roll-text-billboard-02-system-roll-true-3d-01");
-@import url("./styles/chat/image-lightbox.css?v=20260915-image-lightbox-cursor-01-pending-image-lightbox-01");
+@import url("./styles/chat/image-lightbox.css?v=20260915-image-lightbox-cursor-01-pending-image-lightbox-01-native-modal-scroll-lock-01");
 @import url("./styles/states.css?v=20261003-desktop-video-snap-center-01-video-snap-10px-fullscreen-bleed-01");
 @import url("./styles/responsive.css?v=20260930-chat-name-check-spacing-01-chat-header-icon-end-align-02-chat-header-gutter-spacing-01-dock-hover-icon-centered-02-chat-tools-shared-gutter-02-dock-button-width-matches-icon-01-name-editor-crossfade-01-component-stack-header-center-01-component-stack-video-gutter-01");
 @import url("./styles/mini-player.css?v=20260905-overlay-height-cap-03");

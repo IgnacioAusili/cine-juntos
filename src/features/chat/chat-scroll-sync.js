@@ -1,4 +1,4 @@
-import { checkScrollPosition } from "./unread-counters.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-bottom-chat-switch-measure-01-chat-header-anchor-04-arrow-header-slot-center-01";
+import { checkScrollPosition } from "./unread-counters.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-bottom-chat-switch-measure-01-chat-header-anchor-04-arrow-header-slot-center-01-composer-width-01";
 
 const pendingScrollSync = new WeakMap();
 const DEFAULT_PIN_THRESHOLD = 10;

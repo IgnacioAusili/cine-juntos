@@ -4,13 +4,13 @@
 @import url("./styles/components.css?v=20260927-chat-collapse-handle-general-02-dock-button-active-excluded-01-all-buttons-active-stationary-01-dock-button-width-matches-icon-01-presence-pill-padding-00-dock-button-hover-circle-01-presence-pill-people-icon-00-dock-hover-no-background-01-presence-dot-corner-size-01-presence-icon-size-18-presence-icon-taller-dot-07-presence-icon-height-22-presence-icon-height-26-presence-svg-remove-scale-01-arrow-in-header-flow-01-room-chip-descenders-lift-01-right-dock-collapse-arrow-layer-01-about-dialog-equal-padding-12-20");
 @import url("./styles/lobby.css?v=20261003-marquee-variable-phrases-seamless-premiere-02");
 @import url("./styles/player.css?v=20260927-video-status-text-offset-01");
-@import url("./styles/chat.css?v=20261006-composer-controls-centered-both-docks-01-bottom-dock-size-01-bottom-pc-transition-anchor-01-bottom-composer-anchor-consistent-01-chat-input-alignment-01");
+@import url("./styles/chat.css?v=20261006-composer-controls-centered-both-docks-01-bottom-dock-size-01-bottom-pc-transition-anchor-01-bottom-composer-anchor-consistent-01-chat-input-alignment-01-composer-width-01");
 @import url("./styles/chat-overlay.css?v=20260930-system-row-fixed-center-01-overlay-media-alignment-02-message-time-color-01-overlay-image-size-01-system-roll-text-billboard-02-system-roll-true-3d-01");
 @import url("./styles/chat/image-lightbox.css?v=20260915-image-lightbox-cursor-01-pending-image-lightbox-01-native-modal-scroll-lock-01");
 @import url("./styles/states.css?v=20261003-desktop-video-snap-center-01-video-snap-10px-fullscreen-bleed-01");
 @import url("./styles/responsive.css?v=20260930-chat-name-check-spacing-01-chat-header-icon-end-align-02-chat-header-gutter-spacing-01-dock-hover-icon-centered-02-chat-tools-shared-gutter-02-dock-button-width-matches-icon-01-name-editor-crossfade-01-component-stack-header-center-01-component-stack-video-gutter-01-collapsed-bottom-player-inset-01");
 @import url("./styles/mini-player.css?v=20260905-overlay-height-cap-03");
-@import url("./styles/mobile.css?v=20260928-dynamic-chat-name-01-chat-tools-shared-gutter-01-leading-group-flow-01-chat-input-alignment-01-bottom-seek-edge-cache-fix-01");
+@import url("./styles/mobile.css?v=20260928-dynamic-chat-name-01-chat-tools-shared-gutter-01-leading-group-flow-01-chat-input-alignment-01-bottom-seek-edge-cache-fix-01-fit-only-01-thumb-travel-centered-01-sync-01-bottom-chat-composer-inset-10-01-seek-shorter-02-fourpx-longer-01");
   @import url("./styles/mobile-landscape.css?v=20260928-dynamic-chat-name-01-chat-tools-shared-gutter-01-connected-presence-flow-01");
 @import url("./styles/mobile-fullscreen-viewport.css?v=20260927-chat-header-collapse-fit-01");
 @import url("./styles/mini-player-adjustments.css?v=20260905-overlay-height-cap-03");
@@ -21,7 +21,7 @@
 @import url("./styles/lobby-responsive-fixes.css?v=20260924-lobby-footer-no-padding-01");
 @import url("./styles/lobby-layout-variants.css?v=20260926-lobby-ticket-details-07");
 @import url("./styles/lobby-footer-panel.css?v=20260926-lobby-footer-10px-01");
-@import url("./styles/player-progress-responsive.css?v=20260930-player-progress-stable-01-bottom-seek-edge-cache-fix-01-idle-line-01-seek-edge-alignment-02-seek-line-inset-01-stack-only-01");
+@import url("./styles/player-progress-responsive.css?v=20260930-player-progress-stable-01-bottom-seek-edge-cache-fix-01-idle-line-01-seek-edge-alignment-02-seek-line-inset-01-stack-only-01-viewport-fit-state-01-actual-fit-state-02-mobile-seek-fit-only-02-thumb-travel-centered-01-sync-02");
 @import url("./styles/component-stack-chat-header.css?v=20261007-component-stack-header-stable-center-02-desktop-side-gutter-01-component-stack-header-pc-gutter-02-component-stack-header-input-mode-01-component-stack-header-measured-gutter-01-component-stack-header-edge-geometry-02-bottom-chat-gap-header-center-01-bottom-chat-video-bleed-01-chat-header-media-breakpoint-01-bottom-chat-header-overlap-01-bottom-chat-panel-extension-01-bottom-chat-header-portrait-layer-01-edge-to-edge-bottom-chat-corners-01-edge-to-edge-side-chat-corners-01-portrait-panel-surface-02-chat-header-height-mobile-38px-01");
 
 /* El nombre y su lápiz forman un grupo centrado dentro del espacio libre del
@@ -88,18 +88,15 @@
   }
 }
 
-/* La medición de proporción decide cuándo apilar los paneles. En ese estado,
-   la flecha acompaña al header real del chat y la pista queda sobre los botones. */
+/* La barra al borde sólo se usa cuando los dos paneles caben en el viewport. */
 body:not(.is-lobby)
-  .session-view.layout-component-stack:not(.chat-collapsed)[data-chat-dock="bottom"]
+  .session-view.bottom-dock-panels-fit-viewport:not(.chat-collapsed)[data-chat-dock="bottom"]
   .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-bottom-actions {
-  /* El mínimo general de 112px deja un hueco grande cuando la pista se ancla
-     al inicio del pie. La fila y su padding determinan la altura necesaria. */
   min-height: 0;
 }
 
 body:not(.is-lobby)
-  .session-view.layout-component-stack:not(.chat-collapsed)[data-chat-dock="bottom"]
+  .session-view.bottom-dock-panels-fit-viewport:not(.chat-collapsed)[data-chat-dock="bottom"]
   .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-progress-group {
   right: 0;
   bottom: 100%;
@@ -107,15 +104,14 @@ body:not(.is-lobby)
   z-index: 2;
 }
 
-/* En vertical móvil, la barra debe volver al borde inferior del reproductor;
-   el anclaje sobre el pie del layout apilado deja un hueco visible. */
+/* En vertical móvil, alinear la pista con el borde inferior del reproductor. */
 @media (max-width: 680px) and (orientation: portrait) {
   body:not(.is-lobby)
-    .session-view.layout-component-stack:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .session-view.bottom-dock-panels-fit-viewport:not(.chat-collapsed)[data-chat-dock="bottom"]
   .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-progress-group {
-    right: 0;
+    right: 16px;
     bottom: -9px;
-    left: 0;
+    left: 16px;
     z-index: 42;
   }
 }

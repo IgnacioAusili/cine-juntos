@@ -12,24 +12,22 @@
     left: 0;
   }
 
-  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
+  body:not(.is-lobby) .session-view.bottom-dock-panels-fit-viewport:not(.chat-collapsed)[data-chat-dock="bottom"]
     .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-progress-group::before {
-    top: calc(50% - 0.5px);
+    top: calc(50% - 1px);
     height: 1px;
     transform: translateY(-50%);
   }
 
   /* Cuando el video y el chat caben juntos, anclar sólo la pista al pie de
      ancho completo permite que la línea toque el borde del reproductor. */
-  body:not(.is-lobby) .session-view.layout-component-stack:not(.chat-collapsed)[data-chat-dock="bottom"]
+  body:not(.is-lobby) .session-view.bottom-dock-panels-fit-viewport:not(.chat-collapsed)[data-chat-dock="bottom"]
     .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-controls-bar {
     position: static;
   }
 
-  body:not(.is-lobby) .session-view.layout-component-stack:not(.chat-collapsed)[data-chat-dock="bottom"]
+  body:not(.is-lobby) .session-view.bottom-dock-panels-fit-viewport:not(.chat-collapsed)[data-chat-dock="bottom"]
     .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-progress-group::before {
     top: calc(50% - 1px);
-    left: 6px;
-    right: 6px;
   }
 }

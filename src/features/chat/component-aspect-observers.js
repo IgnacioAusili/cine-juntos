@@ -1,17 +1,20 @@
 export function wireComponentAspectObservers({
   sessionView,
   workspace,
+  videoArea,
   videoPlayer,
   playerFrame,
   chatArea,
   scheduleComponentLayoutMeasure,
   isMeasuringExpandedTarget,
 }) {
-  if (!sessionView || !workspace || !videoPlayer || !playerFrame || !chatArea) return;
+  if (!sessionView || !workspace || !videoArea || !videoPlayer || !playerFrame || !chatArea) return;
 
   const workspaceObserver = new ResizeObserver(scheduleComponentLayoutMeasure);
   workspaceObserver.observe(workspace);
   workspaceObserver.observe(sessionView);
+  workspaceObserver.observe(videoArea);
+  workspaceObserver.observe(chatArea);
 
   let dockLayoutTransitionPending = false;
   const dockObserver = new MutationObserver(() => {

@@ -45,6 +45,10 @@
   .session-view.chat-bottom-pc-expand-visual[data-chat-dock="bottom"]
     .chat-area > .message-form {
     position: fixed;
+    left: var(--chat-bottom-pc-expand-composer-left, 64px);
+    right: var(--chat-bottom-pc-expand-composer-right, 64px);
+    width: var(--chat-bottom-pc-expand-composer-width, auto);
+    margin-inline: var(--chat-bottom-pc-expand-composer-margin, auto);
     bottom: calc(
       var(--chat-composer-edge-inset, 20px)
       + var(--app-shell-gutter, 10px)

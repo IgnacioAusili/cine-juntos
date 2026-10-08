@@ -1,6 +1,6 @@
 import { syncComponentStackChatHandle } from "./component-stack-controls.js?v=20260930-header-visual-center-offset-02-chat-handle-flow-01";
 import { syncComponentStackShellInsets } from "./component-stack-insets.js?v=20260929-edge-to-edge-stack-inset-01";
-import { wireComponentAspectObservers } from "./component-aspect-observers.js?v=20261004-empty-player-start-scroll-01-aspect-dock-settle-01";
+import { wireComponentAspectObservers } from "./component-aspect-observers.js?v=20261004-empty-player-start-scroll-01-aspect-dock-settle-01-bottom-dock-fit-observer-01-measure-panel-resize-01";
 import {
   hasLoadedVideo,
   isMeasuringExpandedTarget,
@@ -16,8 +16,10 @@ const playerFrame = sessionView?.querySelector(".player-frame");
 const chatArea = sessionView?.querySelector(".chat-area");
 const FULL_PANEL_LAYOUT_CLASS = "layout-component-stack";
 const EDGE_TO_EDGE_LAYOUT_CLASS = "layout-edge-to-edge";
+const BOTTOM_DOCK_FIT_VIEWPORT_CLASS = "bottom-dock-panels-fit-viewport";
 
 let pendingFrame = 0;
+let pendingBottomDockSyncFrame = 0;
 let pendingScrollTarget = "";
 let initialSessionScrollPending = true;
 
@@ -27,19 +29,47 @@ function syncBottomDockSnapMode() {
     && !sessionView.classList.contains("chat-collapsed");
   const videoRect = videoArea?.getBoundingClientRect();
   const chatRect = chatArea?.getBoundingClientRect();
-  const viewportHeight = window.visualViewport?.height || window.innerHeight;
+  const visualViewport = window.visualViewport;
+  const viewportTop = visualViewport?.offsetTop || 0;
+  const viewportHeight = visualViewport?.height || window.innerHeight;
+  const viewportBottom = viewportTop + viewportHeight;
   const combinedPanelHeight = videoRect && chatRect
     ? Math.max(videoRect.bottom, chatRect.bottom) - Math.min(videoRect.top, chatRect.top)
     : 0;
+  const combinedPanelTop = videoRect && chatRect
+    ? Math.min(videoRect.top, chatRect.top)
+    : 0;
+  const combinedPanelBottom = videoRect && chatRect
+    ? Math.max(videoRect.bottom, chatRect.bottom)
+    : 0;
+  const hasMeasuredPanels = Boolean(
+    videoRect?.height > 0
+    && chatRect?.height > 0,
+  );
+  const panelsFitViewport = Boolean(
+    isExpandedBottomDock
+    && hasMeasuredPanels
+    && combinedPanelHeight <= viewportHeight + 1
+    && combinedPanelTop >= viewportTop - 1
+    && combinedPanelBottom <= viewportBottom + 1,
+  );
   const needsScrollSnap = Boolean(
     isDesktop
     && isExpandedBottomDock
-    && videoRect?.height > 0
-    && chatRect?.height > 0
+    && hasMeasuredPanels
     && combinedPanelHeight > viewportHeight + 1,
   );
 
+  sessionView?.classList.toggle(BOTTOM_DOCK_FIT_VIEWPORT_CLASS, panelsFitViewport);
   sessionView?.classList.toggle("chat-bottom-snap-enabled", needsScrollSnap);
+}
+
+function scheduleBottomDockSnapModeSync() {
+  if (pendingBottomDockSyncFrame) return;
+  pendingBottomDockSyncFrame = window.requestAnimationFrame(() => {
+    pendingBottomDockSyncFrame = 0;
+    syncBottomDockSnapMode();
+  });
 }
 
 function syncEdgeToEdgeLayout() {
@@ -105,6 +135,7 @@ function measureComponentLayout({ allowDuringChatTransition = false } = {}) {
       ) {
         videoArea.scrollIntoView({ block: "center", inline: "nearest", behavior: "auto" });
       }
+      scheduleBottomDockSnapModeSync();
       return;
     }
 
@@ -121,6 +152,7 @@ function measureComponentLayout({ allowDuringChatTransition = false } = {}) {
     ) {
       videoArea.scrollIntoView({ block: "center", inline: "nearest", behavior: "auto" });
     }
+    scheduleBottomDockSnapModeSync();
   });
 }
 
@@ -145,6 +177,7 @@ export function syncComponentAspectLayoutNow(options = {}) {
 wireComponentAspectObservers({
   sessionView,
   workspace,
+  videoArea,
   videoPlayer,
   playerFrame,
   chatArea,
@@ -153,3 +186,11 @@ wireComponentAspectObservers({
 });
 
 window.addEventListener("resize", scheduleComponentLayoutMeasure, { passive: true });
+window.addEventListener("scroll", scheduleBottomDockSnapModeSync, { passive: true });
+document.addEventListener("scroll", scheduleBottomDockSnapModeSync, {
+  capture: true,
+  passive: true,
+});
+window.addEventListener("load", scheduleBottomDockSnapModeSync, { once: true });
+window.visualViewport?.addEventListener("scroll", scheduleBottomDockSnapModeSync, { passive: true });
+window.visualViewport?.addEventListener("resize", scheduleBottomDockSnapModeSync, { passive: true });

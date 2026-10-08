@@ -15,7 +15,7 @@ import {
   resetInsideUnread,
   resetPageUnread,
   syncUnreadBadgesWithVisibility,
-} from "./unread-counters.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-bottom-chat-switch-measure-01-chat-header-anchor-04-arrow-header-slot-center-01";
+} from "./unread-counters.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-bottom-chat-switch-measure-01-chat-header-anchor-04-arrow-header-slot-center-01-composer-width-01";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 import { focusChatInput } from "./chat-input-focus.js";
 import { restorePageScrollAfterRightChatCollapse } from "./chat-scroll-preservation.js?v=20260910-mobile-chat-scroll-lock-01";
@@ -28,7 +28,7 @@ import {
   syncInsideChatPanelPlacement,
   wireInsideChatPanelPlacement,
 } from "../player/inside-chat-layout.js?v=20260910-mobile-chat-side-placement-02";
-import { syncComponentAspectLayoutNow } from "./component-aspect-layout.js?v=20261007-bottom-chat-switch-measure-01-aspect-dock-settle-01";
+import { syncComponentAspectLayoutNow } from "./component-aspect-layout.js?v=20261007-bottom-chat-switch-measure-01-aspect-dock-settle-01-bottom-dock-panels-fit-viewport-01-visible-bounds-03-initial-viewport-sync-02";
 
 const AUTO_COLLAPSE_DELAY_MS = 5000;
 const AUTO_EXPAND_INSIDE_KEY = "cine-juntos-chat-auto-expand-inside";
@@ -1297,8 +1297,13 @@ function clearBottomChatTransitionVisuals() {
   dom.workspace?.style.removeProperty("grid-template-rows");
   dom.chatArea?.style.removeProperty("clip-path");
   dom.chatArea?.style.removeProperty("opacity");
+  const messageForm = dom.chatArea?.querySelector(".message-form");
+  messageForm?.style.removeProperty("--chat-bottom-pc-expand-composer-left");
+  messageForm?.style.removeProperty("--chat-bottom-pc-expand-composer-right");
+  messageForm?.style.removeProperty("--chat-bottom-pc-expand-composer-width");
+  messageForm?.style.removeProperty("--chat-bottom-pc-expand-composer-margin");
   if (dom.sessionView?.dataset.chatDock === "bottom") {
-    dom.chatArea?.querySelector(".message-form")?.style.removeProperty("width");
+    messageForm?.style.removeProperty("width");
   }
 }
 
@@ -1534,11 +1539,31 @@ function animateDesktopBottomChatExpand() {
   };
   bottomChatTransition = transition;
   lockBottomChatScrollAnchoring(transition);
-  dom.sessionView.classList.add("chat-bottom-pc-expand-visual");
   setDesktopBottomChatCurtainProgress(100);
   // Se reserva la fila completa con la cortina cerrada. Desde el primer frame
   // el scroll y la apertura recorren juntos la distancia hasta la unión.
   applyExternalChatCollapsed(false);
+  const messageForm = dom.chatArea.querySelector(".message-form");
+  const composerBounds = messageForm?.getBoundingClientRect();
+  if (messageForm && composerBounds?.width > 0) {
+    // Al pasar a fixed cambia el bloque de referencia de .chat-area al viewport.
+    // Conservar la geometría que ya tiene el composer en el layout expandido
+    // evita que se ensanche durante la cortina y vuelva a encogerse al terminar.
+    messageForm.style.setProperty(
+      "--chat-bottom-pc-expand-composer-left",
+      `${composerBounds.left}px`,
+    );
+    messageForm.style.setProperty(
+      "--chat-bottom-pc-expand-composer-right",
+      "auto",
+    );
+    messageForm.style.setProperty(
+      "--chat-bottom-pc-expand-composer-width",
+      `${composerBounds.width}px`,
+    );
+    messageForm.style.setProperty("--chat-bottom-pc-expand-composer-margin", "0");
+  }
+  dom.sessionView.classList.add("chat-bottom-pc-expand-visual");
   setCollapseHandleTransitioning(
     true,
     BOTTOM_CHAT_CURTAIN_MS + BOTTOM_CHAT_SCROLL_TIMEOUT_MS + 80,

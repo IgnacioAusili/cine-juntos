@@ -36,6 +36,8 @@ let activeGesture = null;
 let headerCollapsedBeforeKeyboard = null;
 let headerKeyboardPreparing = false;
 let chatHasMessages = false;
+let dockHandleSwitchActive = false;
+let bottomDockHandleRevealPending = false;
 
 function isMobileBottomDock() {
   return Boolean(
@@ -52,6 +54,57 @@ function isLayoutTransitioning() {
       || dom.sessionView?.classList.contains("chat-bottom-collapse-visual")
       || dom.sessionView?.classList.contains("chat-bottom-expand-visual"),
   );
+}
+
+function syncCollapseHandleAfterDockSwitch() {
+  const sessionView = dom.sessionView;
+  if (!sessionView) {
+    dockHandleSwitchActive = false;
+    bottomDockHandleRevealPending = false;
+    return;
+  }
+
+  const handleSwitching = sessionView.classList.contains("chat-dock-handle-switching");
+  if (handleSwitching) dockHandleSwitchActive = true;
+
+  const isBottomDock = sessionView.dataset.chatDock === "bottom";
+  if (isBottomDock && sessionView.classList.contains("chat-bottom-mobile-expand-visual")) {
+    bottomDockHandleRevealPending = true;
+  }
+  if (!isBottomDock) bottomDockHandleRevealPending = false;
+
+  const transitionActive = Boolean(
+    isLayoutTransitioning()
+      || sessionView.classList.contains("chat-dock-switching")
+      || sessionView.classList.contains("chat-bottom-mobile-expand-visual")
+      || sessionView.classList.contains("chat-bottom-mobile-curtain-active"),
+  );
+  const shouldRevealBottomHandle = isBottomDock && bottomDockHandleRevealPending && !transitionActive;
+  const shouldResyncDockHandle = dockHandleSwitchActive && !handleSwitching && !transitionActive;
+  if (!shouldRevealBottomHandle && !shouldResyncDockHandle) return;
+
+  window.requestAnimationFrame(() => {
+    if (sessionView !== dom.sessionView) return;
+    const transitionStillActive = Boolean(
+      isLayoutTransitioning()
+        || sessionView.classList.contains("chat-dock-switching")
+        || sessionView.classList.contains("chat-bottom-mobile-expand-visual")
+        || sessionView.classList.contains("chat-bottom-mobile-curtain-active"),
+    );
+    if (transitionStillActive) return;
+
+    if (sessionView.dataset.chatDock === "bottom" && bottomDockHandleRevealPending) {
+      sessionView.classList.remove("chat-dock-handle-switching");
+      bottomDockHandleRevealPending = false;
+    } else if (sessionView.classList.contains("chat-dock-handle-switching")) {
+      return;
+    }
+
+    dockHandleSwitchActive = false;
+    // El evento existente vuelve a medir el handle cuando ya terminó la
+    // transición de ancho y el dock lateral puede calcular su ancla al header.
+    window.dispatchEvent(new Event("chat-layout-settled"));
+  });
 }
 
 function isBottomChatKeyboardOpen() {
@@ -345,6 +398,12 @@ function syncHeaderMode() {
 
 export function wireMobileBottomChatHeader() {
   if (!dom.sessionView || !dom.chatArea || !dom.messages) return;
+
+  const dockSwitchObserver = new MutationObserver(syncCollapseHandleAfterDockSwitch);
+  dockSwitchObserver.observe(dom.sessionView, {
+    attributes: true,
+    attributeFilter: ["class"],
+  });
 
   document.addEventListener("pointerdown", startGesture, { capture: true, passive: true });
   document.addEventListener("pointermove", updateGesture, { capture: true, passive: true });

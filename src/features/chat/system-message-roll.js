@@ -1,4 +1,4 @@
-const SYSTEM_ROLL_FACE_COUNT = 10;
+const SYSTEM_ROLL_FACE_COUNT = 12;
 const SYSTEM_ROLL_FACE_ANGLE = 360 / SYSTEM_ROLL_FACE_COUNT;
 const SYSTEM_ROLL_TURN_FACES = 3;
 const SYSTEM_ROLL_TURN_ANGLE = SYSTEM_ROLL_FACE_ANGLE * SYSTEM_ROLL_TURN_FACES;
@@ -18,7 +18,8 @@ const systemMessageRowAnchorAnimations = new WeakMap();
 /**
  * Hace avanzar el texto visible de un grupo contraído con la misma rueda 3D
  * del prototipo: la cara anterior deja el frente y la nueva entra con un
- * giro positivo de 108 grados. El snapshot anterior se toma antes de ocultar
+ * giro positivo de 90 grados. La cara entrante empieza abajo y sube de forma
+ * continua hasta el frente. El snapshot anterior se toma antes de ocultar
  * la fila vieja porque esa fila deja de tener layout durante la transición.
  */
 export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText) {
@@ -59,11 +60,13 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
   const width = Math.max(nextWidth, previousRect?.width || 0);
   const height = Math.max(nextHeight, previousRect?.height || 0);
   const visualWidth = width;
-  // Un radio mayor hace más evidente el recorrido circular de cada cara;
-  // el mínimo relativo al renglón mantiene la misma curvatura en textos cortos.
+  // La distancia entre las caras depende del alto real de ambos textos. Con
+  // doce caras y un cuarto de vuelta, la entrante arranca en el punto inferior
+  // y avanza hacia arriba sin el pequeño retroceso de la geometría anterior.
   const radius = Math.max(
-    height / 6.5,
-    Number.isFinite(lineHeight) && lineHeight > 0 ? lineHeight * 0.8 : 0,
+    ((previousRect?.height || height) + nextHeight) / 4 +
+      (Number.isFinite(lineHeight) && lineHeight > 0 ? lineHeight * 0.2 : 0),
+    Number.isFinite(lineHeight) && lineHeight > 0 ? lineHeight * 1.2 : 0,
   );
   const originalNodes = Array.from(nextText.childNodes);
   const originalStyle = nextText.getAttribute("style");

@@ -11,7 +11,7 @@ import {
   renderPresence,
 } from "./presence.js?v=20261003-name-editor-curtain-cancel-esc-blur-03";
 import { setConnection } from "./icons-tooltips.js?v=20260914-tooltip-single-path-01-tooltip-focus-restore-skip-01";
-import { syncComponentAspectLayoutNow } from "./chat/component-aspect-layout.js?v=20261007-bottom-chat-switch-measure-01";
+import { syncComponentAspectLayoutNow } from "./chat/component-aspect-layout.js?v=20261007-bottom-chat-switch-measure-01-aspect-dock-settle-01";
 import {
   getUserScrollIntentVersion,
   setHostBadge,
@@ -29,7 +29,7 @@ import {
   resetInsideUnread,
   resetPageUnread,
   setInsideChatVisible,
-} from "./chat/index.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-15-bottom-chat-switch-measure-01-chat-header-anchor-04-chat-header-anchor-05-arrow-header-slot-center-01";
+} from "./chat/index.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-15-bottom-chat-switch-measure-01-chat-header-anchor-04-chat-header-anchor-05-arrow-header-slot-center-01-aspect-dock-settle-01-collapsed-responsive-resize-01-collapse-arrow-tooltip-01";
 import {
   getRoomTabLimitConflictCount,
   writeActiveTabRecord,

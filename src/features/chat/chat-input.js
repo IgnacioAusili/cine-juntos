@@ -23,7 +23,7 @@ import { clearReplyTarget } from "./chat-reply.js?v=20260930-system-row-fixed-ce
 import { renderMessage } from "./chat-render.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-15-bottom-chat-switch-measure-01-chat-header-anchor-04-arrow-header-slot-center-01";
 import {
   completeAutoOpenedChatResponse,
-} from "./chat-layout.js?v=20261007-bottom-chat-switch-measure-01-chat-header-anchor-04-arrow-header-slot-center-01";
+} from "./chat-layout.js?v=20261007-bottom-chat-switch-measure-01-chat-header-anchor-04-arrow-header-slot-center-01-aspect-dock-settle-01-collapsed-responsive-resize-01-collapse-arrow-tooltip-01";
 import { queuePinnedChatScrollSync, isPinnedToBottom } from "./chat-scroll-sync.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-bottom-chat-switch-measure-01-chat-header-anchor-04-arrow-header-slot-center-01";
 import { focusChatInput } from "./chat-input-focus.js";
 import {

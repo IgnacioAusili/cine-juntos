@@ -67,7 +67,7 @@
     rgba(12, 15, 17, 0.26);
   backdrop-filter: blur(18px) saturate(1.08);
   -webkit-backdrop-filter: blur(18px) saturate(1.08);
-  padding: 0 0 0 6px;
+  padding: 0 0 0 4px;
   overflow: hidden;
   transition:
     border-color 0.2s ease,
@@ -125,7 +125,7 @@
   background: transparent !important;
   box-shadow: none !important;
   padding-block: 8px;
-  padding-inline: 10px;
+  padding-inline: 8px;
   outline: none;
   resize: none;
   color: var(--text);
@@ -144,18 +144,22 @@
   height: 0;
 }
 
+.message-form .input-wrapper:not([data-expanded="true"]) textarea {
+  line-height: 20px;
+}
+
 @media (min-width: 681px) {
   .message-form .input-wrapper {
-    padding-left: 2px;
+    padding-left: 4px;
   }
 
   .message-form .input-wrapper textarea {
     font-size: 0.9rem;
-    padding-inline: 4px;
+    padding-inline: 8px;
   }
 
   .message-form .input-wrapper:not([data-expanded="true"]) textarea {
-    padding-left: 6px;
+    padding-left: 8px;
   }
 
   /* La métrica de la fuente deja unos píxeles de aire visual en el último

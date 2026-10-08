@@ -33,7 +33,7 @@ import {
   syncExternalChatCollapseHandleOffset,
   syncChatAutoExpandControls,
   wireResponsiveSessionLayout,
-} from "./chat-layout.js?v=20261007-bottom-chat-switch-measure-01-chat-header-anchor-04-arrow-header-slot-center-01";
+} from "./chat-layout.js?v=20261007-bottom-chat-switch-measure-01-chat-header-anchor-04-arrow-header-slot-center-01-aspect-dock-settle-01-collapsed-responsive-resize-01-collapse-arrow-tooltip-01";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 import { focusChatInput } from "./chat-input-focus.js";
 import { hideTooltip } from "../icons-tooltips.js?v=20260914-tooltip-single-path-01-tooltip-focus-restore-skip-01";
@@ -266,7 +266,7 @@ export {
   setInsideChatVisible,
   syncChatAutoExpandControls,
   updateCollapseButton,
-} from "./chat-layout.js?v=20261007-bottom-chat-switch-measure-01-chat-header-anchor-04-arrow-header-slot-center-01";
+} from "./chat-layout.js?v=20261007-bottom-chat-switch-measure-01-chat-header-anchor-04-arrow-header-slot-center-01-aspect-dock-settle-01-collapsed-responsive-resize-01-collapse-arrow-tooltip-01";
 
 export function wireChatEvents() {
   syncChatAutoExpandControls();

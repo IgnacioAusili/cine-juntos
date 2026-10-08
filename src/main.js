@@ -40,7 +40,7 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-15-bottom-chat-switch-measure-01-chat-header-anchor-04-chat-header-anchor-05-arrow-header-slot-center-01";
+} from "./features/chat/index.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-15-bottom-chat-switch-measure-01-chat-header-anchor-04-chat-header-anchor-05-arrow-header-slot-center-01-aspect-dock-settle-01-collapsed-responsive-resize-01-collapse-arrow-tooltip-01";
 import {
   initializePlayer,
   wirePlayerEvents,
@@ -49,7 +49,7 @@ import { wireMobileFullscreenOrientation } from "./features/player/mobile-fullsc
 import { wireMobileChatKeyboardControls } from "./features/player/mobile-chat-keyboard-controls.js?v=20260914-keyboard-player-controls-01";
 import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20260913-name-editor-keyboard-header-02-tooltip-focus-restore-skip-01";
 import { wireMobileLandscapeVideoSnap } from "./features/mobile-landscape-video-snap.js?v=20260910-mobile-portrait-no-snap-01";
-import { joinRoom, wireRoomEvents } from "./features/room.js?v=20261004-room-join-race-01-seek-tooltip-stable-01-bottom-chat-first-paint-02-bottom-chat-switch-measure-01-chat-header-anchor-04-chat-header-anchor-05-arrow-header-slot-center-01";
+import { joinRoom, wireRoomEvents } from "./features/room.js?v=20261004-room-join-race-01-seek-tooltip-stable-01-bottom-chat-first-paint-02-bottom-chat-switch-measure-01-chat-header-anchor-04-chat-header-anchor-05-arrow-header-slot-center-01-aspect-dock-settle-01-collapsed-responsive-resize-01";
 import { wireTouchHover } from "./core/touch-interactions.js?v=20260829-touch-hold-fix-01";
 import { installConsoleLogCapture, wireMobileDebugTools } from "./features/mobile-debug.js?v=20260917-dialog-test-routes-01";
 import { wireMobileKeyboardDiagnostics } from "./features/mobile-keyboard-diagnostics.js?v=20260911-ios-landscape-keyboard-diagnostics-01";

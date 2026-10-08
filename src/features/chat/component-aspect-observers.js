@@ -13,7 +13,16 @@ export function wireComponentAspectObservers({
   workspaceObserver.observe(workspace);
   workspaceObserver.observe(sessionView);
 
-  const dockObserver = new MutationObserver(scheduleComponentLayoutMeasure);
+  let dockLayoutTransitionPending = false;
+  const dockObserver = new MutationObserver(() => {
+    if (sessionView.classList.contains("chat-layout-transitioning")) {
+      // La primera medición ocurre mientras el dock todavía conserva el alto
+      // anterior. Volver a medir cuando termine la transición para aplicar la
+      // proporción del video al tamaño final del chat inferior.
+      dockLayoutTransitionPending = true;
+    }
+    scheduleComponentLayoutMeasure();
+  });
   dockObserver.observe(sessionView, {
     attributes: true,
     attributeFilter: ["data-chat-dock"],
@@ -50,6 +59,12 @@ export function wireComponentAspectObservers({
 
       if (transitionJustSettled && expandedChatTransitionPending) {
         expandedChatTransitionPending = false;
+        shouldMeasure = true;
+        shouldReveal = true;
+      }
+
+      if (transitionJustSettled && dockLayoutTransitionPending) {
+        dockLayoutTransitionPending = false;
         shouldMeasure = true;
         shouldReveal = true;
       }

@@ -28,7 +28,7 @@ import {
   syncInsideChatPanelPlacement,
   wireInsideChatPanelPlacement,
 } from "../player/inside-chat-layout.js?v=20260910-mobile-chat-side-placement-02";
-import { syncComponentAspectLayoutNow } from "./component-aspect-layout.js?v=20261007-bottom-chat-switch-measure-01";
+import { syncComponentAspectLayoutNow } from "./component-aspect-layout.js?v=20261007-bottom-chat-switch-measure-01-aspect-dock-settle-01";
 
 const AUTO_COLLAPSE_DELAY_MS = 5000;
 const AUTO_EXPAND_INSIDE_KEY = "cine-juntos-chat-auto-expand-inside";
@@ -94,7 +94,7 @@ function setResponsiveSessionLayout(stacked) {
 }
 
 function measureResponsiveSessionLayout() {
-  if (!dom.sessionView || !dom.workspace) return;
+  if (!dom.sessionView || !dom.workspace || !dom.chatArea) return;
 
   const isCoarsePointer = window.matchMedia(
     "(hover: none) and (pointer: coarse)",
@@ -105,29 +105,49 @@ function measureResponsiveSessionLayout() {
     return;
   }
 
+  const isCollapsed = dom.sessionView.classList.contains("chat-collapsed");
   if (
-    dom.sessionView.classList.contains("chat-collapsed")
-    || dom.sessionView.classList.contains("chat-layout-transitioning")
+    dom.sessionView.classList.contains("chat-layout-transitioning")
     || dom.sessionView.classList.contains("chat-dock-switching")
   ) return;
 
-  const temporaryClasses = [
-    "layout-stacked",
-  ].filter((className) => dom.sessionView.classList.contains(className));
+  const wasStacked = dom.sessionView.classList.contains("layout-stacked");
+  const previousChatAreaStyle = isCollapsed ? dom.chatArea.getAttribute("style") : null;
   dom.sessionView.classList.add("layout-fit-check");
-  temporaryClasses.forEach((className) => dom.sessionView.classList.remove(className));
+  dom.sessionView.classList.remove("layout-stacked");
 
-  const videoRect = dom.videoArea?.getBoundingClientRect();
-  const chatRect = dom.chatArea?.getBoundingClientRect();
-  const stacked = Boolean(
-    videoRect
-      && chatRect
-      && chatRect.width > 0
-      && chatRect.top > videoRect.top + 1,
-  );
+  let stacked = false;
+  try {
+    if (isCollapsed) {
+      // Un panel colapsado mide cero y no permite saber si cabe en la nueva
+      // ventana. Recuperar su geometría solo durante esta lectura mantiene
+      // estable el estado del chat y evita dejar obsoleto el modo responsive.
+      dom.chatArea.style.setProperty("flex-basis", "var(--chat-panel-width)");
+      dom.chatArea.style.setProperty("width", "var(--chat-panel-width)");
+      dom.chatArea.style.setProperty("min-width", "0");
+      dom.chatArea.style.setProperty("opacity", "1");
+      dom.chatArea.style.setProperty("pointer-events", "auto");
+    }
 
-  dom.sessionView.classList.remove("layout-fit-check");
-  temporaryClasses.forEach((className) => dom.sessionView.classList.add(className));
+    const videoRect = dom.videoArea?.getBoundingClientRect();
+    const chatRect = dom.chatArea.getBoundingClientRect();
+    stacked = Boolean(
+      videoRect
+        && chatRect.width > 0
+        && chatRect.top > videoRect.top + 1,
+    );
+  } finally {
+    if (isCollapsed) {
+      if (previousChatAreaStyle === null) {
+        dom.chatArea.removeAttribute("style");
+      } else {
+        dom.chatArea.setAttribute("style", previousChatAreaStyle);
+      }
+    }
+    dom.sessionView.classList.remove("layout-fit-check");
+    if (wasStacked) dom.sessionView.classList.add("layout-stacked");
+  }
+
   setResponsiveSessionLayout(stacked);
   syncExternalChatCollapseHandleOffset();
 }
@@ -151,6 +171,9 @@ export function wireResponsiveSessionLayout() {
     responsiveSessionLayoutObserver.observe(dom.workspace);
   }
   window.addEventListener("resize", scheduleResponsiveSessionLayoutMeasure, {
+    passive: true,
+  });
+  window.visualViewport?.addEventListener("resize", scheduleResponsiveSessionLayoutMeasure, {
     passive: true,
   });
   window.addEventListener(
@@ -1973,7 +1996,7 @@ export function updateCollapseButton() {
         : iconName;
     const iconAnchor = button.querySelector(".chat-collapse-icon-anchor");
     const icon = iconAnchor?.querySelector("[data-lucide]");
-    button.removeAttribute("data-tooltip");
+    button.dataset.tooltip = label;
     button.removeAttribute("title");
     button.setAttribute("aria-label", label);
     button.setAttribute("aria-hidden", String(isCollapsedState !== collapsed));

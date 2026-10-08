@@ -1167,10 +1167,9 @@
     transform: translateY(10px);
   }
 
-  /* Los dos composers móviles comparten una única altura compacta. El
-     textarea conserva 20px de línea y 5px arriba/abajo para centrar el hint;
-     si el contenido crece, la altura inline del auto-resize sigue teniendo
-     prioridad. */
+  /* Los dos composers comparten una única altura compacta. El textarea
+     conserva 20px de línea y 5px arriba/abajo para centrar el hint; si el
+     contenido crece, el autoajuste multilinea sigue teniendo prioridad. */
   body:not(.is-lobby) .message-form .input-wrapper {
     min-height: 30px;
   }

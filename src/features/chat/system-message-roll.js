@@ -1,11 +1,15 @@
-const SYSTEM_ROLL_FACE_COUNT = 5;
-const SYSTEM_ROLL_ANGLE = 360 / SYSTEM_ROLL_FACE_COUNT;
-const SYSTEM_ROLL_DURATION_MS = 700;
+const SYSTEM_ROLL_FACE_COUNT = 10;
+const SYSTEM_ROLL_FACE_ANGLE = 360 / SYSTEM_ROLL_FACE_COUNT;
+const SYSTEM_ROLL_TURN_FACES = 3;
+const SYSTEM_ROLL_TURN_ANGLE = SYSTEM_ROLL_FACE_ANGLE * SYSTEM_ROLL_TURN_FACES;
+const SYSTEM_ROLL_INCOMING_FACE_INDEX = SYSTEM_ROLL_FACE_COUNT - SYSTEM_ROLL_TURN_FACES;
+const SYSTEM_ROLL_DURATION_MS = 420;
 const SYSTEM_ROLL_ROTATION_DELAY_MS = 0;
 const SYSTEM_ROLL_ROTATION_DURATION_MS =
   SYSTEM_ROLL_DURATION_MS - SYSTEM_ROLL_ROTATION_DELAY_MS;
 const SYSTEM_ROLL_SIZE_TRANSITION_MS = 140;
 const SYSTEM_ROLL_EASING = "cubic-bezier(0.45, 0, 0.55, 1)";
+const SYSTEM_ROLL_ROTATION_EASING = "linear";
 const systemRollAnimations = new WeakMap();
 const systemRollBubbleAnimations = new WeakMap();
 const systemMessageRowAnchors = new WeakMap();
@@ -13,8 +17,8 @@ const systemMessageRowAnchorAnimations = new WeakMap();
 
 /**
  * Hace avanzar el texto visible de un grupo contraído con la misma rueda 3D
- * del prototipo: la cara anterior queda en el frente y la nueva entra con un
- * giro positivo de 72 grados. El snapshot anterior se toma antes de ocultar
+ * del prototipo: la cara anterior deja el frente y la nueva entra con un
+ * giro positivo de 108 grados. El snapshot anterior se toma antes de ocultar
  * la fila vieja porque esa fila deja de tener layout durante la transición.
  */
 export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText) {
@@ -55,13 +59,12 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
   const width = Math.max(nextWidth, previousRect?.width || 0);
   const height = Math.max(nextHeight, previousRect?.height || 0);
   const visualWidth = width;
-  // Separa suficientemente las caras en 3D incluso cuando ambos textos son
-  // multilinea; el radio tangente original las hacía cruzarse al inicio y
-  // volver a acercarse al final del giro.
-  const separationGap = Number.isFinite(lineHeight) && lineHeight > 0
-    ? lineHeight * 0.4
-    : 6;
-  const radius = (height + separationGap) / Math.sin(SYSTEM_ROLL_ANGLE * Math.PI / 180);
+  // Un radio mayor hace más evidente el recorrido circular de cada cara;
+  // el mínimo relativo al renglón mantiene la misma curvatura en textos cortos.
+  const radius = Math.max(
+    height / 6.5,
+    Number.isFinite(lineHeight) && lineHeight > 0 ? lineHeight * 0.8 : 0,
+  );
   const originalNodes = Array.from(nextText.childNodes);
   const originalStyle = nextText.getAttribute("style");
   const bubble = nextText.closest(".message-system-bubble");
@@ -98,7 +101,7 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
   const drum = document.createElement("span");
   drum.className = "system-message-roll-drum";
   drum.style.setProperty("--system-roll-radius", `${radius}px`);
-  drum.style.setProperty("--system-roll-angle", `${SYSTEM_ROLL_ANGLE}deg`);
+  drum.style.setProperty("--system-roll-angle", `${SYSTEM_ROLL_FACE_ANGLE}deg`);
   drum.style.setProperty("--system-roll-visual-width", `${visualWidth}px`);
   for (let index = 0; index < SYSTEM_ROLL_FACE_COUNT; index += 1) {
     const face = document.createElement("span");
@@ -108,7 +111,7 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
 
     if (index === 0) {
       contentNodes = Array.from(previousMarkup.childNodes).map((node) => node.cloneNode(true));
-    } else if (index === SYSTEM_ROLL_FACE_COUNT - 1) {
+    } else if (index === SYSTEM_ROLL_INCOMING_FACE_INDEX) {
       contentNodes = originalNodes.map((node) => node.cloneNode(true));
     }
 
@@ -167,11 +170,13 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
   const initialTransform =
     "translateX(-50%) translateZ(calc(var(--system-roll-radius) * -1)) rotateX(0deg)";
   const finalTransform =
-    `translateX(-50%) translateZ(calc(var(--system-roll-radius) * -1)) rotateX(${SYSTEM_ROLL_ANGLE}deg)`;
+    `translateX(-50%) translateZ(calc(var(--system-roll-radius) * -1)) rotateX(${SYSTEM_ROLL_TURN_ANGLE}deg)`;
+  // El giro empieza a velocidad constante para que no haya un tramo inicial
+  // casi plano que se perciba como una simple subida del texto.
   const rotationOptions = {
     duration: SYSTEM_ROLL_ROTATION_DURATION_MS,
     delay: SYSTEM_ROLL_ROTATION_DELAY_MS,
-    easing: SYSTEM_ROLL_EASING,
+    easing: SYSTEM_ROLL_ROTATION_EASING,
     fill: "both",
   };
   const animation = drum.animate(

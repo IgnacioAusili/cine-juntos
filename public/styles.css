@@ -1,17 +1,17 @@
 @import url("./styles/tokens.css?v=20260927-chat-collapse-handle-general-03");
 @import url("./styles/base.css?v=20260928-session-page-background-01");
-@import url("./styles/layout.css?v=20261006-bottom-composer-no-jump-01");
+@import url("./styles/layout.css?v=20261006-bottom-composer-follow-visual-01");
 @import url("./styles/components.css?v=20260927-chat-collapse-handle-general-02-dock-button-active-excluded-01-all-buttons-active-stationary-01-dock-button-width-matches-icon-01-presence-pill-padding-00-dock-button-hover-circle-01-presence-pill-people-icon-00-dock-hover-no-background-01-presence-dot-corner-size-01-presence-icon-size-18-presence-icon-taller-dot-07-presence-icon-height-22-presence-icon-height-26-presence-svg-remove-scale-01-arrow-in-header-flow-01-room-chip-descenders-lift-01-right-dock-collapse-arrow-layer-01-about-dialog-equal-padding-12-20");
 @import url("./styles/lobby.css?v=20261003-marquee-variable-phrases-seamless-premiere-02");
 @import url("./styles/player.css?v=20260927-video-status-text-offset-01");
-@import url("./styles/chat.css?v=20261006-composer-controls-centered-both-docks-01");
+@import url("./styles/chat.css?v=20261006-composer-controls-centered-both-docks-01-bottom-dock-size-01-bottom-pc-transition-anchor-01-bottom-composer-anchor-consistent-01");
 @import url("./styles/chat-overlay.css?v=20260930-system-row-fixed-center-01-overlay-media-alignment-02-message-time-color-01-overlay-image-size-01-system-roll-text-billboard-02-system-roll-true-3d-01");
 @import url("./styles/chat/image-lightbox.css?v=20260915-image-lightbox-cursor-01-pending-image-lightbox-01-native-modal-scroll-lock-01");
 @import url("./styles/states.css?v=20261003-desktop-video-snap-center-01-video-snap-10px-fullscreen-bleed-01");
 @import url("./styles/responsive.css?v=20260930-chat-name-check-spacing-01-chat-header-icon-end-align-02-chat-header-gutter-spacing-01-dock-hover-icon-centered-02-chat-tools-shared-gutter-02-dock-button-width-matches-icon-01-name-editor-crossfade-01-component-stack-header-center-01-component-stack-video-gutter-01");
 @import url("./styles/mini-player.css?v=20260905-overlay-height-cap-03");
 @import url("./styles/mobile.css?v=20260928-dynamic-chat-name-01-chat-tools-shared-gutter-01-leading-group-flow-01");
-  @import url("./styles/mobile-landscape.css?v=20260928-dynamic-chat-name-01-chat-tools-shared-gutter-01");
+  @import url("./styles/mobile-landscape.css?v=20260928-dynamic-chat-name-01-chat-tools-shared-gutter-01-connected-presence-flow-01");
 @import url("./styles/mobile-fullscreen-viewport.css?v=20260927-chat-header-collapse-fit-01");
 @import url("./styles/mini-player-adjustments.css?v=20260905-overlay-height-cap-03");
 @import url("./styles/player-controls-layout.css?v=20260902-player-controls-layout-17");
@@ -22,6 +22,7 @@
 @import url("./styles/lobby-layout-variants.css?v=20260926-lobby-ticket-details-07");
 @import url("./styles/lobby-footer-panel.css?v=20260926-lobby-footer-10px-01");
 @import url("./styles/player-progress-responsive.css?v=20260930-player-progress-stable-01");
+@import url("./styles/component-stack-chat-header.css?v=20261007-component-stack-header-stable-center-02-desktop-side-gutter-01-component-stack-header-pc-gutter-02-component-stack-header-input-mode-01-component-stack-header-measured-gutter-01-component-stack-header-edge-geometry-02");
 
 /* El nombre y su lápiz forman un grupo centrado dentro del espacio libre del
    lado izquierdo del header. */
@@ -120,69 +121,6 @@ body:not(.is-lobby)
 .session-view.component-layout-measuring *::before,
 .session-view.component-layout-measuring *::after {
   transition: none !important;
-}
-
-@media (max-width: 680px) and (orientation: landscape) {
-  /* El stack usa un header más compacto que los 38px del layout landscape;
-     la misma medida fija la fila y centra el control de colapso. */
-  :root body:not(.is-lobby) .app-shell
-    .session-view.layout-component-stack[data-chat-dock="bottom"] .chat-area {
-    --component-stack-chat-header-height: 34px;
-    grid-template-rows: var(--component-stack-chat-header-height) minmax(0, 1fr);
-  }
-
-  :root body:not(.is-lobby) .app-shell
-    .session-view.layout-component-stack[data-chat-dock="bottom"] .chat-tools {
-    box-sizing: border-box;
-    height: var(--component-stack-chat-header-height);
-    min-height: var(--component-stack-chat-header-height);
-    max-height: var(--component-stack-chat-header-height);
-  }
-
-  :root body:not(.is-lobby) .app-shell
-    .session-view:not(.chat-collapsed)[data-chat-dock="bottom"] .chat-tools {
-    padding-top: 5px;
-    padding-bottom: 5px;
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    :root body:not(.is-lobby) .app-shell
-      .session-view.layout-component-stack:not(.chat-collapsed)[data-chat-dock="bottom"] .chat-tools {
-      --component-stack-chat-header-vertical-padding: 5px;
-      padding-top: calc(
-        var(--component-stack-chat-header-vertical-padding)
-        + var(--component-stack-chat-header-visual-center-offset, 0px)
-      );
-      padding-bottom: calc(
-        var(--component-stack-chat-header-vertical-padding)
-        - var(--component-stack-chat-header-visual-center-offset, 0px)
-      );
-    }
-
-    :root body:not(.is-lobby) .app-shell
-      .session-view.layout-component-stack:not(.chat-collapsed)[data-chat-dock="bottom"]
-      .chat-tools > .presence-pill {
-      height: calc(
-        var(--component-stack-chat-header-height)
-        - var(--component-stack-chat-header-vertical-padding)
-        - var(--component-stack-chat-header-vertical-padding)
-      );
-      min-height: 0;
-      transform: translateY(var(--component-stack-chat-header-visual-center-offset, 0px));
-    }
-
-    :root body:not(.is-lobby) .app-shell
-      .session-view.layout-component-stack:not(.chat-collapsed)[data-chat-dock="bottom"]
-      .chat-tools #participantCount {
-      transform: none;
-    }
-
-    :root body:not(.is-lobby) .app-shell
-      .session-view.layout-component-stack:not(.chat-collapsed)[data-chat-dock="bottom"]
-      .chat-tools > .chat-tools-actions {
-      top: calc(50% + var(--component-stack-chat-header-visual-center-offset, 0px));
-    }
-  }
 }
 
 /* El dock inferior reparte el header en tres zonas iguales a los lados de la
@@ -289,11 +227,4 @@ body:not(.is-lobby) .app-shell
 .overlay-message-form .textarea-shell {
   box-sizing: border-box;
   padding-inline-start: 3px;
-}
-
-@media (min-width: 981px) {
-  .session-view[data-chat-dock="bottom"] .chat-area > .message-form {
-    max-width: 720px;
-    margin-inline: auto;
-  }
 }

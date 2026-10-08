@@ -14,7 +14,7 @@ import {
   resetInsideUnread,
   resetPageUnread,
   syncUnreadBadgesWithVisibility,
-} from "./unread-counters.js?v=20261003-name-editor-curtain-cancel-esc-blur-03";
+} from "./unread-counters.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-bottom-chat-switch-measure-01";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 import { focusChatInput } from "./chat-input-focus.js";
 import { restorePageScrollAfterRightChatCollapse } from "./chat-scroll-preservation.js?v=20260910-mobile-chat-scroll-lock-01";
@@ -27,6 +27,7 @@ import {
   syncInsideChatPanelPlacement,
   wireInsideChatPanelPlacement,
 } from "../player/inside-chat-layout.js?v=20260910-mobile-chat-side-placement-02";
+import { syncComponentAspectLayoutNow } from "./component-aspect-layout.js?v=20261007-bottom-chat-switch-measure-01";
 
 const AUTO_COLLAPSE_DELAY_MS = 5000;
 const AUTO_EXPAND_INSIDE_KEY = "cine-juntos-chat-auto-expand-inside";
@@ -1019,6 +1020,10 @@ function animateRightToBottomWithNativeCollapse() {
       preserveScroll: true,
       skipFullscreenFocus: true,
     });
+    // Medir la geometría inferior mientras sigue contraído; al abrirlo después,
+    // el primer frame ya reserva una fila completa para el reproductor y otra
+    // para el chat.
+    syncComponentAspectLayoutNow({ allowDuringChatTransition: true });
     setExternalChatCollapsed(false, { source: "dock-switch" });
     scheduleChatDockHandlesReveal(BOTTOM_CHAT_CURTAIN_MS + 80);
   }, RIGHT_CHAT_LAYOUT_TRANSITION_MS + 40);

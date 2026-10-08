@@ -2,7 +2,7 @@ import {
   animateCollapsedSystemMessageAdvance,
   resetSystemMessageRowAnchor,
   settleSystemMessageRoll,
-} from "./system-message-roll.js?v=20261003-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-02";
+} from "./system-message-roll.js?v=20261003-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-15";
 
 const SYSTEM_GROUP_MIN_SIZE = 3;
 const SYSTEM_GROUP_TRANSITION_MS = 180;

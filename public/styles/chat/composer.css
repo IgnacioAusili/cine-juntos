@@ -26,6 +26,31 @@
   left: 64px;
   right: 64px;
   width: auto;
+  max-width: 720px;
+  margin-inline: auto;
+}
+
+/* Durante el despliegue de escritorio, el panel y la página suben juntos.
+   Mantener el composer fijo al destino visible evita que aparezca a media
+   altura y termine de acomodarse cuando el scroll llega a la unión inferior. */
+@media (min-width: 681px) and (hover: hover) and (pointer: fine) {
+  .session-view[data-chat-dock="bottom"] .chat-area {
+    --chat-composer-edge-inset: 10px;
+  }
+
+  .session-view.chat-bottom-pc-expand-visual[data-chat-dock="bottom"] .chat-area {
+    contain: none;
+  }
+
+  .session-view.chat-bottom-pc-expand-visual[data-chat-dock="bottom"]
+    .chat-area > .message-form {
+    position: fixed;
+    bottom: calc(
+      var(--chat-composer-edge-inset, 20px)
+      + var(--app-shell-gutter, 10px)
+      + 1px
+    );
+  }
 }
 
 .message-form .input-wrapper {
@@ -119,7 +144,7 @@
   height: 0;
 }
 
-@media (min-width: 981px) {
+@media (min-width: 681px) {
   .message-form .input-wrapper {
     padding-left: 2px;
   }

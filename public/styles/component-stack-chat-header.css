@@ -1,0 +1,38 @@
+/* El modo compacto sigue el ancho real del panel, sin depender de un estado de
+   apilado que puede cambiar entre orientaciones. Si hay gutter lateral, queda
+   el header normal de PC. */
+:root body:not(.is-lobby) .app-shell
+  .session-view.layout-edge-to-edge[data-chat-dock="bottom"] .chat-area {
+  --component-stack-chat-header-height: 34px;
+  grid-template-rows: var(--component-stack-chat-header-height) minmax(0, 1fr);
+}
+
+:root body:not(.is-lobby) .app-shell
+  .session-view.layout-edge-to-edge[data-chat-dock="bottom"] .chat-tools {
+  --component-stack-chat-header-vertical-padding: 5px;
+  --component-stack-chat-header-visual-center-offset: 0px;
+  box-sizing: border-box;
+  height: var(--component-stack-chat-header-height);
+  min-height: var(--component-stack-chat-header-height);
+  max-height: var(--component-stack-chat-header-height);
+  padding-top: var(--component-stack-chat-header-vertical-padding);
+  padding-bottom: var(--component-stack-chat-header-vertical-padding);
+}
+
+:root body:not(.is-lobby) .app-shell
+  .session-view.layout-edge-to-edge:not(.chat-collapsed)[data-chat-dock="bottom"]
+  .chat-tools > .chat-tools-leading > .presence-pill {
+  height: calc(
+    var(--component-stack-chat-header-height)
+    - var(--component-stack-chat-header-vertical-padding)
+    - var(--component-stack-chat-header-vertical-padding)
+  );
+  min-height: 0;
+  transform: none;
+}
+
+:root body:not(.is-lobby) .app-shell
+  .session-view.layout-edge-to-edge:not(.chat-collapsed)[data-chat-dock="bottom"]
+  .chat-tools #participantCount {
+  transform: none;
+}

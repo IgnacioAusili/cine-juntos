@@ -4,7 +4,7 @@
 @media (max-width: 680px) {
   :root body:not(.is-lobby) .app-shell
     .session-view[data-chat-dock="bottom"] .chat-area {
-    --component-stack-chat-header-height: 34px;
+    --component-stack-chat-header-height: 38px;
     row-gap: 0;
     grid-template-rows: var(--component-stack-chat-header-height) minmax(0, 1fr);
   }

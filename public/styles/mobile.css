@@ -1663,6 +1663,7 @@
   body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
     .player-frame:not(.mini-player-surface).player-seek-control-dragging[data-control-style="line"]
     .player-seek-input {
+    opacity: 1;
     transform: translateY(-1.5px);
   }
 
@@ -1670,6 +1671,8 @@
     .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-seek-input {
     background: transparent !important;
     background-image: none !important;
+    opacity: 0.68;
+    transition: opacity 140ms ease-out;
   }
 
   body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]

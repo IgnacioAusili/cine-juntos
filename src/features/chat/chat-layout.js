@@ -1,6 +1,7 @@
 // Layout del chat externo e interno: visibilidad, estilo, dock y collapse.
 import { dom } from "../../core/dom.js";
 import { state, logEvent } from "../../core/state.js?v=20260914-console-log-controls-01";
+import { shouldAnchorChatCollapseHandleInHeader } from "./chat-collapse-header-layout.js?v=20261007-full-surface-header-anchor-01-chat-header-anchor-04";
 import { CHAT_DOCKS, CHAT_DOCK_META, withShortcutHint } from "../../core/utils.js";
 import { hydrateIcons, hideTooltip, refreshTooltipForTarget } from "../icons-tooltips.js?v=20260914-tooltip-single-path-01-tooltip-focus-restore-skip-01";
 import { focusFullscreenWorkspace } from "../session-ui.js?v=20260911-orientation-scroll-anchor-01";
@@ -14,7 +15,7 @@ import {
   resetInsideUnread,
   resetPageUnread,
   syncUnreadBadgesWithVisibility,
-} from "./unread-counters.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-bottom-chat-switch-measure-01";
+} from "./unread-counters.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-bottom-chat-switch-measure-01-chat-header-anchor-04-arrow-header-slot-center-01";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
 import { focusChatInput } from "./chat-input-focus.js";
 import { restorePageScrollAfterRightChatCollapse } from "./chat-scroll-preservation.js?v=20260910-mobile-chat-scroll-lock-01";
@@ -629,26 +630,32 @@ export function syncExternalChatCollapseHandleOffset() {
     const isHeaderAnchoredLayout = Boolean(
       isRightDock
         && isExpanded
-        && chatHeader
-        && isStackedSessionLayout()
-        && chatRect.height > 0,
+        && shouldAnchorChatCollapseHandleInHeader({
+          workspace: dom.workspace,
+          chatArea: dom.chatArea,
+          chatHeader,
+          isStacked: isStackedSessionLayout(),
+        }),
     );
     dom.sessionView.classList.toggle("chat-collapse-in-header", isHeaderAnchoredLayout);
     if (isHeaderAnchoredLayout) {
       const headerRect = chatHeader.getBoundingClientRect();
       const chatStyles = getComputedStyle(dom.chatArea);
+      const headerStyles = getComputedStyle(chatHeader);
       const chatBorderTop = Number.parseFloat(chatStyles.borderTopWidth) || 0;
       const chatBorderLeft = Number.parseFloat(chatStyles.borderLeftWidth) || 0;
-      const firstHeaderControlRect = chatHeader.firstElementChild?.getBoundingClientRect();
+      const firstLeadingControl = chatHeader.querySelector(".chat-tools-leading > *");
+      const firstHeaderControlRect = firstLeadingControl?.getBoundingClientRect();
       const iconAnchor = dom.collapseChatButton?.querySelector(".chat-collapse-icon-anchor");
       const iconAnchorRect = iconAnchor?.getBoundingClientRect();
       const iconAnchorSize =
         iconAnchorRect?.width
         || Number.parseFloat(iconAnchor ? getComputedStyle(iconAnchor).width : "")
         || 28;
-      const leadingSpace = firstHeaderControlRect
+      const headerInlineStartPadding = Number.parseFloat(headerStyles.paddingInlineStart) || 0;
+      const leadingSpace = firstHeaderControlRect?.width > 0
         ? Math.max(0, firstHeaderControlRect.left - headerRect.left)
-        : iconAnchorSize;
+        : headerInlineStartPadding || iconAnchorSize;
       const handleLeft =
         headerRect.left - chatRect.left - chatBorderLeft
         + Math.max(0, (leadingSpace - iconAnchorSize) / 2);

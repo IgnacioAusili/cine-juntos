@@ -1,7 +1,7 @@
 // Coordinacion general del player: reexporta sync de video y fullscreen sin romper imports existentes.
-import { wireFullscreenEvents } from "./fullscreen.js?v=20261003-desktop-video-snap-center-01-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-15-video-snap-10px-fullscreen-bleed-01-component-stack-header-pc-gutter-01-component-stack-header-pc-gutter-02-bottom-chat-switch-measure-01";
-import { wireMiniPlayerEvents } from "./mini-player.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-15-header-landscape-compact-01-component-stack-header-pc-gutter-01-component-stack-header-pc-gutter-02-component-stack-header-input-mode-01-component-stack-header-measured-gutter-01-component-stack-header-edge-geometry-02-bottom-chat-switch-measure-01";
-import { wirePlayerCoreEvents } from "./player.js?v=20261003-desktop-video-snap-center-01-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-15-video-snap-10px-fullscreen-bleed-01-seek-tooltip-stable-01-component-stack-header-pc-gutter-01-component-stack-header-pc-gutter-02-bottom-chat-switch-measure-01";
+import { wireFullscreenEvents } from "./fullscreen.js?v=20261003-desktop-video-snap-center-01-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-15-video-snap-10px-fullscreen-bleed-01-component-stack-header-pc-gutter-01-component-stack-header-pc-gutter-02-bottom-chat-switch-measure-01-chat-header-anchor-04-arrow-header-slot-center-01";
+import { wireMiniPlayerEvents } from "./mini-player.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-15-header-landscape-compact-01-component-stack-header-pc-gutter-01-component-stack-header-pc-gutter-02-component-stack-header-input-mode-01-component-stack-header-measured-gutter-01-component-stack-header-edge-geometry-02-bottom-chat-switch-measure-01-chat-header-anchor-04-arrow-header-slot-center-01";
+import { wirePlayerCoreEvents } from "./player.js?v=20261003-desktop-video-snap-center-01-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-15-video-snap-10px-fullscreen-bleed-01-seek-tooltip-stable-01-component-stack-header-pc-gutter-01-component-stack-header-pc-gutter-02-bottom-chat-switch-measure-01-chat-header-anchor-04-chat-header-anchor-05-arrow-header-slot-center-01";
 import { wirePlayerControlLayouts } from "./player-controls-layout.js?v=20260929-player-controls-layout-resize-reflow-02";
 import { wirePlayerVolumeLayouts } from "./player-volume-layout.js?v=20260928-volume-popup-arrow-hide-01";
 
@@ -12,16 +12,16 @@ export {
   setVideoSource,
   setVideoStatus,
   waitForVideoMetadata,
-} from "./player.js?v=20261003-desktop-video-snap-center-01-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-15-video-snap-10px-fullscreen-bleed-01-seek-tooltip-stable-01-component-stack-header-pc-gutter-01-component-stack-header-pc-gutter-02-bottom-chat-switch-measure-01";
+} from "./player.js?v=20261003-desktop-video-snap-center-01-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-15-video-snap-10px-fullscreen-bleed-01-seek-tooltip-stable-01-component-stack-header-pc-gutter-01-component-stack-header-pc-gutter-02-bottom-chat-switch-measure-01-chat-header-anchor-04-chat-header-anchor-05-arrow-header-slot-center-01";
 export {
   handleRemoteState,
   publishState,
-} from "./player-sync-logic.js?v=20261003-desktop-video-snap-center-01-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-15-video-snap-10px-fullscreen-bleed-01-seek-tooltip-stable-01-component-stack-header-pc-gutter-02-bottom-chat-switch-measure-01";
+} from "./player-sync-logic.js?v=20261003-desktop-video-snap-center-01-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-15-video-snap-10px-fullscreen-bleed-01-seek-tooltip-stable-01-component-stack-header-pc-gutter-02-bottom-chat-switch-measure-01-chat-header-anchor-04-chat-header-anchor-05-arrow-header-slot-center-01";
 export {
   handleFullscreenChange,
   snapFullscreenScroll,
   togglePageFullscreen,
-} from "./fullscreen.js?v=20261003-desktop-video-snap-center-01-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-15-video-snap-10px-fullscreen-bleed-01-component-stack-header-pc-gutter-01-component-stack-header-pc-gutter-02-bottom-chat-switch-measure-01";
+} from "./fullscreen.js?v=20261003-desktop-video-snap-center-01-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-15-video-snap-10px-fullscreen-bleed-01-component-stack-header-pc-gutter-01-component-stack-header-pc-gutter-02-bottom-chat-switch-measure-01-chat-header-anchor-04-arrow-header-slot-center-01";
 
 export function wirePlayerEvents() {
   const playerInteractions = wirePlayerCoreEvents();

@@ -186,6 +186,20 @@ body:not(.is-lobby)
    el espacio restante deja asomar la barra y el panel siguiente. En fullscreen
    esas reservas se anulan para que ambas superficies lleguen al borde. */
 @media (hover: hover) and (pointer: fine) {
+  /* El dock colapsado también reserva el gutter superior. Sin esta altura,
+     justo antes de activar layout-component-stack el video gana esos 10px y
+     toca el viewport; al cruzar el umbral vuelve a centrarse y el cambio
+     depende de la dirección del resize. */
+  body:not(.is-lobby):not(.fullscreen-mode)
+    .app-shell:not(:fullscreen)
+    .session-view.chat-collapsed:not(.layout-component-stack)[data-chat-dock="bottom"]
+    .workspace {
+    height: calc(
+      var(--app-viewport-height)
+      - (var(--app-shell-gutter) * 2)
+    );
+  }
+
   body:not(.is-lobby):not(.fullscreen-mode)
     .session-view.layout-component-stack[data-chat-dock="bottom"] .workspace {
     --component-stack-video-viewport-inset:

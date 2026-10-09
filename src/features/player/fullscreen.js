@@ -9,25 +9,25 @@ import {
 import {
   hideTooltip,
   setControlIcon,
-} from "../icons-tooltips.js?v=20260914-tooltip-single-path-01-tooltip-focus-restore-skip-01";
-import { setSyncStatus } from "../session-ui.js?v=20260911-orientation-scroll-anchor-01";
+} from "../icons-tooltips.js?v=20261008";
+import { setSyncStatus } from "../session-ui.js?v=20261008";
 import {
   logEvent,
   state,
-} from "../../core/state.js?v=20260914-console-log-controls-01";
-import { isMiniPlayerActive } from "./mini-player.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-02";
+} from "../../core/state.js?v=20261008";
+import { isMiniPlayerActive } from "./mini-player.js?v=20261008";
 import {
   syncExternalChatCollapseHandleOffset,
   syncInsideChatPanelOffset,
   cancelExternalChatAutoCollapse,
   forceExternalChatCollapsed,
   updateCollapseButton,
-} from "../chat/chat-layout.js?v=20261003-name-editor-curtain-cancel-esc-blur-03";
+} from "../chat/chat-layout.js?v=20261008";
 import { withShortcutHint } from "../../core/utils.js";
 import {
   captureFullscreenScroll,
   restoreFullscreenScroll,
-} from "./fullscreen-scroll.js?v=20260913-fullscreen-scroll-user-interrupt-01-video-snap-10px-fullscreen-bleed-01";
+} from "./fullscreen-scroll.js?v=20261008";
 
 const PLAYER_OVERLAY_IDLE_MS = 3000;
 const PLAYER_OVERLAY_LEAVE_HIDE_DELAY_MS = 800;

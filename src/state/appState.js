@@ -4,8 +4,8 @@ import {
   makeGuestName,
   normalizeGuestName,
 } from "../core/utils.js";
-import { normalizeDisplayName } from "../core/name-policy.js?v=20260912-name-session-01";
-import { getOrCreateClientId } from "../core/random-id.js?v=20260902-mobile-real-browser-02";
+import { normalizeDisplayName } from "../core/name-policy.js?v=20261008";
+import { getOrCreateClientId } from "../core/random-id.js?v=20261008";
 
 export const firebaseConfig = window.CINE_JUNTOS_FIREBASE_CONFIG || {};
 const SESSION_NAME_KEY = "cine-juntos-name";

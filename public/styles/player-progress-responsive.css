@@ -1,6 +1,4 @@
-/* En vista vertical estrecha, anclar la pista a la fila de controles mantiene
-   su longitud estable. z-index:auto no crea un contexto de apilado, así que la
-   pista conserva su nivel independiente sobre los botones. */
+/* En la vista normal, la pista sigue alineada con la fila de controles. */
 @media (max-width: 680px) and (orientation: portrait) {
   body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
     .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-controls-bar {
@@ -14,9 +12,22 @@
     left: 0;
   }
 
-  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
+  body:not(.is-lobby) .session-view.bottom-dock-panels-fit-viewport:not(.chat-collapsed)[data-chat-dock="bottom"]
     .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-progress-group::before {
     top: calc(50% - 1px);
-    height: 3px;
+    height: 1px;
+    transform: translateY(-50%);
+  }
+
+  /* Cuando el video y el chat caben juntos, anclar sólo la pista al pie de
+     ancho completo permite que la línea toque el borde del reproductor. */
+  body:not(.is-lobby) .session-view.bottom-dock-panels-fit-viewport:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-controls-bar {
+    position: static;
+  }
+
+  body:not(.is-lobby) .session-view.bottom-dock-panels-fit-viewport:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-progress-group::before {
+    top: calc(50% - 1px);
   }
 }

@@ -1,5 +1,5 @@
 import { dom } from "../core/dom.js";
-import { clearClientLog, getClientLogText, logEvent } from "../core/state.js?v=20260914-console-log-controls-01";
+import { clearClientLog, getClientLogText, logEvent } from "../core/state.js?v=20261008";
 
 const LOG_FILE_NAME = "cine-juntos-log.txt";
 const SHARE_TITLE = "Log de diagnóstico de Cine Juntos";

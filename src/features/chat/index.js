@@ -1,6 +1,6 @@
 // Coordinacion general del chat: cableado de eventos, layout y reexport de submodulos.
 import { dom } from "../../core/dom.js";
-import { logEvent, state } from "../../core/state.js?v=20260914-console-log-controls-01";
+import { logEvent, state } from "../../core/state.js?v=20261008";
 import { CHAT_DOCK_META } from "../../core/utils.js";
 import {
   autoResizeMessageInput,
@@ -13,9 +13,9 @@ import {
   updateCharCounter,
   wireFloatingComposerLayout,
   wireComposerScrollbar,
-} from "./chat-input.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-02";
-import { setReplyTarget } from "./chat-reply.js?v=20260930-system-row-fixed-center-01-tooltip-focus-restore-skip-01-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-02";
-import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20261003-name-editor-curtain-cancel-esc-blur-03";
+} from "./chat-input.js?v=20261008";
+import { setReplyTarget } from "./chat-reply.js?v=20261008";
+import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20261008";
 import {
   copyMessageText,
   hideMessageMenu,
@@ -33,10 +33,10 @@ import {
   syncExternalChatCollapseHandleOffset,
   syncChatAutoExpandControls,
   wireResponsiveSessionLayout,
-} from "./chat-layout.js?v=20261003-name-editor-curtain-cancel-esc-blur-03";
-import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
+} from "./chat-layout.js?v=20261008";
+import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20261008";
 import { focusChatInput } from "./chat-input-focus.js";
-import { hideTooltip } from "../icons-tooltips.js?v=20260914-tooltip-single-path-01-tooltip-focus-restore-skip-01";
+import { hideTooltip } from "../icons-tooltips.js?v=20261008";
 
 const MOBILE_CHAT_LAYOUT_QUERY = "(max-width: 980px)";
 const COLLAPSE_HOVER_RESET_CLASS = "chat-collapse-hover-reset";
@@ -231,24 +231,24 @@ export {
   buildEmojiPicker,
   updateCharCounter,
   sendMessage,
-} from "./chat-input.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-02";
+} from "./chat-input.js?v=20261008";
 export {
   beginSystemMessageHydration,
   finishSystemMessageHydration,
   renderMessage,
-} from "./chat-render.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-02";
+} from "./chat-render.js?v=20261008";
 export {
   clearReplyTarget,
   renderReplyPreview,
   scrollToMessage,
   setReplyTarget,
-} from "./chat-reply.js?v=20260930-system-row-fixed-center-01-tooltip-focus-restore-skip-01-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-02";
-export { sendVideoEventMessage } from "./chat-system-messages.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-02";
+} from "./chat-reply.js?v=20261008";
+export { sendVideoEventMessage } from "./chat-system-messages.js?v=20261008";
 export {
   checkScrollPosition,
   resetInsideUnread,
   resetPageUnread,
-} from "./unread-counters.js?v=20261003-name-editor-curtain-cancel-esc-blur-03";
+} from "./unread-counters.js?v=20261008";
 export {
   copyMessageText,
   hideMessageMenu,
@@ -266,7 +266,7 @@ export {
   setInsideChatVisible,
   syncChatAutoExpandControls,
   updateCollapseButton,
-} from "./chat-layout.js?v=20261003-name-editor-curtain-cancel-esc-blur-03";
+} from "./chat-layout.js?v=20261008";
 
 export function wireChatEvents() {
   syncChatAutoExpandControls();

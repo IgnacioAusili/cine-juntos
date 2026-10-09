@@ -1,9 +1,9 @@
 import { dom } from "../../core/dom.js";
-import { state } from "../../core/state.js?v=20260914-console-log-controls-01";
+import { state } from "../../core/state.js?v=20261008";
 import {
   setExternalChatCollapsed,
   setInsideChatVisible,
-} from "./chat-layout.js?v=20261003-name-editor-curtain-cancel-esc-blur-03";
+} from "./chat-layout.js?v=20261008";
 
 function isElementVisibleInViewport(element) {
   if (!element || document.hidden) return false;

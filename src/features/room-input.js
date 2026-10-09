@@ -1,5 +1,5 @@
 import { dom } from "../core/dom.js";
-import { LAST_ROOM_KEY } from "../core/state.js?v=20260914-console-log-controls-01";
+import { LAST_ROOM_KEY } from "../core/state.js?v=20261008";
 import {
   ROOM_CREATE_ATTEMPT_LIMIT,
   ROOM_CREATE_ATTEMPT_WINDOW_MS,

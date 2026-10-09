@@ -1,10 +1,10 @@
 import { dom } from "../core/dom.js";
-import { state } from "../core/state.js?v=20260914-console-log-controls-01";
+import { state } from "../core/state.js?v=20261008";
 import {
   buildContinuousBubblePath,
   clampBubbleTailCenter,
-} from "../core/continuous-bubble.js?v=20260912-continuous-bubble-01";
-import { setConnection } from "./session-ui.js?v=20260911-orientation-scroll-anchor-01";
+} from "../core/continuous-bubble.js?v=20261008";
+import { setConnection } from "./session-ui.js?v=20261008";
 import { createForeignDocumentIcon } from "./foreign-lucide-icon.js";
 import {
   isTouchPointer,

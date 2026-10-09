@@ -1,4 +1,4 @@
-import { checkScrollPosition } from "./unread-counters.js?v=20261003-name-editor-curtain-cancel-esc-blur-03";
+import { checkScrollPosition } from "./unread-counters.js?v=20261008";
 
 const pendingScrollSync = new WeakMap();
 const DEFAULT_PIN_THRESHOLD = 10;

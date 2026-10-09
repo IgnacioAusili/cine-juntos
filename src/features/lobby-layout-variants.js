@@ -1,4 +1,4 @@
-import { resetLobbyTicketPlacement, syncLobbyTicketPlacement, syncLobbyTitlePlacement } from "./lobby-ticket-placement.js?v=20260922-lobby-ticket-track-center-03";
+import { resetLobbyTicketPlacement, syncLobbyTicketPlacement, syncLobbyTitlePlacement } from "./lobby-ticket-placement.js?v=20261008";
 
 const STORAGE_KEY = "cine-juntos-lobby-layout-variant";
 const DEFAULT_VARIANT = "columns";

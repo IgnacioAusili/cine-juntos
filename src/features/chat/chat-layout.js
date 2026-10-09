@@ -1,32 +1,34 @@
 // Layout del chat externo e interno: visibilidad, estilo, dock y collapse.
 import { dom } from "../../core/dom.js";
-import { state, logEvent } from "../../core/state.js?v=20260914-console-log-controls-01";
+import { state, logEvent } from "../../core/state.js?v=20261008";
+import { shouldAnchorChatCollapseHandleInHeader } from "./chat-collapse-header-layout.js?v=20261008";
 import { CHAT_DOCKS, CHAT_DOCK_META, withShortcutHint } from "../../core/utils.js";
-import { hydrateIcons, hideTooltip, refreshTooltipForTarget } from "../icons-tooltips.js?v=20260914-tooltip-single-path-01-tooltip-focus-restore-skip-01";
-import { focusFullscreenWorkspace } from "../session-ui.js?v=20260911-orientation-scroll-anchor-01";
+import { hydrateIcons, hideTooltip, refreshTooltipForTarget } from "../icons-tooltips.js?v=20261008";
+import { focusFullscreenWorkspace } from "../session-ui.js?v=20261008";
 import {
   cancelIdentityEditing,
   syncNameInputWidth,
-} from "../presence.js?v=20261003-name-editor-curtain-cancel-esc-blur-03";
+} from "../presence.js?v=20261008";
 import {
   isExternalChatVisibleToUser,
   isInsideChatVisibleToUser,
   resetInsideUnread,
   resetPageUnread,
   syncUnreadBadgesWithVisibility,
-} from "./unread-counters.js?v=20261003-name-editor-curtain-cancel-esc-blur-03";
-import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
+} from "./unread-counters.js?v=20261008";
+import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20261008";
 import { focusChatInput } from "./chat-input-focus.js";
-import { restorePageScrollAfterRightChatCollapse } from "./chat-scroll-preservation.js?v=20260910-mobile-chat-scroll-lock-01";
+import { restorePageScrollAfterRightChatCollapse } from "./chat-scroll-preservation.js?v=20261008";
 import {
   CHAT_DOCK_TRANSITIONS,
   resolveChatDockTransition,
-} from "./dock-transition-router.js?v=20261002-chat-dock-transition-router-01";
+} from "./dock-transition-router.js?v=20261008";
 import {
   preserveInsideChatPanelPlacementWhileClosing,
   syncInsideChatPanelPlacement,
   wireInsideChatPanelPlacement,
-} from "../player/inside-chat-layout.js?v=20260910-mobile-chat-side-placement-02";
+} from "../player/inside-chat-layout.js?v=20261008";
+import { syncComponentAspectLayoutNow } from "./component-aspect-layout.js?v=20261008-unified-panel-layout-01";
 
 const AUTO_COLLAPSE_DELAY_MS = 5000;
 const AUTO_EXPAND_INSIDE_KEY = "cine-juntos-chat-auto-expand-inside";
@@ -92,7 +94,7 @@ function setResponsiveSessionLayout(stacked) {
 }
 
 function measureResponsiveSessionLayout() {
-  if (!dom.sessionView || !dom.workspace) return;
+  if (!dom.sessionView || !dom.workspace || !dom.chatArea) return;
 
   const isCoarsePointer = window.matchMedia(
     "(hover: none) and (pointer: coarse)",
@@ -103,29 +105,49 @@ function measureResponsiveSessionLayout() {
     return;
   }
 
+  const isCollapsed = dom.sessionView.classList.contains("chat-collapsed");
   if (
-    dom.sessionView.classList.contains("chat-collapsed")
-    || dom.sessionView.classList.contains("chat-layout-transitioning")
+    dom.sessionView.classList.contains("chat-layout-transitioning")
     || dom.sessionView.classList.contains("chat-dock-switching")
   ) return;
 
-  const temporaryClasses = [
-    "layout-stacked",
-  ].filter((className) => dom.sessionView.classList.contains(className));
+  const wasStacked = dom.sessionView.classList.contains("layout-stacked");
+  const previousChatAreaStyle = isCollapsed ? dom.chatArea.getAttribute("style") : null;
   dom.sessionView.classList.add("layout-fit-check");
-  temporaryClasses.forEach((className) => dom.sessionView.classList.remove(className));
+  dom.sessionView.classList.remove("layout-stacked");
 
-  const videoRect = dom.videoArea?.getBoundingClientRect();
-  const chatRect = dom.chatArea?.getBoundingClientRect();
-  const stacked = Boolean(
-    videoRect
-      && chatRect
-      && chatRect.width > 0
-      && chatRect.top > videoRect.top + 1,
-  );
+  let stacked = false;
+  try {
+    if (isCollapsed) {
+      // Un panel colapsado mide cero y no permite saber si cabe en la nueva
+      // ventana. Recuperar su geometría solo durante esta lectura mantiene
+      // estable el estado del chat y evita dejar obsoleto el modo responsive.
+      dom.chatArea.style.setProperty("flex-basis", "var(--chat-panel-width)");
+      dom.chatArea.style.setProperty("width", "var(--chat-panel-width)");
+      dom.chatArea.style.setProperty("min-width", "0");
+      dom.chatArea.style.setProperty("opacity", "1");
+      dom.chatArea.style.setProperty("pointer-events", "auto");
+    }
 
-  dom.sessionView.classList.remove("layout-fit-check");
-  temporaryClasses.forEach((className) => dom.sessionView.classList.add(className));
+    const videoRect = dom.videoArea?.getBoundingClientRect();
+    const chatRect = dom.chatArea.getBoundingClientRect();
+    stacked = Boolean(
+      videoRect
+        && chatRect.width > 0
+        && chatRect.top > videoRect.top + 1,
+    );
+  } finally {
+    if (isCollapsed) {
+      if (previousChatAreaStyle === null) {
+        dom.chatArea.removeAttribute("style");
+      } else {
+        dom.chatArea.setAttribute("style", previousChatAreaStyle);
+      }
+    }
+    dom.sessionView.classList.remove("layout-fit-check");
+    if (wasStacked) dom.sessionView.classList.add("layout-stacked");
+  }
+
   setResponsiveSessionLayout(stacked);
   syncExternalChatCollapseHandleOffset();
 }
@@ -149,6 +171,9 @@ export function wireResponsiveSessionLayout() {
     responsiveSessionLayoutObserver.observe(dom.workspace);
   }
   window.addEventListener("resize", scheduleResponsiveSessionLayoutMeasure, {
+    passive: true,
+  });
+  window.visualViewport?.addEventListener("resize", scheduleResponsiveSessionLayoutMeasure, {
     passive: true,
   });
   window.addEventListener(
@@ -628,26 +653,32 @@ export function syncExternalChatCollapseHandleOffset() {
     const isHeaderAnchoredLayout = Boolean(
       isRightDock
         && isExpanded
-        && chatHeader
-        && isStackedSessionLayout()
-        && chatRect.height > 0,
+        && shouldAnchorChatCollapseHandleInHeader({
+          workspace: dom.workspace,
+          chatArea: dom.chatArea,
+          chatHeader,
+          isStacked: isStackedSessionLayout(),
+        }),
     );
     dom.sessionView.classList.toggle("chat-collapse-in-header", isHeaderAnchoredLayout);
     if (isHeaderAnchoredLayout) {
       const headerRect = chatHeader.getBoundingClientRect();
       const chatStyles = getComputedStyle(dom.chatArea);
+      const headerStyles = getComputedStyle(chatHeader);
       const chatBorderTop = Number.parseFloat(chatStyles.borderTopWidth) || 0;
       const chatBorderLeft = Number.parseFloat(chatStyles.borderLeftWidth) || 0;
-      const firstHeaderControlRect = chatHeader.firstElementChild?.getBoundingClientRect();
+      const firstLeadingControl = chatHeader.querySelector(".chat-tools-leading > *");
+      const firstHeaderControlRect = firstLeadingControl?.getBoundingClientRect();
       const iconAnchor = dom.collapseChatButton?.querySelector(".chat-collapse-icon-anchor");
       const iconAnchorRect = iconAnchor?.getBoundingClientRect();
       const iconAnchorSize =
         iconAnchorRect?.width
         || Number.parseFloat(iconAnchor ? getComputedStyle(iconAnchor).width : "")
         || 28;
-      const leadingSpace = firstHeaderControlRect
+      const headerInlineStartPadding = Number.parseFloat(headerStyles.paddingInlineStart) || 0;
+      const leadingSpace = firstHeaderControlRect?.width > 0
         ? Math.max(0, firstHeaderControlRect.left - headerRect.left)
-        : iconAnchorSize;
+        : headerInlineStartPadding || iconAnchorSize;
       const handleLeft =
         headerRect.left - chatRect.left - chatBorderLeft
         + Math.max(0, (leadingSpace - iconAnchorSize) / 2);
@@ -1019,6 +1050,10 @@ function animateRightToBottomWithNativeCollapse() {
       preserveScroll: true,
       skipFullscreenFocus: true,
     });
+    // Medir la geometría inferior mientras sigue contraído; al abrirlo después,
+    // el primer frame ya reserva una fila completa para el reproductor y otra
+    // para el chat.
+    syncComponentAspectLayoutNow({ allowDuringChatTransition: true });
     setExternalChatCollapsed(false, { source: "dock-switch" });
     scheduleChatDockHandlesReveal(BOTTOM_CHAT_CURTAIN_MS + 80);
   }, RIGHT_CHAT_LAYOUT_TRANSITION_MS + 40);
@@ -1262,8 +1297,13 @@ function clearBottomChatTransitionVisuals() {
   dom.workspace?.style.removeProperty("grid-template-rows");
   dom.chatArea?.style.removeProperty("clip-path");
   dom.chatArea?.style.removeProperty("opacity");
+  const messageForm = dom.chatArea?.querySelector(".message-form");
+  messageForm?.style.removeProperty("--chat-bottom-pc-expand-composer-left");
+  messageForm?.style.removeProperty("--chat-bottom-pc-expand-composer-right");
+  messageForm?.style.removeProperty("--chat-bottom-pc-expand-composer-width");
+  messageForm?.style.removeProperty("--chat-bottom-pc-expand-composer-margin");
   if (dom.sessionView?.dataset.chatDock === "bottom") {
-    dom.chatArea?.querySelector(".message-form")?.style.removeProperty("width");
+    messageForm?.style.removeProperty("width");
   }
 }
 
@@ -1499,11 +1539,31 @@ function animateDesktopBottomChatExpand() {
   };
   bottomChatTransition = transition;
   lockBottomChatScrollAnchoring(transition);
-  dom.sessionView.classList.add("chat-bottom-pc-expand-visual");
   setDesktopBottomChatCurtainProgress(100);
   // Se reserva la fila completa con la cortina cerrada. Desde el primer frame
   // el scroll y la apertura recorren juntos la distancia hasta la unión.
   applyExternalChatCollapsed(false);
+  const messageForm = dom.chatArea.querySelector(".message-form");
+  const composerBounds = messageForm?.getBoundingClientRect();
+  if (messageForm && composerBounds?.width > 0) {
+    // Al pasar a fixed cambia el bloque de referencia de .chat-area al viewport.
+    // Conservar la geometría que ya tiene el composer en el layout expandido
+    // evita que se ensanche durante la cortina y vuelva a encogerse al terminar.
+    messageForm.style.setProperty(
+      "--chat-bottom-pc-expand-composer-left",
+      `${composerBounds.left}px`,
+    );
+    messageForm.style.setProperty(
+      "--chat-bottom-pc-expand-composer-right",
+      "auto",
+    );
+    messageForm.style.setProperty(
+      "--chat-bottom-pc-expand-composer-width",
+      `${composerBounds.width}px`,
+    );
+    messageForm.style.setProperty("--chat-bottom-pc-expand-composer-margin", "0");
+  }
+  dom.sessionView.classList.add("chat-bottom-pc-expand-visual");
   setCollapseHandleTransitioning(
     true,
     BOTTOM_CHAT_CURTAIN_MS + BOTTOM_CHAT_SCROLL_TIMEOUT_MS + 80,
@@ -1961,7 +2021,7 @@ export function updateCollapseButton() {
         : iconName;
     const iconAnchor = button.querySelector(".chat-collapse-icon-anchor");
     const icon = iconAnchor?.querySelector("[data-lucide]");
-    button.removeAttribute("data-tooltip");
+    button.dataset.tooltip = label;
     button.removeAttribute("title");
     button.setAttribute("aria-label", label);
     button.setAttribute("aria-hidden", String(isCollapsedState !== collapsed));

@@ -7,7 +7,7 @@ import {
   applyInitialDefaults,
   detectTerminalLogEndpoint,
   logEvent,
-} from "./core/state.js?v=20260914-console-log-controls-01";
+} from "./core/state.js?v=20261008";
 import {
   normalizeRoomCode,
 } from "./core/utils.js";
@@ -15,20 +15,20 @@ import {
   hydrateIcons,
   initializeUi,
   setConnection,
-} from "./features/icons-tooltips.js?v=20260914-tooltip-single-path-01-tooltip-focus-restore-skip-01";
+} from "./features/icons-tooltips.js?v=20261008";
 import {
   wireLayoutMetrics,
-} from "./features/layout-metrics.js?v=20261002-bottom-chat-header-flow-focus-01";
-import { wireLobbyKeyboardRestore } from "./features/lobby-keyboard.js?v=20260917-native-keyboard-flow-01";
-import { wireAboutDialogScrollbar } from "./features/about-dialog-scrollbar.js?v=20260917-visual-scrollbar-05";
+} from "./features/layout-metrics.js?v=20261008";
+import { wireLobbyKeyboardRestore } from "./features/lobby-keyboard.js?v=20261008";
+import { wireAboutDialogScrollbar } from "./features/about-dialog-scrollbar.js?v=20261008";
 import {
   renderPresence,
   wireIdentityEvents,
-} from "./features/presence.js?v=20261003-name-editor-curtain-cancel-esc-blur-03";
+} from "./features/presence.js?v=20261008";
 import {
   showLobby,
   initializeAboutDialog,
-} from "./features/session-ui.js?v=20261003-about-dialog-curtain-copy-move-17";
+} from "./features/session-ui.js?v=20261008";
 import {
   buildEmojiPicker,
   getPersistedInsideChatStyle,
@@ -40,21 +40,21 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-02";
+} from "./features/chat/index.js?v=20261008";
 import {
   initializePlayer,
   wirePlayerEvents,
-} from "./features/player/index.js?v=20261003-desktop-video-snap-center-01-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-02-video-snap-10px-fullscreen-bleed-01-seek-tooltip-stable-01";
+} from "./features/player/index.js?v=20261008";
 import { wireMobileFullscreenOrientation } from "./features/player/mobile-fullscreen-orientation.js";
-import { wireMobileChatKeyboardControls } from "./features/player/mobile-chat-keyboard-controls.js?v=20260914-keyboard-player-controls-01";
-import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20260913-name-editor-keyboard-header-02-tooltip-focus-restore-skip-01";
-import { wireMobileLandscapeVideoSnap } from "./features/mobile-landscape-video-snap.js?v=20260910-mobile-portrait-no-snap-01";
-import { joinRoom, wireRoomEvents } from "./features/room.js?v=20261004-room-join-race-01-seek-tooltip-stable-01";
-import { wireTouchHover } from "./core/touch-interactions.js?v=20260829-touch-hold-fix-01";
-import { installConsoleLogCapture, wireMobileDebugTools } from "./features/mobile-debug.js?v=20260917-dialog-test-routes-01";
-import { wireMobileKeyboardDiagnostics } from "./features/mobile-keyboard-diagnostics.js?v=20260911-ios-landscape-keyboard-diagnostics-01";
-import { openDialogTestRoute } from "./features/dialog-test-routes.js?v=20261003-desktop-video-snap-center-01-video-snap-10px-fullscreen-bleed-01-seek-tooltip-stable-01-lightbox-initial-zoom-reset-01-room-scroll-lock-01-native-modal-scroll-lock-01";
-import { wireLobbyLayoutVariants } from "./features/lobby-layout-variants.js?v=20261003-marquee-random-phrase-pool-seamless-live-premiere-05-selected-copy-01-marquee-pause-offscreen-step-boundary-02";
+import { wireMobileChatKeyboardControls } from "./features/player/mobile-chat-keyboard-controls.js?v=20261008";
+import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20261008";
+import { wireMobileLandscapeVideoSnap } from "./features/mobile-landscape-video-snap.js?v=20261008";
+import { joinRoom, wireRoomEvents } from "./features/room.js?v=20261008";
+import { wireTouchHover } from "./core/touch-interactions.js?v=20261008";
+import { installConsoleLogCapture, wireMobileDebugTools } from "./features/mobile-debug.js?v=20261008";
+import { wireMobileKeyboardDiagnostics } from "./features/mobile-keyboard-diagnostics.js?v=20261008";
+import { openDialogTestRoute } from "./features/dialog-test-routes.js?v=20261008";
+import { wireLobbyLayoutVariants } from "./features/lobby-layout-variants.js?v=20261008";
 
 const requestedRoom = normalizeRoomCode(new URLSearchParams(window.location.search).get("room") || "");
 

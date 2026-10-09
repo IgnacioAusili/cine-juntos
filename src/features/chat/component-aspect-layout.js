@@ -1,6 +1,11 @@
-import { syncComponentStackChatHandle } from "./component-stack-controls.js?v=20260930-header-visual-center-offset-02-chat-handle-flow-01";
-import { syncComponentStackShellInsets } from "./component-stack-insets.js?v=20260929-edge-to-edge-stack-inset-01";
-import { wireComponentAspectObservers } from "./component-aspect-observers.js?v=20261004-empty-player-start-scroll-01";
+import { syncComponentStackChatHandle } from "./component-stack-controls.js?v=20261008";
+import { syncComponentStackShellInsets } from "./component-stack-insets.js?v=20261008";
+import { wireComponentAspectObservers } from "./component-aspect-observers.js?v=20261008-unified-panel-layout-01";
+import {
+  hasLoadedVideo,
+  isMeasuringExpandedTarget,
+  measurePanelLayoutTarget,
+} from "./component-aspect-measurement.js?v=20261008-unified-panel-layout-01";
 
 const sessionView = document.querySelector("#sessionView");
 const appShell = document.querySelector(".app-shell");
@@ -10,137 +15,86 @@ const videoPlayer = sessionView?.querySelector("#videoPlayer");
 const playerFrame = sessionView?.querySelector(".player-frame");
 const chatArea = sessionView?.querySelector(".chat-area");
 const FULL_PANEL_LAYOUT_CLASS = "layout-component-stack";
-const DEFAULT_VIDEO_ASPECT_RATIO = 16 / 9;
+const EDGE_TO_EDGE_LAYOUT_CLASS = "layout-edge-to-edge";
+const BOTTOM_DOCK_FIT_VIEWPORT_CLASS = "bottom-dock-panels-fit-viewport";
 
 let pendingFrame = 0;
 let pendingScrollTarget = "";
-let measuringExpandedTarget = false;
 let initialSessionScrollPending = true;
 
-function capturePageScrollPosition() {
-  const isFullscreen = Boolean(document.fullscreenElement)
-    || document.body.classList.contains("fullscreen-mode");
-  const container = isFullscreen ? appShell : null;
-  return {
-    container,
-    top: container ? container.scrollTop : window.scrollY,
-  };
-}
-
-function restorePageScrollPosition(position) {
-  if (!position) return;
-
-  const currentTop = position.container ? position.container.scrollTop : window.scrollY;
-  if (Math.abs(currentTop - position.top) < 1) return;
-
-  if (position.container) {
-    position.container.scrollTop = position.top;
-  } else {
-    window.scrollTo({ top: position.top, behavior: "instant" });
-  }
-}
-
-function getVideoAspectRatio() {
-  if (videoPlayer?.videoWidth > 0 && videoPlayer.videoHeight > 0) {
-    return videoPlayer.videoWidth / videoPlayer.videoHeight;
-  }
-
-  const cssAspectRatio = getComputedStyle(videoPlayer).aspectRatio;
-  const [width, height] = cssAspectRatio.split("/").map(Number);
-  return width > 0 && height > 0
-    ? width / height
-    : DEFAULT_VIDEO_ASPECT_RATIO;
-}
-
-function hasLoadedVideo() {
-  return Boolean(
-    (videoPlayer?.currentSrc || videoPlayer?.getAttribute("src"))
-    && videoPlayer.readyState >= HTMLMediaElement.HAVE_METADATA,
+function getStructuralViewportHeight() {
+  const configuredHeight = Number.parseFloat(
+    getComputedStyle(document.documentElement)
+      .getPropertyValue("--app-viewport-height"),
   );
+  return configuredHeight > 0
+    ? configuredHeight
+    : document.documentElement.clientHeight || window.innerHeight;
 }
 
-function needsFullPanelLayout() {
-  if (
-    !sessionView
-    || !workspace
-    || !playerFrame
-    || !chatArea
-    || sessionView.dataset.chatDock !== "bottom"
-  ) return false;
-
-  const wasCollapsed = sessionView.classList.contains("chat-collapsed");
-  const wasExpanded = sessionView.classList.contains(FULL_PANEL_LAYOUT_CLASS);
-  const preservedScrollPosition = wasCollapsed || wasExpanded
-    ? capturePageScrollPosition()
-    : null;
-  const shouldSuppressTransitions = wasCollapsed || wasExpanded;
-  if (shouldSuppressTransitions) {
-    sessionView.classList.add("component-layout-measuring");
-    // Aplicar la regla antes de tocar el layout: si el navegador anima el
-    // estado temporal, el reproductor parpadea con su tamaño completo.
-    void getComputedStyle(sessionView).transitionProperty;
-  }
-  if (wasCollapsed) measuringExpandedTarget = true;
-  if (wasExpanded) sessionView.classList.remove(FULL_PANEL_LAYOUT_CLASS);
-  if (wasCollapsed) sessionView.classList.remove("chat-collapsed");
-
-  // Medir la geometría que tendrá el dock al expandirse evita que el chat
-  // abra primero con las filas compactas y cambie de layout al terminar.
-  const videoRect = playerFrame.getBoundingClientRect();
-  const chatRect = chatArea.getBoundingClientRect();
-  const requiredVideoHeight = videoRect.width / getVideoAspectRatio();
-  const shouldExpand = Boolean(
-    videoRect.width > 0
-    && videoRect.height > 0
-    && chatRect.width > 0
-    && chatRect.height > 0
-    && videoRect.height < requiredVideoHeight,
-  );
-
-  if (wasCollapsed) {
-    sessionView.classList.add("chat-collapsed");
-    // The temporary state is synchronous. Let its class mutations reach the
-    // observer before allowing it to react to real expand/collapse actions.
-    queueMicrotask(() => {
-      measuringExpandedTarget = false;
-    });
-  }
-  if (wasExpanded) sessionView.classList.add(FULL_PANEL_LAYOUT_CLASS);
-  restorePageScrollPosition(preservedScrollPosition);
-  if (shouldSuppressTransitions) {
-    sessionView.classList.remove("component-layout-measuring");
-  }
-  return shouldExpand;
-}
-
-function syncBottomDockSnapMode() {
+function applyComponentLayoutState({
+  shouldStack,
+  combinedPanelHeight,
+  hasMeasuredPanels,
+}) {
   const isDesktop = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
   const isExpandedBottomDock = sessionView?.dataset.chatDock === "bottom"
     && !sessionView.classList.contains("chat-collapsed");
-  const videoRect = videoArea?.getBoundingClientRect();
-  const chatRect = chatArea?.getBoundingClientRect();
-  const viewportHeight = window.visualViewport?.height || window.innerHeight;
-  const combinedPanelHeight = videoRect && chatRect
-    ? Math.max(videoRect.bottom, chatRect.bottom) - Math.min(videoRect.top, chatRect.top)
-    : 0;
+  const viewportHeight = getStructuralViewportHeight();
+  const panelsFitViewport = Boolean(
+    isExpandedBottomDock
+    && hasMeasuredPanels
+    && !shouldStack
+    && combinedPanelHeight <= viewportHeight + 1
+  );
   const needsScrollSnap = Boolean(
     isDesktop
     && isExpandedBottomDock
-    && videoRect?.height > 0
-    && chatRect?.height > 0
-    && combinedPanelHeight > viewportHeight + 1,
+    && hasMeasuredPanels
+    && (shouldStack || combinedPanelHeight > viewportHeight + 1),
   );
 
+  // Los tres estados se aplican desde la misma medición antes del siguiente
+  // repintado: ni el scroll ni una segunda medición de visibilidad los separa.
+  sessionView?.classList.toggle(FULL_PANEL_LAYOUT_CLASS, shouldStack);
+  sessionView?.classList.toggle(BOTTOM_DOCK_FIT_VIEWPORT_CLASS, panelsFitViewport);
   sessionView?.classList.toggle("chat-bottom-snap-enabled", needsScrollSnap);
+  syncComponentStackChatHandle(sessionView, chatArea);
 }
 
-function measureComponentLayout() {
+function syncEdgeToEdgeLayout() {
+  if (!sessionView || !appShell) return;
+
+  const shellBounds = appShell.getBoundingClientRect();
+  const sessionBounds = sessionView.getBoundingClientRect();
+  const fillsShellWidth = shellBounds.width > 0
+    && sessionBounds.width > 0
+    && sessionBounds.left <= shellBounds.left
+    && sessionBounds.right >= shellBounds.right;
+
+  sessionView.classList.toggle(EDGE_TO_EDGE_LAYOUT_CLASS, fillsShellWidth);
+}
+
+function measureComponentLayout({ allowDuringChatTransition = false } = {}) {
   pendingFrame = 0;
   syncComponentStackShellInsets(appShell, sessionView, workspace);
+  syncEdgeToEdgeLayout();
   const wasStacked = sessionView?.classList.contains(FULL_PANEL_LAYOUT_CLASS);
-  const shouldStack = sessionView?.classList.contains("chat-layout-transitioning")
-    ? Boolean(wasStacked)
-    : needsFullPanelLayout();
+  if (
+    sessionView?.classList.contains("chat-layout-transitioning")
+    && !allowDuringChatTransition
+  ) return;
+
+  const targetLayout = measurePanelLayoutTarget({
+    sessionView,
+    appShell,
+    workspace,
+    videoArea,
+    playerFrame,
+    chatArea,
+    videoPlayer,
+  });
+  const shouldStack = targetLayout.shouldStack;
   if (
     shouldStack
     && !wasStacked
@@ -150,9 +104,7 @@ function measureComponentLayout() {
     pendingScrollTarget = "center-video";
   }
 
-  sessionView?.classList.toggle(FULL_PANEL_LAYOUT_CLASS, shouldStack);
-  syncComponentStackChatHandle(sessionView, chatArea);
-  syncBottomDockSnapMode();
+  applyComponentLayoutState({ ...targetLayout, shouldStack });
 
   const scrollTarget = pendingScrollTarget;
   pendingScrollTarget = "";
@@ -204,12 +156,23 @@ function scheduleComponentLayoutMeasure(scrollTarget = "") {
   pendingFrame = window.requestAnimationFrame(measureComponentLayout);
 }
 
+export function syncComponentAspectLayoutNow(options = {}) {
+  // La entrada a sala lo llama antes de ceder el hilo; el primer frame visible
+  // ya usa el tamaño medido y no muestra primero las filas compactas.
+  if (pendingFrame) window.cancelAnimationFrame(pendingFrame);
+  pendingFrame = 0;
+  measureComponentLayout(options);
+}
+
 wireComponentAspectObservers({
   sessionView,
   workspace,
+  videoArea,
   videoPlayer,
   playerFrame,
   chatArea,
   scheduleComponentLayoutMeasure,
-  isMeasuringExpandedTarget: () => measuringExpandedTarget,
+  isMeasuringExpandedTarget,
 });
+
+window.addEventListener("load", scheduleComponentLayoutMeasure, { once: true });

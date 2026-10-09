@@ -237,7 +237,7 @@
      La flecha conserva su anclaje geométrico; el resto del contenido baja
      lo necesario para quedar centrado respecto de la franja visible. */
   html.viewport-landscape body:not(.is-lobby)
-    .session-view[data-chat-dock="bottom"] .chat-tools > .presence-pill,
+    .session-view[data-chat-dock="bottom"] .chat-tools > .chat-tools-leading,
   html.viewport-landscape body:not(.is-lobby)
     .session-view[data-chat-dock="bottom"] .chat-tools > .chat-tools-actions {
     transform: translateY(2px) !important;

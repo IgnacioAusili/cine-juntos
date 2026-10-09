@@ -1,5 +1,5 @@
 import { FIREBASE_VERSION, MAX_ROOM_PARTICIPANTS, STALE_MEMBER_TIMEOUT_MS } from "../core/utils.js";
-import { state, makeMemberPayload, logEvent } from "../core/state.js?v=20260914-console-log-controls-01";
+import { state, makeMemberPayload, logEvent } from "../core/state.js?v=20261008";
 
 export async function createFirebaseTransport(roomCode, config) {
   const [appModule, authModule, dbModule] = await Promise.all([

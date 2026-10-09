@@ -1,4 +1,4 @@
-import { hideTooltip } from "./icons-tooltips.js?v=20260914-tooltip-single-path-01-tooltip-focus-restore-skip-01";
+import { hideTooltip } from "./icons-tooltips.js?v=20261008";
 
 let suppressRestoredFocusTooltip = false;
 

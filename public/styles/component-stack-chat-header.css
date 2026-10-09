@@ -1,0 +1,139 @@
+/* El dock inferior ocupa todo el ancho desde el mismo breakpoint que elimina
+   el gutter lateral de la sesión. El header cambia por CSS, sin depender de
+   mediciones geométricas en JavaScript. */
+@media (max-width: 680px) {
+  :root body:not(.is-lobby) .app-shell
+    .session-view[data-chat-dock="bottom"] .chat-area {
+    --component-stack-chat-header-height: 38px;
+    row-gap: 0;
+    grid-template-rows: var(--component-stack-chat-header-height) minmax(0, 1fr);
+  }
+
+  :root body:not(.is-lobby) .app-shell
+    .session-view.layout-component-stack:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .chat-area {
+    height: calc(100% + 2px);
+    margin-top: -2px;
+  }
+
+  :root body:not(.is-lobby) .app-shell
+    .session-view[data-chat-dock="bottom"] .chat-tools {
+    --component-stack-chat-header-vertical-padding: 5px;
+    --component-stack-chat-header-visual-center-offset: 0px;
+    box-sizing: border-box;
+    align-items: center;
+    height: var(--component-stack-chat-header-height);
+    min-height: var(--component-stack-chat-header-height);
+    max-height: var(--component-stack-chat-header-height);
+    padding-top: var(--component-stack-chat-header-vertical-padding);
+    padding-bottom: var(--component-stack-chat-header-vertical-padding);
+  }
+
+  :root body:not(.is-lobby) .app-shell
+    .session-view[data-chat-dock="bottom"] .chat-tools > * {
+    align-self: center;
+  }
+
+  :root body:not(.is-lobby) .app-shell
+    .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .chat-tools > .chat-tools-leading > .presence-pill {
+    height: calc(
+      var(--component-stack-chat-header-height)
+      - var(--component-stack-chat-header-vertical-padding)
+      - var(--component-stack-chat-header-vertical-padding)
+    );
+    min-height: 0;
+    transform: none;
+  }
+
+  :root body:not(.is-lobby) .app-shell
+    .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .chat-tools #participantCount {
+    transform: none;
+  }
+}
+
+/* En portrait, mobile.css deja la superficie del panel detrás del video.
+   Elevar el panel completo cubre el solape sin tocar el header. */
+@media (max-width: 680px) and (orientation: portrait) {
+  :root body:not(.is-lobby) .app-shell
+    .session-view:not(.chat-collapsed)[data-chat-dock="bottom"] .chat-area {
+    z-index: 40;
+  }
+}
+
+/* En fullscreen la sesión también elimina el gutter, independientemente del
+   ancho. Se usa el estado nativo/de página y no la detección geométrica. */
+@media (min-width: 681px) {
+  :root body:not(.is-lobby) .app-shell:fullscreen
+    .session-view[data-chat-dock="bottom"] .chat-area,
+  :root body.fullscreen-mode .app-shell
+    .session-view[data-chat-dock="bottom"] .chat-area {
+    --component-stack-chat-header-height: 34px;
+    row-gap: 0;
+    grid-template-rows: var(--component-stack-chat-header-height) minmax(0, 1fr);
+  }
+
+  :root body:not(.is-lobby) .app-shell:fullscreen
+    .session-view[data-chat-dock="bottom"] .chat-tools,
+  :root body.fullscreen-mode .app-shell
+    .session-view[data-chat-dock="bottom"] .chat-tools {
+    --component-stack-chat-header-vertical-padding: 5px;
+    --component-stack-chat-header-visual-center-offset: 0px;
+    box-sizing: border-box;
+    align-items: center;
+    height: var(--component-stack-chat-header-height);
+    min-height: var(--component-stack-chat-header-height);
+    max-height: var(--component-stack-chat-header-height);
+    padding-top: var(--component-stack-chat-header-vertical-padding);
+    padding-bottom: var(--component-stack-chat-header-vertical-padding);
+  }
+
+  :root body:not(.is-lobby) .app-shell:fullscreen
+    .session-view[data-chat-dock="bottom"] .chat-tools > *,
+  :root body.fullscreen-mode .app-shell
+    .session-view[data-chat-dock="bottom"] .chat-tools > * {
+    align-self: center;
+  }
+
+  :root body:not(.is-lobby) .app-shell:fullscreen
+    .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .chat-tools > .chat-tools-leading > .presence-pill,
+  :root body.fullscreen-mode .app-shell
+    .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .chat-tools > .chat-tools-leading > .presence-pill {
+    height: calc(
+      var(--component-stack-chat-header-height)
+      - var(--component-stack-chat-header-vertical-padding)
+      - var(--component-stack-chat-header-vertical-padding)
+    );
+    min-height: 0;
+    transform: none;
+  }
+
+  :root body:not(.is-lobby) .app-shell:fullscreen
+    .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .chat-tools #participantCount,
+  :root body.fullscreen-mode .app-shell
+    .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .chat-tools #participantCount {
+    transform: none;
+  }
+}
+
+/* Cuando la sesión llega a los bordes reales del viewport, el radio inferior
+   del chat deja una curva separada del borde de la página. La marca viene de
+   la medición geométrica compartida con el layout edge-to-edge. */
+body:not(.is-lobby)
+  .session-view.layout-edge-to-edge[data-chat-dock="bottom"] .chat-area {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* En el dock lateral las esquinas externas son las del borde derecho; las
+   esquinas de la unión con el video y las del contenido interno se conservan. */
+body:not(.is-lobby)
+  .session-view.layout-edge-to-edge[data-chat-dock="right"] .chat-area {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}

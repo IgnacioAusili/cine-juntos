@@ -1,6 +1,6 @@
 import { dom } from "../core/dom.js";
-import { state, logEvent } from "../core/state.js?v=20260914-console-log-controls-01";
-import { refreshLayoutMetrics } from "./layout-metrics.js?v=20261002-bottom-chat-header-flow-focus-01";
+import { state, logEvent } from "../core/state.js?v=20261008";
+import { refreshLayoutMetrics } from "./layout-metrics.js?v=20261008";
 
 const ROOM_ENTRY_VIDEO_FOCUS_TIMEOUT_MS = 8000;
 let userScrollIntentVersion = 0;

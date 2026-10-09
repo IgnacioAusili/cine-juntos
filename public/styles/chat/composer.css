@@ -26,6 +26,35 @@
   left: 64px;
   right: 64px;
   width: auto;
+  max-width: 720px;
+  margin-inline: auto;
+}
+
+/* Durante el despliegue de escritorio, el panel y la página suben juntos.
+   Mantener el composer fijo al destino visible evita que aparezca a media
+   altura y termine de acomodarse cuando el scroll llega a la unión inferior. */
+@media (min-width: 681px) and (hover: hover) and (pointer: fine) {
+  .session-view[data-chat-dock="bottom"] .chat-area {
+    --chat-composer-edge-inset: 10px;
+  }
+
+  .session-view.chat-bottom-pc-expand-visual[data-chat-dock="bottom"] .chat-area {
+    contain: none;
+  }
+
+  .session-view.chat-bottom-pc-expand-visual[data-chat-dock="bottom"]
+    .chat-area > .message-form {
+    position: fixed;
+    left: var(--chat-bottom-pc-expand-composer-left, 64px);
+    right: var(--chat-bottom-pc-expand-composer-right, 64px);
+    width: var(--chat-bottom-pc-expand-composer-width, auto);
+    margin-inline: var(--chat-bottom-pc-expand-composer-margin, auto);
+    bottom: calc(
+      var(--chat-composer-edge-inset, 20px)
+      + var(--app-shell-gutter, 10px)
+      + 1px
+    );
+  }
 }
 
 .message-form .input-wrapper {
@@ -42,7 +71,7 @@
     rgba(12, 15, 17, 0.26);
   backdrop-filter: blur(18px) saturate(1.08);
   -webkit-backdrop-filter: blur(18px) saturate(1.08);
-  padding: 0 0 0 6px;
+  padding: 0 0 0 4px;
   overflow: hidden;
   transition:
     border-color 0.2s ease,
@@ -100,14 +129,13 @@
   background: transparent !important;
   box-shadow: none !important;
   padding-block: 8px;
-  padding-inline: 10px;
+  padding-inline: 8px;
   outline: none;
   resize: none;
   color: var(--text);
-  /* Noto va primero para que los emojis escritos antes de enviar mantengan el
-     mismo estilo que el picker y los mensajes. Para letras hace fallback a la
-     fuente de interfaz. */
-  font-family: "Noto Color Emoji", var(--text-font), ui-sans-serif, sans-serif;
+  /* La fuente de interfaz conserva los dígitos como texto; Noto queda como
+     fallback para los emojis que esa fuente no contiene. */
+  font-family: var(--text-font), "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", ui-sans-serif, sans-serif;
   line-height: 1.28;
   overscroll-behavior: auto;
   scrollbar-width: none;
@@ -119,18 +147,22 @@
   height: 0;
 }
 
-@media (min-width: 981px) {
+.message-form .input-wrapper:not([data-expanded="true"]) textarea {
+  line-height: 20px;
+}
+
+@media (min-width: 681px) {
   .message-form .input-wrapper {
-    padding-left: 2px;
+    padding-left: 4px;
   }
 
   .message-form .input-wrapper textarea {
     font-size: 0.9rem;
-    padding-inline: 4px;
+    padding-inline: 8px;
   }
 
   .message-form .input-wrapper:not([data-expanded="true"]) textarea {
-    padding-left: 6px;
+    padding-left: 8px;
   }
 
   /* La métrica de la fuente deja unos píxeles de aire visual en el último

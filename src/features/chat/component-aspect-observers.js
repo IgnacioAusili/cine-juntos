@@ -1,19 +1,31 @@
 export function wireComponentAspectObservers({
   sessionView,
   workspace,
+  videoArea,
   videoPlayer,
   playerFrame,
   chatArea,
   scheduleComponentLayoutMeasure,
   isMeasuringExpandedTarget,
 }) {
-  if (!sessionView || !workspace || !videoPlayer || !playerFrame || !chatArea) return;
+  if (!sessionView || !workspace || !videoArea || !videoPlayer || !playerFrame || !chatArea) return;
 
   const workspaceObserver = new ResizeObserver(scheduleComponentLayoutMeasure);
   workspaceObserver.observe(workspace);
   workspaceObserver.observe(sessionView);
+  workspaceObserver.observe(videoArea);
+  workspaceObserver.observe(chatArea);
 
-  const dockObserver = new MutationObserver(scheduleComponentLayoutMeasure);
+  let dockLayoutTransitionPending = false;
+  const dockObserver = new MutationObserver(() => {
+    if (sessionView.classList.contains("chat-layout-transitioning")) {
+      // La primera medición ocurre mientras el dock todavía conserva el alto
+      // anterior. Volver a medir cuando termine la transición para aplicar la
+      // proporción del video al tamaño final del chat inferior.
+      dockLayoutTransitionPending = true;
+    }
+    scheduleComponentLayoutMeasure();
+  });
   dockObserver.observe(sessionView, {
     attributes: true,
     attributeFilter: ["data-chat-dock"],
@@ -54,6 +66,12 @@ export function wireComponentAspectObservers({
         shouldReveal = true;
       }
 
+      if (transitionJustSettled && dockLayoutTransitionPending) {
+        dockLayoutTransitionPending = false;
+        shouldMeasure = true;
+        shouldReveal = true;
+      }
+
       if (justCollapsed) {
         shouldMeasure = true;
         shouldCenterVideo = true;
@@ -75,9 +93,6 @@ export function wireComponentAspectObservers({
   videoPlayer.addEventListener("loadedmetadata", () => {
     scheduleComponentLayoutMeasure("center-video");
   });
-  window.addEventListener("resize", () => {
-    scheduleComponentLayoutMeasure("center-video");
-  }, { passive: true });
   window.addEventListener("chat-layout-settled", () => {
     scheduleComponentLayoutMeasure("center-video");
   }, { passive: true });

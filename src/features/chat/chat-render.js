@@ -2,7 +2,7 @@ import { dom } from "../../core/dom.js";
 import { state, logEvent } from "../../core/state.js?v=20261008";
 import { MAX_RENDERED_MESSAGES, formatTime, formatClockTime } from "../../core/utils.js?v=20261008";
 import { markParticipantActive, rememberParticipant } from "../presence.js?v=20261008";
-import { wireMessageInteractions } from "./chat-message-interactions.js?v=20261008";
+import { extendMessageHitArea, wireMessageInteractions } from "./chat-message-interactions.js?v=20261009-image-reply-edge-02";
 import { appendMessageContent, truncateText } from "./chat-content-parser.js?v=20261008";
 import { getParticipantAccent } from "./chat-participant-color.js";
 import { scheduleMessageTimeAdjustmentForBubble } from "./message-time-layout.js?v=20261008";
@@ -125,6 +125,7 @@ function appendMessageNow(container, message, { animateSystemGroups = true } = {
   item.dataset.messageId = message.id;
   item.dataset.authorId = authorKey;
   item.style.setProperty("--participant-accent", getParticipantAccent(message.name));
+  extendMessageHitArea(item, container);
 
   const meta = document.createElement("div");
   meta.className = "message-meta";
@@ -262,7 +263,8 @@ function appendMessageNow(container, message, { animateSystemGroups = true } = {
       setReplyTarget,
       replyInput: container === dom.overlayMessages ? dom.overlayMessageInput : dom.messageInput,
       interactionTarget: item,
-      interactionBand: bubbleRow,
+      interactionBand: item,
+      allowSwipeInsideBubble: true,
     });
   } else if (isMediaOnly) {
     item.classList.add("message--media-only");
@@ -293,9 +295,9 @@ function appendMessageNow(container, message, { animateSystemGroups = true } = {
     wireMessageInteractions(mediaStrip || mediaRow, message, hint, {
       setReplyTarget,
       replyInput,
+      companions: [meta, timeAnchor],
       interactionTarget: item,
-      interactionBand: mediaRow,
-      interactionBands: [meta],
+      interactionBand: item,
       allowSwipeInsideBubble: true,
     });
   } else {
@@ -334,9 +336,8 @@ function appendMessageNow(container, message, { animateSystemGroups = true } = {
       replyInput,
       companions: [meta],
       interactionTarget: item,
-      interactionBand: bubbleRow,
-      interactionBands: [meta],
-      allowSwipeInsideBubble: Boolean(messageImages.length),
+      interactionBand: item,
+      allowSwipeInsideBubble: true,
     });
   }
   container.append(item);

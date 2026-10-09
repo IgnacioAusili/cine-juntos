@@ -1,3 +1,5 @@
+import { createImageLightboxPanController } from "./image-lightbox-pan.js?v=20261009-image-pan-01";
+
 const LIGHTBOX_ID = "imageLightbox";
 const MIN_SCALE = 0.5;
 const MAX_SCALE = 4;
@@ -8,12 +10,13 @@ let lightboxImage = null;
 let zoomLabel = null;
 let scale = 1;
 let initialScale = 1;
-let panX = 0;
-let panY = 0;
-let activePointerId = null;
-let panStart = null;
 let lastTrigger = null;
 let scrollPositionsBeforeLightbox = null;
+const panController = createImageLightboxPanController({
+  getLightbox: () => lightbox,
+  getImage: () => lightboxImage,
+  getScale: () => scale,
+});
 
 function captureScrollPositions(target) {
   const positions = [];
@@ -117,10 +120,7 @@ function ensureLightbox() {
     if (!event.target.closest(".image-lightbox-viewport")) return;
     changeScale(event.deltaY < 0 ? SCALE_STEP : -SCALE_STEP);
   }, { passive: false });
-  lightboxImage.addEventListener("pointerdown", startPan);
-  lightboxImage.addEventListener("pointermove", movePan);
-  lightboxImage.addEventListener("pointerup", endPan);
-  lightboxImage.addEventListener("pointercancel", endPan);
+  panController.bind();
   document.addEventListener("keydown", handleKeydown);
   return lightbox;
 }
@@ -141,87 +141,16 @@ function applyInitialScale(modal) {
   resetScale(initialScale);
 }
 
-function getPanLimits() {
-  const viewport = lightbox?.querySelector(".image-lightbox-viewport");
-  if (!viewport || !lightboxImage) return { x: 0, y: 0 };
-
-  const viewportStyle = getComputedStyle(viewport);
-  const availableWidth = viewport.clientWidth
-    - parseFloat(viewportStyle.paddingLeft)
-    - parseFloat(viewportStyle.paddingRight);
-  const availableHeight = viewport.clientHeight
-    - parseFloat(viewportStyle.paddingTop)
-    - parseFloat(viewportStyle.paddingBottom);
-
-  return {
-    x: Math.max(0, (lightboxImage.offsetWidth * scale - availableWidth) / 2),
-    y: Math.max(0, (lightboxImage.offsetHeight * scale - availableHeight) / 2),
-  };
-}
-
-function setPan(nextX, nextY) {
-  const limits = getPanLimits();
-  panX = Math.min(limits.x, Math.max(-limits.x, nextX));
-  panY = Math.min(limits.y, Math.max(-limits.y, nextY));
-  lightboxImage?.style.setProperty("--image-lightbox-offset-x", `${panX}px`);
-  lightboxImage?.style.setProperty("--image-lightbox-offset-y", `${panY}px`);
-}
-
-function startPan(event) {
-  if (!lightbox?.open || (event.pointerType === "mouse" && event.button !== 0)) return;
-
-  activePointerId = event.pointerId;
-  panStart = {
-    x: panX,
-    y: panY,
-    pointerX: event.clientX,
-    pointerY: event.clientY,
-  };
-  try {
-  lightboxImage?.setPointerCapture?.(event.pointerId);
-  } catch {
-    // Algunos eventos sintéticos no tienen un puntero capturable.
-  }
-  lightboxImage?.classList.add("is-dragging");
-  event.preventDefault();
-  event.stopPropagation();
-}
-
-function movePan(event) {
-  if (event.pointerId !== activePointerId || !panStart) return;
-
-  setPan(
-    panStart.x + event.clientX - panStart.pointerX,
-    panStart.y + event.clientY - panStart.pointerY,
-  );
-  event.preventDefault();
-  event.stopPropagation();
-}
-
-function endPan(event) {
-  if (event.pointerId !== activePointerId) return;
-
-  try {
-    lightboxImage?.releasePointerCapture?.(event.pointerId);
-  } catch {
-    // El puntero puede haber sido cancelado antes de liberar la captura.
-  }
-  lightboxImage?.classList.remove("is-dragging");
-  activePointerId = null;
-  panStart = null;
-  event.stopPropagation();
-}
-
 function changeScale(delta) {
   scale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale + delta));
   lightboxImage?.style.setProperty("--image-lightbox-scale", scale);
-  setPan(panX, panY);
+  panController.update();
   if (zoomLabel) zoomLabel.textContent = `${Math.round(scale * 100)}%`;
 }
 
 function resetScale(nextScale = 1) {
   scale = nextScale;
-  setPan(0, 0);
+  panController.reset();
   lightboxImage?.style.setProperty("--image-lightbox-scale", scale);
   if (zoomLabel) zoomLabel.textContent = `${Math.round(scale * 100)}%`;
 }

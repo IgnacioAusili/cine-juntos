@@ -15,7 +15,7 @@ import {
   logEvent,
   state,
 } from "../../core/state.js?v=20261008";
-import { isMiniPlayerActive } from "./mini-player.js?v=20261008";
+import { isMiniPlayerActive } from "./mini-player.js?v=20261009-image-reply-edge-02";
 import {
   syncExternalChatCollapseHandleOffset,
   syncInsideChatPanelOffset,

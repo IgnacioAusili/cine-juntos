@@ -59,6 +59,14 @@
   border-bottom-left-radius: 0;
 }
 
+/* Si el chat inferior queda contraído con espacio lateral visible, el video
+   recupera sus esquinas inferiores redondeadas. */
+.session-view.chat-collapsed:not(.layout-edge-to-edge)[data-chat-dock="bottom"]
+  .player-frame:not(.mini-player-surface) {
+  border-bottom-right-radius: var(--radius-md);
+  border-bottom-left-radius: var(--radius-md);
+}
+
 .session-view[data-chat-dock="bottom"] .chat-area {
   padding-top: 0;
   border-left: 1px solid var(--glass-border-strong);

@@ -137,6 +137,9 @@ export function createSwipeReply(
     blockClick = false;
     setTransitions("");
     setState("idle");
+    // Capture on pointerdown so the first movement is delivered even when the
+    // pointer leaves the message bounds immediately (for example, near an edge).
+    capturePointer();
   }
   function capturePointer() {
     if (pointerId == null) return;

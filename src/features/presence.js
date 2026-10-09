@@ -4,22 +4,22 @@ import {
   getDisplayName,
   getTransportNow,
   logEvent,
-} from "../core/state.js?v=20260914-console-log-controls-01";
+} from "../core/state.js?v=20261008";
 import {
   DISPLAY_NAME_MAX_LENGTH,
   DISPLAY_NAME_MIN_LENGTH,
   NAME_CHANGE_LIMIT,
   normalizeDisplayName,
-} from "../core/name-policy.js?v=20260912-name-session-01";
+} from "../core/name-policy.js?v=20261008";
 import { makeGuestName, makeParticipantLabel } from "../core/utils.js";
 import {
   hideTooltip,
   setControlIcon,
-} from "./icons-tooltips.js?v=20260914-tooltip-single-path-01-tooltip-focus-restore-skip-01";
+} from "./icons-tooltips.js?v=20261008";
 import {
   isTouchPointer,
   TOUCH_LONG_PRESS_DELAY_MS,
-} from "../core/touch-interactions.js?v=20260829-touch-hold-fix-01";
+} from "../core/touch-interactions.js?v=20261008";
 
 // El heartbeat llega cada 10 s. La ventana anterior de 12 s dejaba solo
 // 2 s para tolerar latencia o una actualización demorada de Firebase, lo

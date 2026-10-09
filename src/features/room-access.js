@@ -1,4 +1,4 @@
-import { createRandomId } from "../core/random-id.js?v=20260902-mobile-real-browser-02";
+import { createRandomId } from "../core/random-id.js?v=20261008";
 
 const ACTIVE_TAB_KEY = "cine-juntos-active-tab";
 const ACTIVE_TAB_TTL_MS = 30000;

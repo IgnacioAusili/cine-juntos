@@ -1,23 +1,23 @@
 import { dom } from "../core/dom.js";
-import { state, getDisplayName, LAST_ROOM_KEY, logEvent } from "../core/state.js?v=20260914-console-log-controls-01";
-import { renderPresence } from "./presence.js?v=20261003-name-editor-curtain-cancel-esc-blur-03";
-import { setConnection } from "./icons-tooltips.js?v=20260914-tooltip-single-path-01-tooltip-focus-restore-skip-01";
+import { state, getDisplayName, LAST_ROOM_KEY, logEvent } from "../core/state.js?v=20261008";
+import { renderPresence } from "./presence.js?v=20261008";
+import { setConnection } from "./icons-tooltips.js?v=20261008";
 import {
   setHostBadge,
   setSyncStatus,
   showLobby,
-} from "./session-ui.js?v=20260911-orientation-scroll-anchor-01";
+} from "./session-ui.js?v=20261008";
 import {
   resetInsideUnread,
   resetPageUnread,
   renderReplyPreview,
   setInsideChatVisible,
   finishSystemMessageHydration,
-} from "./chat/index.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-16-bottom-chat-switch-measure-01-chat-header-anchor-04-chat-header-anchor-05-arrow-header-slot-center-01-aspect-dock-settle-01-collapsed-responsive-resize-01-collapse-arrow-tooltip-01-composer-width-01";
-import { removeActiveTabRecord } from "./room-access.js?v=20261004-room-join-race-01";
-import { invalidateRoomOperation, isRoomOperationCurrent, clearUrlRoom } from "./room-navigation.js?v=20261004-room-join-race-01";
-import { syncJoinRoomButtonState } from "./room-input.js?v=20261004-room-join-race-01";
-import { setInviteCopyFeedback } from "./room-invite.js?v=20261004-room-join-race-01";
+} from "./chat/index.js?v=20261008";
+import { removeActiveTabRecord } from "./room-access.js?v=20261008";
+import { invalidateRoomOperation, isRoomOperationCurrent, clearUrlRoom } from "./room-navigation.js?v=20261008";
+import { syncJoinRoomButtonState } from "./room-input.js?v=20261008";
+import { setInviteCopyFeedback } from "./room-invite.js?v=20261008";
 
 export async function leaveRoom() {
   const operationId = invalidateRoomOperation();

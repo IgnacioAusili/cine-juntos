@@ -1,34 +1,34 @@
 // Layout del chat externo e interno: visibilidad, estilo, dock y collapse.
 import { dom } from "../../core/dom.js";
-import { state, logEvent } from "../../core/state.js?v=20260914-console-log-controls-01";
-import { shouldAnchorChatCollapseHandleInHeader } from "./chat-collapse-header-layout.js?v=20261007-full-surface-header-anchor-01-chat-header-anchor-04";
+import { state, logEvent } from "../../core/state.js?v=20261008";
+import { shouldAnchorChatCollapseHandleInHeader } from "./chat-collapse-header-layout.js?v=20261008";
 import { CHAT_DOCKS, CHAT_DOCK_META, withShortcutHint } from "../../core/utils.js";
-import { hydrateIcons, hideTooltip, refreshTooltipForTarget } from "../icons-tooltips.js?v=20260914-tooltip-single-path-01-tooltip-focus-restore-skip-01";
-import { focusFullscreenWorkspace } from "../session-ui.js?v=20260911-orientation-scroll-anchor-01";
+import { hydrateIcons, hideTooltip, refreshTooltipForTarget } from "../icons-tooltips.js?v=20261008";
+import { focusFullscreenWorkspace } from "../session-ui.js?v=20261008";
 import {
   cancelIdentityEditing,
   syncNameInputWidth,
-} from "../presence.js?v=20261003-name-editor-curtain-cancel-esc-blur-03";
+} from "../presence.js?v=20261008";
 import {
   isExternalChatVisibleToUser,
   isInsideChatVisibleToUser,
   resetInsideUnread,
   resetPageUnread,
   syncUnreadBadgesWithVisibility,
-} from "./unread-counters.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-bottom-chat-switch-measure-01-chat-header-anchor-04-arrow-header-slot-center-01-composer-width-01";
-import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20260811-layout-motion-01";
+} from "./unread-counters.js?v=20261008";
+import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20261008";
 import { focusChatInput } from "./chat-input-focus.js";
-import { restorePageScrollAfterRightChatCollapse } from "./chat-scroll-preservation.js?v=20260910-mobile-chat-scroll-lock-01";
+import { restorePageScrollAfterRightChatCollapse } from "./chat-scroll-preservation.js?v=20261008";
 import {
   CHAT_DOCK_TRANSITIONS,
   resolveChatDockTransition,
-} from "./dock-transition-router.js?v=20261002-chat-dock-transition-router-01";
+} from "./dock-transition-router.js?v=20261008";
 import {
   preserveInsideChatPanelPlacementWhileClosing,
   syncInsideChatPanelPlacement,
   wireInsideChatPanelPlacement,
-} from "../player/inside-chat-layout.js?v=20260910-mobile-chat-side-placement-02";
-import { syncComponentAspectLayoutNow } from "./component-aspect-layout.js?v=20261007-bottom-chat-switch-measure-01-aspect-dock-settle-01-bottom-dock-panels-fit-viewport-01-visible-bounds-03-initial-viewport-sync-04-intersection-fit-sync-02";
+} from "../player/inside-chat-layout.js?v=20261008";
+import { syncComponentAspectLayoutNow } from "./component-aspect-layout.js?v=20261008-unified-panel-layout-01";
 
 const AUTO_COLLAPSE_DELAY_MS = 5000;
 const AUTO_EXPAND_INSIDE_KEY = "cine-juntos-chat-auto-expand-inside";

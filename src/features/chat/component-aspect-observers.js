@@ -6,7 +6,6 @@ export function wireComponentAspectObservers({
   playerFrame,
   chatArea,
   scheduleComponentLayoutMeasure,
-  scheduleBottomDockSnapModeSync,
   isMeasuringExpandedTarget,
 }) {
   if (!sessionView || !workspace || !videoArea || !videoPlayer || !playerFrame || !chatArea) return;
@@ -16,13 +15,6 @@ export function wireComponentAspectObservers({
   workspaceObserver.observe(sessionView);
   workspaceObserver.observe(videoArea);
   workspaceObserver.observe(chatArea);
-
-  const panelVisibilityObserver = new IntersectionObserver(
-    () => scheduleBottomDockSnapModeSync(),
-    { threshold: [0, 1] },
-  );
-  panelVisibilityObserver.observe(videoArea);
-  panelVisibilityObserver.observe(chatArea);
 
   let dockLayoutTransitionPending = false;
   const dockObserver = new MutationObserver(() => {
@@ -101,9 +93,6 @@ export function wireComponentAspectObservers({
   videoPlayer.addEventListener("loadedmetadata", () => {
     scheduleComponentLayoutMeasure("center-video");
   });
-  window.addEventListener("resize", () => {
-    scheduleComponentLayoutMeasure("center-video");
-  }, { passive: true });
   window.addEventListener("chat-layout-settled", () => {
     scheduleComponentLayoutMeasure("center-video");
   }, { passive: true });

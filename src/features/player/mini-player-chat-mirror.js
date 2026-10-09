@@ -1,7 +1,7 @@
-import { clearReplyTarget, setReplyTarget } from "../chat/chat-reply.js?v=20260930-system-row-fixed-center-01-tooltip-focus-restore-skip-01-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-16";
-import { wireMessageInteractions } from "../chat/chat-message-interactions.js?v=20260915-image-standalone-reply-02";
-import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js?v=20261007-bottom-chat-switch-measure-01-chat-header-anchor-04-arrow-header-slot-center-01-aspect-dock-settle-01-collapsed-responsive-resize-01-collapse-arrow-tooltip-01-composer-width-01";
-import { state } from "../../core/state.js?v=20260914-console-log-controls-01";
+import { clearReplyTarget, setReplyTarget } from "../chat/chat-reply.js?v=20261008";
+import { wireMessageInteractions } from "../chat/chat-message-interactions.js?v=20261008";
+import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js?v=20261008";
+import { state } from "../../core/state.js?v=20261008";
 import { focusChatInput } from "../chat/chat-input-focus.js";
 
 const mirroredSystemGroupStates = new WeakMap();

@@ -3,15 +3,15 @@ import {
   state,
   getDisplayName,
   logEvent,
-} from "../core/state.js?v=20260914-console-log-controls-01";
+} from "../core/state.js?v=20261008";
 import { MAX_ROOM_PARTICIPANTS } from "../core/utils.js";
-import { createTransport } from "../services/transport.js?v=20260912-name-session-01";
+import { createTransport } from "../services/transport.js?v=20261008";
 import {
   renderMembers,
   renderPresence,
-} from "./presence.js?v=20261003-name-editor-curtain-cancel-esc-blur-03";
-import { setConnection } from "./icons-tooltips.js?v=20260914-tooltip-single-path-01-tooltip-focus-restore-skip-01";
-import { syncComponentAspectLayoutNow } from "./chat/component-aspect-layout.js?v=20261007-bottom-chat-switch-measure-01-aspect-dock-settle-01-bottom-dock-panels-fit-viewport-01-visible-bounds-03-initial-viewport-sync-04-intersection-fit-sync-02";
+} from "./presence.js?v=20261008";
+import { setConnection } from "./icons-tooltips.js?v=20261008";
+import { syncComponentAspectLayoutNow } from "./chat/component-aspect-layout.js?v=20261008-unified-panel-layout-01";
 import {
   getUserScrollIntentVersion,
   setHostBadge,
@@ -19,8 +19,8 @@ import {
   showLobby,
   showSession,
   watchRoomEntryVideoFocus,
-} from "./session-ui.js?v=20260911-orientation-scroll-anchor-01";
-import { handleRemoteState } from "./player/index.js?v=20261003-desktop-video-snap-center-01-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-16-video-snap-10px-fullscreen-bleed-01-seek-tooltip-stable-01-header-landscape-compact-01-component-stack-header-pc-gutter-01-component-stack-header-pc-gutter-02-component-stack-header-input-mode-01-component-stack-header-measured-gutter-01-component-stack-header-edge-geometry-02-bottom-chat-switch-measure-01-chat-header-anchor-04-chat-header-anchor-05-arrow-header-slot-center-01-composer-width-01";
+} from "./session-ui.js?v=20261008";
+import { handleRemoteState } from "./player/index.js?v=20261008";
 import {
   beginSystemMessageHydration,
   finishSystemMessageHydration,
@@ -29,23 +29,23 @@ import {
   resetInsideUnread,
   resetPageUnread,
   setInsideChatVisible,
-} from "./chat/index.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-16-bottom-chat-switch-measure-01-chat-header-anchor-04-chat-header-anchor-05-arrow-header-slot-center-01-aspect-dock-settle-01-collapsed-responsive-resize-01-collapse-arrow-tooltip-01-composer-width-01";
+} from "./chat/index.js?v=20261008";
 import {
   getRoomTabLimitConflictCount,
   writeActiveTabRecord,
-} from "./room-access.js?v=20261004-room-join-race-01";
+} from "./room-access.js?v=20261008";
 import {
   rememberLastRoom,
   sanitizeRoomInput,
   syncJoinRoomButtonState,
-} from "./room-input.js?v=20261004-room-join-race-01";
+} from "./room-input.js?v=20261008";
 import {
   beginRoomOperation,
   isRoomOperationCurrent,
   updateUrlRoom,
-} from "./room-navigation.js?v=20261004-room-join-race-01";
-import { setInviteCopyFeedback } from "./room-invite.js?v=20261004-room-join-race-01";
-import { resetRoomPlayerState } from "./room-player-state.js?v=20261004-room-join-race-01";
+} from "./room-navigation.js?v=20261008";
+import { setInviteCopyFeedback } from "./room-invite.js?v=20261008";
+import { resetRoomPlayerState } from "./room-player-state.js?v=20261008";
 
 async function closeTransport(transport) {
   try {

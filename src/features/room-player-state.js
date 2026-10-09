@@ -1,4 +1,4 @@
-import { state } from "../core/state.js?v=20260914-console-log-controls-01";
+import { state } from "../core/state.js?v=20261008";
 
 export function resetRoomPlayerState() {
   state.player.lastRemoteState = null;

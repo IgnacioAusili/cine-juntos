@@ -133,10 +133,9 @@
   outline: none;
   resize: none;
   color: var(--text);
-  /* Noto va primero para que los emojis escritos antes de enviar mantengan el
-     mismo estilo que el picker y los mensajes. Para letras hace fallback a la
-     fuente de interfaz. */
-  font-family: "Noto Color Emoji", var(--text-font), ui-sans-serif, sans-serif;
+  /* La fuente de interfaz conserva los dígitos como texto; Noto queda como
+     fallback para los emojis que esa fuente no contiene. */
+  font-family: var(--text-font), "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", ui-sans-serif, sans-serif;
   line-height: 1.28;
   overscroll-behavior: auto;
   scrollbar-width: none;

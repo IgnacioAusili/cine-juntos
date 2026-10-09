@@ -1,17 +1,17 @@
 import { dom } from "../../core/dom.js";
-import { state, logEvent } from "../../core/state.js?v=20260914-console-log-controls-01";
-import { setControlIcon } from "../icons-tooltips.js?v=20260914-tooltip-single-path-01-tooltip-focus-restore-skip-01";
-import { setSyncStatus } from "../session-ui.js?v=20260911-orientation-scroll-anchor-01";
+import { state, logEvent } from "../../core/state.js?v=20261008";
+import { setControlIcon } from "../icons-tooltips.js?v=20261008";
+import { setSyncStatus } from "../session-ui.js?v=20261008";
 import {
   createMiniPlayerSurface,
   installMiniPlayerWindowStyles,
-} from "./mini-player-controls.js?v=20260929-mini-player-controls-resize-reflow-01-pending-image-lightbox-01-preview-size-center-01-overlay-image-size-01-presence-svg-remove-scale-01-header-landscape-compact-01-component-stack-header-pc-gutter-01-component-stack-header-pc-gutter-02-component-stack-header-input-mode-01-component-stack-header-measured-gutter-01-component-stack-header-edge-geometry-02";
+} from "./mini-player-controls.js?v=20261008";
 import {
   mirrorMiniPlayerChatState,
-} from "./mini-player-chat.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-16-bottom-chat-switch-measure-01-chat-header-anchor-04-arrow-header-slot-center-01-composer-width-01";
-import { movePlayerInterface } from "./mini-player-interface.js?v=20261003-name-editor-curtain-cancel-esc-blur-03-system-roll-height-exact-01-system-roll-text-billboard-01-system-roll-motion-01-system-roll-wheel-depth-16-bottom-chat-switch-measure-01-chat-header-anchor-04-arrow-header-slot-center-01-composer-width-01";
+} from "./mini-player-chat.js?v=20261008";
+import { movePlayerInterface } from "./mini-player-interface.js?v=20261008";
 import { trackMiniPlayerReturnHint } from "./mini-player-return-hint.js";
-import { clampMiniPlayerPosition, wireMiniPlayerDrag } from "./mini-player-drag.js?v=20260808-scroll-mini-player-02";
+import { clampMiniPlayerPosition, wireMiniPlayerDrag } from "./mini-player-drag.js?v=20261008";
 
 let miniSurface = null;
 let pictureInPictureWindow = null;

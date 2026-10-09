@@ -1,6 +1,6 @@
 import { dom } from "../core/dom.js";
-import { logEvent } from "../core/state.js?v=20260914-console-log-controls-01";
-import { collectMobileKeyboardSnapshot } from "./mobile-keyboard-diagnostics-snapshot.js?v=20260911-ios-landscape-keyboard-diagnostics-01";
+import { logEvent } from "../core/state.js?v=20261008";
+import { collectMobileKeyboardSnapshot } from "./mobile-keyboard-diagnostics-snapshot.js?v=20261008";
 
 const LOG_KIND = "mobile-keyboard-debug";
 const VIEWPORT_EVENT_DELAY_MS = 80;

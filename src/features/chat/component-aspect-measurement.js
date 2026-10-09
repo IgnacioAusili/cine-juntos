@@ -49,10 +49,11 @@ export function isMeasuringExpandedTarget() {
   return measuringExpandedTarget;
 }
 
-export function needsFullPanelLayout({
+export function measurePanelLayoutTarget({
   sessionView,
   appShell,
   workspace,
+  videoArea,
   playerFrame,
   chatArea,
   videoPlayer,
@@ -60,10 +61,17 @@ export function needsFullPanelLayout({
   if (
     !sessionView
     || !workspace
+    || !videoArea
     || !playerFrame
     || !chatArea
     || sessionView.dataset.chatDock !== "bottom"
-  ) return false;
+  ) {
+    return {
+      shouldStack: false,
+      combinedPanelHeight: 0,
+      hasMeasuredPanels: false,
+    };
+  }
 
   const wasCollapsed = sessionView.classList.contains("chat-collapsed");
   const wasExpanded = sessionView.classList.contains(FULL_PANEL_LAYOUT_CLASS);
@@ -82,9 +90,20 @@ export function needsFullPanelLayout({
 
   // Medir la geometría que tendrá el dock al expandirse.
   const videoRect = playerFrame.getBoundingClientRect();
+  const videoAreaRect = videoArea.getBoundingClientRect();
   const chatRect = chatArea.getBoundingClientRect();
+  const rowGap = Number.parseFloat(getComputedStyle(workspace).rowGap) || 0;
+  const hasMeasuredPanels = Boolean(
+    videoRect.width > 0
+    && videoRect.height > 0
+    && videoAreaRect.height > 0
+    && chatRect.height > 0,
+  );
+  const combinedPanelHeight = hasMeasuredPanels
+    ? videoAreaRect.height + chatRect.height + rowGap
+    : 0;
   const requiredVideoHeight = videoRect.width / getVideoAspectRatio(videoPlayer);
-  const shouldExpand = Boolean(
+  const shouldStack = Boolean(
     videoRect.width > 0
     && videoRect.height > 0
     && chatRect.width > 0
@@ -104,5 +123,9 @@ export function needsFullPanelLayout({
   if (shouldSuppressTransitions) {
     sessionView.classList.remove("component-layout-measuring");
   }
-  return shouldExpand;
+  return {
+    shouldStack,
+    combinedPanelHeight,
+    hasMeasuredPanels,
+  };
 }

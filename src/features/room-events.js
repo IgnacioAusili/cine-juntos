@@ -1,8 +1,8 @@
 import { dom } from "../core/dom.js";
 import { updateDisplayName } from "./presence.js?v=20261008";
-import { joinRoom } from "./room-entry.js?v=20261009-emoji-reply-settle-01";
-import { leaveRoom } from "./room-exit.js?v=20261009-emoji-reply-settle-01";
-import { copyInvite } from "./room-invite.js?v=20261008";
+import { joinRoom } from "./room-entry.js?v=20261009-bottom-chat-expand-01-invite-copy-animation-01-chat-hover-geometry-04";
+import { leaveRoom } from "./room-exit.js?v=20261009-bottom-chat-expand-01-invite-copy-animation-01-chat-hover-geometry-04";
+import { copyInvite } from "./room-invite.js?v=20261009-invite-copy-animation-queue-01";
 import {
   consumeRoomCreationAttempt,
   looksLikeRoomInviteUrl,

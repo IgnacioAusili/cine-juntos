@@ -1,7 +1,7 @@
 import {
   syncMiniChatAutoExpand,
   toggleMiniChatOverlay,
-} from "./mini-player-chat-mirror.js?v=20261009-emoji-reply-settle-01";
+} from "./mini-player-chat-mirror.js?v=20261009-bottom-chat-expand-01";
 import { state } from "../../core/state.js?v=20261008";
 
 export function mirrorMiniPlayerChatState(surface, visible = true) {

@@ -13,9 +13,9 @@ import {
   updateCharCounter,
   wireFloatingComposerLayout,
   wireComposerScrollbar,
-} from "./chat-input.js?v=20261009-emoji-reply-settle-01";
+} from "./chat-input.js?v=20261009-bottom-chat-expand-01";
 import { setReplyTarget } from "./chat-reply.js?v=20261008";
-import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20261008";
+import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20261009-bottom-chat-expand-01";
 import {
   copyMessageText,
   hideMessageMenu,
@@ -33,67 +33,30 @@ import {
   syncExternalChatCollapseHandleOffset,
   syncChatAutoExpandControls,
   wireResponsiveSessionLayout,
-} from "./chat-layout.js?v=20261008";
+} from "./chat-layout.js?v=20261009-bottom-chat-expand-01";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20261008";
 import { focusChatInput } from "./chat-input-focus.js";
-import { hideTooltip } from "../icons-tooltips.js?v=20261008";
+import { hideTooltip } from "../icons-tooltips.js?v=20261009-tooltip-slide-01";
 
 const MOBILE_CHAT_LAYOUT_QUERY = "(max-width: 980px)";
-const COLLAPSE_HOVER_RESET_CLASS = "chat-collapse-hover-reset";
-let collapseHoverResetListenerAttached = false;
+const COLLAPSE_POINTER_HOVER_CLASS = "chat-collapse-pointer-hover";
+let pointerHoveredCollapseButton = null;
 
-function getCollapseHoverTargets() {
-  return [...new Set(
-    [dom.collapseChatButton, dom.expandChatButton]
-      .filter(Boolean)
-      .flatMap((button) => [button, button.closest(".chat-collapse-hover-zone")])
-      .filter(Boolean),
-  )];
+function setCollapsePointerHover(button) {
+  if (pointerHoveredCollapseButton === button) return;
+
+  pointerHoveredCollapseButton?.classList.remove(COLLAPSE_POINTER_HOVER_CLASS);
+  pointerHoveredCollapseButton
+    ?.closest(".chat-collapse-hover-zone")
+    ?.classList.remove(COLLAPSE_POINTER_HOVER_CLASS);
+  pointerHoveredCollapseButton = button;
+  button?.classList.add(COLLAPSE_POINTER_HOVER_CLASS);
+  button?.closest(".chat-collapse-hover-zone")
+    ?.classList.add(COLLAPSE_POINTER_HOVER_CLASS);
 }
 
-function isPointerInsideCollapseTarget(event) {
-  if (!Number.isFinite(event?.clientX) || !Number.isFinite(event?.clientY)) {
-    return false;
-  }
-
-  return getCollapseHoverTargets().some((target) => {
-    const rect = target.getBoundingClientRect();
-    return (
-      rect.width > 0
-      && rect.height > 0
-      && event.clientX >= rect.left
-      && event.clientX <= rect.right
-      && event.clientY >= rect.top
-      && event.clientY <= rect.bottom
-    );
-  });
-}
-
-function clearCollapseHandleHoverReset(event) {
-  // El layout puede dejar :hover retenido en la flecha que acaba de moverse.
-  // No reactivamos :hover mientras el puntero esté fuera de las zonas: ese
-  // movimiento puede ser justamente el que dejó al navegador con el estado
-  // pseudoactivo obsoleto. La limpieza ocurre al entrar realmente al nuevo
-  // control, donde :hover vuelve a ser intencional.
-  if (!isPointerInsideCollapseTarget(event)) return;
-
-  getCollapseHoverTargets().forEach((target) => {
-    target.classList.remove(COLLAPSE_HOVER_RESET_CLASS);
-  });
-  collapseHoverResetListenerAttached = false;
-  document.removeEventListener("pointermove", clearCollapseHandleHoverReset);
-}
-
-function suppressCollapseHandleHover() {
-  getCollapseHoverTargets().forEach((target) => {
-    target.classList.add(COLLAPSE_HOVER_RESET_CLASS);
-  });
-
-  if (collapseHoverResetListenerAttached) return;
-  collapseHoverResetListenerAttached = true;
-  document.addEventListener("pointermove", clearCollapseHandleHoverReset, {
-    passive: true,
-  });
+function clearCollapsePointerHover() {
+  setCollapsePointerHover(null);
 }
 
 function isMobileChatLayout() {
@@ -129,6 +92,16 @@ function toggleExternalChatCollapseAfterKeyboardCloses() {
   };
 
   window.requestAnimationFrame(applyToggle);
+}
+
+function handleCollapseButtonClick() {
+  clearCollapsePointerHover();
+  hideTooltip(true);
+  if (isBottomChatKeyboardOpen()) {
+    toggleExternalChatCollapseAfterKeyboardCloses();
+    return;
+  }
+  toggleExternalChatCollapse();
 }
 
 const CHAT_SCROLL_WHEEL_MULTIPLIER = 0.35;
@@ -231,24 +204,24 @@ export {
   buildEmojiPicker,
   updateCharCounter,
   sendMessage,
-} from "./chat-input.js?v=20261009-emoji-reply-settle-01";
+} from "./chat-input.js?v=20261009-bottom-chat-expand-01";
 export {
   beginSystemMessageHydration,
   finishSystemMessageHydration,
   renderMessage,
-} from "./chat-render.js?v=20261009-emoji-reply-settle-01";
+} from "./chat-render.js?v=20261009-bottom-chat-expand-01";
 export {
   clearReplyTarget,
   renderReplyPreview,
   scrollToMessage,
   setReplyTarget,
 } from "./chat-reply.js?v=20261008";
-export { sendVideoEventMessage } from "./chat-system-messages.js?v=20261009-emoji-reply-settle-01";
+export { sendVideoEventMessage } from "./chat-system-messages.js?v=20261009-bottom-chat-expand-01";
 export {
   checkScrollPosition,
   resetInsideUnread,
   resetPageUnread,
-} from "./unread-counters.js?v=20261008";
+} from "./unread-counters.js?v=20261009-bottom-chat-expand-01";
 export {
   copyMessageText,
   hideMessageMenu,
@@ -266,7 +239,7 @@ export {
   setInsideChatVisible,
   syncChatAutoExpandControls,
   updateCollapseButton,
-} from "./chat-layout.js?v=20261008";
+} from "./chat-layout.js?v=20261009-bottom-chat-expand-01";
 
 export function wireChatEvents() {
   syncChatAutoExpandControls();
@@ -291,10 +264,7 @@ export function wireChatEvents() {
     }
   }
   window.addEventListener("chat-layout-settled", syncExternalChatCollapseHandleOffset, { passive: true });
-  // Una transición puede generar pointermove mientras la zona vieja se
-  // desmonta. Volver a aplicar el reset al asentarse garantiza que la flecha
-  // nueva no herede el hover de la acción anterior.
-  window.addEventListener("chat-layout-settled", suppressCollapseHandleHover, { passive: true });
+  window.addEventListener("chat-layout-settled", clearCollapsePointerHover, { passive: true });
   window.addEventListener("scroll", syncExternalChatCollapseHandleOffset, { passive: true });
   window.requestAnimationFrame(syncExternalChatCollapseHandleOffset);
 
@@ -328,6 +298,20 @@ export function wireChatEvents() {
   });
 
   [dom.collapseChatButton, dom.expandChatButton].filter(Boolean).forEach((button) => {
+    const hoverTarget = button.closest(".chat-collapse-hover-zone") || button;
+    hoverTarget.addEventListener("pointerenter", (event) => {
+      if (event.pointerType === "touch") return;
+      if (dom.sessionView?.classList.contains("chat-collapsed")) {
+        if (button !== dom.expandChatButton) return;
+      } else if (button !== dom.collapseChatButton) {
+        return;
+      }
+      setCollapsePointerHover(button);
+    });
+    hoverTarget.addEventListener("pointerleave", () => {
+      if (pointerHoveredCollapseButton === button) clearCollapsePointerHover();
+    });
+
     button.addEventListener("pointerdown", (event) => {
       hideTooltip(true);
       dom.collapseChatButton?.blur();
@@ -340,15 +324,7 @@ export function wireChatEvents() {
       button.blur();
     });
 
-    button.addEventListener("click", () => {
-      suppressCollapseHandleHover();
-      hideTooltip(true);
-      if (isBottomChatKeyboardOpen()) {
-        toggleExternalChatCollapseAfterKeyboardCloses();
-        return;
-      }
-      toggleExternalChatCollapse();
-    });
+    button.addEventListener("click", handleCollapseButtonClick);
   });
 
   [

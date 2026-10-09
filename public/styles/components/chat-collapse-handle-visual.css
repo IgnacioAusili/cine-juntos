@@ -34,18 +34,11 @@
   transform: translate(-50%, -50%);
 }
 
-.session-view[data-chat-dock] .chat-collapse-handle:hover .chat-collapse-icon-anchor,
+.session-view[data-chat-dock] .chat-collapse-handle.chat-collapse-pointer-hover .chat-collapse-icon-anchor,
+.session-view[data-chat-dock] .chat-collapse-hover-zone.chat-collapse-pointer-hover .chat-collapse-handle .chat-collapse-icon-anchor,
 .session-view[data-chat-dock] .chat-collapse-handle.is-touch-hover .chat-collapse-icon-anchor,
 .session-view[data-chat-dock] .chat-collapse-hover-zone.is-touch-hover .chat-collapse-icon-anchor,
 .session-view[data-chat-dock] .chat-collapse-handle:focus-visible .chat-collapse-icon-anchor {
   border-color: rgba(255, 255, 255, 0.38);
   background: rgba(32, 38, 43, 0.98);
-}
-
-.session-view[data-chat-dock] .chat-collapse-handle.chat-collapse-hover-reset .chat-collapse-icon-anchor,
-.session-view[data-chat-dock] .chat-collapse-handle.chat-collapse-hover-reset:hover .chat-collapse-icon-anchor,
-.session-view[data-chat-dock] .chat-collapse-hover-zone.chat-collapse-hover-reset .chat-collapse-handle .chat-collapse-icon-anchor,
-.session-view[data-chat-dock] .chat-collapse-hover-zone.chat-collapse-hover-reset:hover .chat-collapse-handle .chat-collapse-icon-anchor {
-  border-color: rgba(255, 255, 255, 0.2) !important;
-  background: rgba(20, 24, 28, 0.9) !important;
 }

@@ -9,20 +9,20 @@ import {
 import {
   hideTooltip,
   setControlIcon,
-} from "../icons-tooltips.js?v=20261008";
+} from "../icons-tooltips.js?v=20261009-tooltip-slide-01";
 import { setSyncStatus } from "../session-ui.js?v=20261008";
 import {
   logEvent,
   state,
 } from "../../core/state.js?v=20261008";
-import { isMiniPlayerActive } from "./mini-player.js?v=20261009-emoji-reply-settle-01";
+import { isMiniPlayerActive } from "./mini-player.js?v=20261009-bottom-chat-expand-01";
 import {
   syncExternalChatCollapseHandleOffset,
   syncInsideChatPanelOffset,
   cancelExternalChatAutoCollapse,
   forceExternalChatCollapsed,
   updateCollapseButton,
-} from "../chat/chat-layout.js?v=20261008";
+} from "../chat/chat-layout.js?v=20261009-bottom-chat-expand-01";
 import { withShortcutHint } from "../../core/utils.js";
 import {
   captureFullscreenScroll,

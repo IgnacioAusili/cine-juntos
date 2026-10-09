@@ -8,7 +8,7 @@ export function installMiniPlayerWindowStyles(targetDocument) {
   targetDocument.head.append(emojiFont);
 
   const stylesheets = [
-    "../../../public/styles.css?v=20261008",
+    "../../../public/styles.css?v=20261009-tooltip-slide-01",
     "../../../public/styles/mini-player-window.css?v=20261008",
   ].map((path) => {
     const stylesheet = targetDocument.createElement("link");

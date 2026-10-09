@@ -1,4 +1,4 @@
-import { hideTooltip } from "./icons-tooltips.js?v=20261008";
+import { hideTooltip } from "./icons-tooltips.js?v=20261009-tooltip-slide-01";
 
 let suppressRestoredFocusTooltip = false;
 

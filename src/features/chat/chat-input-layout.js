@@ -1,5 +1,5 @@
 import { dom } from "../../core/dom.js";
-import { autoResizeMessageInput } from "./chat-input.js?v=20261009-emoji-reply-settle-01";
+import { autoResizeMessageInput } from "./chat-input.js?v=20261009-bottom-chat-expand-01";
 
 function observeComposerWidth(input) {
   const shell = input?.closest(".textarea-shell");

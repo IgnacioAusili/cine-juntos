@@ -10,7 +10,7 @@ import {
   renderMembers,
   renderPresence,
 } from "./presence.js?v=20261008";
-import { setConnection } from "./icons-tooltips.js?v=20261008";
+import { setConnection } from "./icons-tooltips.js?v=20261009-tooltip-slide-01";
 import { syncComponentAspectLayoutNow } from "./chat/component-aspect-layout.js?v=20261008-unified-panel-layout-01";
 import {
   getUserScrollIntentVersion,
@@ -20,7 +20,7 @@ import {
   showSession,
   watchRoomEntryVideoFocus,
 } from "./session-ui.js?v=20261008";
-import { handleRemoteState } from "./player/index.js?v=20261009-emoji-reply-settle-01";
+import { handleRemoteState } from "./player/index.js?v=20261009-bottom-chat-expand-01-chat-hover-geometry-04";
 import {
   beginSystemMessageHydration,
   finishSystemMessageHydration,
@@ -29,7 +29,7 @@ import {
   resetInsideUnread,
   resetPageUnread,
   setInsideChatVisible,
-} from "./chat/index.js?v=20261009-emoji-reply-settle-01";
+} from "./chat/index.js?v=20261009-chat-hover-geometry-04";
 import {
   getRoomTabLimitConflictCount,
   writeActiveTabRecord,
@@ -44,7 +44,7 @@ import {
   isRoomOperationCurrent,
   updateUrlRoom,
 } from "./room-navigation.js?v=20261008";
-import { setInviteCopyFeedback } from "./room-invite.js?v=20261008";
+import { setInviteCopyFeedback } from "./room-invite.js?v=20261009-invite-copy-animation-queue-01";
 import { resetRoomPlayerState } from "./room-player-state.js?v=20261008";
 
 async function closeTransport(transport) {

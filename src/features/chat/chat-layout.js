@@ -3,7 +3,7 @@ import { dom } from "../../core/dom.js";
 import { state, logEvent } from "../../core/state.js?v=20261008";
 import { shouldAnchorChatCollapseHandleInHeader } from "./chat-collapse-header-layout.js?v=20261008";
 import { CHAT_DOCKS, CHAT_DOCK_META, withShortcutHint } from "../../core/utils.js";
-import { hydrateIcons, hideTooltip, refreshTooltipForTarget } from "../icons-tooltips.js?v=20261008";
+import { hydrateIcons, hideTooltip, refreshTooltipForTarget } from "../icons-tooltips.js?v=20261009-tooltip-slide-01";
 import { focusFullscreenWorkspace } from "../session-ui.js?v=20261008";
 import {
   cancelIdentityEditing,
@@ -15,7 +15,7 @@ import {
   resetInsideUnread,
   resetPageUnread,
   syncUnreadBadgesWithVisibility,
-} from "./unread-counters.js?v=20261008";
+} from "./unread-counters.js?v=20261009-bottom-chat-expand-01";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20261008";
 import { focusChatInput } from "./chat-input-focus.js";
 import { restorePageScrollAfterRightChatCollapse } from "./chat-scroll-preservation.js?v=20261008";
@@ -1543,6 +1543,10 @@ function animateDesktopBottomChatExpand() {
   // Se reserva la fila completa con la cortina cerrada. Desde el primer frame
   // el scroll y la apertura recorren juntos la distancia hasta la unión.
   applyExternalChatCollapsed(false);
+  // El layout de panel completo puede cambiar al abrirse el dock. Resolverlo
+  // antes de fijar el composer evita capturar el inset izquierdo de la fila
+  // contraída y arrastrarlo durante la animación.
+  syncComponentAspectLayoutNow({ allowDuringChatTransition: true });
   const messageForm = dom.chatArea.querySelector(".message-form");
   const composerBounds = messageForm?.getBoundingClientRect();
   if (messageForm && composerBounds?.width > 0) {

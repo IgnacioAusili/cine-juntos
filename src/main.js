@@ -116,7 +116,9 @@ window.addEventListener("load", openDialogTestRoute, { once: true });
 window.addEventListener("load", () => {
   document.body.classList.add("app-ready");
 });
-detectTerminalLogEndpoint();
+if (window.CINE_JUNTOS_TERMINAL_LOGS) {
+  detectTerminalLogEndpoint();
+}
 
 window.addEventListener("pagehide", () => {
   if (state.session.transport) {

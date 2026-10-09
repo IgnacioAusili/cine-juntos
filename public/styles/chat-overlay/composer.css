@@ -32,9 +32,9 @@
   box-sizing: border-box;
   border-radius: 18px;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01)),
-    rgba(12, 15, 17, 0.38);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.005)),
+    rgba(12, 15, 17, 0.26);
+  border: 1px solid rgba(255, 255, 255, 0.035);
   overflow: hidden;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
@@ -43,8 +43,8 @@
     box-shadow 0.2s ease,
     border-color 0.2s ease;
   box-shadow:
-    0 14px 24px -12px rgba(0, 0, 0, 0.42),
-    0 6px 12px -8px rgba(0, 0, 0, 0.22);
+    0 8px 18px -14px rgba(0, 0, 0, 0.24),
+    0 2px 8px -6px rgba(0, 0, 0, 0.12);
 }
 
 .overlay-message-form::after {
@@ -54,10 +54,10 @@
   bottom: 8px;
   z-index: 0;
   height: 1px;
-  background: rgba(0, 0, 0, 0.66);
+  background: rgba(0, 0, 0, 0.5);
   border-radius: 999px;
-  box-shadow: 0 0 20px 8px rgba(0, 0, 0, 0.2);
-  filter: blur(6px);
+  box-shadow: 0 0 14px 5px rgba(0, 0, 0, 0.14);
+  filter: blur(5px);
   content: "";
   pointer-events: none;
 }
@@ -90,30 +90,30 @@
 .player-frame[data-chat-style="float"] .overlay-message-form .input-wrapper {
   background: linear-gradient(
     90deg,
-    rgba(12, 15, 17, 0.46) 0%,
-    rgba(12, 15, 17, 0.34) 56%,
-    rgba(12, 15, 17, 0.24) 82%,
-    rgba(12, 15, 17, 0.24) 100%
+    rgba(12, 15, 17, 0.39) 0%,
+    rgba(12, 15, 17, 0.29) 56%,
+    rgba(12, 15, 17, 0.2) 82%,
+    rgba(12, 15, 17, 0.2) 100%
   );
-  border-color: transparent;
+  border-color: rgba(255, 255, 255, 0.045);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
   background-clip: padding-box;
   overflow: hidden;
   box-shadow:
-    0 14px 24px -12px rgba(0, 0, 0, 0.4),
-    0 6px 12px -8px rgba(0, 0, 0, 0.2);
+    0 8px 18px -14px rgba(0, 0, 0, 0.24),
+    0 2px 8px -6px rgba(0, 0, 0, 0.12);
 }
 
 .overlay-message-form .input-wrapper:focus-within {
   box-shadow:
-    0 16px 26px -12px rgba(0, 0, 0, 0.46),
-    0 7px 14px -8px rgba(0, 0, 0, 0.22),
-    0 0 0 1px rgba(255, 255, 255, 0.1);
+    0 10px 18px -14px rgba(0, 0, 0, 0.32),
+    0 3px 8px -6px rgba(0, 0, 0, 0.16),
+    0 0 0 1px rgba(255, 255, 255, 0.07);
 }
 
 .player-frame[data-chat-style="panel"] .overlay-message-form .input-wrapper:focus-within {
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14) inset;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.09) inset;
 }
 
 .overlay-message-form .input-wrapper textarea {
@@ -138,7 +138,7 @@
   /* La fuente de interfaz conserva los dígitos como texto; Noto queda como
      fallback para los emojis que esa fuente no contiene. */
   font-family: var(--text-font), "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", ui-sans-serif, sans-serif;
-  overscroll-behavior: auto;
+  overscroll-behavior: contain;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }

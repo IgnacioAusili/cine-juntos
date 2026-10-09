@@ -14,8 +14,8 @@
 
 /* El placeholder queda centrado en la fila compacta. */
 .overlay-message-form .input-wrapper textarea {
-  padding-top: 7px;
-  padding-bottom: 7px;
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 
 /* El textarea conserva tres renglones visibles; desde ahí usa su scroll

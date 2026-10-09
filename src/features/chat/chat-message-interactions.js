@@ -1,10 +1,28 @@
 // Cableado de interacciones del mensaje: listeners de puntero, long-press y contextmenu.
 // El motor de gesto vive en swipe-reply.js.
 import { state } from "../../core/state.js?v=20261008";
-import { createSwipeReply } from "./swipe-reply.js?v=20261008";
+import { createSwipeReply } from "./swipe-reply.js?v=20261009-image-reply-edge-02";
 import { showMessageMenu } from "./message-menu.js";
 
 const LONG_PRESS_DELAY = 560;
+
+export function extendMessageHitArea(item, container) {
+  const containerStyle = window.getComputedStyle(container);
+  const startInset = Number.parseFloat(containerStyle.paddingInlineStart) || 0;
+  const endInset = Number.parseFloat(containerStyle.paddingInlineEnd) || 0;
+  const totalInset = startInset + endInset;
+  if (totalInset <= 0) return;
+
+  // Keep message content in place while extending its hit area into the
+  // container padding, so edge swipes still target the message article.
+  item.style.boxSizing = "border-box";
+  item.style.width = `calc(100% + ${totalInset}px)`;
+  item.style.maxWidth = `calc(100% + ${totalInset}px)`;
+  item.style.marginInlineStart = `${-startInset}px`;
+  item.style.marginInlineEnd = `${-endInset}px`;
+  item.style.paddingInlineStart = `${startInset}px`;
+  item.style.paddingInlineEnd = `${endInset}px`;
+}
 
 export function wireMessageInteractions(
   bubble,

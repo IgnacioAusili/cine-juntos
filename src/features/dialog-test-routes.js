@@ -9,7 +9,7 @@ import {
   showSession,
 } from "./session-ui.js?v=20261008";
 import { setVideoStatus } from "./player/player.js?v=20261008";
-import { openLightboxForTest } from "./chat/image-lightbox.js?v=20261008";
+import { openLightboxForTest } from "./chat/image-lightbox.js?v=20261009-image-pan-01";
 
 export const DIALOG_TEST_ROUTES = Object.freeze({
   about: "Sobre este proyecto",

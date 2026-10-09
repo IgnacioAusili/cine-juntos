@@ -1,5 +1,5 @@
 import { clearReplyTarget, setReplyTarget } from "../chat/chat-reply.js?v=20261008";
-import { wireMessageInteractions } from "../chat/chat-message-interactions.js?v=20261008";
+import { extendMessageHitArea, wireMessageInteractions } from "../chat/chat-message-interactions.js?v=20261009-image-reply-edge-02";
 import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js?v=20261008";
 import { state } from "../../core/state.js?v=20261008";
 import { focusChatInput } from "../chat/chat-input-focus.js";
@@ -98,6 +98,9 @@ export function syncMirroredChatMessages(source, element) {
   const previousSourceStates = mirroredSystemGroupStates.get(element) || [];
   const nextSourceStates = [];
   mirrorMessages.innerHTML = sourceMessages.innerHTML;
+  mirrorMessages.querySelectorAll(".message").forEach((item) => {
+    extendMessageHitArea(item, mirrorMessages);
+  });
   if (isInitialSync) normalizeMiniSystemGroupState(mirrorMessages);
   wireMirrorChatScrollbar(element);
   wireMiniMessageReplies(sourceMessages, mirrorMessages, element);
@@ -218,9 +221,10 @@ export function wireMiniMessageReplies(sourceMessages, mirrorMessages, surfaceEl
     }
     const sourceItem = sourceMessages.querySelector(`[data-message-id=\"${CSS.escape(mirrorItem.dataset.messageId || "")}\"]`);
     const message = sourceItem?._chatMessage;
-    const bubble = mirrorItem.querySelector(".message-bubble");
+    const isMediaOnly = mirrorItem.classList.contains("message--media-only");
+    const bubble = mirrorItem.querySelector(".message-bubble, .message-media-strip");
     const hint = mirrorItem.querySelector(".swipe-reply-hint");
-    const row = mirrorItem.querySelector(".message-bubble-row");
+    const row = mirrorItem.querySelector(".message-bubble-row, .message-media-row");
     if (!message || !bubble || !hint || !row || mirrorItem.dataset.replyWired === "true") return;
     mirrorItem.dataset.replyWired = "true";
     wireMessageInteractions(bubble, message, hint, {
@@ -229,9 +233,12 @@ export function wireMiniMessageReplies(sourceMessages, mirrorMessages, surfaceEl
         syncMiniReplyPreview(sourceMessages, mirrorMessages, surfaceElement);
       },
       replyInput: mirrorInput,
+      companions: isMediaOnly
+        ? [mirrorItem.querySelector(".message-meta"), mirrorItem.querySelector(".message-time-anchor")].filter(Boolean)
+        : [mirrorItem.querySelector(".message-meta")].filter(Boolean),
       interactionTarget: mirrorItem,
-      interactionBand: row,
-      interactionBands: [mirrorItem.querySelector(".message-meta")],
+      interactionBand: mirrorItem,
+      allowSwipeInsideBubble: true,
     });
   });
 }

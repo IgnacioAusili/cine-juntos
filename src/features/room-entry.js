@@ -11,7 +11,7 @@ import {
   renderPresence,
 } from "./presence.js?v=20261003-name-editor-curtain-cancel-esc-blur-03";
 import { setConnection } from "./icons-tooltips.js?v=20260914-tooltip-single-path-01-tooltip-focus-restore-skip-01";
-import { syncComponentAspectLayoutNow } from "./chat/component-aspect-layout.js?v=20261007-bottom-chat-switch-measure-01-aspect-dock-settle-01-bottom-dock-panels-fit-viewport-01-visible-bounds-03-initial-viewport-sync-02";
+import { syncComponentAspectLayoutNow } from "./chat/component-aspect-layout.js?v=20261007-bottom-chat-switch-measure-01-aspect-dock-settle-01-bottom-dock-panels-fit-viewport-01-visible-bounds-03-initial-viewport-sync-04-intersection-fit-sync-02";
 import {
   getUserScrollIntentVersion,
   setHostBadge,

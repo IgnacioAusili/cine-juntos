@@ -28,7 +28,7 @@ import {
   syncInsideChatPanelPlacement,
   wireInsideChatPanelPlacement,
 } from "../player/inside-chat-layout.js?v=20260910-mobile-chat-side-placement-02";
-import { syncComponentAspectLayoutNow } from "./component-aspect-layout.js?v=20261007-bottom-chat-switch-measure-01-aspect-dock-settle-01-bottom-dock-panels-fit-viewport-01-visible-bounds-03-initial-viewport-sync-02";
+import { syncComponentAspectLayoutNow } from "./component-aspect-layout.js?v=20261007-bottom-chat-switch-measure-01-aspect-dock-settle-01-bottom-dock-panels-fit-viewport-01-visible-bounds-03-initial-viewport-sync-04-intersection-fit-sync-02";
 
 const AUTO_COLLAPSE_DELAY_MS = 5000;
 const AUTO_EXPAND_INSIDE_KEY = "cine-juntos-chat-auto-expand-inside";

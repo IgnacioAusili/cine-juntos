@@ -1,6 +1,6 @@
 import { syncComponentStackChatHandle } from "./component-stack-controls.js?v=20260930-header-visual-center-offset-02-chat-handle-flow-01";
 import { syncComponentStackShellInsets } from "./component-stack-insets.js?v=20260929-edge-to-edge-stack-inset-01";
-import { wireComponentAspectObservers } from "./component-aspect-observers.js?v=20261004-empty-player-start-scroll-01-aspect-dock-settle-01-bottom-dock-fit-observer-01-measure-panel-resize-01";
+import { wireComponentAspectObservers } from "./component-aspect-observers.js?v=20261004-empty-player-start-scroll-01-aspect-dock-settle-01-bottom-dock-fit-observer-01-measure-panel-resize-01-viewport-intersection-fit-sync-02";
 import {
   hasLoadedVideo,
   isMeasuringExpandedTarget,
@@ -182,15 +182,10 @@ wireComponentAspectObservers({
   playerFrame,
   chatArea,
   scheduleComponentLayoutMeasure,
+  scheduleBottomDockSnapModeSync,
   isMeasuringExpandedTarget,
 });
 
 window.addEventListener("resize", scheduleComponentLayoutMeasure, { passive: true });
-window.addEventListener("scroll", scheduleBottomDockSnapModeSync, { passive: true });
-document.addEventListener("scroll", scheduleBottomDockSnapModeSync, {
-  capture: true,
-  passive: true,
-});
 window.addEventListener("load", scheduleBottomDockSnapModeSync, { once: true });
-window.visualViewport?.addEventListener("scroll", scheduleBottomDockSnapModeSync, { passive: true });
 window.visualViewport?.addEventListener("resize", scheduleBottomDockSnapModeSync, { passive: true });

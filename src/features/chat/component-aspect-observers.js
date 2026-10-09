@@ -6,6 +6,7 @@ export function wireComponentAspectObservers({
   playerFrame,
   chatArea,
   scheduleComponentLayoutMeasure,
+  scheduleBottomDockSnapModeSync,
   isMeasuringExpandedTarget,
 }) {
   if (!sessionView || !workspace || !videoArea || !videoPlayer || !playerFrame || !chatArea) return;
@@ -15,6 +16,13 @@ export function wireComponentAspectObservers({
   workspaceObserver.observe(sessionView);
   workspaceObserver.observe(videoArea);
   workspaceObserver.observe(chatArea);
+
+  const panelVisibilityObserver = new IntersectionObserver(
+    () => scheduleBottomDockSnapModeSync(),
+    { threshold: [0, 1] },
+  );
+  panelVisibilityObserver.observe(videoArea);
+  panelVisibilityObserver.observe(chatArea);
 
   let dockLayoutTransitionPending = false;
   const dockObserver = new MutationObserver(() => {

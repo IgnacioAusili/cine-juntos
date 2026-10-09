@@ -2,7 +2,7 @@ import { dom } from "../../core/dom.js";
 import { state, logEvent } from "../../core/state.js?v=20261008";
 import { MAX_RENDERED_MESSAGES, formatTime, formatClockTime } from "../../core/utils.js?v=20261008";
 import { markParticipantActive, rememberParticipant } from "../presence.js?v=20261008";
-import { extendMessageHitArea, wireMessageInteractions } from "./chat-message-interactions.js?v=20261009-image-reply-edge-02";
+import { extendMessageHitArea, wireMessageInteractions } from "./chat-message-interactions.js?v=20261009-emoji-reply-settle-01";
 import { appendMessageContent, truncateText } from "./chat-content-parser.js?v=20261008";
 import { getParticipantAccent } from "./chat-participant-color.js";
 import { scheduleMessageTimeAdjustmentForBubble } from "./message-time-layout.js?v=20261008";

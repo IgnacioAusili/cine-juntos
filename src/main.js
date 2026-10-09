@@ -40,16 +40,16 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js?v=20261009-image-reply-edge-02";
+} from "./features/chat/index.js?v=20261009-emoji-reply-settle-01";
 import {
   initializePlayer,
   wirePlayerEvents,
-} from "./features/player/index.js?v=20261009-image-reply-edge-02";
+} from "./features/player/index.js?v=20261009-emoji-reply-settle-01";
 import { wireMobileFullscreenOrientation } from "./features/player/mobile-fullscreen-orientation.js";
 import { wireMobileChatKeyboardControls } from "./features/player/mobile-chat-keyboard-controls.js?v=20261008";
 import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20261008";
 import { wireMobileLandscapeVideoSnap } from "./features/mobile-landscape-video-snap.js?v=20261008";
-import { joinRoom, wireRoomEvents } from "./features/room.js?v=20261008";
+import { joinRoom, wireRoomEvents } from "./features/room.js?v=20261009-emoji-reply-settle-01";
 import { wireTouchHover } from "./core/touch-interactions.js?v=20261008";
 import { installConsoleLogCapture, wireMobileDebugTools } from "./features/mobile-debug.js?v=20261008";
 import { wireMobileKeyboardDiagnostics } from "./features/mobile-keyboard-diagnostics.js?v=20261008";

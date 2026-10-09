@@ -1,7 +1,7 @@
 // Cableado de interacciones del mensaje: listeners de puntero, long-press y contextmenu.
 // El motor de gesto vive en swipe-reply.js.
 import { state } from "../../core/state.js?v=20261008";
-import { createSwipeReply } from "./swipe-reply.js?v=20261009-image-reply-edge-02";
+import { createSwipeReply } from "./swipe-reply.js?v=20261009-emoji-reply-settle-01";
 import { showMessageMenu } from "./message-menu.js";
 
 const LONG_PRESS_DELAY = 560;

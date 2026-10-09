@@ -20,7 +20,7 @@ import {
   showSession,
   watchRoomEntryVideoFocus,
 } from "./session-ui.js?v=20261008";
-import { handleRemoteState } from "./player/index.js?v=20261008";
+import { handleRemoteState } from "./player/index.js?v=20261009-emoji-reply-settle-01";
 import {
   beginSystemMessageHydration,
   finishSystemMessageHydration,
@@ -29,7 +29,7 @@ import {
   resetInsideUnread,
   resetPageUnread,
   setInsideChatVisible,
-} from "./chat/index.js?v=20261008";
+} from "./chat/index.js?v=20261009-emoji-reply-settle-01";
 import {
   getRoomTabLimitConflictCount,
   writeActiveTabRecord,

@@ -13,7 +13,7 @@ import {
   updateCharCounter,
   wireFloatingComposerLayout,
   wireComposerScrollbar,
-} from "./chat-input.js?v=20261009-image-reply-edge-02";
+} from "./chat-input.js?v=20261009-emoji-reply-settle-01";
 import { setReplyTarget } from "./chat-reply.js?v=20261008";
 import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20261008";
 import {
@@ -231,19 +231,19 @@ export {
   buildEmojiPicker,
   updateCharCounter,
   sendMessage,
-} from "./chat-input.js?v=20261009-image-reply-edge-02";
+} from "./chat-input.js?v=20261009-emoji-reply-settle-01";
 export {
   beginSystemMessageHydration,
   finishSystemMessageHydration,
   renderMessage,
-} from "./chat-render.js?v=20261009-image-reply-edge-02";
+} from "./chat-render.js?v=20261009-emoji-reply-settle-01";
 export {
   clearReplyTarget,
   renderReplyPreview,
   scrollToMessage,
   setReplyTarget,
 } from "./chat-reply.js?v=20261008";
-export { sendVideoEventMessage } from "./chat-system-messages.js?v=20261009-image-reply-edge-02";
+export { sendVideoEventMessage } from "./chat-system-messages.js?v=20261009-emoji-reply-settle-01";
 export {
   checkScrollPosition,
   resetInsideUnread,

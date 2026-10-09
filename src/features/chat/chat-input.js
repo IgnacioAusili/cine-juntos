@@ -20,7 +20,7 @@ import {
 import { refreshTooltipForTarget } from "../icons-tooltips.js?v=20261008";
 import { markParticipantActive } from "../presence.js?v=20261008";
 import { clearReplyTarget } from "./chat-reply.js?v=20261008";
-import { renderMessage } from "./chat-render.js?v=20261009-image-reply-edge-02";
+import { renderMessage } from "./chat-render.js?v=20261009-emoji-reply-settle-01";
 import {
   completeAutoOpenedChatResponse,
 } from "./chat-layout.js?v=20261008";

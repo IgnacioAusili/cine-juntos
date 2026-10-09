@@ -17,20 +17,20 @@ import { createRandomId } from "../../core/random-id.js?v=20261008";
 import {
   setSyncStatus,
 } from "../session-ui.js?v=20261008";
-import { refreshTooltipForTarget } from "../icons-tooltips.js?v=20261009-tooltip-slide-01";
+import { refreshTooltipForTarget } from "../icons-tooltips.js?v=20261009-tooltip-slide-04";
 import { markParticipantActive } from "../presence.js?v=20261008";
 import { clearReplyTarget } from "./chat-reply.js?v=20261008";
-import { renderMessage } from "./chat-render.js?v=20261009-bottom-chat-expand-01";
+import { renderMessage } from "./chat-render.js?v=20261009-bottom-chat-expand-center-02";
 import {
   completeAutoOpenedChatResponse,
-} from "./chat-layout.js?v=20261009-bottom-chat-expand-01";
-import { queuePinnedChatScrollSync, isPinnedToBottom } from "./chat-scroll-sync.js?v=20261009-bottom-chat-expand-01";
+} from "./chat-layout.js?v=20261009-bottom-chat-expand-center-02";
+import { queuePinnedChatScrollSync, isPinnedToBottom } from "./chat-scroll-sync.js?v=20261009-bottom-chat-expand-center-02";
 import { focusChatInput } from "./chat-input-focus.js";
 import {
   compressImageBase64,
   renderImagePreview,
   clearPendingImage,
-} from "./image-compress.js?v=20261009-bottom-chat-expand-01";
+} from "./image-compress.js?v=20261009-bottom-chat-expand-center-02";
 
 const floatingComposerObservers = new WeakMap();
 const scrollbarDragState = new WeakMap();

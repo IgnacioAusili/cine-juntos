@@ -13,9 +13,9 @@ import {
   updateCharCounter,
   wireFloatingComposerLayout,
   wireComposerScrollbar,
-} from "./chat-input.js?v=20261009-bottom-chat-expand-01";
+} from "./chat-input.js?v=20261009-bottom-chat-expand-center-02";
 import { setReplyTarget } from "./chat-reply.js?v=20261008";
-import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20261009-bottom-chat-expand-01";
+import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20261009-bottom-chat-expand-center-02";
 import {
   copyMessageText,
   hideMessageMenu,
@@ -33,10 +33,10 @@ import {
   syncExternalChatCollapseHandleOffset,
   syncChatAutoExpandControls,
   wireResponsiveSessionLayout,
-} from "./chat-layout.js?v=20261009-bottom-chat-expand-01";
+} from "./chat-layout.js?v=20261009-bottom-chat-expand-center-02";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20261008";
 import { focusChatInput } from "./chat-input-focus.js";
-import { hideTooltip } from "../icons-tooltips.js?v=20261009-tooltip-slide-01";
+import { hideTooltip } from "../icons-tooltips.js?v=20261009-tooltip-slide-04";
 
 const MOBILE_CHAT_LAYOUT_QUERY = "(max-width: 980px)";
 const COLLAPSE_POINTER_HOVER_CLASS = "chat-collapse-pointer-hover";
@@ -204,24 +204,24 @@ export {
   buildEmojiPicker,
   updateCharCounter,
   sendMessage,
-} from "./chat-input.js?v=20261009-bottom-chat-expand-01";
+} from "./chat-input.js?v=20261009-bottom-chat-expand-center-02";
 export {
   beginSystemMessageHydration,
   finishSystemMessageHydration,
   renderMessage,
-} from "./chat-render.js?v=20261009-bottom-chat-expand-01";
+} from "./chat-render.js?v=20261009-bottom-chat-expand-center-02";
 export {
   clearReplyTarget,
   renderReplyPreview,
   scrollToMessage,
   setReplyTarget,
 } from "./chat-reply.js?v=20261008";
-export { sendVideoEventMessage } from "./chat-system-messages.js?v=20261009-bottom-chat-expand-01";
+export { sendVideoEventMessage } from "./chat-system-messages.js?v=20261009-bottom-chat-expand-center-02";
 export {
   checkScrollPosition,
   resetInsideUnread,
   resetPageUnread,
-} from "./unread-counters.js?v=20261009-bottom-chat-expand-01";
+} from "./unread-counters.js?v=20261009-bottom-chat-expand-center-02";
 export {
   copyMessageText,
   hideMessageMenu,
@@ -239,7 +239,7 @@ export {
   setInsideChatVisible,
   syncChatAutoExpandControls,
   updateCollapseButton,
-} from "./chat-layout.js?v=20261009-bottom-chat-expand-01";
+} from "./chat-layout.js?v=20261009-bottom-chat-expand-center-02";
 
 export function wireChatEvents() {
   syncChatAutoExpandControls();

@@ -3,7 +3,7 @@ import { dom } from "../../core/dom.js";
 import { state, logEvent } from "../../core/state.js?v=20261008";
 import { shouldAnchorChatCollapseHandleInHeader } from "./chat-collapse-header-layout.js?v=20261008";
 import { CHAT_DOCKS, CHAT_DOCK_META, withShortcutHint } from "../../core/utils.js";
-import { hydrateIcons, hideTooltip, refreshTooltipForTarget } from "../icons-tooltips.js?v=20261009-tooltip-slide-01";
+import { hydrateIcons, hideTooltip, refreshTooltipForTarget } from "../icons-tooltips.js?v=20261009-tooltip-slide-04";
 import { focusFullscreenWorkspace } from "../session-ui.js?v=20261008";
 import {
   cancelIdentityEditing,
@@ -15,7 +15,7 @@ import {
   resetInsideUnread,
   resetPageUnread,
   syncUnreadBadgesWithVisibility,
-} from "./unread-counters.js?v=20261009-bottom-chat-expand-01";
+} from "./unread-counters.js?v=20261009-bottom-chat-expand-center-02";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20261008";
 import { focusChatInput } from "./chat-input-focus.js";
 import { restorePageScrollAfterRightChatCollapse } from "./chat-scroll-preservation.js?v=20261008";
@@ -1299,9 +1299,7 @@ function clearBottomChatTransitionVisuals() {
   dom.chatArea?.style.removeProperty("opacity");
   const messageForm = dom.chatArea?.querySelector(".message-form");
   messageForm?.style.removeProperty("--chat-bottom-pc-expand-composer-left");
-  messageForm?.style.removeProperty("--chat-bottom-pc-expand-composer-right");
   messageForm?.style.removeProperty("--chat-bottom-pc-expand-composer-width");
-  messageForm?.style.removeProperty("--chat-bottom-pc-expand-composer-margin");
   if (dom.sessionView?.dataset.chatDock === "bottom") {
     messageForm?.style.removeProperty("width");
   }
@@ -1543,31 +1541,28 @@ function animateDesktopBottomChatExpand() {
   // Se reserva la fila completa con la cortina cerrada. Desde el primer frame
   // el scroll y la apertura recorren juntos la distancia hasta la unión.
   applyExternalChatCollapsed(false);
-  // El layout de panel completo puede cambiar al abrirse el dock. Resolverlo
-  // antes de fijar el composer evita capturar el inset izquierdo de la fila
-  // contraída y arrastrarlo durante la animación.
-  syncComponentAspectLayoutNow({ allowDuringChatTransition: true });
   const messageForm = dom.chatArea.querySelector(".message-form");
   const composerBounds = messageForm?.getBoundingClientRect();
+  const chatAreaBounds = dom.chatArea.getBoundingClientRect();
   if (messageForm && composerBounds?.width > 0) {
-    // Al pasar a fixed cambia el bloque de referencia de .chat-area al viewport.
-    // Conservar la geometría que ya tiene el composer en el layout expandido
-    // evita que se ensanche durante la cortina y vuelva a encogerse al terminar.
-    messageForm.style.setProperty(
-      "--chat-bottom-pc-expand-composer-left",
-      `${composerBounds.left}px`,
-    );
-    messageForm.style.setProperty(
-      "--chat-bottom-pc-expand-composer-right",
-      "auto",
-    );
+    // Ajustar la coordenada una vez aplicado fixed: el containing block puede
+    // ser un ancestro interno, así que un left porcentual no equivale al viewport.
+    messageForm.style.setProperty("--chat-bottom-pc-expand-composer-left", "0px");
     messageForm.style.setProperty(
       "--chat-bottom-pc-expand-composer-width",
       `${composerBounds.width}px`,
     );
-    messageForm.style.setProperty("--chat-bottom-pc-expand-composer-margin", "0");
   }
   dom.sessionView.classList.add("chat-bottom-pc-expand-visual");
+  if (messageForm && composerBounds?.width > 0) {
+    const fixedBounds = messageForm.getBoundingClientRect();
+    const targetLeft =
+      chatAreaBounds.left + (chatAreaBounds.width - fixedBounds.width) / 2;
+    messageForm.style.setProperty(
+      "--chat-bottom-pc-expand-composer-left",
+      `${targetLeft - fixedBounds.left}px`,
+    );
+  }
   setCollapseHandleTransitioning(
     true,
     BOTTOM_CHAT_CURTAIN_MS + BOTTOM_CHAT_SCROLL_TIMEOUT_MS + 80,

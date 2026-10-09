@@ -18,10 +18,10 @@ const TOOLTIP_BORDER_WIDTH_PX = 1;
 const TOOLTIP_RADIUS_PX = 12;
 const TOOLTIP_TAIL_WIDTH_PX = 14;
 const TOOLTIP_TAIL_HEIGHT_PX = 7;
-const TOOLTIP_SHOW_DELAY_MS = 800;
-const HELP_TOOLTIP_SHOW_DELAY_MS = 500;
-const PRESENCE_TOOLTIP_SHOW_DELAY_MS = 300;
-const TOOLTIP_HIDE_ANIMATION_MS = 140;
+const TOOLTIP_SHOW_DELAY_MS = 600;
+const HELP_TOOLTIP_SHOW_DELAY_MS = 400;
+const PRESENCE_TOOLTIP_SHOW_DELAY_MS = 250;
+const TOOLTIP_HIDE_ANIMATION_MS = 120;
 const TOUCH_FOCUS_SUPPRESSION_MS = 500;
 const TOUCH_TOOLTIP_MOVE_TOLERANCE_PX = 10;
 const TOUCH_HELP_TOOLTIP_MAX_VISIBLE_MS = 1800;
@@ -111,14 +111,18 @@ function syncTooltipChrome() {
   tooltipChrome.dataset.animationState = layer.dataset.animationState || "visible";
   const tailSide = placement === "bottom" ? "top" : "bottom";
   const svgHeight = rect.height + geometry.tailHeight;
+  // getBoundingClientRect incluye el translate de entrada/salida. Usar el top
+  // calculado del layer mantiene el texto alineado con el cuerpo del SVG.
+  const layerLeft = parseCssPixel(style.left, rect.left);
+  const layerTop = parseCssPixel(style.top, rect.top);
 
   tooltipChrome.style.setProperty("--tooltip-border-color", style.getPropertyValue("--tooltip-border-color").trim());
   tooltipChrome.style.setProperty("--tooltip-border-width", `${geometry.borderWidth}px`);
   tooltipChrome.setAttribute("width", `${rect.width}`);
   tooltipChrome.setAttribute("height", `${svgHeight}`);
   tooltipChrome.setAttribute("viewBox", `0 0 ${rect.width} ${svgHeight}`);
-  tooltipChrome.style.left = `${rect.left}px`;
-  tooltipChrome.style.top = `${placement === "bottom" ? rect.top - geometry.tailHeight : rect.top}px`;
+  tooltipChrome.style.left = `${layerLeft}px`;
+  tooltipChrome.style.top = `${placement === "bottom" ? layerTop - geometry.tailHeight : layerTop}px`;
   tooltipChrome.style.visibility = style.visibility;
   tooltipChrome.style.removeProperty("opacity");
   tooltipChromePath.setAttribute(
@@ -246,7 +250,7 @@ function initializeBubbleChrome() {
   const tooltipObserver = new MutationObserver(syncTooltipChrome);
   tooltipObserver.observe(dom.tooltipLayer, {
     attributes: true,
-    attributeFilter: ["data-edge", "data-placement", "hidden", "style"],
+    attributeFilter: ["data-animation-state", "data-edge", "data-placement", "hidden", "style"],
     childList: true,
     characterData: true,
     subtree: true,

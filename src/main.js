@@ -15,7 +15,7 @@ import {
   hydrateIcons,
   initializeUi,
   setConnection,
-} from "./features/icons-tooltips.js?v=20261009-tooltip-slide-01";
+} from "./features/icons-tooltips.js?v=20261009-tooltip-slide-04";
 import {
   wireLayoutMetrics,
 } from "./features/layout-metrics.js?v=20261008";
@@ -40,20 +40,20 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js?v=20261009-chat-hover-geometry-04";
+} from "./features/chat/index.js?v=20261009-bottom-chat-expand-center-02";
 import {
   initializePlayer,
   wirePlayerEvents,
-} from "./features/player/index.js?v=20261009-bottom-chat-expand-01-chat-hover-geometry-04";
+} from "./features/player/index.js?v=20261009-bottom-chat-expand-center-02";
 import { wireMobileFullscreenOrientation } from "./features/player/mobile-fullscreen-orientation.js";
 import { wireMobileChatKeyboardControls } from "./features/player/mobile-chat-keyboard-controls.js?v=20261008";
 import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20261008";
 import { wireMobileLandscapeVideoSnap } from "./features/mobile-landscape-video-snap.js?v=20261008";
-import { joinRoom, wireRoomEvents } from "./features/room.js?v=20261009-bottom-chat-expand-01-invite-copy-animation-01-chat-hover-geometry-04";
+import { joinRoom, wireRoomEvents } from "./features/room.js?v=20261009-room-back-slide-02";
 import { wireTouchHover } from "./core/touch-interactions.js?v=20261008";
 import { installConsoleLogCapture, wireMobileDebugTools } from "./features/mobile-debug.js?v=20261008";
 import { wireMobileKeyboardDiagnostics } from "./features/mobile-keyboard-diagnostics.js?v=20261008";
-import { openDialogTestRoute } from "./features/dialog-test-routes.js?v=20261009-bottom-chat-expand-01-chat-hover-geometry-04";
+import { openDialogTestRoute } from "./features/dialog-test-routes.js?v=20261009-bottom-chat-expand-center-02";
 import { wireLobbyLayoutVariants } from "./features/lobby-layout-variants.js?v=20261008";
 
 const requestedRoom = normalizeRoomCode(new URLSearchParams(window.location.search).get("room") || "");

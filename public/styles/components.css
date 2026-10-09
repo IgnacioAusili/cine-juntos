@@ -1,5 +1,5 @@
 @import url("./components/app-status.css?v=20261008");
-@import url("./components/room-chip.css?v=20261008");
+@import url("./components/room-chip.css?v=20261009-room-back-slide-02");
 @import url("./components/host-badge.css?v=20261008");
 @import url("./components/buttons.css?v=20261008");
 @import url("./components/chat-collapse-handle.css?v=20261009-chat-hover-geometry-03");
@@ -10,6 +10,6 @@
 @import url("./components/icon-fallbacks.css?v=20261008");
 @import url("./components/unread-badges.css");
 @import url("./components/emoji-popover.css?v=20261008");
-@import url("./components/tooltip-layer.css?v=20261009-tooltip-slide-01");
+@import url("./components/tooltip-layer.css?v=20261009-tooltip-slide-04");
 @import url("./components/dialogs.css?v=20261008");
 @import url("./components/mobile-debug.css?v=20261008");

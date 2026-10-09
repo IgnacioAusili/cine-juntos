@@ -1,6 +1,6 @@
 import { clearReplyTarget, setReplyTarget } from "../chat/chat-reply.js?v=20261008";
 import { extendMessageHitArea, wireMessageInteractions } from "../chat/chat-message-interactions.js?v=20261009-emoji-reply-settle-01";
-import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js?v=20261009-bottom-chat-expand-01";
+import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js?v=20261009-bottom-chat-expand-center-02";
 import { state } from "../../core/state.js?v=20261008";
 import { focusChatInput } from "../chat/chat-input-focus.js";
 

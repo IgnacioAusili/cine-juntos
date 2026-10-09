@@ -10,7 +10,7 @@ import {
   renderMembers,
   renderPresence,
 } from "./presence.js?v=20261008";
-import { setConnection } from "./icons-tooltips.js?v=20261009-tooltip-slide-01";
+import { setConnection } from "./icons-tooltips.js?v=20261009-tooltip-slide-04";
 import { syncComponentAspectLayoutNow } from "./chat/component-aspect-layout.js?v=20261008-unified-panel-layout-01";
 import {
   getUserScrollIntentVersion,
@@ -20,7 +20,7 @@ import {
   showSession,
   watchRoomEntryVideoFocus,
 } from "./session-ui.js?v=20261008";
-import { handleRemoteState } from "./player/index.js?v=20261009-bottom-chat-expand-01-chat-hover-geometry-04";
+import { handleRemoteState } from "./player/index.js?v=20261009-bottom-chat-expand-center-02";
 import {
   beginSystemMessageHydration,
   finishSystemMessageHydration,
@@ -29,7 +29,7 @@ import {
   resetInsideUnread,
   resetPageUnread,
   setInsideChatVisible,
-} from "./chat/index.js?v=20261009-chat-hover-geometry-04";
+} from "./chat/index.js?v=20261009-bottom-chat-expand-center-02";
 import {
   getRoomTabLimitConflictCount,
   writeActiveTabRecord,

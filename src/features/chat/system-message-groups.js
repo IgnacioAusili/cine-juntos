@@ -2,7 +2,7 @@ import {
   animateCollapsedSystemMessageAdvance,
   resetSystemMessageRowAnchor,
   settleSystemMessageRoll,
-} from "./system-message-roll.js?v=20261008";
+} from "./system-message-roll.js?v=20261009-system-roll-compact-02";
 
 const SYSTEM_GROUP_MIN_SIZE = 3;
 const SYSTEM_GROUP_TRANSITION_MS = 180;

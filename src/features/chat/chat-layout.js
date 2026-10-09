@@ -15,7 +15,7 @@ import {
   resetInsideUnread,
   resetPageUnread,
   syncUnreadBadgesWithVisibility,
-} from "./unread-counters.js?v=20261009-bottom-chat-expand-center-02";
+} from "./unread-counters.js?v=20261009-bottom-chat-expand-center-02-scroll-unread-visible-01-hidden-tab-scroll-01-input-boundary-01-scroll-unlocked-01";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20261008";
 import { focusChatInput } from "./chat-input-focus.js";
 import { restorePageScrollAfterRightChatCollapse } from "./chat-scroll-preservation.js?v=20261008";
@@ -39,11 +39,7 @@ const CHAT_LAYOUT_SETTLE_MS = 280;
 const COLLAPSE_HANDLE_HIDE_MS = CHAT_LAYOUT_SETTLE_MS + 40;
 // El dock lateral hereda esta duración de la transición flex de escritorio.
 const RIGHT_CHAT_LAYOUT_TRANSITION_MS = 350;
-// El bloqueo solo debe sobrevivir al último frame de la cortina, no a los
-// 900 ms de protección genérica de los demás layouts.
-const RIGHT_CHAT_SCROLL_LOCK_MS = RIGHT_CHAT_LAYOUT_TRANSITION_MS + 40;
 const CHAT_SCROLL_SNAP_LOCK_MS = 900;
-const CHAT_USER_SCROLL_LOCK_MS = 900;
 const BOTTOM_CHAT_CURTAIN_MS = 320;
 const BOTTOM_CHAT_SCROLL_TIMEOUT_MS = 1200;
 const BOTTOM_DOCK_UNION_REVEAL_PX = 0;
@@ -63,7 +59,6 @@ let layoutAdjustmentTimer = 0;
 let collapseHandleOffsetTimer = 0;
 let expandScrollTimer = 0;
 let chatScrollSnapLockTimer = 0;
-let chatUserScrollUnlockTimer = 0;
 let pendingBottomToRightSwitch = null;
 let pendingChatDockSwitch = null;
 let externalChatVisualMotionTimer = 0;
@@ -307,82 +302,6 @@ export function captureExternalChatCollapseScroll() {
       : null;
 }
 
-const PAGE_SCROLL_KEYS = new Set([
-  "ArrowDown",
-  "ArrowUp",
-  "PageDown",
-  "PageUp",
-  "Home",
-  "End",
-  " ",
-  "Spacebar",
-]);
-const PAGE_SCROLL_LOCK_LISTENER_OPTIONS = { capture: true, passive: false };
-
-function isChatScrollTarget(target) {
-  return target instanceof Element && Boolean(target.closest("#messages, #overlayMessages, textarea"));
-}
-
-function preventPageScrollDuringChatTransition(event) {
-  if (isChatScrollTarget(event.target)) return;
-  event.preventDefault();
-}
-
-function preventPageScrollKeysDuringChatTransition(event) {
-  if (!PAGE_SCROLL_KEYS.has(event.key) || event.ctrlKey || event.metaKey || event.altKey) return;
-
-  const target = event.target;
-  if (
-    target instanceof HTMLInputElement
-    || target instanceof HTMLTextAreaElement
-    || target instanceof HTMLElement && target.isContentEditable
-  ) {
-    return;
-  }
-
-  event.preventDefault();
-}
-
-function unlockUserScrollDuringChatTransition() {
-  document.removeEventListener("wheel", preventPageScrollDuringChatTransition, true);
-  document.removeEventListener("touchmove", preventPageScrollDuringChatTransition, true);
-  document.removeEventListener("keydown", preventPageScrollKeysDuringChatTransition, true);
-  dom.sessionView?.classList.remove("chat-user-scroll-locked");
-  chatUserScrollUnlockTimer = 0;
-}
-
-function lockUserScrollDuringChatTransition(durationMs = CHAT_USER_SCROLL_LOCK_MS) {
-  if (!dom.sessionView || dom.sessionView.hidden) return;
-
-  document.removeEventListener("wheel", preventPageScrollDuringChatTransition, true);
-  document.removeEventListener("touchmove", preventPageScrollDuringChatTransition, true);
-  document.removeEventListener("keydown", preventPageScrollKeysDuringChatTransition, true);
-  document.addEventListener(
-    "wheel",
-    preventPageScrollDuringChatTransition,
-    PAGE_SCROLL_LOCK_LISTENER_OPTIONS,
-  );
-  document.addEventListener(
-    "touchmove",
-    preventPageScrollDuringChatTransition,
-    PAGE_SCROLL_LOCK_LISTENER_OPTIONS,
-  );
-  document.addEventListener(
-    "keydown",
-    preventPageScrollKeysDuringChatTransition,
-    PAGE_SCROLL_LOCK_LISTENER_OPTIONS,
-  );
-  dom.sessionView.classList.add("chat-user-scroll-locked");
-
-  if (chatUserScrollUnlockTimer) {
-    window.clearTimeout(chatUserScrollUnlockTimer);
-  }
-  chatUserScrollUnlockTimer = window.setTimeout(
-    unlockUserScrollDuringChatTransition,
-    durationMs,
-  );
-}
-
 function getAutoExpandTooltip() {
   return "Se abre al recibir mensajes y se oculta al responder";
 }
@@ -559,8 +478,6 @@ function scheduleAutoCollapse(isOverlay) {
 export function setInsideChatVisible(visible, options = {}) {
   wireInsideChatPanelPlacement();
   const source = options.source || "user";
-  const wasVisible = dom.playerFrame.classList.contains("chat-inside-open");
-  if (wasVisible !== visible && !options.skipScrollLock) lockUserScrollDuringChatTransition();
   clearAutoCollapseTimer(true);
   if (visible) {
     state.chat.autoOpenedInside = source === "auto";
@@ -590,7 +507,7 @@ export function setInsideChatVisible(visible, options = {}) {
     dom.overlayMessages.scrollTop = dom.overlayMessages.scrollHeight;
   }
   syncInsideChatPanelOffset();
-  if (visible) {
+  if (visible && source !== "auto") {
     window.requestAnimationFrame(() => {
       focusChatInput(dom.overlayMessageInput);
     });
@@ -1702,13 +1619,6 @@ export function setExternalChatCollapsed(collapsed, options = {}) {
     state.chat.autoOpenedExternal = false;
   }
   const wasCollapsed = dom.sessionView.classList.contains("chat-collapsed");
-  if (wasCollapsed !== collapsed) {
-    lockUserScrollDuringChatTransition(
-      isMobileLandscapeRightDock()
-        ? RIGHT_CHAT_SCROLL_LOCK_MS
-        : CHAT_USER_SCROLL_LOCK_MS,
-    );
-  }
   cancelBottomChatTransition();
 
   // En fullscreen apaisado móvil el chat inferior es una capa sobre el video.

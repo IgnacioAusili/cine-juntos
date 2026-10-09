@@ -87,6 +87,9 @@ export function createLocalTransport(roomCode, firebaseError = null) {
       }, 10000);
       renderLocalMembers();
     },
+    async loadOlderMessages() {
+      return { messages: [], hasMore: false };
+    },
     async sendState(payload) {
       postLocalEvent(channel, storageKey, "state", payload);
       logEvent("local", `Estado enviado: ${payload.action}.`);

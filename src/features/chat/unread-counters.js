@@ -3,7 +3,7 @@ import { state } from "../../core/state.js?v=20261008";
 import {
   setExternalChatCollapsed,
   setInsideChatVisible,
-} from "./chat-layout.js?v=20261009-bottom-chat-expand-center-02";
+} from "./chat-layout.js?v=20261009-bottom-chat-expand-center-02-scroll-unread-visible-01-hidden-tab-scroll-01-input-boundary-01-scroll-unlocked-01";
 
 function isElementVisibleInViewport(element) {
   if (!element || document.hidden) return false;
@@ -121,50 +121,8 @@ export function handleIncomingPageUnread() {
   incrementPageUnread();
 }
 
-export function incrementScrollIndicator(isOverlay) {
-  const btn = isOverlay ? dom.overlayScrollBottomBtn : dom.mainScrollBottomBtn;
-  const badge = isOverlay ? dom.overlayScrollBadge : dom.mainScrollBadge;
-
-  if (isOverlay) {
-    state.chat.overlayScrollUnread += 1;
-    badge.textContent = state.chat.overlayScrollUnread > 99 ? "+99" : String(state.chat.overlayScrollUnread);
-  } else {
-    state.chat.mainScrollUnread += 1;
-    badge.textContent = state.chat.mainScrollUnread > 99 ? "+99" : String(state.chat.mainScrollUnread);
-  }
-
-  const count = isOverlay ? state.chat.overlayScrollUnread : state.chat.mainScrollUnread;
-  badge.hidden = count === 0;
-  btn.hidden = false;
-  btn.classList.add("scroll-bottom-btn--visible");
-}
-
-export function resetScrollIndicator(isOverlay) {
-  const btn = isOverlay ? dom.overlayScrollBottomBtn : dom.mainScrollBottomBtn;
-  const badge = isOverlay ? dom.overlayScrollBadge : dom.mainScrollBadge;
-
-  if (isOverlay) {
-    state.chat.overlayScrollUnread = 0;
-  } else {
-    state.chat.mainScrollUnread = 0;
-  }
-
-  badge.textContent = "0";
-  badge.hidden = true;
-  btn.classList.remove("scroll-bottom-btn--visible");
-  window.setTimeout(() => {
-    if (!btn.classList.contains("scroll-bottom-btn--visible")) {
-      btn.hidden = true;
-    }
-  }, 300);
-}
-
-export function checkScrollPosition(isOverlay) {
-  const container = isOverlay ? dom.overlayMessages : dom.messages;
-  const threshold = 80;
-  const distanceFromBottom = container.scrollHeight - container.scrollTop - container.clientHeight;
-
-  if (distanceFromBottom <= threshold) {
-    resetScrollIndicator(isOverlay);
-  }
-}
+export {
+  checkScrollPosition,
+  incrementScrollIndicator,
+  resetScrollIndicator,
+} from "./scroll-unread-indicator.js?v=20261009-hidden-tab-scroll-01-input-boundary-01";

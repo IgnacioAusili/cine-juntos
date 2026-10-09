@@ -8,8 +8,8 @@ import {
 } from "./mini-player-controls.js?v=20261008";
 import {
   mirrorMiniPlayerChatState,
-} from "./mini-player-chat.js?v=20261009-bottom-chat-expand-center-02";
-import { movePlayerInterface } from "./mini-player-interface.js?v=20261009-bottom-chat-expand-center-02";
+} from "./mini-player-chat.js?v=20261009-bottom-chat-expand-center-02-scroll-unread-visible-01-hidden-tab-scroll-01-input-boundary-01-scroll-unlocked-01";
+import { movePlayerInterface } from "./mini-player-interface.js?v=20261009-bottom-chat-expand-center-02-scroll-unread-visible-01-hidden-tab-scroll-01-input-boundary-01-scroll-unlocked-01";
 import { trackMiniPlayerReturnHint } from "./mini-player-return-hint.js";
 import { clampMiniPlayerPosition, wireMiniPlayerDrag } from "./mini-player-drag.js?v=20261008";
 

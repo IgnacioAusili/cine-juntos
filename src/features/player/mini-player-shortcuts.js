@@ -1,5 +1,5 @@
 import { dom } from "../../core/dom.js";
-import { toggleMiniChatOverlay } from "./mini-player-chat-mirror.js?v=20261009-bottom-chat-expand-center-02";
+import { toggleMiniChatOverlay } from "./mini-player-chat-mirror.js?v=20261009-bottom-chat-expand-center-02-scroll-unread-visible-01-hidden-tab-scroll-01-input-boundary-01-scroll-unlocked-01";
 
 const SEEK_STEP_SECONDS = 5;
 const VOLUME_STEP = 0.05;

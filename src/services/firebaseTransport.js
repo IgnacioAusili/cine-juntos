@@ -1,6 +1,9 @@
 import { FIREBASE_VERSION, MAX_ROOM_PARTICIPANTS, STALE_MEMBER_TIMEOUT_MS } from "../core/utils.js";
 import { state, makeMemberPayload, logEvent } from "../core/state.js?v=20261008";
 
+const INITIAL_CHAT_HISTORY_PAGE_SIZE = 8;
+const CHAT_HISTORY_PAGE_SIZE = 12;
+
 export async function createFirebaseTransport(roomCode, config) {
   const [appModule, authModule, dbModule] = await Promise.all([
     import(`https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}/firebase-app.js`),
@@ -33,7 +36,7 @@ export async function createFirebaseTransport(roomCode, config) {
   let roomDisconnectTask = Promise.resolve();
   let closePromise = null;
   let closed = false;
-  const latestMessagesQuery = dbModule.query(messagesRef, dbModule.limitToLast(100));
+  let historyCursor = null;
 
   const getActiveMembers = (members, now = Date.now() + serverTimeOffset) => {
     const activeMembers = {};
@@ -125,10 +128,29 @@ export async function createFirebaseTransport(roomCode, config) {
   return {
     mode: "firebase",
     async connect(handlers) {
-      const deliverMessage = (snapshot) => {
+      const initialMessageIds = new Set();
+      const pendingInitialMessages = new Map();
+      let initialMessagesReady = false;
+      const latestMessagesQuery = dbModule.query(
+        messagesRef,
+        dbModule.orderByKey(),
+        dbModule.limitToLast(INITIAL_CHAT_HISTORY_PAGE_SIZE),
+      );
+      const deliverMessage = (snapshot, { animateSystemGroups = false, isHistory = false } = {}) => {
         const message = { id: snapshot.key, ...snapshot.val() };
-        handlers.onMessage?.(message);
+        return handlers.onMessage?.(message, { animateSystemGroups, isHistory });
       };
+      const receiveAddedMessage = (snapshot) => {
+        if (initialMessageIds.has(snapshot.key)) return;
+        if (!initialMessagesReady) {
+          pendingInitialMessages.set(snapshot.key, snapshot);
+          return;
+        }
+        void deliverMessage(snapshot, {
+          animateSystemGroups: document.visibilityState === "visible",
+        });
+      };
+      let messageHistoryReady = Promise.resolve();
       try {
         const serverTimeOffsetSnapshot = await dbModule.get(serverTimeOffsetRef).catch(() => null);
         serverTimeOffset = Number(serverTimeOffsetSnapshot?.val()) || 0;
@@ -137,10 +159,30 @@ export async function createFirebaseTransport(roomCode, config) {
         // Registrar el historial después de limpiar una sala huérfana evita que
         // mensajes de una sesión anterior lleguen a pintarse en el reingreso.
         // Se registra antes de esperar la transacción de presencia.
-        unsubscribers.push(dbModule.onChildAdded(latestMessagesQuery, deliverMessage));
-        void dbModule.get(latestMessagesQuery)
-          .then((snapshot) => snapshot.forEach((child) => deliverMessage(child)))
-          .catch(() => {});
+        unsubscribers.push(dbModule.onChildAdded(latestMessagesQuery, receiveAddedMessage));
+        messageHistoryReady = dbModule.get(latestMessagesQuery)
+          .then(async (snapshot) => {
+            const initialMessages = [];
+            snapshot.forEach((child) => {
+              initialMessageIds.add(child.key);
+              initialMessages.push(child);
+            });
+            historyCursor = initialMessages[0]?.key || null;
+            for (const child of initialMessages) {
+              await deliverMessage(child, { isHistory: true });
+            }
+          })
+          .catch(() => undefined)
+          .then(async () => {
+            initialMessagesReady = true;
+            for (const [messageId, snapshot] of pendingInitialMessages) {
+              if (initialMessageIds.has(messageId)) continue;
+              await deliverMessage(snapshot, {
+                animateSystemGroups: document.visibilityState === "visible",
+              });
+            }
+            pendingInitialMessages.clear();
+          });
 
         const joinResult = await dbModule.runTransaction(
           membersRef,
@@ -171,6 +213,7 @@ export async function createFirebaseTransport(roomCode, config) {
         await configureRoomDisconnectCleanup(
           Object.keys(lastMembers).length === 1 && Boolean(lastMembers[state.session.clientId]),
         ).catch(() => {});
+        await messageHistoryReady;
       } catch (error) {
         const wrapped = new Error(error?.message || "No se pudo escribir en members.");
         wrapped.code = error?.code || "FIREBASE_PERMISSION_DENIED";
@@ -221,6 +264,31 @@ export async function createFirebaseTransport(roomCode, config) {
       heartbeat = window.setInterval(() => {
         dbModule.set(memberRef, makeMemberPayload()).catch(() => {});
       }, 10000);
+    },
+    async loadOlderMessages(requestedPageSize = CHAT_HISTORY_PAGE_SIZE) {
+      if (!historyCursor) return { messages: [], hasMore: false };
+      const pageSize = Math.min(
+        CHAT_HISTORY_PAGE_SIZE,
+        Math.max(1, Math.floor(Number(requestedPageSize) || CHAT_HISTORY_PAGE_SIZE)),
+      );
+      const olderMessagesQuery = dbModule.query(
+        messagesRef,
+        dbModule.orderByKey(),
+        dbModule.endBefore(historyCursor),
+        dbModule.limitToLast(pageSize),
+      );
+      const snapshot = await dbModule.get(olderMessagesQuery);
+      const messages = [];
+      let nextHistoryCursor = null;
+      snapshot.forEach((child) => {
+        if (nextHistoryCursor === null) nextHistoryCursor = child.key;
+        messages.push({ id: child.key, ...child.val() });
+      });
+      if (nextHistoryCursor !== null) historyCursor = nextHistoryCursor;
+      return {
+        messages,
+        hasMore: messages.length === pageSize,
+      };
     },
     async sendState(payload) {
       await dbModule.set(stateRef, {

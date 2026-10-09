@@ -13,9 +13,13 @@ import {
   updateCharCounter,
   wireFloatingComposerLayout,
   wireComposerScrollbar,
-} from "./chat-input.js?v=20261009-bottom-chat-expand-center-02";
+} from "./chat-input.js?v=20261009-bottom-chat-expand-center-02-scroll-unread-visible-01-hidden-tab-scroll-01-input-boundary-01-chat-history-page-01-scroll-unlocked-01";
 import { setReplyTarget } from "./chat-reply.js?v=20261008";
-import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20261009-bottom-chat-expand-center-02";
+import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20261009-bottom-chat-expand-center-02-scroll-unread-visible-01-hidden-tab-scroll-01-input-boundary-01-scroll-unlocked-01";
+import {
+  fillChatHistoryViewport,
+  loadOlderChatHistory,
+} from "./chat-history.js?v=20261009-chat-history-page-01-scroll-unlocked-01";
 import {
   copyMessageText,
   hideMessageMenu,
@@ -33,7 +37,7 @@ import {
   syncExternalChatCollapseHandleOffset,
   syncChatAutoExpandControls,
   wireResponsiveSessionLayout,
-} from "./chat-layout.js?v=20261009-bottom-chat-expand-center-02";
+} from "./chat-layout.js?v=20261009-bottom-chat-expand-center-02-scroll-unread-visible-01-hidden-tab-scroll-01-input-boundary-01-scroll-unlocked-01";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20261008";
 import { focusChatInput } from "./chat-input-focus.js";
 import { hideTooltip } from "../icons-tooltips.js?v=20261009-tooltip-slide-04";
@@ -204,24 +208,29 @@ export {
   buildEmojiPicker,
   updateCharCounter,
   sendMessage,
-} from "./chat-input.js?v=20261009-bottom-chat-expand-center-02";
+} from "./chat-input.js?v=20261009-bottom-chat-expand-center-02-scroll-unread-visible-01-hidden-tab-scroll-01-input-boundary-01-chat-history-page-01-scroll-unlocked-01";
 export {
   beginSystemMessageHydration,
   finishSystemMessageHydration,
   renderMessage,
-} from "./chat-render.js?v=20261009-bottom-chat-expand-center-02";
+} from "./chat-render.js?v=20261009-system-message-catchup-03-scroll-unread-visible-01-hidden-tab-scroll-01-input-boundary-01-chat-history-page-01-scroll-unlocked-01";
+export {
+  fillChatHistoryViewport,
+  loadOlderChatHistory,
+  resetChatHistoryPaging,
+} from "./chat-history.js?v=20261009-chat-history-page-01-scroll-unlocked-01";
 export {
   clearReplyTarget,
   renderReplyPreview,
   scrollToMessage,
   setReplyTarget,
 } from "./chat-reply.js?v=20261008";
-export { sendVideoEventMessage } from "./chat-system-messages.js?v=20261009-bottom-chat-expand-center-02";
+export { sendVideoEventMessage } from "./chat-system-messages.js?v=20261009-bottom-chat-expand-center-02-scroll-unread-visible-01-hidden-tab-scroll-01-input-boundary-01-chat-history-page-01-scroll-unlocked-01";
 export {
   checkScrollPosition,
   resetInsideUnread,
   resetPageUnread,
-} from "./unread-counters.js?v=20261009-bottom-chat-expand-center-02";
+} from "./unread-counters.js?v=20261009-bottom-chat-expand-center-02-scroll-unread-visible-01-hidden-tab-scroll-01-input-boundary-01-scroll-unlocked-01";
 export {
   copyMessageText,
   hideMessageMenu,
@@ -239,7 +248,7 @@ export {
   setInsideChatVisible,
   syncChatAutoExpandControls,
   updateCollapseButton,
-} from "./chat-layout.js?v=20261009-bottom-chat-expand-center-02";
+} from "./chat-layout.js?v=20261009-bottom-chat-expand-center-02-scroll-unread-visible-01-hidden-tab-scroll-01-input-boundary-01-scroll-unlocked-01";
 
 export function wireChatEvents() {
   syncChatAutoExpandControls();
@@ -265,6 +274,9 @@ export function wireChatEvents() {
   }
   window.addEventListener("chat-layout-settled", syncExternalChatCollapseHandleOffset, { passive: true });
   window.addEventListener("chat-layout-settled", clearCollapsePointerHover, { passive: true });
+  window.addEventListener("chat-layout-settled", () => {
+    void fillChatHistoryViewport();
+  }, { passive: true });
   window.addEventListener("scroll", syncExternalChatCollapseHandleOffset, { passive: true });
   window.requestAnimationFrame(syncExternalChatCollapseHandleOffset);
 
@@ -494,12 +506,18 @@ export function wireChatEvents() {
   dom.messages.addEventListener("scroll", () => checkScrollPosition(false), {
     passive: true,
   });
+  dom.messages.addEventListener("scroll", () => {
+    if (dom.messages.scrollTop <= 1) void loadOlderChatHistory(dom.messages);
+  }, { passive: true });
 
   dom.overlayMessages.addEventListener(
     "scroll",
     () => checkScrollPosition(true),
     { passive: true },
   );
+  dom.overlayMessages.addEventListener("scroll", () => {
+    if (dom.overlayMessages.scrollTop <= 1) void loadOlderChatHistory(dom.overlayMessages);
+  }, { passive: true });
 
   dom.overlayMessages.addEventListener(
     "wheel",
@@ -594,6 +612,9 @@ export function wireChatEvents() {
   window.addEventListener("resize", syncUnreadBadgesWithVisibility, {
     passive: true,
   });
+  window.addEventListener("resize", () => {
+    void fillChatHistoryViewport();
+  }, { passive: true });
   window.addEventListener("resize", syncExternalChatCollapseHandleOffset, {
     passive: true,
   });

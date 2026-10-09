@@ -1,6 +1,6 @@
 import { dom } from "../../core/dom.js";
 import { state, logEvent } from "../../core/state.js?v=20261008";
-import { MAX_RENDERED_MESSAGES, formatTime, formatClockTime } from "../../core/utils.js?v=20261008";
+import { formatTime, formatClockTime } from "../../core/utils.js?v=20261008";
 import { markParticipantActive, rememberParticipant } from "../presence.js?v=20261008";
 import { extendMessageHitArea, wireMessageInteractions } from "./chat-message-interactions.js?v=20261009-emoji-reply-settle-01";
 import { appendMessageContent, truncateText } from "./chat-content-parser.js?v=20261008";
@@ -10,7 +10,7 @@ import {
   handleIncomingUnread,
   handleIncomingPageUnread,
   incrementScrollIndicator,
-} from "./unread-counters.js?v=20261009-bottom-chat-expand-center-02";
+} from "./unread-counters.js?v=20261009-bottom-chat-expand-center-02-scroll-unread-visible-01-hidden-tab-scroll-01-input-boundary-01-scroll-unlocked-01";
 import { setReplyTarget, scrollToMessage } from "./chat-reply.js?v=20261008";
 import {
   animateExpandedSystemMessageRemoval,
@@ -24,25 +24,24 @@ const EMOJI_ONLY_PATTERN = /^(?:[\s\p{Extended_Pictographic}\p{Emoji_Presentatio
 const EMOJI_GLYPH_PATTERN = /[\p{Extended_Pictographic}\p{Emoji_Presentation}]/u;
 const SYSTEM_MESSAGE_STREAK_LIMIT = 10;
 const SYSTEM_MESSAGE_EXIT_MS = 380;
-const SYSTEM_GROUP_HYDRATION_MAX_MS = 8000;
+const SYSTEM_GROUP_MESSAGE_FRESHNESS_MS = 3000;
+const SYSTEM_GROUP_RESUME_GRACE_MS = 250;
 const messageRenderQueues = new WeakMap();
 const systemMessageLayoutObservers = new WeakMap();
 const systemMessageLayoutFrames = new WeakMap();
+let systemMessageResumeAt = 0;
+
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState !== "visible") return;
+  systemMessageResumeAt = state.session.transport?.now?.() ?? Date.now();
+});
 
 export function beginSystemMessageHydration() {
   finishSystemMessageHydration();
   state.chat.systemGroupAnimationSuppressed = true;
-  state.chat.systemGroupAnimationMaxTimer = window.setTimeout(
-    finishSystemMessageHydration,
-    SYSTEM_GROUP_HYDRATION_MAX_MS,
-  );
 }
 
 export function finishSystemMessageHydration() {
-  if (state.chat.systemGroupAnimationMaxTimer) {
-    window.clearTimeout(state.chat.systemGroupAnimationMaxTimer);
-    state.chat.systemGroupAnimationMaxTimer = null;
-  }
   state.chat.systemGroupAnimationSuppressed = false;
 }
 
@@ -50,12 +49,15 @@ export function finishSystemMessageHydration() {
  * Renderiza un mensaje en los contenedores de chat.
  */
 export function renderMessage(message, options = {}) {
+  const isHistory = Boolean(options.isHistory);
+  const prepend = Boolean(options.prepend);
   const requestedSystemGroupAnimation = options.animateSystemGroups
     ?? message?.animateSystemGroups
     ?? (message?.videoEvent?.action === "video-ready" ? false : null)
     ?? true;
   const animateSystemGroups = requestedSystemGroupAnimation
-    && !state.chat.systemGroupAnimationSuppressed;
+    && !state.chat.systemGroupAnimationSuppressed
+    && canAnimateSystemMessage(message);
   const messageText = String(message?.text || "").trim();
   const messageImages = getRenderableMessageImages(message, messageText);
   if (
@@ -67,10 +69,10 @@ export function renderMessage(message, options = {}) {
   rememberParticipant(message.from, message.name);
   markParticipantActive(message.from, message.name);
 
-  const mainItem = appendMessageTo(dom.messages, message, { animateSystemGroups });
-  const overlayItem = appendMessageTo(dom.overlayMessages, message, { animateSystemGroups });
+  const mainItem = appendMessageTo(dom.messages, message, { animateSystemGroups, prepend });
+  const overlayItem = appendMessageTo(dom.overlayMessages, message, { animateSystemGroups, prepend });
 
-  if (message.from !== state.session.clientId) {
+  if (message.from !== state.session.clientId && !isHistory) {
     handleIncomingUnread();
     handleIncomingPageUnread();
   }
@@ -81,6 +83,23 @@ export function renderMessage(message, options = {}) {
     scheduleMessageTimeAdjustmentForBubble(item?.querySelector(".message-bubble"));
   });
   logEvent("chat:recv", `Mensaje recibido de ${message.name || "Invitado"}.`);
+  return Promise.all([mainItem, overlayItem]);
+}
+
+function canAnimateSystemMessage(message) {
+  if (!message?.system) return true;
+  if (document.visibilityState !== "visible") return false;
+
+  const serverTime = message.serverTime == null ? Number.NaN : Number(message.serverTime);
+  const createdAt = message.createdAt == null ? Number.NaN : Number(message.createdAt);
+  const messageTime = Number.isFinite(serverTime) ? serverTime : createdAt;
+  const now = state.session.transport?.now?.() ?? Date.now();
+  if (systemMessageResumeAt && now <= systemMessageResumeAt + SYSTEM_GROUP_RESUME_GRACE_MS) return false;
+  if (!Number.isFinite(messageTime)) {
+    return !systemMessageResumeAt || now - systemMessageResumeAt > SYSTEM_GROUP_MESSAGE_FRESHNESS_MS;
+  }
+  if (now - messageTime > SYSTEM_GROUP_MESSAGE_FRESHNESS_MS) return false;
+  return !systemMessageResumeAt || messageTime > systemMessageResumeAt + SYSTEM_GROUP_RESUME_GRACE_MS;
 }
 
 /**
@@ -100,10 +119,12 @@ function appendMessageTo(container, message, options = {}) {
   return task;
 }
 
-function appendMessageNow(container, message, { animateSystemGroups = true } = {}) {
+function appendMessageNow(container, message, { animateSystemGroups = true, prepend = false } = {}) {
   const isMine = message.from === state.session.clientId;
   const authorKey = String(message.from || message.name || "").trim();
-  const previousMessage = getPreviousRenderableMessage(container);
+  const previousMessage = prepend
+    ? getFirstRenderableMessage(container)
+    : getPreviousRenderableMessage(container);
   const messageText = String(message?.text || "").trim();
   const messageImages = getRenderableMessageImages(message, messageText);
   const isContinuation = Boolean(
@@ -111,7 +132,7 @@ function appendMessageNow(container, message, { animateSystemGroups = true } = {
     !previousMessage?.classList.contains("system") &&
     previousMessage?.dataset.authorId === authorKey,
   );
-  const shouldRenderAuthorName = !isContinuation;
+  const shouldRenderAuthorName = prepend || !isContinuation;
   const hasRenderableText = Boolean(messageText) && !isStandaloneImageText(messageText);
   const hasReply = Boolean(
     message.replyTo?.text ||
@@ -340,12 +361,16 @@ function appendMessageNow(container, message, { animateSystemGroups = true } = {
       allowSwipeInsideBubble: true,
     });
   }
-  container.append(item);
+  if (prepend) {
+    container.prepend(item);
+    if (isContinuation) removeContinuationAuthorName(previousMessage);
+  } else {
+    container.append(item);
+  }
   if (message.system) {
     watchSystemMessageLayout(container);
     fitSystemMessageBubble(item);
   }
-  trimRenderedMessages(container);
   scheduleSystemMessageCollapse(container, {
     animateIncoming: Boolean(message.system) && animateSystemGroups,
   });
@@ -354,9 +379,13 @@ function appendMessageNow(container, message, { animateSystemGroups = true } = {
   const threshold = 120;
   const distanceFromBottom =
     container.scrollHeight - container.scrollTop - container.clientHeight;
-  if (distanceFromBottom <= threshold || message.from === state.session.clientId) {
+  if (
+    !prepend &&
+    !document.hidden &&
+    (distanceFromBottom <= threshold || message.from === state.session.clientId)
+  ) {
     container.scrollTop = container.scrollHeight;
-  } else if (message.from !== state.session.clientId) {
+  } else if (!prepend && message.from !== state.session.clientId) {
     incrementScrollIndicator(isOverlay);
   }
 
@@ -484,6 +513,24 @@ function getPreviousRenderableMessage(container) {
   return null;
 }
 
+function getFirstRenderableMessage(container) {
+  const children = Array.from(container.children);
+  for (const child of children) {
+    if (!child.classList.contains("message")) continue;
+    if (child.classList.contains("system-group-collapsed-item")) continue;
+    return child;
+  }
+  return null;
+}
+
+function removeContinuationAuthorName(message) {
+  const name = message?.querySelector(".message-meta-name");
+  if (!name) return;
+  const meta = name.parentElement;
+  name.remove();
+  if (meta && !meta.children.length) meta.remove();
+}
+
 function getSystemMessageText(message, isMine) {
   const videoEvent = message.videoEvent;
   if (videoEvent?.action === "video-ready" && videoEvent.isReload) {
@@ -535,21 +582,6 @@ function countEmojiGlyphs(text) {
   return [...value].filter((character) => EMOJI_GLYPH_PATTERN.test(character)).length;
 }
 
-/**
- * Limita la cantidad de mensajes renderizados para optimizar el rendimiento.
- */
-function trimRenderedMessages(container) {
-  const messageChildren = () => Array.from(container.children).filter((child) => child.classList.contains("message"));
-  while (messageChildren().length > MAX_RENDERED_MESSAGES) {
-    const oldest = messageChildren()[0];
-    if (!oldest) break;
-    const groupHeader = prepareSystemMessageRemoval(container, oldest);
-    oldest.remove();
-    refreshSystemMessageGroup(groupHeader);
-    scheduleSystemMessageCollapse(container);
-  }
-}
-
 function getTrailingSystemStreak(container) {
   const children = Array.from(container.children).filter((child) => child.classList.contains("message"));
   let streakStart = children.length;
@@ -572,8 +604,8 @@ function removeOldestSystemMessage(container, { animateSystemGroups = true } = {
   const oldest = streak[0];
   if (!oldest) return Promise.resolve();
 
-  const wasNearBottom =
-    container.scrollHeight - container.scrollTop - container.clientHeight <= 120;
+  const wasNearBottom = !document.hidden
+    && container.scrollHeight - container.scrollTop - container.clientHeight <= 120;
   const groupHeader = prepareSystemMessageRemoval(container, oldest, { deferReanchor: true });
   const expandedRemoval = groupHeader?.getAttribute("aria-expanded") === "true";
 
@@ -582,7 +614,7 @@ function removeOldestSystemMessage(container, { animateSystemGroups = true } = {
     oldest.remove();
     refreshSystemMessageGroup(groupHeader);
     scheduleSystemMessageCollapse(container);
-    if (wasNearBottom) container.scrollTop = container.scrollHeight;
+    if (wasNearBottom && !document.hidden) container.scrollTop = container.scrollHeight;
     return Promise.resolve();
   }
 
@@ -612,7 +644,7 @@ function removeOldestSystemMessage(container, { animateSystemGroups = true } = {
       refreshSystemMessageGroup(groupHeader);
       scheduleSystemMessageCollapse(container);
       animateExpandedSystemMessageRemoval(removalVisualState);
-      if (wasNearBottom) container.scrollTop = container.scrollHeight;
+      if (wasNearBottom && !document.hidden) container.scrollTop = container.scrollHeight;
       window.requestAnimationFrame(resolve);
     };
 

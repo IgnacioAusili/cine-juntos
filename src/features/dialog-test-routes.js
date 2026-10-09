@@ -8,7 +8,7 @@ import {
   showSlowLoadDialog,
   showSession,
 } from "./session-ui.js?v=20261008";
-import { setVideoStatus } from "./player/player.js?v=20261009-bottom-chat-expand-center-02";
+import { setVideoStatus } from "./player/player.js?v=20261009-bottom-chat-expand-center-02-scroll-unread-visible-01-hidden-tab-scroll-01-input-boundary-01-chat-history-page-01-scroll-unlocked-01";
 import { openLightboxForTest } from "./chat/image-lightbox.js?v=20261009-image-pan-01";
 
 export const DIALOG_TEST_ROUTES = Object.freeze({

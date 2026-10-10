@@ -15,7 +15,7 @@ import {
   resetInsideUnread,
   resetPageUnread,
   syncUnreadBadgesWithVisibility,
-} from "./unread-counters.js?v=20261009-bottom-chat-expand-center-02-scroll-unread-visible-01-hidden-tab-scroll-01-input-boundary-01-scroll-unlocked-01-dock-switch-stacked-viewport-01-right-chat-curtain-input-01-right-chat-close-settle-01-right-chat-viewport-curtain-01";
+} from "./unread-counters.js?v=20261009-auto-expand-tooltip-01";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20261008";
 import { focusChatInput } from "./chat-input-focus.js";
 import { restorePageScrollAfterRightChatCollapse } from "./chat-scroll-preservation.js?v=20261008";
@@ -39,6 +39,8 @@ const CHAT_LAYOUT_SETTLE_MS = 280;
 const COLLAPSE_HANDLE_HIDE_MS = CHAT_LAYOUT_SETTLE_MS + 40;
 // El dock lateral hereda esta duración de la transición flex de escritorio.
 const RIGHT_CHAT_LAYOUT_TRANSITION_MS = 350;
+// Mantiene estable el scroll del viewport durante el reflow del dock lateral móvil.
+const RIGHT_CHAT_SCROLL_LOCK_MS = 1200;
 const CHAT_SCROLL_SNAP_LOCK_MS = 900;
 const BOTTOM_CHAT_CURTAIN_MS = 320;
 const BOTTOM_CHAT_SCROLL_TIMEOUT_MS = 1200;
@@ -307,13 +309,13 @@ export function captureExternalChatCollapseScroll() {
       : null;
 }
 
-function getAutoExpandTooltip() {
-  return "Se abre al recibir mensajes y se oculta al responder";
+function getAutoExpandTooltip(enabled) {
+  return enabled ? "Desactivar" : "Activar";
 }
 
 function updateAutoExpandSwitch(button, enabled, label) {
   if (!button) return;
-  const tooltip = getAutoExpandTooltip();
+  const tooltip = getAutoExpandTooltip(enabled);
   button.classList.toggle("active", enabled);
   button.setAttribute("aria-checked", String(enabled));
   button.setAttribute("aria-label", `Autoexpandir ${label}`);

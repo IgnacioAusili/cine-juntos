@@ -3,8 +3,8 @@ import { logEvent, state } from "../../core/state.js?v=20261008";
 import {
   isExternalChatVisibleToUser,
   isInsideChatVisibleToUser,
-} from "./unread-counters.js?v=20261009-bottom-chat-expand-center-02-scroll-unread-visible-01-hidden-tab-scroll-01-input-boundary-01-scroll-unlocked-01";
-import { renderMessage } from "./chat-render.js?v=20261009-system-message-catchup-03-scroll-unread-visible-01-hidden-tab-scroll-01-input-boundary-01-chat-history-page-01-scroll-unlocked-01";
+} from "./unread-counters.js?v=20261009-bottom-chat-expand-center-02-scroll-unread-visible-01-hidden-tab-scroll-01-input-boundary-01-scroll-unlocked-01-dock-switch-stacked-viewport-01-right-chat-curtain-input-01-right-chat-close-settle-01-right-chat-viewport-curtain-01";
+import { renderMessage } from "./chat-render.js?v=20261009-system-message-catchup-03-scroll-unread-visible-01-hidden-tab-scroll-01-input-boundary-01-chat-history-page-01-scroll-unlocked-01-dock-switch-stacked-viewport-01-right-chat-curtain-input-01-right-chat-close-settle-01-right-chat-viewport-curtain-01";
 
 let historyGeneration = 0;
 let historyExhausted = false;

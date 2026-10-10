@@ -55,8 +55,9 @@
 
 .session-view.layout-stacked[data-chat-dock] .workspace {
   display: grid;
+  min-height: 0;
   grid-template-columns: 1fr;
-  grid-template-rows: minmax(360px, 58vh) minmax(360px, 42vh);
+  grid-template-rows: minmax(0, 58fr) minmax(0, 42fr);
   grid-template-areas:
     "video"
     "chat";
@@ -81,7 +82,7 @@
 
 .session-view.layout-stacked.chat-collapsed[data-chat-dock] .workspace {
   row-gap: 0;
-  grid-template-rows: minmax(360px, 58vh) 0px;
+  grid-template-rows: minmax(0, 1fr) 0px;
   grid-template-areas:
     "video"
     "chat";

@@ -1,7 +1,7 @@
 import {
   syncMiniChatAutoExpand,
   toggleMiniChatOverlay,
-} from "./mini-player-chat-mirror.js?v=20261009-bottom-chat-expand-center-02-scroll-unread-visible-01-hidden-tab-scroll-01-input-boundary-01-scroll-unlocked-01";
+} from "./mini-player-chat-mirror.js?v=20261009-bottom-chat-expand-center-02-scroll-unread-visible-01-hidden-tab-scroll-01-input-boundary-01-scroll-unlocked-01-dock-switch-stacked-viewport-01-right-chat-curtain-input-01-right-chat-close-settle-01-right-chat-viewport-curtain-01";
 import { state } from "../../core/state.js?v=20261008";
 
 export function mirrorMiniPlayerChatState(surface, visible = true) {

@@ -15,14 +15,14 @@ import {
   resetInsideUnread,
   resetPageUnread,
   syncUnreadBadgesWithVisibility,
-} from "./unread-counters.js?v=20261009-bottom-chat-expand-center-02-scroll-unread-visible-01-hidden-tab-scroll-01-input-boundary-01-scroll-unlocked-01";
+} from "./unread-counters.js?v=20261009-bottom-chat-expand-center-02-scroll-unread-visible-01-hidden-tab-scroll-01-input-boundary-01-scroll-unlocked-01-dock-switch-stacked-viewport-01-right-chat-curtain-input-01-right-chat-close-settle-01-right-chat-viewport-curtain-01";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20261008";
 import { focusChatInput } from "./chat-input-focus.js";
 import { restorePageScrollAfterRightChatCollapse } from "./chat-scroll-preservation.js?v=20261008";
 import {
   CHAT_DOCK_TRANSITIONS,
   resolveChatDockTransition,
-} from "./dock-transition-router.js?v=20261008";
+} from "./dock-transition-router.js?v=20261009-dock-switch-stacked-viewport-01";
 import {
   preserveInsideChatPanelPlacementWhileClosing,
   syncInsideChatPanelPlacement,
@@ -198,6 +198,11 @@ function isMobileLandscapeFullscreenBottomDock() {
 function isMobilePortraitRightDock() {
   return (dom.sessionView?.dataset.chatDock || "right") === "right"
     && isMobilePortraitChatViewport();
+}
+
+function isRightChatViewportOverlay() {
+  return (dom.sessionView?.dataset.chatDock || "right") === "right"
+    && window.matchMedia("(max-width: 680px)").matches;
 }
 
 // La grilla debe cambiar de una vez para evitar que el texto se reenvuelva en
@@ -387,10 +392,16 @@ function setCollapseHandleTransitioning(
   });
   dom.sessionView?.classList.toggle("chat-layout-transitioning", isTransitioning);
   const messageForm = dom.chatArea?.querySelector(".message-form");
-  if (isTransitioning && dom.sessionView?.dataset.chatDock === "right") {
+  if (
+    isTransitioning
+    && dom.sessionView?.dataset.chatDock === "right"
+    && !isRightChatViewportOverlay()
+  ) {
+    const rightDockUsesViewportWidth = isMobilePortraitRightDock()
+      || isMobileLandscapeRightDock();
     messageForm?.style.setProperty(
       "width",
-      isMobilePortraitRightDock()
+      rightDockUsesViewportWidth
         ? "calc(var(--app-viewport-width, 100vw) - 36px)"
         : "calc(var(--chat-panel-width) - 37px)",
     );
@@ -783,6 +794,7 @@ function dispatchChatDockTransition(currentDock, nextDock, options, videoScrollT
     isCollapsed: dom.sessionView?.classList.contains("chat-collapsed") || false,
     isFullscreen: isFullscreenPageActive(),
     isStacked: isStackedSessionLayout(),
+    isCoarsePointer: window.matchMedia("(hover: none) and (pointer: coarse)").matches,
     isMobilePortrait: isMobilePortraitChatViewport(),
   });
 
@@ -798,6 +810,12 @@ function dispatchChatDockTransition(currentDock, nextDock, options, videoScrollT
       return true;
     case CHAT_DOCK_TRANSITIONS.RIGHT_TO_BOTTOM_MOBILE:
       animateRightToBottomSwitch(nextDock);
+      return true;
+    case CHAT_DOCK_TRANSITIONS.RIGHT_TO_BOTTOM_STACKED:
+      // En esta composición los paneles ya se apilan. Cambiar directamente
+      // evita el amague lateral; setChatDock lleva el viewport a la unión
+      // entre video y chat para que el panel nuevo quede a la vista.
+      setChatDock(nextDock, { skipTransition: true });
       return true;
     case CHAT_DOCK_TRANSITIONS.FULLSCREEN:
       animateFullscreenDockSwitch(nextDock);
@@ -1096,9 +1114,9 @@ function scheduleBottomToRightSwitch(nextDock, targetScrollTop) {
     window.cancelAnimationFrame(transition.frameId);
     window.clearTimeout(transition.timeoutId);
 
-    const usePortraitOverlaySwitch =
-      nextDock === "right" && isMobilePortraitChatViewport();
-    const switchDuration = usePortraitOverlaySwitch
+    const useViewportOverlaySwitch = nextDock === "right"
+      && window.matchMedia("(max-width: 680px)").matches;
+    const switchDuration = useViewportOverlaySwitch
       ? RIGHT_CHAT_LAYOUT_TRANSITION_MS
       : BOTTOM_TO_RIGHT_LAYOUT_MS;
 
@@ -1117,13 +1135,20 @@ function scheduleBottomToRightSwitch(nextDock, targetScrollTop) {
       const chatArea = dom.chatArea;
       const workspace = dom.workspace;
       const fullscreenSwitch = isFullscreenPageActive();
-      // Fijar el estado cerrado después del cambio de dock evita que flex
-      // salte directamente al ancho final. La siguiente fase abre el panel y
-      // reduce el video en el mismo tick de layout.
-      chatArea?.style.setProperty("flex-basis", "0px");
-      chatArea?.style.setProperty("width", "0px");
+      // En una ventana angosta la superficie se monta sobre el video. Mantener
+      // el ancho final y revelar con clip-path evita que el composer se
+      // reacomode durante cada frame de la transición.
+      if (useViewportOverlaySwitch) {
+        chatArea?.style.setProperty("flex-basis", "100%");
+        chatArea?.style.setProperty("width", "100%");
+        chatArea?.style.setProperty("clip-path", "inset(0 0 0 100%)");
+      } else {
+        // En el dock lateral de escritorio el ancho sí se anima junto al video.
+        chatArea?.style.setProperty("flex-basis", "0px");
+        chatArea?.style.setProperty("width", "0px");
+      }
       chatArea?.style.setProperty("min-width", "0px");
-      chatArea?.style.setProperty("opacity", "0");
+      chatArea?.style.setProperty("opacity", useViewportOverlaySwitch ? "1" : "0");
       chatArea?.style.setProperty("transition", "none");
       if (fullscreenSwitch) {
         workspace?.style.setProperty("grid-template-columns", "minmax(0, 1fr) 0px");
@@ -1146,13 +1171,22 @@ function scheduleBottomToRightSwitch(nextDock, targetScrollTop) {
           scrollPageTo(workspaceTop, "auto");
         }
         dom.sessionView.classList.add("chat-dock-switching-entered");
-        chatArea?.style.setProperty(
-          "transition",
-          `flex-basis ${BOTTOM_TO_RIGHT_LAYOUT_MS}ms ease-in-out, width ${BOTTOM_TO_RIGHT_LAYOUT_MS}ms ease-in-out, opacity ${BOTTOM_TO_RIGHT_LAYOUT_MS}ms ease-in-out`,
-        );
-        chatArea?.style.setProperty("flex-basis", "var(--chat-panel-width)");
-        chatArea?.style.setProperty("width", "var(--chat-panel-width)");
-        chatArea?.style.setProperty("opacity", "1");
+        if (useViewportOverlaySwitch) {
+          chatArea?.style.setProperty(
+            "transition",
+            `clip-path ${switchDuration}ms cubic-bezier(0.22, 1, 0.36, 1)`,
+          );
+          chatArea?.style.setProperty("clip-path", "inset(0 0 0 0)");
+          chatArea?.style.setProperty("opacity", "1");
+        } else {
+          chatArea?.style.setProperty(
+            "transition",
+            `flex-basis ${BOTTOM_TO_RIGHT_LAYOUT_MS}ms ease-in-out, width ${BOTTOM_TO_RIGHT_LAYOUT_MS}ms ease-in-out, opacity ${BOTTOM_TO_RIGHT_LAYOUT_MS}ms ease-in-out`,
+          );
+          chatArea?.style.setProperty("flex-basis", "var(--chat-panel-width)");
+          chatArea?.style.setProperty("width", "var(--chat-panel-width)");
+          chatArea?.style.setProperty("opacity", "1");
+        }
         if (fullscreenSwitch) {
           workspace?.style.setProperty(
             "transition",
@@ -1171,6 +1205,7 @@ function scheduleBottomToRightSwitch(nextDock, targetScrollTop) {
           chatArea?.style.removeProperty("min-width");
           chatArea?.style.removeProperty("opacity");
           chatArea?.style.removeProperty("transition");
+          chatArea?.style.removeProperty("clip-path");
           workspace?.style.removeProperty("grid-template-columns");
           workspace?.style.removeProperty("transition");
         }, switchDuration);
@@ -1715,11 +1750,9 @@ function applyExternalChatCollapsed(collapsed) {
       ? RIGHT_CHAT_SCROLL_LOCK_MS
       : CHAT_SCROLL_SNAP_LOCK_MS,
   );
-  const handleSettleDelay = isMobilePortraitRightDock()
-    ? RIGHT_CHAT_LAYOUT_TRANSITION_MS
-    : !collapsed && isMobileLandscapeRightDock()
-      ? RIGHT_CHAT_LAYOUT_TRANSITION_MS
-      : COLLAPSE_HANDLE_HIDE_MS;
+  const handleSettleDelay = isRightChatViewportOverlay()
+    ? RIGHT_CHAT_LAYOUT_TRANSITION_MS + 40
+    : COLLAPSE_HANDLE_HIDE_MS;
   setCollapseHandleTransitioning(true, handleSettleDelay);
   dom.sessionView.classList.toggle("chat-collapsed", collapsed);
   localStorage.setItem(EXTERNAL_CHAT_COLLAPSED_KEY, collapsed ? "1" : "0");
@@ -1781,6 +1814,19 @@ function applyExternalChatCollapsed(collapsed) {
         });
       });
     }, CHAT_LAYOUT_SETTLE_MS + 40);
+    return;
+  }
+
+  // Mantener el reproductor anclado al viewport al cerrar el overlay. Sin
+  // este ajuste, el clamp del documento devuelve el scroll al inicio y deja
+  // fuera de vista la parte superior del video a pesar de que su alto sea el
+  // del viewport completo.
+  if (isRightChatViewportOverlay() && dom.workspace) {
+    const targetTop = Math.min(
+      getPageScrollMax(),
+      Math.max(0, Math.round(getElementPageTop(dom.workspace))),
+    );
+    scrollPageTo(targetTop, "auto");
     return;
   }
 

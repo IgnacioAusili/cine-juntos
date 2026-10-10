@@ -4,6 +4,7 @@ export const CHAT_DOCK_TRANSITIONS = Object.freeze({
   FULLSCREEN: "fullscreen",
   RIGHT_TO_BOTTOM_NATIVE: "right-to-bottom-native",
   RIGHT_TO_BOTTOM_MOBILE: "right-to-bottom-mobile",
+  RIGHT_TO_BOTTOM_STACKED: "right-to-bottom-stacked",
 });
 
 export function resolveChatDockTransition({
@@ -13,6 +14,7 @@ export function resolveChatDockTransition({
   isCollapsed,
   isFullscreen,
   isStacked,
+  isCoarsePointer,
   isMobilePortrait,
 }) {
   if (skipTransition || currentDock === nextDock) return null;
@@ -31,7 +33,10 @@ export function resolveChatDockTransition({
   }
 
   if (currentDock === "right" && nextDock === "bottom" && !isCollapsed) {
-    return isMobilePortrait
+    if (isStacked && !isCoarsePointer) {
+      return CHAT_DOCK_TRANSITIONS.RIGHT_TO_BOTTOM_STACKED;
+    }
+    return isMobilePortrait || isStacked
       ? CHAT_DOCK_TRANSITIONS.RIGHT_TO_BOTTOM_MOBILE
       : CHAT_DOCK_TRANSITIONS.RIGHT_TO_BOTTOM_NATIVE;
   }

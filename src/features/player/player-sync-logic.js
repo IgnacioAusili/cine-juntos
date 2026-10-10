@@ -14,10 +14,10 @@ import {
 } from "../../core/utils.js";
 import { markParticipantActive, rememberParticipant } from "../presence.js?v=20261008";
 import { setSyncStatus } from "../session-ui.js?v=20261008";
-import { sendVideoEventMessage, renderMessage } from "../chat/index.js?v=20261009-system-message-catchup-03-scroll-unread-visible-01-hidden-tab-scroll-01-input-boundary-01-chat-history-page-01-scroll-unlocked-01-dock-switch-stacked-viewport-01-right-chat-curtain-input-01-right-chat-close-settle-01-right-chat-viewport-curtain-01";
+import { sendVideoEventMessage, renderMessage } from "../chat/index.js?v=20261010-bottom-chat-collapse-rows-controls-01";
 // Import circular intencional y seguro: estas funciones se invocan en runtime,
 // no durante la carga del modulo, y player.js a su vez importa publishState.
-import { clearVideoSource, setVideoSource, waitForVideoMetadata } from "./player.js?v=20261009-bottom-chat-expand-center-02-scroll-unread-visible-01-hidden-tab-scroll-01-input-boundary-01-chat-history-page-01-scroll-unlocked-01-dock-switch-stacked-viewport-01-right-chat-curtain-input-01-right-chat-close-settle-01-right-chat-viewport-curtain-01";
+import { clearVideoSource, setVideoSource, waitForVideoMetadata } from "./player.js?v=20261010-bottom-chat-collapse-rows-controls-01";
 
 const PLAYBACK_ISSUE_SYNC_COOLDOWN_MS = 2200;
 // Los eventos waiting/stalled también se disparan por pequeños saltos de red.

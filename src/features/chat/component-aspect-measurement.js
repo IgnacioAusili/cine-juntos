@@ -1,5 +1,7 @@
 const FULL_PANEL_LAYOUT_CLASS = "layout-component-stack";
 const DEFAULT_VIDEO_ASPECT_RATIO = 16 / 9;
+const MIN_VIDEO_ASPECT_SHORTFALL_PX = 24;
+const VIDEO_ASPECT_SHORTFALL_TOLERANCE = 0.08;
 
 let measuringExpandedTarget = false;
 
@@ -103,12 +105,17 @@ export function measurePanelLayoutTarget({
     ? videoAreaRect.height + chatRect.height + rowGap
     : 0;
   const requiredVideoHeight = videoRect.width / getVideoAspectRatio(videoPlayer);
+  const videoAspectShortfall = requiredVideoHeight - videoRect.height;
+  const toleratedVideoShortfall = Math.max(
+    MIN_VIDEO_ASPECT_SHORTFALL_PX,
+    requiredVideoHeight * VIDEO_ASPECT_SHORTFALL_TOLERANCE,
+  );
   const shouldStack = Boolean(
     videoRect.width > 0
     && videoRect.height > 0
     && chatRect.width > 0
     && chatRect.height > 0
-    && videoRect.height < requiredVideoHeight,
+    && videoAspectShortfall > toleratedVideoShortfall,
   );
 
   if (wasCollapsed) {

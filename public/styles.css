@@ -1,7 +1,7 @@
 @import url("./styles/tokens.css?v=20261008");
 @import url("./styles/base.css?v=20261008");
-@import url("./styles/layout.css?v=20261009-bottom-chat-radius-01");
-@import url("./styles/components.css?v=20261009-chat-hover-geometry-03-tooltip-slide-04-room-back-slide-02");
+@import url("./styles/layout.css?v=20261009-bottom-chat-radius-01-username-pencil-size-01");
+@import url("./styles/components.css?v=20261009-chat-hover-geometry-03-tooltip-slide-04-room-back-slide-02-switch-thumb-hover-05");
 @import url("./styles/lobby.css?v=20261008");
 @import url("./styles/player.css?v=20261008");
 @import url("./styles/chat.css?v=20261009-system-roll-perspective-01");
@@ -10,7 +10,7 @@
 @import url("./styles/states.css?v=20261008");
 @import url("./styles/responsive.css?v=20261009-stacked-chat-viewport-01-dock-switch-stacked-viewport-01");
 @import url("./styles/mini-player.css?v=20261008");
-@import url("./styles/mobile.css?v=20261009-stacked-chat-viewport-01-dock-switch-stacked-viewport-01-right-chat-player-match-01-right-chat-visible-viewport-02-right-chat-viewport-curtain-01-right-chat-curtain-opacity-01-right-chat-arrow-hover-01-disabled-seek-hover-01");
+@import url("./styles/mobile.css?v=20261009-stacked-chat-viewport-01-dock-switch-stacked-viewport-01-right-chat-player-match-01-right-chat-visible-viewport-02-right-chat-viewport-curtain-01-right-chat-curtain-opacity-01-right-chat-arrow-hover-01-disabled-seek-hover-01-right-chat-narrow-overlay-01-bottom-chat-collapse-controls-01");
   @import url("./styles/mobile-landscape.css?v=20261008");
 @import url("./styles/mobile-fullscreen-viewport.css?v=20261008");
 @import url("./styles/mini-player-adjustments.css?v=20261008");
@@ -23,6 +23,7 @@
 @import url("./styles/lobby-footer-panel.css?v=20261008");
 @import url("./styles/player-progress-responsive.css?v=20261008");
 @import url("./styles/component-stack-chat-header.css?v=20261008");
+@import url("./styles/bottom-chat-visible-viewport.css?v=20261010-bottom-chat-visible-viewport-01-side-gutter-fit-01");
 
 /* En layouts apilados, el primer carril del header queda reservado aunque la
    flecha esté momentáneamente fuera del header durante la transición. */
@@ -104,7 +105,7 @@
 /* El nombre y su lápiz forman un grupo centrado dentro del espacio libre del
    lado izquierdo del header. */
 .chat-tools-leading > .chat-name-field {
-  --chat-name-control-width: 20px;
+  --chat-name-control-width: 22px;
   --chat-name-control-gap: 6px;
   grid-column: 2;
   min-width: 0;

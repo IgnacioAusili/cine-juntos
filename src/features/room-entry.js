@@ -10,7 +10,7 @@ import {
   renderMembers,
   renderPresence,
 } from "./presence.js?v=20261008";
-import { setConnection } from "./icons-tooltips.js?v=20261009-tooltip-slide-04";
+import { setConnection } from "./icons-tooltips.js?v=20261010-tooltip-click-guard-01";
 import { syncComponentAspectLayoutNow } from "./chat/component-aspect-layout.js?v=20261008-unified-panel-layout-01-shared-viewport-fit-01";
 import {
   getUserScrollIntentVersion,
@@ -20,7 +20,7 @@ import {
   showSession,
   watchRoomEntryVideoFocus,
 } from "./session-ui.js?v=20261008";
-import { handleRemoteState } from "./player/index.js?v=20261009-bottom-chat-expand-center-02-scroll-unread-visible-01-hidden-tab-scroll-01-input-boundary-01-chat-history-page-01-scroll-unlocked-01-dock-switch-stacked-viewport-01-right-chat-curtain-input-01-right-chat-close-settle-01-right-chat-viewport-curtain-01";
+import { handleRemoteState } from "./player/index.js?v=20261010-bottom-chat-collapse-rows-controls-01";
 import {
   beginSystemMessageHydration,
   finishSystemMessageHydration,
@@ -31,7 +31,7 @@ import {
   resetChatHistoryPaging,
   fillChatHistoryViewport,
   setInsideChatVisible,
-} from "./chat/index.js?v=20261009-system-message-catchup-03-scroll-unread-visible-01-hidden-tab-scroll-01-input-boundary-01-chat-history-page-01-scroll-unlocked-01-dock-switch-stacked-viewport-01-right-chat-curtain-input-01-right-chat-close-settle-01-right-chat-viewport-curtain-01";
+} from "./chat/index.js?v=20261010-bottom-chat-collapse-rows-controls-01";
 import {
   getRoomTabLimitConflictCount,
   writeActiveTabRecord,

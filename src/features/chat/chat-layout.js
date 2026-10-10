@@ -3,7 +3,7 @@ import { dom } from "../../core/dom.js";
 import { state, logEvent } from "../../core/state.js?v=20261008";
 import { shouldAnchorChatCollapseHandleInHeader } from "./chat-collapse-header-layout.js?v=20261008";
 import { CHAT_DOCKS, CHAT_DOCK_META, withShortcutHint } from "../../core/utils.js";
-import { hydrateIcons, hideTooltip, refreshTooltipForTarget } from "../icons-tooltips.js?v=20261009-tooltip-slide-04";
+import { hydrateIcons, hideTooltip, refreshTooltipForTarget } from "../icons-tooltips.js?v=20261010-tooltip-click-guard-01";
 import { focusFullscreenWorkspace } from "../session-ui.js?v=20261008";
 import {
   cancelIdentityEditing,
@@ -15,7 +15,7 @@ import {
   resetInsideUnread,
   resetPageUnread,
   syncUnreadBadgesWithVisibility,
-} from "./unread-counters.js?v=20261009-bottom-chat-expand-center-02-scroll-unread-visible-01-hidden-tab-scroll-01-input-boundary-01-scroll-unlocked-01-dock-switch-stacked-viewport-01-right-chat-curtain-input-01-right-chat-close-settle-01-right-chat-viewport-curtain-01";
+} from "./unread-counters.js?v=20261010-bottom-chat-collapse-rows-controls-01";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20261008";
 import { focusChatInput } from "./chat-input-focus.js";
 import { restorePageScrollAfterRightChatCollapse } from "./chat-scroll-preservation.js?v=20261008";
@@ -39,6 +39,8 @@ const CHAT_LAYOUT_SETTLE_MS = 280;
 const COLLAPSE_HANDLE_HIDE_MS = CHAT_LAYOUT_SETTLE_MS + 40;
 // El dock lateral hereda esta duración de la transición flex de escritorio.
 const RIGHT_CHAT_LAYOUT_TRANSITION_MS = 350;
+// Mantiene estable el scroll del viewport durante el reflow del dock lateral móvil.
+const RIGHT_CHAT_SCROLL_LOCK_MS = 1200;
 const CHAT_SCROLL_SNAP_LOCK_MS = 900;
 const BOTTOM_CHAT_CURTAIN_MS = 320;
 const BOTTOM_CHAT_SCROLL_TIMEOUT_MS = 1200;
@@ -307,13 +309,13 @@ export function captureExternalChatCollapseScroll() {
       : null;
 }
 
-function getAutoExpandTooltip() {
-  return "Se abre al recibir mensajes y se oculta al responder";
+function getAutoExpandTooltip(enabled) {
+  return enabled ? "Desactivar" : "Activar";
 }
 
 function updateAutoExpandSwitch(button, enabled, label) {
   if (!button) return;
-  const tooltip = getAutoExpandTooltip();
+  const tooltip = getAutoExpandTooltip(enabled);
   button.classList.toggle("active", enabled);
   button.setAttribute("aria-checked", String(enabled));
   button.setAttribute("aria-label", `Autoexpandir ${label}`);
@@ -1243,6 +1245,7 @@ function clearBottomChatTransitionVisuals() {
     "chat-bottom-mobile-curtain-active",
     "chat-bottom-pc-collapse-visual",
     "chat-bottom-pc-expand-visual",
+    "chat-bottom-pc-collapse-controls-transition",
     "chat-bottom-curtain-active",
   );
   dom.sessionView?.style.removeProperty("--chat-bottom-curtain-clip");
@@ -1370,6 +1373,20 @@ function setMobileBottomTransitionProgress(transition, progress) {
   scrollPageTo(Math.round(scrollProgress), "auto");
 }
 
+function setDesktopBottomTransitionRowsProgress(transition, progress) {
+  if (!transition.animateRows || !dom.workspace) return;
+
+  const easedProgress = easeBottomChatCurtainProgress(progress);
+  const videoHeight = transition.startRows[0]
+    + ((transition.targetRows[0] - transition.startRows[0]) * easedProgress);
+  const chatHeight = transition.startRows[1]
+    + ((transition.targetRows[1] - transition.startRows[1]) * easedProgress);
+  dom.workspace.style.setProperty(
+    "grid-template-rows",
+    `${Math.max(0, videoHeight)}px ${Math.max(0, chatHeight)}px`,
+  );
+}
+
 function completeMobileBottomChatTransition(transition) {
   if (bottomChatTransition !== transition) return;
 
@@ -1413,6 +1430,7 @@ function stepDesktopBottomChatTransition(transition, force = false) {
   // hacia arriba, mientras el shell desplaza el video en el mismo frame.
   const clipProgress = transition.collapsed ? progress : 1 - progress;
   setDesktopBottomChatCurtainProgress(clipProgress * 100);
+  setDesktopBottomTransitionRowsProgress(transition, progress);
 
   const scrollProgress = transition.startScrollTop
     + ((transition.targetScrollTop - transition.startScrollTop) * progress);
@@ -1444,11 +1462,16 @@ function animateDesktopBottomChatCollapse(targetScrollTop) {
     return;
   }
 
+  const animateRows = dom.sessionView.classList.contains("bottom-dock-panels-fit-viewport");
+  const startRows = animateRows ? getWorkspaceRowHeights() : [0, 0];
   const transition = {
     collapsed: true,
+    animateRows,
     frameId: 0,
     timeoutId: 0,
     startedAt: performance.now(),
+    startRows,
+    targetRows: animateRows ? [getWorkspaceContentHeight(), 0] : [0, 0],
     startScrollTop: getPageScrollTop(),
     targetScrollTop,
   };
@@ -1460,6 +1483,15 @@ function animateDesktopBottomChatCollapse(targetScrollTop) {
   );
   dom.sessionView.classList.add("chat-bottom-pc-collapse-visual");
   setDesktopBottomChatCurtainProgress(0);
+  if (transition.animateRows) {
+    // Reanclar los controles al video desde el primer frame; si se espera a
+    // que termine la medición del layout, cambian de posición al final.
+    dom.sessionView.classList.add("chat-bottom-pc-collapse-controls-transition");
+    dom.workspace.style.setProperty(
+      "grid-template-rows",
+      `${transition.startRows[0]}px ${transition.startRows[1]}px`,
+    );
+  }
   void dom.chatArea.offsetWidth;
   transition.frameId = window.requestAnimationFrame(() => {
     if (bottomChatTransition !== transition) return;

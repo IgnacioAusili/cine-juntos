@@ -1,7 +1,7 @@
 // Controla la cabecera del chat en pantallas tactiles.
 import { dom } from "../../core/dom.js";
 import { state } from "../../core/state.js?v=20261008";
-import { hideTooltip } from "../icons-tooltips.js?v=20261009-tooltip-slide-04";
+import { hideTooltip } from "../icons-tooltips.js?v=20261010-tooltip-click-guard-01";
 
 const MOBILE_QUERY = "(hover: none) and (pointer: coarse)";
 const HEADER_IDLE_MS = 2200;

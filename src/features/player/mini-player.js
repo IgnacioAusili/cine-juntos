@@ -1,6 +1,6 @@
 import { dom } from "../../core/dom.js";
 import { state, logEvent } from "../../core/state.js?v=20261008";
-import { setControlIcon } from "../icons-tooltips.js?v=20261008";
+import { setControlIcon } from "../icons-tooltips.js?v=20261009-tooltip-slide-04";
 import { setSyncStatus } from "../session-ui.js?v=20261008";
 import {
   createMiniPlayerSurface,
@@ -8,8 +8,8 @@ import {
 } from "./mini-player-controls.js?v=20261008";
 import {
   mirrorMiniPlayerChatState,
-} from "./mini-player-chat.js?v=20261009-emoji-reply-settle-01";
-import { movePlayerInterface } from "./mini-player-interface.js?v=20261009-emoji-reply-settle-01";
+} from "./mini-player-chat.js?v=20261009-bottom-chat-expand-center-02-scroll-unread-visible-01-hidden-tab-scroll-01-input-boundary-01-scroll-unlocked-01-dock-switch-stacked-viewport-01-right-chat-curtain-input-01-right-chat-close-settle-01-right-chat-viewport-curtain-01";
+import { movePlayerInterface } from "./mini-player-interface.js?v=20261009-bottom-chat-expand-center-02-scroll-unread-visible-01-hidden-tab-scroll-01-input-boundary-01-scroll-unlocked-01-dock-switch-stacked-viewport-01-right-chat-curtain-input-01-right-chat-close-settle-01-right-chat-viewport-curtain-01";
 import { trackMiniPlayerReturnHint } from "./mini-player-return-hint.js";
 import { clampMiniPlayerPosition, wireMiniPlayerDrag } from "./mini-player-drag.js?v=20261008";
 

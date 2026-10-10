@@ -90,9 +90,8 @@
   transition: none;
 }
 
-/* El control cambia de anclaje mientras la grilla se contrae. Mantenerlo
-   interactivo durante ese reflow permite que :hover lo revele en una
-   posicion intermedia y produce un rebote visible. */
+/* El control cambia de anclaje mientras la grilla se contrae. Ocultarlo
+   durante ese reflow evita que aparezca en posiciones intermedias. */
 .chat-collapse-hover-zone.is-transitioning {
   pointer-events: none;
 }
@@ -117,24 +116,13 @@
   transition: none !important;
 }
 
-.chat-collapse-handle:hover,
+.chat-collapse-handle.chat-collapse-pointer-hover,
+.chat-collapse-hover-zone.chat-collapse-pointer-hover .chat-collapse-handle,
 .chat-collapse-handle.is-touch-hover,
 .chat-collapse-hover-zone.is-touch-hover .chat-collapse-handle,
 .chat-collapse-handle:focus-visible {
   color: #fff;
   background: transparent;
-}
-
-/* Al cambiar de estado el layout puede dejar :hover retenido sobre el
-   control que acaba de desaparecer. Mantener el estado base hasta el
-   siguiente movimiento real del puntero evita que el nuevo anclaje herede
-   el resaltado de la acción anterior. */
-.chat-collapse-handle.chat-collapse-hover-reset,
-.chat-collapse-handle.chat-collapse-hover-reset:hover,
-.chat-collapse-hover-zone.chat-collapse-hover-reset .chat-collapse-handle,
-.chat-collapse-hover-zone.chat-collapse-hover-reset:hover .chat-collapse-handle {
-  color: rgba(255, 255, 255, 0.78) !important;
-  background: transparent !important;
 }
 
 .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-handle {
@@ -150,7 +138,7 @@
   opacity: 1;
 }
 
-.session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone:hover .chat-collapse-handle {
+.session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone.chat-collapse-pointer-hover .chat-collapse-handle {
   opacity: 1;
 }
 

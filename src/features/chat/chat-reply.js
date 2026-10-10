@@ -1,6 +1,6 @@
 import { dom } from "../../core/dom.js";
 import { state } from "../../core/state.js?v=20261008";
-import { hideTooltip } from "../icons-tooltips.js?v=20261008";
+import { hideTooltip } from "../icons-tooltips.js?v=20261009-tooltip-slide-04";
 import { truncateText } from "./chat-content-parser.js?v=20261008";
 import { getParticipantAccent } from "./chat-participant-color.js";
 import { expandSystemMessageGroupForItem } from "./system-message-groups.js?v=20261008";

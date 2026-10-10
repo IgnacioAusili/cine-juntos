@@ -1,8 +1,8 @@
 import { dom } from "../core/dom.js";
 import { updateDisplayName } from "./presence.js?v=20261008";
-import { joinRoom } from "./room-entry.js?v=20261009-emoji-reply-settle-01";
-import { leaveRoom } from "./room-exit.js?v=20261009-emoji-reply-settle-01";
-import { copyInvite } from "./room-invite.js?v=20261008";
+import { joinRoom } from "./room-entry.js?v=20261009-system-message-catchup-03-scroll-unread-visible-01-hidden-tab-scroll-01-input-boundary-01-chat-history-page-01-scroll-unlocked-01-dock-switch-stacked-viewport-01-right-chat-curtain-input-01-right-chat-close-settle-01-right-chat-viewport-curtain-01";
+import { leaveRoom } from "./room-exit.js?v=20261009-bottom-chat-expand-center-02-scroll-unread-visible-01-hidden-tab-scroll-01-input-boundary-01-chat-history-page-01-scroll-unlocked-01-dock-switch-stacked-viewport-01-right-chat-curtain-input-01-right-chat-close-settle-01-right-chat-viewport-curtain-01";
+import { copyInvite } from "./room-invite.js?v=20261009-invite-copy-animation-queue-01";
 import {
   consumeRoomCreationAttempt,
   looksLikeRoomInviteUrl,
@@ -14,7 +14,10 @@ import { state, logEvent } from "../core/state.js?v=20261008";
 import { generateRoomCode } from "../core/utils.js";
 import { setSyncStatus } from "./session-ui.js?v=20261008";
 
+const BACK_TO_LOBBY_ANIMATION_MS = 200;
+
 export function wireRoomEvents() {
+  let isLeavingRoom = false;
   syncJoinRoomButtonState();
 
   dom.roomInput.addEventListener("input", () => {
@@ -61,7 +64,13 @@ export function wireRoomEvents() {
 
   dom.copyInviteButton.addEventListener("click", copyInvite);
   dom.backToLobbyButton?.addEventListener("click", () => {
-    void leaveRoom();
+    if (isLeavingRoom) return;
+    isLeavingRoom = true;
+    dom.backToLobbyButton.classList.add("is-leaving");
+    const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+    window.setTimeout(() => {
+      void leaveRoom();
+    }, prefersReducedMotion ? 0 : BACK_TO_LOBBY_ANIMATION_MS);
   });
 
   dom.roomInput.addEventListener("keydown", (event) => {

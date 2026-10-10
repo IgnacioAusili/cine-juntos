@@ -130,7 +130,6 @@ export const chatState = {
   longPressTimer: null,
   longPressStart: null,
   systemGroupAnimationSuppressed: false,
-  systemGroupAnimationMaxTimer: null,
   mainScrollUnread: 0,
   overlayScrollUnread: 0,
   // El cupo vive en memoria: una recarga inicia una nueva sesión de página.

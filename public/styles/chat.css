@@ -1,6 +1,6 @@
 @import url("./chat/messages.css?v=20261008");
 @import url("./chat/message-media.css?v=20261008");
-@import url("./chat/composer.css?v=20261008-noto-input-01");
+@import url("./chat/composer.css?v=20261009-bottom-chat-expand-center-03");
 @import url("./chat/message-menu.css?v=20261008");
 @import url("./chat/image-preview.css?v=20261008");
 @import url("./chat/messages-wrap.css?v=20261008");
@@ -10,5 +10,5 @@
 @import url("./chat/message-highlight.css?v=20261008");
 @import url("./chat/swipe-reply.css?v=20261008");
 @import url("./chat/system-message-groups.css?v=20261008");
-@import url("./chat/system-message-roll.css?v=20261008");
+@import url("./chat/system-message-roll.css?v=20261009-system-roll-perspective-01");
 @import url("./chat/char-counter.css");

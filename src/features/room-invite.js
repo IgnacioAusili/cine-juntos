@@ -7,6 +7,7 @@ let inviteCopyFeedbackTimer = 0;
 let inviteCopyAnimationTimer = 0;
 let inviteCopyAnimationEndTarget = null;
 let inviteCopyAnimationEndHandler = null;
+let inviteCopyAnimationQueued = false;
 
 function clearInviteCopyAnimationEndListener() {
   if (inviteCopyAnimationEndTarget && inviteCopyAnimationEndHandler) {
@@ -70,24 +71,31 @@ async function copyTextToClipboard(text) {
 
 export function setInviteCopyFeedback(active) {
   if (!dom.copyInviteButton) return;
+
+  if (active && dom.copyInviteButton.classList.contains("is-copy-animating")) {
+    inviteCopyAnimationQueued = true;
+    return;
+  }
+
   window.clearTimeout(inviteCopyFeedbackTimer);
   window.clearTimeout(inviteCopyAnimationTimer);
   clearInviteCopyAnimationEndListener();
+  inviteCopyAnimationQueued = false;
   dom.copyInviteButton.dataset.copied = active ? "true" : "false";
   dom.copyInviteButton.classList.remove("is-copy-animating");
   if (!active) return;
 
   void dom.copyInviteButton.offsetWidth;
   dom.copyInviteButton.classList.add("is-copy-animating");
-  const animationTarget = dom.copyInviteButton.querySelector(
-    ".room-chip-copy-motion, .room-chip-copy-main",
-  );
+  const animationTarget = dom.copyInviteButton.querySelector(".room-chip-copy-motion")
+    || dom.copyInviteButton.querySelector(".room-chip-copy-main");
   const finishCopyAnimation = (event) => {
-    if (event.animationName !== "roomChipCopyLift") return;
+    if (event && event.animationName !== "roomChipCopyLift") return;
     clearInviteCopyAnimationEndListener();
     window.clearTimeout(inviteCopyAnimationTimer);
     inviteCopyAnimationTimer = 0;
     dom.copyInviteButton?.classList.remove("is-copy-animating");
+    if (inviteCopyAnimationQueued) setInviteCopyFeedback(true);
   };
 
   if (animationTarget) {
@@ -103,9 +111,7 @@ export function setInviteCopyFeedback(active) {
     ? animationDurationMs + 120
     : 1200;
   inviteCopyAnimationTimer = window.setTimeout(() => {
-    clearInviteCopyAnimationEndListener();
-    dom.copyInviteButton?.classList.remove("is-copy-animating");
-    inviteCopyAnimationTimer = 0;
+    finishCopyAnimation();
   }, fallbackDelayMs);
   inviteCopyFeedbackTimer = window.setTimeout(() => {
     if (dom.copyInviteButton) dom.copyInviteButton.dataset.copied = "false";

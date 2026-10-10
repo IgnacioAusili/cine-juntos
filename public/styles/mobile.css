@@ -650,6 +650,19 @@
     padding-bottom: 0;
   }
 
+  /* El dock lateral usa una sola superficie de viewport. Limitar el shell a
+     esa superficie deja que el workspace ocupe lo que queda tras el header y
+     la barra de sala, sin sumar otro viewport debajo de ellos. */
+  body:not(.is-lobby) .app-shell:has(.session-view[data-chat-dock="right"]) {
+    height: var(--app-viewport-height);
+    min-height: 0;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  body:not(.is-lobby) .session-view.layout-stacked[data-chat-dock="right"] {
+    min-height: 0;
+  }
+
   body:not(.is-lobby) .session-view {
     width: calc(100% + (var(--app-shell-gutter) * 2));
     margin-left: calc(var(--app-shell-gutter) * -1);
@@ -678,19 +691,69 @@
     grid-template-rows: minmax(0, 1fr) 0;
   }
 
-  /* En vertical el dock lateral ocupa la misma superficie que el video: al
-     expandirlo el chat queda por encima de esa superficie y al contraerlo
-     vuelve a quedar visible el reproductor completo. */
+  /* En una ventana angosta el reproductor y el dock lateral comparten el
+     alto del viewport realmente visible, no solo el espacio restante bajo
+     el header. El chat se monta sobre esa misma superficie. */
   body:not(.is-lobby) .session-view[data-chat-dock="right"] .workspace {
-    height: var(--app-viewport-height);
+    position: relative;
+    display: block;
+    height: var(--right-chat-visible-height, var(--app-viewport-height));
+    flex: 0 0 var(--right-chat-visible-height, var(--app-viewport-height));
     min-height: 0;
     padding-top: 0;
     gap: 0;
-    grid-template-rows: 0 minmax(0, 1fr);
+    grid-template: none;
+    overflow: visible;
   }
 
-  body:not(.is-lobby) .session-view.chat-collapsed[data-chat-dock="right"] .workspace {
-    grid-template-rows: minmax(0, 1fr) 0;
+  body:not(.is-lobby) .session-view[data-chat-dock="right"] .video-area {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    grid-area: auto;
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-area {
+    position: absolute;
+    z-index: 10;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: auto;
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    min-height: 0;
+    flex: 0 0 100%;
+    clip-path: inset(0);
+    overflow: hidden;
+    /* El panel debe ocultar el video por completo mientras se desplaza la
+       cortina; un fondo translúcido hace que parezca que cambia la opacidad. */
+    background: rgb(20 24 28);
+    transition: clip-path 350ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: clip-path;
+  }
+
+  /* Mantener el panel y el input con tamaño de viewport; la cortina recorta
+     lo que se ve sin reacomodar el contenido durante el cierre. */
+  body:not(.is-lobby) .session-view.chat-collapsed[data-chat-dock="right"] .chat-area {
+    width: 100%;
+    flex-basis: 100%;
+    clip-path: inset(0 0 0 100%);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* En landscape la cortina es el único efecto de ocultamiento. Mantener la
+     opacidad fija evita el desvanecido al cerrar el panel ya recortado. */
+  html.viewport-landscape body:not(.is-lobby)
+    .session-view[data-chat-dock="right"] .chat-area {
+    opacity: 1 !important;
+  }
+
+  body:not(.is-lobby) .session-view.chat-layout-transitioning[data-chat-dock="right"] .chat-area {
+    opacity: 1 !important;
   }
 
   body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-area > * {
@@ -780,12 +843,6 @@
     width: 26px;
     height: 26px;
     flex-basis: 26px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 999px;
-    background: rgba(20, 24, 28, 0.9);
-    box-shadow:
-      0 4px 14px rgba(0, 0, 0, 0.35),
-      inset 0 1px 0 rgba(255, 255, 255, 0.08);
   }
 
   /* La flecha ocupa los primeros 32px del header; el contenido comienza
@@ -1267,7 +1324,8 @@
   body:not(.is-lobby) .session-view[data-chat-dock="right"] .workspace {
     position: relative;
     display: block;
-    height: var(--app-viewport-height);
+    height: var(--right-chat-visible-height, var(--app-viewport-height));
+    flex: 0 0 var(--right-chat-visible-height, var(--app-viewport-height));
     min-height: 0;
     padding: 0;
     gap: 0;
@@ -1293,12 +1351,13 @@
     min-height: 0;
     flex: 0 0 100%;
     transform: none;
+    clip-path: inset(0);
+    overflow: hidden;
     /* En vertical el dock es una capa sobre el video: su superficie debe ser
        sólida durante todo el barrido, sin revelar el reproductor debajo. */
     background: rgb(20 24 28);
-    transition:
-      width 350ms cubic-bezier(0.22, 1, 0.36, 1);
-    will-change: width;
+    transition: clip-path 350ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: clip-path;
   }
 
   /* Mantener el contenido con el ancho final hace que el borde izquierdo
@@ -1340,8 +1399,9 @@
   }
 
   body:not(.is-lobby) .session-view.chat-collapsed[data-chat-dock="right"] .chat-area {
-    width: 0;
-    flex-basis: 0;
+    width: 100%;
+    flex-basis: 100%;
+    clip-path: inset(0 0 0 100%);
     opacity: 0;
     pointer-events: none;
   }
@@ -1626,6 +1686,14 @@
     bottom: -9px;
     left: 16px;
     z-index: 39;
+  }
+
+  /* En esta disposición el avance deshabilitado comparte el borde entre
+     video y chat: conserva la línea, pero deja pasar el puntero. */
+  body:not(.is-lobby) .session-view.bottom-dock-panels-fit-viewport:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"]
+    .player-progress-group:has(.player-seek-input:disabled) {
+    pointer-events: none;
   }
 
   /* La pista queda como un hilo en reposo y aumenta sólo mientras se

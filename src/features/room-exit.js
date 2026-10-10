@@ -1,7 +1,7 @@
 import { dom } from "../core/dom.js";
 import { state, getDisplayName, LAST_ROOM_KEY, logEvent } from "../core/state.js?v=20261008";
 import { renderPresence } from "./presence.js?v=20261008";
-import { setConnection } from "./icons-tooltips.js?v=20261008";
+import { setConnection } from "./icons-tooltips.js?v=20261009-tooltip-slide-04";
 import {
   setHostBadge,
   setSyncStatus,
@@ -13,11 +13,11 @@ import {
   renderReplyPreview,
   setInsideChatVisible,
   finishSystemMessageHydration,
-} from "./chat/index.js?v=20261009-emoji-reply-settle-01";
+} from "./chat/index.js?v=20261009-system-message-catchup-03-scroll-unread-visible-01-hidden-tab-scroll-01-input-boundary-01-chat-history-page-01-scroll-unlocked-01-dock-switch-stacked-viewport-01-right-chat-curtain-input-01-right-chat-close-settle-01-right-chat-viewport-curtain-01";
 import { removeActiveTabRecord } from "./room-access.js?v=20261008";
 import { invalidateRoomOperation, isRoomOperationCurrent, clearUrlRoom } from "./room-navigation.js?v=20261008";
 import { syncJoinRoomButtonState } from "./room-input.js?v=20261008";
-import { setInviteCopyFeedback } from "./room-invite.js?v=20261008";
+import { setInviteCopyFeedback } from "./room-invite.js?v=20261009-invite-copy-animation-queue-01";
 
 export async function leaveRoom() {
   const operationId = invalidateRoomOperation();

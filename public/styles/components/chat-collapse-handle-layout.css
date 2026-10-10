@@ -95,7 +95,7 @@
   opacity: 0;
 }
 
-.session-view.chat-collapsed[data-chat-dock="bottom"] .chat-collapse-hover-zone:hover .chat-collapse-handle {
+.session-view.chat-collapsed[data-chat-dock="bottom"] .chat-collapse-hover-zone.chat-collapse-pointer-hover .chat-collapse-handle {
   opacity: 0;
 }
 

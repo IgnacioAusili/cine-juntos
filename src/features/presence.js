@@ -15,7 +15,7 @@ import { makeGuestName, makeParticipantLabel } from "../core/utils.js";
 import {
   hideTooltip,
   setControlIcon,
-} from "./icons-tooltips.js?v=20261008";
+} from "./icons-tooltips.js?v=20261009-tooltip-slide-04";
 import {
   isTouchPointer,
   TOUCH_LONG_PRESS_DELAY_MS,

@@ -3,7 +3,7 @@ import { dom } from "../../core/dom.js";
 import { state, logEvent } from "../../core/state.js?v=20261008";
 import { shouldAnchorChatCollapseHandleInHeader } from "./chat-collapse-header-layout.js?v=20261008";
 import { CHAT_DOCKS, CHAT_DOCK_META, withShortcutHint } from "../../core/utils.js";
-import { hydrateIcons, hideTooltip, refreshTooltipForTarget } from "../icons-tooltips.js?v=20261008";
+import { hydrateIcons, hideTooltip, refreshTooltipForTarget } from "../icons-tooltips.js?v=20261009-tooltip-slide-04";
 import { focusFullscreenWorkspace } from "../session-ui.js?v=20261008";
 import {
   cancelIdentityEditing,
@@ -15,20 +15,20 @@ import {
   resetInsideUnread,
   resetPageUnread,
   syncUnreadBadgesWithVisibility,
-} from "./unread-counters.js?v=20261008";
+} from "./unread-counters.js?v=20261009-bottom-chat-expand-center-02-scroll-unread-visible-01-hidden-tab-scroll-01-input-boundary-01-scroll-unlocked-01-dock-switch-stacked-viewport-01-right-chat-curtain-input-01-right-chat-close-settle-01-right-chat-viewport-curtain-01";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20261008";
 import { focusChatInput } from "./chat-input-focus.js";
 import { restorePageScrollAfterRightChatCollapse } from "./chat-scroll-preservation.js?v=20261008";
 import {
   CHAT_DOCK_TRANSITIONS,
   resolveChatDockTransition,
-} from "./dock-transition-router.js?v=20261008";
+} from "./dock-transition-router.js?v=20261009-dock-switch-stacked-viewport-01";
 import {
   preserveInsideChatPanelPlacementWhileClosing,
   syncInsideChatPanelPlacement,
   wireInsideChatPanelPlacement,
 } from "../player/inside-chat-layout.js?v=20261008";
-import { syncComponentAspectLayoutNow } from "./component-aspect-layout.js?v=20261008-unified-panel-layout-01";
+import { syncComponentAspectLayoutNow } from "./component-aspect-layout.js?v=20261008-unified-panel-layout-01-shared-viewport-fit-01";
 
 const AUTO_COLLAPSE_DELAY_MS = 5000;
 const AUTO_EXPAND_INSIDE_KEY = "cine-juntos-chat-auto-expand-inside";
@@ -39,11 +39,7 @@ const CHAT_LAYOUT_SETTLE_MS = 280;
 const COLLAPSE_HANDLE_HIDE_MS = CHAT_LAYOUT_SETTLE_MS + 40;
 // El dock lateral hereda esta duración de la transición flex de escritorio.
 const RIGHT_CHAT_LAYOUT_TRANSITION_MS = 350;
-// El bloqueo solo debe sobrevivir al último frame de la cortina, no a los
-// 900 ms de protección genérica de los demás layouts.
-const RIGHT_CHAT_SCROLL_LOCK_MS = RIGHT_CHAT_LAYOUT_TRANSITION_MS + 40;
 const CHAT_SCROLL_SNAP_LOCK_MS = 900;
-const CHAT_USER_SCROLL_LOCK_MS = 900;
 const BOTTOM_CHAT_CURTAIN_MS = 320;
 const BOTTOM_CHAT_SCROLL_TIMEOUT_MS = 1200;
 const BOTTOM_DOCK_UNION_REVEAL_PX = 0;
@@ -63,7 +59,6 @@ let layoutAdjustmentTimer = 0;
 let collapseHandleOffsetTimer = 0;
 let expandScrollTimer = 0;
 let chatScrollSnapLockTimer = 0;
-let chatUserScrollUnlockTimer = 0;
 let pendingBottomToRightSwitch = null;
 let pendingChatDockSwitch = null;
 let externalChatVisualMotionTimer = 0;
@@ -205,6 +200,11 @@ function isMobilePortraitRightDock() {
     && isMobilePortraitChatViewport();
 }
 
+function isRightChatViewportOverlay() {
+  return (dom.sessionView?.dataset.chatDock || "right") === "right"
+    && window.matchMedia("(max-width: 680px)").matches;
+}
+
 // La grilla debe cambiar de una vez para evitar que el texto se reenvuelva en
 // cada frame. Esta transición FLIP conserva el movimiento visual del video sin
 // volver a calcular el contenido del chat ni los controles durante el trayecto.
@@ -307,82 +307,6 @@ export function captureExternalChatCollapseScroll() {
       : null;
 }
 
-const PAGE_SCROLL_KEYS = new Set([
-  "ArrowDown",
-  "ArrowUp",
-  "PageDown",
-  "PageUp",
-  "Home",
-  "End",
-  " ",
-  "Spacebar",
-]);
-const PAGE_SCROLL_LOCK_LISTENER_OPTIONS = { capture: true, passive: false };
-
-function isChatScrollTarget(target) {
-  return target instanceof Element && Boolean(target.closest("#messages, #overlayMessages, textarea"));
-}
-
-function preventPageScrollDuringChatTransition(event) {
-  if (isChatScrollTarget(event.target)) return;
-  event.preventDefault();
-}
-
-function preventPageScrollKeysDuringChatTransition(event) {
-  if (!PAGE_SCROLL_KEYS.has(event.key) || event.ctrlKey || event.metaKey || event.altKey) return;
-
-  const target = event.target;
-  if (
-    target instanceof HTMLInputElement
-    || target instanceof HTMLTextAreaElement
-    || target instanceof HTMLElement && target.isContentEditable
-  ) {
-    return;
-  }
-
-  event.preventDefault();
-}
-
-function unlockUserScrollDuringChatTransition() {
-  document.removeEventListener("wheel", preventPageScrollDuringChatTransition, true);
-  document.removeEventListener("touchmove", preventPageScrollDuringChatTransition, true);
-  document.removeEventListener("keydown", preventPageScrollKeysDuringChatTransition, true);
-  dom.sessionView?.classList.remove("chat-user-scroll-locked");
-  chatUserScrollUnlockTimer = 0;
-}
-
-function lockUserScrollDuringChatTransition(durationMs = CHAT_USER_SCROLL_LOCK_MS) {
-  if (!dom.sessionView || dom.sessionView.hidden) return;
-
-  document.removeEventListener("wheel", preventPageScrollDuringChatTransition, true);
-  document.removeEventListener("touchmove", preventPageScrollDuringChatTransition, true);
-  document.removeEventListener("keydown", preventPageScrollKeysDuringChatTransition, true);
-  document.addEventListener(
-    "wheel",
-    preventPageScrollDuringChatTransition,
-    PAGE_SCROLL_LOCK_LISTENER_OPTIONS,
-  );
-  document.addEventListener(
-    "touchmove",
-    preventPageScrollDuringChatTransition,
-    PAGE_SCROLL_LOCK_LISTENER_OPTIONS,
-  );
-  document.addEventListener(
-    "keydown",
-    preventPageScrollKeysDuringChatTransition,
-    PAGE_SCROLL_LOCK_LISTENER_OPTIONS,
-  );
-  dom.sessionView.classList.add("chat-user-scroll-locked");
-
-  if (chatUserScrollUnlockTimer) {
-    window.clearTimeout(chatUserScrollUnlockTimer);
-  }
-  chatUserScrollUnlockTimer = window.setTimeout(
-    unlockUserScrollDuringChatTransition,
-    durationMs,
-  );
-}
-
 function getAutoExpandTooltip() {
   return "Se abre al recibir mensajes y se oculta al responder";
 }
@@ -468,10 +392,16 @@ function setCollapseHandleTransitioning(
   });
   dom.sessionView?.classList.toggle("chat-layout-transitioning", isTransitioning);
   const messageForm = dom.chatArea?.querySelector(".message-form");
-  if (isTransitioning && dom.sessionView?.dataset.chatDock === "right") {
+  if (
+    isTransitioning
+    && dom.sessionView?.dataset.chatDock === "right"
+    && !isRightChatViewportOverlay()
+  ) {
+    const rightDockUsesViewportWidth = isMobilePortraitRightDock()
+      || isMobileLandscapeRightDock();
     messageForm?.style.setProperty(
       "width",
-      isMobilePortraitRightDock()
+      rightDockUsesViewportWidth
         ? "calc(var(--app-viewport-width, 100vw) - 36px)"
         : "calc(var(--chat-panel-width) - 37px)",
     );
@@ -559,8 +489,6 @@ function scheduleAutoCollapse(isOverlay) {
 export function setInsideChatVisible(visible, options = {}) {
   wireInsideChatPanelPlacement();
   const source = options.source || "user";
-  const wasVisible = dom.playerFrame.classList.contains("chat-inside-open");
-  if (wasVisible !== visible && !options.skipScrollLock) lockUserScrollDuringChatTransition();
   clearAutoCollapseTimer(true);
   if (visible) {
     state.chat.autoOpenedInside = source === "auto";
@@ -590,7 +518,7 @@ export function setInsideChatVisible(visible, options = {}) {
     dom.overlayMessages.scrollTop = dom.overlayMessages.scrollHeight;
   }
   syncInsideChatPanelOffset();
-  if (visible) {
+  if (visible && source !== "auto") {
     window.requestAnimationFrame(() => {
       focusChatInput(dom.overlayMessageInput);
     });
@@ -866,6 +794,7 @@ function dispatchChatDockTransition(currentDock, nextDock, options, videoScrollT
     isCollapsed: dom.sessionView?.classList.contains("chat-collapsed") || false,
     isFullscreen: isFullscreenPageActive(),
     isStacked: isStackedSessionLayout(),
+    isCoarsePointer: window.matchMedia("(hover: none) and (pointer: coarse)").matches,
     isMobilePortrait: isMobilePortraitChatViewport(),
   });
 
@@ -881,6 +810,12 @@ function dispatchChatDockTransition(currentDock, nextDock, options, videoScrollT
       return true;
     case CHAT_DOCK_TRANSITIONS.RIGHT_TO_BOTTOM_MOBILE:
       animateRightToBottomSwitch(nextDock);
+      return true;
+    case CHAT_DOCK_TRANSITIONS.RIGHT_TO_BOTTOM_STACKED:
+      // En esta composición los paneles ya se apilan. Cambiar directamente
+      // evita el amague lateral; setChatDock lleva el viewport a la unión
+      // entre video y chat para que el panel nuevo quede a la vista.
+      setChatDock(nextDock, { skipTransition: true });
       return true;
     case CHAT_DOCK_TRANSITIONS.FULLSCREEN:
       animateFullscreenDockSwitch(nextDock);
@@ -1179,9 +1114,9 @@ function scheduleBottomToRightSwitch(nextDock, targetScrollTop) {
     window.cancelAnimationFrame(transition.frameId);
     window.clearTimeout(transition.timeoutId);
 
-    const usePortraitOverlaySwitch =
-      nextDock === "right" && isMobilePortraitChatViewport();
-    const switchDuration = usePortraitOverlaySwitch
+    const useViewportOverlaySwitch = nextDock === "right"
+      && window.matchMedia("(max-width: 680px)").matches;
+    const switchDuration = useViewportOverlaySwitch
       ? RIGHT_CHAT_LAYOUT_TRANSITION_MS
       : BOTTOM_TO_RIGHT_LAYOUT_MS;
 
@@ -1200,13 +1135,20 @@ function scheduleBottomToRightSwitch(nextDock, targetScrollTop) {
       const chatArea = dom.chatArea;
       const workspace = dom.workspace;
       const fullscreenSwitch = isFullscreenPageActive();
-      // Fijar el estado cerrado después del cambio de dock evita que flex
-      // salte directamente al ancho final. La siguiente fase abre el panel y
-      // reduce el video en el mismo tick de layout.
-      chatArea?.style.setProperty("flex-basis", "0px");
-      chatArea?.style.setProperty("width", "0px");
+      // En una ventana angosta la superficie se monta sobre el video. Mantener
+      // el ancho final y revelar con clip-path evita que el composer se
+      // reacomode durante cada frame de la transición.
+      if (useViewportOverlaySwitch) {
+        chatArea?.style.setProperty("flex-basis", "100%");
+        chatArea?.style.setProperty("width", "100%");
+        chatArea?.style.setProperty("clip-path", "inset(0 0 0 100%)");
+      } else {
+        // En el dock lateral de escritorio el ancho sí se anima junto al video.
+        chatArea?.style.setProperty("flex-basis", "0px");
+        chatArea?.style.setProperty("width", "0px");
+      }
       chatArea?.style.setProperty("min-width", "0px");
-      chatArea?.style.setProperty("opacity", "0");
+      chatArea?.style.setProperty("opacity", useViewportOverlaySwitch ? "1" : "0");
       chatArea?.style.setProperty("transition", "none");
       if (fullscreenSwitch) {
         workspace?.style.setProperty("grid-template-columns", "minmax(0, 1fr) 0px");
@@ -1229,13 +1171,22 @@ function scheduleBottomToRightSwitch(nextDock, targetScrollTop) {
           scrollPageTo(workspaceTop, "auto");
         }
         dom.sessionView.classList.add("chat-dock-switching-entered");
-        chatArea?.style.setProperty(
-          "transition",
-          `flex-basis ${BOTTOM_TO_RIGHT_LAYOUT_MS}ms ease-in-out, width ${BOTTOM_TO_RIGHT_LAYOUT_MS}ms ease-in-out, opacity ${BOTTOM_TO_RIGHT_LAYOUT_MS}ms ease-in-out`,
-        );
-        chatArea?.style.setProperty("flex-basis", "var(--chat-panel-width)");
-        chatArea?.style.setProperty("width", "var(--chat-panel-width)");
-        chatArea?.style.setProperty("opacity", "1");
+        if (useViewportOverlaySwitch) {
+          chatArea?.style.setProperty(
+            "transition",
+            `clip-path ${switchDuration}ms cubic-bezier(0.22, 1, 0.36, 1)`,
+          );
+          chatArea?.style.setProperty("clip-path", "inset(0 0 0 0)");
+          chatArea?.style.setProperty("opacity", "1");
+        } else {
+          chatArea?.style.setProperty(
+            "transition",
+            `flex-basis ${BOTTOM_TO_RIGHT_LAYOUT_MS}ms ease-in-out, width ${BOTTOM_TO_RIGHT_LAYOUT_MS}ms ease-in-out, opacity ${BOTTOM_TO_RIGHT_LAYOUT_MS}ms ease-in-out`,
+          );
+          chatArea?.style.setProperty("flex-basis", "var(--chat-panel-width)");
+          chatArea?.style.setProperty("width", "var(--chat-panel-width)");
+          chatArea?.style.setProperty("opacity", "1");
+        }
         if (fullscreenSwitch) {
           workspace?.style.setProperty(
             "transition",
@@ -1254,6 +1205,7 @@ function scheduleBottomToRightSwitch(nextDock, targetScrollTop) {
           chatArea?.style.removeProperty("min-width");
           chatArea?.style.removeProperty("opacity");
           chatArea?.style.removeProperty("transition");
+          chatArea?.style.removeProperty("clip-path");
           workspace?.style.removeProperty("grid-template-columns");
           workspace?.style.removeProperty("transition");
         }, switchDuration);
@@ -1299,9 +1251,7 @@ function clearBottomChatTransitionVisuals() {
   dom.chatArea?.style.removeProperty("opacity");
   const messageForm = dom.chatArea?.querySelector(".message-form");
   messageForm?.style.removeProperty("--chat-bottom-pc-expand-composer-left");
-  messageForm?.style.removeProperty("--chat-bottom-pc-expand-composer-right");
   messageForm?.style.removeProperty("--chat-bottom-pc-expand-composer-width");
-  messageForm?.style.removeProperty("--chat-bottom-pc-expand-composer-margin");
   if (dom.sessionView?.dataset.chatDock === "bottom") {
     messageForm?.style.removeProperty("width");
   }
@@ -1545,25 +1495,26 @@ function animateDesktopBottomChatExpand() {
   applyExternalChatCollapsed(false);
   const messageForm = dom.chatArea.querySelector(".message-form");
   const composerBounds = messageForm?.getBoundingClientRect();
+  const chatAreaBounds = dom.chatArea.getBoundingClientRect();
   if (messageForm && composerBounds?.width > 0) {
-    // Al pasar a fixed cambia el bloque de referencia de .chat-area al viewport.
-    // Conservar la geometría que ya tiene el composer en el layout expandido
-    // evita que se ensanche durante la cortina y vuelva a encogerse al terminar.
-    messageForm.style.setProperty(
-      "--chat-bottom-pc-expand-composer-left",
-      `${composerBounds.left}px`,
-    );
-    messageForm.style.setProperty(
-      "--chat-bottom-pc-expand-composer-right",
-      "auto",
-    );
+    // Ajustar la coordenada una vez aplicado fixed: el containing block puede
+    // ser un ancestro interno, así que un left porcentual no equivale al viewport.
+    messageForm.style.setProperty("--chat-bottom-pc-expand-composer-left", "0px");
     messageForm.style.setProperty(
       "--chat-bottom-pc-expand-composer-width",
       `${composerBounds.width}px`,
     );
-    messageForm.style.setProperty("--chat-bottom-pc-expand-composer-margin", "0");
   }
   dom.sessionView.classList.add("chat-bottom-pc-expand-visual");
+  if (messageForm && composerBounds?.width > 0) {
+    const fixedBounds = messageForm.getBoundingClientRect();
+    const targetLeft =
+      chatAreaBounds.left + (chatAreaBounds.width - fixedBounds.width) / 2;
+    messageForm.style.setProperty(
+      "--chat-bottom-pc-expand-composer-left",
+      `${targetLeft - fixedBounds.left}px`,
+    );
+  }
   setCollapseHandleTransitioning(
     true,
     BOTTOM_CHAT_CURTAIN_MS + BOTTOM_CHAT_SCROLL_TIMEOUT_MS + 80,
@@ -1703,13 +1654,6 @@ export function setExternalChatCollapsed(collapsed, options = {}) {
     state.chat.autoOpenedExternal = false;
   }
   const wasCollapsed = dom.sessionView.classList.contains("chat-collapsed");
-  if (wasCollapsed !== collapsed) {
-    lockUserScrollDuringChatTransition(
-      isMobileLandscapeRightDock()
-        ? RIGHT_CHAT_SCROLL_LOCK_MS
-        : CHAT_USER_SCROLL_LOCK_MS,
-    );
-  }
   cancelBottomChatTransition();
 
   // En fullscreen apaisado móvil el chat inferior es una capa sobre el video.
@@ -1806,11 +1750,9 @@ function applyExternalChatCollapsed(collapsed) {
       ? RIGHT_CHAT_SCROLL_LOCK_MS
       : CHAT_SCROLL_SNAP_LOCK_MS,
   );
-  const handleSettleDelay = isMobilePortraitRightDock()
-    ? RIGHT_CHAT_LAYOUT_TRANSITION_MS
-    : !collapsed && isMobileLandscapeRightDock()
-      ? RIGHT_CHAT_LAYOUT_TRANSITION_MS
-      : COLLAPSE_HANDLE_HIDE_MS;
+  const handleSettleDelay = isRightChatViewportOverlay()
+    ? RIGHT_CHAT_LAYOUT_TRANSITION_MS + 40
+    : COLLAPSE_HANDLE_HIDE_MS;
   setCollapseHandleTransitioning(true, handleSettleDelay);
   dom.sessionView.classList.toggle("chat-collapsed", collapsed);
   localStorage.setItem(EXTERNAL_CHAT_COLLAPSED_KEY, collapsed ? "1" : "0");
@@ -1872,6 +1814,19 @@ function applyExternalChatCollapsed(collapsed) {
         });
       });
     }, CHAT_LAYOUT_SETTLE_MS + 40);
+    return;
+  }
+
+  // Mantener el reproductor anclado al viewport al cerrar el overlay. Sin
+  // este ajuste, el clamp del documento devuelve el scroll al inicio y deja
+  // fuera de vista la parte superior del video a pesar de que su alto sea el
+  // del viewport completo.
+  if (isRightChatViewportOverlay() && dom.workspace) {
+    const targetTop = Math.min(
+      getPageScrollMax(),
+      Math.max(0, Math.round(getElementPageTop(dom.workspace))),
+    );
+    scrollPageTo(targetTop, "auto");
     return;
   }
 

@@ -18,9 +18,10 @@ const TOOLTIP_BORDER_WIDTH_PX = 1;
 const TOOLTIP_RADIUS_PX = 12;
 const TOOLTIP_TAIL_WIDTH_PX = 14;
 const TOOLTIP_TAIL_HEIGHT_PX = 7;
-const TOOLTIP_SHOW_DELAY_MS = 800;
-const HELP_TOOLTIP_SHOW_DELAY_MS = 500;
-const PRESENCE_TOOLTIP_SHOW_DELAY_MS = 300;
+const TOOLTIP_SHOW_DELAY_MS = 600;
+const HELP_TOOLTIP_SHOW_DELAY_MS = 400;
+const PRESENCE_TOOLTIP_SHOW_DELAY_MS = 250;
+const TOOLTIP_HIDE_ANIMATION_MS = 120;
 const TOUCH_FOCUS_SUPPRESSION_MS = 500;
 const TOUCH_TOOLTIP_MOVE_TOLERANCE_PX = 10;
 const TOUCH_HELP_TOOLTIP_MAX_VISIBLE_MS = 1800;
@@ -28,6 +29,7 @@ const TOUCH_HELP_TOOLTIP_MAX_VISIBLE_MS = 1800;
 let tooltipFrame = 0;
 let tooltipShowTimer = null;
 let tooltipShowContext = null;
+let tooltipHideTimer = null;
 let suppressFocusTooltipUntil = 0;
 let touchTooltipPress = null;
 let touchTooltipTimer = null;
@@ -105,18 +107,24 @@ function syncTooltipChrome() {
     geometry.tailWidth,
   );
   const placement = layer.dataset.placement || "top";
+  tooltipChrome.dataset.placement = placement;
+  tooltipChrome.dataset.animationState = layer.dataset.animationState || "visible";
   const tailSide = placement === "bottom" ? "top" : "bottom";
   const svgHeight = rect.height + geometry.tailHeight;
+  // getBoundingClientRect incluye el translate de entrada/salida. Usar el top
+  // calculado del layer mantiene el texto alineado con el cuerpo del SVG.
+  const layerLeft = parseCssPixel(style.left, rect.left);
+  const layerTop = parseCssPixel(style.top, rect.top);
 
   tooltipChrome.style.setProperty("--tooltip-border-color", style.getPropertyValue("--tooltip-border-color").trim());
   tooltipChrome.style.setProperty("--tooltip-border-width", `${geometry.borderWidth}px`);
   tooltipChrome.setAttribute("width", `${rect.width}`);
   tooltipChrome.setAttribute("height", `${svgHeight}`);
   tooltipChrome.setAttribute("viewBox", `0 0 ${rect.width} ${svgHeight}`);
-  tooltipChrome.style.left = `${rect.left}px`;
-  tooltipChrome.style.top = `${placement === "bottom" ? rect.top - geometry.tailHeight : rect.top}px`;
+  tooltipChrome.style.left = `${layerLeft}px`;
+  tooltipChrome.style.top = `${placement === "bottom" ? layerTop - geometry.tailHeight : layerTop}px`;
   tooltipChrome.style.visibility = style.visibility;
-  tooltipChrome.style.opacity = "1";
+  tooltipChrome.style.removeProperty("opacity");
   tooltipChromePath.setAttribute(
     "d",
     buildContinuousBubblePath({
@@ -242,7 +250,7 @@ function initializeBubbleChrome() {
   const tooltipObserver = new MutationObserver(syncTooltipChrome);
   tooltipObserver.observe(dom.tooltipLayer, {
     attributes: true,
-    attributeFilter: ["data-edge", "data-placement", "hidden", "style"],
+    attributeFilter: ["data-animation-state", "data-edge", "data-placement", "hidden", "style"],
     childList: true,
     characterData: true,
     subtree: true,
@@ -632,16 +640,21 @@ function showTooltip(context) {
   const text = context?.source?.dataset?.tooltip;
   if (!text) return;
   cancelScheduledTooltip();
+  window.clearTimeout(tooltipHideTimer);
+  tooltipHideTimer = null;
   window.clearTimeout(state.ui.tooltipPressTimer);
   state.ui.tooltipPressTimer = null;
   setTooltipTouchHover(state.ui.tooltipTarget, false);
   state.ui.tooltipTarget = context.anchor;
   setTooltipTouchHover(context.anchor, true);
   dom.tooltipLayer.textContent = text;
+  dom.tooltipLayer.style.setProperty("transition", "none");
+  tooltipChrome?.style.setProperty("transition", "none");
   dom.tooltipLayer.hidden = false;
   dom.tooltipLayer.style.visibility = "hidden";
   dom.tooltipLayer.style.left = "0px";
   dom.tooltipLayer.style.top = "0px";
+  dom.tooltipLayer.dataset.animationState = "entering";
   dom.tooltipLayer.removeAttribute("data-placement");
 
   window.cancelAnimationFrame(tooltipFrame);
@@ -649,6 +662,13 @@ function showTooltip(context) {
     if (state.ui.tooltipTarget !== context.anchor || dom.tooltipLayer.hidden) return;
     positionTooltip(context.anchor);
     dom.tooltipLayer.style.visibility = "";
+    void dom.tooltipLayer.offsetWidth;
+    window.requestAnimationFrame(() => {
+      if (state.ui.tooltipTarget !== context.anchor || dom.tooltipLayer.hidden) return;
+      dom.tooltipLayer.style.removeProperty("transition");
+      tooltipChrome?.style.removeProperty("transition");
+      dom.tooltipLayer.dataset.animationState = "visible";
+    });
   });
 }
 
@@ -690,11 +710,30 @@ export function hideTooltip(force = false) {
   state.ui.tooltipPressTimer = null;
   window.cancelAnimationFrame(tooltipFrame);
   tooltipFrame = 0;
-  dom.tooltipLayer.hidden = true;
-  dom.tooltipLayer.textContent = "";
-  dom.tooltipLayer.style.visibility = "";
-  dom.tooltipLayer.style.removeProperty("--tooltip-arrow-offset");
-  dom.tooltipLayer.removeAttribute("data-placement");
+  if (!dom.tooltipLayer || dom.tooltipLayer.hidden) return;
+
+  const finishHide = () => {
+    tooltipHideTimer = null;
+    dom.tooltipLayer.hidden = true;
+    dom.tooltipLayer.textContent = "";
+    dom.tooltipLayer.style.visibility = "";
+    dom.tooltipLayer.style.removeProperty("--tooltip-arrow-offset");
+    dom.tooltipLayer.style.removeProperty("transition");
+    tooltipChrome?.style.removeProperty("transition");
+    dom.tooltipLayer.removeAttribute("data-animation-state");
+    dom.tooltipLayer.removeAttribute("data-placement");
+  };
+
+  window.clearTimeout(tooltipHideTimer);
+  if (force || window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+    finishHide();
+    return;
+  }
+
+  dom.tooltipLayer.style.removeProperty("transition");
+  tooltipChrome?.style.removeProperty("transition");
+  dom.tooltipLayer.dataset.animationState = "leaving";
+  tooltipHideTimer = window.setTimeout(finishHide, TOOLTIP_HIDE_ANIMATION_MS);
 }
 
 function clearTouchTooltipPress() {

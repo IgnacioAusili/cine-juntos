@@ -5,13 +5,13 @@ import {
   logEvent,
 } from "../core/state.js?v=20261008";
 import { MAX_ROOM_PARTICIPANTS } from "../core/utils.js";
-import { createTransport } from "../services/transport.js?v=20261008";
+import { createTransport } from "../services/transport.js?v=20261009-system-message-catchup-03-chat-history-page-01-scroll-unlocked-01";
 import {
   renderMembers,
   renderPresence,
 } from "./presence.js?v=20261008";
-import { setConnection } from "./icons-tooltips.js?v=20261008";
-import { syncComponentAspectLayoutNow } from "./chat/component-aspect-layout.js?v=20261008-unified-panel-layout-01";
+import { setConnection } from "./icons-tooltips.js?v=20261009-tooltip-slide-04";
+import { syncComponentAspectLayoutNow } from "./chat/component-aspect-layout.js?v=20261008-unified-panel-layout-01-shared-viewport-fit-01";
 import {
   getUserScrollIntentVersion,
   setHostBadge,
@@ -20,7 +20,7 @@ import {
   showSession,
   watchRoomEntryVideoFocus,
 } from "./session-ui.js?v=20261008";
-import { handleRemoteState } from "./player/index.js?v=20261009-emoji-reply-settle-01";
+import { handleRemoteState } from "./player/index.js?v=20261009-bottom-chat-expand-center-02-scroll-unread-visible-01-hidden-tab-scroll-01-input-boundary-01-chat-history-page-01-scroll-unlocked-01-dock-switch-stacked-viewport-01-right-chat-curtain-input-01-right-chat-close-settle-01-right-chat-viewport-curtain-01";
 import {
   beginSystemMessageHydration,
   finishSystemMessageHydration,
@@ -28,8 +28,10 @@ import {
   renderReplyPreview,
   resetInsideUnread,
   resetPageUnread,
+  resetChatHistoryPaging,
+  fillChatHistoryViewport,
   setInsideChatVisible,
-} from "./chat/index.js?v=20261009-emoji-reply-settle-01";
+} from "./chat/index.js?v=20261009-system-message-catchup-03-scroll-unread-visible-01-hidden-tab-scroll-01-input-boundary-01-chat-history-page-01-scroll-unlocked-01-dock-switch-stacked-viewport-01-right-chat-curtain-input-01-right-chat-close-settle-01-right-chat-viewport-curtain-01";
 import {
   getRoomTabLimitConflictCount,
   writeActiveTabRecord,
@@ -44,7 +46,7 @@ import {
   isRoomOperationCurrent,
   updateUrlRoom,
 } from "./room-navigation.js?v=20261008";
-import { setInviteCopyFeedback } from "./room-invite.js?v=20261008";
+import { setInviteCopyFeedback } from "./room-invite.js?v=20261009-invite-copy-animation-queue-01";
 import { resetRoomPlayerState } from "./room-player-state.js?v=20261008";
 
 async function closeTransport(transport) {
@@ -93,6 +95,7 @@ export async function joinRoom(rawRoomCode, sourceButton = "join") {
   let nextTransport = null;
   let connectStarted = false;
   try {
+    resetChatHistoryPaging();
     beginSystemMessageHydration();
     const previousTransport = state.session.transport;
     dom.messages.innerHTML = "";
@@ -107,7 +110,8 @@ export async function joinRoom(rawRoomCode, sourceButton = "join") {
     state.session.knownMembers = new Map([[state.session.clientId, getDisplayName()]]);
 
     const whenCurrent = (handler) => (...args) => {
-      if (isRoomOperationCurrent(operationId)) handler(...args);
+      if (isRoomOperationCurrent(operationId)) return handler(...args);
+      return undefined;
     };
     const connectionHandlers = {
       onState: whenCurrent(handleRemoteState),
@@ -139,6 +143,7 @@ export async function joinRoom(rawRoomCode, sourceButton = "join") {
     state.session.transport = nextTransport;
     writeActiveTabRecord(roomCode);
     state.session.activeRoom = roomCode;
+    finishSystemMessageHydration();
     rememberLastRoom(roomCode);
     dom.roomInput.value = roomCode;
     syncJoinRoomButtonState();
@@ -155,6 +160,7 @@ export async function joinRoom(rawRoomCode, sourceButton = "join") {
     resetInsideUnread();
     renderReplyPreview();
     roomEntryVideoFocus.activate();
+    void fillChatHistoryViewport();
     setSyncStatus("Sala activa.");
     logEvent("room", "Sala " + roomCode + " activa.");
   } catch (error) {

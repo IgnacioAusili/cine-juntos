@@ -1688,6 +1688,14 @@
     z-index: 39;
   }
 
+  /* En esta disposición el avance deshabilitado comparte el borde entre
+     video y chat: conserva la línea, pero deja pasar el puntero. */
+  body:not(.is-lobby) .session-view.bottom-dock-panels-fit-viewport:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"]
+    .player-progress-group:has(.player-seek-input:disabled) {
+    pointer-events: none;
+  }
+
   /* La pista queda como un hilo en reposo y aumenta sólo mientras se
      interactúa con ella. */
   body:not(.is-lobby) .session-view.bottom-dock-panels-fit-viewport:not(.chat-collapsed)[data-chat-dock="bottom"]

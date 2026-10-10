@@ -11,7 +11,7 @@ import {
   renderPresence,
 } from "./presence.js?v=20261008";
 import { setConnection } from "./icons-tooltips.js?v=20261009-tooltip-slide-04";
-import { syncComponentAspectLayoutNow } from "./chat/component-aspect-layout.js?v=20261008-unified-panel-layout-01";
+import { syncComponentAspectLayoutNow } from "./chat/component-aspect-layout.js?v=20261008-unified-panel-layout-01-shared-viewport-fit-01";
 import {
   getUserScrollIntentVersion,
   setHostBadge,

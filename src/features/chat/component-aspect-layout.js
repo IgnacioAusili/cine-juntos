@@ -94,7 +94,16 @@ function measureComponentLayout({ allowDuringChatTransition = false } = {}) {
     chatArea,
     videoPlayer,
   });
-  const shouldStack = targetLayout.shouldStack;
+  const isExpandedBottomDock = sessionView?.dataset.chatDock === "bottom"
+    && !sessionView.classList.contains("chat-collapsed");
+  const panelsFitViewport = Boolean(
+    isExpandedBottomDock
+    && targetLayout.hasMeasuredPanels
+    && targetLayout.combinedPanelHeight <= getStructuralViewportHeight() + 1
+  );
+  // Si ambos paneles caben en pantalla, conservar la disposición compartida.
+  // Una pequeña falta de alto ideal del video no debe convertirla en dos vistas.
+  const shouldStack = Boolean(targetLayout.shouldStack && !panelsFitViewport);
   if (
     shouldStack
     && !wasStacked

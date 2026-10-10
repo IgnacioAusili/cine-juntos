@@ -28,7 +28,7 @@ import {
   syncInsideChatPanelPlacement,
   wireInsideChatPanelPlacement,
 } from "../player/inside-chat-layout.js?v=20261008";
-import { syncComponentAspectLayoutNow } from "./component-aspect-layout.js?v=20261008-unified-panel-layout-01";
+import { syncComponentAspectLayoutNow } from "./component-aspect-layout.js?v=20261008-unified-panel-layout-01-shared-viewport-fit-01";
 
 const AUTO_COLLAPSE_DELAY_MS = 5000;
 const AUTO_EXPAND_INSIDE_KEY = "cine-juntos-chat-auto-expand-inside";

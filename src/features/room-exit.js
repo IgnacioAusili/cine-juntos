@@ -13,7 +13,7 @@ import {
   renderReplyPreview,
   setInsideChatVisible,
   finishSystemMessageHydration,
-} from "./chat/index.js?v=20261009-auto-expand-tooltip-01";
+} from "./chat/index.js?v=20261010-bottom-chat-collapse-rows-controls-01";
 import { removeActiveTabRecord } from "./room-access.js?v=20261008";
 import { invalidateRoomOperation, isRoomOperationCurrent, clearUrlRoom } from "./room-navigation.js?v=20261008";
 import { syncJoinRoomButtonState } from "./room-input.js?v=20261008";

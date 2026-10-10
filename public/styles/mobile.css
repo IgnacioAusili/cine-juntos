@@ -1767,6 +1767,22 @@
     z-index: 39;
   }
 
+  /* Al contraer, reanclar los controles al video desde el primer frame de su
+     expansión, en vez de cambiar su disposición al terminar la animación. */
+  body:not(.is-lobby) .session-view.bottom-dock-panels-fit-viewport.chat-bottom-pc-collapse-controls-transition:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-controls-bar {
+    position: relative;
+    z-index: 1;
+  }
+
+  body:not(.is-lobby) .session-view.bottom-dock-panels-fit-viewport.chat-bottom-pc-collapse-controls-transition:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-progress-group {
+    right: 0;
+    bottom: 100%;
+    left: 0;
+    z-index: 2;
+  }
+
   /* En esta disposición el avance deshabilitado comparte el borde entre
      video y chat: conserva la línea, pero deja pasar el puntero. */
   body:not(.is-lobby) .session-view.bottom-dock-panels-fit-viewport:not(.chat-collapsed)[data-chat-dock="bottom"]

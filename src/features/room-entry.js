@@ -20,7 +20,7 @@ import {
   showSession,
   watchRoomEntryVideoFocus,
 } from "./session-ui.js?v=20261008";
-import { handleRemoteState } from "./player/index.js?v=20261009-auto-expand-tooltip-01";
+import { handleRemoteState } from "./player/index.js?v=20261010-bottom-chat-collapse-rows-controls-01";
 import {
   beginSystemMessageHydration,
   finishSystemMessageHydration,
@@ -31,7 +31,7 @@ import {
   resetChatHistoryPaging,
   fillChatHistoryViewport,
   setInsideChatVisible,
-} from "./chat/index.js?v=20261009-auto-expand-tooltip-01";
+} from "./chat/index.js?v=20261010-bottom-chat-collapse-rows-controls-01";
 import {
   getRoomTabLimitConflictCount,
   writeActiveTabRecord,

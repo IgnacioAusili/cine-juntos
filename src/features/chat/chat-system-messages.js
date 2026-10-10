@@ -6,7 +6,7 @@ import {
 } from "../../core/state.js?v=20261008";
 import { formatClockTime } from "../../core/utils.js";
 import { createRandomId } from "../../core/random-id.js?v=20261008";
-import { renderMessage } from "./chat-render.js?v=20261009-auto-expand-tooltip-01";
+import { renderMessage } from "./chat-render.js?v=20261010-bottom-chat-collapse-rows-controls-01";
 
 /**
  * Genera y envía un mensaje de sistema al chat describiendo un evento de video.

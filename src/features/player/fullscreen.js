@@ -15,14 +15,14 @@ import {
   logEvent,
   state,
 } from "../../core/state.js?v=20261008";
-import { isMiniPlayerActive } from "./mini-player.js?v=20261009-auto-expand-tooltip-01";
+import { isMiniPlayerActive } from "./mini-player.js?v=20261010-bottom-chat-collapse-rows-controls-01";
 import {
   syncExternalChatCollapseHandleOffset,
   syncInsideChatPanelOffset,
   cancelExternalChatAutoCollapse,
   forceExternalChatCollapsed,
   updateCollapseButton,
-} from "../chat/chat-layout.js?v=20261009-auto-expand-tooltip-01-right-chat-scroll-lock-01";
+} from "../chat/chat-layout.js?v=20261010-bottom-chat-collapse-rows-controls-01";
 import { withShortcutHint } from "../../core/utils.js";
 import {
   captureFullscreenScroll,

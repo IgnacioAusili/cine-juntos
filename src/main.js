@@ -40,20 +40,20 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js?v=20261009-auto-expand-tooltip-01";
+} from "./features/chat/index.js?v=20261010-bottom-chat-collapse-rows-controls-01";
 import {
   initializePlayer,
   wirePlayerEvents,
-} from "./features/player/index.js?v=20261009-auto-expand-tooltip-01";
+} from "./features/player/index.js?v=20261010-bottom-chat-collapse-rows-controls-01";
 import { wireMobileFullscreenOrientation } from "./features/player/mobile-fullscreen-orientation.js";
 import { wireMobileChatKeyboardControls } from "./features/player/mobile-chat-keyboard-controls.js?v=20261008";
 import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20261008";
 import { wireMobileLandscapeVideoSnap } from "./features/mobile-landscape-video-snap.js?v=20261008";
-import { joinRoom, wireRoomEvents } from "./features/room.js?v=20261009-auto-expand-tooltip-01";
+import { joinRoom, wireRoomEvents } from "./features/room.js?v=20261010-bottom-chat-collapse-rows-controls-01";
 import { wireTouchHover } from "./core/touch-interactions.js?v=20261008";
 import { installConsoleLogCapture, wireMobileDebugTools } from "./features/mobile-debug.js?v=20261008";
 import { wireMobileKeyboardDiagnostics } from "./features/mobile-keyboard-diagnostics.js?v=20261008";
-import { openDialogTestRoute } from "./features/dialog-test-routes.js?v=20261009-auto-expand-tooltip-01";
+import { openDialogTestRoute } from "./features/dialog-test-routes.js?v=20261010-bottom-chat-collapse-rows-controls-01";
 import { wireLobbyLayoutVariants } from "./features/lobby-layout-variants.js?v=20261008";
 
 const requestedRoom = normalizeRoomCode(new URLSearchParams(window.location.search).get("room") || "");

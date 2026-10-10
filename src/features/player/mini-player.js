@@ -8,8 +8,8 @@ import {
 } from "./mini-player-controls.js?v=20261008";
 import {
   mirrorMiniPlayerChatState,
-} from "./mini-player-chat.js?v=20261009-auto-expand-tooltip-01";
-import { movePlayerInterface } from "./mini-player-interface.js?v=20261009-auto-expand-tooltip-01";
+} from "./mini-player-chat.js?v=20261010-bottom-chat-collapse-rows-controls-01";
+import { movePlayerInterface } from "./mini-player-interface.js?v=20261010-bottom-chat-collapse-rows-controls-01";
 import { trackMiniPlayerReturnHint } from "./mini-player-return-hint.js";
 import { clampMiniPlayerPosition, wireMiniPlayerDrag } from "./mini-player-drag.js?v=20261008";
 

@@ -1,7 +1,7 @@
 import {
   syncMiniChatAutoExpand,
   toggleMiniChatOverlay,
-} from "./mini-player-chat-mirror.js?v=20261009-auto-expand-tooltip-01";
+} from "./mini-player-chat-mirror.js?v=20261010-bottom-chat-collapse-rows-controls-01";
 import { state } from "../../core/state.js?v=20261008";
 
 export function mirrorMiniPlayerChatState(surface, visible = true) {

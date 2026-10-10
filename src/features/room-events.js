@@ -1,7 +1,7 @@
 import { dom } from "../core/dom.js";
 import { updateDisplayName } from "./presence.js?v=20261008";
-import { joinRoom } from "./room-entry.js?v=20261009-auto-expand-tooltip-01";
-import { leaveRoom } from "./room-exit.js?v=20261009-auto-expand-tooltip-01";
+import { joinRoom } from "./room-entry.js?v=20261010-bottom-chat-collapse-rows-controls-01";
+import { leaveRoom } from "./room-exit.js?v=20261010-bottom-chat-collapse-rows-controls-01";
 import { copyInvite } from "./room-invite.js?v=20261009-invite-copy-animation-queue-01";
 import {
   consumeRoomCreationAttempt,

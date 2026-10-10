@@ -15,7 +15,7 @@ import {
   resetInsideUnread,
   resetPageUnread,
   syncUnreadBadgesWithVisibility,
-} from "./unread-counters.js?v=20261009-auto-expand-tooltip-01";
+} from "./unread-counters.js?v=20261010-bottom-chat-collapse-rows-controls-01";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20261008";
 import { focusChatInput } from "./chat-input-focus.js";
 import { restorePageScrollAfterRightChatCollapse } from "./chat-scroll-preservation.js?v=20261008";
@@ -1245,6 +1245,7 @@ function clearBottomChatTransitionVisuals() {
     "chat-bottom-mobile-curtain-active",
     "chat-bottom-pc-collapse-visual",
     "chat-bottom-pc-expand-visual",
+    "chat-bottom-pc-collapse-controls-transition",
     "chat-bottom-curtain-active",
   );
   dom.sessionView?.style.removeProperty("--chat-bottom-curtain-clip");
@@ -1372,6 +1373,20 @@ function setMobileBottomTransitionProgress(transition, progress) {
   scrollPageTo(Math.round(scrollProgress), "auto");
 }
 
+function setDesktopBottomTransitionRowsProgress(transition, progress) {
+  if (!transition.animateRows || !dom.workspace) return;
+
+  const easedProgress = easeBottomChatCurtainProgress(progress);
+  const videoHeight = transition.startRows[0]
+    + ((transition.targetRows[0] - transition.startRows[0]) * easedProgress);
+  const chatHeight = transition.startRows[1]
+    + ((transition.targetRows[1] - transition.startRows[1]) * easedProgress);
+  dom.workspace.style.setProperty(
+    "grid-template-rows",
+    `${Math.max(0, videoHeight)}px ${Math.max(0, chatHeight)}px`,
+  );
+}
+
 function completeMobileBottomChatTransition(transition) {
   if (bottomChatTransition !== transition) return;
 
@@ -1415,6 +1430,7 @@ function stepDesktopBottomChatTransition(transition, force = false) {
   // hacia arriba, mientras el shell desplaza el video en el mismo frame.
   const clipProgress = transition.collapsed ? progress : 1 - progress;
   setDesktopBottomChatCurtainProgress(clipProgress * 100);
+  setDesktopBottomTransitionRowsProgress(transition, progress);
 
   const scrollProgress = transition.startScrollTop
     + ((transition.targetScrollTop - transition.startScrollTop) * progress);
@@ -1446,11 +1462,16 @@ function animateDesktopBottomChatCollapse(targetScrollTop) {
     return;
   }
 
+  const animateRows = dom.sessionView.classList.contains("bottom-dock-panels-fit-viewport");
+  const startRows = animateRows ? getWorkspaceRowHeights() : [0, 0];
   const transition = {
     collapsed: true,
+    animateRows,
     frameId: 0,
     timeoutId: 0,
     startedAt: performance.now(),
+    startRows,
+    targetRows: animateRows ? [getWorkspaceContentHeight(), 0] : [0, 0],
     startScrollTop: getPageScrollTop(),
     targetScrollTop,
   };
@@ -1462,6 +1483,15 @@ function animateDesktopBottomChatCollapse(targetScrollTop) {
   );
   dom.sessionView.classList.add("chat-bottom-pc-collapse-visual");
   setDesktopBottomChatCurtainProgress(0);
+  if (transition.animateRows) {
+    // Reanclar los controles al video desde el primer frame; si se espera a
+    // que termine la medición del layout, cambian de posición al final.
+    dom.sessionView.classList.add("chat-bottom-pc-collapse-controls-transition");
+    dom.workspace.style.setProperty(
+      "grid-template-rows",
+      `${transition.startRows[0]}px ${transition.startRows[1]}px`,
+    );
+  }
   void dom.chatArea.offsetWidth;
   transition.frameId = window.requestAnimationFrame(() => {
     if (bottomChatTransition !== transition) return;

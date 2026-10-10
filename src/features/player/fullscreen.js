@@ -9,7 +9,7 @@ import {
 import {
   hideTooltip,
   setControlIcon,
-} from "../icons-tooltips.js?v=20261009-tooltip-slide-04";
+} from "../icons-tooltips.js?v=20261010-tooltip-click-guard-01";
 import { setSyncStatus } from "../session-ui.js?v=20261008";
 import {
   logEvent,

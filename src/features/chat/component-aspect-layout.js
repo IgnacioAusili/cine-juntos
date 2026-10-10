@@ -99,10 +99,11 @@ function measureComponentLayout({ allowDuringChatTransition = false } = {}) {
   const panelsFitViewport = Boolean(
     isExpandedBottomDock
     && targetLayout.hasMeasuredPanels
+    && !targetLayout.shouldStack
     && targetLayout.combinedPanelHeight <= getStructuralViewportHeight() + 1
   );
-  // Si ambos paneles caben en pantalla, conservar la disposición compartida.
-  // Una pequeña falta de alto ideal del video no debe convertirla en dos vistas.
+  // Compartir el viewport solo es válido si el video conserva su proporción.
+  // Las diferencias pequeñas por redondeo ya se absorben en la medición.
   const shouldStack = Boolean(targetLayout.shouldStack && !panelsFitViewport);
   if (
     shouldStack

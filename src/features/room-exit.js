@@ -1,7 +1,7 @@
 import { dom } from "../core/dom.js";
 import { state, getDisplayName, LAST_ROOM_KEY, logEvent } from "../core/state.js?v=20261008";
 import { renderPresence } from "./presence.js?v=20261008";
-import { setConnection } from "./icons-tooltips.js?v=20261009-tooltip-slide-04";
+import { setConnection } from "./icons-tooltips.js?v=20261010-tooltip-click-guard-01";
 import {
   setHostBadge,
   setSyncStatus,

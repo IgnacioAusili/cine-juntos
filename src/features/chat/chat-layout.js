@@ -3,7 +3,7 @@ import { dom } from "../../core/dom.js";
 import { state, logEvent } from "../../core/state.js?v=20261008";
 import { shouldAnchorChatCollapseHandleInHeader } from "./chat-collapse-header-layout.js?v=20261008";
 import { CHAT_DOCKS, CHAT_DOCK_META, withShortcutHint } from "../../core/utils.js";
-import { hydrateIcons, hideTooltip, refreshTooltipForTarget } from "../icons-tooltips.js?v=20261009-tooltip-slide-04";
+import { hydrateIcons, hideTooltip, refreshTooltipForTarget } from "../icons-tooltips.js?v=20261010-tooltip-click-guard-01";
 import { focusFullscreenWorkspace } from "../session-ui.js?v=20261008";
 import {
   cancelIdentityEditing,

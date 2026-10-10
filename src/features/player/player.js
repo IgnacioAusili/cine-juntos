@@ -17,7 +17,7 @@ import {
   hideTooltip,
   refreshTooltipForTarget,
   setControlIcon,
-} from "../icons-tooltips.js?v=20261009-tooltip-slide-04";
+} from "../icons-tooltips.js?v=20261010-tooltip-click-guard-01";
 import { scrollToVideoPosition, sendVideoEventMessage, setInsideChatVisible } from "../chat/index.js?v=20261009-auto-expand-tooltip-01";
 // Import circular intencional y seguro: estas funciones se invocan en runtime,
 // no durante la carga del modulo, y player-sync-logic.js a su vez importa

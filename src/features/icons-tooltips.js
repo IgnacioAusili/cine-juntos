@@ -374,21 +374,17 @@ export function wireTooltipEvents() {
     if (!isTouchPointer(event)) return;
 
     suppressFocusTooltipUntil = performance.now() + TOUCH_FOCUS_SUPPRESSION_MS;
-    const shouldToggleOff = (isHelpButton || isPresenceButton || isStatusButton)
-      && state.ui.tooltipTarget === context.anchor
-      && !dom.tooltipLayer.hidden;
+    window.clearTimeout(state.ui.tooltipPressTimer);
+    state.ui.tooltipPressTimer = null;
     clearTouchTooltipPress();
-    if (shouldToggleOff) {
-      suppressTouchTooltipClick(context.anchor);
-      hideTooltip();
-      return;
-    }
 
     // Un tooltip anterior de otra ancla no debe bloquear el nuevo toque.
     if (state.ui.tooltipTarget && state.ui.tooltipTarget !== context.anchor) {
       setTooltipTouchHover(state.ui.tooltipTarget, false);
       cancelScheduledTooltip();
-    } else {
+    } else if (state.ui.tooltipTarget !== context.anchor || dom.tooltipLayer.hidden) {
+      // Si el mismo tooltip ya está visible, mantenerlo durante la pulsación.
+      // El click que llega al soltar es el que lo alterna a oculto.
       hideTooltip();
     }
     touchTooltipPress = {
@@ -467,6 +463,15 @@ export function wireTooltipEvents() {
       || isStatusTooltipContext(context);
     if (window.matchMedia("(max-width: 680px)").matches && isMobileTooltipButton) {
       if (state.ui.tooltipTarget === context.anchor && !dom.tooltipLayer.hidden) {
+        if (dom.tooltipLayer.style.visibility === "hidden") {
+          // Los toques durante la entrada no deben cerrar el tooltip antes de verlo.
+          window.clearTimeout(state.ui.tooltipPressTimer);
+          state.ui.tooltipPressTimer = window.setTimeout(
+            hideTooltip,
+            TOUCH_HELP_TOOLTIP_MAX_VISIBLE_MS,
+          );
+          return;
+        }
         hideTooltip();
       } else {
         showTooltip(context);

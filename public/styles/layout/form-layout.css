@@ -181,6 +181,12 @@
   transition: color 140ms ease, filter 180ms ease;
 }
 
+.chat-name-edit-button {
+  width: 22px;
+  min-height: 22px;
+  flex: 0 0 22px;
+}
+
 .chat-name-edit-button:disabled {
   cursor: not-allowed;
   opacity: 0.42;
@@ -271,6 +277,11 @@
 .chat-name-confirm-button svg {
   width: 14px;
   height: 14px;
+}
+
+.chat-name-edit-button svg {
+  width: 16px;
+  height: 16px;
 }
 
 .chat-name-confirm-button svg {

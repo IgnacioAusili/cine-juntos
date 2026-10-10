@@ -40,7 +40,7 @@ import {
 } from "./chat-layout.js?v=20261009-auto-expand-tooltip-01-right-chat-scroll-lock-01";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20261008";
 import { focusChatInput } from "./chat-input-focus.js";
-import { hideTooltip } from "../icons-tooltips.js?v=20261009-tooltip-slide-04";
+import { hideTooltip } from "../icons-tooltips.js?v=20261010-tooltip-click-guard-01";
 
 const MOBILE_CHAT_LAYOUT_QUERY = "(max-width: 980px)";
 const COLLAPSE_POINTER_HOVER_CLASS = "chat-collapse-pointer-hover";

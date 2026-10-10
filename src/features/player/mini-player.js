@@ -1,6 +1,6 @@
 import { dom } from "../../core/dom.js";
 import { state, logEvent } from "../../core/state.js?v=20261008";
-import { setControlIcon } from "../icons-tooltips.js?v=20261009-tooltip-slide-04";
+import { setControlIcon } from "../icons-tooltips.js?v=20261010-tooltip-click-guard-01";
 import { setSyncStatus } from "../session-ui.js?v=20261008";
 import {
   createMiniPlayerSurface,

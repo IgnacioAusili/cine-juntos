@@ -15,7 +15,7 @@ import {
   hydrateIcons,
   initializeUi,
   setConnection,
-} from "./features/icons-tooltips.js?v=20261009-tooltip-slide-04";
+} from "./features/icons-tooltips.js?v=20261010-tooltip-click-guard-01";
 import {
   wireLayoutMetrics,
 } from "./features/layout-metrics.js?v=20261008";

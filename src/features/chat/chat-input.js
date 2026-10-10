@@ -17,7 +17,7 @@ import { createRandomId } from "../../core/random-id.js?v=20261008";
 import {
   setSyncStatus,
 } from "../session-ui.js?v=20261008";
-import { refreshTooltipForTarget } from "../icons-tooltips.js?v=20261009-tooltip-slide-04";
+import { refreshTooltipForTarget } from "../icons-tooltips.js?v=20261010-tooltip-click-guard-01";
 import { markParticipantActive } from "../presence.js?v=20261008";
 import { clearReplyTarget } from "./chat-reply.js?v=20261008";
 import { renderMessage } from "./chat-render.js?v=20261009-auto-expand-tooltip-01";

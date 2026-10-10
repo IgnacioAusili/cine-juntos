@@ -1,4 +1,4 @@
-import { dom } from "../../core/dom.js";
+import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
 
 const TIME_GAP_PX = 8;
 const STANDALONE_TIME_GAP_PX = 3;

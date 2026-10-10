@@ -1,0 +1,224 @@
+/* En landscape angosto el chat lateral conserva la composicion de escritorio.
+   El modo vertical sigue usando la navegacion apilada definida en mobile.css. */
+@media (hover: none) and (pointer: coarse) {
+  body.fullscreen-mode {
+    width: var(--app-viewport-width, 100vw);
+    height: var(--app-viewport-height);
+    min-height: 0;
+    overflow: visible;
+  }
+
+  body.fullscreen-mode .app-shell {
+    position: fixed;
+    inset: var(--app-viewport-offset-top, 0px) auto auto var(--app-viewport-offset-left, 0px);
+    display: grid;
+    width: var(--app-viewport-width, 100vw);
+    height: var(--app-viewport-height);
+    min-width: 0;
+    min-height: 0;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    gap: 0;
+    overflow: hidden;
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  body.fullscreen-mode .topbar {
+    display: none;
+  }
+
+  body.fullscreen-mode .session-view {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    margin: 0;
+  }
+
+  body.fullscreen-mode .session-view[data-chat-dock="right"] .workspace {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    margin: 0;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) 0;
+    grid-template-areas:
+      "video"
+      "chat";
+  }
+
+  body.fullscreen-mode .session-view:not(.chat-collapsed)[data-chat-dock="right"] .workspace {
+    grid-template-rows: 0 minmax(0, 1fr);
+  }
+
+  body.fullscreen-mode .session-view[data-chat-dock="right"] .video-area,
+  body.fullscreen-mode .session-view[data-chat-dock="right"] .chat-area {
+    height: auto;
+    min-height: 0;
+  }
+
+  body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="right"] .video-area,
+  body.fullscreen-mode .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-area {
+    height: 100%;
+  }
+
+  body.fullscreen-mode .session-view[data-chat-dock="right"] .session-toolbar {
+    display: none;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] {
+    --chat-panel-width: clamp(250px, 40vw, 280px);
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .workspace {
+    display: grid;
+    width: 100%;
+    height: var(--app-viewport-height);
+    min-height: 0;
+    margin-top: var(--session-toolbar-height);
+    gap: 0;
+    grid-template-columns: minmax(0, 1fr) var(--chat-panel-width);
+    grid-template-rows: minmax(0, 1fr);
+    grid-template-areas: "video chat";
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view.chat-collapsed[data-chat-dock="right"] .workspace {
+    grid-template-columns: minmax(0, 1fr) 0;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-area {
+    flex: 0 0 var(--chat-panel-width);
+    width: var(--chat-panel-width);
+    height: 100%;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-tools {
+    gap: 4px;
+    --chat-tools-inline-gutter: 4px;
+    padding-inline: var(--chat-tools-inline-gutter);
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-tools-actions {
+    gap: 4px;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="bottom"] #dockChatButton {
+    width: 24px;
+    min-height: 24px;
+    height: 24px;
+    flex-basis: 24px;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .workspace {
+    /* Igual que en PC: video y chat son dos superficies consecutivas del
+       documento. El chat conserva un viewport propio y se alcanza mediante
+       scroll, en vez de comprimirse dentro del alto del video. */
+    height: auto;
+    min-height: 0;
+    padding-top: 0;
+    grid-template-rows: var(--app-viewport-height) var(--app-viewport-height);
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view.chat-collapsed[data-chat-dock="bottom"] .workspace {
+    height: var(--app-viewport-height);
+    padding-top: 0;
+    grid-template-rows: var(--app-viewport-height) 0px;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-area {
+    gap: 3px;
+    grid-template-rows: 38px minmax(0, 1fr);
+    transition: grid-template-rows 220ms ease;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"] .chat-collapse-hover-zone {
+    /* El control es hijo de .chat-area: top: 0 coincide con la unión
+       superior del panel, sin mezclar coordenadas del workspace. */
+    top: 0;
+    width: 38px;
+    height: 38px;
+    transform: translate(-50%, -50%);
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"] .chat-collapse-handle {
+    width: 32px;
+    height: 32px;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-tools {
+    box-sizing: border-box;
+    min-height: 0;
+    height: auto;
+    max-height: none;
+    /* La flecha se ancla al centro geométrico del header. El contenido
+       restante debe tener el mismo centro: padding simétrico evita que el
+       track normal quede un píxel más abajo. */
+    padding-top: 1px;
+    padding-bottom: 1px;
+    --chat-tools-inline-gutter: 4px;
+    padding-inline: var(--chat-tools-inline-gutter);
+    gap: 4px;
+    overflow: hidden;
+    transition:
+      opacity 220ms ease,
+      padding 220ms ease;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-tools > * {
+    align-self: center;
+    transform: none;
+  }
+
+  /* Al plegarse solo el contenido del header, la flecha sigue siendo el
+     control visible para recuperar la cabecera. El ancho landscape del móvil
+     no entra en el bloque portrait de mobile.css, por eso se declara aquí. */
+  html.viewport-landscape body:not(.is-lobby)
+    .session-view.chat-header-collapsed[data-chat-dock="bottom"] .chat-tools {
+    opacity: 1;
+    pointer-events: auto;
+    /* La fila de mensajes ocupa el espacio liberado por el header. El
+       control debe permanecer por encima de esa fila y poder sobresalir del
+       alto reducido del header. */
+    position: relative;
+    z-index: 14;
+    overflow: visible;
+  }
+
+  html.viewport-landscape body:not(.is-lobby)
+    .session-view.chat-header-collapsed[data-chat-dock="bottom"]
+    .chat-tools > :not(.chat-collapse-hover-zone) {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  html.viewport-landscape body:not(.is-lobby)
+    .session-view[data-chat-dock="bottom"] .chat-tools > :not(.chat-collapse-hover-zone) {
+    transition: opacity 220ms ease, visibility 0s linear;
+  }
+
+  html.viewport-landscape body:not(.is-lobby)
+    .session-view.chat-header-collapsed[data-chat-dock="bottom"] .chat-area {
+    gap: 3px;
+    grid-template-rows: 0 minmax(0, 1fr);
+  }
+
+  html.viewport-landscape body:not(.is-lobby)
+    .session-view.chat-header-collapsed[data-chat-dock="bottom"]
+    .chat-tools > :not(.chat-collapse-hover-zone) {
+    transition: opacity 220ms ease, visibility 0s linear 220ms;
+  }
+
+  html.viewport-landscape body:not(.is-lobby)
+    .session-view.chat-header-collapsed[data-chat-dock="bottom"]
+    .chat-area > .chat-collapse-hover-zone[data-chat-control="collapse"] {
+    /* .chat-tools se reduce a 0px al ocultar el header. Mantener el punto
+       medio de su altura original evita que la flecha se desplace con la fila. */
+    top: calc(38px / 2);
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }}

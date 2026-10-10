@@ -1,10 +1,18 @@
 const http = require("node:http");
 const fs = require("node:fs");
 const path = require("node:path");
+const { buildHtml, sourceRoot } = require("./build-html.js");
 
 const root = path.resolve(__dirname, "..");
 const portArgIndex = process.argv.indexOf("--port");
 const port = Number(process.env.PORT || (portArgIndex >= 0 ? process.argv[portArgIndex + 1] : 8080));
+
+try {
+  buildHtml();
+} catch (error) {
+  console.error(`No se pudo preparar index.html: ${error.message}`);
+  process.exit(1);
+}
 
 const csp = [
   "default-src 'self'",
@@ -141,3 +149,23 @@ server.listen(port, () => {
   console.log(`Cine Juntos dev server: http://localhost:${port}`);
   console.log("Client logs enabled in this terminal.");
 });
+
+let htmlBuildTimer;
+try {
+  const watcher = fs.watch(sourceRoot, { recursive: true }, (_event, filename) => {
+    if (filename && path.extname(filename.toString()).toLowerCase() !== ".html") return;
+    clearTimeout(htmlBuildTimer);
+    htmlBuildTimer = setTimeout(() => {
+      try {
+        const result = buildHtml();
+        if (result.changed) console.log(`HTML actualizado desde ${result.sources.length} fuentes.`);
+      } catch (error) {
+        console.error(`No se pudo actualizar index.html: ${error.message}`);
+      }
+    }, 120);
+  });
+  watcher.on("error", (error) => console.error(`No se pudo observar el HTML fuente: ${error.message}`));
+  console.log("HTML fuente observado; index.html se recompone al guardar parciales.");
+} catch (error) {
+  console.warn(`No se pudo activar la observación del HTML: ${error.message}`);
+}

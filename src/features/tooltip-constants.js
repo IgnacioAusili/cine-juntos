@@ -1,0 +1,14 @@
+export const TOOLTIP_ANCHOR_SELECTOR = "button, [role='button'], a, label, summary, input, select, textarea";
+export const TOOLTIP_VIEWPORT_PADDING = 8;
+export const TOOLTIP_GAP = 4;
+export const TOOLTIP_BORDER_WIDTH_PX = 1;
+export const TOOLTIP_RADIUS_PX = 12;
+export const TOOLTIP_TAIL_WIDTH_PX = 14;
+export const TOOLTIP_TAIL_HEIGHT_PX = 7;
+export const TOOLTIP_SHOW_DELAY_MS = 600;
+export const HELP_TOOLTIP_SHOW_DELAY_MS = 400;
+export const PRESENCE_TOOLTIP_SHOW_DELAY_MS = 250;
+export const TOOLTIP_HIDE_ANIMATION_MS = 120;
+export const TOUCH_FOCUS_SUPPRESSION_MS = 500;
+export const TOUCH_TOOLTIP_MOVE_TOLERANCE_PX = 10;
+export const TOUCH_HELP_TOOLTIP_MAX_VISIBLE_MS = 1800;

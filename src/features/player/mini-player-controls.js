@@ -1,5 +1,5 @@
-import { observePlayerControlLayouts } from "./player-controls-layout.js?v=20261008";
-import { observePlayerVolumeLayouts } from "./player-volume-layout.js?v=20261008";
+import { observePlayerControlLayouts } from "./player-controls-layout.js?v=20261010-file-size-refactor-02";
+import { observePlayerVolumeLayouts } from "./player-volume-layout.js?v=20261010-file-size-refactor-02";
 
 export function installMiniPlayerWindowStyles(targetDocument) {
   const emojiFont = targetDocument.createElement("link");
@@ -8,8 +8,8 @@ export function installMiniPlayerWindowStyles(targetDocument) {
   targetDocument.head.append(emojiFont);
 
   const stylesheets = [
-    "../../../public/styles.css?v=20261009-tooltip-slide-01",
-    "../../../public/styles/mini-player-window.css?v=20261008",
+    "../../../public/styles.css?v=20261010-file-size-refactor-02",
+    "../../../public/styles/mini-player-window.css?v=20261010-file-size-refactor-02",
   ].map((path) => {
     const stylesheet = targetDocument.createElement("link");
     stylesheet.rel = "stylesheet";

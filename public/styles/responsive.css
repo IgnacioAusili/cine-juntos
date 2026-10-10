@@ -1,5 +1,5 @@
-@import url("./session-fit-layout.css?v=20261009-stacked-chat-viewport-01-dock-switch-stacked-viewport-01");
-@import url("./session-layout-controls.css?v=20261008");
+@import url("./session-fit-layout.css?v=20261010-file-size-refactor-02");
+@import url("./session-layout-controls.css?v=20261010-file-size-refactor-02");
 
 @media (max-width: 1100px) {
   .session-toolbar {

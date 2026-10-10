@@ -1,0 +1,134 @@
+
+
+@media (hover: none) {
+  .mini-player-surface.mini-player-scroll:hover .player-bottom-actions {
+    opacity: 0;
+    transform: translateY(6px);
+    pointer-events: none;
+  }
+
+  .mini-player-surface.mini-player-scroll.is-touch-hover .player-bottom-actions {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .mini-player-surface .player-volume-group:hover:not(.is-touch-hover):not(.volume-hovered) {
+    gap: 0;
+  }
+
+  .mini-player-surface .player-volume-group:hover:not(.is-touch-hover):not(.volume-hovered) .player-volume-slider-wrap {
+    max-width: 0;
+  }
+
+  .mini-player-surface .player-volume-group.is-touch-hover,
+  .mini-player-surface .player-volume-group.volume-hovered {
+    gap: 6px;
+  }
+
+  .mini-player-surface .player-volume-group.is-touch-hover .player-volume-slider-wrap,
+  .mini-player-surface .player-volume-group.volume-hovered .player-volume-slider-wrap {
+    max-width: 42px;
+  }
+}
+
+.mini-player-surface .player-volume-group .video-control-button {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.mini-player-surface .player-rate-select {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.mini-player-surface .player-progress-group {
+  order: initial;
+  width: auto;
+  gap: 5px;
+}
+
+.mini-player-surface .player-time {
+  min-width: 28px;
+  font-size: 0.64rem;
+}
+
+.mini-player-surface .video-control-button {
+  width: 28px;
+  min-height: 28px;
+  flex-basis: 28px;
+}
+
+.mini-player-surface .player-rate-select,
+.mini-player-surface #pageFullscreenButton,
+.mini-player-surface [data-proxy-for="pageFullscreenButton"] {
+  display: none;
+}
+
+.mini-player-surface #playerMiniPlayerButton.active svg,
+.mini-player-surface [data-proxy-for="playerMiniPlayerButton"].active svg,
+.player-frame.mini-player-active #playerMiniPlayerButton.active svg {
+  width: 12px;
+  height: 12px;
+}
+
+.player-frame.mini-player-active #playerMiniPlayerButton.active,
+.mini-player-surface #playerMiniPlayerButton.active,
+.mini-player-surface [data-proxy-for="playerMiniPlayerButton"].active {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+/* La salida del mini reproductor sigue la barra Linea y conserva un area de
+   toque comoda, sin la capsula rectangular del estilo anterior. */
+.player-frame[data-control-style="line"] #playerMiniPlayerButton.active,
+.mini-player-surface[data-control-style="line"] [data-proxy-for="playerMiniPlayerButton"].active {
+  margin-left: auto;
+  width: 34px;
+  min-height: 34px;
+  flex-basis: 34px;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.player-frame[data-control-style="line"] #playerMiniPlayerButton.active svg,
+.mini-player-surface[data-control-style="line"] [data-proxy-for="playerMiniPlayerButton"].active svg {
+  width: 22px;
+  height: 22px;
+  stroke-width: 2.45;
+}
+
+.player-frame.mini-player-active #playerMiniPlayerButton.active:hover svg,
+.player-frame.mini-player-active #playerMiniPlayerButton.active:focus-visible svg,
+.mini-player-surface #playerMiniPlayerButton.active:hover svg,
+.mini-player-surface #playerMiniPlayerButton.active:focus-visible svg,
+.mini-player-surface [data-proxy-for="playerMiniPlayerButton"].active:hover svg,
+.mini-player-surface [data-proxy-for="playerMiniPlayerButton"].active:focus-visible svg {
+  color: #ff6464;
+}
+
+@media (max-width: 760px) {
+  .mini-player-return-hint {
+    left: 16px;
+    right: 16px;
+    width: auto;
+  }
+
+  .mini-player-inline {
+    right: 8px;
+    bottom: 8px;
+    width: calc(100% - 16px);
+    height: min(340px, calc(100% - 16px));
+  }
+
+  .mini-player-scroll {
+    right: 12px;
+    top: 12px;
+    bottom: auto;
+    width: min(320px, 72vw, calc(100vw - 24px));
+    height: auto;
+  }
+}

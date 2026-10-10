@@ -1,0 +1,203 @@
+              <video
+                id="videoPlayer"
+                controlslist="nofullscreen nodownload noremoteplayback"
+                playsinline
+                preload="metadata"
+              ></video>
+              <div
+                class="player-loading-overlay"
+                id="playerLoadingOverlay"
+                role="status"
+                aria-live="polite"
+                aria-label="Cargando video"
+                hidden
+              >
+                <span class="player-loading-spinner" aria-hidden="true"></span>
+              </div>
+              <div
+                class="playback-gesture-indicator"
+                id="playbackGestureIndicator"
+                aria-hidden="true"
+              >
+                <span class="playback-gesture-icon playback-gesture-icon-play" data-lucide="play"></span>
+                <span class="playback-gesture-icon playback-gesture-icon-pause" data-lucide="pause"></span>
+                <span class="playback-gesture-icon playback-gesture-icon-volume" data-lucide="volume-2"></span>
+              </div>
+              <div class="player-center-actions" aria-label="Controles centrales del reproductor"></div>
+              <div class="mini-player-return-hint" aria-live="polite">
+                <span>El video está en el mini-reproductor</span>
+                <strong>Para verlo en la pantalla principal, cancelá la vista en miniatura desde este botón</strong>
+              </div>
+              <span class="mini-player-return-arrow" aria-hidden="true"></span>
+              <div class="empty-player" id="emptyPlayer">
+                <span data-lucide="film"></span>
+              </div>
+              <p
+                id="syncStatus"
+                class="sync-status video-status empty player-status-badge"
+                role="button"
+                tabindex="0"
+                title="Estado de video"
+                data-tooltip="Todavía no hay un video cargado en la sala"
+              >
+                <span class="status-dot video-status-dot" id="videoStatusIcon" aria-hidden="true"></span>
+                <span id="videoStatusText">Sin contenido</span>
+              </p>
+
+              <div class="player-actions" aria-label="Controles de reproductor">
+                  <button
+                    class="icon-button player-tool compact-tool"
+                    id="playerChatToggleButton"
+                    type="button"
+                    aria-label="Mostrar chat"
+                    title="Mostrar chat"
+                    data-tooltip="Mostrar chat (Tab)"
+                  >
+                    <span data-lucide="message-square"></span>
+                    <span class="unread-badge player-chat-unread-badge" id="insideChatUnread" hidden><span class="player-chat-unread-count">0</span></span>
+                </button>
+              </div>
+              <div class="player-bottom-actions" aria-label="Controles inferiores del reproductor">
+                <div class="player-controls-bar">
+                  <button
+                    class="video-control-button player-skip-control"
+                    id="playerBackButton"
+                    type="button"
+                    aria-label="Retroceder 10 segundos"
+                    data-tooltip="Retroceder 10 segundos (←)"
+                  >
+                    <span data-lucide="rewind"></span>
+                  </button>
+
+                  <button
+                    class="video-control-button primary-video-control"
+                    id="playerPlayButton"
+                    type="button"
+                    aria-label="Reproducir video"
+                    title="Reproducir video"
+                    data-tooltip="Reproducir video (Espacio)"
+                  >
+                    <span data-lucide="play"></span>
+                  </button>
+
+                  <button
+                    class="video-control-button player-skip-control"
+                    id="playerForwardButton"
+                    type="button"
+                    aria-label="Avanzar 10 segundos"
+                    data-tooltip="Avanzar 10 segundos (→)"
+                  >
+                    <span data-lucide="fast-forward"></span>
+                  </button>
+
+                  <div class="player-volume-group" id="playerVolumeGroup">
+                    <button
+                      class="video-control-button"
+                      id="playerMuteButton"
+                      type="button"
+                      aria-label="Silenciar"
+                      aria-controls="playerVolumeInput"
+                      aria-expanded="false"
+                      aria-haspopup="slider"
+                      title="Silenciar"
+                      data-tooltip="Silenciar (M)"
+                    >
+                      <span data-lucide="volume-2"></span>
+                    </button>
+                    <div class="player-volume-slider-wrap">
+                      <input
+                        class="player-volume-input"
+                        id="playerVolumeInput"
+                        type="range"
+                        min="0"
+                        max="1"
+                        step="0.01"
+                        value="1"
+                        aria-label="Volumen"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="player-progress-group">
+                    <span class="player-time" id="playerCurrentTime">0:00</span>
+                    <input
+                      class="player-seek-input"
+                      id="playerSeekInput"
+                      type="range"
+                      min="0"
+                      max="0"
+                      step="0.1"
+                      value="0"
+                      aria-label="Avance del video"
+                    />
+                    <button class="player-time player-time-total" id="playerDuration" type="button">0:00</button>
+                  </div>
+
+                  <div
+                    class="player-controls-scroll-zone"
+                    aria-label="Controles adicionales"
+                  >
+                    <div
+                      class="player-controls-scroll-window"
+                      tabindex="0"
+                      role="region"
+                      aria-label="Deslizar controles adicionales"
+                    >
+                      <div class="player-controls-scroll-track">
+                        <label
+                          class="player-select player-rate-select"
+                          for="playerRateSelect"
+                          data-player-control="rate"
+                          data-tooltip="Velocidad de reproduccion"
+                        >
+                          <select id="playerRateSelect" aria-label="Velocidad de reproduccion">
+                            <option value="0.5">0.5x</option>
+                            <option value="0.75">0.75x</option>
+                            <option value="1" selected>1x</option>
+                            <option value="1.25">1.25x</option>
+                            <option value="1.5">1.5x</option>
+                            <option value="2">2x</option>
+                          </select>
+                        </label>
+
+                        <button
+                          class="video-control-button"
+                          id="playerMiniPlayerButton"
+                          type="button"
+                          data-player-control="mini"
+                          aria-label="Abrir mini-reproductor"
+                          aria-pressed="false"
+                          title="Abrir mini-reproductor"
+                          data-tooltip="Mini-reproductor"
+                        >
+                          <span data-lucide="picture-in-picture-2"></span>
+                        </button>
+
+                        <button
+                          class="video-control-button"
+                          id="pageFullscreenButton"
+                          type="button"
+                          data-player-control="fullscreen"
+                          aria-label="Pantalla completa"
+                          title="Pantalla completa"
+                          data-tooltip="Pantalla completa (F)"
+                        >
+                          <span data-lucide="maximize"></span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <input
+                      class="player-controls-scroll-indicator"
+                      type="range"
+                      min="0"
+                      max="0"
+                      step="1"
+                      value="0"
+                      aria-label="Desplazar controles adicionales"
+                      data-player-scroll-indicator
+                      hidden
+                    />
+                  </div>
+                </div>
+              </div>

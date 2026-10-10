@@ -1,0 +1,211 @@
+
+
+@media (max-width: 680px) {
+
+  .lobby-feature-text strong {
+    font-size: 0.72rem;
+    line-height: 1.15;
+    white-space: nowrap;
+  }
+
+  .lobby-feature-text small {
+    display: block;
+    color: var(--muted-2);
+    font-size: 0.62rem;
+    line-height: 1.25;
+    text-align: left;
+  }
+
+  .lobby-ticket {
+    width: min(380px, 100%);
+    justify-self: center;
+    margin-top: 8px;
+    transform: none;
+  }
+
+  .lobby-ticket-body {
+    gap: 16px;
+    padding: 14px 14px 10px;
+  }
+
+  .lobby-ticket-label {
+    font-size: 1.02rem;
+  }
+
+  .lobby-ticket-hint {
+    font-size: 0.76rem;
+  }
+
+  .lobby-fields {
+    gap: 10px;
+  }
+
+  .lobby-fields input[type="text"] {
+    height: 42px;
+    min-height: 42px;
+    line-height: 42px;
+  }
+
+  .lobby-actions {
+    gap: 8px;
+  }
+
+  .lobby-actions > .button {
+    min-height: 42px;
+  }
+
+  .lobby-fields input[type="text"] {
+    --lobby-input-offset: 3px;
+    width: calc(100% - var(--lobby-input-offset));
+    transform: translateX(var(--lobby-input-offset));
+  }
+
+  .lobby-footer {
+    display: grid;
+    align-items: center;
+    grid-template-columns: minmax(0, 1fr) var(--lobby-about-panel-size, 42px);
+    gap: 12px;
+    width: min(380px, 100%);
+    align-self: end;
+    margin-top: 0;
+    padding: 10px 0;
+    border: 0;
+    border-radius: 16px;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+
+  .lobby-footer .lobby-disclaimer {
+    width: auto;
+    transform: translateY(10px);
+    text-align: center;
+  }
+
+  .lobby-about-button {
+    position: static;
+    justify-self: center;
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    margin: 0;
+    transform: translateY(5px);
+  }
+
+  .lobby-about-button svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .lobby-about-button:hover,
+  .lobby-about-button:focus-visible {
+    transform: translateY(3px);
+  }
+
+  .lobby-about-button.is-touch-hover,
+  .lobby-about-button.is-touch-hover:hover {
+    transform: translateY(3px);
+  }
+
+  /* Cargar usa el estado nativo de presión: evita que JS y :hover compitan
+     durante una pulsación táctil prolongada. */
+  .session-toolbar-body .button.primary:hover:not(:active):not(:disabled) {
+    background: #d4762a;
+    border-color: rgba(240, 140, 58, 0.3);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+    transform: none;
+  }
+
+  .session-toolbar-body .button.primary {
+    /* Al liberar fuera del botón no debe interpolar un frame oscuro entre
+       :active y el estado normal. */
+    transition: none;
+  }
+
+  .session-toolbar-body .button.primary:active,
+  .session-toolbar-body .button.primary:active:hover {
+    background: linear-gradient(180deg, #ffb070, var(--amber));
+    border-color: rgba(240, 140, 58, 0.32);
+    box-shadow:
+      0 0 0 1px rgba(240, 140, 58, 0.32),
+      0 12px 30px rgba(240, 140, 58, 0.42),
+      inset 0 1px 0 rgba(255, 255, 255, 0.42);
+    transform: none;
+  }
+
+  /* La toolbar es absoluta sobre el video y en una pantalla angosta crece a
+     dos filas. Reservamos su alto real para que no tape las acciones de sala. */
+  body:not(.is-lobby) .session-view .workspace {
+    margin-top: var(--session-toolbar-height);
+    scroll-margin-top: var(--session-toolbar-height);
+  }
+
+  /* El header conserva el gutter lateral; video y chat ocupan todo el ancho
+     disponible y llegan hasta el borde inferior de la pantalla. */
+  body:not(.is-lobby) .app-shell {
+    padding-bottom: 0;
+  }
+
+  /* El dock lateral usa una sola superficie de viewport. Limitar el shell a
+     esa superficie deja que el workspace ocupe lo que queda tras el header y
+     la barra de sala, sin sumar otro viewport debajo de ellos. */
+  body:not(.is-lobby) .app-shell:has(.session-view[data-chat-dock="right"]) {
+    height: var(--app-viewport-height);
+    min-height: 0;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  body:not(.is-lobby) .session-view.layout-stacked[data-chat-dock="right"] {
+    min-height: 0;
+  }
+
+  body:not(.is-lobby) .session-view {
+    width: calc(100% + (var(--app-shell-gutter) * 2));
+    margin-left: calc(var(--app-shell-gutter) * -1);
+    margin-right: calc(var(--app-shell-gutter) * -1);
+    margin-inline: calc(var(--app-shell-gutter) * -1);
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .workspace {
+    margin-top: var(--session-toolbar-height);
+    scroll-margin-top: var(--session-toolbar-height);
+    /* En móvil el video y el chat forman una única pantalla desplazable.
+       Las reglas generales del dock inferior les asignan un viewport entero
+       a cada fila, dejando solo el chat visible al llegar al final. */
+    height: var(--app-viewport-height);
+    min-height: 0;
+    padding-top: 0;
+    grid-template-rows:
+      minmax(220px, 42%)
+      minmax(0, 1fr);
+  }
+
+  /* Cuando el chat está contraído, no reservar su segunda fila. En móvil el
+     dock lateral también se apila debajo del video, por lo que ambos docks
+     deben recuperar todo el alto disponible de la pantalla. */
+  body:not(.is-lobby) .session-view.chat-collapsed[data-chat-dock] .workspace {
+    grid-template-rows: minmax(0, 1fr) 0;
+  }
+
+  /* En una ventana angosta el reproductor y el dock lateral comparten el
+     alto del viewport realmente visible, no solo el espacio restante bajo
+     el header. El chat se monta sobre esa misma superficie. */
+  body:not(.is-lobby) .session-view[data-chat-dock="right"] .workspace {
+    position: relative;
+    display: block;
+    height: var(--right-chat-visible-height, var(--app-viewport-height));
+    flex: 0 0 var(--right-chat-visible-height, var(--app-viewport-height));
+    min-height: 0;
+    padding-top: 0;
+    gap: 0;
+    grid-template: none;
+    overflow: visible;
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="right"] .video-area {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    grid-area: auto;
+  }}

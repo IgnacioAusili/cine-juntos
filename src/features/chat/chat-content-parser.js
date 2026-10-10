@@ -2,7 +2,7 @@ import {
   CHAT_VIDEO_PREVIEW_MAX_SECONDS,
   REMOTE_IMAGE_EXTENSIONS,
   REMOTE_VIDEO_EXTENSIONS,
-} from "../../core/utils.js";
+} from "../../core/utils.js?v=20261010-file-size-refactor-02";
 
 export function appendMessageContent(container, text) {
   const trimmedText = String(text || "").trim();

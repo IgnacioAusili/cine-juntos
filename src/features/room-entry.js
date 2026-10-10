@@ -1,17 +1,17 @@
-import { dom } from "../core/dom.js";
+import { dom } from "../core/dom.js?v=20261010-file-size-refactor-02";
 import {
   state,
   getDisplayName,
   logEvent,
-} from "../core/state.js?v=20261008";
-import { MAX_ROOM_PARTICIPANTS } from "../core/utils.js";
-import { createTransport } from "../services/transport.js?v=20261009-system-message-catchup-03-chat-history-page-01-scroll-unlocked-01";
+} from "../core/state.js?v=20261010-file-size-refactor-02";
+import { MAX_ROOM_PARTICIPANTS } from "../core/utils.js?v=20261010-file-size-refactor-02";
+import { createTransport } from "../services/transport.js?v=20261010-file-size-refactor-02";
 import {
   renderMembers,
   renderPresence,
-} from "./presence.js?v=20261008";
-import { setConnection } from "./icons-tooltips.js?v=20261010-tooltip-click-guard-01";
-import { syncComponentAspectLayoutNow } from "./chat/component-aspect-layout.js?v=20261008-unified-panel-layout-01-shared-viewport-fit-01";
+} from "./presence.js?v=20261010-file-size-refactor-02";
+import { setConnection } from "./icons-tooltips.js?v=20261010-file-size-refactor-02";
+import { syncComponentAspectLayoutNow } from "./chat/component-aspect-layout.js?v=20261010-file-size-refactor-02";
 import {
   getUserScrollIntentVersion,
   setHostBadge,
@@ -19,8 +19,8 @@ import {
   showLobby,
   showSession,
   watchRoomEntryVideoFocus,
-} from "./session-ui.js?v=20261008";
-import { handleRemoteState } from "./player/index.js?v=20261010-bottom-chat-collapse-rows-controls-01";
+} from "./session-ui.js?v=20261010-file-size-refactor-02";
+import { handleRemoteState } from "./player/index.js?v=20261010-file-size-refactor-02";
 import {
   beginSystemMessageHydration,
   finishSystemMessageHydration,
@@ -31,23 +31,23 @@ import {
   resetChatHistoryPaging,
   fillChatHistoryViewport,
   setInsideChatVisible,
-} from "./chat/index.js?v=20261010-bottom-chat-collapse-rows-controls-01";
+} from "./chat/index.js?v=20261010-file-size-refactor-02";
 import {
   getRoomTabLimitConflictCount,
   writeActiveTabRecord,
-} from "./room-access.js?v=20261008";
+} from "./room-access.js?v=20261010-file-size-refactor-02";
 import {
   rememberLastRoom,
   sanitizeRoomInput,
   syncJoinRoomButtonState,
-} from "./room-input.js?v=20261008";
+} from "./room-input.js?v=20261010-file-size-refactor-02";
 import {
   beginRoomOperation,
   isRoomOperationCurrent,
   updateUrlRoom,
-} from "./room-navigation.js?v=20261008";
-import { setInviteCopyFeedback } from "./room-invite.js?v=20261009-invite-copy-animation-queue-01";
-import { resetRoomPlayerState } from "./room-player-state.js?v=20261008";
+} from "./room-navigation.js?v=20261010-file-size-refactor-02";
+import { setInviteCopyFeedback } from "./room-invite.js?v=20261010-file-size-refactor-02";
+import { resetRoomPlayerState } from "./room-player-state.js?v=20261010-file-size-refactor-02";
 
 async function closeTransport(transport) {
   try {

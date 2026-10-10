@@ -1,4 +1,4 @@
-import { dom } from "../../core/dom.js";
+import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
 import {
   getMirrorChatDraft,
   handleMiniChatInteraction,
@@ -16,10 +16,10 @@ import {
   toggleMiniEmojiPicker,
   toggleMiniChatOverlay,
   wireMirrorChatScrollbar,
-} from "./mini-player-chat-mirror.js?v=20261010-bottom-chat-collapse-rows-controls-01";
-import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js?v=20261010-bottom-chat-collapse-rows-controls-01";
-import { wireMiniPlayerShortcuts } from "./mini-player-shortcuts.js?v=20261010-bottom-chat-collapse-rows-controls-01";
-import { wireTouchHover } from "../../core/touch-interactions.js";
+} from "./mini-player-chat-mirror.js?v=20261010-file-size-refactor-02";
+import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js?v=20261010-file-size-refactor-02";
+import { wireMiniPlayerShortcuts } from "./mini-player-shortcuts.js?v=20261010-file-size-refactor-02";
+import { wireTouchHover } from "../../core/touch-interactions.js?v=20261010-file-size-refactor-02";
 
 const VIDEO_EVENTS = ["play", "pause", "ended", "timeupdate", "seeked", "ratechange", "volumechange"];
 const PROXY_CONTROL_SELECTOR = "button, input:not([data-player-scroll-indicator]), select, textarea";

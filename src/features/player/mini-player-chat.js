@@ -1,8 +1,8 @@
 import {
   syncMiniChatAutoExpand,
   toggleMiniChatOverlay,
-} from "./mini-player-chat-mirror.js?v=20261010-bottom-chat-collapse-rows-controls-01";
-import { state } from "../../core/state.js?v=20261008";
+} from "./mini-player-chat-mirror.js?v=20261010-file-size-refactor-02";
+import { state } from "../../core/state.js?v=20261010-file-size-refactor-02";
 
 export function mirrorMiniPlayerChatState(surface, visible = true) {
   toggleMiniChatOverlay(surface, visible);

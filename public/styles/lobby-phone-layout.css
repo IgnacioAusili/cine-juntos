@@ -1,0 +1,25 @@
+
+
+@media (max-width: 480px) {
+  body.is-lobby[data-lobby-flow="single-column"] .lobby-ticket {
+    --lobby-ticket-top-stub-height: 32px;
+    grid-template-rows: var(--lobby-ticket-fit-stub-height, var(--lobby-ticket-top-stub-height)) minmax(0, 1fr);
+  }
+
+  body.is-lobby[data-lobby-flow="single-column"] .lobby-ticket-stub {
+    min-height: var(--lobby-ticket-fit-stub-height, var(--lobby-ticket-top-stub-height));
+    padding: 4px 14px;
+  }
+
+  body.is-lobby[data-lobby-flow="single-column"] .lobby-ticket-perforation {
+    top: var(--lobby-ticket-fit-stub-height, var(--lobby-ticket-top-stub-height));
+  }
+}
+
+body.is-lobby .lobby-about-button {
+  transition: scale 160ms ease, transform 160ms ease, background 160ms ease, border-color 160ms ease;
+}
+
+body.is-lobby[data-lobby-about-contact="true"] .lobby-about-button {
+  scale: 0.9;
+}

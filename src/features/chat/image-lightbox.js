@@ -1,4 +1,4 @@
-import { createImageLightboxPanController } from "./image-lightbox-pan.js?v=20261009-image-pan-01";
+import { createImageLightboxPanController } from "./image-lightbox-pan.js?v=20261010-file-size-refactor-02";
 
 const LIGHTBOX_ID = "imageLightbox";
 const MIN_SCALE = 0.5;

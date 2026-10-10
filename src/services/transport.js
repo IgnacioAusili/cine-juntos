@@ -1,7 +1,7 @@
-import { firebaseConfig, logEvent } from "../core/state.js?v=20261008";
-import { hasFirebaseConfig } from "../core/utils.js";
-import { createFirebaseTransport } from "./firebaseTransport.js?v=20261009-system-message-catchup-03-chat-history-page-01-scroll-unlocked-01";
-import { createLocalTransport } from "./localTransport.js?v=20261008-chat-history-page-01";
+import { firebaseConfig, logEvent } from "../core/state.js?v=20261010-file-size-refactor-02";
+import { hasFirebaseConfig } from "../core/utils.js?v=20261010-file-size-refactor-02";
+import { createFirebaseTransport } from "./firebaseTransport.js?v=20261010-file-size-refactor-02";
+import { createLocalTransport } from "./localTransport.js?v=20261010-file-size-refactor-02";
 
 export async function createTransport(roomCode) {
   let firebaseError = null;
@@ -18,4 +18,4 @@ export async function createTransport(roomCode) {
   return createLocalTransport(roomCode, firebaseError);
 }
 
-export { createLocalTransport } from "./localTransport.js?v=20261008-chat-history-page-01";
+export { createLocalTransport } from "./localTransport.js?v=20261010-file-size-refactor-02";

@@ -2,7 +2,8 @@
 
 ## Indice
 
-- `index.html`: estructura base de la pagina.
+- `src/index.template.html` y los parciales `src/features/*/*.html`: fuentes del marcado estatico.
+- `index.html`: salida generada para el hosting estatico; no editar directamente.
 - `public/`: estilos globales, modulos CSS y archivos de runtime.
 - `src/main.js`: punto de entrada e inicializacion.
 - `src/core/`: utilidades, DOM y compatibilidad de estado.
@@ -35,6 +36,7 @@ La app sigue una arquitectura simple y modular en JavaScript vanilla. El punto d
   - archivos como `room.js`, `presence.js` y `session-ui.js` resuelven coordinacion de sala, presencia e interfaz de sesion.
 - `src/services/` abstrae el transporte en tiempo real con dos caminos: Firebase cuando hay configuracion valida y modo local como fallback.
 - `public/styles/` divide el CSS por capas y areas de UI, con `public/styles.css` como entrada principal.
+- `scripts/build-html.js` ensambla el template y sus parciales antes del despliegue; el servidor local observa cambios HTML y actualiza la salida.
 
 La idea general es separar responsabilidades sin meter frameworks ni refactors grandes: estado centralizado, modulos por feature y servicios aislados para no mezclar logica de interfaz con sincronizacion o transporte.
 
@@ -53,5 +55,5 @@ La idea general es separar responsabilidades sin meter frameworks ni refactors g
 - Priorizar cambios acotados en pasos
 - Mantener logs tecnicos en consola o terminal
 - Si consideras necesario validar cambios con `node --check src/main.js` y se puede revisar visualmente en `http://127.0.0.1:8080` levantado el servidor, aunque es preferible evitarlo.
-- Si un fix ya esta en `main` pero GitHub Pages sigue cargando una version vieja, actualizar el query param `?v=` en `index.html` para forzar cache-busting.
-- Es muy importante, los archivos/Modulos no deben superar nunca las 200 lineas, si estas modificando un archivo/modulo y detectas que supera ese limite, debes separar de manera coherente ese modulo en mas archivos, siguiendo la arquitectura y nomenclatura recomendada.
+- Si un fix ya esta en `main` pero GitHub Pages sigue cargando una version vieja, actualizar el query param `?v=` en `src/index.template.html` para forzar cache-busting y regenerar `index.html`.
+- Los archivos propios de JavaScript, CSS y HTML deben apuntar a menos de 300 lineas. Entre 300 y 400, mantenerlos solo si dividirlos perjudica la cohesion y documentar el motivo; por encima de 400, dividir salvo necesidad clara y documentada. Documentacion, configuracion, vendor y archivos generados quedan fuera del limite. `index.html` es salida generada y puede superar ese limite; sus fuentes HTML deben seguir por debajo de 300 lineas.

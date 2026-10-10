@@ -1,0 +1,167 @@
+
+
+/* El snap acompaña los paneles inferiores solo cuando, por su tamaño real,
+   no entran juntos en el viewport. El dock lateral y móvil quedan libres. */
+@media (hover: hover) and (pointer: fine) {
+  body.fullscreen-mode .app-shell:has(
+    .session-view.chat-bottom-snap-enabled[data-chat-dock="bottom"]
+  ) {
+    scroll-snap-type: y proximity;
+  }
+
+  /* Durante la cortina el scroll intermedio es parte de la animación. Si el
+     shell conserva el snap de proximidad, Chrome salta a la siguiente sección
+     antes de que termine el frame y el video parece parpadear. */
+  body.fullscreen-mode .app-shell:has(
+    .session-view.chat-scroll-snap-locked.chat-bottom-snap-enabled[data-chat-dock="bottom"]
+  ) {
+    scroll-snap-type: none;
+  }
+
+  /* El dock inferior de fullscreen entra desde el borde inferior y se retira
+     desde la unión superior. Fuera de fullscreen se conserva la cortina
+     original del layout de escritorio. */
+  body.fullscreen-mode .session-view[data-chat-dock="bottom"].chat-bottom-pc-collapse-visual .chat-area {
+    clip-path: inset(var(--chat-bottom-curtain-clip, 0%) 0 0 0);
+  }
+
+  body.fullscreen-mode .session-view[data-chat-dock="bottom"].chat-bottom-pc-expand-visual .chat-area {
+    clip-path: inset(var(--chat-bottom-curtain-clip, 100%) 0 0 0);
+  }
+
+  body.fullscreen-mode .session-view.chat-bottom-snap-enabled[data-chat-dock="bottom"] .video-area {
+    scroll-snap-align: center;
+    scroll-snap-stop: normal;
+  }
+
+  body.fullscreen-mode .session-view.chat-bottom-snap-enabled[data-chat-dock="bottom"] .chat-area {
+    scroll-snap-align: start;
+    scroll-snap-stop: normal;
+  }
+
+  body.fullscreen-mode .session-view.chat-bottom-snap-enabled[data-chat-dock="bottom"] .session-toolbar {
+    scroll-snap-align: start;
+    scroll-snap-stop: normal;
+  }
+}
+
+body.fullscreen-mode .session-view[data-chat-dock="bottom"] .workspace {
+  display: grid;
+  width: 100%;
+  height: auto;
+  min-height: var(--app-viewport-height);
+  flex: 0 0 auto;
+  margin-top: 68px;
+  gap: 0;
+  padding-top: 0;
+  grid-template-rows: var(--app-viewport-height) minmax(0, var(--app-viewport-height));
+  grid-template-areas:
+    "video"
+    "chat";
+}
+
+body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="bottom"] .workspace {
+  height: var(--app-viewport-height);
+  min-height: 0;
+  flex: 0 0 auto;
+  row-gap: 0;
+  grid-template-rows: var(--app-viewport-height) 0;
+}
+
+/* En PC, el dock inferior fullscreen muestra primero el reproductor a sangre:
+   el header de la página y el gutter del shell no deben restarle viewport.
+   El chat permanece como la sección siguiente del scroll del shell. */
+@media (hover: hover) and (pointer: fine) {
+  body.fullscreen-mode .app-shell:has(.session-view[data-chat-dock="bottom"]) {
+    width: 100%;
+    max-width: none;
+    height: var(--app-viewport-height);
+    min-height: var(--app-viewport-height);
+    margin: 0;
+    padding: 0;
+    gap: 0;
+    grid-template-rows: minmax(0, 1fr);
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  body.fullscreen-mode .app-shell:has(.session-view[data-chat-dock="bottom"]) .topbar {
+    display: none;
+  }
+
+  body.fullscreen-mode .session-view[data-chat-dock="bottom"] {
+    width: 100%;
+    margin-inline: 0;
+  }
+
+  body.fullscreen-mode .session-view[data-chat-dock="bottom"] .workspace {
+    margin-top: 0;
+  }
+
+  body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="bottom"] .workspace {
+    grid-template-rows: minmax(0, 1fr) 0;
+  }
+
+  /* La barra queda fuera de la superficie de video; no debe ganar el snap
+     del viewport cuando el panel inferior está en fullscreen. */
+  body.fullscreen-mode .session-view.chat-bottom-snap-enabled[data-chat-dock="bottom"] .session-toolbar {
+    scroll-snap-align: none;
+  }
+}
+
+/* El cambio de dock en fullscreen conserva las mismas dos fases del layout
+   normal: ocultar por el borde de la superficie actual, cambiar la grilla y
+   revelar el nuevo panel desde su borde. */
+@media (min-width: 981px) {
+  body.fullscreen-mode .session-view.chat-dock-mobile-transition-out .chat-area {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    pointer-events: auto;
+    will-change: transform, opacity;
+  }
+
+  body.fullscreen-mode .session-view.chat-dock-mobile-transition-out-active[data-chat-dock="right"] .chat-area {
+    opacity: 0;
+    transform: translateX(100%);
+    transition: transform 260ms ease, opacity 220ms ease;
+    pointer-events: none;
+  }
+
+  body.fullscreen-mode .session-view.chat-dock-mobile-transition-out-active[data-chat-dock="bottom"] .chat-area {
+    opacity: 0;
+    transform: translateY(100%);
+    transition: transform 260ms ease, opacity 220ms ease;
+    pointer-events: none;
+  }
+
+  body.fullscreen-mode .session-view.chat-dock-mobile-transition-in[data-chat-dock="right"] .chat-area {
+    opacity: 0;
+    transform: translateX(100%);
+    transition: none;
+    pointer-events: none;
+    will-change: transform, opacity;
+  }
+
+  body.fullscreen-mode .session-view.chat-dock-mobile-transition-in-active[data-chat-dock="right"] .chat-area {
+    opacity: 1;
+    transform: translateX(0);
+    transition: transform 320ms ease, opacity 260ms ease;
+    pointer-events: auto;
+  }
+
+  body.fullscreen-mode .session-view.chat-dock-mobile-transition-in[data-chat-dock="bottom"] .chat-area {
+    opacity: 0;
+    transform: translateY(100%);
+    transition: none;
+    pointer-events: none;
+    will-change: transform, opacity;
+  }
+
+  body.fullscreen-mode .session-view.chat-dock-mobile-transition-in-active[data-chat-dock="bottom"] .chat-area {
+    opacity: 1;
+    transform: translateY(0);
+    transition: transform 320ms ease, opacity 260ms ease;
+    pointer-events: auto;
+  }
+}

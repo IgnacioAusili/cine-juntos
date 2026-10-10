@@ -1,0 +1,221 @@
+/* ============================================================
+   LOBBY — "La antesala del cine"
+   Layout: hero dramático (izq) + boleto/ticket perforado (der)
+   Coherente con la sala: dark, ámbar + teal, glass, glow.
+   ============================================================ */
+
+.lobby-screen {
+  display: grid;
+  min-height: calc(var(--app-viewport-height) - 64px);
+  grid-template-rows: auto 1fr auto;
+  align-content: space-between;
+  justify-items: center;
+  gap: 14px;
+  padding-block: 4px 18px;
+}
+
+/* ===== Marquesina superior (banner en movimiento) ===== */
+.lobby-marquee {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 1240px;
+  min-height: 30px;
+  overflow: hidden;
+  border-block: 1px solid var(--glass-border);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  transform: translateY(-26px);
+}
+
+.lobby-marquee-track {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  white-space: nowrap;
+  width: max-content;
+  flex: 0 0 max-content;
+  min-height: 30px;
+  padding-block: 0;
+  color: var(--text-faint);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.lobby-marquee-track > span {
+  display: inline-flex;
+  align-items: center;
+}
+
+.lobby-marquee-track > .marquee-set {
+  gap: 36px;
+  margin-inline-end: 36px;
+}
+
+.lobby-marquee-track .marquee-emojis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 0 0 4.5em;
+  width: 4.5em;
+  font-size: 1.25em;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.lobby-marquee-track .marquee-emoji {
+  display: inline-flex;
+  flex: 0 0 1.2em;
+  width: 1.2em;
+  align-items: center;
+  justify-content: center;
+  animation: marqueeEmojiPop 500ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.lobby-marquee-track .marquee-emoji:nth-child(2) {
+  animation-delay: 70ms;
+}
+
+.lobby-marquee-track .marquee-emoji:nth-child(3) {
+  animation-delay: 140ms;
+}
+
+@keyframes marqueeEmojiPop {
+  from {
+    opacity: 0;
+    transform: translateY(5px) scale(0.65) rotate(-12deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0);
+  }
+}
+
+.lobby-marquee-track span.live {
+  color: var(--teal);
+}
+
+/* Bullet "●" como pseudo-elemento: centrado vertical real */
+.lobby-marquee-track span.live {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+  gap: 8px;
+}
+
+.lobby-marquee-track span.live::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--teal);
+  box-shadow: 0 0 6px var(--teal);
+  flex-shrink: 0;
+}
+
+.lobby-marquee-track span.marquee-premiere {
+  color: #ff5364;
+  font-family: Impact, "Arial Narrow", sans-serif;
+  font-size: 1.08em;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-shadow: 0 0 0.25em rgb(255 62 82 / 24%);
+  transform: translateY(0.045em);
+}
+
+.lobby-marquee-track span.spacer {
+  display: inline-block;
+  width: 64px;
+}
+
+/* ===== Grid principal: hero | ticket ===== */
+.lobby-grid {
+  --lobby-grid-column-gap: 10px;
+  display: grid;
+  width: min(1220px, 100%);
+  align-items: center;
+  grid-template-columns: minmax(0, 1fr) minmax(420px, 0.9fr);
+  column-gap: var(--lobby-grid-column-gap);
+  row-gap: clamp(36px, 4vw, 64px);
+}
+
+/* Composición base: hero centrado dentro de su columna y ticket a la derecha. */
+.lobby-hero,
+.lobby-ticket {
+  z-index: 1;
+}
+
+/* ===== HERO (izquierda) ===== */
+.lobby-hero {
+  justify-self: center;
+  align-self: center;
+  transform: translateY(-20px);
+  display: grid;
+  justify-items: start;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas:
+    "icon title"
+    "description description"
+    "features features";
+  align-items: center;
+  column-gap: 28px;
+  row-gap: clamp(32px, 4.5vh, 48px);
+  width: min(760px, 100%);
+  max-width: 760px;
+}
+
+/* Titulo tipografico dramatico */
+.lobby-title {
+  grid-area: title;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0;
+  width: 100%;
+  max-width: 100%;
+  font-size: clamp(3.4rem, 6.8vw, 6.2rem);
+  font-weight: 900;
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+  padding-bottom: 0.14em;
+  overflow: visible;
+}
+
+.lobby-title-line {
+  display: block;
+  line-height: 1.02;
+}
+
+.lobby-title-icon {
+  grid-area: icon;
+  display: block;
+  flex: 0 0 auto;
+  width: clamp(118px, 9vw, 160px);
+  height: clamp(118px, 9vw, 160px);
+  filter: none;
+}
+
+.lobby-title-accent {
+  background: linear-gradient(120deg, var(--amber) 10%, #ffd9a8 45%, var(--amber) 80%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 28px rgba(240, 140, 58, 0.4));
+  animation: shimmerAmber 6s ease-in-out infinite;
+  /* Reserva aire tras la tinta para que el último glifo no toque el borde. */
+  padding-inline-end: 0.08em;
+}
+
+@keyframes shimmerAmber {
+  0%, 100% {
+    background-position: 0% center;
+  }
+  50% {
+    background-position: 100% center;
+  }
+}

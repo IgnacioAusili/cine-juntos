@@ -1,0 +1,190 @@
+
+
+@media (max-width: 680px) {
+
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-area .input-wrapper .emoji-trigger {
+    align-self: flex-end;
+    flex: 0 0 24px;
+    width: 24px;
+    min-height: 30px;
+    height: 30px;
+    margin: 0;
+    padding: 0;
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-area .input-wrapper .send {
+    align-self: flex-end;
+    flex: 0 0 34px;
+    width: 34px;
+    min-height: 30px;
+    height: 30px;
+    margin: 0;
+    padding: 0;
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-area .input-wrapper .send > * {
+    left: calc(50% - 3px);
+  }
+
+  body:not(.is-lobby) .overlay-message-form {
+    padding-inline: 8px;
+    padding-bottom: 8px;
+  }
+
+  body:not(.is-lobby) .overlay-message-form .input-wrapper {
+    width: 100%;
+    min-height: 30px;
+    border-radius: 16px;
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock] .player-frame .overlay-message-form .input-wrapper textarea {
+    min-height: 30px;
+    max-height: 66px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 6px;
+  }
+
+  /* Los botones conservan la altura de una sola línea aunque el textarea se
+     expanda. El envío también toma el espacio libre hasta el borde derecho. */
+  body:not(.is-lobby) .player-frame .overlay-message-form .input-wrapper .emoji-trigger {
+    width: 24px;
+    min-height: 30px;
+    height: 30px;
+    flex-basis: 24px;
+    margin: 0;
+  }
+
+  body:not(.is-lobby) .player-frame .overlay-message-form .input-wrapper .send {
+    width: 34px;
+    min-height: 30px;
+    height: 30px;
+    flex-basis: 34px;
+    margin: 0;
+  }
+
+  body:not(.is-lobby) .player-frame .overlay-message-form .input-wrapper .send > * {
+    left: calc(50% - 3px);
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-area {
+    gap: 3px;
+    grid-template-rows: 38px minmax(0, 1fr);
+    transition: grid-template-rows 220ms ease;
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-tools {
+    gap: 4px;
+    --chat-tools-inline-gutter: 4px;
+    padding-inline: var(--chat-tools-inline-gutter);
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-tools-actions {
+    gap: 4px;
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] #dockChatButton {
+    width: 24px;
+    min-height: 24px;
+    height: 24px;
+    flex-basis: 24px;
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-tools > * {
+    align-self: center;
+    transform: none;
+  }
+
+  body:not(.is-lobby) .session-view.chat-header-collapsed[data-chat-dock="bottom"] .chat-tools {
+    min-height: 0;
+    height: auto;
+    max-height: none;
+    padding-top: 0;
+    padding-bottom: 0;
+    /* La flecha de contraer vive dentro de este header. No podemos ocultar
+       el contenedor completo porque también desaparecería el único control
+       que permite recuperar la cabecera. */
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  body:not(.is-lobby) .session-view.chat-header-collapsed[data-chat-dock="bottom"]
+    .chat-tools > :not(.chat-collapse-hover-zone) {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  body:not(.is-lobby) .session-view.chat-header-collapsed[data-chat-dock="bottom"]
+    .chat-area > .chat-collapse-hover-zone[data-chat-control="collapse"] {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  body:not(.is-lobby) .session-view.chat-header-collapsed[data-chat-dock="bottom"] .chat-area {
+    gap: 3px;
+    grid-template-rows: 0px minmax(0, 1fr);
+  }
+
+  /* La flecha de contraer queda apenas por encima de la unión video/chat;
+     la de expandir conserva su anclaje propio cuando el chat está cerrado. */
+  body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"] .chat-collapse-hover-zone {
+    transform: translate(-50%, calc(-50% + 12px));
+  }
+
+  /* Al abrir el teclado el alto del chat cambia, pero la flecha del header
+     debe seguir centrada exactamente sobre la unión entre video y chat. */
+  html.bottom-chat-keyboard-open body:not(.is-lobby)
+    .session-view[data-chat-dock="bottom"]
+    .chat-collapse-hover-zone[data-chat-control="collapse"] {
+    top: 0 !important;
+    transform: translate(-50%, -50%) !important;
+  }
+
+  body:not(.is-lobby) #playerChatToggleButton {
+    width: 34px;
+    min-height: 34px;
+    flex-basis: 34px;
+    background: transparent;
+  }
+
+  /* El botón conserva su tamaño visual, pero en táctil deja una zona cómoda
+     alrededor para abrir el chat sin acertar exactamente el icono. */
+  body:not(.is-lobby) #playerChatToggleButton::before {
+    content: "";
+    position: absolute;
+    inset: -10px;
+    border-radius: 0;
+    background: transparent;
+    pointer-events: auto;
+  }
+
+  body:not(.is-lobby) #playerChatToggleButton svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  body:not(.is-lobby) #playerChatToggleButton .player-chat-unread-badge {
+    pointer-events: none;
+  }
+
+  body:not(.is-lobby) #playerChatToggleButton:hover,
+  body:not(.is-lobby) #playerChatToggleButton:focus-visible {
+    background: transparent;
+  }
+
+  body:not(.is-lobby) #playerChatToggleButton.active {
+    background: rgba(47, 184, 164, 0.14);
+  }
+
+  /* El mini-reproductor fijo acompaña al chat inferior sin cubrir su
+     cabecera, que conserva las acciones de usuario y dock. */
+  .mini-player-scroll {
+    top: calc(var(--app-shell-gutter) + 48px);
+    right: 16px;
+    width: min(260px, calc(100vw - 32px));
+    border-radius: 12px;
+  }
+}

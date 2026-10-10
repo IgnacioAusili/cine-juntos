@@ -1,17 +1,19 @@
-import { dom } from "../../core/dom.js";
-import { state, logEvent } from "../../core/state.js?v=20261008";
-import { setControlIcon } from "../icons-tooltips.js?v=20261010-tooltip-click-guard-01";
-import { setSyncStatus } from "../session-ui.js?v=20261008";
+import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
+import { wireMiniPlayerOverlayControls } from "./mini-player-overlay-controls.js?v=20261010-file-size-refactor-02";
+import { configureScrollMiniPlayerOperations, scheduleScrollMiniPlayerSync, dismissScrollMiniPlayerForSession } from "./mini-player-scroll.js?v=20261010-file-size-refactor-02";
+import { state, logEvent } from "../../core/state.js?v=20261010-file-size-refactor-02";
+import { setControlIcon } from "../icons-tooltips.js?v=20261010-file-size-refactor-02";
+import { setSyncStatus } from "../session-ui.js?v=20261010-file-size-refactor-02";
 import {
   createMiniPlayerSurface,
   installMiniPlayerWindowStyles,
-} from "./mini-player-controls.js?v=20261008";
+} from "./mini-player-controls.js?v=20261010-file-size-refactor-02";
 import {
   mirrorMiniPlayerChatState,
-} from "./mini-player-chat.js?v=20261010-bottom-chat-collapse-rows-controls-01";
-import { movePlayerInterface } from "./mini-player-interface.js?v=20261010-bottom-chat-collapse-rows-controls-01";
-import { trackMiniPlayerReturnHint } from "./mini-player-return-hint.js";
-import { clampMiniPlayerPosition, wireMiniPlayerDrag } from "./mini-player-drag.js?v=20261008";
+} from "./mini-player-chat.js?v=20261010-file-size-refactor-02";
+import { movePlayerInterface } from "./mini-player-interface.js?v=20261010-file-size-refactor-02";
+import { trackMiniPlayerReturnHint } from "./mini-player-return-hint.js?v=20261010-file-size-refactor-02";
+import { clampMiniPlayerPosition, wireMiniPlayerDrag } from "./mini-player-drag.js?v=20261010-file-size-refactor-02";
 
 let miniSurface = null;
 let pictureInPictureWindow = null;
@@ -20,11 +22,7 @@ let miniPlayerInterface = null;
 let stopMiniPlayerReturnHintTracking = null;
 let stopMiniPlayerDrag = null;
 let stopMiniPlayerOverlayControls = null;
-let scrollMiniPlayerFrame = 0;
-let scrollMiniPlayerDismissedRoom = "";
 
-const SCROLL_MINI_PLAYER_DISMISSED_KEY = "cine-juntos-scroll-mini-player-dismissed";
-const MOBILE_VIEWPORT_QUERY = "(max-width: 680px), (hover: none) and (pointer: coarse)";
 const MINI_PLAYER_OVERLAY_IDLE_MS = 3000;
 const MINI_PLAYER_OVERLAY_LEAVE_HIDE_DELAY_MS = 800;
 
@@ -221,276 +219,12 @@ function restoreMainPlayer() {
   logEvent("player", "Mini-reproductor cerrado sin pausar el video.");
 }
 
-function wireMiniPlayerOverlayControls(surface, ownerWindow) {
-  let hideTimer = null;
-  let lastTouchPointerAt = 0;
-  const isChatInteractionTarget = (target) => Boolean(target?.closest?.(
-    ".player-chat, #playerChatToggleButton, [data-proxy-for=\"playerChatToggleButton\"]",
-  ));
-  const getPointerTarget = (event) => {
-    if (Number.isFinite(event?.clientX) && Number.isFinite(event?.clientY)) {
-      return ownerWindow.document.elementFromPoint(event.clientX, event.clientY)
-        || event.target;
-    }
-    return event?.target;
-  };
-  const clearHideTimer = () => {
-    if (hideTimer) ownerWindow.clearTimeout(hideTimer);
-    hideTimer = null;
-  };
-  const isMobileTouchDevice = () => ownerWindow.matchMedia?.(
-    "(max-width: 980px) and (hover: none) and (pointer: coarse)",
-  ).matches === true;
-  const keepOverlayWhilePaused = () => isMobileTouchDevice()
-    && (dom.videoPlayer.paused || dom.videoPlayer.ended);
-  const hide = () => {
-    clearHideTimer();
-    const activeSelect = ownerWindow.document.activeElement;
-    if (activeSelect?.matches?.(".player-rate-select select, [data-proxy-for=\"playerRateSelect\"]")) {
-      activeSelect.blur();
-    }
-    surface.classList.remove("player-overlay-visible");
-  };
-  const scheduleHide = (delay = MINI_PLAYER_OVERLAY_IDLE_MS) => {
-    clearHideTimer();
-    if (keepOverlayWhilePaused()) return;
-    const safeDelay = delay > 0 ? delay : MINI_PLAYER_OVERLAY_IDLE_MS;
-    hideTimer = ownerWindow.setTimeout(() => {
-      hideTimer = null;
-      if (keepOverlayWhilePaused()) return;
-      hide();
-    }, safeDelay);
-  };
-  const resetHideTimerAfterControlClick = (event) => {
-    const control = event.target?.closest?.(
-      ".player-controls-bar button, .player-center-actions button",
-    );
-    if (!control || control.disabled) return;
-
-    clearHideTimer();
-    scheduleHide();
-  };
-  const reveal = (event) => {
-    if (isChatInteractionTarget(event?.target)) return;
-    if (
-      isMobileTouchDevice()
-      && event?.target === dom.videoPlayer
-      && (event?.type === "mousedown" || event?.type === "mouseenter")
-    ) return;
-    if (surface.classList.contains("player-overlay-suppressed")) return;
-    clearHideTimer();
-    surface.classList.add("player-overlay-visible");
-    scheduleHide();
-  };
-
-  const handlePointerMove = (event) => {
-    if (event.pointerType !== "mouse") return;
-    reveal({ target: getPointerTarget(event) });
-  };
-  const handleMouseDown = (event) => {
-    if (event.target === dom.videoPlayer) return;
-    reveal({ target: getPointerTarget(event) });
-  };
-  const handleSurfaceEnter = (event) => {
-    reveal({ target: getPointerTarget(event) });
-  };
-  const handleSurfaceLeave = () => {
-    const activeElement = ownerWindow.document.activeElement;
-    if (
-      activeElement
-      && surface.contains(activeElement)
-      && !activeElement.closest?.(".player-chat")
-    ) {
-      activeElement.blur();
-    }
-    scheduleHide(MINI_PLAYER_OVERLAY_LEAVE_HIDE_DELAY_MS);
-  };
-  const handleFocusIn = (event) => {
-    reveal(event);
-  };
-  const handleFocusOut = (event) => {
-    if (isChatInteractionTarget(event.relatedTarget)) return;
-    scheduleHide(MINI_PLAYER_OVERLAY_LEAVE_HIDE_DELAY_MS);
-  };
-  const handleVideoPointerDown = (event) => {
-    if (event.target !== dom.videoPlayer) return;
-    if (isMobileTouchDevice()) {
-      event.preventDefault();
-      return;
-    }
-    if (!dom.videoPlayer.paused && !dom.videoPlayer.ended) return;
-    clearHideTimer();
-    surface.classList.remove("player-overlay-visible");
-    surface.classList.add("player-overlay-suppressed");
-    ownerWindow.setTimeout(() => {
-      surface.classList.remove("player-overlay-suppressed");
-    }, 700);
-  };
-  const toggleOverlayFromVideo = (event) => {
-    if (event?.target !== dom.videoPlayer || !isMobileTouchDevice()) return;
-    if (event.defaultPrevented) {
-      lastTouchPointerAt = Date.now();
-      return;
-    }
-
-    event.preventDefault();
-    lastTouchPointerAt = Date.now();
-    clearHideTimer();
-    const isVisible = surface.classList.contains("player-overlay-visible");
-    if (isVisible) {
-      hide();
-      return;
-    }
-    surface.classList.add("player-overlay-visible");
-    scheduleHide();
-  };
-  const handleVideoPointerUp = (event) => {
-    if (event.pointerType === "touch" || event.pointerType === "pen") {
-      toggleOverlayFromVideo(event);
-    }
-  };
-  const handleVideoTouchEnd = (event) => {
-    if (Date.now() - lastTouchPointerAt > 300) toggleOverlayFromVideo(event);
-  };
-  const handleVideoClick = (event) => {
-    if (event.target !== dom.videoPlayer || !isMobileTouchDevice()) return;
-    if (Date.now() - lastTouchPointerAt <= 600) {
-      event.preventDefault();
-      return;
-    }
-    if (event.pointerType !== "mouse") toggleOverlayFromVideo(event);
-  };
-  const handleMiniPlayerClose = (event) => {
-    const button = event.target.closest?.(
-      "#playerMiniPlayerButton, [data-proxy-for=\"playerMiniPlayerButton\"]",
-    );
-    if (!button || button.disabled) return;
-    event.preventDefault();
-    event.stopPropagation();
-    void toggleMiniPlayer();
-  };
-  const handleCenterControlClick = (event) => {
-    const button = event.target?.closest?.(".player-center-actions button");
-    if (!button || button.disabled) return;
-    button.classList.remove("is-click-bouncing");
-    void button.offsetWidth;
-    button.classList.add("is-click-bouncing");
-  };
-  surface.addEventListener("click", handleMiniPlayerClose, true);
-  surface.addEventListener("click", resetHideTimerAfterControlClick);
-  surface.addEventListener("click", handleCenterControlClick);
-  surface.addEventListener("pointerdown", handleVideoPointerDown, true);
-  dom.videoPlayer.addEventListener("pointerup", handleVideoPointerUp, { passive: false });
-  dom.videoPlayer.addEventListener("touchend", handleVideoTouchEnd, { passive: false });
-  dom.videoPlayer.addEventListener("click", handleVideoClick);
-  surface.addEventListener("pointermove", handlePointerMove, { passive: true });
-  surface.addEventListener("mousedown", handleMouseDown);
-  surface.addEventListener("mouseenter", handleSurfaceEnter);
-  surface.addEventListener("mouseleave", handleSurfaceLeave);
-  surface.addEventListener("focusin", handleFocusIn);
-  surface.addEventListener("focusout", handleFocusOut);
-
-  return () => {
-    clearHideTimer();
-    surface.removeEventListener("click", handleMiniPlayerClose, true);
-    surface.removeEventListener("click", resetHideTimerAfterControlClick);
-    surface.removeEventListener("click", handleCenterControlClick);
-    surface.removeEventListener("pointerdown", handleVideoPointerDown, true);
-    dom.videoPlayer.removeEventListener("pointerup", handleVideoPointerUp);
-    dom.videoPlayer.removeEventListener("touchend", handleVideoTouchEnd);
-    dom.videoPlayer.removeEventListener("click", handleVideoClick);
-    surface.removeEventListener("pointermove", handlePointerMove);
-    surface.removeEventListener("mousedown", handleMouseDown);
-    surface.removeEventListener("mouseenter", handleSurfaceEnter);
-    surface.removeEventListener("mouseleave", handleSurfaceLeave);
-    surface.removeEventListener("focusin", handleFocusIn);
-    surface.removeEventListener("focusout", handleFocusOut);
-  };
-}
-
 function supportsDocumentPictureInPicture() {
   return typeof window.documentPictureInPicture?.requestWindow === "function";
 }
 
 function hasMedia() {
   return Boolean(dom.videoPlayer.currentSrc || dom.videoPlayer.getAttribute("src"));
-}
-
-function scheduleScrollMiniPlayerSync() {
-  if (scrollMiniPlayerFrame) return;
-  scrollMiniPlayerFrame = window.requestAnimationFrame(() => {
-    scrollMiniPlayerFrame = 0;
-    syncScrollMiniPlayer();
-  });
-}
-
-function syncScrollMiniPlayer() {
-  syncScrollMiniPlayerDismissalState();
-  if (isMobileViewport()) {
-    if (state.player.miniPlayerMode === "scroll") restoreMainPlayer();
-    return;
-  }
-
-  const isBottomDock = dom.sessionView?.dataset.chatDock === "bottom";
-  if (!isBottomDock || !hasMedia()) {
-    if (state.player.miniPlayerMode === "scroll") restoreMainPlayer();
-    return;
-  }
-
-  const videoRect = dom.playerFrame?.getBoundingClientRect();
-  const chatRect = dom.chatArea?.getBoundingClientRect();
-  if (!videoRect || !chatRect) return;
-
-  const chatIsVisible = chatRect.top < window.innerHeight && chatRect.bottom > 0;
-  const videoIsMostlyOutOfView = videoRect.bottom < window.innerHeight * 0.6;
-  const shouldFloat = chatIsVisible && videoIsMostlyOutOfView;
-
-  if (!shouldFloat) {
-    if (state.player.miniPlayerMode === "scroll") restoreMainPlayer();
-    return;
-  }
-
-  if (
-    !state.player.miniPlayerMode
-    && !state.player.scrollMiniPlayerDismissed
-  ) {
-    openScrollMiniPlayer();
-  }
-}
-
-function isMobileViewport() {
-  return window.matchMedia?.(MOBILE_VIEWPORT_QUERY).matches === true;
-}
-
-function syncScrollMiniPlayerDismissalState() {
-  const room = state.session.activeRoom || "lobby";
-  if (scrollMiniPlayerDismissedRoom === room) return;
-
-  scrollMiniPlayerDismissedRoom = room;
-  state.player.scrollMiniPlayerDismissed = readScrollMiniPlayerDismissal(room);
-}
-
-function dismissScrollMiniPlayerForSession() {
-  state.player.scrollMiniPlayerDismissed = true;
-  const room = state.session.activeRoom || "lobby";
-  scrollMiniPlayerDismissedRoom = room;
-  try {
-    sessionStorage.setItem(getScrollMiniPlayerDismissalKey(room), "1");
-  } catch {
-    // Si el almacenamiento está bloqueado, el estado en memoria sigue vigente.
-  }
-}
-
-function readScrollMiniPlayerDismissal(room) {
-  try {
-    return sessionStorage.getItem(getScrollMiniPlayerDismissalKey(room)) === "1";
-  } catch {
-    return false;
-  }
-}
-
-function getScrollMiniPlayerDismissalKey(room) {
-  return `${SCROLL_MINI_PLAYER_DISMISSED_KEY}:${room}`;
 }
 
 function wireNativePictureInPictureActions() {
@@ -516,3 +250,5 @@ function seekVideoBy(seconds) {
     ? Math.min(duration, Math.max(0, dom.videoPlayer.currentTime + seconds))
     : Math.max(0, dom.videoPlayer.currentTime + seconds);
 }
+
+configureScrollMiniPlayerOperations({ hasMedia, restoreMainPlayer, openScrollMiniPlayer });

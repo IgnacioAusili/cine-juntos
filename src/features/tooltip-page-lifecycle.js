@@ -1,4 +1,4 @@
-import { hideTooltip } from "./icons-tooltips.js?v=20261010-tooltip-click-guard-01";
+import { hideTooltip } from "./icons-tooltips.js?v=20261010-file-size-refactor-02";
 
 let suppressRestoredFocusTooltip = false;
 

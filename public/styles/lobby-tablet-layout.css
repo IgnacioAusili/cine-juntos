@@ -1,0 +1,225 @@
+
+
+/* Override final del modo columns: estas reglas usan la misma especificidad
+   que sus variantes anteriores para que la transición no herede el boleto
+   grande ni la franja de prestaciones compacta. */
+@media (min-width: 681px) and (max-width: 980px) {
+  body.is-lobby[data-lobby-layout="columns"] .lobby-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(420px, 0.9fr);
+    align-items: start;
+    gap: var(--lobby-grid-column-gap);
+    margin-top: clamp(30px, 6vh, 40px);
+    padding-inline: 0;
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-hero {
+    justify-items: start;
+    align-self: start;
+    text-align: left;
+    column-gap: clamp(20px, 2.6vw, 28px);
+    row-gap: clamp(8px, 1.5vh, 14px);
+    transform: none;
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-title {
+    --lobby-title-size: clamp(4.75rem, 11vw, 6.8rem);
+    font-size: var(--lobby-title-size);
+    justify-self: start;
+    text-align: left;
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-title-icon {
+    width: clamp(112px, 11vw, 150px);
+    height: clamp(112px, 11vw, 150px);
+    transform: none;
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-description {
+    width: 100%;
+    max-width: 68ch;
+    font-size: clamp(0.98rem, 1.2vw, 1.12rem);
+    line-height: 1.5;
+    text-align: left;
+    transform: none;
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-features {
+    width: 100%;
+    gap: 14px clamp(16px, 2.6vw, 28px);
+    margin-top: clamp(36px, 10vh, 64px);
+    padding-top: clamp(14px, 2.2vh, 16px);
+    transform: none;
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-feature-icon svg {
+    width: clamp(22px, 2.4vw, 25px);
+    height: clamp(22px, 2.4vw, 25px);
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-feature-text strong {
+    font-size: clamp(0.88rem, 1vw, 0.98rem);
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-feature-text small {
+    font-size: clamp(0.74rem, 0.85vw, 0.82rem);
+    line-height: 1.25;
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-ticket {
+    width: min(404px, 100%);
+    justify-self: center;
+    align-self: center;
+    margin-top: 0;
+    transform: none;
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-ticket-body {
+    gap: 14px;
+    padding: 18px 18px 16px;
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-fields {
+    gap: 10px;
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-fields input[type="text"] {
+    height: 40px;
+    min-height: 40px;
+    line-height: 40px;
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-actions > .button {
+    min-height: 42px;
+  }
+}
+
+/* Regla estructural final del hero: la descripción queda centrada entre el
+   título y las prestaciones, con el mismo espacio arriba y abajo. */
+@media (min-width: 681px) {
+  body.is-lobby[data-lobby-layout="columns"] .lobby-hero {
+    --lobby-section-gap: clamp(32px, 4.5vh, 48px);
+    row-gap: var(--lobby-section-gap);
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-title {
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-description {
+    align-self: center;
+    margin-block: 0;
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-features {
+    margin-top: 0;
+    column-gap: clamp(8px, 1.2vw, 14px);
+    transform: none;
+  }
+}
+
+/* El título se dibuja proporcionalmente hacia arriba; compensa ese
+   desplazamiento en el flujo para conservar una altura estable del hero. */
+@media (min-width: 681px) {
+  body.is-lobby[data-lobby-layout="columns"] .lobby-title {
+    --lobby-title-size: clamp(4.75rem, 11vw, 6.8rem);
+    font-size: var(--lobby-title-size);
+    --lobby-title-lift: calc(var(--lobby-title-size) * 0.175);
+    transform: translateY(calc(-1 * var(--lobby-title-lift)));
+    margin-bottom: calc(-1 * var(--lobby-title-lift));
+  }
+}
+
+/* Centrado del contenido dentro de la franja que ya define el layout original;
+   la marquesina y el footer conservan sus posiciones propias. */
+body.is-lobby .lobby-screen {
+  padding: 0;
+}
+
+@media (min-width: 681px) {
+  body.is-lobby[data-lobby-layout="columns"] .lobby-grid {
+    align-self: stretch;
+    align-items: center;
+    min-height: 0;
+    margin-top: 0;
+    transform: translateY(var(--lobby-content-center-shift, 0px));
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-hero,
+  body.is-lobby[data-lobby-layout="columns"] .lobby-ticket {
+    align-self: center;
+    margin-top: 0;
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-hero {
+    transform: translateY(calc(-1 * clamp(30px, 5vh, 44px)));
+  }
+}
+
+/* El boleto mantiene su geometría cuando el grid pasa de dos columnas a una.
+   El ancho solo se limita si el viewport es físicamente más angosto que el
+   boleto; la separación interior y los controles no dependen del layout. */
+body.is-lobby[data-lobby-flow="single-column"] .lobby-ticket {
+  width: min(404px, 100%);
+  height: var(--lobby-ticket-fit-height, auto);
+  min-height: 0;
+  grid-template-rows: minmax(0, 1fr);
+}
+
+/* El modo apilado se activa cuando el contenido real deja de caber en las
+   dos columnas, aunque el viewport siga teniendo más de 680px de ancho. */
+body.is-lobby[data-lobby-layout="columns"][data-lobby-flow="single-column"] .lobby-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 481px) and (max-width: 680px) {
+  body.is-lobby[data-lobby-flow="single-column"] .lobby-ticket {
+    grid-template-columns: 36px minmax(0, 1fr);
+  }
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-ticket-body {
+  min-height: 0;
+  gap: var(--lobby-ticket-fit-body-gap, 14px);
+  padding:
+    var(--lobby-ticket-fit-padding-top, 18px)
+    var(--lobby-ticket-fit-padding-inline, 18px)
+    var(--lobby-ticket-fit-padding-bottom, 16px);
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-ticket-head {
+  padding-bottom: var(--lobby-ticket-fit-head-padding, 12px);
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-ticket-label {
+  font-size: 0.96rem;
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-ticket-hint {
+  font-size: 0.72rem;
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-fields {
+  gap: var(--lobby-ticket-fit-fields-gap, 10px);
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-fields input[type="text"] {
+  height: var(--lobby-ticket-fit-control-height, 40px);
+  min-height: var(--lobby-ticket-fit-control-height, 40px);
+  line-height: var(--lobby-ticket-fit-control-height, 40px);
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-actions {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 8px;
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-actions > .button {
+  min-height: var(--lobby-ticket-fit-action-height, 42px);
+}
+
+@media (min-width: 981px) {
+  body.is-lobby[data-lobby-layout="columns"] .lobby-hero {
+    transform: translateY(calc(-1 * clamp(30px, 5vh, 44px)));
+  }
+}

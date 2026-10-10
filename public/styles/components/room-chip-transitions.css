@@ -1,0 +1,145 @@
+
+
+.room-chip-back-button.is-leaving svg {
+  transform: translateX(-4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .room-chip-back-button svg {
+    transition-duration: 0.01ms;
+  }
+}
+
+.room-chip-copy {
+  display: inline-flex;
+  position: relative;
+  justify-content: flex-start;
+  /* La confirmación conserva su propio overflow; el botón debe dejar salir
+     el texto durante el lift de copiado para que no se corte arriba. */
+  overflow: visible;
+}
+
+.room-chip-copy-main {
+  position: relative;
+  --room-chip-copy-hover-offset: 0px;
+  top: var(--room-chip-copy-hover-offset);
+  display: inline-flex;
+  align-items: center;
+  pointer-events: none;
+  white-space: nowrap;
+  transform: none;
+  transition: top 160ms ease;
+}
+
+.room-chip-copy-motion {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding-right: 24px;
+  white-space: nowrap;
+}
+
+.room-chip-copy.is-copy-animating .room-chip-copy-motion {
+  animation: roomChipCopyLift 520ms cubic-bezier(0.4, 0, 0.2, 1) both;
+  will-change: top;
+}
+
+@keyframes roomChipCopyLift {
+  0% {
+    top: 0;
+  }
+
+  50% {
+    top: -4px;
+  }
+
+  100% {
+    top: 0;
+  }
+}
+
+.room-chip-copy svg {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 auto;
+}
+
+.room-chip-copy-confirm {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  width: 22px;
+  height: 22px;
+  overflow: hidden;
+  transition:
+    opacity 420ms ease,
+    transform 420ms ease;
+  transform: translate(-6px, -50%);
+  visibility: hidden;
+}
+
+.room-chip-copy[data-copied="true"] .room-chip-copy-confirm {
+  opacity: 1;
+  transform: translate(0, -50%);
+  visibility: visible;
+}
+
+.room-chip-copy[data-copied="false"] .room-chip-copy-confirm {
+  transition:
+    opacity 420ms ease,
+    transform 0ms linear 420ms;
+  transform: translate(-6px, -50%);
+}
+
+.room-chip-copy-confirm svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 3;
+  color: #7ef0ab;
+}
+
+.room-chip-code-text {
+  font-size: 0.95em;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  position: relative;
+  top: -2px;
+  line-height: 1.2;
+  padding-block: 0.04em;
+  color: #ffffff;
+  background: linear-gradient(180deg, #ffffff 0%, #ffc896 45%, #f08c3a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 0 rgba(0, 0, 0, 0);
+}
+
+.room-chip .app-status {
+  min-height: 36px;
+  min-width: 0;
+  justify-content: center;
+  gap: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--text-soft);
+  font-size: 1.05em;
+  padding: 0;
+  box-shadow: none;
+}
+
+.room-chip .status-dot {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 8px;
+}
+
+body.is-lobby .room-chip,
+body.is-lobby .host-badge {
+  display: none;
+}

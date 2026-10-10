@@ -1,0 +1,245 @@
+/* Ajustes de composición para teléfonos. Se carga después del resto de las
+   capas para conservar intacta la geometría de escritorio. */
+
+.lobby-description-mobile,
+.lobby-disclaimer-mobile,
+.lobby-mobile-title-icon,
+.lobby-feature-description-mobile {
+  display: none;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  /* En móvil vertical el documento debe seguir exactamente el recorrido que
+     hace el dedo. Ningún contenedor de la composición puede atraerlo a una
+     sección cercana al terminar el gesto. */
+  @media (orientation: portrait) {
+    html,
+    body,
+    body:not(.is-lobby) .app-shell,
+    body:not(.is-lobby) .session-view,
+    body:not(.is-lobby) .workspace,
+    body:not(.is-lobby) .video-area,
+    body:not(.is-lobby) .chat-area {
+      scroll-snap-type: none !important;
+    }
+
+    body:not(.is-lobby) .session-view,
+    body:not(.is-lobby) .workspace,
+    body:not(.is-lobby) .video-area,
+    body:not(.is-lobby) .chat-area {
+      scroll-snap-align: none !important;
+      scroll-snap-stop: normal !important;
+    }
+  }
+
+  /* El trazo de circle-help queda ópticamente bajo respecto de las etiquetas
+     aunque la caja táctil ya esté centrada por flex/grid. */
+  .room-chip-label-row .help-button svg,
+  .session-toolbar-label-row .help-button svg,
+  .lobby-fields .label-row .help-button svg {
+    transform: translateY(-1px);
+  }
+
+  /* El chat interno debe quedar por encima de los controles centrales y de la
+     barra inferior cuando el video y el overlay comparten la superficie. */
+  body:not(.is-lobby) .player-frame .player-chat {
+    z-index: 12;
+  }
+
+  /* El overlay tiene un tamaño máximo propio. Solo se reduce si no entra
+     entre sus dos bordes del reproductor; la barra de controles no participa
+     en este cálculo y puede quedar debajo del overlay. */
+  body:not(.is-lobby) .player-frame:not(.mini-player-surface) > .player-chat {
+    --player-chat-bottom-inset: 8px;
+    bottom: var(--player-chat-bottom-inset);
+    max-height: calc(
+      100% - var(--inside-chat-top-offset, 48px) - var(--player-chat-bottom-inset)
+    );
+  }
+
+  /* El disparador del overlay conserva acceso táctil aunque el panel abierto
+     llegue a solaparse con su esquina superior derecha. */
+  body:not(.is-lobby) .player-frame .player-actions {
+    z-index: 13;
+  }
+
+  /* El video debe poder iniciar el desplazamiento vertical de la página. El
+     toque corto se resuelve en JS; los arrastres no deben quedar bloqueados
+     por los eventos del reproductor. */
+  body:not(.is-lobby) .player-frame video {
+    touch-action: auto;
+  }
+
+  /* iOS Safari amplía la página al enfocar controles de texto menores a
+     16px. La línea explícita también centra el placeholder dentro de la
+     altura compacta del composer sin alterar el layout de escritorio. */
+  body:not(.is-lobby) .message-form .input-wrapper textarea,
+  body:not(.is-lobby) .overlay-message-form .input-wrapper textarea {
+    font-size: 16px;
+    line-height: 20px;
+  }
+
+  /* Todos los compositores externos usan la misma caja que el dock inferior:
+     el shell ocupa la altura disponible y el textarea conserva su línea y
+     padding vertical para que el texto quede centrado en cualquier dock u
+     orientación móvil. */
+  body:not(.is-lobby) .chat-area > .message-form .input-wrapper {
+    align-items: center;
+    padding-left: 4px;
+  }
+
+  body:not(.is-lobby) .chat-area > .message-form .input-wrapper .textarea-shell {
+    align-self: stretch;
+  }
+
+  /* El ancho temporal que se conserva durante el cambio desde el dock
+     lateral no debe sobrevivir en el dock inferior: sus márgenes laterales
+     son los que centran el compositor. Mientras la cortina está activa se
+     mantiene el ancho estable para evitar un salto visual. */
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"]:not(.chat-bottom-mobile-expand-visual):not(.chat-bottom-mobile-collapse-visual) .chat-area > .message-form {
+    width: auto !important;
+  }
+
+  /* Los botones conservan el alto de una línea aun cuando el textarea crece.
+     El ancho extra queda dentro del botón, por lo que también es táctil. */
+  body:not(.is-lobby) .chat-area > .message-form .input-wrapper .emoji-trigger {
+    align-self: flex-end;
+    flex: 0 0 24px;
+    width: 24px;
+    min-height: 30px;
+    height: 30px;
+    margin: 0;
+    padding: 0;
+  }
+
+  body:not(.is-lobby) .chat-area > .message-form .input-wrapper .send {
+    align-self: flex-end;
+    flex: 0 0 34px;
+    width: 34px;
+    min-height: 30px;
+    height: 30px;
+    margin: 0;
+    padding: 0;
+  }
+
+  body:not(.is-lobby) .chat-area > .message-form .input-wrapper .send > * {
+    left: calc(50% - 3px);
+  }
+
+  body:not(.is-lobby) .player-frame .overlay-message-form .input-wrapper .emoji-trigger {
+    width: 24px;
+    min-height: 34px;
+    height: 34px;
+    flex-basis: 24px;
+    margin: 0;
+  }
+
+  body:not(.is-lobby) .player-frame .overlay-message-form .input-wrapper .send {
+    width: 34px;
+    min-height: 34px;
+    height: 34px;
+    flex-basis: 34px;
+    margin: 0;
+  }
+
+  body:not(.is-lobby) .player-frame .overlay-message-form .input-wrapper .send > * {
+    left: calc(50% - 3px);
+  }
+
+  /* El control móvil actual siempre lleva su flecha dentro del círculo. Esta
+     regla debe cubrir también landscape, cuyo ancho puede superar 680px. */
+  body:not(.is-lobby) .session-view[data-chat-dock] .chat-collapse-handle {
+    width: 32px;
+    height: 30px;
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock] .chat-collapse-icon-anchor {
+    width: 26px;
+    height: 26px;
+    flex-basis: 26px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+    background: rgba(20, 24, 28, 0.9);
+    box-shadow:
+      0 4px 14px rgba(0, 0, 0, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock] .chat-collapse-handle svg {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2.35px;
+  }
+}
+
+/* Cambio de dock en fullscreen móvil: el panel que sale se oculta completo
+   antes de cambiar de composición y el nuevo panel entra desde su borde.
+   La prioridad alta mantiene estas fases por encima de las reglas de layout
+   que fuerzan opacity: 1 mientras se sincronizan los controles. */
+@media (hover: none) and (pointer: coarse) {
+  body.fullscreen-mode
+    .session-view.chat-dock-mobile-transition-out
+    .chat-area {
+    opacity: 1 !important;
+    transform: translate(0, 0) !important;
+    transition: none !important;
+    pointer-events: auto;
+    will-change: transform, opacity;
+  }
+
+  body.fullscreen-mode
+    .session-view.chat-dock-mobile-transition-out-active[data-chat-dock="right"]
+    .chat-area {
+    opacity: 0 !important;
+    transform: translateX(100%) !important;
+    transition: transform 260ms ease, opacity 220ms ease !important;
+    pointer-events: none;
+  }
+
+  body.fullscreen-mode
+    .session-view.chat-dock-mobile-transition-out-active[data-chat-dock="bottom"]
+    .chat-area {
+    opacity: 0 !important;
+    transform: translateY(100%) !important;
+    transition: transform 260ms ease, opacity 220ms ease !important;
+    pointer-events: none;
+  }
+
+  body.fullscreen-mode
+    .session-view.chat-dock-mobile-transition-in[data-chat-dock="right"]
+    .chat-area {
+    opacity: 0 !important;
+    transform: translateX(100%) !important;
+    transition: none !important;
+    pointer-events: none;
+    will-change: transform, opacity;
+  }
+
+  body.fullscreen-mode
+    .session-view.chat-dock-mobile-transition-in-active[data-chat-dock="right"]
+    .chat-area {
+    opacity: 1 !important;
+    transform: translateX(0) !important;
+    transition: transform 320ms ease, opacity 260ms ease !important;
+    pointer-events: auto;
+  }
+
+  body.fullscreen-mode
+    .session-view.chat-dock-mobile-transition-in[data-chat-dock="bottom"]
+    .chat-area {
+    opacity: 0 !important;
+    transform: translateY(100%) !important;
+    transition: none !important;
+    pointer-events: none;
+    will-change: transform, opacity;
+  }
+
+  body.fullscreen-mode
+    .session-view.chat-dock-mobile-transition-in-active[data-chat-dock="bottom"]
+    .chat-area {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+    transition: transform 320ms ease, opacity 260ms ease !important;
+    pointer-events: auto;
+  }
+}

@@ -1,0 +1,224 @@
+.source-strip,
+.sync-bar {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 8px;
+}
+
+.chat-tools {
+  --chat-tools-inline-gutter: 8px;
+  position: relative;
+  z-index: 1;
+  display: grid;
+  align-items: center;
+  gap: 6px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  width: 100%;
+  padding: 2px var(--chat-tools-inline-gutter);
+}
+
+/* Aisla el layout del header del reflow del panel durante la animacion
+   de colapso/expansion en el dock lateral: evita que el nombre de
+   usuario salte al cambiar el flex-basis del panel. */
+.session-view[data-chat-dock="right"] .chat-tools {
+  contain: layout;
+}
+
+/* Baja el contenido solo en la cabecera del chat acoplado abajo. */
+.session-view[data-chat-dock="bottom"] .chat-tools > * {
+  transform: translateY(6px);
+}
+
+.session-view[data-chat-dock="bottom"] .chat-tools {
+  min-height: 48px;
+  padding-top: 8px;
+  padding-bottom: 4px;
+}
+
+.chat-tools-actions {
+  /* El nombre del chat se posiciona de forma absoluta para centrarlo; por eso
+     no ocupa la columna intermedia y hay que reservar explícitamente la final. */
+  grid-column: 3;
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.chat-name-field {
+  display: grid;
+  min-width: 0;
+  width: fit-content;
+  max-width: 100%;
+  overflow: hidden;
+  justify-self: center;
+}
+
+.chat-name-field[data-editing="true"] {
+  width: 100%;
+}
+
+.chat-name-editor {
+  display: grid;
+  position: relative;
+  min-width: 0;
+  min-height: 24px;
+  width: fit-content;
+  max-width: 100%;
+  overflow: hidden;
+  align-items: center;
+  justify-items: start;
+}
+
+.chat-name-editor[data-editing="true"] {
+  width: 100%;
+  justify-items: center;
+}
+
+.chat-name-display-row,
+.chat-name-edit-row {
+  display: flex;
+  grid-area: 1 / 1;
+  min-width: 0;
+  min-height: 24px;
+  width: fit-content;
+  max-width: 100%;
+  overflow: hidden;
+  align-items: center;
+  gap: 6px;
+  transition:
+    opacity 140ms ease,
+    visibility 0s linear;
+}
+
+.chat-name-display-row {
+  padding: 0;
+}
+
+.chat-name-display {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chat-name-edit-row {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  padding: 0;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.chat-name-editor:not([data-editing="true"]) .chat-name-edit-row,
+.chat-name-editor[data-editing="true"] .chat-name-display-row {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 50%;
+  translate: -50% 0;
+}
+
+.chat-name-edit-row input[type="text"],
+.chat-name-edit-row input[type="search"] {
+  appearance: none;
+  display: block;
+  min-width: 0;
+  flex: 0 1 auto;
+  field-sizing: fixed;
+  width: 0;
+  height: 1.5em;
+  max-width: none;
+  min-height: 0;
+  border: 0 !important;
+  border-radius: 0;
+  outline: none;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  box-sizing: border-box;
+  align-self: center;
+  overflow-x: auto;
+  line-height: 1.3;
+  white-space: nowrap;
+  /* El ancho del editor se recalcula al entrar en edición. Animarlo hace que
+     la fila centrada se desplace horizontalmente durante la transición. */
+  transition: none;
+}
+
+.chat-name-edit-row input[type="text"]:focus,
+.chat-name-edit-row input[type="search"]:focus {
+  border: 0 !important;
+  outline: none;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.chat-name-edit-button,
+.chat-name-confirm-button {
+  display: inline-grid;
+  width: 20px;
+  min-height: 20px;
+  flex: 0 0 20px;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--text);
+  transform: none;
+  transition: color 140ms ease, filter 180ms ease;
+}
+
+.chat-name-edit-button {
+  width: 22px;
+  min-height: 22px;
+  flex: 0 0 22px;
+}
+
+.chat-name-edit-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.42;
+  color: color-mix(in srgb, var(--muted-2) 70%, var(--text-faint) 30%);
+  filter: saturate(0.55);
+}
+
+.chat-name-edit-button:disabled:hover,
+.chat-name-edit-button:disabled:focus-visible {
+  color: color-mix(in srgb, var(--muted-2) 70%, var(--text-faint) 30%);
+  opacity: 0.42;
+  transform: none;
+}
+
+.presence-pill {
+  justify-self: start;
+  align-self: center;
+}
+
+@media (min-width: 981px) {
+  .session-view[data-chat-dock="right"] .chat-tools {
+    padding-left: 8px;
+  }
+}
+
+.chat-name-edit-button:hover,
+.chat-name-edit-button:focus-visible,
+.chat-name-confirm-button:hover,
+.chat-name-confirm-button:focus-visible {
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+  color: var(--text);
+  transform: none;
+}

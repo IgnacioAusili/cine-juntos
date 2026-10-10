@@ -30,6 +30,9 @@ jobs:
       - name: Configure Pages
         uses: actions/configure-pages@v6
 
+      - name: Assemble static HTML
+        run: node scripts/build-html.js
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v5
         with:

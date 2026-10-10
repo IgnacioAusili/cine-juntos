@@ -1,0 +1,40 @@
+            <section class="session-toolbar" aria-label="Controles de sala">
+              <div class="session-toolbar-body">
+                <div class="session-toolbar-field">
+                  <span class="session-toolbar-label-row">
+                        <span class="session-toolbar-label">Enlace del video</span>
+                    <button
+                      class="help-button"
+                      type="button"
+                      aria-label="Ayuda sobre el enlace del video"
+                    >
+                      <span
+                        data-lucide="circle-help"
+                        data-tooltip="Enlace directo a un video MP4, WebM o similar"
+                      ></span>
+                    </button>
+                  </span>
+                  <input
+                    id="videoUrlInput"
+                    type="url"
+                    autocomplete="off"
+                    autocapitalize="off"
+                    spellcheck="false"
+                    data-bwignore="true"
+                    data-lpignore="true"
+                    placeholder="https://servidor.com/video.mp4"
+                  />
+                </div>
+                <button
+                  class="button primary"
+                  id="loadVideoButton"
+                  type="button"
+                  title="Cargar el video en la sala"
+                  data-tooltip="Cargar el video en la sala"
+                >
+                  <span data-lucide="play-square"></span>
+                  <span class="button-label">Cargar</span>
+                  <span class="button-spinner" aria-hidden="true"></span>
+                </button>
+              </div>
+            </section>

@@ -1,0 +1,222 @@
+
+
+.lobby-ticket-stub::before {
+  position: absolute;
+  z-index: 0;
+  inset: var(--lobby-ticket-fit-stub-inset, 0px) 0;
+  background:
+    repeating-linear-gradient(
+      45deg,
+      rgba(240, 140, 58, 0.38) 0 6px,
+      transparent 6px 12px
+    ),
+    rgba(14, 16, 20, 0.45);
+  content: "";
+  pointer-events: none;
+}
+
+/* Cuerpo principal del boleto */
+.lobby-ticket-body {
+  z-index: 1;
+  display: grid;
+  gap: 14px;
+  padding: 18px 18px 16px;
+}
+
+/* Perforacion del ticket: el mismo corte circular que en escritorio. */
+.lobby-ticket-perforation {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: 36px;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: var(--bg);
+  box-shadow:
+    inset 0 0 0 1px var(--glass-border),
+    inset 0 1px 2px rgba(0, 0, 0, 0.5);
+  transform: translate(-50%, -50%);
+}
+
+.lobby-ticket-head {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed var(--glass-border-strong);
+}
+
+.lobby-ticket-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lobby-ticket-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text);
+  font-size: 0.96rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.lobby-ticket-mark {
+  display: inline-flex;
+  width: 15px;
+  height: 15px;
+  flex: 0 0 15px;
+  color: var(--amber);
+}
+
+.lobby-ticket-mark svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  stroke-width: 2;
+}
+
+.lobby-ticket-code {
+  position: absolute;
+  top: 1px;
+  right: 0;
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  width: clamp(66px, calc(100% - 202px), 128px);
+  color: rgba(225, 231, 231, 0.72);
+  opacity: 0.84;
+}
+
+.lobby-ticket-code-bars {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 352 / 22;
+  overflow: visible;
+  transform: scaleY(1.2);
+  transform-origin: center;
+}
+
+.lobby-ticket-code-bars path {
+  fill: currentColor;
+}
+
+.lobby-ticket-code-serial {
+  color: rgba(205, 215, 215, 0.56);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 0.36rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.lobby-ticket-hint {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  color: var(--muted-2);
+  font-size: 0.72rem;
+}
+
+.lobby-ticket-hint-icon {
+  display: inline-block;
+  color: var(--amber);
+  line-height: 0;
+  width: 12px;
+  height: 12px;
+  flex: 0 0 auto;
+  transform: translateY(1px);
+}
+
+.lobby-ticket-hint-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: none;
+  transform-origin: center;
+  stroke-width: 2;
+}
+
+/* Form dentro del boleto */
+.lobby-fields {
+  display: grid;
+  gap: 10px;
+}
+
+.lobby-fields input[type="text"] {
+  --lobby-input-offset: 3px;
+  appearance: none;
+  display: block;
+  height: 40px;
+  min-height: 40px;
+  padding-block: 0;
+  line-height: 40px;
+  text-align: start;
+  box-shadow: none;
+  background: rgba(7, 9, 11, 0.5);
+}
+
+.lobby-fields input[type="text"]:focus {
+  box-shadow: none;
+}
+
+.lobby-fields .label-row {
+  align-items: center;
+  line-height: 1;
+  padding-inline-start: 0;
+  gap: 4px;
+  width: max-content;
+  justify-self: start;
+  pointer-events: none;
+}
+
+.lobby-fields .label-row .help-button {
+  align-self: center;
+  width: 16px;
+  height: 16px;
+  min-height: 16px;
+  flex: 0 0 16px;
+  pointer-events: auto;
+  transform: none;
+}
+
+.lobby-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 0;
+}
+
+#createRoomButton {
+  gap: 4px;
+}
+
+/* ===== Información legal inferior ===== */
+.lobby-footer {
+  overflow: visible;
+  width: min(980px, calc(100% - 40px));
+  margin-top: 14px;
+  padding: 4px 16px;
+}
+
+.lobby-disclaimer {
+  overflow: hidden;
+  margin: 0;
+  color: rgba(190, 196, 202, 0.58);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: clamp(0.54rem, 0.62vw, 0.64rem);
+  font-weight: 500;
+  letter-spacing: 0.035em;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap;
+}

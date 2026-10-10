@@ -1,0 +1,211 @@
+.overlay-messages {
+  position: relative;
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  justify-content: flex-start;
+  overflow-x: hidden;
+  overflow-y: auto;
+  /* El navegador no debe reanclar el scroll mientras el grupo cambia sus
+     filas visibles; la transición calcula y anima esa corrección. */
+  overflow-anchor: none;
+  overscroll-behavior: auto;
+  scroll-padding-bottom: var(--chat-message-bottom-reserve, 132px);
+  pointer-events: auto;
+  border: 0;
+  background: transparent;
+  padding: 0 8px var(--chat-message-bottom-reserve, 132px) 8px;
+}
+
+.overlay-messages .message {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 100%;
+  align-items: flex-start;
+  margin-bottom: 6px;
+}
+
+.overlay-messages .message-highlight--overlay {
+  position: absolute;
+  pointer-events: none;
+  z-index: 2;
+  left: 0;
+  right: 0;
+}
+
+.overlay-messages .message.mine {
+  align-self: flex-end;
+  align-items: flex-end;
+}
+
+.overlay-messages .message-bubble-row {
+  width: 100%;
+  max-width: 100%;
+}
+
+.overlay-messages .message.mine .message-bubble-row {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  align-self: stretch;
+}
+
+.overlay-messages .message:not(.mine) .message-bubble-row {
+  width: 100%;
+  max-width: 100%;
+  align-self: stretch;
+}
+
+/* Conserva el ancho natural del overlay, pero ancla la flecha a la burbuja
+   en lugar de al extremo de la fila. */
+.overlay-messages .message-bubble-row .swipe-reply-hint-wrapper {
+  position: relative;
+  top: auto;
+  right: auto;
+  left: auto;
+  flex: 0 0 0;
+  align-self: center;
+}
+
+.overlay-messages .message:not(.mine) .message-bubble-row .swipe-reply-hint-wrapper {
+  order: -1;
+}
+
+.overlay-messages .message.mine .message-bubble-row .swipe-reply-hint-wrapper {
+  order: -1;
+}
+
+.overlay-messages .message.mine .message-bubble-row > .message-bubble {
+  margin-left: 0;
+}
+
+.overlay-messages .message:not(.mine) .message-bubble-row > .message-bubble {
+  margin-right: 0;
+}
+
+.overlay-messages .message-meta {
+  color: rgba(255, 255, 255, 0.74);
+  font-size: 0.58rem;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.72);
+  padding-inline-start: 12px;
+}
+
+.overlay-messages .message.mine .message-meta {
+  padding-inline-start: 0;
+  padding-inline-end: 12px;
+}
+
+.overlay-messages .message-meta-name {
+  display: block;
+  padding-inline-start: 0;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--participant-accent, rgba(255, 255, 255, 0.74));
+}
+
+.overlay-messages .message-time {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  width: auto;
+  font-size: 0.54rem;
+  text-align: right;
+  margin: 0;
+  pointer-events: none;
+  user-select: none;
+  background: none;
+  padding-left: 0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+}
+
+.overlay-messages .message-bubble {
+  display: flow-root;
+  box-sizing: border-box;
+  width: fit-content;
+  min-width: 0;
+  max-width: 78%;
+  border-radius: 14px;
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(9, 12, 14, 0.12);
+  font-size: 0.76rem;
+  line-height: 1.25;
+  overflow-wrap: break-word;
+  word-break: normal;
+  white-space: normal;
+  padding: 4px 10px 3px;
+}
+
+.overlay-messages .message-content {
+  display: contents;
+}
+
+.overlay-messages .message-bubble.message-bubble--with-reply {
+  display: flex;
+  flex-direction: column;
+}
+
+.overlay-messages .message-bubble--with-reply .message-content {
+  display: block;
+  width: 100%;
+  order: 1;
+}
+
+.overlay-messages .message-bubble--with-reply .message-reply-text-row {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+.overlay-messages .message-bubble--with-reply .message-reply-text-row .message-time-anchor {
+  float: right;
+  height: 100%;
+  margin-left: 8px;
+  shape-outside: inset(calc(100% - 19px) 0 0);
+}
+
+.overlay-messages .message-text {
+  display: inline;
+  min-width: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.overlay-messages .message-bubble:not(.message-bubble--emoji-only) .message-emoji {
+  font-family: var(--emoji-font-family);
+  font-size: 1.12em;
+  line-height: 1;
+  vertical-align: -0.08em;
+}
+
+.overlay-messages .message-bubble--emoji-only {
+  display: flex;
+  max-width: 100%;
+  flex-direction: column;
+  border: 0;
+  background: transparent;
+  padding: 0;
+}
+
+.overlay-messages .message-bubble--emoji-only .message-content {
+  display: block;
+  width: 100%;
+  order: 1;
+  text-align: left;
+}
+
+.overlay-messages .message-bubble--emoji-only .message-text {
+  display: inline-block;
+  font-family: var(--emoji-font-family);
+  font-size: 1.4rem;
+  /* Evita que los extremos de los emojis queden fuera de su line box. */
+  line-height: 1.25;
+}
+
+.overlay-messages .message-bubble--emoji-only-compact .message-text {
+  font-size: 1.25rem;
+}
+
+.overlay-messages .message.mine .message-bubble--emoji-only .message-content {
+  text-align: right;
+}

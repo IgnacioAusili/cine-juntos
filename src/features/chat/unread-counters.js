@@ -1,9 +1,5 @@
-import { dom } from "../../core/dom.js";
-import { state } from "../../core/state.js?v=20261008";
-import {
-  setExternalChatCollapsed,
-  setInsideChatVisible,
-} from "./chat-layout.js?v=20261010-bottom-chat-collapse-rows-controls-01";
+import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
+import { state } from "../../core/state.js?v=20261010-file-size-refactor-02";
 
 function isElementVisibleInViewport(element) {
   if (!element || document.hidden) return false;
@@ -95,7 +91,7 @@ export function syncUnreadBadgesWithVisibility() {
   }
 }
 
-export function handleIncomingUnread() {
+export function handleIncomingUnread({ setInsideChatVisible, setExternalChatCollapsed } = {}) {
   const insideVisible = isInsideChatVisibleToUser();
   const externalVisible = isExternalChatVisibleToUser();
 
@@ -107,12 +103,12 @@ export function handleIncomingUnread() {
   } else {
     incrementInsideUnread();
     if (state.chat.autoExpandInsideEnabled && !insideVisible) {
-      setInsideChatVisible(true, { source: "auto" });
+      setInsideChatVisible?.(true, { source: "auto" });
     }
   }
 
   if (state.chat.autoExpandExternalEnabled && !externalVisible) {
-    setExternalChatCollapsed(false, { source: "auto" });
+    setExternalChatCollapsed?.(false, { source: "auto" });
   }
 }
 
@@ -125,4 +121,4 @@ export {
   checkScrollPosition,
   incrementScrollIndicator,
   resetScrollIndicator,
-} from "./scroll-unread-indicator.js?v=20261009-hidden-tab-scroll-01-input-boundary-01";
+} from "./scroll-unread-indicator.js?v=20261010-file-size-refactor-02";

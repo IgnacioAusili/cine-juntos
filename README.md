@@ -16,7 +16,9 @@ creador no se responsabiliza por el contenido reproducido ni por el uso del serv
 node scripts/dev-server.js --port 8080
 ```
 
-Abrir `http://localhost:8080`.
+Abrir `http://localhost:8080`. El servidor genera `index.html` al iniciar y lo vuelve a generar cuando se guarda una fuente HTML.
+
+El marcado se edita en `src/index.template.html` y en parciales dentro de `src/features/`. GitHub Pages y Cloudflare Pages por Git deben ejecutar `node scripts/build-html.js` antes de publicar el `index.html` estático. Para una carga directa, ejecutar ese comando antes de subir los archivos.
 
 Con `scripts/dev-server.js`, los logs del cliente se imprimen en la terminal que corre el servidor. En GitHub Pages o Cloudflare Pages no hay una terminal del dispositivo disponible, asi que los logs quedan en la consola del navegador.
 
@@ -25,6 +27,8 @@ Sin Firebase configurado, la app usa modo local para probar dos pestanas del mis
 ```powershell
 python -m http.server 8080
 ```
+
+Ese servidor básico sirve el último `index.html` generado y no observa cambios en los parciales.
 
 La pantalla ya trae precargado este video MP4 de ejemplo:
 
@@ -87,15 +91,22 @@ El link debe ser un archivo reproducible por el navegador, por ejemplo `.mp4`, `
 /
   index.html
   src/
+    index.template.html
     main.js
     core/
+    state/
     services/
     features/
+      chat/*.html
+      lobby/*.html
+      player/*.html
+      session/*.html
   public/
     styles.css
     firebase-config.js
     dev-runtime.js
   scripts/
+    build-html.js
     dev-server.js
   docs/
     PASOS_PARA_PUBLICAR.txt

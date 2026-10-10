@@ -1,0 +1,238 @@
+/* Selector experimental para comparar composiciones en el viewport de
+   escritorio intermedio. Fuera de ese rango no agrega controles visuales. */
+
+.lobby-layout-picker {
+  display: none;
+}
+
+@media (min-width: 681px) and (max-width: 980px) {
+  body.is-lobby .lobby-layout-picker {
+    position: fixed;
+    top: 36px;
+    right: 14px;
+    z-index: 10;
+    display: grid;
+    gap: 4px;
+    width: min(190px, calc(100vw - 28px));
+    padding: 6px 8px 7px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 10px;
+    background: rgba(13, 16, 19, 0.88);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(12px);
+  }
+
+  body.is-lobby .lobby-layout-picker label {
+    color: var(--muted-2);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  body.is-lobby .lobby-layout-picker select {
+    min-width: 0;
+    min-height: 30px;
+    padding: 0 28px 0 9px;
+    border-color: rgba(47, 184, 164, 0.42);
+    background-color: rgba(7, 9, 11, 0.78);
+    color: var(--text);
+    font-size: 0.72rem;
+  }
+
+  body.is-lobby .lobby-hero {
+    container-type: inline-size;
+    row-gap: clamp(6px, 1.6vh, 14px);
+  }
+
+  body.is-lobby .lobby-title {
+    /* El tamaño sigue el ancho real de la columna del hero, no el viewport:
+       así conserva presencia cuando todavía hay espacio horizontal. */
+    font-size: clamp(4.75rem, 18cqw, 6.8rem);
+  }
+
+body.is-lobby[data-lobby-layout="columns"] .lobby-grid {
+    width: 100%;
+    grid-template-columns: minmax(0, 1fr) minmax(360px, 0.84fr);
+    align-items: center;
+    gap: clamp(8px, 2vw, 22px);
+    padding-inline: clamp(2px, 1vw, 10px);
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-hero {
+    width: 100%;
+    max-width: none;
+    column-gap: clamp(16px, 2.8vw, 28px);
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-title-icon {
+    width: clamp(104px, 12vw, 150px);
+    height: clamp(104px, 12vw, 150px);
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-title {
+    justify-self: start;
+    text-align: left;
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-ticket {
+    width: min(410px, 100%);
+    justify-self: center;
+  }
+
+  /* En dos columnas la franja de prestaciones no tiene ancho suficiente;
+     se reserva el espacio para que hero y boleto respiren. */
+  body.is-lobby[data-lobby-layout="columns"] .lobby-features {
+    display: grid;
+    gap: clamp(6px, 1.4vw, 14px) clamp(8px, 1.8vw, 20px);
+    margin-top: clamp(4px, 1.2vh, 14px);
+    padding-top: clamp(8px, 1.5vh, 16px);
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-feature {
+    gap: clamp(6px, 1.1vw, 12px);
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-feature-icon svg {
+    width: clamp(17px, 2.2vw, 22px);
+    height: clamp(17px, 2.2vw, 22px);
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-feature-text strong {
+    font-size: clamp(0.72rem, 0.95vw, 0.88rem);
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-feature-text small {
+    font-size: clamp(0.6rem, 0.8vw, 0.74rem);
+    line-height: 1.25;
+  }
+
+  body.is-lobby[data-lobby-layout="hero"] .lobby-grid {
+    gap: 14px;
+  }
+
+  body.is-lobby[data-lobby-layout="hero"] .lobby-hero {
+    width: min(650px, calc(100% - 32px));
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "icon"
+      "title"
+      "description"
+      "features";
+    justify-items: center;
+    row-gap: 8px;
+    text-align: center;
+  }
+
+  body.is-lobby[data-lobby-layout="hero"] .lobby-title {
+    text-align: center;
+  }
+
+  body.is-lobby[data-lobby-layout="hero"] .lobby-features {
+    display: grid;
+    margin-top: 4px;
+  }
+
+  body.is-lobby[data-lobby-layout="hero"] .lobby-ticket {
+    width: min(430px, 100%);
+  }
+
+  body.is-lobby[data-lobby-layout="compact"] .lobby-screen {
+    padding-block: 2px 8px;
+  }
+
+  body.is-lobby[data-lobby-layout="compact"] .lobby-grid {
+    gap: 8px;
+    margin-top: 30px;
+  }
+
+  body.is-lobby[data-lobby-layout="compact"] .lobby-hero {
+    width: min(700px, calc(100% - 32px));
+    row-gap: 6px;
+  }
+
+  body.is-lobby[data-lobby-layout="compact"] .lobby-title {
+    font-size: clamp(3.7rem, 7vw, 5.8rem);
+  }
+
+  body.is-lobby[data-lobby-layout="compact"] .lobby-description {
+    font-size: 0.92rem;
+  }
+
+  body.is-lobby[data-lobby-layout="compact"] .lobby-ticket {
+    width: min(400px, 100%);
+  }
+}
+
+/* El flujo dinámico apilado usa la misma presentación editorial que el lobby
+   vertical móvil, sin depender del breakpoint de ancho que activa esa vista. */
+body.is-lobby[data-lobby-flow="single-column"] {
+  height: auto;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .app-shell {
+  height: auto;
+  min-height: 100dvh;
+  padding-block-start: 10px;
+  padding-bottom: 0;
+  grid-template-rows: auto auto;
+  align-content: start;
+  gap: 0;
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .topbar,
+body.is-lobby[data-lobby-flow="single-column"] .lobby-marquee,
+body.is-lobby[data-lobby-flow="single-column"] .lobby-features {
+  display: none;
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-screen {
+  height: auto;
+  min-height: max(0px, calc(100dvh - var(--app-shell-gutter)));
+  gap: 0;
+  /* El pie es fixed y la marquesina está oculta: solo queda una fila en flujo. */
+  grid-template-rows: auto;
+  align-content: start;
+  padding-block: 0 8px;
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-grid {
+  width: 100%;
+  min-height: 0;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(10px, 1.8vh, 16px);
+  align-content: start;
+  justify-items: center;
+  padding-inline: 0;
+  transform: translateY(-8px);
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-hero {
+  container-type: inline-size;
+  position: relative;
+  display: grid;
+  width: min(580px, calc(100% - 32px));
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "title"
+    "description"
+    "features";
+  align-items: center;
+  justify-items: center;
+  column-gap: 14px;
+  row-gap: clamp(12px, 2vh, 16px);
+  text-align: left;
+  transform: translateY(-4px);
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-title {
+  grid-area: title;
+  font-size: clamp(4.65rem, 18cqw, 5.8rem);
+  line-height: 0.92;
+  margin-bottom: 0;
+  align-self: center;
+  text-align: left;
+}

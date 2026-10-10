@@ -1,0 +1,222 @@
+.player-frame {
+  --player-control-fade-bg: linear-gradient(0deg, rgba(5, 6, 7, 0.85) 0%, rgba(5, 6, 7, 0.4) 60%, transparent 100%);
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid var(--glass-border-strong);
+  border-radius: 0 0 0 var(--radius-md);
+  background: #050607;
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(16px);
+  user-select: none;
+}
+
+.player-frame .player-chat,
+.player-frame .player-chat input,
+.player-frame .player-chat textarea,
+.player-frame .player-chat [contenteditable="true"] {
+  user-select: text;
+}
+
+/* Ocultar el puntero solo cuando el reproductor ya entró en inactividad. */
+.player-frame.player-cursor-hidden,
+.player-frame.player-cursor-hidden * {
+  cursor: none;
+}
+
+video {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: #050607;
+  object-fit: contain;
+}
+
+video:focus,
+video:focus-visible {
+  outline: none;
+  border: 0;
+  box-shadow: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+video::-webkit-media-controls-fullscreen-button {
+  display: none;
+}
+
+.player-loading-overlay {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(5, 6, 7, 0.18);
+  pointer-events: none;
+}
+
+.player-loading-spinner {
+  width: clamp(38px, 6vw, 66px);
+  height: clamp(38px, 6vw, 66px);
+  border: clamp(3px, 0.45vw, 5px) solid rgba(255, 255, 255, 0.2);
+  border-top-color: var(--accent);
+  border-right-color: rgba(240, 140, 58, 0.88);
+  border-radius: 50%;
+  box-shadow: 0 0 24px rgba(240, 140, 58, 0.24);
+  animation: playerLoadingSpin 850ms linear infinite;
+}
+
+@keyframes playerLoadingSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .player-loading-spinner {
+    animation-duration: 1800ms;
+  }
+}
+
+.empty-player {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #47515a;
+  pointer-events: none;
+}
+
+.empty-player.hidden {
+  display: none;
+}
+
+.player-status-badge {
+  position: absolute;
+  /* El diálogo inline y su backdrop deben cubrir también este estado. */
+  z-index: 4;
+  top: 13px;
+  left: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 24px;
+  max-width: min(240px, calc(100% - 84px));
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  overflow: visible;
+  text-overflow: clip;
+  color: rgba(255, 255, 255, 0.82);
+  text-shadow: 0 0 7px rgba(255, 255, 255, 0.16);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), 0 0 10px rgba(0, 0, 0, 0.45);
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.68));
+  pointer-events: auto;
+  cursor: help;
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+/* El halo de la bolita no debe quedar recortado por la regla general del estado. */
+.sync-status.player-status-badge {
+  margin: -2px 0 0 -2px;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+/* El badge siempre es visible cuando no hay video cargado o se está cargando. Con video cargado se oculta y reaparece con el hover del reproductor (.player-overlay-visible) */
+.player-status-badge.loaded {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+
+.player-frame.player-overlay-visible .player-status-badge.loaded,
+.player-status-badge.empty,
+.player-status-badge.loading,
+.player-status-badge.error {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.player-status-badge .video-status-dot {
+  --status-glow: rgba(255, 255, 255, 0.38);
+  border-radius: 999px;
+  background: #ffffff;
+  transition: background 180ms ease, box-shadow 180ms ease;
+}
+
+#videoStatusText {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+  transform: translateY(-1px);
+}
+
+.player-status-badge.video-status.empty {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.player-status-badge.video-status.empty .video-status-dot {
+  --status-glow: rgba(255, 255, 255, 0.38);
+  background: #ffffff;
+}
+
+.player-status-badge.video-status.empty .video-status-dot::before {
+  opacity: 0.38;
+}
+
+.player-status-badge.video-status.loading {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.player-status-badge.video-status.loading .video-status-dot {
+  --status-glow: rgba(245, 197, 24, 0.42);
+  background: #f5c518;
+}
+
+.player-status-badge.video-status.loaded {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.player-status-badge.video-status.loaded .video-status-dot {
+  --status-glow: rgba(56, 216, 121, 0.42);
+  background: #38d879;
+}
+
+.player-status-badge.video-status.loading .video-status-dot,
+.player-status-badge.video-status.player-status-live .video-status-dot {
+  animation: playerLiveStatusPulse 1.25s ease-in-out infinite;
+}
+
+@keyframes playerLiveStatusPulse {
+  0%,
+  100% {
+    opacity: 0.42;
+    transform: scale(0.88);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+}
+
+.player-status-badge.video-status.error {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.player-status-badge.video-status.error .video-status-dot {
+  --status-glow: rgba(233, 68, 68, 0.42);
+  background: var(--danger);
+}

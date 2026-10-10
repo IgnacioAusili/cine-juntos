@@ -1,0 +1,183 @@
+          <aside class="chat-area" aria-label="Chat de la sala">
+            <div class="chat-tools">
+              <span class="chat-collapse-header-slot" aria-hidden="true"></span>
+              <div class="chat-tools-leading">
+                <button
+                  class="presence-pill"
+                  id="presencePill"
+                  type="button"
+                  aria-label="Usuarios conectados"
+                  data-tooltip="Conectados: vos"
+                >
+                  <span class="presence-icon-wrap" aria-hidden="true">
+                    <span class="presence-users-icon" data-lucide="user-round"></span>
+                    <span class="status-dot presence-dot"></span>
+                  </span>
+                  <span class="presence-self-label" id="presenceSelfLabel" hidden></span>
+                  <span id="participantCount">1</span>
+                </button>
+                <div class="chat-name-field">
+                  <div class="chat-name-editor" id="chatNameField" data-editing="false">
+                    <div class="chat-name-display-row">
+                      <span
+                        class="chat-name-display"
+                        id="nameDisplay"
+                        data-tooltip="Nombre visible para los participantes de la sala"
+                      >Invitado</span>
+                      <button
+                        class="chat-name-edit-button"
+                        id="editNameButton"
+                        type="button"
+                        aria-label="Editar nombre"
+                        title="Editar nombre"
+                        data-tooltip="Editar nombre"
+                      >
+                        <span data-lucide="pencil"></span>
+                      </button>
+                    </div>
+                    <div class="chat-name-edit-row">
+                      <input
+                        id="nameInput"
+                        type="search"
+                        autocomplete="off"
+                        enterkeyhint="done"
+                        autocapitalize="off"
+                        spellcheck="false"
+                        data-bwignore="true"
+                        data-lpignore="true"
+                        maxlength="20"
+                        aria-label="Nombre visible para los participantes de la sala"
+                        data-tooltip="Nombre visible para los participantes de la sala"
+                      />
+                      <button
+                        class="chat-name-confirm-button"
+                        id="confirmNameButton"
+                        type="button"
+                        aria-label="Aceptar nombre"
+                        title="Aceptar nombre"
+                        data-tooltip="Aceptar nombre (Enter)"
+                      >
+                        <span data-lucide="check"></span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="chat-collapse-hover-zone chat-collapse-hover-zone-collapse"
+                data-chat-control="collapse"
+              >
+                <button
+                  class="chat-collapse-handle"
+                  id="collapseChatButton"
+                  type="button"
+                  aria-label="Contraer chat"
+                  title="Contraer chat"
+                  tabindex="-1"
+                >
+                  <span class="chat-collapse-icon-anchor">
+                    <span data-lucide="arrow-right"></span>
+                  </span>
+                </button>
+              </div>
+              <div class="chat-tools-actions">
+                <button
+                  class="help-button chat-auto-switch-help"
+                  type="button"
+                  aria-label="Ayuda sobre la autoexpansión del chat"
+                  data-tooltip="Al recibir mensajes nuevos, el chat se abre; al enviar una respuesta, se oculta"
+                >
+                  <span data-lucide="circle-help"></span>
+                </button>
+                <button
+                  class="chat-auto-switch"
+                  id="externalChatAutoExpandSwitch"
+                  type="button"
+                  role="switch"
+                  aria-checked="false"
+                  aria-label="Autoexpandir chat externo"
+                >
+                  <span class="chat-auto-switch-track" aria-hidden="true">
+                    <span class="chat-auto-switch-thumb"></span>
+                  </span>
+                </button>
+                <button
+                  class="icon-button dock-button"
+                  id="dockChatButton"
+                  type="button"
+                  aria-label="Mover chat"
+                  data-tooltip="Mover chat abajo"
+                >
+                  <span data-lucide="panel-right"></span>
+                </button>
+              </div>
+            </div>
+
+            <div class="messages-wrap">
+              <div class="messages" id="messages" aria-live="polite"></div>
+              <div class="chat-scrollbar" aria-hidden="true">
+                <div class="chat-scrollbar-thumb"></div>
+              </div>
+              <button class="scroll-bottom-btn" id="mainScrollBottomBtn" hidden aria-label="Ir al último mensaje" data-tooltip="Ir al último mensaje">
+                <span data-lucide="chevrons-down"></span>
+                <span class="scroll-bottom-badge" id="mainScrollBadge">0</span>
+              </button>
+            </div>
+
+            <form class="message-form" id="messageForm">
+              <div class="reply-preview" id="replyPreview" hidden></div>
+              <div class="image-preview-container" id="imagePreview" hidden></div>
+              <div class="input-wrapper">
+                <div class="textarea-shell">
+                  <textarea
+                    id="messageInput"
+                    autocomplete="off"
+                    autocapitalize="off"
+                    spellcheck="false"
+                    data-bwignore="true"
+                    data-lpignore="true"
+                      placeholder="Mensaje"
+                    rows="1"
+                  ></textarea>
+                  <div class="composer-scrollbar" aria-hidden="true">
+                    <div class="composer-scrollbar-thumb"></div>
+                  </div>
+                </div>
+                <button
+                  class="icon-button ghost emoji-trigger"
+                  id="messageEmojiButton"
+                  type="button"
+                  aria-label="Abrir emojis"
+                  title="Emojis"
+                  data-tooltip="Agregar emoji"
+                >
+                  <span data-lucide="smile-plus"></span>
+                </button>
+                <button class="icon-button send" id="mainMessageSend" type="submit" aria-label="Enviar mensaje" data-tooltip="Enviar mensaje (Enter)">
+                  <svg class="composer-progress-ring" viewBox="0 0 44 44" aria-hidden="true" focusable="false">
+                    <circle class="composer-progress-track" cx="22" cy="22" r="18.5" pathLength="100"></circle>
+                    <circle class="composer-progress-value" cx="22" cy="22" r="18.5" pathLength="100"></circle>
+                  </svg>
+                  <span data-lucide="send"></span>
+                </button>
+              </div>
+              <div class="char-counter" id="mainCharCounter">0 / 300</div>
+            </form>
+          </aside>
+          <div
+            class="chat-collapse-hover-zone chat-collapse-hover-zone-expand"
+            data-chat-control="expand"
+          >
+            <button
+              class="chat-collapse-handle"
+              id="expandChatButton"
+              type="button"
+              aria-label="Expandir chat"
+              title="Expandir chat"
+              tabindex="-1"
+            >
+              <span class="chat-collapse-icon-anchor">
+                <span data-lucide="arrow-right"></span>
+              </span>
+            </button>
+          </div>

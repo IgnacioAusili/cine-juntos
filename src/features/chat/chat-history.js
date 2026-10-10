@@ -1,10 +1,10 @@
-import { dom } from "../../core/dom.js";
-import { logEvent, state } from "../../core/state.js?v=20261008";
+import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
+import { logEvent, state } from "../../core/state.js?v=20261010-file-size-refactor-02";
 import {
   isExternalChatVisibleToUser,
   isInsideChatVisibleToUser,
-} from "./unread-counters.js?v=20261010-bottom-chat-collapse-rows-controls-01";
-import { renderMessage } from "./chat-render.js?v=20261010-bottom-chat-collapse-rows-controls-01";
+} from "./unread-counters.js?v=20261010-file-size-refactor-02";
+import { renderMessage } from "./chat-render.js?v=20261010-file-size-refactor-02";
 
 let historyGeneration = 0;
 let historyExhausted = false;

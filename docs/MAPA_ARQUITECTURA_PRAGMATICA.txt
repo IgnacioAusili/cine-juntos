@@ -1,137 +1,63 @@
 MAPA DE ARQUITECTURA PRAGMATICA
 Proyecto: Cine Juntos
 
-Objetivo actual
-- Mantener la app en HTML + CSS + JS vanilla.
-- Ordenar el proyecto con cambios chicos y de bajo riesgo, siendo pragmático siguiendo criterios.
-- Separar responsabilidades sin reescribir la aplicacion.
+OBJETIVO
+- Mantener una app estatica en HTML, CSS y JavaScript vanilla.
+- Organizar por capacidades del producto con FSD pragmatico y usar Clean Architecture como regla de dependencias.
+- Preservar la UI dinamica sin frameworks ni carga de HTML en runtime; ensamblar el marcado fuente antes de servirlo.
 
+PRINCIPIOS
+- FSD orienta la organizacion en slices; no obliga a crear capas o carpetas vacias.
+- Clean Architecture aporta direccion de dependencias, no una jerarquia de archivos para cada funcion.
+- Dividir por responsabilidades cohesivas; no crear un archivo por funcion ni mover codigo por deporte.
+- Los cambios deben conservar el comportamiento y las rutas de despliegue estatico.
 
-1. ESTADO VIGENTE
+CAPAS Y RESPONSABILIDADES ACTUALES
+- `src/main.js`: composition root; inicializa y conecta los modulos de la app.
+- `src/features/`: capacidades por dominio, como chat, player, sala, presencia y sesion.
+- `src/index.template.html` y los parciales HTML de `src/features/`: marcado fuente organizado por capacidad.
+- `scripts/build-html.js`: resuelve los includes fuente y genera el `index.html` estatico; el servidor local observa cambios y Pages ensambla antes de publicar.
+- `index.html`: salida generada que conserva el shell unico requerido por el hosting estatico.
+- `src/state/appState.js`: estado de aplicacion agrupado en session, player, chat y ui.
+- `src/core/`: referencias DOM, compatibilidad de estado y utilidades compartidas del navegador.
+- `src/services/`: fabrica de transporte y adaptadores Firebase/local.
+- `public/styles.css`: entrada CSS; `public/styles/` contiene estilos por dominio, componente y variante.
+- Los includes HTML solo se resuelven antes de publicar; el navegador recibe una unica pagina estatica.
 
-Lo que ya quedo resuelto:
-- `public/styles.css` ya funciona como entrada de modulos CSS chicos.
-- chat ya esta agrupado en `src/features/chat/`:
-  - `index.js` (coordinacion y reexport)
-  - `chat-render.js` (render de mensajes: DOM, bubble, meta)
-  - `chat-reply.js` (objetivo de reply, vista previa, scroll a mensaje)
-  - `chat-system-messages.js` (mensajes de sistema: eventos del video)
-  - `chat-input.js` (composicion y envio)
-  - `chat-message-interactions.js` (cableado DOM: listeners, long-press)
-  - `swipe-reply.js` (motor de gesto swipe-to-reply)
-  - `message-menu.js` (menu contextual: mostrar, ocultar, copiar)
-  - `chat-layout.js` (layout: dock, collapse, estilo, visibilidad)
-  - `chat-content-parser.js` (parseo de URLs, imagenes, videos)
-  - `image-compress.js` (compresion y preview de imagenes pegadas)
-  - `unread-counters.js` (contadores de no leidos y scroll)
-- player ya esta agrupado en `src/features/player/`:
-  - `player.js` (eventos locales, carga y estado visual del video)
-  - `player-sync-logic.js` (sincronizacion con la sala)
-  - `index.js` (barrel + `wirePlayerEvents`)
-  - `fullscreen.js`
-- el estado global ya vive en `src/state/appState.js` con sub-estados:
-  - `session`
-  - `player`
-  - `chat`
-  - `ui`
-- `src/core/state.js` queda como puente de compatibilidad para imports.
-- `icons-tooltips.js` ya fue limpiado y queda enfocado en iconos y tooltips.
-  Solo reexporta `setConnection` por compatibilidad.
-- presencia e identidad ya viven en `presence.js`.
-- lobby, foco, host badge, sync status y estado de conexion
-  ya viven en `session-ui.js`.
-- `appState.js` ya no muta el DOM al importarse;
-  la inicializacion es explicita via `applyInitialDefaults()`.
+REGLAS DE DEPENDENCIA
+- `main.js` compone la app; los modulos no deben importar el arranque para coordinarse.
+- Cada slice puede exponer su API publica desde `index.js` cuando tenga consumidores externos.
+- Evitar imports a internos de otra slice; preferir su API publica o mover la responsabilidad compartida a una capa neutral.
+- La UI no debe depender directamente de Firebase; usar la frontera de `services/transport.js`.
+- La logica de dominio compartible no debe depender del DOM.
+- No agregar ciclos. La sincronizacion del reproductor usa un puerto de operaciones de medio configurado por `features/player/index.js` antes de cablear eventos remotos.
 
+TAMANO Y NOMENCLATURA
+- Meta: menos de 300 lineas por archivo propio JS, CSS o HTML.
+- Entre 300 y 400 lineas requiere una razon de cohesion; sobre 400 se divide salvo necesidad clara y documentada.
+- Cada template o parcial HTML fuente debe quedar debajo de 300 lineas; `index.html` es salida generada y no entra en el limite.
+- Documentacion, configuracion, vendor y otros archivos generados no entran en este limite.
+- Usar nombres descriptivos en kebab-case, alineados con el dominio y la responsabilidad del modulo.
+- Crear subcarpetas `ui`, `model`, `api` o `lib` solo si aclaran una separacion real.
 
-2. ESTRUCTURA ACTUAL
+EXCEPCIONES DE TAMANO POR COHESION
+- `player-volume-layout.js` supera 400 lineas: eventos de puntero, teclado y foco comparten estado y temporizadores por grupo; no hay un corte seguro sin introducir otra API interna.
+- `chat-dock-transition-core.js` mantiene una unica maquina de transicion para RAF, scroll y anclajes.
+- `chat-dock-transition-switches.js` conserva juntas las coreografias entre docks y sus mediciones de scroll.
+- `mobile-chat-header.js` combina teclado, actividad, dock y temporizadores en una unica maquina de estado movil.
+- `mini-player-interface.js` sincroniza controles proxy y estado DOM entre el reproductor y su superficie duplicada.
+- `player-media.js` coordina carga, recuperacion y persistencia con las mismas claves de fuente y guardas contra carreras.
+- `player-controls-layout.js` calcula ajuste, densidad y overflow en un mismo ciclo de geometria.
+- `layout-viewport-engine.js` resuelve viewport, teclado y fullscreen a partir de una misma captura de metricas.
+- `player-sync-logic.js` ordena eventos remotos y publicaciones locales con guardas compartidas contra ecos.
+- `fullscreen.js` coordina foco y scroll durante todo el ciclo de entrada y salida de fullscreen.
+- `player-overlay-controls.js` mantiene juntos los estados y temporizadores de visibilidad para puntero, tactil y teclado.
+- `firebaseTransport.js` adapta los eventos de sala y presencia a un unico ciclo de vida de transporte.
 
-Pagina/
-  index.html
-  public/
-    styles.css
-    styles/
-      tokens.css
-      base.css
-      layout.css
-      components.css
-      lobby.css
-      player.css
-      chat.css
-      chat-overlay.css
-      states.css
-      responsive.css
-    firebase-config.js
-    dev-runtime.js
-  src/
-    main.js
-    core/
-      dom.js
-      state.js
-      utils.js
-    state/
-      appState.js
-    features/
-      chat/
-        index.js
-        chat-render.js
-        chat-reply.js
-        chat-system-messages.js
-        chat-input.js
-        chat-message-interactions.js
-        swipe-reply.js
-        message-menu.js
-        chat-layout.js
-        chat-content-parser.js
-        image-compress.js
-        unread-counters.js
-      player/
-        index.js
-        player.js
-        player-sync-logic.js
-        fullscreen.js
-      room.js
-      presence.js
-      session-ui.js
-      icons-tooltips.js
-    services/
-      transport.js
-      firebaseTransport.js
-      localTransport.js
-  scripts/
-    dev-server.js
-  docs/
-    MAPA_ARQUITECTURA_PRAGMATICA.txt
-    PASOS_PARA_PUBLICAR.txt
-
-
-3. CRITERIO DE ORDEN
-
-Reglas practicas:
-- `core` = referencias y helpers neutros.
-- `state` = estado global y sub-estados.
-- `features` = logica por dominio o interfaz.
-- `services` = transporte e integraciones.
-
-Principio de trabajo:
-- tocar poco por vez
-- validar cada paso
-- no mover codigo por deporte
-- no meter tooling nuevo si no hace falta
-
-
-4. IMPORTS CIRCULARES INTENCIONALES
-
-`player.js` <-> `player-sync-logic.js`:
-- `player-sync-logic.js` importa `setVideoSource` y `waitForVideoMetadata` de `player.js`.
-- `player.js` importa `publishState` de `player-sync-logic.js`.
-Es seguro porque todas son `export function` (hoisting) y se invocan
-solo en runtime, no durante la carga top-level del modulo.
-
-
-5. QUE NO HACER AHORA
-
-- no rehacer `index.html`
-- no inventar una arquitectura grande
-- no mezclar varios refactors en el mismo paso
-- no abrir la pagina sin necesidad concreta
+CSS, CACHE Y VALIDACION
+- Mantener el orden efectivo de imports CSS y la cascada al extraer submodulos.
+- Las hojas grandes conservan su nombre como agregador; sus imports descriptivos siguen el orden original y permanecen junto a la hoja para conservar URLs relativas.
+- Al cambiar HTML, CSS o JavaScript, actualizar el cache-burst de toda la cadena de imports afectada.
+- Verificar `Cache-Control: no-store` en desarrollo, ausencia de service worker y URLs solicitadas actuales.
+- Validar el mismo viewport y variante de layout afectados; medir posiciones responsive con limites reales del DOM.
+- Trabajar en pasos chicos y validar cada grupo antes de seguir.

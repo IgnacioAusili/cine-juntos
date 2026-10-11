@@ -17,25 +17,25 @@
 }
 
 /* La separacion del header de la sesion se controla en un solo lugar. */
-body:not(.is-lobby):not(.fullscreen-mode) .app-shell {
+body:not(.page-context--lobby):not(.page-context--fullscreen) .app-shell {
   gap: var(--session-header-gap);
   padding-top: var(--session-header-gap);
 }
 
-body:not(.is-lobby):not(.fullscreen-mode) .site-header {
+body:not(.page-context--lobby):not(.page-context--fullscreen) .site-header {
   margin-bottom: 0;
 }
 
-body.is-lobby .site-header {
+body.page-context--lobby .site-header {
   align-items: start;
 }
 
-body.is-lobby .site-header__brand {
+body.page-context--lobby .site-header__brand {
   display: grid;
   gap: 4px;
 }
 
-body.is-lobby .site-header__actions {
+body.page-context--lobby .site-header__actions {
   padding-top: 2px;
 }
 
@@ -55,21 +55,21 @@ body.is-lobby .site-header__actions {
   gap: 10px;
 }
 
-body.is-lobby .room-chip,
-body.is-lobby .host-badge {
+body.page-context--lobby .room-chip,
+body.page-context--lobby .host-badge {
   display: none;
 }
 
 /* En el lobby el titulo dramatico vive en el hero: el del topbar sobra */
-body.is-lobby .site-header__brand h1 {
+body.page-context--lobby .site-header__brand h1 {
   display: none;
 }
 
 /* En sesion no se muestra el badge "En vivo" decorativo del topbar */
-body:not(.is-lobby) .live-badge {
+body:not(.page-context--lobby) .live-badge {
   display: none;
 }
 
-body:not(.is-lobby) .site-header__brand {
+body:not(.page-context--lobby) .site-header__brand {
   display: none;
 }

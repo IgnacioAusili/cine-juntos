@@ -1,23 +1,28 @@
 # Inventario de migración CSS
 
-Corte inicial: 2026-10-11. El inventario base se obtuvo de `public/**/*.css` y HTML fuente; la migración suma referencias dinámicas al cerrar cada dominio.
+Corte: 2026-10-11. Incluye clases de CSS, templates HTML y clases dinámicas emitidas desde JavaScript.
 
-## Línea de base
-- 129 hojas CSS y 2.143 reglas de estilo.
-- 433 nombres de clase en CSS; 243 en HTML; 442 nombres únicos combinados (se actualiza el total al incluir nombres solo dinámicos de JS).
-- 33 clases BEM iniciales, agrupadas en 14 raíces.
-- 400 clases CSS sin delimitadores BEM: mezcla de bloques válidos, elementos heredados, estados, objetos y utilidades; no equivale al número de cambios.
+## Línea de base y resultado
 
-## Trazabilidad
-- Etapa 1 — inventario y destinos: completada.
-- Etapa 2 — lobby, UI compartida, presencia, edición de nombre y diálogos: completada; 142 nombres renombrados en las referencias de CSS, HTML y JS.
-- Verificación etapa 2: `stylelint --quiet`, reglas CSS del proyecto, sintaxis JS de 26 archivos, build/HTML y Playwright en lobby/sala; sin errores de consola.
-- Etapa 3 — chat, emojis, mensajes, compositor, medios y espejos mini-player: pendiente.
-- Etapa 4 — controles del reproductor, fullscreen, volumen, seek y mini-player: pendiente.
-- Etapa 5 — estados, utilidades, objetos, clasificación ITCSS y cierre: pendiente.
+- Base: 129 hojas CSS, 433 nombres en CSS, 243 en HTML y 442 nombres estáticos únicos.
+- Se sumaron 10 nombres dinámicos no presentes en CSS/HTML: alcance inicial de 452 clases.
+- Resultado: 129 hojas asignadas a ITCSS, 441 nombres estáticos únicos y 10 nombres solo dinámicos (451 destinos).
+- 372 nombres heredados se consolidaron en 367 destinos actuales; se retiraron aliases sin consumidores.
+- No quedan referencias a nombres heredados; la auditoría también inspecciona atributos `class` en templates JavaScript.
 
-## Capas ITCSS
-`public/styles.css` ya ordena settings, base, layout, componentes, estados/responsive y overrides finales. Las 129 hojas siguen asignadas por imports existentes; la cascada no se reordenó.
+## Trazabilidad por etapa
 
-## Criterio de cierre
-Todas las clases de aplicación deben tener categoría/destino, todas las referencias heredadas migradas o justificadas como bloque independiente, y la cadena de cache-burst hasta `index.html` verificada junto con `no-store` y ausencia de service worker.
+- Etapa 1 — inventario y destinos: completa.
+- Etapa 2 — lobby, sesión, sala, presencia y diálogos: completa; 142 nombres.
+- Etapa 3 — chat, emojis, compositor, mensajes, medios y visor: completa; 113 nombres más 1 ajuste dinámico.
+- Etapa 4 — controles del reproductor, fullscreen, seek, volumen y mini-player: completa; 54 nombres.
+- Etapa 5 — estados/utilidades, capas ITCSS y cierre de aliases: completa; 62 nombres.
+
+## Mapas y verificación
+
+- [`MAPA_CLASES_CSS.csv`](./MAPA_CLASES_CSS.csv): nombre previo/final, estado, categoría, componente y referencias CSS/HTML/JS.
+- [`MAPA_ITCSS_CSS.csv`](./MAPA_ITCSS_CSS.csv): asignación de las 129 hojas y su importador.
+- Se conserva el orden de imports y la cascada de `public/styles.css`.
+- QA focalizado Playwright: lobby/sala, emojis/envío, badge de estado, tooltip, visor de imagen y quitar preview.
+- Build HTML, Stylelint, lint HTML, sintaxis JavaScript tocado y auditoría de clases forman el cierre técnico.
+- Confirmado en navegador: URLs v04, respuestas HTML/CSS/JS con `no-store` y cero registros/control de service worker.

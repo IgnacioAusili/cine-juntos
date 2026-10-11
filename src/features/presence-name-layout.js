@@ -1,5 +1,5 @@
-import { dom } from "../core/dom.js?v=20261010-file-size-refactor-02";
-import { getDisplayName } from "../core/state.js?v=20261010-file-size-refactor-02";
+import { dom } from "../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { getDisplayName } from "../core/state.js?v=20261011-bem-itcss-oocss-04";
 
 const DESKTOP_BOTTOM_NAME_GAP_PX = 8;
 const DESKTOP_BOTTOM_NAME_ARROW_GAP_PX = 120;
@@ -28,10 +28,10 @@ function getDesktopBottomNameGeometry() {
   const tools = dom.chatNameField?.closest(".chat-tools");
   const sessionView = tools?.closest(".session-view");
   const field = dom.chatNameField?.parentElement;
-  const activeCollapseButton = sessionView.classList.contains("chat-collapsed")
+  const activeCollapseButton = sessionView.classList.contains('session-view--chat-collapsed')
     ? dom.expandChatButton
     : dom.collapseChatButton;
-  const collapseAnchor = activeCollapseButton?.querySelector(".chat-collapse-icon-anchor");
+  const collapseAnchor = activeCollapseButton?.querySelector('.chat-area__collapse-icon-anchor');
   if (
     !tools
     || !sessionView

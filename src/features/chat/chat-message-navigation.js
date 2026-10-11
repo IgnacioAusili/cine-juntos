@@ -1,5 +1,5 @@
-import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
-import { expandSystemMessageGroupForItem } from "./system-message-groups.js?v=20261011-chat-interaction-fixes-01";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { expandSystemMessageGroupForItem } from "./system-message-groups.js?v=20261011-bem-itcss-oocss-04";
 
 const pendingOverlayHighlights = new WeakMap();
 const pendingOverlayHighlightTimers = new WeakMap();
@@ -41,13 +41,13 @@ export function scrollToMessage(messageId, preferredContainer = null) {
  * Aplica un efecto visual de resaltado temporal a un elemento de mensaje.
  */
 function highlightMessage(element) {
-  const overlayContainer = element.closest(".overlay-messages");
+  const overlayContainer = element.closest('.chat-message-list.chat-message-list--overlay');
   if (overlayContainer) {
     highlightOverlayMessage(overlayContainer, element);
     return;
   }
 
-  const highlightContainer = element.closest(".messages");
+  const highlightContainer = element.closest('.chat-message-list');
   if (highlightContainer) {
     const elementRect = element.getBoundingClientRect();
     const containerRect = highlightContainer.getBoundingClientRect();

@@ -1,5 +1,5 @@
-import { dom } from "../core/dom.js?v=20261010-file-size-refactor-02";
-import { LAST_ROOM_KEY } from "../core/state.js?v=20261010-file-size-refactor-02";
+import { dom } from "../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { LAST_ROOM_KEY } from "../core/state.js?v=20261011-bem-itcss-oocss-04";
 import {
   ROOM_CREATE_ATTEMPT_LIMIT,
   ROOM_CREATE_ATTEMPT_WINDOW_MS,

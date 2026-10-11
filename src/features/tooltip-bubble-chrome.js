@@ -1,4 +1,4 @@
-import { dom } from "../core/dom.js?v=20261010-file-size-refactor-02";
+import { dom } from "../core/dom.js?v=20261011-bem-itcss-oocss-04";
 import { buildContinuousBubblePath, clampBubbleTailCenter } from "../core/continuous-bubble.js?v=20261010-file-size-refactor-02";
 import { TOOLTIP_VIEWPORT_PADDING, TOOLTIP_GAP, TOOLTIP_BORDER_WIDTH_PX, TOOLTIP_RADIUS_PX, TOOLTIP_TAIL_WIDTH_PX, TOOLTIP_TAIL_HEIGHT_PX } from "./tooltip-constants.js?v=20261010-file-size-refactor-02";
 
@@ -160,7 +160,7 @@ function syncEmojiPopoverChrome(popover) {
   svg.style.left = `${rect.left}px`;
   svg.style.top = `${placement === "bottom" ? rect.top - geometry.tailHeight : rect.top}px`;
   svg.style.visibility = style.visibility;
-  svg.style.opacity = popover.classList.contains("is-emoji-popover-open")
+  svg.style.opacity = popover.classList.contains('emoji-popover--open')
     ? "1"
     : "0";
   path.setAttribute(
@@ -183,7 +183,7 @@ function syncEmojiPopoverChrome(popover) {
 
 function registerEmojiPopover(popover) {
   if (!popover || emojiPopoverChromes.has(popover)) return;
-  const chrome = createBubbleChrome("emoji-popover-svg", 8999);
+  const chrome = createBubbleChrome("emoji-popover__svg", 8999);
   const observer = new MutationObserver(() => syncEmojiPopoverChrome(popover));
   observer.observe(popover, {
     attributes: true,
@@ -218,7 +218,7 @@ export function unregisterEmojiPopoversIn(node) {
 export function initializeBubbleChrome() {
   if (bubbleChromeObserversReady || !dom.tooltipLayer || !dom.emojiPopover || !document.body) return;
   bubbleChromeObserversReady = true;
-  ({ svg: tooltipChrome, path: tooltipChromePath } = createBubbleChrome("tooltip-layer-svg", 9999));
+  ({ svg: tooltipChrome, path: tooltipChromePath } = createBubbleChrome("tooltip-layer__svg", 9999));
   registerEmojiPopover(dom.emojiPopover);
 
   const tooltipObserver = new MutationObserver(syncTooltipChrome);

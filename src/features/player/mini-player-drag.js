@@ -30,7 +30,7 @@ export function wireMiniPlayerDrag(surface) {
 
     dragState.moved = true;
     suppressClick = true;
-    surface.classList.add("is-dragging");
+    surface.classList.add('u-dragging');
     event.preventDefault();
     setSurfacePosition(surface, dragState.startLeft + deltaX, dragState.startTop + deltaY);
   };
@@ -40,7 +40,7 @@ export function wireMiniPlayerDrag(surface) {
     if (surface.hasPointerCapture?.(event.pointerId)) {
       surface.releasePointerCapture(event.pointerId);
     }
-    surface.classList.remove("is-dragging");
+    surface.classList.remove('u-dragging');
     dragState = null;
   };
 

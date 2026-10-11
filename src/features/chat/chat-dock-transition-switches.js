@@ -1,11 +1,11 @@
-import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
-import { focusFullscreenWorkspace } from "../session-ui.js?v=20261010-file-size-refactor-02";
-import { isStackedSessionLayout } from "./chat-responsive-layout.js?v=20261011-chat-ui-fixes-02";
-import { getElementPageTop, getPageScrollContainer, getPageScrollMax, getPageScrollTop, isFullscreenPageActive, scrollPageTo } from "./chat-page-scroll.js?v=20261010-file-size-refactor-02";
-import { syncComponentAspectLayoutNow } from "./component-aspect-layout.js?v=20261010-file-size-refactor-02";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { focusFullscreenWorkspace } from "../session-ui.js?v=20261011-bem-itcss-oocss-04";
+import { isStackedSessionLayout } from "./chat-responsive-layout.js?v=20261011-bem-itcss-oocss-04";
+import { getElementPageTop, getPageScrollContainer, getPageScrollMax, getPageScrollTop, isFullscreenPageActive, scrollPageTo } from "./chat-page-scroll.js?v=20261011-bem-itcss-oocss-04";
+import { syncComponentAspectLayoutNow } from "./component-aspect-layout.js?v=20261011-bem-itcss-oocss-04";
 import { chatDockTransitionState, getChatDockOperations } from "./chat-layout-transition-state.js?v=20261010-file-size-refactor-02";
-import { clearBottomChatTransitionVisuals, lockBottomChatScrollAnchoring, restoreBottomChatScrollAnchoring, cancelBottomChatTransition, completeDesktopBottomChatTransition, setDesktopBottomChatCurtainProgress, setMobileBottomTransitionProgress, setDesktopBottomTransitionRowsProgress, completeMobileBottomChatTransition, stepMobileBottomChatTransition, stepDesktopBottomChatTransition, animateDesktopBottomChatCollapse, animateDesktopBottomChatExpand, animateBottomChatCollapse, animateBottomChatExpand } from "./chat-dock-transition-core.js?v=20261011-chat-ui-fixes-02";
-import { isDesktopBottomDock, easeBottomChatCurtainProgress, getWorkspaceRowHeights, getWorkspaceContentHeight } from "./chat-dock-transition-measurements.js?v=20261011-chat-ui-fixes-02";
+import { clearBottomChatTransitionVisuals, lockBottomChatScrollAnchoring, restoreBottomChatScrollAnchoring, cancelBottomChatTransition, completeDesktopBottomChatTransition, setDesktopBottomChatCurtainProgress, setMobileBottomTransitionProgress, setDesktopBottomTransitionRowsProgress, completeMobileBottomChatTransition, stepMobileBottomChatTransition, stepDesktopBottomChatTransition, animateDesktopBottomChatCollapse, animateDesktopBottomChatExpand, animateBottomChatCollapse, animateBottomChatExpand } from "./chat-dock-transition-core.js?v=20261011-bem-itcss-oocss-04";
+import { isDesktopBottomDock, easeBottomChatCurtainProgress, getWorkspaceRowHeights, getWorkspaceContentHeight } from "./chat-dock-transition-measurements.js?v=20261011-bem-itcss-oocss-04";
 import { BOTTOM_CHAT_CURTAIN_MS, BOTTOM_CHAT_SCROLL_TIMEOUT_MS, RIGHT_CHAT_LAYOUT_TRANSITION_MS, BOTTOM_TO_RIGHT_SCROLL_TIMEOUT_MS, BOTTOM_TO_RIGHT_LAYOUT_MS, FULLSCREEN_DOCK_OUT_MS, FULLSCREEN_DOCK_IN_MS } from "./chat-layout-timing.js?v=20261010-file-size-refactor-02";
 
 export function animateFullscreenDockSwitch(nextDock) {
@@ -28,20 +28,20 @@ export function animateFullscreenDockSwitch(nextDock) {
 
   const sessionView = dom.sessionView;
   const chatArea = dom.chatArea;
-  sessionView.classList.add("chat-dock-mobile-transition-out");
+  sessionView.classList.add('session-view--chat-dock-mobile-transition-out');
   // Primero se fija el estado inicial y recién en el frame siguiente se
   // dispara la salida. Así la transición no se convierte en un salto al
   // aplicar la clase y el cambio de dock queda después de que termina.
   void chatArea.offsetWidth;
   window.requestAnimationFrame(() => {
     if (chatDockTransitionState.pendingChatDockSwitch !== transition) return;
-    sessionView.classList.add("chat-dock-mobile-transition-out-active");
+    sessionView.classList.add('session-view--chat-dock-mobile-transition-out-active');
     transition.outTimerId = window.setTimeout(() => {
       if (chatDockTransitionState.pendingChatDockSwitch !== transition) return;
 
       sessionView.classList.remove(
-        "chat-dock-mobile-transition-out",
-        "chat-dock-mobile-transition-out-active",
+        'session-view--chat-dock-mobile-transition-out',
+        'session-view--chat-dock-mobile-transition-out-active',
       );
       getChatDockOperations().setChatDock(nextDock, {
         skipTransition: true,
@@ -62,18 +62,18 @@ export function animateFullscreenDockSwitch(nextDock) {
       } else {
         focusFullscreenWorkspace();
       }
-      sessionView.classList.add("chat-dock-mobile-transition-in");
+      sessionView.classList.add('session-view--chat-dock-mobile-transition-in');
       void chatArea.offsetWidth;
       window.requestAnimationFrame(() => {
         if (chatDockTransitionState.pendingChatDockSwitch !== transition) return;
-        sessionView.classList.add("chat-dock-mobile-transition-in-active");
+        sessionView.classList.add('session-view--chat-dock-mobile-transition-in-active');
         transition.inTimerId = window.setTimeout(() => {
           if (chatDockTransitionState.pendingChatDockSwitch !== transition) return;
           chatDockTransitionState.pendingChatDockSwitch = null;
           getChatDockOperations().scheduleChatDockHandlesReveal(FULLSCREEN_DOCK_IN_MS + 80);
           sessionView.classList.remove(
-            "chat-dock-mobile-transition-in",
-            "chat-dock-mobile-transition-in-active",
+            'session-view--chat-dock-mobile-transition-in',
+            'session-view--chat-dock-mobile-transition-in-active',
           );
           getChatDockOperations().setCollapseHandleTransitioning(false);
           getChatDockOperations().scheduleExternalChatCollapseHandleOffset();
@@ -190,7 +190,7 @@ export function animateRightToBottomSwitch(nextDock) {
   // la cortina inferior controle las filas y el recorte, sin un frame visible
   // en el que aparezcan ambos chats.
   getChatDockOperations().setChatDock(nextDock, { skipTransition: true, preserveScroll: true });
-  dom.sessionView.classList.add("chat-bottom-mobile-expand-visual");
+  dom.sessionView.classList.add('session-view--chat-bottom-mobile-expand-visual');
   transition.targetRows = getWorkspaceRowHeights();
   transition.targetScrollTop = getChatDockOperations().getBottomDockChatScrollTop();
   dom.workspace.style.setProperty(
@@ -199,7 +199,7 @@ export function animateRightToBottomSwitch(nextDock) {
   );
   setMobileBottomTransitionProgress(transition, 0);
   void dom.chatArea.offsetWidth;
-  dom.sessionView.classList.add("chat-bottom-mobile-curtain-active");
+  dom.sessionView.classList.add('session-view--chat-bottom-mobile-curtain-active');
   transition.startedAt = performance.now();
   transition.frameId = window.requestAnimationFrame(() => {
     stepMobileBottomChatTransition(transition);
@@ -243,7 +243,7 @@ export function scheduleBottomToRightSwitch(nextDock, targetScrollTop) {
     // Este es el único cambio de grilla animado entre docks. Durante él no
     // se deben recalcular offsets ni reservas del compositor por cada frame.
     getChatDockOperations().setCollapseHandleTransitioning(true, switchDuration);
-    dom.sessionView.classList.add("chat-dock-switching");
+    dom.sessionView.classList.add('session-view--chat-dock-switching');
     window.requestAnimationFrame(() => {
       getChatDockOperations().setChatDock(nextDock, {
         skipTransition: true,
@@ -288,7 +288,7 @@ export function scheduleBottomToRightSwitch(nextDock, targetScrollTop) {
           );
           scrollPageTo(workspaceTop, "auto");
         }
-        dom.sessionView.classList.add("chat-dock-switching-entered");
+        dom.sessionView.classList.add('session-view--chat-dock-switching-entered');
         if (useViewportOverlaySwitch) {
           chatArea?.style.setProperty(
             "transition",
@@ -317,7 +317,7 @@ export function scheduleBottomToRightSwitch(nextDock, targetScrollTop) {
         }
         getChatDockOperations().scheduleChatDockHandlesReveal(switchDuration + 80);
         window.setTimeout(() => {
-          dom.sessionView.classList.remove("chat-dock-switching", "chat-dock-switching-entered");
+          dom.sessionView.classList.remove('session-view--chat-dock-switching', 'session-view--chat-dock-switching-entered');
           chatArea?.style.removeProperty("flex-basis");
           chatArea?.style.removeProperty("width");
           chatArea?.style.removeProperty("min-width");

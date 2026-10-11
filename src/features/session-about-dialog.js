@@ -1,4 +1,4 @@
-import { dom } from "../core/dom.js?v=20261010-file-size-refactor-02";
+import { dom } from "../core/dom.js?v=20261011-bem-itcss-oocss-04";
 
 let aboutDialogInitialized = false;
 
@@ -15,7 +15,7 @@ export function initializeAboutDialog() {
       disclosureContent?.removeEventListener("transitionend", pendingDescriptionTransitionEnd);
       pendingDescriptionTransitionEnd = null;
     }
-    description?.classList.remove("is-expanded");
+    description?.classList.remove('about-dialog__disclosure--expanded');
     if (disclosureButton) {
       disclosureButton.hidden = false;
       disclosureButton.setAttribute("aria-expanded", "false");
@@ -27,9 +27,9 @@ export function initializeAboutDialog() {
   };
 
   disclosureButton?.addEventListener("click", () => {
-    if (!description || !disclosureContent || description.classList.contains("is-expanded")) return;
+    if (!description || !disclosureContent || description.classList.contains('about-dialog__disclosure--expanded')) return;
 
-    description.classList.add("is-expanded");
+    description.classList.add('about-dialog__disclosure--expanded');
     disclosureButton.hidden = true;
     disclosureButton.setAttribute("aria-expanded", "true");
     disclosureContent.hidden = false;

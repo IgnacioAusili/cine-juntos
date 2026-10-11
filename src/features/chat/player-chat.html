@@ -1,7 +1,7 @@
               <aside class="player-chat" id="playerChat" aria-label="Chat dentro del video">
-                <div class="player-chat-header">
+                <div class="player-chat__header">
                   <button
-                    class="presence-pill   player-chat-presence"
+                    class="presence-pill   player-chat__presence"
                     id="overlayPresencePill"
                     type="button"
                     aria-label="Usuarios conectados"
@@ -14,7 +14,7 @@
                     <span class="presence-pill__self-label" id="overlayPresenceSelfLabel" hidden></span>
                     <span id="overlayParticipantCount">1</span>
                   </button>
-                  <div class="player-chat-header-actions">
+                  <div class="player-chat__header-actions">
                     <div
                       class="chat-style-toggle"
                       id="chatStyleToggle"
@@ -72,21 +72,21 @@
                     </button>
                   </div>
                 </div>
-                <div class="messages-wrap">
-                  <div class="overlay-messages" id="overlayMessages" aria-live="polite"></div>
+                <div class="chat-message-list-shell">
+                  <div class="chat-message-list chat-message-list--overlay" id="overlayMessages" aria-live="polite"></div>
                   <div class="chat-scrollbar" aria-hidden="true">
-                    <div class="chat-scrollbar-thumb"></div>
+                    <div class="chat-scrollbar__thumb"></div>
                   </div>
                   <button class="scroll-bottom-btn" id="overlayScrollBottomBtn" type="button" hidden aria-label="Ir al último mensaje" data-tooltip="Ir al último mensaje">
                     <span data-lucide="chevrons-down"></span>
-                    <span class="scroll-bottom-badge" id="overlayScrollBadge">0</span>
+                    <span class="scroll-bottom-btn__badge" id="overlayScrollBadge">0</span>
                   </button>
                 </div>
-                <form class="message-form   overlay-message-form" id="overlayMessageForm">
+                <form class="message-form message-form--overlay" id="overlayMessageForm">
                 <div class="reply-preview" id="overlayReplyPreview" hidden></div>
                 <div class="image-preview-container" id="overlayImagePreview" hidden></div>
-                <div class="input-wrapper">
-                  <div class="textarea-shell">
+                <div class="message-form__input-wrapper">
+                  <div class="message-form__textarea-shell">
                     <textarea
                       id="overlayMessageInput"
                       autocomplete="off"
@@ -98,11 +98,11 @@
                       rows="1"
                     ></textarea>
                     <div class="composer-scrollbar" aria-hidden="true">
-                      <div class="composer-scrollbar-thumb"></div>
+                      <div class="composer-scrollbar__thumb"></div>
                     </div>
                   </div>
                     <button
-                      class="icon-button   icon-button--ghost   emoji-trigger"
+                      class="icon-button   icon-button--ghost   icon-button--emoji-trigger"
                       id="overlayEmojiButton"
                       type="button"
                       aria-label="Abrir emojis"
@@ -112,9 +112,9 @@
                       <span data-lucide="smile-plus"></span>
                     </button>
                     <button class="icon-button   icon-button--send" id="overlayMessageSend" type="submit" aria-label="Enviar mensaje" data-tooltip="Enviar mensaje (Enter)">
-                      <svg class="composer-progress-ring" viewBox="0 0 44 44" aria-hidden="true" focusable="false">
-                        <circle class="composer-progress-track" cx="22" cy="22" r="18.5" pathLength="100"></circle>
-                        <circle class="composer-progress-value" cx="22" cy="22" r="18.5" pathLength="100"></circle>
+                      <svg class="icon-button__progress-ring" viewBox="0 0 44 44" aria-hidden="true" focusable="false">
+                        <circle class="icon-button__progress-track" cx="22" cy="22" r="18.5" pathLength="100"></circle>
+                        <circle class="icon-button__progress-value" cx="22" cy="22" r="18.5" pathLength="100"></circle>
                       </svg>
                       <span data-lucide="send"></span>
                     </button>

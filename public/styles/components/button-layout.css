@@ -77,7 +77,7 @@
   align-items: center;
 }
 
-.source-strip .button {
+.image-preview-container__source-strip .button {
   align-self: end;
   margin-bottom: 1px;
 }

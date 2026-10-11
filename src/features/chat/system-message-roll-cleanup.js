@@ -1,4 +1,4 @@
-import { setSystemMessageRowAnchorOffset } from "./system-message-roll-layout.js?v=20261010-file-size-refactor-02";
+import { setSystemMessageRowAnchorOffset } from "./system-message-roll-layout.js?v=20261011-bem-itcss-oocss-04";
 
 export function createSystemRollCleanup(context) {
   const {
@@ -53,9 +53,9 @@ export function createSystemRollCleanup(context) {
     nextText.replaceChildren(...originalNodes);
     if (originalStyle === null) nextText.removeAttribute("style");
     else nextText.setAttribute("style", originalStyle);
-    nextText.classList.remove("system-message-roll-viewport");
-    row?.classList.remove("system-message-rolling");
-    if (!hadGroupTransitionClass) groupItem?.classList.remove("system-group-transitioning");
+    nextText.classList.remove('message__system-roll-viewport');
+    row?.classList.remove('message--system-rolling');
+    if (!hadGroupTransitionClass) groupItem?.classList.remove('u-transitioning');
     if (bubble) {
       if (originalBubbleStyle === null) bubble.removeAttribute("style");
       else bubble.setAttribute("style", originalBubbleStyle);

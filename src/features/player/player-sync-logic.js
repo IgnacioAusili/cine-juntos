@@ -1,21 +1,21 @@
 // Sincronizacion del player con la sala: estado remoto, aplicacion y publicacion.
-import { dom } from "../../core/dom.js?v=20261011-chat-controls-repair-01";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
 import {
   state,
   getDisplayName,
   getTransportNow,
   logEvent,
-} from "../../core/state.js?v=20261011-chat-controls-repair-01";
+} from "../../core/state.js?v=20261011-bem-itcss-oocss-04";
 import {
   MAX_DRIFT_SECONDS,
   HARD_DRIFT_SECONDS,
   SEND_THROTTLE_MS,
   formatSeconds,
 } from "../../core/utils.js?v=20261011-chat-controls-repair-01";
-import { markParticipantActive, rememberParticipant } from "../presence.js?v=20261011-lucide-icons-repair-01";
-import { sendVideoEventMessage } from "../chat/index.js?v=20261011-chat-auto-switch-bem-01-video-ts-group-01";
-import { configurePlaybackRecoveryPort, describePlaybackIssue, cancelPendingPlaybackIssueDetection, pauseRoomForPlaybackIssue, clearPlaybackRecoveryTracking, attemptPlaybackRecovery } from "./player-sync-recovery.js?v=20261011-chat-auto-switch-bem-01-video-ts-group-01";
-export { cancelPendingPlaybackIssueDetection, pauseRoomForPlaybackIssue, clearPlaybackRecoveryTracking, attemptPlaybackRecovery } from "./player-sync-recovery.js?v=20261011-chat-auto-switch-bem-01-video-ts-group-01";
+import { markParticipantActive, rememberParticipant } from "../presence.js?v=20261011-bem-itcss-oocss-04";
+import { sendVideoEventMessage } from "../chat/index.js?v=20261011-bem-itcss-oocss-04";
+import { configurePlaybackRecoveryPort, describePlaybackIssue, cancelPendingPlaybackIssueDetection, pauseRoomForPlaybackIssue, clearPlaybackRecoveryTracking, attemptPlaybackRecovery } from "./player-sync-recovery.js?v=20261011-bem-itcss-oocss-04";
+export { cancelPendingPlaybackIssueDetection, pauseRoomForPlaybackIssue, clearPlaybackRecoveryTracking, attemptPlaybackRecovery } from "./player-sync-recovery.js?v=20261011-bem-itcss-oocss-04";
 let playerMediaPort = null;
 
 export function configurePlayerMediaPort(port) {

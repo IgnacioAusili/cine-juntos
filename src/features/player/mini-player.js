@@ -1,19 +1,19 @@
-import { dom } from "../../core/dom.js?v=20261011-chat-controls-repair-01";
-import { wireMiniPlayerOverlayControls } from "./mini-player-overlay-controls.js?v=20261011-chat-controls-repair-01";
-import { configureScrollMiniPlayerOperations, scheduleScrollMiniPlayerSync, dismissScrollMiniPlayerForSession } from "./mini-player-scroll.js?v=20261011-chat-controls-repair-01";
-import { state, logEvent } from "../../core/state.js?v=20261011-chat-controls-repair-01";
-import { setControlIcon } from "../icons-tooltips.js?v=20261011-lucide-icons-repair-01";
-import { setSyncStatus } from "../session-ui.js?v=20261011-chat-controls-repair-01";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { wireMiniPlayerOverlayControls } from "./mini-player-overlay-controls.js?v=20261011-bem-itcss-oocss-04";
+import { configureScrollMiniPlayerOperations, scheduleScrollMiniPlayerSync, dismissScrollMiniPlayerForSession } from "./mini-player-scroll.js?v=20261011-bem-itcss-oocss-04";
+import { state, logEvent } from "../../core/state.js?v=20261011-bem-itcss-oocss-04";
+import { setControlIcon } from "../icons-tooltips.js?v=20261011-bem-itcss-oocss-04";
+import { setSyncStatus } from "../session-ui.js?v=20261011-bem-itcss-oocss-04";
 import {
   createMiniPlayerSurface,
   installMiniPlayerWindowStyles,
-} from "./mini-player-controls.js?v=20261011-player-skip-active-cleanup-01";
+} from "./mini-player-controls.js?v=20261011-bem-itcss-oocss-04";
 import {
   mirrorMiniPlayerChatState,
-} from "./mini-player-chat.js?v=20261011-chat-auto-switch-bem-01";
-import { movePlayerInterface } from "./mini-player-interface.js?v=20261011-chat-auto-switch-bem-01";
-import { trackMiniPlayerReturnHint } from "./mini-player-return-hint.js?v=20261011-chat-controls-repair-01";
-import { clampMiniPlayerPosition, wireMiniPlayerDrag } from "./mini-player-drag.js?v=20261011-chat-controls-repair-01";
+} from "./mini-player-chat.js?v=20261011-bem-itcss-oocss-04";
+import { movePlayerInterface } from "./mini-player-interface.js?v=20261011-bem-itcss-oocss-04";
+import { trackMiniPlayerReturnHint } from "./mini-player-return-hint.js?v=20261011-bem-itcss-oocss-04";
+import { clampMiniPlayerPosition, wireMiniPlayerDrag } from "./mini-player-drag.js?v=20261011-bem-itcss-oocss-04";
 
 let miniSurface = null;
 let pictureInPictureWindow = null;
@@ -53,7 +53,7 @@ export async function toggleMiniPlayer() {
   }
   if (!hasMedia()) return;
 
-  const chatWasOpen = dom.playerFrame.classList.contains("chat-inside-open");
+  const chatWasOpen = dom.playerFrame.classList.contains('u-chat-inside-open');
 
   state.player.miniPlayerMode = "opening";
   syncMiniPlayerButton(true);
@@ -131,7 +131,7 @@ function openInlineMiniPlayer(chatWasOpen) {
     chatWasOpen,
     dom.playerFrame.dataset.controlStyle,
   );
-  miniSurface.classList.add("mini-player-inline");
+  miniSurface.classList.add('mini-player-surface--inline');
   dom.playerFrame.append(miniSurface);
   miniPlayerInterface = movePlayerInterface(miniSurface);
   miniPlayerChat = mirrorMiniPlayerChatState(miniSurface, chatWasOpen);
@@ -146,8 +146,8 @@ function openScrollMiniPlayer() {
     false,
     dom.playerFrame.dataset.controlStyle,
   );
-  miniSurface.classList.add("mini-player-inline", "mini-player-scroll");
-  miniSurface.classList.remove("player-overlay-visible");
+  miniSurface.classList.add('mini-player-surface--inline', 'mini-player-surface--scroll');
+  miniSurface.classList.remove('player-frame--overlay-visible');
   document.body.append(miniSurface);
   miniPlayerInterface = movePlayerInterface(miniSurface, {
     includeChat: false,
@@ -161,7 +161,7 @@ function openScrollMiniPlayer() {
 function activateMiniPlayer(mode) {
   state.player.miniPlayerMode = mode;
   if (miniSurface) {
-    miniSurface.classList.remove("mini-player-initializing");
+    miniSurface.classList.remove('mini-player-surface--initializing');
     const surfaceToReveal = miniSurface;
     const reveal = () => {
       if (miniSurface !== surfaceToReveal) return;
@@ -170,7 +170,7 @@ function activateMiniPlayer(mode) {
     };
     window.requestAnimationFrame(() => window.requestAnimationFrame(reveal));
   }
-  dom.playerFrame.classList.add("mini-player-active");
+  dom.playerFrame.classList.add('mini-player-surface--active');
   syncMiniPlayerButton(true);
   stopMiniPlayerReturnHintTracking = trackMiniPlayerReturnHint();
   setSyncStatus(mode === "scroll"
@@ -209,7 +209,7 @@ function restoreMainPlayer() {
   miniSurface?.remove();
   miniSurface = null;
   pictureInPictureWindow = null;
-  dom.playerFrame.classList.remove("mini-player-active");
+  dom.playerFrame.classList.remove('mini-player-surface--active');
   state.player.miniPlayerMode = "";
   syncMiniPlayerButton(hasMedia());
   setSyncStatus("Video devuelto al reproductor principal.");

@@ -1,8 +1,8 @@
-import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
-import { state } from "../../core/state.js?v=20261010-file-size-refactor-02";
-import { truncateText } from "./chat-content-parser.js?v=20261010-file-size-refactor-02";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { state } from "../../core/state.js?v=20261011-bem-itcss-oocss-04";
+import { truncateText } from "./chat-content-parser.js?v=20261011-bem-itcss-oocss-04";
 import { getParticipantAccent } from "./chat-participant-color.js?v=20261010-file-size-refactor-02";
-import { scrollToMessage } from "./chat-message-navigation.js?v=20261011-chat-interaction-fixes-01";
+import { scrollToMessage } from "./chat-message-navigation.js?v=20261011-bem-itcss-oocss-04";
 import { createForeignDocumentIcon } from "../foreign-lucide-icon.js?v=20261011-lucide-icons-repair-01";
 
 let clearReplyTargetCallback = null;
@@ -18,8 +18,8 @@ const pendingReplyPreviewAnimations = new WeakMap();
 
 function setReplyPreviewClosing(container, isClosing) {
   const form = container.closest(".message-form");
-  if (!form || form.classList.contains("reply-preview-closing") === isClosing) return;
-  form.classList.toggle("reply-preview-closing", isClosing);
+  if (!form || form.classList.contains('reply-preview--closing') === isClosing) return;
+  form.classList.toggle('reply-preview--closing', isClosing);
   window.dispatchEvent(new Event("chat-reply-preview-layout"));
 }
 
@@ -38,14 +38,14 @@ function hideReplyPreviewContainer(container) {
 
 function createReplyPreviewContent(container) {
   const replyIcon = document.createElement("span");
-  replyIcon.className = "reply-preview-icon";
+  replyIcon.className = 'reply-preview__icon';
   replyIcon.innerHTML =
     "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><polyline points='9 17 4 12 9 7'/><path d='M20 18v-2a4 4 0 0 0-4-4H4'/></svg>";
 
   const textBtn = document.createElement("button");
   textBtn.type = "button";
-  textBtn.className = "reply-preview-text";
-  textBtn.innerHTML = `<span class="reply-preview-name">${state.chat.replyTarget.name}</span><span class="reply-preview-body">${truncateText(state.chat.replyTarget.text || "", 58)}</span>`;
+  textBtn.className = 'reply-preview__text';
+  textBtn.innerHTML = `<span class="reply-preview__name">${state.chat.replyTarget.name}</span><span class="reply-preview__body">${truncateText(state.chat.replyTarget.text || "", 58)}</span>`;
   const preferredScrollContainer = container === dom.overlayReplyPreview ? dom.overlayMessages : dom.messages;
   textBtn.addEventListener("click", () =>
     scrollToMessage(state.chat.replyTarget.id, preferredScrollContainer),
@@ -53,13 +53,13 @@ function createReplyPreviewContent(container) {
 
   const close = document.createElement("button");
   close.type = "button";
-  close.className = "reply-preview-close";
+  close.className = 'reply-preview__close';
   close.innerHTML = '<span data-lucide="x" aria-hidden="true"></span>';
   close.setAttribute("aria-label", "Cancelar respuesta");
   close.addEventListener("click", clearReplyTargetFromPreview);
 
   const replyContent = document.createElement("div");
-  replyContent.className = "reply-preview-content";
+  replyContent.className = 'reply-preview__content';
   replyContent.append(replyIcon, textBtn, close);
   return replyContent;
 }

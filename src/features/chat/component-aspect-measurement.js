@@ -1,4 +1,4 @@
-const FULL_PANEL_LAYOUT_CLASS = "layout-component-stack";
+const FULL_PANEL_LAYOUT_CLASS = 'session-view--layout-component-stack';
 const DEFAULT_VIDEO_ASPECT_RATIO = 16 / 9;
 const MIN_VIDEO_ASPECT_SHORTFALL_PX = 24;
 const VIDEO_ASPECT_SHORTFALL_TOLERANCE = 0.08;
@@ -7,7 +7,7 @@ let measuringExpandedTarget = false;
 
 function capturePageScrollPosition(appShell) {
   const isFullscreen = Boolean(document.fullscreenElement)
-    || document.body.classList.contains("fullscreen-mode");
+    || document.body.classList.contains('page-context--fullscreen');
   const container = isFullscreen ? appShell : null;
   return {
     container,
@@ -75,20 +75,20 @@ export function measurePanelLayoutTarget({
     };
   }
 
-  const wasCollapsed = sessionView.classList.contains("chat-collapsed");
+  const wasCollapsed = sessionView.classList.contains('session-view--chat-collapsed');
   const wasExpanded = sessionView.classList.contains(FULL_PANEL_LAYOUT_CLASS);
   const preservedScrollPosition = wasCollapsed || wasExpanded
     ? capturePageScrollPosition(appShell)
     : null;
   const shouldSuppressTransitions = wasCollapsed || wasExpanded;
   if (shouldSuppressTransitions) {
-    sessionView.classList.add("component-layout-measuring");
+    sessionView.classList.add('session-view--layout-measuring');
     // Aplicar el estado temporal antes de medir evita que se anime.
     void getComputedStyle(sessionView).transitionProperty;
   }
   if (wasCollapsed) measuringExpandedTarget = true;
   if (wasExpanded) sessionView.classList.remove(FULL_PANEL_LAYOUT_CLASS);
-  if (wasCollapsed) sessionView.classList.remove("chat-collapsed");
+  if (wasCollapsed) sessionView.classList.remove('session-view--chat-collapsed');
 
   // Medir la geometría que tendrá el dock al expandirse.
   const videoRect = playerFrame.getBoundingClientRect();
@@ -119,7 +119,7 @@ export function measurePanelLayoutTarget({
   );
 
   if (wasCollapsed) {
-    sessionView.classList.add("chat-collapsed");
+    sessionView.classList.add('session-view--chat-collapsed');
     // Dejar que la mutación temporal llegue a los observers antes de aceptar acciones.
     queueMicrotask(() => {
       measuringExpandedTarget = false;
@@ -128,7 +128,7 @@ export function measurePanelLayoutTarget({
   if (wasExpanded) sessionView.classList.add(FULL_PANEL_LAYOUT_CLASS);
   restorePageScrollPosition(preservedScrollPosition);
   if (shouldSuppressTransitions) {
-    sessionView.classList.remove("component-layout-measuring");
+    sessionView.classList.remove('session-view--layout-measuring');
   }
   return {
     shouldStack,

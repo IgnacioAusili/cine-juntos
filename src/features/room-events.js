@@ -1,18 +1,18 @@
-import { dom } from "../core/dom.js?v=20261011-chat-controls-repair-01";
-import { updateDisplayName } from "./presence.js?v=20261011-lucide-icons-repair-01";
-import { joinRoom } from "./room-entry.js?v=20261011-player-empty-state-01";
-import { leaveRoom } from "./room-exit.js?v=20261011-chat-auto-switch-bem-01-video-ts-group-01";
-import { copyInvite } from "./room-invite.js?v=20261011-chat-controls-repair-01";
+import { dom } from "../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { updateDisplayName } from "./presence.js?v=20261011-bem-itcss-oocss-04";
+import { joinRoom } from "./room-entry.js?v=20261011-bem-itcss-oocss-04";
+import { leaveRoom } from "./room-exit.js?v=20261011-bem-itcss-oocss-04";
+import { copyInvite } from "./room-invite.js?v=20261011-bem-itcss-oocss-04";
 import {
   consumeRoomCreationAttempt,
   looksLikeRoomInviteUrl,
   rememberLastRoom,
   sanitizeRoomInput,
   syncJoinRoomButtonState,
-} from "./room-input.js?v=20261011-chat-controls-repair-01";
-import { state, logEvent } from "../core/state.js?v=20261011-chat-controls-repair-01";
+} from "./room-input.js?v=20261011-bem-itcss-oocss-04";
+import { state, logEvent } from "../core/state.js?v=20261011-bem-itcss-oocss-04";
 import { generateRoomCode } from "../core/utils.js?v=20261011-chat-controls-repair-01";
-import { setSyncStatus } from "./session-ui.js?v=20261011-chat-controls-repair-01";
+import { setSyncStatus } from "./session-ui.js?v=20261011-bem-itcss-oocss-04";
 
 const BACK_TO_LOBBY_ANIMATION_MS = 430;
 
@@ -66,11 +66,11 @@ export function wireRoomEvents() {
   dom.backToLobbyButton?.addEventListener("click", () => {
     if (isLeavingRoom) return;
     isLeavingRoom = true;
-    dom.backToLobbyButton.classList.add("is-leaving");
+    dom.backToLobbyButton.classList.add('page-context--leaving');
     const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
     window.setTimeout(() => {
       void leaveRoom().finally(() => {
-        dom.backToLobbyButton?.classList.remove("is-leaving");
+        dom.backToLobbyButton?.classList.remove('page-context--leaving');
         isLeavingRoom = false;
       });
     }, prefersReducedMotion ? 0 : BACK_TO_LOBBY_ANIMATION_MS);

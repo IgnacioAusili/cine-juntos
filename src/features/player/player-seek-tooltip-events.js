@@ -1,8 +1,8 @@
-import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
-import { state } from "../../core/state.js?v=20261010-file-size-refactor-02";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { state } from "../../core/state.js?v=20261011-bem-itcss-oocss-04";
 import { formatSeconds } from "../../core/utils.js?v=20261010-file-size-refactor-02";
-import { hideTooltip } from "../icons-tooltips.js?v=20261011-lucide-icons-repair-01";
-import { hideSeekTooltip, showSeekTooltip } from "./player-seek-tooltip-view.js?v=20261011-lucide-icons-repair-01";
+import { hideTooltip } from "../icons-tooltips.js?v=20261011-bem-itcss-oocss-04";
+import { hideSeekTooltip, showSeekTooltip } from "./player-seek-tooltip-view.js?v=20261011-bem-itcss-oocss-04";
 import { seekTooltipState } from "./player-seek-tooltip-state.js?v=20261010-file-size-refactor-02";
 
 const SEEK_THUMB_WIDTH = 14;
@@ -19,7 +19,7 @@ export function wireSeekTooltipEvents() {
 
   const setSeekDragActive = (active) => {
     state.ui.seekDragActive = active;
-    dom.playerFrame?.classList.toggle("player-seek-control-dragging", active);
+    dom.playerFrame?.classList.toggle('player-frame--seek-control-dragging', active);
   };
 
   const handlePointerMove = (event) => {
@@ -136,7 +136,7 @@ function isPointerOverRateMenu(event) {
 
   const openMenu = dom.playerRateSelect
     ?.closest(".player-rate-select")
-    ?.querySelector(".player-rate-menu:not([hidden])");
+    ?.querySelector('.player-rate-select__menu:not([hidden])');
   if (!openMenu) return false;
 
   const menuRect = openMenu.getBoundingClientRect();
@@ -151,7 +151,7 @@ function isPointerOverRateMenu(event) {
   }
 
   const elementUnderPointer = document.elementFromPoint(clientX, clientY);
-  return Boolean(elementUnderPointer?.closest?.(".player-rate-menu"));
+  return Boolean(elementUnderPointer?.closest?.('.player-rate-select__menu'));
 }
 
 function queueSeekTooltipFromPointer(event) {

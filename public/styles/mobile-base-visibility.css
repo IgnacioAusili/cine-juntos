@@ -15,18 +15,18 @@
   @media (orientation: portrait) {
     html,
     body,
-    body:not(.is-lobby) .app-shell,
-    body:not(.is-lobby) .session-view,
-    body:not(.is-lobby) .o-workspace,
-    body:not(.is-lobby) .o-video-area,
-    body:not(.is-lobby) .chat-area {
+    body:not(.page-context--lobby) .app-shell,
+    body:not(.page-context--lobby) .session-view,
+    body:not(.page-context--lobby) .o-workspace,
+    body:not(.page-context--lobby) .o-video-area,
+    body:not(.page-context--lobby) .chat-area {
       scroll-snap-type: none !important;
     }
 
-    body:not(.is-lobby) .session-view,
-    body:not(.is-lobby) .o-workspace,
-    body:not(.is-lobby) .o-video-area,
-    body:not(.is-lobby) .chat-area {
+    body:not(.page-context--lobby) .session-view,
+    body:not(.page-context--lobby) .o-workspace,
+    body:not(.page-context--lobby) .o-video-area,
+    body:not(.page-context--lobby) .chat-area {
       scroll-snap-align: none !important;
       scroll-snap-stop: normal !important;
     }
@@ -42,14 +42,14 @@
 
   /* El chat interno debe quedar por encima de los controles centrales y de la
      barra inferior cuando el video y el overlay comparten la superficie. */
-  body:not(.is-lobby) .player-frame .player-chat {
+  body:not(.page-context--lobby) .player-frame .player-chat {
     z-index: 12;
   }
 
   /* El overlay tiene un tamaño máximo propio. Solo se reduce si no entra
      entre sus dos bordes del reproductor; la barra de controles no participa
      en este cálculo y puede quedar debajo del overlay. */
-  body:not(.is-lobby) .player-frame:not(.mini-player-surface) > .player-chat {
+  body:not(.page-context--lobby) .player-frame:not(.mini-player-surface) > .player-chat {
     --player-chat-bottom-inset: 8px;
     bottom: var(--player-chat-bottom-inset);
     max-height: calc(
@@ -59,22 +59,22 @@
 
   /* El disparador del overlay conserva acceso táctil aunque el panel abierto
      llegue a solaparse con su esquina superior derecha. */
-  body:not(.is-lobby) .player-frame .player-actions {
+  body:not(.page-context--lobby) .player-frame .player-frame__actions {
     z-index: 13;
   }
 
   /* El video debe poder iniciar el desplazamiento vertical de la página. El
      toque corto se resuelve en JS; los arrastres no deben quedar bloqueados
      por los eventos del reproductor. */
-  body:not(.is-lobby) .player-frame video {
+  body:not(.page-context--lobby) .player-frame video {
     touch-action: auto;
   }
 
   /* iOS Safari amplía la página al enfocar controles de texto menores a
      16px. La línea explícita también centra el placeholder dentro de la
      altura compacta del composer sin alterar el layout de escritorio. */
-  body:not(.is-lobby) .message-form .input-wrapper textarea,
-  body:not(.is-lobby) .overlay-message-form .input-wrapper textarea {
+  body:not(.page-context--lobby) .message-form .message-form__input-wrapper textarea,
+  body:not(.page-context--lobby) .message-form.message-form--overlay .message-form__input-wrapper textarea {
     font-size: 16px;
     line-height: 20px;
   }
@@ -83,12 +83,12 @@
      el shell ocupa la altura disponible y el textarea conserva su línea y
      padding vertical para que el texto quede centrado en cualquier dock u
      orientación móvil. */
-  body:not(.is-lobby) .chat-area > .message-form .input-wrapper {
+  body:not(.page-context--lobby) .chat-area > .message-form .message-form__input-wrapper {
     align-items: center;
     padding-left: 4px;
   }
 
-  body:not(.is-lobby) .chat-area > .message-form .input-wrapper .textarea-shell {
+  body:not(.page-context--lobby) .chat-area > .message-form .message-form__input-wrapper .message-form__textarea-shell {
     align-self: stretch;
   }
 
@@ -96,13 +96,13 @@
      lateral no debe sobrevivir en el dock inferior: sus márgenes laterales
      son los que centran el compositor. Mientras la cortina está activa se
      mantiene el ancho estable para evitar un salto visual. */
-  body:not(.is-lobby) .session-view[data-chat-dock="bottom"]:not(.chat-bottom-mobile-expand-visual):not(.chat-bottom-mobile-collapse-visual) .chat-area > .message-form {
+  body:not(.page-context--lobby) .session-view[data-chat-dock="bottom"]:not(.session-view--chat-bottom-mobile-expand-visual):not(.session-view--chat-bottom-mobile-collapse-visual) .chat-area > .message-form {
     width: auto !important;
   }
 
   /* Los botones conservan el alto de una línea aun cuando el textarea crece.
      El ancho extra queda dentro del botón, por lo que también es táctil. */
-  body:not(.is-lobby) .chat-area > .message-form .input-wrapper .emoji-trigger {
+  body:not(.page-context--lobby) .chat-area > .message-form .message-form__input-wrapper .icon-button--emoji-trigger {
     align-self: flex-end;
     flex: 0 0 24px;
     width: 24px;
@@ -112,7 +112,7 @@
     padding: 0;
   }
 
-  body:not(.is-lobby) .chat-area > .message-form .input-wrapper .icon-button--send {
+  body:not(.page-context--lobby) .chat-area > .message-form .message-form__input-wrapper .icon-button--send {
     align-self: flex-end;
     flex: 0 0 34px;
     width: 34px;
@@ -122,11 +122,11 @@
     padding: 0;
   }
 
-  body:not(.is-lobby) .chat-area > .message-form .input-wrapper .icon-button--send > * {
+  body:not(.page-context--lobby) .chat-area > .message-form .message-form__input-wrapper .icon-button--send > * {
     left: calc(50% - 3px);
   }
 
-  body:not(.is-lobby) .player-frame .overlay-message-form .input-wrapper .emoji-trigger {
+  body:not(.page-context--lobby) .player-frame .message-form.message-form--overlay .message-form__input-wrapper .icon-button--emoji-trigger {
     width: 24px;
     min-height: 34px;
     height: 34px;
@@ -134,7 +134,7 @@
     margin: 0;
   }
 
-  body:not(.is-lobby) .player-frame .overlay-message-form .input-wrapper .icon-button--send {
+  body:not(.page-context--lobby) .player-frame .message-form.message-form--overlay .message-form__input-wrapper .icon-button--send {
     width: 34px;
     min-height: 34px;
     height: 34px;
@@ -142,18 +142,18 @@
     margin: 0;
   }
 
-  body:not(.is-lobby) .player-frame .overlay-message-form .input-wrapper .icon-button--send > * {
+  body:not(.page-context--lobby) .player-frame .message-form.message-form--overlay .message-form__input-wrapper .icon-button--send > * {
     left: calc(50% - 3px);
   }
 
   /* El control móvil actual siempre lleva su flecha dentro del círculo. Esta
      regla debe cubrir también landscape, cuyo ancho puede superar 680px. */
-  body:not(.is-lobby) .session-view[data-chat-dock] .chat-collapse-handle {
+  body:not(.page-context--lobby) .session-view[data-chat-dock] .chat-area__collapse-handle {
     width: 32px;
     height: 30px;
   }
 
-  body:not(.is-lobby) .session-view[data-chat-dock] .chat-collapse-icon-anchor {
+  body:not(.page-context--lobby) .session-view[data-chat-dock] .chat-area__collapse-icon-anchor {
     width: 26px;
     height: 26px;
     flex-basis: 26px;
@@ -165,7 +165,7 @@
       inset 0 1px 0 rgba(255, 255, 255, 0.08);
   }
 
-  body:not(.is-lobby) .session-view[data-chat-dock] .chat-collapse-handle svg {
+  body:not(.page-context--lobby) .session-view[data-chat-dock] .chat-area__collapse-handle svg {
     width: 18px;
     height: 18px;
     stroke-width: 2.35px;
@@ -177,8 +177,8 @@
    La prioridad alta mantiene estas fases por encima de las reglas de layout
    que fuerzan opacity: 1 mientras se sincronizan los controles. */
 @media (hover: none) and (pointer: coarse) {
-  body.fullscreen-mode
-    .session-view.chat-dock-mobile-transition-out
+  body.page-context--fullscreen
+    .session-view.session-view--chat-dock-mobile-transition-out
     .chat-area {
     opacity: 1 !important;
     transform: translate(0, 0) !important;
@@ -187,8 +187,8 @@
     will-change: transform, opacity;
   }
 
-  body.fullscreen-mode
-    .session-view.chat-dock-mobile-transition-out-active[data-chat-dock="right"]
+  body.page-context--fullscreen
+    .session-view.session-view--chat-dock-mobile-transition-out-active[data-chat-dock="right"]
     .chat-area {
     opacity: 0 !important;
     transform: translateX(100%) !important;
@@ -196,8 +196,8 @@
     pointer-events: none;
   }
 
-  body.fullscreen-mode
-    .session-view.chat-dock-mobile-transition-out-active[data-chat-dock="bottom"]
+  body.page-context--fullscreen
+    .session-view.session-view--chat-dock-mobile-transition-out-active[data-chat-dock="bottom"]
     .chat-area {
     opacity: 0 !important;
     transform: translateY(100%) !important;
@@ -205,8 +205,8 @@
     pointer-events: none;
   }
 
-  body.fullscreen-mode
-    .session-view.chat-dock-mobile-transition-in[data-chat-dock="right"]
+  body.page-context--fullscreen
+    .session-view.session-view--chat-dock-mobile-transition-in[data-chat-dock="right"]
     .chat-area {
     opacity: 0 !important;
     transform: translateX(100%) !important;
@@ -215,8 +215,8 @@
     will-change: transform, opacity;
   }
 
-  body.fullscreen-mode
-    .session-view.chat-dock-mobile-transition-in-active[data-chat-dock="right"]
+  body.page-context--fullscreen
+    .session-view.session-view--chat-dock-mobile-transition-in-active[data-chat-dock="right"]
     .chat-area {
     opacity: 1 !important;
     transform: translateX(0) !important;
@@ -224,8 +224,8 @@
     pointer-events: auto;
   }
 
-  body.fullscreen-mode
-    .session-view.chat-dock-mobile-transition-in[data-chat-dock="bottom"]
+  body.page-context--fullscreen
+    .session-view.session-view--chat-dock-mobile-transition-in[data-chat-dock="bottom"]
     .chat-area {
     opacity: 0 !important;
     transform: translateY(100%) !important;
@@ -234,8 +234,8 @@
     will-change: transform, opacity;
   }
 
-  body.fullscreen-mode
-    .session-view.chat-dock-mobile-transition-in-active[data-chat-dock="bottom"]
+  body.page-context--fullscreen
+    .session-view.session-view--chat-dock-mobile-transition-in-active[data-chat-dock="bottom"]
     .chat-area {
     opacity: 1 !important;
     transform: translateY(0) !important;

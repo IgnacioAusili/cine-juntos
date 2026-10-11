@@ -40,14 +40,14 @@
 }
 
 @media (hover: none) {
-  .lobby-screen__about-button:hover:not(.is-touch-hover) {
+  .lobby-screen__about-button:hover:not(.u-touch-hover) {
     border-color: rgba(47, 184, 164, 0.46);
     background: rgba(20, 24, 28, 0.82);
     transform: translateX(14px);
   }
 
-  .lobby-screen__about-button.is-touch-hover,
-  .lobby-screen__about-button.is-touch-hover:hover {
+  .lobby-screen__about-button.u-touch-hover,
+  .lobby-screen__about-button.u-touch-hover:hover {
     border-color: var(--teal);
     background: rgba(47, 184, 164, 0.16);
     transform: translateY(-2px);
@@ -61,7 +61,7 @@
   transform: rotate(180deg);
 }
 
-body:not(.is-lobby) .lobby-screen__about-button {
+body:not(.page-context--lobby) .lobby-screen__about-button {
   display: none;
 }
 
@@ -104,7 +104,7 @@ body:not(.is-lobby) .lobby-screen__about-button {
   }
 }
 
-body:not(.is-lobby) .live-badge {
+body:not(.page-context--lobby) .live-badge {
   display: none;
 }
 

@@ -37,7 +37,7 @@
   animation: messageHighlightPulse 1.5s ease-out forwards;
 }
 
-.message.system.message-highlight::before {
+.message.message--system.message-highlight::before {
   top: -1px;
   bottom: -1px;
   left: var(--message-highlight-left, -2px);
@@ -50,7 +50,7 @@
   z-index: 3;
 }
 
-.message-highlight .message-bubble {
+.message-highlight .message__bubble {
   position: relative;
   z-index: 3;
 }

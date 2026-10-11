@@ -1,13 +1,13 @@
-import { dom } from "../../core/dom.js?v=20261011-chat-controls-repair-01";
-import { state, logEvent } from "../../core/state.js?v=20261011-chat-controls-repair-01";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { state, logEvent } from "../../core/state.js?v=20261011-bem-itcss-oocss-04";
 import { withShortcutHint } from "../../core/utils.js?v=20261011-chat-controls-repair-01";
-import { refreshTooltipForTarget } from "../icons-tooltips.js?v=20261011-lucide-icons-repair-01";
-import { resetInsideUnread, resetPageUnread, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20261011-chat-controls-repair-01";
+import { refreshTooltipForTarget } from "../icons-tooltips.js?v=20261011-bem-itcss-oocss-04";
+import { resetInsideUnread, resetPageUnread, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20261011-bem-itcss-oocss-04";
 import { focusChatInput } from "./chat-input-focus.js?v=20261011-chat-controls-repair-01";
-import { wireInsideChatPanelPlacement, syncInsideChatPanelPlacement, preserveInsideChatPanelPlacementWhileClosing } from "../player/inside-chat-layout.js?v=20261011-chat-controls-repair-01";
-import { isMobileLandscapeFullscreenBottomDock } from "./chat-layout-breakpoints.js?v=20261011-chat-controls-repair-01";
-import { cancelIdentityEditing } from "../presence.js?v=20261011-lucide-icons-repair-01";
-import { syncInsideChatPanelOffset } from "./chat-collapse-handles.js?v=20261011-lucide-icons-repair-01";
+import { wireInsideChatPanelPlacement, syncInsideChatPanelPlacement, preserveInsideChatPanelPlacementWhileClosing } from "../player/inside-chat-layout.js?v=20261011-bem-itcss-oocss-04";
+import { isMobileLandscapeFullscreenBottomDock } from "./chat-layout-breakpoints.js?v=20261011-bem-itcss-oocss-04";
+import { cancelIdentityEditing } from "../presence.js?v=20261011-bem-itcss-oocss-04";
+import { syncInsideChatPanelOffset } from "./chat-collapse-handles.js?v=20261011-bem-itcss-oocss-04";
 
 const AUTO_COLLAPSE_DELAY_MS = 5000;
 const AUTO_EXPAND_INSIDE_KEY = "cine-juntos-chat-auto-expand-inside";
@@ -62,11 +62,11 @@ function scheduleAutoCollapse(isOverlay) {
   state.chat[timerKey] = window.setTimeout(() => {
     state.chat[timerKey] = null;
     if (isOverlay) {
-      if (!dom.playerFrame.classList.contains("chat-inside-open")) return;
+      if (!dom.playerFrame.classList.contains('u-chat-inside-open')) return;
       setInsideChatVisible(false, { source: "auto-timeout" });
     } else {
       if (isMobileLandscapeFullscreenBottomDock()) return;
-      if (dom.sessionView.classList.contains("chat-collapsed")) return;
+      if (dom.sessionView.classList.contains('session-view--chat-collapsed')) return;
       getChatVisibilityOperations().setExternalChatCollapsed(true, { source: "auto-timeout" });
     }
   }, AUTO_COLLAPSE_DELAY_MS);
@@ -87,7 +87,7 @@ export function setInsideChatVisible(visible, options = {}) {
     state.chat.autoOpenedInside = false;
   }
   if (!visible) cancelIdentityEditing();
-  dom.playerFrame.classList.toggle("chat-inside-open", visible);
+  dom.playerFrame.classList.toggle('u-chat-inside-open', visible);
   if (visible) {
     syncInsideChatPanelPlacement();
   } else {
@@ -123,7 +123,7 @@ export function setInsideChatVisible(visible, options = {}) {
   syncUnreadBadgesWithVisibility();
   if (visible && source !== "auto") {
     window.setTimeout(() => {
-      if (dom.playerFrame.classList.contains("chat-inside-open")) {
+      if (dom.playerFrame.classList.contains('u-chat-inside-open')) {
         resetInsideUnread();
       }
     }, 220);

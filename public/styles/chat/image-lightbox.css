@@ -1,20 +1,20 @@
 /* Los mensajes con texto e imagen deben crecer con todo su contenido. */
-.message-bubble:has(> .message-content > .message-media-strip),
-.message-bubble:has(> .message-content > .message-media-link > .message-media) {
+.message__bubble:has(> .message__content > .message__media-strip),
+.message__bubble:has(> .message__content > .message__media-link > .message__media) {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
 }
 
-.message-content:has(> .message-media-strip),
-.message-content:has(> .message-media-link > .message-media) {
+.message__content:has(> .message__media-strip),
+.message__content:has(> .message__media-link > .message__media) {
   display: flex;
   width: 100%;
   flex-direction: column;
 }
 
-.message-bubble:has(> .message-content > .message-media-strip) > .message-time-anchor,
-.message-bubble:has(> .message-content > .message-media-link > .message-media) > .message-time-anchor {
+.message__bubble:has(> .message__content > .message__media-strip) > .message__time-anchor,
+.message__bubble:has(> .message__content > .message__media-link > .message__media) > .message__time-anchor {
   order: 2;
   float: none;
   height: auto;
@@ -25,8 +25,8 @@
   shape-outside: none;
 }
 
-.message-content:has(> .message-media-strip) > .message-media-strip,
-.message-content:has(> .message-media-link > .message-media) > .message-media-link {
+.message__content:has(> .message__media-strip) > .message__media-strip,
+.message__content:has(> .message__media-link > .message__media) > .message__media-link {
   order: -1;
   min-width: 0;
   max-width: 100%;
@@ -35,28 +35,28 @@
 }
 
 /* Una sola imagen usa todo el ancho útil; dos imágenes mantienen su grilla. */
-.message-bubble .message-media-strip > .message-media-link:only-child {
+.message__bubble .message__media-strip > .message__media-link:only-child {
   flex: 0 1 auto;
   max-width: 100%;
 }
 
-.message-content:has(> .message-media-strip) > .message-text,
-.message-content:has(> .message-media-link > .message-media) > .message-text {
+.message__content:has(> .message__media-strip) > .message__text,
+.message__content:has(> .message__media-link > .message__media) > .message__text {
   order: 1;
 }
 
-.message-media-link,
-.message-media {
+.message__media-link,
+.message__media {
   min-width: 0;
   box-sizing: border-box;
 }
 
-.message-media-link {
+.message__media-link {
   cursor: pointer;
   touch-action: pan-y;
 }
 
-.player-frame.player-cursor-hidden .message-media-link {
+.player-frame.player-frame--cursor-hidden .message__media-link {
   cursor: pointer;
 }
 
@@ -80,13 +80,13 @@
   background: rgba(0, 0, 0, 0.26);
 }
 
-.image-lightbox-surface {
+.image-lightbox__surface {
   position: relative;
   width: 100%;
   height: 100%;
 }
 
-.image-lightbox-toolbar {
+.image-lightbox__toolbar {
   position: absolute;
   z-index: 2;
   top: 14px;
@@ -94,7 +94,7 @@
   transform: translateX(-50%);
 }
 
-.image-lightbox-zoom-controls {
+.image-lightbox__zoom-controls {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: stretch;
@@ -112,7 +112,7 @@
   -webkit-backdrop-filter: blur(16px);
 }
 
-.image-lightbox-button {
+.image-lightbox__button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -131,7 +131,7 @@
   transition: color 140ms ease, background 140ms ease, transform 140ms ease;
 }
 
-.image-lightbox-icon {
+.image-lightbox__icon {
   display: block;
   width: 18px;
   height: 18px;
@@ -140,7 +140,7 @@
   overflow: visible;
 }
 
-.image-lightbox-icon.lucide {
+.image-lightbox__icon.lucide {
   fill: none;
   stroke: currentColor;
   stroke-width: 2.25;
@@ -148,36 +148,36 @@
   stroke-linejoin: round;
 }
 
-.image-lightbox-button:hover,
-.image-lightbox-button:focus-visible {
+.image-lightbox__button:hover,
+.image-lightbox__button:focus-visible {
   color: #fff;
   background: rgba(255, 255, 255, 0.06);
   transform: scale(0.94);
   outline: none;
 }
 
-.image-lightbox-zoom-controls .image-lightbox-button {
+.image-lightbox__zoom-controls .image-lightbox__button {
   width: 100%;
   height: 100%;
   border-radius: 0;
   transform: none;
 }
 
-.image-lightbox-zoom-controls .image-lightbox-button:hover,
-.image-lightbox-zoom-controls .image-lightbox-button:focus-visible {
+.image-lightbox__zoom-controls .image-lightbox__button:hover,
+.image-lightbox__zoom-controls .image-lightbox__button:focus-visible {
   background: rgba(255, 255, 255, 0.06);
   transform: none;
 }
 
-.image-lightbox-zoom-controls [data-lightbox-action="zoom-out"] {
+.image-lightbox__zoom-controls [data-lightbox-action="zoom-out"] {
   border-radius: 999px 0 0 999px;
 }
 
-.image-lightbox-zoom-controls [data-lightbox-action="zoom-in"] {
+.image-lightbox__zoom-controls [data-lightbox-action="zoom-in"] {
   border-radius: 0 999px 999px 0;
 }
 
-.image-lightbox-close {
+.image-lightbox__close {
   position: absolute;
   z-index: 3;
   top: 14px;
@@ -194,15 +194,15 @@
   -webkit-backdrop-filter: blur(16px);
 }
 
-.image-lightbox-close:hover,
-.image-lightbox-close:focus-visible {
+.image-lightbox__close:hover,
+.image-lightbox__close:focus-visible {
   color: #ff6b6b;
   border: 0;
   background: rgba(255, 255, 255, 0.045);
   transform: none;
 }
 
-.image-lightbox-zoom-label {
+.image-lightbox__zoom-label {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -215,7 +215,7 @@
   user-select: none;
 }
 
-.image-lightbox-viewport {
+.image-lightbox__viewport {
   width: 100%;
   height: 100%;
   display: flex;
@@ -229,7 +229,7 @@
   cursor: default;
 }
 
-.image-lightbox-image {
+.image-lightbox__image {
   display: block;
   max-width: 100%;
   max-height: 100%;
@@ -245,21 +245,21 @@
   user-select: none;
 }
 
-.image-lightbox-image.is-dragging {
+.image-lightbox__image.u-dragging {
   cursor: grabbing;
 }
 
 @media (max-width: 680px) {
-  .image-lightbox-toolbar {
+  .image-lightbox__toolbar {
     top: 10px;
   }
 
-  .image-lightbox-close {
+  .image-lightbox__close {
     top: 10px;
     right: 10px;
   }
 
-  .image-lightbox-viewport {
+  .image-lightbox__viewport {
     padding: 60px 12px 20px;
   }
 }

@@ -18,7 +18,7 @@ export function wireComponentAspectObservers({
 
   let dockLayoutTransitionPending = false;
   const dockObserver = new MutationObserver(() => {
-    if (sessionView.classList.contains("chat-layout-transitioning")) {
+    if (sessionView.classList.contains('session-view--chat-layout-transitioning')) {
       // La primera medición ocurre mientras el dock todavía conserva el alto
       // anterior. Volver a medir cuando termine la transición para aplicar la
       // proporción del video al tamaño final del chat inferior.

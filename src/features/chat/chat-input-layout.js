@@ -1,8 +1,8 @@
-import { dom } from "../../core/dom.js?v=20261011-chat-controls-repair-01";
-import { hideEmojiPicker } from "./emoji-picker.js?v=20261011-chat-controls-repair-01";
-import { isPinnedToBottom, queuePinnedChatScrollSync } from "./chat-scroll-sync.js?v=20261011-chat-controls-repair-01";
-import { wireChatScrollbar, syncChatScrollbar, syncComposerScrollbar } from "./chat-scrollbar.js?v=20261011-chat-controls-repair-01";
-import { isMobileLayout } from "./chat-input-debug.js?v=20261011-chat-controls-repair-01";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { hideEmojiPicker } from "./emoji-picker.js?v=20261011-bem-itcss-oocss-04";
+import { isPinnedToBottom, queuePinnedChatScrollSync } from "./chat-scroll-sync.js?v=20261011-bem-itcss-oocss-04";
+import { wireChatScrollbar, syncChatScrollbar, syncComposerScrollbar } from "./chat-scrollbar.js?v=20261011-bem-itcss-oocss-04";
+import { isMobileLayout } from "./chat-input-debug.js?v=20261011-bem-itcss-oocss-04";
 
 const floatingComposerObservers = new WeakMap();
 
@@ -20,7 +20,7 @@ export function autoResizeMessageInput(input) {
   const maxHeight = isOverlay ? 86 : 118;
   const mobileMinHeight = isMobileLayout();
   const minHeight = mobileMinHeight ? 30 : (isOverlay ? 30 : 36);
-  const wrapper = input.closest(".input-wrapper");
+  const wrapper = input.closest('.message-form__input-wrapper');
 
   input.style.height = `${minHeight}px`;
   // El padding del textarea cambia cuando pasa a multilinea. Resolver el
@@ -45,8 +45,8 @@ export function wireFloatingComposerLayout() {
     const container = form.closest(".chat-area, .player-chat");
     if (!container) return;
     const messagesContainer = form === dom.overlayMessageForm ? dom.overlayMessages : dom.messages;
-    const messagesWrap = messagesContainer?.closest(".messages-wrap");
-    const inputWrapper = form.querySelector(".input-wrapper");
+    const messagesWrap = messagesContainer?.closest('.chat-message-list-shell');
+    const inputWrapper = form.querySelector('.message-form__input-wrapper');
     wireChatScrollbar(messagesContainer);
     let reserveAnimationFrame = 0;
     let currentMessageReserve = null;
@@ -130,7 +130,7 @@ export function wireFloatingComposerLayout() {
 
     let reserveFrame = 0;
     const scheduleReserveUpdate = () => {
-      if (form === dom.messageForm && dom.sessionView?.classList.contains("chat-layout-transitioning")) return;
+      if (form === dom.messageForm && dom.sessionView?.classList.contains('session-view--chat-layout-transitioning')) return;
       if (reserveFrame) return;
       reserveFrame = window.requestAnimationFrame(() => {
         reserveFrame = 0;
@@ -158,7 +158,7 @@ export function wireFloatingComposerLayout() {
 }
 
 function observeComposerWidth(input) {
-  const shell = input?.closest(".textarea-shell");
+  const shell = input?.closest('.message-form__textarea-shell');
   if (!input || !shell || input.dataset.composerWidthObserverBound === "true") return;
   input.dataset.composerWidthObserverBound = "true";
 

@@ -1,19 +1,19 @@
-import { clearReplyTarget, setReplyTarget } from "../chat/chat-reply.js?v=20261011-lucide-icons-repair-01";
-import { wireMessageInteractions } from "../chat/chat-message-interactions.js?v=20261010-file-size-refactor-02";
-import { setMiniSystemGroupVisibility, animateMiniSystemGroupTransition } from "./mini-player-chat-groups.js?v=20261010-file-size-refactor-02";
-import { state } from "../../core/state.js?v=20261010-file-size-refactor-02";
+import { clearReplyTarget, setReplyTarget } from "../chat/chat-reply.js?v=20261011-bem-itcss-oocss-04";
+import { wireMessageInteractions } from "../chat/chat-message-interactions.js?v=20261011-bem-itcss-oocss-04";
+import { setMiniSystemGroupVisibility, animateMiniSystemGroupTransition } from "./mini-player-chat-groups.js?v=20261011-bem-itcss-oocss-04";
+import { state } from "../../core/state.js?v=20261011-bem-itcss-oocss-04";
 
 export function wireMiniMessageReplies(sourceMessages, mirrorMessages, surfaceElement) {
   const mirrorInput = surfaceElement.querySelector("#overlayMessageInput, [data-proxy-for=\"overlayMessageInput\"]");
   if (!mirrorInput) return;
 
   mirrorMessages.querySelectorAll(".message").forEach((mirrorItem) => {
-    if (mirrorItem.classList.contains("system-group-member") && mirrorItem.dataset.groupClickWired !== "true") {
+    if (mirrorItem.classList.contains('message--system-group-member') && mirrorItem.dataset.groupClickWired !== "true") {
       mirrorItem.dataset.groupClickWired = "true";
       mirrorItem.addEventListener("click", (event) => {
         if (event.target.closest?.("button, input, textarea, select")) return;
         const toggle = findMiniGroupToggle(mirrorItem);
-        if (!toggle || toggle.classList.contains("system-group-transitioning")) return;
+        if (!toggle || toggle.classList.contains('u-transitioning')) return;
         event.stopPropagation();
         const expanded = toggle.getAttribute("aria-expanded") !== "true";
         toggle.setAttribute("aria-expanded", String(expanded));
@@ -24,9 +24,9 @@ export function wireMiniMessageReplies(sourceMessages, mirrorMessages, surfaceEl
     const sourceItem = sourceMessages.querySelector(`[data-message-id=\"${CSS.escape(mirrorItem.dataset.messageId || "")}\"]`);
     const message = sourceItem?._chatMessage;
     const isMediaOnly = mirrorItem.classList.contains("message--media-only");
-    const bubble = mirrorItem.querySelector(".message-bubble, .message-media-strip");
-    const hint = mirrorItem.querySelector(".swipe-reply-hint");
-    const row = mirrorItem.querySelector(".message-bubble-row, .message-media-row");
+    const bubble = mirrorItem.querySelector('.message__bubble, .message__media-strip');
+    const hint = mirrorItem.querySelector('.message__swipe-reply-hint');
+    const row = mirrorItem.querySelector('.message__bubble-row, .message__media-row');
     if (!message || !bubble || !hint || !row || mirrorItem.dataset.replyWired === "true") return;
     mirrorItem.dataset.replyWired = "true";
     wireMessageInteractions(bubble, message, hint, {
@@ -36,8 +36,8 @@ export function wireMiniMessageReplies(sourceMessages, mirrorMessages, surfaceEl
       },
       replyInput: mirrorInput,
       companions: isMediaOnly
-        ? [mirrorItem.querySelector(".message-meta"), mirrorItem.querySelector(".message-time-anchor")].filter(Boolean)
-        : [mirrorItem.querySelector(".message-meta")].filter(Boolean),
+        ? [mirrorItem.querySelector('.message__meta'), mirrorItem.querySelector('.message__time-anchor')].filter(Boolean)
+        : [mirrorItem.querySelector('.message__meta')].filter(Boolean),
       interactionTarget: mirrorItem,
       interactionBand: mirrorItem,
       allowSwipeInsideBubble: true,
@@ -53,11 +53,11 @@ function syncMiniReplyPreview(sourceMessages, mirrorMessages, surfaceElement) {
   mirrorPreview.className = sourcePreview.className;
   mirrorPreview.innerHTML = sourcePreview.innerHTML;
   mirrorPreview.hidden = sourcePreview.hidden;
-  mirrorPreview.querySelector(".reply-preview-close")?.addEventListener("click", () => {
+  mirrorPreview.querySelector('.reply-preview__close')?.addEventListener("click", () => {
     clearReplyTarget();
     mirrorPreview.hidden = true;
   }, { once: true });
-  mirrorPreview.querySelector(".reply-preview-text")?.addEventListener("click", (event) => {
+  mirrorPreview.querySelector('.reply-preview__text')?.addEventListener("click", (event) => {
     event.preventDefault();
     event.stopPropagation();
     const messageId = state.chat.replyTarget?.id;
@@ -71,7 +71,7 @@ function scrollMiniMirrorToMessage(messageId, container) {
   );
   if (!target) return;
 
-  if (target.classList.contains("system-group-collapsed-item")) {
+  if (target.classList.contains('message--system-group-collapsed-item')) {
     const toggle = findMiniGroupToggle(target);
     if (toggle) {
       setMiniSystemGroupVisibility(toggle, true);
@@ -96,16 +96,16 @@ function scrollMiniMirrorToMessage(messageId, container) {
 function findMiniGroupToggle(item) {
   const items = [item];
   let current = item.previousElementSibling;
-  while (current?.classList.contains("message") && current.classList.contains("system")) {
+  while (current?.classList.contains("message") && current.classList.contains('message--system')) {
     items.unshift(current);
     current = current.previousElementSibling;
   }
   current = item.nextElementSibling;
-  while (current?.classList.contains("message") && current.classList.contains("system")) {
+  while (current?.classList.contains("message") && current.classList.contains('message--system')) {
     items.push(current);
     current = current.nextElementSibling;
   }
-  return items.map((groupItem) => groupItem.querySelector(".system-group-toggle")).find(Boolean) || null;
+  return items.map((groupItem) => groupItem.querySelector('.message__system-group-toggle')).find(Boolean) || null;
 }
 
 function highlightMiniOverlayMessage(container, element) {

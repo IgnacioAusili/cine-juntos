@@ -1,13 +1,13 @@
 
 
-.player-volume-input::-moz-range-track {
+.player-volume-group__input::-moz-range-track {
   height: var(--volume-track-height);
   border: 0;
   border-radius: 999px;
   background: transparent;
 }
 
-.player-volume-input::-webkit-slider-thumb {
+.player-volume-group__input::-webkit-slider-thumb {
   width: var(--volume-thumb-size);
   height: var(--volume-thumb-size);
   margin-top: calc((var(--volume-track-height) - var(--volume-thumb-size)) / 2);
@@ -17,7 +17,7 @@
   background: #fff;
 }
 
-.player-volume-input::-moz-range-thumb {
+.player-volume-group__input::-moz-range-thumb {
   width: var(--volume-thumb-size);
   height: var(--volume-thumb-size);
   border: 0;
@@ -31,7 +31,7 @@
   min-width: 48px;
 }
 
-.player-tool {
+.player-frame__tool {
   border-color: rgba(255, 255, 255, 0.14);
   background: rgba(17, 21, 24, 0.62);
   backdrop-filter: blur(12px);
@@ -82,7 +82,7 @@
   pointer-events: none;
 }
 
-.player-rate-trigger {
+.player-rate-select__trigger {
   --player-rate-trigger-padding-left: 6px;
   --player-rate-trigger-padding-right: 22px;
   position: relative;
@@ -103,7 +103,7 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-.player-rate-trigger:disabled {
+.player-rate-select__trigger:disabled {
   cursor: not-allowed;
 }
 
@@ -121,11 +121,11 @@
   transform: translateY(-65%) rotate(45deg);
 }
 
-.player-controls-bar .player-rate-select.is-open::after {
+.player-controls-bar .player-rate-select.player-rate-select--open::after {
   transform: translateY(-25%) rotate(225deg);
 }
 
-.player-rate-menu {
+.player-rate-select__menu {
   position: absolute;
   left: 50%;
   bottom: calc(100% + 6px);
@@ -144,12 +144,12 @@
   transform: translateX(-50%);
 }
 
-.player-frame:not(.player-overlay-visible) .player-rate-menu,
-.player-frame.player-overlay-suppressed .player-rate-menu {
+.player-frame:not(.player-frame--overlay-visible) .player-rate-select__menu,
+.player-frame.player-frame--overlay-suppressed .player-rate-select__menu {
   display: none;
 }
 
-.player-rate-option {
+.player-rate-select__option {
   border: 0;
   border-radius: 6px;
   background: transparent;
@@ -168,12 +168,12 @@
 
 .player-rate-select,
 .player-rate-select select,
-.player-rate-menu {
+.player-rate-select__menu {
   -webkit-tap-highlight-color: transparent;
 }
 
-.player-rate-option:hover,
-.player-rate-option.selected {
+.player-rate-select__option:hover,
+.player-rate-select__option.player-rate-select__option--selected {
   background: rgba(216, 255, 249, 0.14);
 }
 
@@ -201,19 +201,19 @@
    estados no representan una interacción activa y no deben dejar el control
    resaltado. */
 @media (hover: none) {
-  .player-rate-select:hover:not(.is-open) {
+  .player-rate-select:hover:not(.player-rate-select--open) {
     border-color: rgba(255, 255, 255, 0.14);
     background: rgba(255, 255, 255, 0.08);
   }
 
-  .player-frame[data-control-style="line"] .player-controls-bar .player-select:not([data-disabled="true"]):hover:not(.is-open),
-  .player-frame[data-control-style="line"] .player-controls-bar .player-select:not([data-disabled="true"]):focus-within:not(.is-open) {
+  .player-frame[data-control-style="line"] .player-controls-bar .player-select:not([data-disabled="true"]):hover:not(.player-rate-select--open),
+  .player-frame[data-control-style="line"] .player-controls-bar .player-select:not([data-disabled="true"]):focus-within:not(.player-rate-select--open) {
     color: rgba(255, 255, 255, 0.74);
     transform: none;
   }
 
-  .player-frame[data-control-style="line"] .player-controls-bar .player-select:not([data-disabled="true"]):hover:not(.is-open)::after,
-  .player-frame[data-control-style="line"] .player-controls-bar .player-select:not([data-disabled="true"]):focus-within:not(.is-open)::after {
+  .player-frame[data-control-style="line"] .player-controls-bar .player-select:not([data-disabled="true"]):hover:not(.player-rate-select--open)::after,
+  .player-frame[data-control-style="line"] .player-controls-bar .player-select:not([data-disabled="true"]):focus-within:not(.player-rate-select--open)::after {
     color: rgba(255, 255, 255, 0.74);
     border-right-color: rgba(255, 255, 255, 0.74);
     border-bottom-color: rgba(255, 255, 255, 0.74);

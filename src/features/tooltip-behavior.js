@@ -1,9 +1,9 @@
-import { dom } from "../core/dom.js?v=20261010-file-size-refactor-02";
+import { dom } from "../core/dom.js?v=20261011-bem-itcss-oocss-04";
 import { tooltipState } from "./tooltip-state.js?v=20261010-file-size-refactor-02";
-import { state } from "../core/state.js?v=20261010-file-size-refactor-02";
-import { setConnection } from "./session-ui.js?v=20261010-file-size-refactor-02";
+import { state } from "../core/state.js?v=20261011-bem-itcss-oocss-04";
+import { setConnection } from "./session-ui.js?v=20261011-bem-itcss-oocss-04";
 import { isTouchPointer, TOUCH_LONG_PRESS_DELAY_MS } from "../core/touch-interactions.js?v=20261010-file-size-refactor-02";
-import { setTooltipChromeTransition, syncTooltipChrome } from "./tooltip-bubble-chrome.js?v=20261011-chat-interaction-fixes-01";
+import { setTooltipChromeTransition, syncTooltipChrome } from "./tooltip-bubble-chrome.js?v=20261011-bem-itcss-oocss-04";
 import { TOOLTIP_ANCHOR_SELECTOR, TOOLTIP_VIEWPORT_PADDING, TOOLTIP_GAP, TOOLTIP_BORDER_WIDTH_PX, TOOLTIP_RADIUS_PX, TOOLTIP_TAIL_WIDTH_PX, TOOLTIP_TAIL_HEIGHT_PX, TOOLTIP_SHOW_DELAY_MS, HELP_TOOLTIP_SHOW_DELAY_MS, PRESENCE_TOOLTIP_SHOW_DELAY_MS, TOOLTIP_HIDE_ANIMATION_MS, TOUCH_FOCUS_SUPPRESSION_MS, TOUCH_TOOLTIP_MOVE_TOLERANCE_PX, TOUCH_HELP_TOOLTIP_MAX_VISIBLE_MS } from "./tooltip-constants.js?v=20261010-file-size-refactor-02";
 
 
@@ -13,7 +13,7 @@ export function suppressTouchTooltipClick(anchor) {
 
 export function setTooltipTouchHover(anchor, active) {
   if (!anchor?.classList?.contains("help-button")) return;
-  anchor.classList.toggle("is-touch-hover", active);
+  anchor.classList.toggle('u-touch-hover', active);
 }
 
 export function refreshTooltipForTarget(target) {
@@ -59,7 +59,7 @@ export function getTooltipContext(target) {
 }
 
 export function getTooltipAnchor(source) {
-  if (source.classList?.contains("chat-collapse-icon-anchor")) return source;
+  if (source.classList?.contains('chat-area__collapse-icon-anchor')) return source;
   return source.closest?.(TOOLTIP_ANCHOR_SELECTOR) || source;
 }
 

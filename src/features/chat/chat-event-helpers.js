@@ -1,9 +1,9 @@
-import { dom } from "../../core/dom.js?v=20261011-chat-controls-repair-01";
-import { captureExternalChatCollapseScroll, setExternalChatCollapsed } from "./chat-layout.js?v=20261011-chat-auto-switch-bem-01";
-import { hideTooltip } from "../icons-tooltips.js?v=20261011-lucide-icons-repair-01";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { captureExternalChatCollapseScroll, setExternalChatCollapsed } from "./chat-layout.js?v=20261011-bem-itcss-oocss-04";
+import { hideTooltip } from "../icons-tooltips.js?v=20261011-bem-itcss-oocss-04";
 
 const MOBILE_CHAT_LAYOUT_QUERY = "(max-width: 980px)";
-const COLLAPSE_POINTER_HOVER_CLASS = "chat-collapse-pointer-hover";
+const COLLAPSE_POINTER_HOVER_CLASS = 'chat-area__collapse-hover-zone--pointer-hover';
 let pointerHoveredCollapseButton = null;
 
 export function setCollapsePointerHover(button) {
@@ -11,11 +11,11 @@ export function setCollapsePointerHover(button) {
 
   pointerHoveredCollapseButton?.classList.remove(COLLAPSE_POINTER_HOVER_CLASS);
   pointerHoveredCollapseButton
-    ?.closest(".chat-collapse-hover-zone")
+    ?.closest('.chat-area__collapse-hover-zone')
     ?.classList.remove(COLLAPSE_POINTER_HOVER_CLASS);
   pointerHoveredCollapseButton = button;
   button?.classList.add(COLLAPSE_POINTER_HOVER_CLASS);
-  button?.closest(".chat-collapse-hover-zone")
+  button?.closest('.chat-area__collapse-hover-zone')
     ?.classList.add(COLLAPSE_POINTER_HOVER_CLASS);
 }
 export function clearCollapsePointerHover() {
@@ -34,12 +34,12 @@ export function isMobileChatLayout() {
 }
 
 export function isBottomChatKeyboardOpen() {
-  return document.documentElement.classList.contains("bottom-chat-keyboard-open");
+  return document.documentElement.classList.contains('page-context--bottom-chat-keyboard-open');
 }
 
 export function toggleExternalChatCollapse() {
   setExternalChatCollapsed(
-    !dom.sessionView.classList.contains("chat-collapsed"),
+    !dom.sessionView.classList.contains('session-view--chat-collapsed'),
   );
   dom.collapseChatButton?.blur();
   dom.expandChatButton?.blur();

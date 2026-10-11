@@ -93,7 +93,7 @@
   mask-image: linear-gradient(180deg, #000 calc(100% - 18px), transparent 100%);
 }
 
-.about-dialog__intro.is-expanded .about-dialog__description-lead {
+.about-dialog__intro.about-dialog__disclosure--expanded .about-dialog__description-lead {
   -webkit-mask-image: none;
   mask-image: none;
 }

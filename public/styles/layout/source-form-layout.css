@@ -1,4 +1,4 @@
-.source-strip,
+.image-preview-container__source-strip,
 .sync-bar {
   position: relative;
   z-index: 1;
@@ -36,7 +36,7 @@
   padding-bottom: 4px;
 }
 
-.chat-tools-actions {
+.chat-tools__actions {
   /* El nombre del chat se posiciona de forma absoluta para centrarlo; por eso
      no ocupa la columna intermedia y hay que reservar explícitamente la final. */
   grid-column: 3;

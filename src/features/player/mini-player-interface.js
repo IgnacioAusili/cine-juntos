@@ -1,4 +1,4 @@
-import { dom } from "../../core/dom.js?v=20261011-chat-controls-repair-01";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
 import {
   getMirrorChatDraft,
   handleMiniChatInteraction,
@@ -16,9 +16,9 @@ import {
   toggleMiniEmojiPicker,
   toggleMiniChatOverlay,
   wireMirrorChatScrollbar,
-} from "./mini-player-chat-mirror.js?v=20261011-chat-auto-switch-bem-01";
-import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js?v=20261011-chat-auto-switch-bem-01";
-import { wireMiniPlayerShortcuts } from "./mini-player-shortcuts.js?v=20261011-chat-auto-switch-bem-01";
+} from "./mini-player-chat-mirror.js?v=20261011-bem-itcss-oocss-04";
+import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js?v=20261011-bem-itcss-oocss-04";
+import { wireMiniPlayerShortcuts } from "./mini-player-shortcuts.js?v=20261011-bem-itcss-oocss-04";
 import { wireTouchHover } from "../../core/touch-interactions.js?v=20261011-chat-controls-repair-01";
 
 const VIDEO_EVENTS = ["play", "pause", "ended", "timeupdate", "seeked", "ratechange", "volumechange"];
@@ -92,9 +92,9 @@ function createInteractiveMirror(source, targetDocument) {
   const element = targetDocument.importNode(source, true);
   const observer = new MutationObserver((records) => {
     if (source === dom.playerChat) {
-      if (records.some((record) => record.target.closest?.(".overlay-messages"))) {
+      if (records.some((record) => record.target.closest?.('.chat-message-list.chat-message-list--overlay'))) {
         syncMirroredChatMessages(source, element);
-      } else if (records.some((record) => record.target.closest?.(".overlay-message-form"))) {
+      } else if (records.some((record) => record.target.closest?.('.message-form.message-form--overlay'))) {
         syncMirrorComposerState(source, element);
       }
       return;
@@ -121,8 +121,8 @@ function createInteractiveMirror(source, targetDocument) {
     ) {
       return;
     }
-    if (source === dom.playerChat && event.target.closest?.(".system-group-toggle")) {
-      const mirrorToggle = event.target.closest(".system-group-toggle");
+    if (source === dom.playerChat && event.target.closest?.('.message__system-group-toggle')) {
+      const mirrorToggle = event.target.closest('.message__system-group-toggle');
       const expanded = mirrorToggle.getAttribute("aria-expanded") !== "true";
       mirrorToggle.setAttribute("aria-expanded", String(expanded));
       setMiniSystemGroupVisibility(mirrorToggle, expanded);
@@ -183,7 +183,7 @@ function createInteractiveMirror(source, targetDocument) {
     if (source !== dom.playerBottomActions) return;
     const volumeGroup = event.target.closest?.(".player-volume-group");
     if (!volumeGroup || volumeGroup.contains(event.relatedTarget)) return;
-    volumeGroup.classList.remove("volume-hovered");
+    volumeGroup.classList.remove('player-volume-group--hovered');
   }, { passive: true });
 
   element.addEventListener("wheel", (event) => {
@@ -197,7 +197,7 @@ function createInteractiveMirror(source, targetDocument) {
     const delta = event.deltaY < 0 ? step : -step;
     const currentVolume = dom.videoPlayer.muted ? 0 : dom.videoPlayer.volume;
     const nextVolume = Math.min(1, Math.max(0, currentVolume + delta));
-    volumeGroup.classList.add("volume-hovered");
+    volumeGroup.classList.add('player-volume-group--hovered');
     dom.videoPlayer.volume = nextVolume;
     if (nextVolume > 0 && dom.videoPlayer.muted) dom.videoPlayer.muted = false;
     syncState();
@@ -276,14 +276,14 @@ function createInteractiveMirror(source, targetDocument) {
     if (source === dom.playerActions) {
       const surface = element.closest(".mini-player-surface");
       if (surface) {
-        toggleMiniChatOverlay(surface, surface.classList.contains("chat-inside-open"));
+        toggleMiniChatOverlay(surface, surface.classList.contains('u-chat-inside-open'));
       }
     }
     restoreMirrorChatDraft(source, element, draft);
     wireMirrorChatScrollbar(element);
     if (source === dom.playerChat) {
-      const sourceMessages = source.querySelector(".overlay-messages");
-      const mirrorMessages = element.querySelector(".overlay-messages");
+      const sourceMessages = source.querySelector('.chat-message-list.chat-message-list--overlay');
+      const mirrorMessages = element.querySelector('.chat-message-list.chat-message-list--overlay');
       if (sourceMessages && mirrorMessages) wireMiniMessageReplies(sourceMessages, mirrorMessages, element);
       syncMiniChatAutoExpand(element.closest(".mini-player-surface"));
     }
@@ -301,8 +301,8 @@ function createInteractiveMirror(source, targetDocument) {
 }
 
 function syncMirrorComposerState(source, element) {
-  const sourceWrapper = source.querySelector(".overlay-message-form .input-wrapper");
-  const mirrorWrapper = element.querySelector(".overlay-message-form .input-wrapper");
+  const sourceWrapper = source.querySelector('.message-form.message-form--overlay .message-form__input-wrapper');
+  const mirrorWrapper = element.querySelector('.message-form.message-form--overlay .message-form__input-wrapper');
   const sourceInput = source.querySelector("#overlayMessageInput");
   const mirrorInput = element.querySelector("#overlayMessageInput, [data-proxy-for=\"overlayMessageInput\"]");
   if (!sourceWrapper || !mirrorWrapper) return;

@@ -8,7 +8,7 @@ function isMobileLayout() {
 
 function isFullscreenActive() {
   return Boolean(document.fullscreenElement)
-    || document.body.classList.contains("fullscreen-mode");
+    || document.body.classList.contains('page-context--fullscreen');
 }
 
 async function syncFullscreenOrientation() {

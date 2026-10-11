@@ -1,4 +1,4 @@
-const COMPONENT_STACK_CLASS = "layout-component-stack";
+const COMPONENT_STACK_CLASS = 'session-view--layout-component-stack';
 const HEADER_VISUAL_CENTER_OFFSET_PROPERTY = "--component-stack-chat-header-visual-center-offset";
 
 export function syncComponentStackChatHandle(sessionView, chatArea) {
@@ -6,7 +6,7 @@ export function syncComponentStackChatHandle(sessionView, chatArea) {
   if (
     sessionView.dataset.chatDock !== "bottom"
     || !sessionView.classList.contains(COMPONENT_STACK_CLASS)
-    || sessionView.classList.contains("chat-collapsed")
+    || sessionView.classList.contains('session-view--chat-collapsed')
   ) {
     sessionView.style.removeProperty(HEADER_VISUAL_CENTER_OFFSET_PROPERTY);
     return;

@@ -1,11 +1,11 @@
-import { syncComponentStackChatHandle } from "./component-stack-controls.js?v=20261010-file-size-refactor-02";
+import { syncComponentStackChatHandle } from "./component-stack-controls.js?v=20261011-bem-itcss-oocss-04";
 import { syncComponentStackShellInsets } from "./component-stack-insets.js?v=20261010-file-size-refactor-02";
-import { wireComponentAspectObservers } from "./component-aspect-observers.js?v=20261010-file-size-refactor-02";
+import { wireComponentAspectObservers } from "./component-aspect-observers.js?v=20261011-bem-itcss-oocss-04";
 import {
   hasLoadedVideo,
   isMeasuringExpandedTarget,
   measurePanelLayoutTarget,
-} from "./component-aspect-measurement.js?v=20261010-file-size-refactor-02";
+} from "./component-aspect-measurement.js?v=20261011-bem-itcss-oocss-04";
 
 const sessionView = document.querySelector("#sessionView");
 const appShell = document.querySelector(".app-shell");
@@ -14,9 +14,9 @@ const videoArea = sessionView?.querySelector('.o-video-area');
 const videoPlayer = sessionView?.querySelector("#videoPlayer");
 const playerFrame = sessionView?.querySelector(".player-frame");
 const chatArea = sessionView?.querySelector(".chat-area");
-const FULL_PANEL_LAYOUT_CLASS = "layout-component-stack";
-const EDGE_TO_EDGE_LAYOUT_CLASS = "layout-edge-to-edge";
-const BOTTOM_DOCK_FIT_VIEWPORT_CLASS = "bottom-dock-panels-fit-viewport";
+const FULL_PANEL_LAYOUT_CLASS = 'session-view--layout-component-stack';
+const EDGE_TO_EDGE_LAYOUT_CLASS = 'session-view--layout-edge-to-edge';
+const BOTTOM_DOCK_FIT_VIEWPORT_CLASS = 'session-view--bottom-dock-panels-fit-viewport';
 
 let pendingFrame = 0;
 let pendingScrollTarget = "";
@@ -39,7 +39,7 @@ function applyComponentLayoutState({
 }) {
   const isDesktop = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
   const isExpandedBottomDock = sessionView?.dataset.chatDock === "bottom"
-    && !sessionView.classList.contains("chat-collapsed");
+    && !sessionView.classList.contains('session-view--chat-collapsed');
   const viewportHeight = getStructuralViewportHeight();
   const panelsFitViewport = Boolean(
     isExpandedBottomDock
@@ -58,7 +58,7 @@ function applyComponentLayoutState({
   // repintado: ni el scroll ni una segunda medición de visibilidad los separa.
   sessionView?.classList.toggle(FULL_PANEL_LAYOUT_CLASS, shouldStack);
   sessionView?.classList.toggle(BOTTOM_DOCK_FIT_VIEWPORT_CLASS, panelsFitViewport);
-  sessionView?.classList.toggle("chat-bottom-snap-enabled", needsScrollSnap);
+  sessionView?.classList.toggle('session-view--chat-bottom-snap-enabled', needsScrollSnap);
   syncComponentStackChatHandle(sessionView, chatArea);
 }
 
@@ -81,7 +81,7 @@ function measureComponentLayout({ allowDuringChatTransition = false } = {}) {
   syncEdgeToEdgeLayout();
   const wasStacked = sessionView?.classList.contains(FULL_PANEL_LAYOUT_CLASS);
   if (
-    sessionView?.classList.contains("chat-layout-transitioning")
+    sessionView?.classList.contains('session-view--chat-layout-transitioning')
     && !allowDuringChatTransition
   ) return;
 
@@ -95,7 +95,7 @@ function measureComponentLayout({ allowDuringChatTransition = false } = {}) {
     videoPlayer,
   });
   const isExpandedBottomDock = sessionView?.dataset.chatDock === "bottom"
-    && !sessionView.classList.contains("chat-collapsed");
+    && !sessionView.classList.contains('session-view--chat-collapsed');
   const panelsFitViewport = Boolean(
     isExpandedBottomDock
     && targetLayout.hasMeasuredPanels
@@ -108,7 +108,7 @@ function measureComponentLayout({ allowDuringChatTransition = false } = {}) {
   if (
     shouldStack
     && !wasStacked
-    && !sessionView.classList.contains("chat-collapsed")
+    && !sessionView.classList.contains('session-view--chat-collapsed')
     && !pendingScrollTarget
   ) {
     pendingScrollTarget = "center-video";
@@ -125,7 +125,7 @@ function measureComponentLayout({ allowDuringChatTransition = false } = {}) {
   window.requestAnimationFrame(() => {
     if (sessionView.hidden) return;
 
-    const isCollapsed = sessionView.classList.contains("chat-collapsed");
+    const isCollapsed = sessionView.classList.contains('session-view--chat-collapsed');
     const isStacked = sessionView.classList.contains(FULL_PANEL_LAYOUT_CLASS);
     if (initialSessionScrollPending) {
       initialSessionScrollPending = false;

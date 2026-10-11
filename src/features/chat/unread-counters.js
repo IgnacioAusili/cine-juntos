@@ -1,5 +1,5 @@
-import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
-import { state } from "../../core/state.js?v=20261010-file-size-refactor-02";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { state } from "../../core/state.js?v=20261011-bem-itcss-oocss-04";
 
 function isElementVisibleInViewport(element) {
   if (!element || document.hidden) return false;
@@ -22,12 +22,12 @@ function isElementVisibleInViewport(element) {
 }
 
 export function isInsideChatVisibleToUser() {
-  if (!dom.playerFrame.classList.contains("chat-inside-open")) return false;
+  if (!dom.playerFrame.classList.contains('u-chat-inside-open')) return false;
   return isElementVisibleInViewport(dom.playerChat);
 }
 
 export function isExternalChatVisibleToUser() {
-  if (dom.sessionView.classList.contains("chat-collapsed")) return false;
+  if (dom.sessionView.classList.contains('session-view--chat-collapsed')) return false;
   return isElementVisibleInViewport(dom.chatArea);
 }
 
@@ -37,7 +37,7 @@ export function isAnyChatVisibleToUser() {
 
 export function incrementInsideUnread() {
   state.chat.unreadInsideCount += 1;
-  const countElement = dom.insideChatUnread.querySelector(".player-chat-unread-count");
+  const countElement = dom.insideChatUnread.querySelector('.player-chat__unread-count');
   (countElement || dom.insideChatUnread).textContent = state.chat.unreadInsideCount > 99
     ? "+99"
     : String(state.chat.unreadInsideCount);
@@ -121,4 +121,4 @@ export {
   checkScrollPosition,
   incrementScrollIndicator,
   resetScrollIndicator,
-} from "./scroll-unread-indicator.js?v=20261010-file-size-refactor-02";
+} from "./scroll-unread-indicator.js?v=20261011-bem-itcss-oocss-04";

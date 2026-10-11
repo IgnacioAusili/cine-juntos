@@ -1,6 +1,6 @@
 
 
-body.fullscreen-mode .session-view[data-chat-dock="right"] .chat-collapse-hover-zone {
+body.page-context--fullscreen .session-view[data-chat-dock="right"] .chat-area__collapse-hover-zone {
   position: absolute;
   grid-area: auto;
   top: 50%;
@@ -13,7 +13,7 @@ body.fullscreen-mode .session-view[data-chat-dock="right"] .chat-collapse-hover-
   transform: translateY(-50%);
 }
 
-body.fullscreen-mode .player-chat {
+body.page-context--fullscreen .player-chat {
   top: var(--inside-chat-top-offset, 56px);
   right: 24px;
   bottom: 14px;
@@ -23,7 +23,7 @@ body.fullscreen-mode .player-chat {
 /* El fullscreen lateral conserva la misma pagina desplazable que se ve fuera
    de fullscreen. El shell es el viewport nativo y su propio scroll permite
    volver a la sala y al enlace sin superponerlos sobre el reproductor. */
-body.fullscreen-mode .app-shell {
+body.page-context--fullscreen .app-shell {
   position: static;
   inset: auto;
   display: grid;
@@ -48,12 +48,12 @@ body.fullscreen-mode .app-shell {
   scrollbar-width: none;
 }
 
-body.fullscreen-mode .app-shell::-webkit-scrollbar {
+body.page-context--fullscreen .app-shell::-webkit-scrollbar {
   width: 0;
   height: 0;
 }
 
-body.fullscreen-mode .site-header {
+body.page-context--fullscreen .site-header {
   position: static;
   z-index: auto;
   display: flex;
@@ -62,7 +62,7 @@ body.fullscreen-mode .site-header {
   padding: 0;
 }
 
-body.fullscreen-mode .session-view {
+body.page-context--fullscreen .session-view {
   display: flex;
   height: auto;
   min-height: 0;
@@ -71,7 +71,7 @@ body.fullscreen-mode .session-view {
   padding: 0;
 }
 
-body.fullscreen-mode .session-view[data-chat-dock="right"] {
+body.page-context--fullscreen .session-view[data-chat-dock="right"] {
   position: static;
   inset: auto;
   z-index: auto;
@@ -81,8 +81,8 @@ body.fullscreen-mode .session-view[data-chat-dock="right"] {
   margin-inline: calc(var(--app-shell-gutter) * -1);
 }
 
-body.fullscreen-mode .session-view[data-chat-dock="right"] .o-workspace,
-body.fullscreen-mode .app-shell:fullscreen .session-view[data-chat-dock="right"] .o-workspace {
+body.page-context--fullscreen .session-view[data-chat-dock="right"] .o-workspace,
+body.page-context--fullscreen .app-shell:fullscreen .session-view[data-chat-dock="right"] .o-workspace {
   display: grid;
   width: 100%;
   height: var(--app-viewport-height);
@@ -95,8 +95,8 @@ body.fullscreen-mode .app-shell:fullscreen .session-view[data-chat-dock="right"]
   grid-template-areas: "video chat";
 }
 
-body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="right"] .o-workspace,
-body.fullscreen-mode .app-shell:fullscreen .session-view.chat-collapsed[data-chat-dock="right"] .o-workspace {
+body.page-context--fullscreen .session-view.session-view--chat-collapsed[data-chat-dock="right"] .o-workspace,
+body.page-context--fullscreen .app-shell:fullscreen .session-view.session-view--chat-collapsed[data-chat-dock="right"] .o-workspace {
   grid-template-columns: minmax(0, 1fr) 0;
   grid-template-areas: "video chat";
 }
@@ -105,16 +105,16 @@ body.fullscreen-mode .app-shell:fullscreen .session-view.chat-collapsed[data-cha
   /* En PC fullscreen la grilla debe interpolar el ancho del panel. El layout
      lateral normal deja transition en none porque usa flex; acá se restaura
      solo para la variante de grilla de pantalla completa. */
-  body.fullscreen-mode .session-view[data-chat-dock="right"] .o-workspace,
-  body.fullscreen-mode .app-shell:fullscreen .session-view[data-chat-dock="right"] .o-workspace {
+  body.page-context--fullscreen .session-view[data-chat-dock="right"] .o-workspace,
+  body.page-context--fullscreen .app-shell:fullscreen .session-view[data-chat-dock="right"] .o-workspace {
     transition: grid-template-columns 350ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   /* La grilla controla el ancho del panel durante la animación. Mantener el
      contenido del chat como un item de grilla evita que width: 0 lo oculte de
      golpe antes de que termine el cierre. */
-  body.fullscreen-mode .session-view[data-chat-dock="right"] .chat-area,
-  body.fullscreen-mode .app-shell:fullscreen .session-view[data-chat-dock="right"] .chat-area {
+  body.page-context--fullscreen .session-view[data-chat-dock="right"] .chat-area,
+  body.page-context--fullscreen .app-shell:fullscreen .session-view[data-chat-dock="right"] .chat-area {
     flex: none;
     width: auto;
     min-width: 0;
@@ -122,12 +122,12 @@ body.fullscreen-mode .app-shell:fullscreen .session-view.chat-collapsed[data-cha
 
 }
 
-body.fullscreen-mode .session-view[data-chat-dock="right"] .o-video-area {
+body.page-context--fullscreen .session-view[data-chat-dock="right"] .o-video-area {
   display: flex;
 }
 
-body.fullscreen-mode .session-view[data-chat-dock="right"] .session-toolbar,
-body.fullscreen-mode .session-view[data-chat-dock="bottom"] .session-toolbar {
+body.page-context--fullscreen .session-view[data-chat-dock="right"] .session-toolbar,
+body.page-context--fullscreen .session-view[data-chat-dock="bottom"] .session-toolbar {
   position: absolute;
   inset: auto;
   z-index: 10;
@@ -138,7 +138,7 @@ body.fullscreen-mode .session-view[data-chat-dock="bottom"] .session-toolbar {
   transform: none;
 }
 
-body.fullscreen-mode .session-view[data-chat-dock="right"] .player-frame {
+body.page-context--fullscreen .session-view[data-chat-dock="right"] .player-frame {
   border: 0;
   border-radius: 0;
   background: #050607;
@@ -146,7 +146,7 @@ body.fullscreen-mode .session-view[data-chat-dock="right"] .player-frame {
   backdrop-filter: none;
 }
 
-body.fullscreen-mode .session-view[data-chat-dock="right"] .chat-area {
+body.page-context--fullscreen .session-view[data-chat-dock="right"] .chat-area {
   /* En pantalla completa el header debe arrancar en el borde superior del
      viewport, sin el gutter vertical del layout normal. */
   padding: 0;
@@ -157,7 +157,7 @@ body.fullscreen-mode .session-view[data-chat-dock="right"] .chat-area {
   backdrop-filter: blur(16px);
 }
 
-body.fullscreen-mode .session-view[data-chat-dock="right"] .messages {
+body.page-context--fullscreen .session-view[data-chat-dock="right"] .chat-message-list {
   border-radius: 0;
 }
 
@@ -167,14 +167,14 @@ body.fullscreen-mode .session-view[data-chat-dock="right"] .messages {
   transform: translateY(-1px);
 }
 
-body.fullscreen-mode .session-view[data-chat-dock="right"] .player-actions {
+body.page-context--fullscreen .session-view[data-chat-dock="right"] .player-frame__actions {
   top: 2px;
   right: 4px;
   flex-direction: row;
   align-items: center;
 }
 
-body.fullscreen-mode .session-view[data-chat-dock="right"] .player-chat {
+body.page-context--fullscreen .session-view[data-chat-dock="right"] .player-chat {
   top: var(--inside-chat-top-offset, 48px);
   right: 24px;
   bottom: 8px;
@@ -185,7 +185,7 @@ body.fullscreen-mode .session-view[data-chat-dock="right"] .player-chat {
    reproductor debe poder extenderse hasta los bordes del viewport. El
    gutter del shell sigue siendo correcto para la cabecera y para la vista
    normal; acá lo compensamos únicamente en la sesión inferior. */
-body.fullscreen-mode .session-view[data-chat-dock="bottom"] {
+body.page-context--fullscreen .session-view[data-chat-dock="bottom"] {
   position: static;
   inset: auto;
   z-index: auto;

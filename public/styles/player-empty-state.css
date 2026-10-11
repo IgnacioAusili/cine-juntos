@@ -6,7 +6,7 @@
   stroke-width: 1.2;
 }
 
-.player-actions {
+.player-frame__actions {
   position: absolute;
   z-index: 8;
   top: 2px;
@@ -16,7 +16,7 @@
   gap: 5px;
 }
 
-.player-center-actions {
+.player-frame__center-actions {
   display: none;
 }
 
@@ -24,7 +24,7 @@
    solo aparece con el overlay para que un toque sobre el video siga teniendo
    una única función: alternar la visibilidad de los controles. */
 @media (max-width: 980px) and (hover: none) and (pointer: coarse) {
-  .player-center-actions {
+  .player-frame__center-actions {
     position: absolute;
     z-index: 7;
     top: 50%;
@@ -39,17 +39,17 @@
     transition: opacity 180ms ease;
   }
 
-  .player-frame.player-overlay-visible .player-center-actions {
+  .player-frame.player-frame--overlay-visible .player-frame__center-actions {
     opacity: 1;
     pointer-events: auto;
   }
 
-  .player-frame.player-no-content .player-center-actions {
+  .player-frame.player-frame--no-content .player-frame__center-actions {
     opacity: 1;
     pointer-events: auto;
   }
 
-  .player-center-actions .video-control-button {
+  .player-frame__center-actions .video-control-button {
     width: clamp(42px, 12vw, 52px);
     min-width: clamp(42px, 12vw, 52px);
     height: clamp(42px, 12vw, 52px);
@@ -67,7 +67,7 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  .player-center-actions .player-skip-control svg {
+  .player-frame__center-actions .video-control-button--skip svg {
     width: clamp(19px, 5vw, 25px);
     height: clamp(19px, 5vw, 25px);
     display: block;
@@ -77,7 +77,7 @@
     transform-origin: center;
   }
 
-  .player-center-actions .video-control-button--primary {
+  .player-frame__center-actions .video-control-button--primary {
     width: clamp(54px, 15vw, 66px);
     min-width: clamp(54px, 15vw, 66px);
     height: clamp(54px, 15vw, 66px);
@@ -88,7 +88,7 @@
     color: #ffc896;
   }
 
-  .player-center-actions .player-skip-control {
+  .player-frame__center-actions .video-control-button--skip {
     display: grid;
     place-items: center;
     border: 0 !important;
@@ -97,44 +97,44 @@
     line-height: 0;
   }
 
-  .player-center-actions .video-control-button--primary svg {
+  .player-frame__center-actions .video-control-button--primary svg {
     width: clamp(25px, 7vw, 32px);
     height: clamp(25px, 7vw, 32px);
   }
 
-  .player-center-actions .video-control-button:not(:disabled):hover,
-  .player-center-actions .video-control-button:not(:disabled):focus-visible {
+  .player-frame__center-actions .video-control-button:not(:disabled):hover,
+  .player-frame__center-actions .video-control-button:not(:disabled):focus-visible {
     background: rgba(14, 19, 21, 0.7) !important;
     border-color: rgba(255, 255, 255, 0.18) !important;
     color: rgba(255, 255, 255, 0.92);
     transform: none;
   }
 
-  .player-center-actions .video-control-button--primary:not(:disabled):hover,
-  .player-center-actions .video-control-button--primary:not(:disabled):focus-visible {
+  .player-frame__center-actions .video-control-button--primary:not(:disabled):hover,
+  .player-frame__center-actions .video-control-button--primary:not(:disabled):focus-visible {
     background: rgba(116, 67, 31, 0.68) !important;
     border-color: transparent !important;
     color: #ffc896;
   }
 
-  .player-center-actions .video-control-button--primary.video-control-button--active:not(:disabled) {
+  .player-frame__center-actions .video-control-button--primary.video-control-button--active:not(:disabled) {
     background: rgba(116, 67, 31, 0.68) !important;
     border-color: transparent !important;
     color: #ffc896;
   }
 
-  .player-center-actions .player-skip-control:not(:disabled):hover,
-  .player-center-actions .player-skip-control:not(:disabled):focus-visible {
+  .player-frame__center-actions .video-control-button--skip:not(:disabled):hover,
+  .player-frame__center-actions .video-control-button--skip:not(:disabled):focus-visible {
     border: 0 !important;
     background: rgba(45, 78, 57, 0.64) !important;
     color: #b4cfba;
   }
 
-  .player-center-actions .play-button-cooldown {
+  .player-frame__center-actions .video-control-button__cooldown {
     text-shadow: none;
   }
 
-  .player-center-actions .video-control-button.is-click-bouncing {
+  .player-frame__center-actions .video-control-button.video-control-button--click-bouncing {
     animation: player-center-button-bounce 240ms ease-out;
     backface-visibility: hidden;
     transform-origin: center;
@@ -148,7 +148,7 @@
   }
 }
 
-.player-control-style-select {
+.player-select--chat-style {
   height: 28px;
   margin-top: 2px;
   margin-right: 2px;
@@ -156,7 +156,7 @@
   background: rgba(9, 12, 15, 0.28);
 }
 
-.player-control-style-select select {
+.player-select--chat-style select {
   font-size: 0.66rem;
   letter-spacing: 0.04em;
 }
@@ -196,7 +196,7 @@
   filter: drop-shadow(0 0 5px rgba(119, 244, 222, 0.36));
 }
 
-.player-bottom-actions {
+.player-frame__bottom-actions {
   position: absolute;
   z-index: 8;
   right: 0;
@@ -215,14 +215,14 @@
   pointer-events: none;
 }
 
-.player-frame.player-overlay-visible .player-bottom-actions {
+.player-frame.player-frame--overlay-visible .player-frame__bottom-actions {
   opacity: 1;
   transform: translateY(0);
   pointer-events: auto;
 }
 
 /* Sin contenido, un toque no debe poder dejar inutilizables los controles. */
-.player-frame.player-no-content .player-bottom-actions {
+.player-frame.player-frame--no-content .player-frame__bottom-actions {
   opacity: 1;
   transform: translateY(0);
   pointer-events: auto;

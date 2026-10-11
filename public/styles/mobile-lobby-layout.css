@@ -6,14 +6,14 @@
      decorativo del boleto. */
   /* En reposo el contenido entra completo; con el teclado el documento puede
      crecer de forma natural para que Chrome desplace solo lo imprescindible. */
-  body.is-lobby {
+  body.page-context--lobby {
     height: auto;
     min-height: 100dvh;
     overflow-x: hidden;
     overflow-y: auto;
   }
 
-  body.is-lobby .app-shell {
+  body.page-context--lobby .app-shell {
     height: auto;
     min-height: 100dvh;
     padding-bottom: 0;
@@ -25,7 +25,7 @@
     gap: 0;
   }
 
-  body.is-lobby .site-header {
+  body.page-context--lobby .site-header {
     display: none;
   }
 

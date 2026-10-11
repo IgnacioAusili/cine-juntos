@@ -106,11 +106,11 @@
   transform: translateY(1px);
 }
 
-.chat-tools-controls input[type="text"] {
+.chat-tools__controls input[type="text"] {
   min-height: 36px;
   padding: 0 10px;
 }
 
-.source-strip input[type="url"] {
+.image-preview-container__source-strip input[type="url"] {
   min-height: 36px;
 }

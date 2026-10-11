@@ -59,7 +59,7 @@
   }
 }
 
-.help-button.is-touch-hover {
+.help-button.u-touch-hover {
   background: rgba(255, 255, 255, 0.07);
   color: var(--text);
 }

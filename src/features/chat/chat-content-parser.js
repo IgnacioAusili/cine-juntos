@@ -9,12 +9,12 @@ export function appendMessageContent(container, text) {
 
   if (trimmedText.startsWith("data:image/") && trimmedText.includes("base64,")) {
     const link = document.createElement("a");
-    link.className = "message-media-link";
+    link.className = 'message__media-link';
     link.href = trimmedText;
     link.target = "_blank";
 
     const img = document.createElement("img");
-    img.className = "message-media";
+    img.className = 'message__media';
     img.src = trimmedText;
     img.alt = "Imagen base64";
     img.loading = "lazy";
@@ -32,12 +32,12 @@ export function appendMessageContent(container, text) {
   if (!firstUrl) {
     const textNode = document.createElement("div");
     const isEmojiOnly = isEmojiOnlyText(trimmedText);
-    textNode.className = `message-text${isEmojiOnly ? " message-text--emoji" : ""}`;
+    textNode.className = `message__text${isEmojiOnly ? ' message__text--emoji' : ""}`;
     appendEmojiAwareText(textNode, trimmedText);
     container.append(textNode);
     if (isEmojiOnly) {
-      container.classList.add("message-content--emoji");
-      container.parentElement?.classList.add("message-bubble--emoji");
+      container.classList.add('message__content--emoji');
+      container.parentElement?.classList.add('message__bubble--emoji');
     }
     return;
   }
@@ -46,12 +46,12 @@ export function appendMessageContent(container, text) {
   if (textWithoutUrl) {
     const textNode = document.createElement("div");
     const isEmojiOnly = isEmojiOnlyText(textWithoutUrl);
-    textNode.className = `message-text${isEmojiOnly ? " message-text--emoji" : ""}`;
+    textNode.className = `message__text${isEmojiOnly ? ' message__text--emoji' : ""}`;
     appendEmojiAwareText(textNode, textWithoutUrl);
     container.append(textNode);
     if (isEmojiOnly && container.childElementCount === 1) {
-      container.classList.add("message-content--emoji");
-      container.parentElement?.classList.add("message-bubble--emoji");
+      container.classList.add('message__content--emoji');
+      container.parentElement?.classList.add('message__bubble--emoji');
     }
   }
 
@@ -62,7 +62,7 @@ export function appendMessageContent(container, text) {
 
   const link = document.createElement("a");
   const shouldAttemptImagePreview = Boolean(!videoUrl && firstUrl);
-  link.className = shouldAttemptImagePreview ? "message-media-link" : "message-link";
+  link.className = shouldAttemptImagePreview ? 'message__media-link' : 'message__link';
   link.href = firstUrl;
   link.target = "_blank";
   link.rel = "noreferrer";
@@ -74,7 +74,7 @@ export function appendMessageContent(container, text) {
   }
 
   const image = document.createElement("img");
-  image.className = "message-media";
+  image.className = 'message__media';
   image.src = imageUrl || firstUrl;
   image.alt = "Imagen enviada";
   image.loading = "lazy";
@@ -82,7 +82,7 @@ export function appendMessageContent(container, text) {
   image.addEventListener(
     "error",
     () => {
-      link.className = "message-link";
+      link.className = 'message__link';
       link.replaceChildren();
       link.textContent = firstUrl;
     },
@@ -146,7 +146,7 @@ function appendEmojiAwareText(container, text) {
     }
 
     const emoji = document.createElement("span");
-    emoji.className = "message-emoji";
+    emoji.className = 'message__emoji';
     emoji.textContent = segment;
     container.append(emoji);
   }
@@ -158,7 +158,7 @@ function isEmojiSegment(segment) {
 
 function appendVideoPreview(container, videoUrl, fallbackUrl) {
   const link = document.createElement("a");
-  link.className = "message-link";
+  link.className = 'message__link';
   link.href = fallbackUrl || videoUrl;
   link.target = "_blank";
   link.rel = "noreferrer";
@@ -189,7 +189,7 @@ function appendVideoPreview(container, videoUrl, fallbackUrl) {
     }
 
     const video = document.createElement("video");
-    video.className = "message-video";
+    video.className = 'message__video';
     video.src = videoUrl;
     video.controls = true;
     video.playsInline = true;

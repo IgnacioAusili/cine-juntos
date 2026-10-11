@@ -1,6 +1,6 @@
 
 
-.player-frame.player-overlay-suppressed .player-bottom-actions {
+.player-frame.player-frame--overlay-suppressed .player-frame__bottom-actions {
   opacity: 0 !important;
   /* Al ocultar por una reproducción solo debe desvanecerse; mover la barra
      unos píxeles produce un salto perceptible al cambiar play/pausa. */
@@ -10,7 +10,7 @@
 
 /* El arrastre del volumen mantiene visibles los controles aunque otro evento
    del reproductor intente ocultar el overlay durante el movimiento. */
-.player-frame.player-volume-control-dragging .player-bottom-actions {
+.player-frame.player-frame--volume-control-dragging .player-frame__bottom-actions {
   opacity: 1 !important;
   transform: translateY(0);
   pointer-events: auto;
@@ -18,7 +18,7 @@
 
 /* El range puede perder el foco y el hover durante un gesto táctil; el
    estado explícito del arrastre mantiene la barra disponible hasta soltar. */
-.player-frame.player-seek-control-dragging .player-bottom-actions {
+.player-frame.player-frame--seek-control-dragging .player-frame__bottom-actions {
   opacity: 1 !important;
   transform: translateY(0);
   pointer-events: auto;
@@ -26,13 +26,13 @@
 
 /* El range nativo puede conservar :active aunque se pierda la captura del
    puntero; mientras ese estado exista, la barra tampoco debe desaparecer. */
-.player-frame:has(.player-volume-input:active) .player-bottom-actions {
+.player-frame:has(.player-volume-group__input:active) .player-frame__bottom-actions {
   opacity: 1 !important;
   transform: translateY(0);
   pointer-events: auto;
 }
 
-.player-frame.player-no-content .player-seek-input {
+.player-frame.player-frame--no-content .player-progress-group__seek-input {
   transition: none;
 }
 
@@ -68,7 +68,7 @@
 }
 
 /* Línea: controles desnudos, sin panel. El progreso se vuelve la única guía visual. */
-.player-frame[data-control-style="line"] .player-bottom-actions {
+.player-frame[data-control-style="line"] .player-frame__bottom-actions {
   min-height: 112px;
   box-sizing: border-box;
   padding: 10px 18px 10px;
@@ -102,11 +102,11 @@
   height: 16px;
 }
 
-.player-frame[data-control-style="line"] .player-progress-group .player-time {
+.player-frame[data-control-style="line"] .player-progress-group .player-progress-group__time {
   display: none;
 }
 
-.player-frame[data-control-style="line"] .player-seek-input {
+.player-frame[data-control-style="line"] .player-progress-group__seek-input {
   position: relative;
   z-index: 2;
   height: 14px;
@@ -115,7 +115,7 @@
   background: transparent;
 }
 
-.playback-gesture-indicator {
+.player-frame__gesture-indicator {
   position: absolute;
   z-index: 6;
   top: 50%;
@@ -135,12 +135,12 @@
   transition: opacity 160ms ease, transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.playback-gesture-indicator.is-visible {
+.player-frame__gesture-indicator.u-visible {
   opacity: 1;
   transform: translate(-50%, -50%) scale(1);
 }
 
-.playback-gesture-icon {
+.player-frame__gesture-icon {
   display: none;
   width: 34px;
   height: 34px;
@@ -148,13 +148,13 @@
   stroke-width: 1.8;
 }
 
-.playback-gesture-indicator[data-action="play"] .playback-gesture-icon-play,
-.playback-gesture-indicator[data-action="pause"] .playback-gesture-icon-pause,
-.playback-gesture-indicator[data-action^="volume-"] .playback-gesture-icon-volume {
+.player-frame__gesture-indicator[data-action="play"] .player-frame__gesture-icon--play,
+.player-frame__gesture-indicator[data-action="pause"] .player-frame__gesture-icon--pause,
+.player-frame__gesture-indicator[data-action^="volume-"] .player-frame__gesture-icon--volume {
   display: block;
 }
 
-.playback-gesture-indicator[data-action^="volume-"]::after {
+.player-frame__gesture-indicator[data-action^="volume-"]::after {
   position: absolute;
   bottom: 12px;
   content: attr(data-volume-label);
@@ -186,12 +186,12 @@
   transition: transform 180ms ease-out;
 }
 
-.player-frame[data-control-style="line"] .player-progress-group:has(.player-seek-input:not(:disabled)):hover::before,
-.player-frame[data-control-style="line"] .player-progress-group:has(.player-seek-input:not(:disabled)):focus-within::before {
+.player-frame[data-control-style="line"] .player-progress-group:has(.player-progress-group__seek-input:not(:disabled)):hover::before,
+.player-frame[data-control-style="line"] .player-progress-group:has(.player-progress-group__seek-input:not(:disabled)):focus-within::before {
   transform: translateY(-50%) scaleY(1.67);
 }
 
-.player-frame[data-control-style="line"] .player-progress-group:has(.player-seek-input:disabled)::before {
+.player-frame[data-control-style="line"] .player-progress-group:has(.player-progress-group__seek-input:disabled)::before {
   transform: translateY(-50%) scaleY(1);
   transition: none;
 }

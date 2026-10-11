@@ -1,6 +1,6 @@
 
 
-.player-seek-input::-webkit-slider-thumb {
+.player-progress-group__seek-input::-webkit-slider-thumb {
   width: 14px;
   height: 14px;
   margin-top: -4px;
@@ -12,7 +12,7 @@
   box-shadow: none;
 }
 
-.player-seek-input::-moz-range-thumb {
+.player-progress-group__seek-input::-moz-range-thumb {
   width: 14px;
   height: 14px;
   box-sizing: border-box;
@@ -22,13 +22,13 @@
   box-shadow: none;
 }
 
-.player-seek-input:disabled {
+.player-progress-group__seek-input:disabled {
   cursor: not-allowed;
   opacity: 1;
   filter: none;
 }
 
-.player-seek-input:disabled::-webkit-slider-thumb {
+.player-progress-group__seek-input:disabled::-webkit-slider-thumb {
   opacity: 1;
   border-color: #7a7b7c;
   border-color: color-mix(in srgb, #ffffff 45%, #0b0d0f);
@@ -37,7 +37,7 @@
   box-shadow: 0 0 0 1px #0b0d0f;
 }
 
-.player-seek-input:disabled::-moz-range-thumb {
+.player-progress-group__seek-input:disabled::-moz-range-thumb {
   opacity: 1;
   border-color: #7a7b7c;
   border-color: color-mix(in srgb, #ffffff 45%, #0b0d0f);
@@ -85,7 +85,7 @@
   opacity: 0.68;
 }
 
-.play-button-cooldown {
+.video-control-button__cooldown {
   position: absolute;
   inset: 0;
   display: grid;
@@ -168,38 +168,38 @@
   gap: 6px;
 }
 
-.player-volume-slider-wrap {
+.player-volume-group__slider {
   max-width: 0;
   overflow: hidden;
   transition: max-width 180ms ease;
 }
 
-.player-volume-group:hover .player-volume-slider-wrap,
-.player-volume-group:focus-within .player-volume-slider-wrap {
+.player-volume-group:hover .player-volume-group__slider,
+.player-volume-group:focus-within .player-volume-group__slider {
   max-width: 60px;
 }
 
 /* En superficies táctiles :hover puede quedar retenido después de un toque.
    El estado equivalente lo controla el detector de pulsación larga. */
 @media (hover: none) {
-  .player-volume-group:hover:not(.is-touch-hover) {
+  .player-volume-group:hover:not(.u-touch-hover) {
     gap: 0;
   }
 
-  .player-volume-group:hover:not(.is-touch-hover) .player-volume-slider-wrap {
+  .player-volume-group:hover:not(.u-touch-hover) .player-volume-group__slider {
     max-width: 0;
   }
 
-  .player-volume-group.is-touch-hover {
+  .player-volume-group.u-touch-hover {
     gap: 6px;
   }
 
-  .player-volume-group.is-touch-hover .player-volume-slider-wrap {
+  .player-volume-group.u-touch-hover .player-volume-group__slider {
     max-width: 60px;
   }
 }
 
-.player-volume-input {
+.player-volume-group__input {
   --volume-track-height: 5px;
   --volume-thumb-size: 10px;
   --volume-progress: 100%;
@@ -216,7 +216,7 @@
   cursor: pointer;
 }
 
-.player-volume-input::-webkit-slider-runnable-track {
+.player-volume-group__input::-webkit-slider-runnable-track {
   height: var(--volume-track-height);
   border-radius: 999px;
   background: transparent;

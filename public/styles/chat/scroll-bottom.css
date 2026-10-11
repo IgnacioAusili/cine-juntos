@@ -45,7 +45,7 @@
   color: var(--teal);
 }
 
-.scroll-bottom-badge {
+.scroll-bottom-btn__badge {
   position: absolute;
   top: -5px;
   right: -6px;

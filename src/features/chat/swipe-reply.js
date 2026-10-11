@@ -15,7 +15,7 @@ export function createSwipeReply(
   // mensaje. Todo el cálculo del gesto usa esta misma dirección para que los
   // umbrales, la animación y la flecha permanezcan sincronizados.
   const swipeDirection = 1;
-  const messageOnLeft = !(hint.closest(".message")?.classList.contains("mine") ?? false);
+  const messageOnLeft = !(hint.closest(".message")?.classList.contains('message--mine') ?? false);
 
   let state = "idle", pointerId = null, pointerType = "", tracking = false, directionLocked = false;
   let startX = 0, startY = 0, currentX = 0, currentY = 0, currentDx = 0, currentDy = 0;
@@ -32,13 +32,13 @@ export function createSwipeReply(
     if (state === next) return;
     state = next;
     bubble.dataset.replySwipeState = next;
-    bubble.classList.toggle("swipe-dragging", next === "dragging" || next === "reply-ready");
-    bubble.classList.toggle("swipe-settling", next === "settling");
+    bubble.classList.toggle('message--swipe-dragging', next === "dragging" || next === "reply-ready");
+    bubble.classList.toggle('message--swipe-settling', next === "settling");
   }
   function setThreshold(reached) {
     if (thresholdReached === reached) return;
     thresholdReached = reached;
-    bubble.classList.toggle("swipe-ready", reached);
+    bubble.classList.toggle('message--swipe-ready', reached);
     if (reached) setState("reply-ready");
     else if (tracking) setState("dragging");
   }
@@ -66,7 +66,7 @@ export function createSwipeReply(
     hint.style.transition = "";
     hint.style.opacity = "0";
     hint.style.transform = `translate(${messageOnLeft ? -14 : 14}px, -50%) scale(0.72)`;
-    bubble.classList.remove("swipe-dragging", "swipe-settling", "swipe-ready", "swipe-confirmed");
+    bubble.classList.remove('message--swipe-dragging', 'message--swipe-settling', 'message--swipe-ready', 'message--swipe-confirmed');
     hintVisible = thresholdReached = false;
   }
   function cancelAnimation() {
@@ -110,9 +110,9 @@ export function createSwipeReply(
     setState("idle");
   }
   function triggerReply() {
-    bubble.classList.add("swipe-confirmed");
+    bubble.classList.add('message--swipe-confirmed');
     window.clearTimeout(confirmPulseTimer);
-    confirmPulseTimer = window.setTimeout(() => bubble.classList.remove("swipe-confirmed"), 180);
+    confirmPulseTimer = window.setTimeout(() => bubble.classList.remove('message--swipe-confirmed'), 180);
     // El gesto ya fue confirmado al soltar; el preview puede empezar a cargar
     // de inmediato mientras la burbuja vuelve visualmente a su posición.
     onReply?.();
@@ -125,7 +125,7 @@ export function createSwipeReply(
   }
   function beginSwipe(event) {
     cancelAnimation();
-    bubble.classList.remove("swipe-confirmed");
+    bubble.classList.remove('message--swipe-confirmed');
     window.clearTimeout(confirmPulseTimer);
     pointerId = event.pointerId;
     pointerType = event.pointerType || "mouse";

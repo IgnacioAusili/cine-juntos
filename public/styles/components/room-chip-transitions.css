@@ -1,6 +1,6 @@
 
 
-.room-chip__back-button.is-leaving svg {
+.room-chip__back-button.page-context--leaving svg {
   animation: roomChipBackBounce 380ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 
@@ -27,7 +27,7 @@
     transition-duration: 0.01ms;
   }
 
-  .room-chip__back-button.is-leaving svg {
+  .room-chip__back-button.page-context--leaving svg {
     animation: none;
   }
 }
@@ -62,7 +62,7 @@
   white-space: nowrap;
 }
 
-.room-chip__copy.is-copy-animating .room-chip__copy-motion {
+.room-chip__copy.room-chip__copy--animating .room-chip__copy-motion {
   animation: roomChipCopyLift 520ms cubic-bezier(0.4, 0, 0.2, 1) both;
   will-change: top;
 }
@@ -161,7 +161,7 @@
   flex: 0 0 8px;
 }
 
-body.is-lobby .room-chip,
-body.is-lobby .host-badge {
+body.page-context--lobby .room-chip,
+body.page-context--lobby .host-badge {
   display: none;
 }

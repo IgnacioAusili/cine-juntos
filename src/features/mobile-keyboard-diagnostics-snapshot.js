@@ -1,4 +1,4 @@
-import { dom } from "../core/dom.js?v=20261010-file-size-refactor-02";
+import { dom } from "../core/dom.js?v=20261011-bem-itcss-oocss-04";
 
 function round(value) {
   return Number.isFinite(value) ? Math.round(value * 10) / 10 : null;
@@ -107,8 +107,8 @@ function composerSnapshot(form, input) {
   return {
     form: elementSnapshot(form),
     input: inputSnapshot(input),
-    textareaShell: elementSnapshot(form?.querySelector(".textarea-shell")),
-    inputWrapper: elementSnapshot(form?.querySelector(".input-wrapper")),
+    textareaShell: elementSnapshot(form?.querySelector('.message-form__textarea-shell')),
+    inputWrapper: elementSnapshot(form?.querySelector('.message-form__input-wrapper')),
     sendButton: elementSnapshot(form?.querySelector("button[type=submit]")),
   };
 }
@@ -177,7 +177,7 @@ export function collectMobileKeyboardSnapshot(reason, sequence) {
     session: {
       hidden: dom.sessionView?.hidden ?? null,
       className: dom.sessionView?.className || null,
-      fullscreen: Boolean(document.fullscreenElement || document.body.classList.contains("fullscreen-mode")),
+      fullscreen: Boolean(document.fullscreenElement || document.body.classList.contains('page-context--fullscreen')),
     },
     geometry: {
       session: elementSnapshot(dom.sessionView),

@@ -1,9 +1,9 @@
-import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
-import { state } from "../../core/state.js?v=20261010-file-size-refactor-02";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { state } from "../../core/state.js?v=20261011-bem-itcss-oocss-04";
 import {
   isPinnedToBottom,
   queuePinnedChatScrollSync,
-} from "./chat-scroll-sync.js?v=20261011-chat-interaction-fixes-01";
+} from "./chat-scroll-sync.js?v=20261011-bem-itcss-oocss-04";
 import { createForeignDocumentIcon } from "../foreign-lucide-icon.js?v=20261011-lucide-icons-repair-01";
 
 function hydrateImagePreviewIcons(container) {
@@ -70,11 +70,11 @@ export function renderImagePreview(isOverlay) {
     .slice(0, 2)
     .map(
       (image, index) => `
-        <div class="preview-box">
-          <a class="message-media-link preview-image-trigger" href="${image}" aria-label="Abrir imagen adjunta ${index + 1}">
-            <img class="message-media" src="${image}" alt="Miniatura de imagen pegada ${index + 1}" />
+        <div class="image-preview-container__item">
+          <a class="message__media-link image-preview-container__image-trigger" href="${image}" aria-label="Abrir imagen adjunta ${index + 1}">
+            <img class="message__media" src="${image}" alt="Miniatura de imagen pegada ${index + 1}" />
           </a>
-          <button type="button" class="preview-remove-btn" data-index="${index}" aria-label="Quitar imagen ${index + 1}">
+          <button type="button" class="image-preview-container__remove-button" data-index="${index}" aria-label="Quitar imagen ${index + 1}">
             <span data-lucide="x" aria-hidden="true"></span>
           </button>
         </div>
@@ -83,7 +83,7 @@ export function renderImagePreview(isOverlay) {
     .join("");
   hydrateImagePreviewIcons(container);
 
-  container.querySelectorAll(".preview-remove-btn").forEach((button) => {
+  container.querySelectorAll('.image-preview-container__remove-button').forEach((button) => {
     button.addEventListener("click", () => {
       removePendingImage(isOverlay, Number.parseInt(button.dataset.index || "0", 10));
     });

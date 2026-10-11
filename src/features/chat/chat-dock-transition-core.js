@@ -1,21 +1,21 @@
-import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
-import { isStackedSessionLayout } from "./chat-responsive-layout.js?v=20261011-chat-ui-fixes-02";
-import { getElementPageTop, getPageScrollContainer, getPageScrollMax, getPageScrollTop, isFullscreenPageActive, scrollPageTo } from "./chat-page-scroll.js?v=20261010-file-size-refactor-02";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { isStackedSessionLayout } from "./chat-responsive-layout.js?v=20261011-bem-itcss-oocss-04";
+import { getElementPageTop, getPageScrollContainer, getPageScrollMax, getPageScrollTop, isFullscreenPageActive, scrollPageTo } from "./chat-page-scroll.js?v=20261011-bem-itcss-oocss-04";
 import { chatDockTransitionState, getChatDockOperations } from "./chat-layout-transition-state.js?v=20261010-file-size-refactor-02";
-import { easeBottomChatCurtainProgress, getWorkspaceRowHeights, getWorkspaceContentHeight, isDesktopBottomDock } from "./chat-dock-transition-measurements.js?v=20261011-chat-ui-fixes-02";
+import { easeBottomChatCurtainProgress, getWorkspaceRowHeights, getWorkspaceContentHeight, isDesktopBottomDock } from "./chat-dock-transition-measurements.js?v=20261011-bem-itcss-oocss-04";
 import { BOTTOM_CHAT_CURTAIN_MS, BOTTOM_CHAT_SCROLL_TIMEOUT_MS } from "./chat-layout-timing.js?v=20261010-file-size-refactor-02";
 
 export function clearBottomChatTransitionVisuals() {
   dom.sessionView?.classList.remove(
-    "chat-bottom-collapse-visual",
-    "chat-bottom-expand-visual",
-    "chat-bottom-mobile-collapse-visual",
-    "chat-bottom-mobile-expand-visual",
-    "chat-bottom-mobile-curtain-active",
-    "chat-bottom-pc-collapse-visual",
-    "chat-bottom-pc-expand-visual",
-    "chat-bottom-pc-collapse-controls-transition",
-    "chat-bottom-curtain-active",
+    'session-view--chat-bottom-collapse-visual',
+    'session-view--chat-bottom-expand-visual',
+    'session-view--chat-bottom-mobile-collapse-visual',
+    'session-view--chat-bottom-mobile-expand-visual',
+    'session-view--chat-bottom-mobile-curtain-active',
+    'session-view--chat-bottom-pc-collapse-visual',
+    'session-view--chat-bottom-pc-expand-visual',
+    'session-view--chat-bottom-pc-collapse-controls-transition',
+    'session-view--chat-bottom-curtain-active',
   );
   dom.sessionView?.style.removeProperty("--chat-bottom-curtain-clip");
   dom.workspace?.style.removeProperty("grid-template-rows");
@@ -195,7 +195,7 @@ export function animateDesktopBottomChatCollapse(targetScrollTop) {
     return;
   }
 
-  const animateRows = dom.sessionView.classList.contains("bottom-dock-panels-fit-viewport");
+  const animateRows = dom.sessionView.classList.contains('session-view--bottom-dock-panels-fit-viewport');
   const startRows = animateRows ? getWorkspaceRowHeights() : [0, 0];
   const transition = {
     collapsed: true,
@@ -214,12 +214,12 @@ export function animateDesktopBottomChatCollapse(targetScrollTop) {
     true,
     BOTTOM_CHAT_CURTAIN_MS + BOTTOM_CHAT_SCROLL_TIMEOUT_MS + 80,
   );
-  dom.sessionView.classList.add("chat-bottom-pc-collapse-visual");
+  dom.sessionView.classList.add('session-view--chat-bottom-pc-collapse-visual');
   setDesktopBottomChatCurtainProgress(0);
   if (transition.animateRows) {
     // Reanclar los controles al video desde el primer frame; si se espera a
     // que termine la medición del layout, cambian de posición al final.
-    dom.sessionView.classList.add("chat-bottom-pc-collapse-controls-transition");
+    dom.sessionView.classList.add('session-view--chat-bottom-pc-collapse-controls-transition');
     dom.workspace.style.setProperty(
       "grid-template-rows",
       `${transition.startRows[0]}px ${transition.startRows[1]}px`,
@@ -270,7 +270,7 @@ export function animateDesktopBottomChatExpand() {
       `${composerBounds.width}px`,
     );
   }
-  dom.sessionView.classList.add("chat-bottom-pc-expand-visual");
+  dom.sessionView.classList.add('session-view--chat-bottom-pc-expand-visual');
   if (messageForm && composerBounds?.width > 0) {
     const fixedBounds = messageForm.getBoundingClientRect();
     const targetLeft =
@@ -320,7 +320,7 @@ export function animateBottomChatCollapse(targetScrollTop) {
     true,
     BOTTOM_CHAT_CURTAIN_MS + BOTTOM_CHAT_SCROLL_TIMEOUT_MS + 80,
   );
-  dom.sessionView.classList.add("chat-bottom-mobile-collapse-visual");
+  dom.sessionView.classList.add('session-view--chat-bottom-mobile-collapse-visual');
   void dom.workspace?.offsetWidth;
   getChatDockOperations().applyExternalChatCollapsed(true);
   transition.targetRows = [
@@ -335,7 +335,7 @@ export function animateBottomChatCollapse(targetScrollTop) {
   // reproductor queda alineado en la posición superior de la página.
   setMobileBottomTransitionProgress(transition, 0);
   void dom.chatArea.offsetWidth;
-  dom.sessionView.classList.add("chat-bottom-mobile-curtain-active");
+  dom.sessionView.classList.add('session-view--chat-bottom-mobile-curtain-active');
   transition.frameId = window.requestAnimationFrame(() => {
     stepMobileBottomChatTransition(transition);
   });
@@ -365,7 +365,7 @@ export function animateBottomChatExpand() {
   };
   chatDockTransitionState.bottomChatTransition = transition;
   lockBottomChatScrollAnchoring(transition);
-  dom.sessionView.classList.add("chat-bottom-mobile-expand-visual");
+  dom.sessionView.classList.add('session-view--chat-bottom-mobile-expand-visual');
   void dom.workspace?.offsetWidth;
   // Primero se reserva la fila completa con el contenido todavía oculto;
   // después se revela desde la unión superior hacia abajo.
@@ -381,7 +381,7 @@ export function animateBottomChatExpand() {
   );
   setMobileBottomTransitionProgress(transition, 0);
   void dom.chatArea.offsetWidth;
-  dom.sessionView.classList.add("chat-bottom-mobile-curtain-active");
+  dom.sessionView.classList.add('session-view--chat-bottom-mobile-curtain-active');
   transition.startedAt = performance.now();
   transition.frameId = window.requestAnimationFrame(() => {
     stepMobileBottomChatTransition(transition);

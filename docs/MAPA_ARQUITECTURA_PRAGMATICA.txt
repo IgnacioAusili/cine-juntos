@@ -29,9 +29,10 @@ ARQUITECTURA CSS: ITCSS, BEM Y OOCSS
 - BEM es la convencion para clases de componentes nuevas o migradas: bloque (`button`), elemento con `__` (`button__label`) y modificador con `--` (`button--primary`). Los modificadores se agregan junto con la clase del bloque.
 - Dentro de cada archivo, las reglas se agrupan por componente y se ordenan por base, elementos, variantes, estados y ajustes responsive. Las variables CSS se mantienen al inicio del archivo.
 - OOCSS separa estructura reutilizable de apariencia cuando la cohesión lo justifica; `components/button-layout.css` y `components/button-skin.css` son un ejemplo, no una obligación para cada componente.
-- La migracion de clases existentes se hace por componente y actualiza en conjunto CSS, HTML fuente y referencias JavaScript.
-- Los componentes `button` y `video-control-button` usan sus modificadores BEM junto a su bloque; pantalla completa y mini reproductor usan `.video-control-button--active`. El cooldown de envio usa `.icon-button__send-cooldown`, el selector de estilo del chat usa `.chat-style-toggle__button--active`, el control del chat del reproductor usa `.player-chat-toggle--active` y el switch de autoexpansión usa `.chat-auto-switch__track`, `.chat-auto-switch__thumb` y `.chat-auto-switch--active`; estos estados se sincronizan en el mini reproductor. Otros estados heredados quedan para migraciones contenidas.
-- La skin activa de `.icon-button` combina bloque y modificador en `.icon-button.icon-button--active`; se retiró el alias heredado `.icon-button.active`, que no tenía consumidores en HTML ni JavaScript. También se eliminó `.player-skip-control.active`, una regla duplicada sin consumidores; queda sin selectores CSS de clase `.active`, aunque falta inventariar los demás componentes heredados para cuantificar la migración completa.
+- La migración de clases quedó completa por dominio: CSS, HTML fuente y referencias JavaScript, incluidos templates dinámicos, se actualizaron en conjunto. La auditoría final no encontró referencias heredadas.
+- Componentes, elementos y estados usan BEM; utilidades compartidas usan `u-`, los objetos de layout `o-` y los estados globales de página `page-context--*`.
+- Se conservaron las clases requeridas por Lucide y el orden efectivo de cascada. OOCSS separa estructura y skin en patrones compartidos cuando pueden variar de forma independiente.
+- El resultado y el contrato vigente están en `docs/CONTRATO_CSS_ITCSS_BEM.md`; los inventarios por clase y por hoja ITCSS están en `docs/MAPA_CLASES_CSS.csv` y `docs/MAPA_ITCSS_CSS.csv`.
 - Las hojas siguen divididas por dominio y responsabilidad; los agregadores conservan imports anidados y su orden.
 
 REGLAS DE DEPENDENCIA

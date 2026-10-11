@@ -10,7 +10,7 @@ export function watchSystemMessageLayout(container) {
     const frame = window.requestAnimationFrame(() => {
       systemMessageLayoutFrames.delete(container);
       container
-        .querySelectorAll(".message.system .message-system-bubble")
+        .querySelectorAll('.message.message--system .message__system-bubble')
         .forEach(fitSystemMessageBubble);
     });
     systemMessageLayoutFrames.set(container, frame);
@@ -20,14 +20,14 @@ export function watchSystemMessageLayout(container) {
   systemMessageLayoutObservers.set(container, observer);
 }
 export function fitSystemMessageBubble(itemOrBubble) {
-  const bubble = itemOrBubble?.matches?.(".message-system-bubble")
+  const bubble = itemOrBubble?.matches?.('.message__system-bubble')
     ? itemOrBubble
-    : itemOrBubble?.querySelector?.(".message-system-bubble");
-  const text = bubble?.querySelector(".message-system-text");
+    : itemOrBubble?.querySelector?.('.message__system-bubble');
+  const text = bubble?.querySelector('.message__system-text');
   if (
     !bubble ||
     !text ||
-    text.classList.contains("system-message-roll-viewport") ||
+    text.classList.contains('message__system-roll-viewport') ||
     bubble.getBoundingClientRect().width <= 0
   ) return;
 
@@ -46,7 +46,7 @@ export function fitSystemMessageBubble(itemOrBubble) {
     }
 
     const bubbleStyle = getComputedStyle(bubble);
-    const lineElements = bubble.querySelectorAll(".message-system-line");
+    const lineElements = bubble.querySelectorAll('.message__system-line');
     const beforeWidth = lineElements[0]
       ? Number.parseFloat(getComputedStyle(lineElements[0]).width) || 0
       : 0;

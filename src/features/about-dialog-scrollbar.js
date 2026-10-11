@@ -38,10 +38,10 @@ export function wireAboutDialogScrollbar() {
   };
 
   const showWhileScrolling = () => {
-    track.classList.add("is-visible");
+    track.classList.add('u-visible');
     window.clearTimeout(hideTimer);
     hideTimer = window.setTimeout(() => {
-      track.classList.remove("is-visible");
+      track.classList.remove('u-visible');
     }, 700);
   };
 
@@ -52,7 +52,7 @@ export function wireAboutDialogScrollbar() {
   window.addEventListener("resize", scheduleSync, { passive: true });
   dialog.addEventListener("close", () => {
     window.clearTimeout(hideTimer);
-    track.classList.remove("is-visible");
+    track.classList.remove('u-visible');
     track.hidden = true;
   });
   document.addEventListener("click", (event) => {

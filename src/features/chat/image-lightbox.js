@@ -1,4 +1,4 @@
-import { createImageLightboxPanController } from "./image-lightbox-pan.js?v=20261010-file-size-refactor-02";
+import { createImageLightboxPanController } from "./image-lightbox-pan.js?v=20261011-bem-itcss-oocss-04";
 
 const LIGHTBOX_ID = "imageLightbox";
 const MIN_SCALE = 0.5;
@@ -68,29 +68,29 @@ function ensureLightbox() {
   lightbox.className = "image-lightbox";
   lightbox.setAttribute("aria-label", "Visor de imagen");
   lightbox.innerHTML = `
-    <div class="image-lightbox-surface">
-      <div class="image-lightbox-toolbar" aria-label="Controles de zoom">
-        <div class="image-lightbox-zoom-controls">
-          <button class="image-lightbox-button" type="button" data-lightbox-action="zoom-out" aria-label="Alejar imagen"><span class="image-lightbox-icon" data-lucide="minus" aria-hidden="true"></span></button>
-          <button class="image-lightbox-button image-lightbox-zoom-label" type="button" data-lightbox-action="reset-zoom" aria-live="polite">100%</button>
-          <button class="image-lightbox-button" type="button" data-lightbox-action="zoom-in" aria-label="Acercar imagen"><span class="image-lightbox-icon" data-lucide="plus" aria-hidden="true"></span></button>
+    <div class="image-lightbox__surface">
+      <div class="image-lightbox__toolbar" aria-label="Controles de zoom">
+        <div class="image-lightbox__zoom-controls">
+          <button class="image-lightbox__button" type="button" data-lightbox-action="zoom-out" aria-label="Alejar imagen"><span class="image-lightbox__icon" data-lucide="minus" aria-hidden="true"></span></button>
+          <button class="image-lightbox__button image-lightbox__zoom-label" type="button" data-lightbox-action="reset-zoom" aria-live="polite">100%</button>
+          <button class="image-lightbox__button" type="button" data-lightbox-action="zoom-in" aria-label="Acercar imagen"><span class="image-lightbox__icon" data-lucide="plus" aria-hidden="true"></span></button>
         </div>
       </div>
-      <button class="image-lightbox-button image-lightbox-close" type="button" data-lightbox-action="close" aria-label="Cerrar imagen"><span class="image-lightbox-icon" data-lucide="x" aria-hidden="true"></span></button>
-      <div class="image-lightbox-viewport" data-lightbox-action="dismiss">
-        <img class="image-lightbox-image" alt="" draggable="false" />
+      <button class="image-lightbox__button image-lightbox__close" type="button" data-lightbox-action="close" aria-label="Cerrar imagen"><span class="image-lightbox__icon" data-lucide="x" aria-hidden="true"></span></button>
+      <div class="image-lightbox__viewport" data-lightbox-action="dismiss">
+        <img class="image-lightbox__image" alt="" draggable="false" />
       </div>
     </div>
   `;
   document.body.append(lightbox);
   window.lucide?.createIcons();
-  lightboxImage = lightbox.querySelector(".image-lightbox-image");
-  zoomLabel = lightbox.querySelector(".image-lightbox-zoom-label");
+  lightboxImage = lightbox.querySelector('.image-lightbox__image');
+  zoomLabel = lightbox.querySelector('.image-lightbox__zoom-label');
 
   lightbox.addEventListener("click", (event) => {
     event.stopPropagation();
 
-    if (event.target.closest(".image-lightbox-image")) {
+    if (event.target.closest('.image-lightbox__image')) {
       event.preventDefault();
       return;
     }
@@ -117,7 +117,7 @@ function ensureLightbox() {
   lightbox.addEventListener("wheel", (event) => {
     event.preventDefault();
     event.stopPropagation();
-    if (!event.target.closest(".image-lightbox-viewport")) return;
+    if (!event.target.closest('.image-lightbox__viewport')) return;
     changeScale(event.deltaY < 0 ? SCALE_STEP : -SCALE_STEP);
   }, { passive: false });
   panController.bind();
@@ -157,7 +157,7 @@ function resetScale(nextScale = 1) {
 
 function openLightbox(image) {
   const modal = ensureLightbox();
-  lastTrigger = image.closest(".message-media-link") || image;
+  lastTrigger = image.closest('.message__media-link') || image;
   scrollPositionsBeforeLightbox = captureScrollPositions(lastTrigger);
   initialScale = 1;
   resetScale();
@@ -213,8 +213,8 @@ function handleKeydown(event) {
 }
 
 document.addEventListener("click", (event) => {
-  const link = event.target.closest(".message-media-link");
-  const image = link?.querySelector(":scope > .message-media");
+  const link = event.target.closest('.message__media-link');
+  const image = link?.querySelector(':scope > .message__media');
   if (!image) return;
   event.preventDefault();
   event.stopPropagation();

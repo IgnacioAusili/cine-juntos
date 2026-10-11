@@ -1,14 +1,14 @@
-import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
-import { hydrateIcons, hideTooltip } from "../icons-tooltips.js?v=20261011-lucide-icons-repair-01";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { hydrateIcons, hideTooltip } from "../icons-tooltips.js?v=20261011-bem-itcss-oocss-04";
 import { shouldAnchorChatCollapseHandleInHeader } from "./chat-collapse-header-layout.js?v=20261010-file-size-refactor-02";
-import { isFullscreenPageActive } from "./chat-page-scroll.js?v=20261010-file-size-refactor-02";
-import { isStackedSessionLayout } from "./chat-responsive-layout.js?v=20261011-chat-ui-fixes-02";
-import { isMobilePortraitChatViewport } from "./chat-layout-breakpoints.js?v=20261011-chat-ui-fixes-02";
+import { isFullscreenPageActive } from "./chat-page-scroll.js?v=20261011-bem-itcss-oocss-04";
+import { isStackedSessionLayout } from "./chat-responsive-layout.js?v=20261011-bem-itcss-oocss-04";
+import { isMobilePortraitChatViewport } from "./chat-layout-breakpoints.js?v=20261011-bem-itcss-oocss-04";
 
 export function syncInsideChatPanelOffset() {
   if (!dom.playerFrame) return;
 
-  const isFullscreen = document.body.classList.contains("fullscreen-mode") || Boolean(document.fullscreenElement);
+  const isFullscreen = document.body.classList.contains('page-context--fullscreen') || Boolean(document.fullscreenElement);
   if (!isFullscreen || !dom.playerActions) {
     dom.playerFrame.style.removeProperty("--inside-chat-top-offset");
     return;
@@ -22,10 +22,10 @@ export function syncInsideChatPanelOffset() {
 
 export function syncExternalChatCollapseHandleOffset() {
   if (!dom.sessionView || !dom.workspace || !dom.chatArea) return;
-  if (dom.sessionView.classList.contains("chat-layout-transitioning")) return;
+  if (dom.sessionView.classList.contains('session-view--chat-layout-transitioning')) return;
 
   if (dom.sessionView.dataset.chatDock === "bottom") {
-    dom.sessionView.classList.remove("chat-collapse-in-header");
+    dom.sessionView.classList.remove('session-view--chat-collapse-in-header');
     dom.sessionView.style.removeProperty("--chat-right-collapse-handle-top");
     dom.sessionView.style.removeProperty("--chat-right-collapse-handle-left");
     dom.sessionView.style.removeProperty("--chat-right-collapse-handle-size");
@@ -33,7 +33,7 @@ export function syncExternalChatCollapseHandleOffset() {
 
   if ((dom.sessionView.dataset.chatDock || "right") !== "bottom") {
     const isRightDock = dom.sessionView.dataset.chatDock === "right";
-    const isExpanded = !dom.sessionView.classList.contains("chat-collapsed");
+    const isExpanded = !dom.sessionView.classList.contains('session-view--chat-collapsed');
     const chatHeader = dom.chatArea.querySelector(".chat-tools");
     const chatRect = dom.chatArea.getBoundingClientRect();
     const isHeaderAnchoredLayout = Boolean(
@@ -46,16 +46,16 @@ export function syncExternalChatCollapseHandleOffset() {
           isStacked: isStackedSessionLayout(),
         }),
     );
-    dom.sessionView.classList.toggle("chat-collapse-in-header", isHeaderAnchoredLayout);
+    dom.sessionView.classList.toggle('session-view--chat-collapse-in-header', isHeaderAnchoredLayout);
     if (isHeaderAnchoredLayout) {
       const headerRect = chatHeader.getBoundingClientRect();
       const chatStyles = getComputedStyle(dom.chatArea);
       const headerStyles = getComputedStyle(chatHeader);
       const chatBorderTop = Number.parseFloat(chatStyles.borderTopWidth) || 0;
       const chatBorderLeft = Number.parseFloat(chatStyles.borderLeftWidth) || 0;
-      const firstLeadingControl = chatHeader.querySelector(".chat-tools-leading > *");
+      const firstLeadingControl = chatHeader.querySelector('.chat-tools__leading > *');
       const firstHeaderControlRect = firstLeadingControl?.getBoundingClientRect();
-      const iconAnchor = dom.collapseChatButton?.querySelector(".chat-collapse-icon-anchor");
+      const iconAnchor = dom.collapseChatButton?.querySelector('.chat-area__collapse-icon-anchor');
       const iconAnchorRect = iconAnchor?.getBoundingClientRect();
       const iconAnchorSize =
         iconAnchorRect?.width
@@ -208,7 +208,7 @@ export function updateCollapseButton() {
   // semántica y el icono de cada acción; ningún nodo se reposiciona entre
   // contraer y expandir.
   hideTooltip(true);
-  const collapsed = dom.sessionView.classList.contains("chat-collapsed");
+  const collapsed = dom.sessionView.classList.contains('session-view--chat-collapsed');
   const dock = dom.sessionView.dataset.chatDock || "right";
   const isPortraitMobileRightDock =
     dock === "right"
@@ -260,7 +260,7 @@ export function updateCollapseButton() {
       : isFullscreenLandscapeBottomDock
         ? isCollapsedState ? "arrow-up" : "arrow-down"
         : iconName;
-    const iconAnchor = button.querySelector(".chat-collapse-icon-anchor");
+    const iconAnchor = button.querySelector('.chat-area__collapse-icon-anchor');
     const icon = iconAnchor?.querySelector("[data-lucide]");
     button.dataset.tooltip = label;
     button.removeAttribute("title");

@@ -23,7 +23,7 @@ export function getSystemRollGeometry(faceHeight) {
 
 export function createSystemRollStage(previousMarkup, nextNodes, geometry) {
   const stage = document.createElement("span");
-  stage.className = "system-message-roll-stage";
+  stage.className = 'message__system-roll-stage';
   stage.style.setProperty("--system-roll-radius", `${geometry.radius}px`);
   stage.style.setProperty("--system-roll-angle", `${SYSTEM_ROLL_FACE_ANGLE}deg`);
   stage.style.setProperty("--system-roll-visual-width", `${geometry.width}px`);
@@ -32,11 +32,11 @@ export function createSystemRollStage(previousMarkup, nextNodes, geometry) {
   stage.style.setProperty("--system-roll-perspective", `${geometry.perspective}px`);
 
   const drum = document.createElement("span");
-  drum.className = "system-message-roll-drum";
+  drum.className = 'message__system-roll-drum';
   const faces = [];
   for (let index = 0; index < SYSTEM_ROLL_FACE_COUNT; index += 1) {
     const face = document.createElement("span");
-    face.className = "system-message-roll-face";
+    face.className = 'message__system-roll-face';
     face.style.transform = `rotateX(${-index * SYSTEM_ROLL_FACE_ANGLE}deg) translateZ(${geometry.radius}px)`;
     face.style.opacity = index === SYSTEM_ROLL_INCOMING_FACE_INDEX ? "0" : "1";
     const contentNodes = index === 0
@@ -47,7 +47,7 @@ export function createSystemRollStage(previousMarkup, nextNodes, geometry) {
 
     if (contentNodes) {
       const content = document.createElement("span");
-      content.className = "system-message-roll-content";
+      content.className = 'message__system-roll-content';
       content.append(...contentNodes);
       face.append(content);
     }

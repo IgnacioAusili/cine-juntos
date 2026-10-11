@@ -54,9 +54,9 @@ export function prepareCollapseVisualTransition(items) {
     // aparece como un panel redondeado durante la transición.
     const clone = entry.target.cloneNode(true);
     const row = document.createElement("div");
-    row.className = "message-bubble-row system-message-row";
+    row.className = 'message__bubble-row message__system-row';
     const shell = document.createElement("article");
-    shell.className = "message system";
+    shell.className = 'message message--system';
     row.append(clone);
     shell.append(row);
     const { rect } = entry;
@@ -122,8 +122,8 @@ function captureScrollState(items) {
   };
 }
 export function getGroupTransitionTarget(item) {
-  return item?.querySelector(".message-system-bubble")
-    || item?.querySelector(".system-message-row")
+  return item?.querySelector('.message__system-bubble')
+    || item?.querySelector('.message__system-row')
     || item;
 }
 

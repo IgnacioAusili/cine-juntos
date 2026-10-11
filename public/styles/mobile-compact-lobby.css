@@ -109,18 +109,18 @@
   /* Los dos composers comparten una única altura compacta. El textarea
      conserva 20px de línea y 5px arriba/abajo para centrar el hint; si el
      contenido crece, el autoajuste multilinea sigue teniendo prioridad. */
-  body:not(.is-lobby) .message-form .input-wrapper {
+  body:not(.page-context--lobby) .message-form .message-form__input-wrapper {
     min-height: 30px;
   }
 
-  body:not(.is-lobby) .message-form .input-wrapper textarea {
+  body:not(.page-context--lobby) .message-form .message-form__input-wrapper textarea {
     height: 30px;
     min-height: 30px;
     padding-block: 5px;
   }
 
-  body:not(.is-lobby) .message-form .input-wrapper .emoji-trigger,
-  body:not(.is-lobby) .message-form .input-wrapper .icon-button--send {
+  body:not(.page-context--lobby) .message-form .message-form__input-wrapper .icon-button--emoji-trigger,
+  body:not(.page-context--lobby) .message-form .message-form__input-wrapper .icon-button--send {
     min-height: 30px !important;
     height: 30px !important;
   }

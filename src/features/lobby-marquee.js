@@ -17,18 +17,18 @@ const LOBBY_MARQUEE_SPEED_PX_PER_SECOND = 26;
 
 export function wireLobbyMarqueeContent(screen) {
   const track = screen?.querySelector('.lobby-screen__marquee-track');
-  const sets = [...(track?.querySelectorAll(".marquee-set") || [])];
+  const sets = [...(track?.querySelectorAll('.lobby-screen__marquee-set') || [])];
   if (sets.length < 4) return;
 
-  const emojiGroup = sets[0].querySelector(".marquee-emojis");
-  const liveOption = sets[0].querySelector(".live");
-  const messageSlots = [...sets[0].querySelectorAll(".marquee-message")];
+  const emojiGroup = sets[0].querySelector('.lobby-screen__marquee-emojis');
+  const liveOption = sets[0].querySelector('.lobby-screen__marquee-live');
+  const messageSlots = [...sets[0].querySelectorAll('.lobby-screen__marquee-message')];
   const messageOptions = [
     ...messageSlots.map((message) => ({ text: message.textContent, className: message.className })),
-    { text: liveOption?.textContent || "En vivo", className: "live" },
+    { text: liveOption?.textContent || "En vivo", className: 'lobby-screen__marquee-live' },
     ...LOBBY_MARQUEE_EXTRA_MESSAGES.map((text) => ({
       text,
-      className: text === "Estreno" ? "marquee-premiere" : "marquee-message",
+      className: text === "Estreno" ? 'lobby-screen__marquee-message--premiere' : 'lobby-screen__marquee-message',
     })),
   ];
   const emojis = (emojiGroup?.dataset.emojis || "").split(",").filter(Boolean);
@@ -49,9 +49,9 @@ export function wireLobbyMarqueeContent(screen) {
     .sort()
     .join("\u001f");
   const emojiKey = (order) => order.join("\u001f");
-  const currentPhraseOrder = (set) => [...set.querySelectorAll(".live, .marquee-message, .marquee-premiere")]
+  const currentPhraseOrder = (set) => [...set.querySelectorAll('.lobby-screen__marquee-live, .lobby-screen__marquee-message, .lobby-screen__marquee-message--premiere')]
     .map((phrase) => ({ text: phrase.textContent, className: phrase.className }));
-  const currentEmojiOrder = (set) => [...set.querySelectorAll(".marquee-emoji")]
+  const currentEmojiOrder = (set) => [...set.querySelectorAll('.lobby-screen__marquee-emoji')]
     .map((emoji) => emoji.textContent);
   const recentPhraseOrders = [];
   const rememberPhraseOrder = (order) => {
@@ -122,18 +122,18 @@ export function wireLobbyMarqueeContent(screen) {
       return item;
     });
     const newEmojiGroup = document.createElement("span");
-    newEmojiGroup.className = "marquee-emojis";
+    newEmojiGroup.className = 'lobby-screen__marquee-emojis';
     newEmojiGroup.dataset.emojis = emojis.join(",");
     newEmojiGroup.setAttribute("aria-hidden", "true");
     newEmojiGroup.replaceChildren(...emojiOrder.map((emoji) => {
       const item = document.createElement("span");
-      item.className = "marquee-emoji";
+      item.className = 'lobby-screen__marquee-emoji';
       item.textContent = emoji;
       return item;
     }));
 
-    set.querySelector(".marquee-emojis")?.replaceWith(newEmojiGroup);
-    [...set.querySelectorAll(".live, .marquee-message, .marquee-premiere")]
+    set.querySelector('.lobby-screen__marquee-emojis')?.replaceWith(newEmojiGroup);
+    [...set.querySelectorAll('.lobby-screen__marquee-live, .lobby-screen__marquee-message, .lobby-screen__marquee-message--premiere')]
       .forEach((node) => node.remove());
     set.prepend(...phraseNodes);
     phraseNodes.at(-1)?.after(newEmojiGroup);
@@ -169,17 +169,17 @@ export function wireLobbyMarqueeContent(screen) {
   let activeIncomingSet = null;
   const isLobbyMarqueeVisible = () => (
     !screen.hidden
-    && document.body.classList.contains("is-lobby")
+    && document.body.classList.contains('page-context--lobby')
     && document.visibilityState !== "hidden"
   );
 
   function finishMarqueeStep(animation, incomingSet) {
     if (activeAnimation !== animation) return;
 
-    const outgoingSet = track.querySelector(".marquee-set");
+    const outgoingSet = track.querySelector('.lobby-screen__marquee-set');
     if (!outgoingSet || outgoingSet !== incomingSet) return;
 
-    const remainingSets = [...track.querySelectorAll(".marquee-set")].slice(1);
+    const remainingSets = [...track.querySelectorAll('.lobby-screen__marquee-set')].slice(1);
     const forbiddenPhraseOrders = remainingSets.map((set) => phraseSetKey(currentPhraseOrder(set)));
     const forbiddenEmojiOrders = remainingSets.map((set) => emojiKey(currentEmojiOrder(set)));
     forbiddenPhraseOrders.push(phraseSetKey(currentPhraseOrder(outgoingSet)));
@@ -192,7 +192,7 @@ export function wireLobbyMarqueeContent(screen) {
     animation.cancel();
     track.style.transform = "translateX(0px)";
 
-    const liveCount = remainingSets.filter((set) => set.querySelector(".live")).length;
+    const liveCount = remainingSets.filter((set) => set.querySelector('.lobby-screen__marquee-live')).length;
     const nextPhraseOrder = chooseDifferentTextOrder(
       forbiddenPhraseOrders,
       liveCount === 0,
@@ -243,7 +243,7 @@ export function wireLobbyMarqueeContent(screen) {
   document.addEventListener("visibilitychange", syncMarqueePlayback);
 
   const animateNextSet = () => {
-    const currentSets = [...track.querySelectorAll(".marquee-set")];
+    const currentSets = [...track.querySelectorAll('.lobby-screen__marquee-set')];
     const incomingSet = currentSets[0];
     if (!incomingSet || currentSets.length < 2) return;
 

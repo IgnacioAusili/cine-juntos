@@ -6,7 +6,7 @@
 }
 
 @media (min-width: 681px) and (max-width: 980px) {
-  body.is-lobby .lobby-screen__layout-picker {
+  body.page-context--lobby .lobby-screen__layout-picker {
     position: fixed;
     top: 36px;
     right: 14px;
@@ -22,7 +22,7 @@
     backdrop-filter: blur(12px);
   }
 
-  body.is-lobby .lobby-screen__layout-picker label {
+  body.page-context--lobby .lobby-screen__layout-picker label {
     color: var(--muted-2);
     font-size: 0.62rem;
     font-weight: 700;
@@ -30,7 +30,7 @@
     text-transform: uppercase;
   }
 
-  body.is-lobby .lobby-screen__layout-picker select {
+  body.page-context--lobby .lobby-screen__layout-picker select {
     min-width: 0;
     min-height: 30px;
     padding: 0 28px 0 9px;
@@ -40,18 +40,18 @@
     font-size: 0.72rem;
   }
 
-  body.is-lobby .lobby-screen__hero {
+  body.page-context--lobby .lobby-screen__hero {
     container-type: inline-size;
     row-gap: clamp(6px, 1.6vh, 14px);
   }
 
-  body.is-lobby .lobby-screen__title {
+  body.page-context--lobby .lobby-screen__title {
     /* El tamaño sigue el ancho real de la columna del hero, no el viewport:
        así conserva presencia cuando todavía hay espacio horizontal. */
     font-size: clamp(4.75rem, 18cqw, 6.8rem);
   }
 
-body.is-lobby[data-lobby-layout="columns"] .lobby-screen__grid {
+body.page-context--lobby[data-lobby-layout="columns"] .lobby-screen__grid {
     width: 100%;
     grid-template-columns: minmax(0, 1fr) minmax(360px, 0.84fr);
     align-items: center;
@@ -59,59 +59,59 @@ body.is-lobby[data-lobby-layout="columns"] .lobby-screen__grid {
     padding-inline: clamp(2px, 1vw, 10px);
   }
 
-  body.is-lobby[data-lobby-layout="columns"] .lobby-screen__hero {
+  body.page-context--lobby[data-lobby-layout="columns"] .lobby-screen__hero {
     width: 100%;
     max-width: none;
     column-gap: clamp(16px, 2.8vw, 28px);
   }
 
-  body.is-lobby[data-lobby-layout="columns"] .lobby-screen__title-icon {
+  body.page-context--lobby[data-lobby-layout="columns"] .lobby-screen__title-icon {
     width: clamp(104px, 12vw, 150px);
     height: clamp(104px, 12vw, 150px);
   }
 
-  body.is-lobby[data-lobby-layout="columns"] .lobby-screen__title {
+  body.page-context--lobby[data-lobby-layout="columns"] .lobby-screen__title {
     justify-self: start;
     text-align: left;
   }
 
-  body.is-lobby[data-lobby-layout="columns"] .lobby-screen__ticket {
+  body.page-context--lobby[data-lobby-layout="columns"] .lobby-screen__ticket {
     width: min(410px, 100%);
     justify-self: center;
   }
 
   /* En dos columnas la franja de prestaciones no tiene ancho suficiente;
      se reserva el espacio para que hero y boleto respiren. */
-  body.is-lobby[data-lobby-layout="columns"] .lobby-screen__features {
+  body.page-context--lobby[data-lobby-layout="columns"] .lobby-screen__features {
     display: grid;
     gap: clamp(6px, 1.4vw, 14px) clamp(8px, 1.8vw, 20px);
     margin-top: clamp(4px, 1.2vh, 14px);
     padding-top: clamp(8px, 1.5vh, 16px);
   }
 
-  body.is-lobby[data-lobby-layout="columns"] .lobby-screen__feature {
+  body.page-context--lobby[data-lobby-layout="columns"] .lobby-screen__feature {
     gap: clamp(6px, 1.1vw, 12px);
   }
 
-  body.is-lobby[data-lobby-layout="columns"] .lobby-screen__feature-icon svg {
+  body.page-context--lobby[data-lobby-layout="columns"] .lobby-screen__feature-icon svg {
     width: clamp(17px, 2.2vw, 22px);
     height: clamp(17px, 2.2vw, 22px);
   }
 
-  body.is-lobby[data-lobby-layout="columns"] .lobby-screen__feature-text strong {
+  body.page-context--lobby[data-lobby-layout="columns"] .lobby-screen__feature-text strong {
     font-size: clamp(0.72rem, 0.95vw, 0.88rem);
   }
 
-  body.is-lobby[data-lobby-layout="columns"] .lobby-screen__feature-text small {
+  body.page-context--lobby[data-lobby-layout="columns"] .lobby-screen__feature-text small {
     font-size: clamp(0.6rem, 0.8vw, 0.74rem);
     line-height: 1.25;
   }
 
-  body.is-lobby[data-lobby-layout="hero"] .lobby-screen__grid {
+  body.page-context--lobby[data-lobby-layout="hero"] .lobby-screen__grid {
     gap: 14px;
   }
 
-  body.is-lobby[data-lobby-layout="hero"] .lobby-screen__hero {
+  body.page-context--lobby[data-lobby-layout="hero"] .lobby-screen__hero {
     width: min(650px, calc(100% - 32px));
     grid-template-columns: 1fr;
     grid-template-areas:
@@ -124,56 +124,56 @@ body.is-lobby[data-lobby-layout="columns"] .lobby-screen__grid {
     text-align: center;
   }
 
-  body.is-lobby[data-lobby-layout="hero"] .lobby-screen__title {
+  body.page-context--lobby[data-lobby-layout="hero"] .lobby-screen__title {
     text-align: center;
   }
 
-  body.is-lobby[data-lobby-layout="hero"] .lobby-screen__features {
+  body.page-context--lobby[data-lobby-layout="hero"] .lobby-screen__features {
     display: grid;
     margin-top: 4px;
   }
 
-  body.is-lobby[data-lobby-layout="hero"] .lobby-screen__ticket {
+  body.page-context--lobby[data-lobby-layout="hero"] .lobby-screen__ticket {
     width: min(430px, 100%);
   }
 
-  body.is-lobby[data-lobby-layout="compact"] .lobby-screen {
+  body.page-context--lobby[data-lobby-layout="compact"] .lobby-screen {
     padding-block: 2px 8px;
   }
 
-  body.is-lobby[data-lobby-layout="compact"] .lobby-screen__grid {
+  body.page-context--lobby[data-lobby-layout="compact"] .lobby-screen__grid {
     gap: 8px;
     margin-top: 30px;
   }
 
-  body.is-lobby[data-lobby-layout="compact"] .lobby-screen__hero {
+  body.page-context--lobby[data-lobby-layout="compact"] .lobby-screen__hero {
     width: min(700px, calc(100% - 32px));
     row-gap: 6px;
   }
 
-  body.is-lobby[data-lobby-layout="compact"] .lobby-screen__title {
+  body.page-context--lobby[data-lobby-layout="compact"] .lobby-screen__title {
     font-size: clamp(3.7rem, 7vw, 5.8rem);
   }
 
-  body.is-lobby[data-lobby-layout="compact"] .lobby-screen__description {
+  body.page-context--lobby[data-lobby-layout="compact"] .lobby-screen__description {
     font-size: 0.92rem;
   }
 
-  body.is-lobby[data-lobby-layout="compact"] .lobby-screen__ticket {
+  body.page-context--lobby[data-lobby-layout="compact"] .lobby-screen__ticket {
     width: min(400px, 100%);
   }
 }
 
 /* El flujo dinámico apilado usa la misma presentación editorial que el lobby
    vertical móvil, sin depender del breakpoint de ancho que activa esa vista. */
-body.is-lobby[data-lobby-flow="single-column"] {
+body.page-context--lobby[data-lobby-flow="single-column"] {
   height: auto;
   min-height: 100dvh;
   overflow-x: hidden;
   overflow-y: auto;
 }
 
-body.is-lobby[data-lobby-flow="single-column"] .app-shell {
+body.page-context--lobby[data-lobby-flow="single-column"] .app-shell {
   height: auto;
   min-height: 100dvh;
   padding-block-start: 10px;
@@ -183,13 +183,13 @@ body.is-lobby[data-lobby-flow="single-column"] .app-shell {
   gap: 0;
 }
 
-body.is-lobby[data-lobby-flow="single-column"] .site-header,
-body.is-lobby[data-lobby-flow="single-column"] .lobby-screen__marquee,
-body.is-lobby[data-lobby-flow="single-column"] .lobby-screen__features {
+body.page-context--lobby[data-lobby-flow="single-column"] .site-header,
+body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__marquee,
+body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__features {
   display: none;
 }
 
-body.is-lobby[data-lobby-flow="single-column"] .lobby-screen {
+body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen {
   height: auto;
   min-height: max(0px, calc(100dvh - var(--app-shell-gutter)));
   gap: 0;
@@ -199,7 +199,7 @@ body.is-lobby[data-lobby-flow="single-column"] .lobby-screen {
   padding-block: 0 8px;
 }
 
-body.is-lobby[data-lobby-flow="single-column"] .lobby-screen__grid {
+body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__grid {
   width: 100%;
   min-height: 0;
   grid-template-columns: minmax(0, 1fr);
@@ -210,7 +210,7 @@ body.is-lobby[data-lobby-flow="single-column"] .lobby-screen__grid {
   transform: translateY(-8px);
 }
 
-body.is-lobby[data-lobby-flow="single-column"] .lobby-screen__hero {
+body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__hero {
   container-type: inline-size;
   position: relative;
   display: grid;
@@ -228,7 +228,7 @@ body.is-lobby[data-lobby-flow="single-column"] .lobby-screen__hero {
   transform: translateY(-4px);
 }
 
-body.is-lobby[data-lobby-flow="single-column"] .lobby-screen__title {
+body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__title {
   grid-area: title;
   font-size: clamp(4.65rem, 18cqw, 5.8rem);
   line-height: 0.92;

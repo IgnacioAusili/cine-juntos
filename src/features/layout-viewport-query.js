@@ -1,4 +1,4 @@
-import { dom } from "../core/dom.js?v=20261010-file-size-refactor-02";
+import { dom } from "../core/dom.js?v=20261011-bem-itcss-oocss-04";
 
 const MOBILE_LAYOUT_QUERY = "(max-width: 980px)";
 
@@ -8,7 +8,7 @@ export function isMobileLayout() {
 
 export function isFullscreenActive() {
   return Boolean(document.fullscreenElement)
-    || document.body.classList.contains("fullscreen-mode");
+    || document.body.classList.contains('page-context--fullscreen');
 }
 
 function isOverlayChatInput(target) {
@@ -38,7 +38,7 @@ export function isBottomChatInputFocused() {
 }
 
 export function isBottomChatKeyboardOpen() {
-  return document.documentElement.classList.contains("bottom-chat-keyboard-open");
+  return document.documentElement.classList.contains('page-context--bottom-chat-keyboard-open');
 }
 
 export function isRightChatInputFocused() {

@@ -24,9 +24,9 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap"
     />
     <link rel="icon" href="./public/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="./public/styles.css?v=20261011-player-empty-icon-layer-01" />
+    <link rel="stylesheet" href="./public/styles.css?v=20261011-bem-itcss-oocss-04" />
   </head>
-  <body class="is-lobby">
+  <body class="page-context--lobby">
     <div class="app-shell">
       <header class="site-header">
         <div class="site-header__brand">
@@ -89,7 +89,7 @@
       <section class="lobby-screen" id="lobbyScreen" aria-label="Entrada a sala">
         <div class="lobby-screen__marquee" aria-hidden="true">
           <span class="lobby-screen__marquee-track">
-            <span class="marquee-set"><span class="live">En vivo</span><span class="marquee-message">Salas publicas</span><span class="marquee-message">Chat integrado</span><span class="marquee-message">Elegí lo que querés ver</span><span class="marquee-message">Compartí con amigos</span><span class="marquee-message">Disfrutá</span><span class="marquee-emojis" data-emojis="🎬,🍿,✨,🎥,💬,💚,🌟" aria-hidden="true">🎬 🍿 ✨</span><span class="spacer"></span></span><span class="marquee-set"><span class="live">En vivo</span><span class="marquee-message">Salas publicas</span><span class="marquee-message">Chat integrado</span><span class="marquee-message">Elegí lo que querés ver</span><span class="marquee-message">Compartí con amigos</span><span class="marquee-message">Disfrutá</span><span class="marquee-emojis" data-emojis="🎬,🍿,✨,🎥,💬,💚,🌟" aria-hidden="true">🎬 🍿 ✨</span><span class="spacer"></span></span><span class="marquee-set"><span class="live">En vivo</span><span class="marquee-message">Salas publicas</span><span class="marquee-message">Chat integrado</span><span class="marquee-message">Elegí lo que querés ver</span><span class="marquee-message">Compartí con amigos</span><span class="marquee-message">Disfrutá</span><span class="marquee-emojis" data-emojis="🎬,🍿,✨,🎥,💬,💚,🌟" aria-hidden="true">🎬 🍿 ✨</span><span class="spacer"></span></span><span class="marquee-set"><span class="live">En vivo</span><span class="marquee-message">Salas publicas</span><span class="marquee-message">Chat integrado</span><span class="marquee-message">Elegí lo que querés ver</span><span class="marquee-message">Compartí con amigos</span><span class="marquee-message">Disfrutá</span><span class="marquee-emojis" data-emojis="🎬,🍿,✨,🎥,💬,💚,🌟" aria-hidden="true">🎬 🍿 ✨</span><span class="spacer"></span></span>
+            <span class="lobby-screen__marquee-set"><span class="lobby-screen__marquee-live">En vivo</span><span class="lobby-screen__marquee-message">Salas publicas</span><span class="lobby-screen__marquee-message">Chat integrado</span><span class="lobby-screen__marquee-message">Elegí lo que querés ver</span><span class="lobby-screen__marquee-message">Compartí con amigos</span><span class="lobby-screen__marquee-message">Disfrutá</span><span class="lobby-screen__marquee-emojis" data-emojis="🎬,🍿,✨,🎥,💬,💚,🌟" aria-hidden="true">🎬 🍿 ✨</span><span class="u-spacer"></span></span><span class="lobby-screen__marquee-set"><span class="lobby-screen__marquee-live">En vivo</span><span class="lobby-screen__marquee-message">Salas publicas</span><span class="lobby-screen__marquee-message">Chat integrado</span><span class="lobby-screen__marquee-message">Elegí lo que querés ver</span><span class="lobby-screen__marquee-message">Compartí con amigos</span><span class="lobby-screen__marquee-message">Disfrutá</span><span class="lobby-screen__marquee-emojis" data-emojis="🎬,🍿,✨,🎥,💬,💚,🌟" aria-hidden="true">🎬 🍿 ✨</span><span class="u-spacer"></span></span><span class="lobby-screen__marquee-set"><span class="lobby-screen__marquee-live">En vivo</span><span class="lobby-screen__marquee-message">Salas publicas</span><span class="lobby-screen__marquee-message">Chat integrado</span><span class="lobby-screen__marquee-message">Elegí lo que querés ver</span><span class="lobby-screen__marquee-message">Compartí con amigos</span><span class="lobby-screen__marquee-message">Disfrutá</span><span class="lobby-screen__marquee-emojis" data-emojis="🎬,🍿,✨,🎥,💬,💚,🌟" aria-hidden="true">🎬 🍿 ✨</span><span class="u-spacer"></span></span><span class="lobby-screen__marquee-set"><span class="lobby-screen__marquee-live">En vivo</span><span class="lobby-screen__marquee-message">Salas publicas</span><span class="lobby-screen__marquee-message">Chat integrado</span><span class="lobby-screen__marquee-message">Elegí lo que querés ver</span><span class="lobby-screen__marquee-message">Compartí con amigos</span><span class="lobby-screen__marquee-message">Disfrutá</span><span class="lobby-screen__marquee-emojis" data-emojis="🎬,🍿,✨,🎥,💬,💚,🌟" aria-hidden="true">🎬 🍿 ✨</span><span class="u-spacer"></span></span>
           </span>
         </div>
 
@@ -333,36 +333,36 @@
                 preload="metadata"
               ></video>
               <div
-                class="player-loading-overlay"
+                class="player-frame__loading-overlay"
                 id="playerLoadingOverlay"
                 role="status"
                 aria-live="polite"
                 aria-label="Cargando video"
                 hidden
               >
-                <span class="player-loading-spinner" aria-hidden="true"></span>
+                <span class="player-frame__loading-spinner" aria-hidden="true"></span>
               </div>
               <div
-                class="playback-gesture-indicator"
+                class="player-frame__gesture-indicator"
                 id="playbackGestureIndicator"
                 aria-hidden="true"
               >
-                <span class="playback-gesture-icon   playback-gesture-icon-play" data-lucide="play"></span>
-                <span class="playback-gesture-icon   playback-gesture-icon-pause" data-lucide="pause"></span>
-                <span class="playback-gesture-icon   playback-gesture-icon-volume" data-lucide="volume-2"></span>
+                <span class="player-frame__gesture-icon   player-frame__gesture-icon--play" data-lucide="play"></span>
+                <span class="player-frame__gesture-icon   player-frame__gesture-icon--pause" data-lucide="pause"></span>
+                <span class="player-frame__gesture-icon   player-frame__gesture-icon--volume" data-lucide="volume-2"></span>
               </div>
-              <div class="player-center-actions" role="group" aria-label="Controles centrales del reproductor"></div>
-              <div class="mini-player-return-hint" aria-live="polite">
+              <div class="player-frame__center-actions" role="group" aria-label="Controles centrales del reproductor"></div>
+              <div class="mini-player-surface__return-hint" aria-live="polite">
                 <span>El video está en el mini-reproductor</span>
                 <strong>Para verlo en la pantalla principal, cancelá la vista en miniatura desde este botón</strong>
               </div>
-              <span class="mini-player-return-arrow" aria-hidden="true"></span>
+              <span class="mini-player-surface__return-arrow" aria-hidden="true"></span>
               <div class="empty-player" id="emptyPlayer">
                 <span data-lucide="film"></span>
               </div>
               <p
                 id="syncStatus"
-                class="sync-status   video-status   empty   player-status-badge"
+                class="sync-status   sync-status--video   sync-status--empty   player-status-badge"
                 role="button"
                 tabindex="0"
                 title="Estado de video"
@@ -372,9 +372,9 @@
                 <span id="videoStatusText">Sin contenido</span>
               </p>
 
-              <div class="player-actions" role="group" aria-label="Controles de reproductor">
+              <div class="player-frame__actions" role="group" aria-label="Controles de reproductor">
                   <button
-                    class="icon-button   icon-button--compact-tool   player-tool   player-chat-toggle"
+                    class="icon-button   icon-button--compact-tool   player-frame__tool   player-chat-toggle"
                     id="playerChatToggleButton"
                     type="button"
                     aria-label="Mostrar chat"
@@ -382,13 +382,13 @@
                     data-tooltip="Mostrar chat (Tab)"
                   >
                     <span data-lucide="message-square"></span>
-                    <span class="unread-badge   player-chat-unread-badge" id="insideChatUnread" hidden><span class="player-chat-unread-count">0</span></span>
+                    <span class="unread-badge   player-chat__unread-badge" id="insideChatUnread" hidden><span class="player-chat__unread-count">0</span></span>
                 </button>
               </div>
-              <div class="player-bottom-actions" role="group" aria-label="Controles inferiores del reproductor">
+              <div class="player-frame__bottom-actions" role="group" aria-label="Controles inferiores del reproductor">
                 <div class="player-controls-bar">
                   <button
-                    class="video-control-button   player-skip-control"
+                    class="video-control-button   video-control-button--skip"
                     id="playerBackButton"
                     type="button"
                     aria-label="Retroceder 10 segundos"
@@ -409,7 +409,7 @@
                   </button>
 
                   <button
-                    class="video-control-button   player-skip-control"
+                    class="video-control-button   video-control-button--skip"
                     id="playerForwardButton"
                     type="button"
                     aria-label="Avanzar 10 segundos"
@@ -432,9 +432,9 @@
                     >
                       <span data-lucide="volume-2"></span>
                     </button>
-                    <div class="player-volume-slider-wrap">
+                    <div class="player-volume-group__slider">
                       <input
-                        class="player-volume-input"
+                        class="player-volume-group__input"
                         id="playerVolumeInput"
                         type="range"
                         min="0"
@@ -447,9 +447,9 @@
                   </div>
 
                   <div class="player-progress-group">
-                    <span class="player-time" id="playerCurrentTime">0:00</span>
+                    <span class="player-progress-group__time" id="playerCurrentTime">0:00</span>
                     <input
-                      class="player-seek-input"
+                      class="player-progress-group__seek-input"
                       id="playerSeekInput"
                       type="range"
                       min="0"
@@ -458,21 +458,21 @@
                       value="0"
                       aria-label="Avance del video"
                     />
-                    <button class="player-time   player-time-total" id="playerDuration" type="button">0:00</button>
+                    <button class="player-progress-group__time   player-progress-group__time--total" id="playerDuration" type="button">0:00</button>
                   </div>
 
                   <div
-                    class="player-controls-scroll-zone"
+                    class="player-controls-bar__scroll-zone"
                     role="group"
                     aria-label="Controles adicionales"
                   >
                     <div
-                      class="player-controls-scroll-window"
+                      class="player-controls-bar__scroll-window"
                       tabindex="0"
                       role="region"
                       aria-label="Deslizar controles adicionales"
                     >
-                      <div class="player-controls-scroll-track">
+                      <div class="player-controls-bar__scroll-track">
                         <label
                           class="player-select   player-rate-select"
                           data-player-control="rate"
@@ -516,7 +516,7 @@
                     </div>
 
                     <input
-                      class="player-controls-scroll-indicator"
+                      class="player-controls-bar__scroll-indicator"
                       type="range"
                       min="0"
                       max="0"
@@ -538,7 +538,7 @@
                 aria-labelledby="resumeVideoPopupTitle"
                 aria-describedby="resumeVideoPopupMessage"
               >
-                <div class="player-inline-dialog-card" role="document">
+                <div class="player-inline-dialog__card" role="document">
                   <button id="closeResumeVideoDialogButton" type="button" class="o-dialog-close" aria-label="Cerrar diálogo" data-tooltip="Cerrar diálogo (Esc)">
                     <span data-lucide="x" aria-hidden="true"></span>
                   </button>
@@ -556,9 +556,9 @@
                 </div>
               </div>
               <aside class="player-chat" id="playerChat" aria-label="Chat dentro del video">
-                <div class="player-chat-header">
+                <div class="player-chat__header">
                   <button
-                    class="presence-pill   player-chat-presence"
+                    class="presence-pill   player-chat__presence"
                     id="overlayPresencePill"
                     type="button"
                     aria-label="Usuarios conectados"
@@ -571,7 +571,7 @@
                     <span class="presence-pill__self-label" id="overlayPresenceSelfLabel" hidden></span>
                     <span id="overlayParticipantCount">1</span>
                   </button>
-                  <div class="player-chat-header-actions">
+                  <div class="player-chat__header-actions">
                     <div
                       class="chat-style-toggle"
                       id="chatStyleToggle"
@@ -629,21 +629,21 @@
                     </button>
                   </div>
                 </div>
-                <div class="messages-wrap">
-                  <div class="overlay-messages" id="overlayMessages" aria-live="polite"></div>
+                <div class="chat-message-list-shell">
+                  <div class="chat-message-list chat-message-list--overlay" id="overlayMessages" aria-live="polite"></div>
                   <div class="chat-scrollbar" aria-hidden="true">
-                    <div class="chat-scrollbar-thumb"></div>
+                    <div class="chat-scrollbar__thumb"></div>
                   </div>
                   <button class="scroll-bottom-btn" id="overlayScrollBottomBtn" type="button" hidden aria-label="Ir al último mensaje" data-tooltip="Ir al último mensaje">
                     <span data-lucide="chevrons-down"></span>
-                    <span class="scroll-bottom-badge" id="overlayScrollBadge">0</span>
+                    <span class="scroll-bottom-btn__badge" id="overlayScrollBadge">0</span>
                   </button>
                 </div>
-                <form class="message-form   overlay-message-form" id="overlayMessageForm">
+                <form class="message-form message-form--overlay" id="overlayMessageForm">
                 <div class="reply-preview" id="overlayReplyPreview" hidden></div>
                 <div class="image-preview-container" id="overlayImagePreview" hidden></div>
-                <div class="input-wrapper">
-                  <div class="textarea-shell">
+                <div class="message-form__input-wrapper">
+                  <div class="message-form__textarea-shell">
                     <textarea
                       id="overlayMessageInput"
                       autocomplete="off"
@@ -655,11 +655,11 @@
                       rows="1"
                     ></textarea>
                     <div class="composer-scrollbar" aria-hidden="true">
-                      <div class="composer-scrollbar-thumb"></div>
+                      <div class="composer-scrollbar__thumb"></div>
                     </div>
                   </div>
                     <button
-                      class="icon-button   icon-button--ghost   emoji-trigger"
+                      class="icon-button   icon-button--ghost   icon-button--emoji-trigger"
                       id="overlayEmojiButton"
                       type="button"
                       aria-label="Abrir emojis"
@@ -669,9 +669,9 @@
                       <span data-lucide="smile-plus"></span>
                     </button>
                     <button class="icon-button   icon-button--send" id="overlayMessageSend" type="submit" aria-label="Enviar mensaje" data-tooltip="Enviar mensaje (Enter)">
-                      <svg class="composer-progress-ring" viewBox="0 0 44 44" aria-hidden="true" focusable="false">
-                        <circle class="composer-progress-track" cx="22" cy="22" r="18.5" pathLength="100"></circle>
-                        <circle class="composer-progress-value" cx="22" cy="22" r="18.5" pathLength="100"></circle>
+                      <svg class="icon-button__progress-ring" viewBox="0 0 44 44" aria-hidden="true" focusable="false">
+                        <circle class="icon-button__progress-track" cx="22" cy="22" r="18.5" pathLength="100"></circle>
+                        <circle class="icon-button__progress-value" cx="22" cy="22" r="18.5" pathLength="100"></circle>
                       </svg>
                       <span data-lucide="send"></span>
                     </button>
@@ -684,8 +684,8 @@
 
           <aside class="chat-area" aria-label="Chat de la sala">
             <div class="chat-tools">
-              <span class="chat-collapse-header-slot" aria-hidden="true"></span>
-              <div class="chat-tools-leading">
+              <span class="chat-area__collapse-header-slot" aria-hidden="true"></span>
+              <div class="chat-tools__leading">
                 <button
                   class="presence-pill"
                   id="presencePill"
@@ -748,23 +748,23 @@
                 </div>
               </div>
               <div
-                class="chat-collapse-hover-zone   chat-collapse-hover-zone-collapse"
+                class="chat-area__collapse-hover-zone   chat-area__collapse-hover-zone--collapse"
                 data-chat-control="collapse"
               >
                 <button
-                  class="chat-collapse-handle"
+                  class="chat-area__collapse-handle"
                   id="collapseChatButton"
                   type="button"
                   aria-label="Contraer chat"
                   title="Contraer chat"
                   tabindex="-1"
                 >
-                  <span class="chat-collapse-icon-anchor">
+                  <span class="chat-area__collapse-icon-anchor">
                     <span data-lucide="arrow-right"></span>
                   </span>
                 </button>
               </div>
-              <div class="chat-tools-actions">
+              <div class="chat-tools__actions">
                 <button
                   class="help-button   help-button--chat-auto-switch"
                   type="button"
@@ -797,22 +797,22 @@
               </div>
             </div>
 
-            <div class="messages-wrap">
-              <div class="messages" id="messages" aria-live="polite"></div>
+            <div class="chat-message-list-shell">
+              <div class="chat-message-list" id="messages" aria-live="polite"></div>
               <div class="chat-scrollbar" aria-hidden="true">
-                <div class="chat-scrollbar-thumb"></div>
+                <div class="chat-scrollbar__thumb"></div>
               </div>
               <button class="scroll-bottom-btn" id="mainScrollBottomBtn" type="button" hidden aria-label="Ir al último mensaje" data-tooltip="Ir al último mensaje">
                 <span data-lucide="chevrons-down"></span>
-                <span class="scroll-bottom-badge" id="mainScrollBadge">0</span>
+                <span class="scroll-bottom-btn__badge" id="mainScrollBadge">0</span>
               </button>
             </div>
 
             <form class="message-form" id="messageForm">
               <div class="reply-preview" id="replyPreview" hidden></div>
               <div class="image-preview-container" id="imagePreview" hidden></div>
-              <div class="input-wrapper">
-                <div class="textarea-shell">
+              <div class="message-form__input-wrapper">
+                <div class="message-form__textarea-shell">
                   <textarea
                     id="messageInput"
                     autocomplete="off"
@@ -824,11 +824,11 @@
                     rows="1"
                   ></textarea>
                   <div class="composer-scrollbar" aria-hidden="true">
-                    <div class="composer-scrollbar-thumb"></div>
+                    <div class="composer-scrollbar__thumb"></div>
                   </div>
                 </div>
                 <button
-                  class="icon-button   icon-button--ghost   emoji-trigger"
+                  class="icon-button   icon-button--ghost   icon-button--emoji-trigger"
                   id="messageEmojiButton"
                   type="button"
                   aria-label="Abrir emojis"
@@ -838,9 +838,9 @@
                   <span data-lucide="smile-plus"></span>
                 </button>
                 <button class="icon-button   icon-button--send" id="mainMessageSend" type="submit" aria-label="Enviar mensaje" data-tooltip="Enviar mensaje (Enter)">
-                  <svg class="composer-progress-ring" viewBox="0 0 44 44" aria-hidden="true" focusable="false">
-                    <circle class="composer-progress-track" cx="22" cy="22" r="18.5" pathLength="100"></circle>
-                    <circle class="composer-progress-value" cx="22" cy="22" r="18.5" pathLength="100"></circle>
+                  <svg class="icon-button__progress-ring" viewBox="0 0 44 44" aria-hidden="true" focusable="false">
+                    <circle class="icon-button__progress-track" cx="22" cy="22" r="18.5" pathLength="100"></circle>
+                    <circle class="icon-button__progress-value" cx="22" cy="22" r="18.5" pathLength="100"></circle>
                   </svg>
                   <span data-lucide="send"></span>
                 </button>
@@ -849,18 +849,18 @@
             </form>
           </aside>
           <div
-            class="chat-collapse-hover-zone   chat-collapse-hover-zone-expand"
+            class="chat-area__collapse-hover-zone   chat-area__collapse-hover-zone--expand"
             data-chat-control="expand"
           >
             <button
-              class="chat-collapse-handle"
+              class="chat-area__collapse-handle"
               id="expandChatButton"
               type="button"
               aria-label="Expandir chat"
               title="Expandir chat"
               tabindex="-1"
             >
-              <span class="chat-collapse-icon-anchor">
+              <span class="chat-area__collapse-icon-anchor">
                 <span data-lucide="arrow-right"></span>
               </span>
             </button>
@@ -1073,11 +1073,11 @@
     <script src="./public/dev-runtime.js?v=20261010-file-size-refactor-02"></script>
     <script defer src="./public/vendor/lucide-0.468.0/lucide.min.js?v=20261010-file-size-refactor-02"></script>
     <script src="./public/firebase-config.js?v=20261010-file-size-refactor-02"></script>
-    <script type="module" src="./src/features/chat/image-lightbox.js?v=20261010-file-size-refactor-02"></script>
-    <script type="module" src="./src/features/tooltip-page-lifecycle.js?v=20261011-lucide-icons-repair-01"></script>
-    <script type="module" src="./src/main.js?v=20261011-player-empty-state-01"></script>
-    <script type="module" src="./src/features/chat/chat-input-layout.js?v=20261011-chat-interaction-fixes-01"></script>
-    <script type="module" src="./src/features/chat/component-aspect-layout.js?v=20261010-file-size-refactor-02"></script>
+    <script type="module" src="./src/features/chat/image-lightbox.js?v=20261011-bem-itcss-oocss-04"></script>
+    <script type="module" src="./src/features/tooltip-page-lifecycle.js?v=20261011-bem-itcss-oocss-04"></script>
+    <script type="module" src="./src/main.js?v=20261011-bem-itcss-oocss-04"></script>
+    <script type="module" src="./src/features/chat/chat-input-layout.js?v=20261011-bem-itcss-oocss-04"></script>
+    <script type="module" src="./src/features/chat/component-aspect-layout.js?v=20261011-bem-itcss-oocss-04"></script>
     <script type="module" src="./src/features/chat/switch-pointer-glow.js?v=20261010-file-size-refactor-02"></script>
   </body>
 </html>

@@ -1,25 +1,33 @@
 # Contrato CSS: ITCSS, BEM y OOCSS
 
 ## Convenciones
-- ITCSS: conservar el orden efectivo de `public/styles.css`; las capas son settings, base, objetos, componentes, estados/responsive y overrides.
+
+- ITCSS: conservar el orden efectivo de imports en `public/styles.css`; capas settings, base, objetos, componentes, estados/responsive y overrides.
 - BEM: bloque (`button`), elemento (`button__label`) y modificador (`button--primary`); aplicar el modificador junto a su bloque.
 - Estados propios: modificadores del bloque; estados globales de página: `page-context--*`.
 - Utilidades compartidas: prefijo `u-`; objetos de layout reutilizables: prefijo `o-`.
-- OOCSS separa estructura y skin cuando puedan variar por separado; no dividir componentes por obligación.
-- Integraciones externas (por ejemplo `.lucide`), IDs, `data-*` y `aria-*` se conservan.
-- Cada etapa actualiza CSS, HTML fuente y JavaScript dinámico en conjunto; `index.html` se genera desde `src/index.template.html`.
+- OOCSS separa estructura y apariencia cuando puedan variar independientemente; no dividir componentes por obligación.
+- Clases de librerías externas (por ejemplo `.lucide`), IDs, `data-*` y `aria-*` se conservan.
+- Cada cambio de clases actualiza CSS, HTML fuente y JavaScript que las genera o consulta; `index.html` se regenera.
 
-## Avance
-- Inventario inicial: 129 hojas, 433 nombres CSS y 442 nombres únicos entre CSS y HTML; ver [`INVENTARIO_MIGRACION_CSS.md`](./INVENTARIO_MIGRACION_CSS.md).
-- Etapa 1 — inventario: completada; los nombres iniciales quedaron clasificados y asociados a destinos.
-- Etapa 2 — lobby, sala, presencia, edición de nombre y diálogos: completada; 142 nombres migrados a BEM/OOCSS en CSS, marcado y referencias dinámicas.
-- Etapa 2 verificada: build HTML, `stylelint` sin errores, sintaxis de 26 JS tocados y Playwright; editar/cancelar nombre, volver al lobby y abrir ayuda funcionaron; consola sin errores.
-- Etapa 3 — chat, compositor, emojis, mensajes y espejos mini-player: pendiente.
-- Etapa 4 — reproductor y mini-player: pendiente.
-- Etapa 5 — estados/utilidades restantes, clasificación ITCSS/OOCSS y cierre de aliases: pendiente.
+## Avance cerrado — 2026-10-11
 
-## Criterio de cierre
-- Todas las clases de aplicación tienen categoría y componente; no quedan referencias a nombres migrados.
-- Las 129 hojas están asignadas a capas ITCSS y el orden de imports/cascada se conserva.
-- Los estados usan modificadores BEM o utilidades `u-*`; los objetos reutilizables usan `o-*`.
-- La cadena afectada llega con cache-burst a `index.html`; servidor `no-store`, sin service worker, y la interacción de mayor riesgo verificada.
+- Etapa 1 — inventario y destinos: completa; línea base 129 hojas, 442 clases CSS/HTML y 10 tokens dinámicos de JS.
+- Etapa 2 — lobby, sesión, sala, presencia y diálogos: completa; 142 nombres migrados.
+- Etapa 3 — chat, compositor, emojis, medios, mensajes y visor: completa; 113 nombres y 1 ajuste dinámico.
+- Etapa 4 — reproductor, controles, fullscreen y mini-player: completa; 54 nombres.
+- Etapa 5 — estados/utilidades transversales, capas ITCSS y aliases: completa; 62 nombres.
+- Consolidado: 372 nombres heredados convergen en 367 destinos; inventario final: 451 clases de aplicación (10 solo dinámicas).
+- `MAPA_CLASES_CSS.csv` registra nombre previo/final, categoría, componente y referencias CSS/HTML/JS.
+- `MAPA_ITCSS_CSS.csv` asigna las 129 hojas; se conserva el orden de cascada existente.
+- Auditoría ampliada a templates HTML en JavaScript: cero referencias a nombres heredados.
+- Runtime alineado: modificadores de estado del badge y templates BEM del visor y preview de imagen.
+- QA Playwright: color de estados del badge, fondo SVG del tooltip, visor (abrir/zoom/cerrar) y preview de imagen (render/quitar).
+- Cache-burst `20261011-bem-itcss-oocss-04` verificado; recursos dev `no-store` y cero service workers/controles.
+- Build HTML regenerado y URLs v04 solicitadas en navegador.
+
+## Criterio para cambios futuros
+
+- Mantener la convención y ampliar los mapas al agregar o renombrar clases.
+- Revisar la cadena de imports/cache-burst afectada y validar la interacción principal del dominio modificado.
+- Para cambios futuros, revisar `no-store`, ausencia de service worker y URLs actuales en navegador.

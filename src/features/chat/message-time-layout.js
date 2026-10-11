@@ -1,4 +1,4 @@
-import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
 
 const TIME_GAP_PX = 8;
 const STANDALONE_TIME_GAP_PX = 3;
@@ -20,7 +20,7 @@ export function scheduleMessageTimeAdjustmentForBubble(bubble) {
   observeMessageTimeBubble(bubble);
   window.requestAnimationFrame(() => {
     if (!bubble.isConnected) return;
-    const container = bubble.closest(".messages, .overlay-messages");
+    const container = bubble.closest('.chat-message-list, .chat-message-list.chat-message-list--overlay');
     if (!isMessageBubbleVisible(bubble, container)) return;
     adjustMessageTimeForBubble(bubble);
   });
@@ -32,7 +32,7 @@ export function adjustMessageTimes() {
     if (!record || !isMessageContainerReady(container)) continue;
 
     if (!record.observer) {
-      container.querySelectorAll(".message-bubble").forEach((bubble) => {
+      container.querySelectorAll('.message__bubble').forEach((bubble) => {
         if (isMessageBubbleVisible(bubble, container)) adjustMessageTimeForBubble(bubble);
       });
       continue;
@@ -50,7 +50,7 @@ export function adjustMessageTimes() {
 }
 
 function observeMessageTimeBubble(bubble) {
-  const container = bubble.closest(".messages, .overlay-messages");
+  const container = bubble.closest('.chat-message-list, .chat-message-list.chat-message-list--overlay');
   const record = ensureMessageTimeObserver(container);
   record?.observer?.observe(bubble);
 }
@@ -80,7 +80,7 @@ function ensureMessageTimeObserver(container) {
     { root: container, threshold: [0, 0.01] },
   );
   observerRecords.set(container, record);
-  container.querySelectorAll(".message-bubble").forEach((bubble) => record.observer.observe(bubble));
+  container.querySelectorAll('.message__bubble').forEach((bubble) => record.observer.observe(bubble));
   return record;
 }
 
@@ -106,22 +106,22 @@ function isMessageBubbleVisible(bubble, container) {
 
 export function adjustMessageTimeForBubble(bubble) {
   if (!bubble) return;
-  const messageBubble = bubble.matches?.(".message-bubble")
+  const messageBubble = bubble.matches?.('.message__bubble')
     ? bubble
-    : bubble.querySelector(".message-bubble");
+    : bubble.querySelector('.message__bubble');
   if (!messageBubble) return;
 
-  const timeAnchor = messageBubble.querySelector(".message-time-anchor");
+  const timeAnchor = messageBubble.querySelector('.message__time-anchor');
   if (!timeAnchor) return;
 
-  const text = messageBubble.querySelector(".message-text");
-  const content = messageBubble.querySelector(".message-content");
-  const hasReply = Boolean(content?.querySelector(".message-reply"));
-  const textRow = messageBubble.querySelector(".message-reply-text-row");
+  const text = messageBubble.querySelector('.message__text');
+  const content = messageBubble.querySelector('.message__content');
+  const hasReply = Boolean(content?.querySelector('.message__reply'));
+  const textRow = messageBubble.querySelector('.message__reply-text-row');
   const hasMediaContent = Boolean(
-    content?.querySelector(".message-media, .message-video, .message-media-link"),
+    content?.querySelector('.message__media, .message__video, .message__media-link'),
   );
-  const isEmojiOnly = messageBubble.classList.contains("message-bubble--emoji-only");
+  const isEmojiOnly = messageBubble.classList.contains('message__bubble--emoji-only');
 
   // Los emojis tienen la hora en una tarjeta independiente debajo del glyph.
   // No deben recibir el layout de floats usado por mensajes de texto.
@@ -162,7 +162,7 @@ export function adjustMessageTimeForBubble(bubble) {
 function getMessageTimeLayoutKey(bubble, timeAnchor, text) {
   const bubbleRect = bubble.getBoundingClientRect();
   const textRect = text?.getBoundingClientRect();
-  const timeRect = timeAnchor.querySelector(".message-time")?.getBoundingClientRect();
+  const timeRect = timeAnchor.querySelector('.message__time')?.getBoundingClientRect();
   const style = window.getComputedStyle(bubble);
 
   return [
@@ -215,7 +215,7 @@ function resetMessageTimeLayout(timeAnchor) {
   timeAnchor.style.removeProperty("display");
   timeAnchor.style.removeProperty("visibility");
   timeAnchor.style.removeProperty("transform");
-  timeAnchor.querySelector(".message-time")?.style.removeProperty("transform");
+  timeAnchor.querySelector('.message__time')?.style.removeProperty("transform");
 }
 
 function getBubbleLineHeight(bubble) {
@@ -251,7 +251,7 @@ function stabilizeFloatLayout(target, timeAnchor, lineHeight) {
 
 function timeFitsLastTextLine(text, timeAnchor) {
   const lineRects = getTextLineRects(text);
-  const time = timeAnchor.querySelector(".message-time")?.getBoundingClientRect();
+  const time = timeAnchor.querySelector('.message__time')?.getBoundingClientRect();
   const lastLine = lineRects.at(-1);
   if (!lastLine || !time) return true;
 

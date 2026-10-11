@@ -1,4 +1,4 @@
-import { animateExpandedSystemMessageRemoval, captureExpandedSystemMessageRemoval, prepareSystemMessageRemoval, refreshSystemMessageGroup, scheduleSystemMessageCollapse } from "./system-message-groups.js?v=20261011-chat-interaction-fixes-01";
+import { animateExpandedSystemMessageRemoval, captureExpandedSystemMessageRemoval, prepareSystemMessageRemoval, refreshSystemMessageGroup, scheduleSystemMessageCollapse } from "./system-message-groups.js?v=20261011-bem-itcss-oocss-04";
 
 const SYSTEM_MESSAGE_STREAK_LIMIT = 10;
 const SYSTEM_MESSAGE_EXIT_MS = 380;
@@ -7,7 +7,7 @@ export function getTrailingSystemStreak(container) {
   const children = Array.from(container.children).filter((child) => child.classList.contains("message"));
   let streakStart = children.length;
 
-  while (streakStart > 0 && children[streakStart - 1].classList.contains("system")) {
+  while (streakStart > 0 && children[streakStart - 1].classList.contains('message--system')) {
     streakStart -= 1;
   }
 
@@ -39,13 +39,13 @@ export function removeOldestSystemMessage(container, { animateSystemGroups = tru
     return Promise.resolve();
   }
 
-  oldest.classList.add("message-system-exit");
-  if (expandedRemoval) oldest.classList.add("message-system-exit-expanded");
+  oldest.classList.add('message--system-exit');
+  if (expandedRemoval) oldest.classList.add('message--system-exit-expanded');
 
   return new Promise((resolve) => {
     let removalFinished = false;
     const exitTarget = expandedRemoval
-      ? oldest.querySelector(".message-system-bubble")
+      ? oldest.querySelector('.message__system-bubble')
       : null;
     let fallbackTimer = 0;
 

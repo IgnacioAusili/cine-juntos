@@ -1,4 +1,4 @@
-import { state } from "../core/state.js?v=20261010-file-size-refactor-02";
+import { state } from "../core/state.js?v=20261011-bem-itcss-oocss-04";
 
 export function resetRoomPlayerState() {
   state.player.lastRemoteState = null;

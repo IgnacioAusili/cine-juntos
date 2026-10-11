@@ -1,5 +1,5 @@
-import { scheduleLobbyContentCenter } from "./lobby-content-layout.js?v=20261010-file-size-refactor-02";
-import { wireLobbyMarqueeContent } from "./lobby-marquee.js?v=20261010-file-size-refactor-02";
+import { scheduleLobbyContentCenter } from "./lobby-content-layout.js?v=20261011-bem-itcss-oocss-04";
+import { wireLobbyMarqueeContent } from "./lobby-marquee.js?v=20261011-bem-itcss-oocss-04";
 
 const STORAGE_KEY = "cine-juntos-lobby-layout-variant";
 const DEFAULT_VARIANT = "columns";
@@ -41,9 +41,9 @@ export function wireLobbyLayoutVariants() {
     window.addEventListener("resize", scheduleLobbyContentCenter, { passive: true });
 
     if (typeof MutationObserver === "function") {
-      let wasLobbyVisible = document.body.classList.contains("is-lobby");
+      let wasLobbyVisible = document.body.classList.contains('page-context--lobby');
       const visibilityObserver = new MutationObserver(() => {
-        const isLobbyVisible = document.body.classList.contains("is-lobby");
+        const isLobbyVisible = document.body.classList.contains('page-context--lobby');
         if (isLobbyVisible && !wasLobbyVisible) scheduleLobbyContentCenter();
         wasLobbyVisible = isLobbyVisible;
       });

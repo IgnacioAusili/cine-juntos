@@ -61,7 +61,7 @@
 
 /* Si el chat inferior queda contraído con espacio lateral visible, el video
    recupera sus esquinas inferiores redondeadas. */
-.session-view.chat-collapsed:not(.layout-edge-to-edge)[data-chat-dock="bottom"]
+.session-view.session-view--chat-collapsed:not(.session-view--layout-edge-to-edge)[data-chat-dock="bottom"]
   .player-frame:not(.mini-player-surface) {
   border-bottom-right-radius: var(--radius-md);
   border-bottom-left-radius: var(--radius-md);
@@ -89,14 +89,14 @@
   right: auto;
 }
 
-.session-view.chat-collapsed .chat-area {
+.session-view.session-view--chat-collapsed .chat-area {
   opacity: 0;
   pointer-events: none;
 }
 
 
 
-.session-view.chat-collapsed[data-chat-dock="bottom"] .chat-area {
+.session-view.session-view--chat-collapsed[data-chat-dock="bottom"] .chat-area {
   height: 0;
   padding: 0;
   border-width: 0;
@@ -108,7 +108,7 @@
    estado de la grilla cambia fuera de la cortina y el contenido se mantiene
    estable mientras el panel se revela o se oculta. Como la unión con el
    video está arriba, ambas direcciones usan ese borde como ancla. */
-.session-view[data-chat-dock="bottom"].chat-bottom-collapse-visual .chat-area {
+.session-view[data-chat-dock="bottom"].session-view--chat-bottom-collapse-visual .chat-area {
   clip-path: inset(0 0 0 0);
   opacity: 1;
   transform: none;
@@ -119,14 +119,14 @@
 }
 
 /* Al contraer, la cortina sube desde el borde inferior hacia la unión. */
-.session-view[data-chat-dock="bottom"].chat-bottom-collapse-visual.chat-bottom-curtain-active .chat-area {
+.session-view[data-chat-dock="bottom"].session-view--chat-bottom-collapse-visual.session-view--chat-bottom-curtain-active .chat-area {
   clip-path: inset(0 0 100% 0);
   opacity: 0;
 }
 
 /* Al expandir, la fila ya está reservada pero permanece oculta hasta que la
    cortina baje desde la unión superior. */
-.session-view[data-chat-dock="bottom"].chat-bottom-expand-visual .chat-area {
+.session-view[data-chat-dock="bottom"].session-view--chat-bottom-expand-visual .chat-area {
   clip-path: inset(0 0 100% 0);
   opacity: 0;
   transform: none;
@@ -136,20 +136,20 @@
   will-change: clip-path, opacity;
 }
 
-.session-view[data-chat-dock="bottom"].chat-bottom-expand-visual.chat-bottom-curtain-active .chat-area {
+.session-view[data-chat-dock="bottom"].session-view--chat-bottom-expand-visual.session-view--chat-bottom-curtain-active .chat-area {
   clip-path: inset(0 0 0 0);
   opacity: 1;
 }
 
 /* La opacidad del estado final se aplica sin transición en pantallas amplias. */
 @media (min-width: 681px) {
-  .session-view.chat-collapsed[data-chat-dock="bottom"] .chat-area {
+  .session-view.session-view--chat-collapsed[data-chat-dock="bottom"] .chat-area {
     opacity: 0;
     transition: none;
   }
 }
 
-.session-view[data-chat-dock="bottom"].chat-bottom-pc-collapse-visual .chat-area {
+.session-view[data-chat-dock="bottom"].session-view--chat-bottom-pc-collapse-visual .chat-area {
   clip-path: inset(0 0 var(--chat-bottom-curtain-clip, 0%) 0);
   opacity: 1;
   transform: none;
@@ -157,12 +157,12 @@
   will-change: clip-path;
 }
 
-.session-view[data-chat-dock="bottom"].chat-bottom-pc-collapse-visual.chat-bottom-curtain-active .chat-area {
+.session-view[data-chat-dock="bottom"].session-view--chat-bottom-pc-collapse-visual.session-view--chat-bottom-curtain-active .chat-area {
   clip-path: inset(0 0 var(--chat-bottom-curtain-clip, 100%) 0);
   opacity: 1;
 }
 
-.session-view[data-chat-dock="bottom"].chat-bottom-pc-expand-visual .chat-area {
+.session-view[data-chat-dock="bottom"].session-view--chat-bottom-pc-expand-visual .chat-area {
   clip-path: inset(0 0 var(--chat-bottom-curtain-clip, 100%) 0);
   opacity: 1;
   transform: none;
@@ -170,7 +170,7 @@
   will-change: clip-path;
 }
 
-.session-view[data-chat-dock="bottom"].chat-bottom-pc-expand-visual.chat-bottom-curtain-active .chat-area {
+.session-view[data-chat-dock="bottom"].session-view--chat-bottom-pc-expand-visual.session-view--chat-bottom-curtain-active .chat-area {
   clip-path: inset(0 0 var(--chat-bottom-curtain-clip, 0%) 0);
   opacity: 1;
 }

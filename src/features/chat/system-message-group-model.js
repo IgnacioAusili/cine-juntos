@@ -1,33 +1,33 @@
 import { SYSTEM_GROUP_MIN_SIZE, groupStates, groupTransitions } from "./system-message-group-state.js?v=20261010-file-size-refactor-02";
-import { cancelGroupTransition, animateGroupTransition } from "./system-message-group-transitions.js?v=20261010-file-size-refactor-02";
-import { getGroupTransitionTarget, prepareCollapseVisualTransition, prepareExpansionVisualTransition } from "./system-message-group-visuals.js?v=20261010-file-size-refactor-02";
-import { cancelGroupToggleAnimation, moveGroupToggle } from "./system-message-group-toggle.js?v=20261010-file-size-refactor-02";
-import { settleSystemMessageRoll, resetSystemMessageRowAnchor } from "./system-message-roll.js?v=20261010-file-size-refactor-02";
+import { cancelGroupTransition, animateGroupTransition } from "./system-message-group-transitions.js?v=20261011-bem-itcss-oocss-04";
+import { getGroupTransitionTarget, prepareCollapseVisualTransition, prepareExpansionVisualTransition } from "./system-message-group-visuals.js?v=20261011-bem-itcss-oocss-04";
+import { cancelGroupToggleAnimation, moveGroupToggle } from "./system-message-group-toggle.js?v=20261011-bem-itcss-oocss-04";
+import { settleSystemMessageRoll, resetSystemMessageRowAnchor } from "./system-message-roll.js?v=20261011-bem-itcss-oocss-04";
 
 export function getLatestSystemStreak(container) {
   const messages = Array.from(container.children).filter((child) => child.classList.contains("message"));
   let start = messages.length;
-  while (start > 0 && messages[start - 1].classList.contains("system")) start -= 1;
+  while (start > 0 && messages[start - 1].classList.contains('message--system')) start -= 1;
   return messages.slice(start);
 }
 
 export function getGroupItems(header) {
-  const anchor = header?.closest(".message.system");
+  const anchor = header?.closest('.message.message--system');
   return getContiguousSystemItems(anchor);
 }
 
 export function getContiguousSystemItems(anchor) {
-  if (!anchor?.classList.contains("message") || !anchor.classList.contains("system")) return [];
+  if (!anchor?.classList.contains("message") || !anchor.classList.contains('message--system')) return [];
 
   const items = [anchor];
   let item = anchor.previousElementSibling;
-  while (item?.classList.contains("message") && item.classList.contains("system")) {
+  while (item?.classList.contains("message") && item.classList.contains('message--system')) {
     items.unshift(item);
     item = item.previousElementSibling;
   }
 
   item = anchor.nextElementSibling;
-  while (item?.classList.contains("message") && item.classList.contains("system")) {
+  while (item?.classList.contains("message") && item.classList.contains('message--system')) {
     items.push(item);
     item = item.nextElementSibling;
   }
@@ -37,7 +37,7 @@ export function getContiguousSystemItems(anchor) {
 
 export function findGroupToggle(items) {
   return items
-    .map((item) => item.querySelector(":scope .system-group-toggle"))
+    .map((item) => item.querySelector(':scope .message__system-group-toggle'))
     .find(Boolean) || null;
 }
 
@@ -45,9 +45,9 @@ export function clearShortGroup(items) {
   const header = findGroupToggle(items);
   if (header) removeGroupHeader(header);
   items.forEach((item) => {
-    settleSystemMessageRoll(item.querySelector(".message-system-text"));
+    settleSystemMessageRoll(item.querySelector('.message__system-text'));
     resetSystemMessageRowAnchor(item);
-    item.classList.remove("system-group-collapsed-item", "system-group-last");
+    item.classList.remove('message--system-group-collapsed-item', 'message--system-group-last');
   });
 }
 
@@ -57,7 +57,7 @@ export function ensureGroupHeader(items) {
   if (!header) {
     header = document.createElement("button");
     header.type = "button";
-    header.className = "system-group-toggle";
+    header.className = 'message__system-group-toggle';
     header.setAttribute("aria-expanded", "false");
     groupStates.set(header, { expanded: false });
   }
@@ -80,7 +80,7 @@ export function bindGroupHeader(header, items = getGroupItems(header)) {
   };
 
   items.forEach((item) => {
-    item.classList.add("system-group-member");
+    item.classList.add('message--system-group-member');
     item.oncontextmenu = null;
     item.onclick = (event) => {
       if (event.target instanceof HTMLElement && event.target.closest("button, input, textarea, select")) {
@@ -109,9 +109,9 @@ export function applyGroupState(
   if (items.length < SYSTEM_GROUP_MIN_SIZE) {
     removeGroupHeader(header);
     items.forEach((item) => {
-      settleSystemMessageRoll(item.querySelector(".message-system-text"));
+      settleSystemMessageRoll(item.querySelector('.message__system-text'));
       resetSystemMessageRowAnchor(item);
-      item.classList.remove("system-group-collapsed-item", "system-group-last");
+      item.classList.remove('message--system-group-collapsed-item', 'message--system-group-last');
     });
     return;
   }
@@ -119,7 +119,7 @@ export function applyGroupState(
   const lastItem = items.at(-1);
 
   cancelGroupTransition(header);
-  if (animate && preserveSelectorHighlight) header.classList.add("system-group-transitioning");
+  if (animate && preserveSelectorHighlight) header.classList.add('u-transitioning');
   const visualState = animate
     ? expanded
       ? prepareExpansionVisualTransition(lastItem, items)
@@ -134,7 +134,7 @@ export function applyGroupState(
   // cualquier fila que pase a quedar oculta tras actualizar el grupo.
   items.forEach((item) => {
     if (expanded || item !== lastItem) {
-      settleSystemMessageRoll(item.querySelector(".message-system-text"));
+      settleSystemMessageRoll(item.querySelector('.message__system-text'));
       resetSystemMessageRowAnchor(item);
     }
   });
@@ -167,10 +167,10 @@ export function applyStructuralGroupState(
   // El layout adopta siempre el estado definitivo antes de mover el selector.
   // La contracción mantiene la imagen anterior en una capa temporal para que
   // este cambio estructural no haga desaparecer las filas de golpe.
-  hiddenItems.forEach((item) => item.classList.toggle("system-group-collapsed-item", !expanded));
+  hiddenItems.forEach((item) => item.classList.toggle('message--system-group-collapsed-item', !expanded));
 
-  if (visibleItem) visibleItem.classList.remove("system-group-collapsed-item");
-  items.forEach((item) => item.classList.toggle("system-group-last", item === visibleItem));
+  if (visibleItem) visibleItem.classList.remove('message--system-group-collapsed-item');
+  items.forEach((item) => item.classList.toggle('message--system-group-last', item === visibleItem));
   header.setAttribute("aria-expanded", String(Boolean(expanded)));
   updateHeader(header, items.length - 1, Boolean(expanded));
 
@@ -198,7 +198,7 @@ export function updateHeader(header, hiddenCount, expanded) {
     "aria-label",
     `${expanded ? "Ocultar" : "Mostrar"} ${hiddenCount} mensajes de sincronización`,
   );
-  header.innerHTML = `${getChevronMarkup(expanded)}<span class="system-group-toggle-count">${hiddenCount}</span>`;
+  header.innerHTML = `${getChevronMarkup(expanded)}<span class="message__system-group-toggle-count">${hiddenCount}</span>`;
 }
 
 export function getChevronMarkup(expanded) {
@@ -207,9 +207,9 @@ export function getChevronMarkup(expanded) {
 }
 
 export function captureSystemTextSnapshot(item) {
-  const target = item?.querySelector(".message-system-text");
-  const bubble = item?.querySelector(".message-system-bubble");
-  const row = item?.querySelector(".system-message-row");
+  const target = item?.querySelector('.message__system-text');
+  const bubble = item?.querySelector('.message__system-bubble');
+  const row = item?.querySelector('.message__system-row');
   if (!target) return null;
   return {
     markup: target.cloneNode(true),

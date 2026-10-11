@@ -1,6 +1,6 @@
-import { dom } from "../core/dom.js?v=20261010-file-size-refactor-02";
-import { logEvent } from "../core/state.js?v=20261010-file-size-refactor-02";
-import { collectMobileKeyboardSnapshot } from "./mobile-keyboard-diagnostics-snapshot.js?v=20261010-file-size-refactor-02";
+import { dom } from "../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { logEvent } from "../core/state.js?v=20261011-bem-itcss-oocss-04";
+import { collectMobileKeyboardSnapshot } from "./mobile-keyboard-diagnostics-snapshot.js?v=20261011-bem-itcss-oocss-04";
 
 const LOG_KIND = "mobile-keyboard-debug";
 const VIEWPORT_EVENT_DELAY_MS = 80;

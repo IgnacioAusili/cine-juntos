@@ -1,8 +1,8 @@
-import { dom } from "../../core/dom.js?v=20261011-chat-controls-repair-01";
-import { state, logEvent } from "../../core/state.js?v=20261011-chat-controls-repair-01";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { state, logEvent } from "../../core/state.js?v=20261011-bem-itcss-oocss-04";
 import { formatSeconds, formatClockTime, PLAYBACK_ERROR_CONFIRMATION_MS } from "../../core/utils.js?v=20261011-chat-controls-repair-01";
-import { showErrorDialog, showResumeVideoDialog, showSlowLoadDialog } from "../session-ui.js?v=20261011-chat-controls-repair-01";
-import { pauseRoomForPlaybackIssue } from "./player-sync-logic.js?v=20261011-chat-auto-switch-bem-01-video-ts-group-01";
+import { showErrorDialog, showResumeVideoDialog, showSlowLoadDialog } from "../session-ui.js?v=20261011-bem-itcss-oocss-04";
+import { pauseRoomForPlaybackIssue } from "./player-sync-logic.js?v=20261011-bem-itcss-oocss-04";
 import { playerRuntimeState } from "./player-runtime-state.js?v=20261011-chat-controls-repair-01";
 
 const VIDEO_RESUME_STORAGE_KEY = "cine-juntos-video-resume-times";

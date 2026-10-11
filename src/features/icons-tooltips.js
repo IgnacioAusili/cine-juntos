@@ -1,15 +1,15 @@
-import { dom } from "../core/dom.js?v=20261010-file-size-refactor-02";
-import { initializeBubbleChrome } from "./tooltip-bubble-chrome.js?v=20261011-chat-interaction-fixes-01";
-import { wireTooltipEvents } from "./tooltip-events.js?v=20261011-chat-ui-fixes-03";
-import { hideTooltip, refreshTooltipForTarget } from "./tooltip-behavior.js?v=20261011-chat-ui-fixes-03";
-export { wireTooltipEvents } from "./tooltip-events.js?v=20261011-chat-ui-fixes-03";
-export { hideTooltip, refreshTooltipForTarget } from "./tooltip-behavior.js?v=20261011-chat-ui-fixes-03";
-import { state } from "../core/state.js?v=20261010-file-size-refactor-02";
+import { dom } from "../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { initializeBubbleChrome } from "./tooltip-bubble-chrome.js?v=20261011-bem-itcss-oocss-04";
+import { wireTooltipEvents } from "./tooltip-events.js?v=20261011-bem-itcss-oocss-04";
+import { hideTooltip, refreshTooltipForTarget } from "./tooltip-behavior.js?v=20261011-bem-itcss-oocss-04";
+export { wireTooltipEvents } from "./tooltip-events.js?v=20261011-bem-itcss-oocss-04";
+export { hideTooltip, refreshTooltipForTarget } from "./tooltip-behavior.js?v=20261011-bem-itcss-oocss-04";
+import { state } from "../core/state.js?v=20261011-bem-itcss-oocss-04";
 import {
   buildContinuousBubblePath,
   clampBubbleTailCenter,
 } from "../core/continuous-bubble.js?v=20261010-file-size-refactor-02";
-import { setConnection } from "./session-ui.js?v=20261010-file-size-refactor-02";
+import { setConnection } from "./session-ui.js?v=20261011-bem-itcss-oocss-04";
 import { createForeignDocumentIcon } from "./foreign-lucide-icon.js?v=20261011-lucide-icons-repair-01";
 import {
   isTouchPointer,

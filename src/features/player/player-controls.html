@@ -5,36 +5,36 @@
                 preload="metadata"
               ></video>
               <div
-                class="player-loading-overlay"
+                class="player-frame__loading-overlay"
                 id="playerLoadingOverlay"
                 role="status"
                 aria-live="polite"
                 aria-label="Cargando video"
                 hidden
               >
-                <span class="player-loading-spinner" aria-hidden="true"></span>
+                <span class="player-frame__loading-spinner" aria-hidden="true"></span>
               </div>
               <div
-                class="playback-gesture-indicator"
+                class="player-frame__gesture-indicator"
                 id="playbackGestureIndicator"
                 aria-hidden="true"
               >
-                <span class="playback-gesture-icon   playback-gesture-icon-play" data-lucide="play"></span>
-                <span class="playback-gesture-icon   playback-gesture-icon-pause" data-lucide="pause"></span>
-                <span class="playback-gesture-icon   playback-gesture-icon-volume" data-lucide="volume-2"></span>
+                <span class="player-frame__gesture-icon   player-frame__gesture-icon--play" data-lucide="play"></span>
+                <span class="player-frame__gesture-icon   player-frame__gesture-icon--pause" data-lucide="pause"></span>
+                <span class="player-frame__gesture-icon   player-frame__gesture-icon--volume" data-lucide="volume-2"></span>
               </div>
-              <div class="player-center-actions" role="group" aria-label="Controles centrales del reproductor"></div>
-              <div class="mini-player-return-hint" aria-live="polite">
+              <div class="player-frame__center-actions" role="group" aria-label="Controles centrales del reproductor"></div>
+              <div class="mini-player-surface__return-hint" aria-live="polite">
                 <span>El video está en el mini-reproductor</span>
                 <strong>Para verlo en la pantalla principal, cancelá la vista en miniatura desde este botón</strong>
               </div>
-              <span class="mini-player-return-arrow" aria-hidden="true"></span>
+              <span class="mini-player-surface__return-arrow" aria-hidden="true"></span>
               <div class="empty-player" id="emptyPlayer">
                 <span data-lucide="film"></span>
               </div>
               <p
                 id="syncStatus"
-                class="sync-status   video-status   empty   player-status-badge"
+                class="sync-status   sync-status--video   sync-status--empty   player-status-badge"
                 role="button"
                 tabindex="0"
                 title="Estado de video"
@@ -44,9 +44,9 @@
                 <span id="videoStatusText">Sin contenido</span>
               </p>
 
-              <div class="player-actions" role="group" aria-label="Controles de reproductor">
+              <div class="player-frame__actions" role="group" aria-label="Controles de reproductor">
                   <button
-                    class="icon-button   icon-button--compact-tool   player-tool   player-chat-toggle"
+                    class="icon-button   icon-button--compact-tool   player-frame__tool   player-chat-toggle"
                     id="playerChatToggleButton"
                     type="button"
                     aria-label="Mostrar chat"
@@ -54,13 +54,13 @@
                     data-tooltip="Mostrar chat (Tab)"
                   >
                     <span data-lucide="message-square"></span>
-                    <span class="unread-badge   player-chat-unread-badge" id="insideChatUnread" hidden><span class="player-chat-unread-count">0</span></span>
+                    <span class="unread-badge   player-chat__unread-badge" id="insideChatUnread" hidden><span class="player-chat__unread-count">0</span></span>
                 </button>
               </div>
-              <div class="player-bottom-actions" role="group" aria-label="Controles inferiores del reproductor">
+              <div class="player-frame__bottom-actions" role="group" aria-label="Controles inferiores del reproductor">
                 <div class="player-controls-bar">
                   <button
-                    class="video-control-button   player-skip-control"
+                    class="video-control-button   video-control-button--skip"
                     id="playerBackButton"
                     type="button"
                     aria-label="Retroceder 10 segundos"
@@ -81,7 +81,7 @@
                   </button>
 
                   <button
-                    class="video-control-button   player-skip-control"
+                    class="video-control-button   video-control-button--skip"
                     id="playerForwardButton"
                     type="button"
                     aria-label="Avanzar 10 segundos"
@@ -104,9 +104,9 @@
                     >
                       <span data-lucide="volume-2"></span>
                     </button>
-                    <div class="player-volume-slider-wrap">
+                    <div class="player-volume-group__slider">
                       <input
-                        class="player-volume-input"
+                        class="player-volume-group__input"
                         id="playerVolumeInput"
                         type="range"
                         min="0"
@@ -119,9 +119,9 @@
                   </div>
 
                   <div class="player-progress-group">
-                    <span class="player-time" id="playerCurrentTime">0:00</span>
+                    <span class="player-progress-group__time" id="playerCurrentTime">0:00</span>
                     <input
-                      class="player-seek-input"
+                      class="player-progress-group__seek-input"
                       id="playerSeekInput"
                       type="range"
                       min="0"
@@ -130,21 +130,21 @@
                       value="0"
                       aria-label="Avance del video"
                     />
-                    <button class="player-time   player-time-total" id="playerDuration" type="button">0:00</button>
+                    <button class="player-progress-group__time   player-progress-group__time--total" id="playerDuration" type="button">0:00</button>
                   </div>
 
                   <div
-                    class="player-controls-scroll-zone"
+                    class="player-controls-bar__scroll-zone"
                     role="group"
                     aria-label="Controles adicionales"
                   >
                     <div
-                      class="player-controls-scroll-window"
+                      class="player-controls-bar__scroll-window"
                       tabindex="0"
                       role="region"
                       aria-label="Deslizar controles adicionales"
                     >
-                      <div class="player-controls-scroll-track">
+                      <div class="player-controls-bar__scroll-track">
                         <label
                           class="player-select   player-rate-select"
                           data-player-control="rate"
@@ -188,7 +188,7 @@
                     </div>
 
                     <input
-                      class="player-controls-scroll-indicator"
+                      class="player-controls-bar__scroll-indicator"
                       type="range"
                       min="0"
                       max="0"

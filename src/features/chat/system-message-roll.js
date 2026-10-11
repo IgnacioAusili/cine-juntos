@@ -4,14 +4,14 @@ import {
   startSystemRollAnimations,
   SYSTEM_ROLL_DURATION_MS,
   SYSTEM_ROLL_EASING,
-} from "./system-message-roll-visual.js?v=20261010-file-size-refactor-02";
+} from "./system-message-roll-visual.js?v=20261011-bem-itcss-oocss-04";
 import {
   animateReducedMotionRowAnchor,
   captureSystemMessageRowAnchor,
   resetSystemMessageRowAnchor,
   systemMessageRowAnchorAnimations,
-} from "./system-message-roll-layout.js?v=20261010-file-size-refactor-02";
-import { createSystemRollCleanup } from "./system-message-roll-cleanup.js?v=20261010-file-size-refactor-02";
+} from "./system-message-roll-layout.js?v=20261011-bem-itcss-oocss-04";
+import { createSystemRollCleanup } from "./system-message-roll-cleanup.js?v=20261011-bem-itcss-oocss-04";
 
 const SYSTEM_ROLL_SIZE_TRANSITION_MS = 90;
 const systemRollAnimations = new WeakMap();
@@ -40,15 +40,15 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
   const geometry = getSystemRollGeometry(height);
   const originalNodes = Array.from(nextText.childNodes);
   const originalStyle = nextText.getAttribute("style");
-  const bubble = nextText.closest(".message-system-bubble");
+  const bubble = nextText.closest('.message__system-bubble');
   const originalBubbleStyle = bubble?.getAttribute("style");
-  const groupItem = nextText.closest(".message.system");
-  const hadGroupTransitionClass = groupItem?.classList.contains("system-group-transitioning") ?? false;
+  const groupItem = nextText.closest('.message.message--system');
+  const hadGroupTransitionClass = groupItem?.classList.contains('u-transitioning') ?? false;
   const originalBubbleColor = bubble ? getComputedStyle(bubble).color : "";
-  const lineElements = bubble ? Array.from(bubble.querySelectorAll(".message-system-line")) : [];
+  const lineElements = bubble ? Array.from(bubble.querySelectorAll('.message__system-line')) : [];
   const originalLineStyles = lineElements.map((line) => line.getAttribute("style"));
   const nextBubbleRect = bubble?.getBoundingClientRect();
-  const row = nextText.closest(".system-message-row");
+  const row = nextText.closest('.message__system-row');
   const nextRowRect = row?.getBoundingClientRect() || null;
   const previousBubbleAnimation = bubble && systemRollBubbleAnimations.get(bubble);
   previousBubbleAnimation?.cancel();
@@ -66,8 +66,8 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
     ...geometry,
   });
 
-  groupItem?.classList.add("system-group-transitioning");
-  nextText.classList.add("system-message-roll-viewport");
+  groupItem?.classList.add('u-transitioning');
+  nextText.classList.add('message__system-roll-viewport');
   nextText.setAttribute("style", [
     originalStyle,
     `--system-roll-width: ${width}px`,
@@ -77,7 +77,7 @@ export function animateCollapsedSystemMessageAdvance(previousSnapshot, nextText)
   if (bubble && bubbleWidth > 0) bubble.style.setProperty("width", `${bubbleWidth}px`);
   if (bubble && originalBubbleColor) bubble.style.setProperty("color", originalBubbleColor, "important");
   nextText.replaceChildren(visual.stage);
-  row?.classList.add("system-message-rolling");
+  row?.classList.add('message--system-rolling');
 
   const previousRowRect = previousSnapshot.rowRect || previousSnapshot.bubbleRect;
   const rowRectAtReservedSize = row?.getBoundingClientRect();

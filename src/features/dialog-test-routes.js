@@ -1,15 +1,15 @@
 import {
   dom,
-} from "../core/dom.js?v=20261011-chat-controls-repair-01";
+} from "../core/dom.js?v=20261011-bem-itcss-oocss-04";
 import {
   showErrorDialog,
   showLoadReplaceDialog,
   showResumeVideoDialog,
   showSlowLoadDialog,
   showSession,
-} from "./session-ui.js?v=20261011-chat-controls-repair-01";
-import { setVideoStatus } from "./player/player-video-source.js?v=20261011-player-empty-state-01";
-import { openLightboxForTest } from "./chat/image-lightbox.js?v=20261011-chat-controls-repair-01";
+} from "./session-ui.js?v=20261011-bem-itcss-oocss-04";
+import { setVideoStatus } from "./player/player-video-source.js?v=20261011-bem-itcss-oocss-04";
+import { openLightboxForTest } from "./chat/image-lightbox.js?v=20261011-bem-itcss-oocss-04";
 
 export const DIALOG_TEST_ROUTES = Object.freeze({
   about: "Sobre este proyecto",
@@ -39,10 +39,10 @@ export function openDialogTestRoute() {
   const playerTestName = getPlayerTestName();
   if (playerTestName === "loading") {
     showSession();
-    dom.emptyPlayer?.classList.add("hidden");
+    dom.emptyPlayer?.classList.add('u-hidden');
     dom.videoPlayer?.removeAttribute("src");
     setVideoStatus("loading", "Cargando video");
-    dom.playerFrame?.classList.add("player-overlay-visible");
+    dom.playerFrame?.classList.add('player-frame--overlay-visible');
     return;
   }
 

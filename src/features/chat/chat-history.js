@@ -1,10 +1,10 @@
-import { dom } from "../../core/dom.js?v=20261011-chat-controls-repair-01";
-import { logEvent, state } from "../../core/state.js?v=20261011-chat-controls-repair-01";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { logEvent, state } from "../../core/state.js?v=20261011-bem-itcss-oocss-04";
 import {
   isExternalChatVisibleToUser,
   isInsideChatVisibleToUser,
-} from "./unread-counters.js?v=20261011-chat-controls-repair-01";
-import { renderMessage } from "./chat-render.js?v=20261011-chat-auto-switch-bem-01-video-ts-group-01";
+} from "./unread-counters.js?v=20261011-bem-itcss-oocss-04";
+import { renderMessage } from "./chat-render.js?v=20261011-bem-itcss-oocss-04";
 
 let historyGeneration = 0;
 let historyExhausted = false;

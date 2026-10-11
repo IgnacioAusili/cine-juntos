@@ -1,15 +1,15 @@
-import { dom } from "../core/dom.js?v=20261011-chat-controls-repair-01";
-import { renderDisplayName, renderPresence } from "./presence-members.js?v=20261011-chat-controls-repair-01";
-export { renderMembers, rememberParticipant, renderPresence } from "./presence-members.js?v=20261011-chat-controls-repair-01";
-import { upsertParticipantRecord } from "./presence-activity.js?v=20261011-chat-controls-repair-01";
-export { markParticipantActive } from "./presence-activity.js?v=20261011-chat-controls-repair-01";
-import { syncNameInputWidth } from "./presence-name-layout.js?v=20261011-chat-controls-repair-01";
-export { syncNameInputWidth } from "./presence-name-layout.js?v=20261011-chat-controls-repair-01";
+import { dom } from "../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { renderDisplayName, renderPresence } from "./presence-members.js?v=20261011-bem-itcss-oocss-04";
+export { renderMembers, rememberParticipant, renderPresence } from "./presence-members.js?v=20261011-bem-itcss-oocss-04";
+import { upsertParticipantRecord } from "./presence-activity.js?v=20261011-bem-itcss-oocss-04";
+export { markParticipantActive } from "./presence-activity.js?v=20261011-bem-itcss-oocss-04";
+import { syncNameInputWidth } from "./presence-name-layout.js?v=20261011-bem-itcss-oocss-04";
+export { syncNameInputWidth } from "./presence-name-layout.js?v=20261011-bem-itcss-oocss-04";
 import {
   state,
   getDisplayName,
   logEvent,
-} from "../core/state.js?v=20261011-chat-controls-repair-01";
+} from "../core/state.js?v=20261011-bem-itcss-oocss-04";
 import {
   DISPLAY_NAME_MAX_LENGTH,
   DISPLAY_NAME_MIN_LENGTH,
@@ -20,7 +20,7 @@ import { makeGuestName } from "../core/utils.js?v=20261011-chat-controls-repair-
 import {
   hideTooltip,
   setControlIcon,
-} from "./icons-tooltips.js?v=20261011-lucide-icons-repair-01";
+} from "./icons-tooltips.js?v=20261011-bem-itcss-oocss-04";
 import {
   isTouchPointer,
   TOUCH_LONG_PRESS_DELAY_MS,

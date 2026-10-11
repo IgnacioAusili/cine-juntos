@@ -1,9 +1,9 @@
-import { dom } from "../core/dom.js?v=20261010-file-size-refactor-02";
+import { dom } from "../core/dom.js?v=20261011-bem-itcss-oocss-04";
 import { layoutMetricsState } from "./layout-metrics-state.js?v=20261010-file-size-refactor-02";
-import { isOverlayChatInputFocused, isBottomChatKeyboardTarget, isBottomChatNameEditorFocused, isBottomChatInputFocused, isBottomChatKeyboardOpen, isRightChatInputFocused, isRightChatKeyboardOpen, captureRightChatKeyboardScroll, alignRightChatKeyboardViewport, restoreRightChatKeyboardScroll, preventRightChatPageScroll, captureBottomChatKeyboardHandlePosition, restoreBottomChatKeyboardHandlePosition, preventBottomChatPageScroll, restoreBottomChatPageScrollPosition, getLargeViewportHeight, getCurrentViewportHeight, getNativePageScrollMax, captureOrientationScrollPosition, restoreOrientationScrollPosition, scheduleOrientationScrollRestore, rememberNativePageScrollPosition, preservePageBottomAfterViewportChange } from "./layout-viewport-interactions.js?v=20261010-file-size-refactor-02";
-import { isMobileLayout, isFullscreenActive } from "./layout-viewport-query.js?v=20261010-file-size-refactor-02";
+import { isOverlayChatInputFocused, isBottomChatKeyboardTarget, isBottomChatNameEditorFocused, isBottomChatInputFocused, isBottomChatKeyboardOpen, isRightChatInputFocused, isRightChatKeyboardOpen, captureRightChatKeyboardScroll, alignRightChatKeyboardViewport, restoreRightChatKeyboardScroll, preventRightChatPageScroll, captureBottomChatKeyboardHandlePosition, restoreBottomChatKeyboardHandlePosition, preventBottomChatPageScroll, restoreBottomChatPageScrollPosition, getLargeViewportHeight, getCurrentViewportHeight, getNativePageScrollMax, captureOrientationScrollPosition, restoreOrientationScrollPosition, scheduleOrientationScrollRestore, rememberNativePageScrollPosition, preservePageBottomAfterViewportChange } from "./layout-viewport-interactions.js?v=20261011-bem-itcss-oocss-04";
+import { isMobileLayout, isFullscreenActive } from "./layout-viewport-query.js?v=20261011-bem-itcss-oocss-04";
 
-export { isMobileLayout, isFullscreenActive } from "./layout-viewport-query.js?v=20261010-file-size-refactor-02";
+export { isMobileLayout, isFullscreenActive } from "./layout-viewport-query.js?v=20261011-bem-itcss-oocss-04";
 
 export function getViewportMetrics(force = false) {
   const viewport = window.visualViewport;
@@ -144,7 +144,7 @@ export function syncViewportMetrics(force = false) {
     layoutMetricsState.lastViewportMetrics = metrics;
   }
   document.documentElement.classList.toggle(
-    "viewport-landscape",
+    'page-context--viewport-landscape',
     isViewportLandscape(metrics, rightChatKeyboardOpen),
   );
   rootStyle.setProperty("--app-viewport-width", `${metrics.width}px`);
@@ -171,14 +171,14 @@ export function syncViewportMetrics(force = false) {
     captureBottomChatKeyboardHandlePosition();
   }
   document.documentElement.classList.toggle(
-    "bottom-chat-keyboard-open",
+    'page-context--bottom-chat-keyboard-open',
     bottomChatKeyboardOpen,
   );
   if (rightChatKeyboardOpen && !layoutMetricsState.wasRightChatKeyboardOpen) {
     captureRightChatKeyboardScroll();
   }
   document.documentElement.classList.toggle(
-    "right-chat-keyboard-open",
+    'page-context--right-chat-keyboard-open',
     rightChatKeyboardOpen,
   );
   if (rightChatKeyboardOpen) {
@@ -299,7 +299,7 @@ export function alignBottomChatKeyboardViewport() {
     const minCenter = halfHandle;
     const maxCenter = Math.max(minCenter, positioningParentRect.height - halfHandle);
     const boundedCenter = Math.min(maxCenter, Math.max(minCenter, desiredCenter));
-    if (document.documentElement.classList.contains("viewport-landscape")) {
+    if (document.documentElement.classList.contains('page-context--viewport-landscape')) {
       // Animar la opacidad después de calcular el anclaje evita ocultar la
       // flecha durante el foco previo a un cambio real del viewport.
       anchoredHandleZone.style.setProperty(
@@ -312,7 +312,7 @@ export function alignBottomChatKeyboardViewport() {
       `${boundedCenter}px`,
     );
     anchoredHandleZone.style.setProperty("bottom", "auto");
-    if (document.documentElement.classList.contains("viewport-landscape")) {
+    if (document.documentElement.classList.contains('page-context--viewport-landscape')) {
       // Reafirmar visibilidad después del reanclaje evita que la flecha quede
       // invisible si Chrome emite varios resize al abrir el teclado.
       anchoredHandleZone.style.setProperty("opacity", "1");

@@ -111,20 +111,20 @@
 /* En pantallas táctiles el navegador puede conservar :hover después de
    soltar. El brillo táctil queda gobernado explícitamente por JS. */
 @media (hover: none) {
-  .lobby-screen__actions .button:not(.button--primary):not(:disabled):hover:not(.is-touch-hover) {
+  .lobby-screen__actions .button:not(.button--primary):not(:disabled):hover:not(.u-touch-hover) {
     border-color: var(--line);
     background: var(--panel-2);
     transform: none;
   }
 
-  .lobby-screen__actions .button:not(.button--primary):not(:disabled).is-touch-hover,
-  .lobby-screen__actions .button:not(.button--primary):not(:disabled).is-touch-hover:hover {
+  .lobby-screen__actions .button:not(.button--primary):not(:disabled).u-touch-hover,
+  .lobby-screen__actions .button:not(.button--primary):not(:disabled).u-touch-hover:hover {
     border-color: rgba(255, 255, 255, 0.22);
     background: #2a3036;
     transform: translateY(-1px);
   }
 
-  .button.button--primary:not(:disabled):hover:not(.is-touch-hover) {
+  .button.button--primary:not(:disabled):hover:not(.u-touch-hover) {
     background: linear-gradient(180deg, var(--amber), var(--accent));
     box-shadow:
       0 0 0 1px rgba(240, 140, 58, 0.2),
@@ -132,8 +132,8 @@
       inset 0 1px 0 rgba(255, 255, 255, 0.32);
   }
 
-  .button.button--primary:not(:disabled).is-touch-hover,
-  .button.button--primary:not(:disabled).is-touch-hover:hover {
+  .button.button--primary:not(:disabled).u-touch-hover,
+  .button.button--primary:not(:disabled).u-touch-hover:hover {
     background: linear-gradient(180deg, #ffb070, var(--amber));
     box-shadow:
       0 0 0 1px rgba(240, 140, 58, 0.32),

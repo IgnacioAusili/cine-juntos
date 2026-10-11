@@ -7,7 +7,7 @@ export function moveGroupToggle(header, anchor, { animate = false, previousRect 
     ? previousRect || (header.isConnected ? header.getBoundingClientRect() : null)
     : null;
   cancelGroupToggleAnimation(header);
-  const row = anchor.querySelector(".system-message-row") || anchor;
+  const row = anchor.querySelector('.message__system-row') || anchor;
   if (header.parentElement !== row) row.append(header);
   header.style.removeProperty("top");
   header.style.removeProperty("left");

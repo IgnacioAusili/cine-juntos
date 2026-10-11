@@ -1,5 +1,5 @@
-import { dom } from "../../core/dom.js?v=20261011-chat-controls-repair-01";
-import { toggleMiniChatOverlay } from "./mini-player-chat-mirror.js?v=20261011-chat-auto-switch-bem-01";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { toggleMiniChatOverlay } from "./mini-player-chat-mirror.js?v=20261011-bem-itcss-oocss-04";
 
 const SEEK_STEP_SECONDS = 5;
 const VOLUME_STEP = 0.05;

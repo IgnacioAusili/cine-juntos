@@ -24,9 +24,9 @@ function scanForControlBars(root) {
 function wireControlBar(bar) {
   if (wiredBars.has(bar)) return;
 
-  const scrollZone = bar.querySelector(".player-controls-scroll-zone");
-  const scrollWindow = bar.querySelector(".player-controls-scroll-window");
-  const indicator = bar.querySelector(".player-controls-scroll-indicator");
+  const scrollZone = bar.querySelector('.player-controls-bar__scroll-zone');
+  const scrollWindow = bar.querySelector('.player-controls-bar__scroll-window');
+  const indicator = bar.querySelector('.player-controls-bar__scroll-indicator');
   if (!scrollZone || !scrollWindow || !indicator) return;
 
   wiredBars.add(bar);
@@ -113,7 +113,7 @@ function createFrameScheduler(callback, view = window) {
 
 function syncControlBar(bar, scrollZone, scrollWindow, indicator) {
   const volumeGroup = bar.querySelector(".player-volume-group");
-  const isVerticalPopupOpen = volumeGroup?.classList.contains("is-volume-slider-open")
+  const isVerticalPopupOpen = volumeGroup?.classList.contains('player-volume-group--slider-open')
     && volumeGroup.dataset.volumeSliderLayout === "vertical"
     && VOLUME_VERTICAL_DENSITIES.has(bar.dataset.controlDensity);
   if (isVerticalPopupOpen) {
@@ -208,7 +208,7 @@ function applyControlDensity(bar, density) {
   const isMobileViewport = view.matchMedia?.("(max-width: 680px), (hover: none) and (pointer: coarse)").matches;
   const horizontalVolumeFits = isMobileViewport && canFitHorizontalVolume(
     bar,
-    bar.querySelector(".player-controls-scroll-window"),
+    bar.querySelector('.player-controls-bar__scroll-window'),
   );
   const nextLayout = isMobileViewport && horizontalVolumeFits
     ? "horizontal"
@@ -219,7 +219,7 @@ function applyControlDensity(bar, density) {
   // El cambio de orientacion es atomico: nunca debe quedar abierta la
   // representacion anterior mientras la nueva esta siendo medida.
   if (nextLayout === "horizontal") {
-    volumeGroup.classList.remove("is-volume-slider-open");
+    volumeGroup.classList.remove('player-volume-group--slider-open');
     volumeGroup.querySelector(".video-control-button")?.setAttribute("aria-expanded", "false");
   }
 }
@@ -231,8 +231,8 @@ function canFitControlStage(bar, scrollWindow) {
 
 function canFitHorizontalVolume(bar, scrollWindow) {
   const group = bar.querySelector(".player-volume-group");
-  const input = group?.querySelector(".player-volume-input");
-  const wrap = group?.querySelector(".player-volume-slider-wrap");
+  const input = group?.querySelector('.player-volume-group__input');
+  const wrap = group?.querySelector('.player-volume-group__slider');
   if (!group || !input || !wrap) return true;
 
   const inputStyles = getComputedStyle(input);
@@ -264,7 +264,7 @@ function hasStableTrackOverflow(scrollWindow) {
 }
 
 function getStableTrackMetrics(scrollWindow) {
-  const track = scrollWindow.querySelector(".player-controls-scroll-track");
+  const track = scrollWindow.querySelector('.player-controls-bar__scroll-track');
   if (!track) return { requiredWidth: 0, availableWidth: scrollWindow.clientWidth };
 
   const trackStyles = getComputedStyle(track);
@@ -308,7 +308,7 @@ function syncScrollIndicator(scrollZone, scrollWindow, indicator) {
   const isScrollable = maxScroll > 1;
   indicator.max = String(Math.ceil(maxScroll));
   indicator.hidden = !isScrollable;
-  scrollZone.classList.toggle("is-scrollable", isScrollable);
+  scrollZone.classList.toggle('player-controls-bar__scroll-zone--scrollable', isScrollable);
   if (!isScrollable) {
     scrollWindow.scrollLeft = 0;
     indicator.value = "0";

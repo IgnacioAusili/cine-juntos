@@ -27,7 +27,7 @@ export function toggleMiniEmojiPicker(element) {
     miniEmojiPopoverHideTimers.delete(popover);
   }
   popover.hidden = false;
-  popover.classList.remove("is-emoji-popover-closing");
+  popover.classList.remove('emoji-popover--closing');
   const anchor = element.querySelector(
     "#overlayEmojiButton, [data-proxy-for=\"overlayEmojiButton\"]",
   );
@@ -47,8 +47,8 @@ export function toggleMiniEmojiPicker(element) {
     popover.style.setProperty("--emoji-popover-anchor-x", `${anchorOffset}px`);
   }
   window.requestAnimationFrame(() => {
-    if (popover.hidden || popover.classList.contains("is-emoji-popover-closing")) return;
-    popover.classList.add("is-emoji-popover-open");
+    if (popover.hidden || popover.classList.contains('emoji-popover--closing')) return;
+    popover.classList.add('emoji-popover--open');
   });
   if (!isMobileChatLayout()) {
     requestAnimationFrame(() => focusChatInput(input, selectionStart, selectionEnd));
@@ -56,14 +56,14 @@ export function toggleMiniEmojiPicker(element) {
 }
 
 function hideMiniEmojiPopover(popover) {
-  if (popover.hidden || popover.classList.contains("is-emoji-popover-closing")) return;
+  if (popover.hidden || popover.classList.contains('emoji-popover--closing')) return;
   const hideTimer = miniEmojiPopoverHideTimers.get(popover);
   if (hideTimer) window.clearTimeout(hideTimer);
-  popover.classList.remove("is-emoji-popover-open");
-  popover.classList.add("is-emoji-popover-closing");
+  popover.classList.remove('emoji-popover--open');
+  popover.classList.add('emoji-popover--closing');
   const nextHideTimer = window.setTimeout(() => {
     popover.hidden = true;
-    popover.classList.remove("is-emoji-popover-closing");
+    popover.classList.remove('emoji-popover--closing');
     popover.dataset.placement = "";
     popover.style.removeProperty("--emoji-popover-anchor-x");
     miniEmojiPopoverHideTimers.delete(popover);
@@ -72,19 +72,19 @@ function hideMiniEmojiPopover(popover) {
 }
 
 function getMiniEmojiPopover(surface) {
-  let popover = surface.querySelector(".mini-emoji-popover");
+  let popover = surface.querySelector('.emoji-popover--mini');
   if (popover) return popover;
 
   popover = surface.ownerDocument.createElement("div");
-  popover.className = "emoji-popover mini-emoji-popover";
+  popover.className = 'emoji-popover emoji-popover--mini';
   popover.hidden = true;
   popover.setAttribute("aria-label", "Selector de emojis");
   const fog = surface.ownerDocument.createElement("span");
-  fog.className = "emoji-popover-fog";
+  fog.className = 'emoji-popover__fog';
   fog.setAttribute("aria-hidden", "true");
   popover.append(fog);
   const sourceOptions = document.querySelector("#emojiPopover")?.children || [];
-  [...sourceOptions].filter((option) => option.classList.contains("emoji-option")).forEach((option) => popover.append(
+  [...sourceOptions].filter((option) => option.classList.contains('emoji-popover__option')).forEach((option) => popover.append(
     surface.ownerDocument.importNode(option, true),
   ));
   popover.addEventListener("mousedown", (event) => event.preventDefault());
@@ -94,7 +94,7 @@ function getMiniEmojiPopover(surface) {
 }
 
 function insertMiniEmoji(surface, target) {
-  const option = target.closest?.(".emoji-option");
+  const option = target.closest?.('.emoji-popover__option');
   const input = surface.querySelector("#overlayMessageInput, [data-proxy-for=\"overlayMessageInput\"]");
   if (!option || !input) return;
 
@@ -108,5 +108,5 @@ function insertMiniEmoji(surface, target) {
   } else {
     focusChatInput(input, position, position);
   }
-  hideMiniEmojiPopover(surface.querySelector(".mini-emoji-popover"));
+  hideMiniEmojiPopover(surface.querySelector('.emoji-popover--mini'));
 }

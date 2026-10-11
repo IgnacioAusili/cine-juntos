@@ -207,7 +207,7 @@
     transition: opacity 120ms ease, visibility 0s linear 120ms;
   }
 
-  .about-dialog__scrollbar.is-visible {
+  .about-dialog__scrollbar.u-visible {
     opacity: 1;
     visibility: visible;
     transition-delay: 0s;

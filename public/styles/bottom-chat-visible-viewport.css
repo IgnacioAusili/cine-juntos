@@ -1,22 +1,22 @@
 /* El viewport estructural puede incluir espacio de las barras del navegador.
    Al contraer el dock inferior, usar el alto realmente visible para el video. */
-.session-view.chat-collapsed:not(.layout-component-stack)[data-chat-dock="bottom"] .o-workspace {
+.session-view.session-view--chat-collapsed:not(.session-view--layout-component-stack)[data-chat-dock="bottom"] .o-workspace {
   height: var(
     --chat-bottom-viewport-height,
     calc(var(--app-viewport-height) - var(--app-shell-gutter))
   );
 }
 
-.session-view.layout-component-stack.chat-collapsed[data-chat-dock="bottom"] .o-workspace {
+.session-view.session-view--layout-component-stack.session-view--chat-collapsed[data-chat-dock="bottom"] .o-workspace {
   grid-template-rows:
     minmax(0, var(--chat-bottom-viewport-height, var(--app-viewport-height)))
     0px;
 }
 
 @media (hover: hover) and (pointer: fine) {
-  body:not(.is-lobby):not(.fullscreen-mode)
+  body:not(.page-context--lobby):not(.page-context--fullscreen)
     .app-shell:not(:fullscreen)
-    .session-view.chat-collapsed:not(.layout-component-stack):not(.layout-edge-to-edge)[data-chat-dock="bottom"]
+    .session-view.session-view--chat-collapsed:not(.session-view--layout-component-stack):not(.session-view--layout-edge-to-edge)[data-chat-dock="bottom"]
     .o-workspace {
     height: calc(
       var(--chat-bottom-viewport-height, var(--app-viewport-height))

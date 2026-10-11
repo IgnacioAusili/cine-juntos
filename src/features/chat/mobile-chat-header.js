@@ -1,8 +1,8 @@
 // Controla la cabecera del chat en pantallas tactiles.
-import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
-import { state } from "../../core/state.js?v=20261010-file-size-refactor-02";
-import { hideTooltip } from "../icons-tooltips.js?v=20261011-lucide-icons-repair-01";
-import { wireMobileChatHeaderGestures } from "./mobile-chat-header-gestures.js?v=20261010-file-size-refactor-02";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { state } from "../../core/state.js?v=20261011-bem-itcss-oocss-04";
+import { hideTooltip } from "../icons-tooltips.js?v=20261011-bem-itcss-oocss-04";
+import { wireMobileChatHeaderGestures } from "./mobile-chat-header-gestures.js?v=20261011-bem-itcss-oocss-04";
 
 const MOBILE_QUERY = "(hover: none) and (pointer: coarse)";
 const HEADER_IDLE_MS = 2200;
@@ -48,10 +48,10 @@ function isMobileBottomDock() {
 
 function isLayoutTransitioning() {
   return Boolean(
-    dom.sessionView?.classList.contains("chat-layout-transitioning")
-      || dom.sessionView?.classList.contains("chat-dock-switching")
-      || dom.sessionView?.classList.contains("chat-bottom-collapse-visual")
-      || dom.sessionView?.classList.contains("chat-bottom-expand-visual"),
+    dom.sessionView?.classList.contains('session-view--chat-layout-transitioning')
+      || dom.sessionView?.classList.contains('session-view--chat-dock-switching')
+      || dom.sessionView?.classList.contains('session-view--chat-bottom-collapse-visual')
+      || dom.sessionView?.classList.contains('session-view--chat-bottom-expand-visual'),
   );
 }
 
@@ -63,20 +63,20 @@ function syncCollapseHandleAfterDockSwitch() {
     return;
   }
 
-  const handleSwitching = sessionView.classList.contains("chat-dock-handle-switching");
+  const handleSwitching = sessionView.classList.contains('session-view--chat-dock-handle-switching');
   if (handleSwitching) dockHandleSwitchActive = true;
 
   const isBottomDock = sessionView.dataset.chatDock === "bottom";
-  if (isBottomDock && sessionView.classList.contains("chat-bottom-mobile-expand-visual")) {
+  if (isBottomDock && sessionView.classList.contains('session-view--chat-bottom-mobile-expand-visual')) {
     bottomDockHandleRevealPending = true;
   }
   if (!isBottomDock) bottomDockHandleRevealPending = false;
 
   const transitionActive = Boolean(
     isLayoutTransitioning()
-      || sessionView.classList.contains("chat-dock-switching")
-      || sessionView.classList.contains("chat-bottom-mobile-expand-visual")
-      || sessionView.classList.contains("chat-bottom-mobile-curtain-active"),
+      || sessionView.classList.contains('session-view--chat-dock-switching')
+      || sessionView.classList.contains('session-view--chat-bottom-mobile-expand-visual')
+      || sessionView.classList.contains('session-view--chat-bottom-mobile-curtain-active'),
   );
   const shouldRevealBottomHandle = isBottomDock && bottomDockHandleRevealPending && !transitionActive;
   const shouldResyncDockHandle = dockHandleSwitchActive && !handleSwitching && !transitionActive;
@@ -86,16 +86,16 @@ function syncCollapseHandleAfterDockSwitch() {
     if (sessionView !== dom.sessionView) return;
     const transitionStillActive = Boolean(
       isLayoutTransitioning()
-        || sessionView.classList.contains("chat-dock-switching")
-        || sessionView.classList.contains("chat-bottom-mobile-expand-visual")
-        || sessionView.classList.contains("chat-bottom-mobile-curtain-active"),
+        || sessionView.classList.contains('session-view--chat-dock-switching')
+        || sessionView.classList.contains('session-view--chat-bottom-mobile-expand-visual')
+        || sessionView.classList.contains('session-view--chat-bottom-mobile-curtain-active'),
     );
     if (transitionStillActive) return;
 
     if (sessionView.dataset.chatDock === "bottom" && bottomDockHandleRevealPending) {
-      sessionView.classList.remove("chat-dock-handle-switching");
+      sessionView.classList.remove('session-view--chat-dock-handle-switching');
       bottomDockHandleRevealPending = false;
-    } else if (sessionView.classList.contains("chat-dock-handle-switching")) {
+    } else if (sessionView.classList.contains('session-view--chat-dock-handle-switching')) {
       return;
     }
 
@@ -107,12 +107,12 @@ function syncCollapseHandleAfterDockSwitch() {
 }
 
 function isBottomChatKeyboardOpen() {
-  return document.documentElement.classList.contains("bottom-chat-keyboard-open");
+  return document.documentElement.classList.contains('page-context--bottom-chat-keyboard-open');
 }
 
 function isChatKeyboardOpen() {
   return isBottomChatKeyboardOpen()
-    || document.documentElement.classList.contains("right-chat-keyboard-open");
+    || document.documentElement.classList.contains('page-context--right-chat-keyboard-open');
 }
 
 function isNameEditorActive() {
@@ -129,7 +129,7 @@ function isActiveChatDock() {
     isMobileChatHeaderDock()
       && dom.sessionView
       && !dom.sessionView.hidden
-      && !dom.sessionView.classList.contains("chat-collapsed")
+      && !dom.sessionView.classList.contains('session-view--chat-collapsed')
       && !isLayoutTransitioning(),
   );
 }
@@ -172,7 +172,7 @@ function hasPersistentActivity() {
 function setHeaderCollapsed(collapsed) {
   if (!dom.sessionView) return;
   if (!isMobileChatHeaderDock() || isLayoutTransitioning()) {
-    dom.sessionView.classList.remove("chat-header-collapsed");
+    dom.sessionView.classList.remove('session-view--chat-header-collapsed');
     return;
   }
   const keepVisibleWithoutMessages = !hasMessages();
@@ -180,7 +180,7 @@ function setHeaderCollapsed(collapsed) {
     && (isHeaderForcedByKeyboard() || (Boolean(collapsed) && !keepVisibleWithoutMessages));
   if (shouldCollapse) hideTooltip(true);
   dom.sessionView.classList.toggle(
-    "chat-header-collapsed",
+    'session-view--chat-header-collapsed',
     shouldCollapse,
   );
 }
@@ -189,7 +189,7 @@ function isMobileLandscapeRightDock() {
   return Boolean(
     dom.sessionView
       && dom.sessionView.dataset.chatDock === "right"
-      && document.documentElement.classList.contains("viewport-landscape")
+      && document.documentElement.classList.contains('page-context--viewport-landscape')
       && window.matchMedia("(max-width: 980px) and (orientation: landscape)").matches,
   );
 }
@@ -231,7 +231,7 @@ function isMessageSurfaceTap(target) {
 }
 
 function isSystemMessageTarget(target) {
-  return target instanceof Element && Boolean(target.closest("#messages .message.system"));
+  return target instanceof Element && Boolean(target.closest('#messages .message.message--system'));
 }
 
 function revealHeader() {
@@ -256,7 +256,7 @@ function scheduleHeaderToggle() {
     tapToggleTimer = 0;
     if (isChatKeyboardOpen() || !isActiveChatDock()) return;
 
-    const isCollapsed = dom.sessionView.classList.contains("chat-header-collapsed");
+    const isCollapsed = dom.sessionView.classList.contains('session-view--chat-header-collapsed');
     // La actividad persistente impide volver a ocultar la cabecera, pero no
     // debe impedir que un toque sobre el chat la revele si ya estaba plegada.
     if (!isCollapsed && hasPersistentActivity()) return;
@@ -297,7 +297,7 @@ function handleWheel(event) {
 function syncHeaderMode() {
   if (isHeaderForcedByKeyboard() && isActiveChatDock()) {
     if (headerCollapsedBeforeKeyboard === null) {
-      headerCollapsedBeforeKeyboard = dom.sessionView.classList.contains("chat-header-collapsed");
+      headerCollapsedBeforeKeyboard = dom.sessionView.classList.contains('session-view--chat-header-collapsed');
     }
     clearHideTimer();
     setHeaderCollapsed(true);
@@ -345,7 +345,7 @@ export function wireMobileBottomChatHeader() {
   dom.chatArea.addEventListener("focusin", (event) => {
     if (event.target === dom.messageInput && isActiveChatDock()) {
       if (headerCollapsedBeforeKeyboard === null) {
-        headerCollapsedBeforeKeyboard = dom.sessionView.classList.contains("chat-header-collapsed");
+        headerCollapsedBeforeKeyboard = dom.sessionView.classList.contains('session-view--chat-header-collapsed');
       }
       headerKeyboardPreparing = true;
       clearHideTimer();

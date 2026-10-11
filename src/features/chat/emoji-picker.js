@@ -1,9 +1,9 @@
-import { dom } from "../../core/dom.js?v=20261011-chat-controls-repair-01";
-import { state } from "../../core/state.js?v=20261011-chat-controls-repair-01";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { state } from "../../core/state.js?v=20261011-bem-itcss-oocss-04";
 import { EMOJI_PICKER_ITEMS, replaceEmojiShortcodes } from "../../core/utils.js?v=20261011-chat-controls-repair-01";
 import { focusChatInput } from "./chat-input-focus.js?v=20261011-chat-controls-repair-01";
-import { isMobileLayout, logMobileInteraction } from "./chat-input-debug.js?v=20261011-chat-controls-repair-01";
-import { EMOJI_PAGE_COLUMNS, positionEmojiPopover } from "./emoji-picker-layout.js?v=20261011-chat-controls-repair-01";
+import { isMobileLayout, logMobileInteraction } from "./chat-input-debug.js?v=20261011-bem-itcss-oocss-04";
+import { EMOJI_PAGE_COLUMNS, positionEmojiPopover } from "./emoji-picker-layout.js?v=20261011-bem-itcss-oocss-04";
 
 const EMOJI_POPOVER_TRANSITION_MS = 150;
 
@@ -21,7 +21,7 @@ let emojiPopoverOriginalParent = null;
 
 function syncFullscreenEmojiPopoverSurface(anchor) {
   const popover = dom.emojiPopover;
-  if (!popover || !isMobileLayout() || !document.body.classList.contains("fullscreen-mode")) {
+  if (!popover || !isMobileLayout() || !document.body.classList.contains('page-context--fullscreen')) {
     return;
   }
 
@@ -90,13 +90,13 @@ function cancelEmojiPopoverHide() {
 
 function showEmojiPopover(popover) {
   cancelEmojiPopoverHide();
-  const track = popover.querySelector(".emoji-popover-track");
+  const track = popover.querySelector('.emoji-popover__track');
   if (track) track.scrollLeft = 0;
   popover.hidden = false;
-  popover.classList.remove("is-emoji-popover-closing");
+  popover.classList.remove('emoji-popover--closing');
   window.requestAnimationFrame(() => {
-    if (popover.hidden || popover.classList.contains("is-emoji-popover-closing")) return;
-    popover.classList.add("is-emoji-popover-open");
+    if (popover.hidden || popover.classList.contains('emoji-popover--closing')) return;
+    popover.classList.add('emoji-popover--open');
   });
 }
 
@@ -105,12 +105,12 @@ export function buildEmojiPicker() {
   emojiPopoverOriginalParent = dom.emojiPopover.parentElement;
   dom.emojiPopover.innerHTML = "";
   const fog = document.createElement("span");
-  fog.className = "emoji-popover-fog";
+  fog.className = 'emoji-popover__fog';
   fog.setAttribute("aria-hidden", "true");
   const track = document.createElement("div");
-  track.className = "emoji-popover-track";
+  track.className = 'emoji-popover__track';
   const page = document.createElement("div");
-  page.className = "emoji-popover-page";
+  page.className = 'emoji-popover__page';
   page.style.setProperty("--emoji-page-columns", String(EMOJI_PAGE_COLUMNS));
   track.append(page);
   dom.emojiPopover.append(fog);
@@ -118,7 +118,7 @@ export function buildEmojiPicker() {
   syncEmojiTriggerState();
   EMOJI_PICKER_ITEMS.forEach(({ emoji, tags }) => {
     const button = document.createElement("button");
-    button.className = "emoji-option";
+    button.className = 'emoji-popover__option';
     button.type = "button";
     const tooltip = tags?.length ? `:${tags[0]}:` : "";
     button.setAttribute("aria-label", `Insertar ${emoji}`);
@@ -176,7 +176,7 @@ function syncEmojiTriggerState(activeAnchor = null) {
   [dom.messageEmojiButton, dom.overlayEmojiButton].forEach((button) => {
     if (!button) return;
     const isActive = button === activeAnchor;
-    button.classList.toggle("is-emoji-picker-open", isActive);
+    button.classList.toggle('icon-button--emoji-picker-open', isActive);
     button.setAttribute("aria-expanded", String(isActive));
   });
 }
@@ -185,7 +185,7 @@ export function hideEmojiPicker() {
   const popover = dom.emojiPopover;
   emojiPickerOpenRequestId += 1;
   if (popover.hidden) {
-    popover.classList.remove("is-emoji-popover-open", "is-emoji-popover-closing");
+    popover.classList.remove('emoji-popover--open', 'emoji-popover--closing');
     popover.dataset.anchor = "";
     popover.dataset.placement = "";
     popover.style.removeProperty("--emoji-popover-anchor-x");
@@ -194,16 +194,16 @@ export function hideEmojiPicker() {
     return;
   }
 
-  if (popover.classList.contains("is-emoji-popover-closing")) return;
+  if (popover.classList.contains('emoji-popover--closing')) return;
   cancelEmojiPopoverHide();
-  popover.classList.remove("is-emoji-popover-open");
-  popover.classList.add("is-emoji-popover-closing");
+  popover.classList.remove('emoji-popover--open');
+  popover.classList.add('emoji-popover--closing');
   dom.emojiPopover.dataset.anchor = "";
   syncEmojiTriggerState();
   emojiPopoverHideTimer = window.setTimeout(() => {
     emojiPopoverHideTimer = 0;
     popover.hidden = true;
-    popover.classList.remove("is-emoji-popover-closing");
+    popover.classList.remove('emoji-popover--closing');
     popover.dataset.placement = "";
     popover.style.removeProperty("--emoji-popover-anchor-x");
     restoreEmojiPopoverSurface();

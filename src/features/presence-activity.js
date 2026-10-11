@@ -1,4 +1,4 @@
-import { state, getTransportNow } from "../core/state.js?v=20261010-file-size-refactor-02";
+import { state, getTransportNow } from "../core/state.js?v=20261011-bem-itcss-oocss-04";
 import { makeParticipantLabel } from "../core/utils.js?v=20261010-file-size-refactor-02";
 
 const RECENT_ACTIVITY_WINDOW_MS = 30000;

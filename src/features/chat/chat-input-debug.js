@@ -1,5 +1,5 @@
-import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
-import { logEvent, state } from "../../core/state.js?v=20261010-file-size-refactor-02";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { logEvent, state } from "../../core/state.js?v=20261011-bem-itcss-oocss-04";
 
 const MOBILE_CHAT_LAYOUT_QUERY = "(max-width: 980px)";
 

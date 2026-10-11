@@ -30,7 +30,7 @@ html {
 /* El lobby puede crecer un poco más que el viewport en teléfonos bajos, pero
    no debe activar el rebote visual del root al arrastrar desde sus extremos.
    Ese rebote mueve temporalmente también las capas fijas del fondo. */
-html:has(body.is-lobby) {
+html:has(body.page-context--lobby) {
   overscroll-behavior-y: none;
   background:
     radial-gradient(circle at 18% -8%, rgba(240, 140, 58, 0.18), transparent 42%),
@@ -62,11 +62,11 @@ body {
   color: var(--text);
 }
 
-body:not(.app-ready) {
+body:not(.page-context--ready) {
   visibility: hidden;
 }
 
-body.is-lobby {
+body.page-context--lobby {
   position: relative;
   isolation: isolate;
   overflow-x: hidden;
@@ -80,12 +80,12 @@ body.is-lobby {
 /* El fondo del lobby vive en el canvas raíz (html), fuera del body que se
    desplaza. Los pseudo-elementos del body provocaban que Chrome Android
    repintara la superficie durante un swipe y la línea diagonal parecía moverse. */
-body.is-lobby::before {
+body.page-context--lobby::before {
   display: none;
 }
 
 /* El grano también queda fuera de la superficie scrolleable. */
-body.is-lobby::after {
+body.page-context--lobby::after {
   display: none;
 }
 
@@ -174,8 +174,7 @@ select:focus {
   background: rgba(7, 9, 11, 0.85);
 }
 
-.message-form textarea:focus,
-.overlay-message-form textarea:focus {
+.message-form textarea:focus,.message-form.message-form--overlay textarea:focus {
   border-color: var(--glass-border-strong);
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.06);
 }
@@ -190,14 +189,14 @@ select {
   padding-right: 32px;
 }
 
-.overlay-messages::-webkit-scrollbar,
-.messages::-webkit-scrollbar,
+.chat-message-list.chat-message-list--overlay::-webkit-scrollbar,
+.chat-message-list::-webkit-scrollbar,
 textarea::-webkit-scrollbar {
   width: 6px;
 }
 
-.overlay-messages::-webkit-scrollbar-thumb,
-.messages::-webkit-scrollbar-thumb,
+.chat-message-list.chat-message-list--overlay::-webkit-scrollbar-thumb,
+.chat-message-list::-webkit-scrollbar-thumb,
 textarea::-webkit-scrollbar-thumb {
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.18);

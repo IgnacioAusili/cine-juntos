@@ -1,4 +1,4 @@
-import { hideTooltip } from "./icons-tooltips.js?v=20261011-lucide-icons-repair-01";
+import { hideTooltip } from "./icons-tooltips.js?v=20261011-bem-itcss-oocss-04";
 
 let suppressRestoredFocusTooltip = false;
 

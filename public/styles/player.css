@@ -1,7 +1,7 @@
-@import url("./player-frame-layout.css?v=20261011-player-empty-icon-layer-01");
-@import url("./player-empty-state.css?v=20261011-player-skip-active-cleanup-01");
-@import url("./player-overlay-states.css?v=20261010-file-size-refactor-02");
-@import url("./player-control-line-layout.css?v=20261011-player-skip-active-cleanup-01");
-@import url("./player-seek-slider.css?v=20261011-player-skip-active-cleanup-01");
-@import url("./player-volume-slider.css?v=20261010-file-size-refactor-02");
+@import url("./player-frame-layout.css?v=20261011-bem-itcss-oocss-04");
+@import url("./player-empty-state.css?v=20261011-bem-itcss-oocss-04");
+@import url("./player-overlay-states.css?v=20261011-bem-itcss-oocss-04");
+@import url("./player-control-line-layout.css?v=20261011-bem-itcss-oocss-04");
+@import url("./player-seek-slider.css?v=20261011-bem-itcss-oocss-04");
+@import url("./player-volume-slider.css?v=20261011-bem-itcss-oocss-04");
 @import url("./player-rate-select.css?v=20261011-chat-style-toggle-bem-01");

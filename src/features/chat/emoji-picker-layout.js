@@ -1,4 +1,4 @@
-import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
 
 const EMOJI_POPOVER_GAP_PX = 8;
 
@@ -18,8 +18,8 @@ const EMOJI_PAGE_MIN_CELL_PX = 20;
 
 export function isLandscapeKeyboardEmojiLayout() {
   return Boolean(
-    document.documentElement.classList.contains("viewport-landscape")
-      && document.documentElement.classList.contains("bottom-chat-keyboard-open")
+    document.documentElement.classList.contains('page-context--viewport-landscape')
+      && document.documentElement.classList.contains('page-context--bottom-chat-keyboard-open')
       && dom.sessionView?.dataset.chatDock === "bottom",
   );
 }
@@ -33,7 +33,7 @@ function getEmojiViewportSize() {
 }
 
 function getEmojiPopoverTrack(popover) {
-  return popover.querySelector(".emoji-popover-track");
+  return popover.querySelector('.emoji-popover__track');
 }
 
 export function rebuildEmojiPopoverPages(popover, options, columns, rows) {
@@ -48,7 +48,7 @@ export function rebuildEmojiPopoverPages(popover, options, columns, rows) {
 
   for (let start = 0; start < options.length; start += pageSize) {
     const page = document.createElement("div");
-    page.className = "emoji-popover-page";
+    page.className = 'emoji-popover__page';
     page.style.setProperty("--emoji-page-columns", String(columns));
     page.style.setProperty("--emoji-page-rows", String(rows));
     options.slice(start, start + pageSize).forEach((option) => page.append(option));
@@ -63,7 +63,7 @@ export function rebuildEmojiPopoverPages(popover, options, columns, rows) {
 }
 
 export function syncEmojiPopoverLayout(popover) {
-  const options = [...popover.querySelectorAll(".emoji-option")];
+  const options = [...popover.querySelectorAll('.emoji-popover__option')];
   if (!options.length) return;
 
   const landscapeKeyboardLayout = isLandscapeKeyboardEmojiLayout();
@@ -94,7 +94,7 @@ export function syncEmojiPopoverLayout(popover) {
     popover.style.removeProperty("max-width");
   }
 
-  popover.classList.remove("is-emoji-popover-paged");
+  popover.classList.remove('emoji-popover--paged');
   popover.style.removeProperty("height");
   rebuildEmojiPopoverPages(
     popover,
@@ -119,7 +119,7 @@ export function syncEmojiPopoverLayout(popover) {
     ),
   );
 
-  popover.classList.add("is-emoji-popover-paged");
+  popover.classList.add('emoji-popover--paged');
   const compactHeight = verticalChrome
     + rows * naturalCellHeight
     + rowGap * Math.max(0, rows - 1);

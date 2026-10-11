@@ -1,4 +1,4 @@
-import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
 
 const scrollbarDragState = new WeakMap();
 
@@ -28,11 +28,11 @@ function wireChatScrollbarDragging(messagesContainer) {
   if (!messagesContainer || messagesContainer.dataset.chatScrollbarDragBound === "true") return;
   messagesContainer.dataset.chatScrollbarDragBound = "true";
 
-  const shell = messagesContainer.closest(".messages-wrap");
+  const shell = messagesContainer.closest('.chat-message-list-shell');
   const track = shell?.querySelector(".chat-scrollbar");
   if (!shell || !track) return;
 
-  const getThumb = () => shell.querySelector(".chat-scrollbar-thumb");
+  const getThumb = () => shell.querySelector('.chat-scrollbar__thumb');
 
   const updateFromPointer = (clientY) => {
     const thumb = getThumb();
@@ -63,8 +63,8 @@ function wireChatScrollbarDragging(messagesContainer) {
     } catch {
       // Ignorado: el puntero ya pudo haberse liberado.
     }
-    track.classList.remove("is-dragging");
-    shell.classList.remove("is-dragging");
+    track.classList.remove('u-dragging');
+    shell.classList.remove('u-dragging');
   };
 
   track.addEventListener("pointerdown", (event) => {
@@ -86,8 +86,8 @@ function wireChatScrollbarDragging(messagesContainer) {
       offsetWithinThumb,
     });
 
-    track.classList.add("is-dragging");
-    shell.classList.add("is-dragging");
+    track.classList.add('u-dragging');
+    shell.classList.add('u-dragging');
 
     try {
       track.setPointerCapture(event.pointerId);
@@ -112,13 +112,13 @@ function wireChatScrollbarDragging(messagesContainer) {
 }
 
 export function syncChatScrollbar(messagesContainer) {
-  const shell = messagesContainer?.closest(".messages-wrap");
+  const shell = messagesContainer?.closest('.chat-message-list-shell');
   const track = shell?.querySelector(".chat-scrollbar");
-  const thumb = shell?.querySelector(".chat-scrollbar-thumb");
+  const thumb = shell?.querySelector('.chat-scrollbar__thumb');
   if (!shell || !track || !thumb) return;
 
-  const isLayoutTransitioning = dom.sessionView?.classList.contains("chat-layout-transitioning")
-    || dom.sessionView?.classList.contains("chat-dock-switching");
+  const isLayoutTransitioning = dom.sessionView?.classList.contains('session-view--chat-layout-transitioning')
+    || dom.sessionView?.classList.contains('session-view--chat-dock-switching');
   if (isLayoutTransitioning) {
     shell.removeAttribute("data-scrollbar-visible");
     thumb.style.height = "";
@@ -147,8 +147,8 @@ export function syncChatScrollbar(messagesContainer) {
 }
 
 export function syncComposerScrollbar(input) {
-  const shell = input?.closest(".textarea-shell");
-  const thumb = shell?.querySelector(".composer-scrollbar-thumb");
+  const shell = input?.closest('.message-form__textarea-shell');
+  const thumb = shell?.querySelector('.composer-scrollbar__thumb');
   if (!shell || !thumb) return;
 
   const overflow = input.scrollHeight - input.clientHeight;

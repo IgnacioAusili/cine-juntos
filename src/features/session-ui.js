@@ -1,10 +1,10 @@
-import { dom } from "../core/dom.js?v=20261010-file-size-refactor-02";
-import { initializeAboutDialog } from "./session-about-dialog.js?v=20261010-file-size-refactor-02";
-import { showErrorDialog, showLoadReplaceDialog, showSlowLoadDialog, showResumeVideoDialog } from "./session-dialogs.js?v=20261011-button-bem-scope-01";
-export { initializeAboutDialog } from "./session-about-dialog.js?v=20261010-file-size-refactor-02";
-export { showErrorDialog, showLoadReplaceDialog, showSlowLoadDialog, showResumeVideoDialog } from "./session-dialogs.js?v=20261011-button-bem-scope-01";
-import { state, logEvent } from "../core/state.js?v=20261010-file-size-refactor-02";
-import { refreshLayoutMetrics } from "./layout-metrics.js?v=20261010-file-size-refactor-02";
+import { dom } from "../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { initializeAboutDialog } from "./session-about-dialog.js?v=20261011-bem-itcss-oocss-04";
+import { showErrorDialog, showLoadReplaceDialog, showSlowLoadDialog, showResumeVideoDialog } from "./session-dialogs.js?v=20261011-bem-itcss-oocss-04";
+export { initializeAboutDialog } from "./session-about-dialog.js?v=20261011-bem-itcss-oocss-04";
+export { showErrorDialog, showLoadReplaceDialog, showSlowLoadDialog, showResumeVideoDialog } from "./session-dialogs.js?v=20261011-bem-itcss-oocss-04";
+import { state, logEvent } from "../core/state.js?v=20261011-bem-itcss-oocss-04";
+import { refreshLayoutMetrics } from "./layout-metrics.js?v=20261011-bem-itcss-oocss-04";
 
 const ROOM_ENTRY_VIDEO_FOCUS_TIMEOUT_MS = 8000;
 let userScrollIntentVersion = 0;
@@ -122,7 +122,7 @@ export function watchRoomEntryVideoFocus(userScrollIntentAtEntry = userScrollInt
 export function showLobby() {
   dom.lobbyScreen.hidden = false;
   dom.sessionView.hidden = true;
-  document.body.classList.add("is-lobby");
+  document.body.classList.add('page-context--lobby');
   setHostBadge(false);
   refreshLayoutMetrics();
 }
@@ -130,7 +130,7 @@ export function showLobby() {
 export function showSession() {
   dom.lobbyScreen.hidden = true;
   dom.sessionView.hidden = false;
-  document.body.classList.remove("is-lobby");
+  document.body.classList.remove('page-context--lobby');
   refreshLayoutMetrics();
 }
 

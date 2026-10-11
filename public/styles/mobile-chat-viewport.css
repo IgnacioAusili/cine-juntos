@@ -4,7 +4,7 @@
    el reproductor. Las reglas equivalentes de móvil dependen del puntero táctil
    y no se activan cuando Edge reduce el viewport al acoplar DevTools. */
 @media (max-width: 680px) {
-  body:not(.is-lobby) .session-view[data-chat-dock="right"] .o-workspace {
+  body:not(.page-context--lobby) .session-view[data-chat-dock="right"] .o-workspace {
     position: relative;
     display: block;
     height: var(--right-chat-visible-height, var(--app-viewport-height));
@@ -16,7 +16,7 @@
     overflow: visible;
   }
 
-  body:not(.is-lobby) .session-view[data-chat-dock="right"] .o-video-area {
+  body:not(.page-context--lobby) .session-view[data-chat-dock="right"] .o-video-area {
     position: relative;
     width: 100%;
     height: 100%;
@@ -24,7 +24,7 @@
     grid-area: auto;
   }
 
-  body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-area {
+  body:not(.page-context--lobby) .session-view[data-chat-dock="right"] .chat-area {
     position: absolute;
     z-index: 10;
     inset: 0 0 0 auto;
@@ -41,16 +41,16 @@
     will-change: clip-path;
   }
 
-  body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-area > * {
+  body:not(.page-context--lobby) .session-view[data-chat-dock="right"] .chat-area > * {
     width: var(--app-viewport-width, 100vw);
     max-width: none;
   }
 
-  body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-area > .message-form {
+  body:not(.page-context--lobby) .session-view[data-chat-dock="right"] .chat-area > .message-form {
     width: calc(var(--app-viewport-width, 100vw) - 36px);
   }
 
-  body:not(.is-lobby) .session-view.chat-collapsed[data-chat-dock="right"] .chat-area {
+  body:not(.page-context--lobby) .session-view.session-view--chat-collapsed[data-chat-dock="right"] .chat-area {
     width: 100%;
     flex-basis: 100%;
     clip-path: inset(0 0 0 100%);
@@ -58,11 +58,11 @@
     pointer-events: none;
   }
 
-  body:not(.is-lobby) .session-view.chat-layout-transitioning[data-chat-dock="right"] .chat-area {
+  body:not(.page-context--lobby) .session-view.session-view--chat-layout-transitioning[data-chat-dock="right"] .chat-area {
     opacity: 1 !important;
   }
 
-  body:not(.is-lobby) .session-view.chat-dock-switching[data-chat-dock="right"] .chat-area {
+  body:not(.page-context--lobby) .session-view.session-view--chat-dock-switching[data-chat-dock="right"] .chat-area {
     width: 0 !important;
     max-width: 100% !important;
     flex-basis: 0 !important;
@@ -70,7 +70,7 @@
     transition: none !important;
   }
 
-  body:not(.is-lobby) .session-view.chat-dock-switching.chat-dock-switching-entered[data-chat-dock="right"] .chat-area {
+  body:not(.page-context--lobby) .session-view.session-view--chat-dock-switching.session-view--chat-dock-switching-entered[data-chat-dock="right"] .chat-area {
     width: 100% !important;
     max-width: 100% !important;
     flex-basis: 100% !important;
@@ -83,12 +83,12 @@
    reproductor. La clase se aplica mientras se conserva el estado original
    para restaurarlo cuando el teclado se cierra, incluso sin contenido. */
 @media (hover: none) and (pointer: coarse) {
-  body:not(.is-lobby):not(.fullscreen-mode)
-    .session-view[data-chat-dock] .player-frame.player-controls-keyboard-hidden
-    .player-bottom-actions,
-  body:not(.is-lobby):not(.fullscreen-mode)
-    .session-view[data-chat-dock] .player-frame.player-controls-keyboard-hidden
-    .player-center-actions {
+  body:not(.page-context--lobby):not(.page-context--fullscreen)
+    .session-view[data-chat-dock] .player-frame.player-controls-bar--keyboard-hidden
+    .player-frame__bottom-actions,
+  body:not(.page-context--lobby):not(.page-context--fullscreen)
+    .session-view[data-chat-dock] .player-frame.player-controls-bar--keyboard-hidden
+    .player-frame__center-actions {
     opacity: 0;
     pointer-events: none;
     transition:
@@ -96,9 +96,9 @@
       transform 180ms ease;
   }
 
-  body:not(.is-lobby):not(.fullscreen-mode)
-    .session-view[data-chat-dock] .player-frame.player-controls-keyboard-hidden
-    .player-bottom-actions {
+  body:not(.page-context--lobby):not(.page-context--fullscreen)
+    .session-view[data-chat-dock] .player-frame.player-controls-bar--keyboard-hidden
+    .player-frame__bottom-actions {
     transform: translateY(6px);
   }
 }
@@ -108,21 +108,21 @@
    el reproductor no cambia de tamaño ni el documento se desplaza para mostrar
    un chat completo que ya no entra sobre el teclado. */
 @media (max-width: 680px) {
-  html.bottom-chat-keyboard-open body:not(.is-lobby) {
+  html.page-context--bottom-chat-keyboard-open body:not(.page-context--lobby) {
     overscroll-behavior: none !important;
   }
 
-  html.bottom-chat-keyboard-open body:not(.is-lobby)
-    .session-view[data-chat-dock="bottom"] .messages {
+  html.page-context--bottom-chat-keyboard-open body:not(.page-context--lobby)
+    .session-view[data-chat-dock="bottom"] .chat-message-list {
     overscroll-behavior: contain;
   }
 
-  html.bottom-chat-keyboard-open body:not(.is-lobby)
+  html.page-context--bottom-chat-keyboard-open body:not(.page-context--lobby)
     .session-view[data-chat-dock="bottom"] .chat-area > .message-form {
     bottom: 0 !important;
   }
 
-  html.bottom-chat-keyboard-open body:not(.is-lobby)
+  html.page-context--bottom-chat-keyboard-open body:not(.page-context--lobby)
     .session-view[data-chat-dock="bottom"] .o-workspace {
     height: var(--app-viewport-height) !important;
     min-height: 0 !important;
@@ -135,7 +135,7 @@
       ) !important;
   }
 
-  html.bottom-chat-keyboard-open body:not(.is-lobby)
+  html.page-context--bottom-chat-keyboard-open body:not(.page-context--lobby)
     .session-view[data-chat-dock="bottom"]:not(:has(.chat-name-editor[data-editing="true"])) .chat-tools {
     min-height: 0 !important;
     height: 0 !important;
@@ -147,12 +147,12 @@
     transform: none !important;
   }
 
-  html.bottom-chat-keyboard-open body:not(.is-lobby)
+  html.page-context--bottom-chat-keyboard-open body:not(.page-context--lobby)
     .session-view[data-chat-dock="bottom"]:not(:has(.chat-name-editor[data-editing="true"])) .chat-area {
     grid-template-rows: 0px minmax(0, 1fr) !important;
   }
 
-  html.bottom-chat-keyboard-open body:not(.is-lobby)
+  html.page-context--bottom-chat-keyboard-open body:not(.page-context--lobby)
     .session-view[data-chat-dock="bottom"]:has(.chat-name-editor[data-editing="true"])
     #messageForm {
     display: none !important;
@@ -162,9 +162,9 @@
      orientation: landscape aunque el teléfono siga en vertical. Mantener
      aquí la composición sin bordes evita que reaparezca el marco base del
      reproductor y del chat durante ese cambio de media query. */
-  html.bottom-chat-keyboard-open body:not(.is-lobby)
+  html.page-context--bottom-chat-keyboard-open body:not(.page-context--lobby)
     .session-view[data-chat-dock="bottom"] .player-frame:not(.mini-player-surface),
-  html.bottom-chat-keyboard-open body:not(.is-lobby)
+  html.page-context--bottom-chat-keyboard-open body:not(.page-context--lobby)
     .session-view[data-chat-dock="bottom"] .chat-area {
     border: 0 !important;
     border-radius: 0 !important;
@@ -177,8 +177,8 @@
    zona web muy baja; el chat enfocado debe ocupar esa zona, no conservar las
    dos filas completas del layout apaisado y quedar debajo del teclado. */
 @media (hover: none) and (pointer: coarse) {
-  html.viewport-landscape.bottom-chat-keyboard-open body:not(.is-lobby)
-    .session-view.chat-header-collapsed[data-chat-dock="bottom"] .chat-tools {
+  html.page-context--viewport-landscape.page-context--bottom-chat-keyboard-open body:not(.page-context--lobby)
+    .session-view.session-view--chat-header-collapsed[data-chat-dock="bottom"] .chat-tools {
     min-height: 0 !important;
     height: 0 !important;
     max-height: 0 !important;
@@ -190,29 +190,29 @@
     transform: translateY(0) !important;
   }
 
-  html.viewport-landscape.bottom-chat-keyboard-open body:not(.is-lobby)
-    .session-view.chat-header-collapsed[data-chat-dock="bottom"]
-    .chat-tools > :not(.chat-collapse-hover-zone) {
+  html.page-context--viewport-landscape.page-context--bottom-chat-keyboard-open body:not(.page-context--lobby)
+    .session-view.session-view--chat-header-collapsed[data-chat-dock="bottom"]
+    .chat-tools > :not(.chat-area__collapse-hover-zone) {
     opacity: 0 !important;
     visibility: hidden;
     pointer-events: none !important;
   }
 
-  html.viewport-landscape.bottom-chat-keyboard-open body:not(.is-lobby)
-    .session-view.chat-header-collapsed[data-chat-dock="bottom"]
-    .chat-area > .chat-collapse-hover-zone[data-chat-control="collapse"] {
+  html.page-context--viewport-landscape.page-context--bottom-chat-keyboard-open body:not(.page-context--lobby)
+    .session-view.session-view--chat-header-collapsed[data-chat-dock="bottom"]
+    .chat-area > .chat-area__collapse-hover-zone[data-chat-control="collapse"] {
     opacity: 1 !important;
     visibility: visible;
     pointer-events: auto !important;
   }
 
-  html.viewport-landscape.bottom-chat-keyboard-open body:not(.is-lobby)
-    .session-view.chat-header-collapsed[data-chat-dock="bottom"] .chat-area {
+  html.page-context--viewport-landscape.page-context--bottom-chat-keyboard-open body:not(.page-context--lobby)
+    .session-view.session-view--chat-header-collapsed[data-chat-dock="bottom"] .chat-area {
     gap: 3px;
     grid-template-rows: 0 minmax(0, 1fr) !important;
   }
 
-  html.viewport-landscape.bottom-chat-keyboard-open body:not(.is-lobby)
+  html.page-context--viewport-landscape.page-context--bottom-chat-keyboard-open body:not(.page-context--lobby)
     .session-view[data-chat-dock="bottom"] .o-workspace {
     height: var(--chat-bottom-viewport-height, var(--app-viewport-height)) !important;
     min-height: 0 !important;
@@ -220,14 +220,14 @@
     grid-template-rows: 0 minmax(0, 1fr) !important;
   }
 
-  html.viewport-landscape.bottom-chat-keyboard-open body:not(.is-lobby)
+  html.page-context--viewport-landscape.page-context--bottom-chat-keyboard-open body:not(.page-context--lobby)
     .session-view[data-chat-dock="bottom"] .o-video-area {
     height: 0 !important;
     min-height: 0 !important;
     overflow: hidden !important;
   }
 
-  html.viewport-landscape.bottom-chat-keyboard-open body:not(.is-lobby)
+  html.page-context--viewport-landscape.page-context--bottom-chat-keyboard-open body:not(.page-context--lobby)
     .session-view[data-chat-dock="bottom"] .chat-area {
     height: auto !important;
     min-height: 0 !important;
@@ -237,7 +237,7 @@
     grid-template-rows: 0 minmax(0, 1fr) !important;
   }
 
-  html.viewport-landscape.bottom-chat-keyboard-open body:not(.is-lobby)
+  html.page-context--viewport-landscape.page-context--bottom-chat-keyboard-open body:not(.page-context--lobby)
     .session-view[data-chat-dock="bottom"] .chat-area > .message-form {
     bottom: 0 !important;
   }

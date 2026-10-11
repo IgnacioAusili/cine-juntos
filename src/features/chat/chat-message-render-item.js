@@ -1,16 +1,16 @@
-import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
-import { state } from "../../core/state.js?v=20261010-file-size-refactor-02";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { state } from "../../core/state.js?v=20261011-bem-itcss-oocss-04";
 import { formatTime, formatClockTime } from "../../core/utils.js?v=20261010-file-size-refactor-02";
-import { getPreviousRenderableMessage, getFirstRenderableMessage, removeContinuationAuthorName } from "./chat-message-flow.js?v=20261010-file-size-refactor-02";
+import { getPreviousRenderableMessage, getFirstRenderableMessage, removeContinuationAuthorName } from "./chat-message-flow.js?v=20261011-bem-itcss-oocss-04";
 import { getSystemMessageText, normalizeOwnSystemBody, isEmojiOnlyText, countEmojiGlyphs } from "./chat-system-message-text.js?v=20261010-file-size-refactor-02";
-import { getRenderableMessageImages, isStandaloneImageText, appendMessageMedia } from "./chat-message-media.js?v=20261010-file-size-refactor-02";
-import { extendMessageHitArea, wireMessageInteractions } from "./chat-message-interactions.js?v=20261010-file-size-refactor-02";
-import { appendMessageContent, truncateText } from "./chat-content-parser.js?v=20261010-file-size-refactor-02";
+import { getRenderableMessageImages, isStandaloneImageText, appendMessageMedia } from "./chat-message-media.js?v=20261011-bem-itcss-oocss-04";
+import { extendMessageHitArea, wireMessageInteractions } from "./chat-message-interactions.js?v=20261011-bem-itcss-oocss-04";
+import { appendMessageContent, truncateText } from "./chat-content-parser.js?v=20261011-bem-itcss-oocss-04";
 import { getParticipantAccent } from "./chat-participant-color.js?v=20261010-file-size-refactor-02";
-import { setReplyTarget, scrollToMessage } from "./chat-reply.js?v=20261011-lucide-icons-repair-01";
-import { watchSystemMessageLayout, fitSystemMessageBubble } from "./chat-system-message-layout.js?v=20261010-file-size-refactor-02";
-import { incrementScrollIndicator } from "./unread-counters.js?v=20261011-chat-interaction-fixes-01";
-import { scheduleSystemMessageCollapse } from "./system-message-groups.js?v=20261011-chat-interaction-fixes-01";
+import { setReplyTarget, scrollToMessage } from "./chat-reply.js?v=20261011-bem-itcss-oocss-04";
+import { watchSystemMessageLayout, fitSystemMessageBubble } from "./chat-system-message-layout.js?v=20261011-bem-itcss-oocss-04";
+import { incrementScrollIndicator } from "./unread-counters.js?v=20261011-bem-itcss-oocss-04";
+import { scheduleSystemMessageCollapse } from "./system-message-groups.js?v=20261011-bem-itcss-oocss-04";
 
 export function appendMessageNow(container, message, { animateSystemGroups = true, prepend = false } = {}) {
   const isMine = message.from === state.session.clientId;
@@ -27,7 +27,7 @@ export function appendMessageNow(container, message, { animateSystemGroups = tru
   const messageImages = getRenderableMessageImages(message, messageText);
   const isContinuation = Boolean(
     !message.system &&
-    !previousMessage?.classList.contains("system") &&
+    !previousMessage?.classList.contains('message--system') &&
     previousMessage?.dataset.authorId === authorKey,
   );
   const shouldRenderAuthorName = prepend || !isContinuation;
@@ -39,7 +39,7 @@ export function appendMessageNow(container, message, { animateSystemGroups = tru
   );
   const isMediaOnly = !message.system && Boolean(messageImages.length) && !hasReply && !hasRenderableText;
   const item = document.createElement("article");
-  item.className = `message${isMine ? " mine" : ""}${message.system ? " system" : ""}`;
+  item.className = `message${isMine ? ' message--mine' : ""}${message.system ? ' message--system' : ""}`;
   item._chatMessage = message;
   item.dataset.messageId = message.id;
   item.dataset.authorId = authorKey;
@@ -47,17 +47,17 @@ export function appendMessageNow(container, message, { animateSystemGroups = tru
   extendMessageHitArea(item, container);
 
   const meta = document.createElement("div");
-  meta.className = "message-meta";
+  meta.className = 'message__meta';
 
   const metaName = document.createElement("span");
-  metaName.className = "message-meta-name";
+  metaName.className = 'message__meta-name';
   metaName.textContent = message.name || "Invitado";
 
   let tsBtn = null;
   if (message.videoTimestamp != null && !message.system) {
     tsBtn = document.createElement("button");
     tsBtn.type = "button";
-    tsBtn.className = "message-video-ts";
+    tsBtn.className = 'message__video-ts';
     tsBtn.dataset.tooltip = `Ir al minuto ${formatClockTime(message.videoTimestamp)} del video`;
     tsBtn.removeAttribute("title");
     tsBtn.setAttribute("aria-label", `Saltar a ${formatClockTime(message.videoTimestamp)} en el video`);
@@ -78,9 +78,9 @@ export function appendMessageNow(container, message, { animateSystemGroups = tru
   }
 
   const bubble = document.createElement("div");
-  bubble.className = "message-bubble";
+  bubble.className = 'message__bubble';
   const content = document.createElement("div");
-  content.className = "message-content";
+  content.className = 'message__content';
   const emojiOnlyCount = countEmojiGlyphs(messageText);
   const isEmojiOnly =
     !message.system &&
@@ -88,15 +88,15 @@ export function appendMessageNow(container, message, { animateSystemGroups = tru
     !messageImages.length &&
     isEmojiOnlyText(messageText);
   if (isEmojiOnly) {
-    bubble.classList.add("message-bubble--emoji-only");
-    if (emojiOnlyCount > 4) bubble.classList.add("message-bubble--emoji-only-compact");
+    bubble.classList.add('message__bubble--emoji-only');
+    if (emojiOnlyCount > 4) bubble.classList.add('message__bubble--emoji-only-compact');
   }
   const replyTextRow = hasReply && !message.system ? document.createElement("div") : null;
   if (hasReply) {
-    bubble.classList.add("message-bubble--with-reply");
+    bubble.classList.add('message__bubble--with-reply');
     const reply = document.createElement("button");
     reply.type = "button";
-    reply.className = "message-reply";
+    reply.className = 'message__reply';
     reply.style.setProperty(
       "--reply-participant-accent",
       getParticipantAccent(message.replyTo.name),
@@ -106,16 +106,16 @@ export function appendMessageNow(container, message, { animateSystemGroups = tru
       rawReplyLabel && !(rawReplyLabel.startsWith("data:image/") && rawReplyLabel.includes("base64,"))
         ? rawReplyLabel
         : "(Imagen)";
-    reply.innerHTML = `<span class="message-reply-name">${message.replyTo.name || "Invitado"}</span><span class="message-reply-body">${truncateText(replyLabel, 90)}</span>`;
+    reply.innerHTML = `<span class="message__reply-name">${message.replyTo.name || "Invitado"}</span><span class="message__reply-body">${truncateText(replyLabel, 90)}</span>`;
     reply.addEventListener("click", () => scrollToMessage(message.replyTo.id, container));
     content.append(reply);
   }
 
   if (message.text) {
     if (message.system) {
-      bubble.classList.add("message-system-bubble");
+      bubble.classList.add('message__system-bubble');
       const systemText = document.createElement("span");
-      systemText.className = "message-system-text";
+      systemText.className = 'message__system-text';
 
       const exactName = String(message.name || "Invitado").trim();
       const rawText = getSystemMessageText(message, isMine);
@@ -124,17 +124,17 @@ export function appendMessageNow(container, message, { animateSystemGroups = tru
         const ownBodyText = isMine ? normalizeOwnSystemBody(bodyText) : "";
         if (ownBodyText) {
           const body = document.createElement("span");
-          body.className = "message-system-body";
+          body.className = 'message__system-body';
           body.textContent = ownBodyText;
           systemText.append(body);
         } else {
           const systemName = document.createElement("span");
-          systemName.className = "message-system-name";
+          systemName.className = 'message__system-name';
           systemName.textContent = isMine ? "Tu" : exactName;
           systemText.append(systemName);
           if (bodyText) {
             const body = document.createElement("span");
-            body.className = "message-system-body";
+            body.className = 'message__system-body';
             body.textContent = ` ${bodyText}`;
             systemText.append(body);
           }
@@ -149,17 +149,17 @@ export function appendMessageNow(container, message, { animateSystemGroups = tru
   }
 
   if (replyTextRow) {
-    replyTextRow.className = "message-reply-text-row";
+    replyTextRow.className = 'message__reply-text-row';
     content.append(replyTextRow);
   }
 
   if (!isMediaOnly) appendMessageMedia(content, messageImages);
   if (message.system) {
     const lineBefore = document.createElement("span");
-    lineBefore.className = "message-system-line message-system-line-before";
+    lineBefore.className = 'message__system-line message__system-line--before';
     lineBefore.setAttribute("aria-hidden", "true");
     const lineAfter = document.createElement("span");
-    lineAfter.className = "message-system-line message-system-line-after";
+    lineAfter.className = 'message__system-line message__system-line--after';
     lineAfter.setAttribute("aria-hidden", "true");
     bubble.append(lineBefore, content, lineAfter);
   } else {
@@ -167,11 +167,11 @@ export function appendMessageNow(container, message, { animateSystemGroups = tru
   }
   if (message.system) {
     const bubbleRow = document.createElement("div");
-    bubbleRow.className = "message-bubble-row system-message-row";
+    bubbleRow.className = 'message__bubble-row message__system-row';
     const hintWrapper = document.createElement("div");
-    hintWrapper.className = "swipe-reply-hint-wrapper";
+    hintWrapper.className = 'message__swipe-reply-hint-wrapper';
     const hint = document.createElement("span");
-    hint.className = "swipe-reply-hint";
+    hint.className = 'message__swipe-reply-hint';
     hint.innerHTML =
       "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><polyline points='9 17 4 12 9 7'/><path d='M20 18v-2a4 4 0 0 0-4-4H4'/></svg>";
     hintWrapper.append(hint);
@@ -188,11 +188,11 @@ export function appendMessageNow(container, message, { animateSystemGroups = tru
   } else if (isMediaOnly) {
     item.classList.add("message--media-only");
     const mediaRow = document.createElement("div");
-    mediaRow.className = "message-media-row";
+    mediaRow.className = 'message__media-row';
     const hintWrapper = document.createElement("div");
-    hintWrapper.className = "swipe-reply-hint-wrapper";
+    hintWrapper.className = 'message__swipe-reply-hint-wrapper';
     const hint = document.createElement("span");
-    hint.className = "swipe-reply-hint";
+    hint.className = 'message__swipe-reply-hint';
     hint.innerHTML =
       "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><polyline points='9 17 4 12 9 7'/><path d='M20 18v-2a4 4 0 0 0-4-4H4'/></svg>";
     hintWrapper.append(hint);
@@ -203,9 +203,9 @@ export function appendMessageNow(container, message, { animateSystemGroups = tru
     item.append(mediaRow);
 
     const timeAnchor = document.createElement("div");
-    timeAnchor.className = "message-time-anchor";
+    timeAnchor.className = 'message__time-anchor';
     const time = document.createElement("div");
-    time.className = "message-time";
+    time.className = 'message__time';
     time.textContent = formatTime(message.createdAt);
     timeAnchor.append(time);
     item.append(timeAnchor);
@@ -221,10 +221,10 @@ export function appendMessageNow(container, message, { animateSystemGroups = tru
     });
   } else {
     const timeAnchor = document.createElement("div");
-    timeAnchor.className = "message-time-anchor";
+    timeAnchor.className = 'message__time-anchor';
 
     const time = document.createElement("div");
-    time.className = "message-time";
+    time.className = 'message__time';
     time.textContent = formatTime(message.createdAt);
     timeAnchor.append(time);
 
@@ -235,12 +235,12 @@ export function appendMessageNow(container, message, { animateSystemGroups = tru
     }
 
     const bubbleRow = document.createElement("div");
-    bubbleRow.className = "message-bubble-row";
+    bubbleRow.className = 'message__bubble-row';
 
     const hintWrapper = document.createElement("div");
-    hintWrapper.className = "swipe-reply-hint-wrapper";
+    hintWrapper.className = 'message__swipe-reply-hint-wrapper';
     const hint = document.createElement("span");
-    hint.className = "swipe-reply-hint";
+    hint.className = 'message__swipe-reply-hint';
     hint.innerHTML =
       "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><polyline points='9 17 4 12 9 7'/><path d='M20 18v-2a4 4 0 0 0-4-4H4'/></svg>";
     hintWrapper.append(hint);

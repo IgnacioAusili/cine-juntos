@@ -1,16 +1,16 @@
-import { dom } from "../../core/dom.js?v=20261011-chat-controls-repair-01";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
 import { CHAT_DOCKS, CHAT_DOCK_META } from "../../core/utils.js?v=20261011-chat-controls-repair-01";
-import { cancelIdentityEditing, syncNameInputWidth } from "../presence.js?v=20261011-lucide-icons-repair-01";
-import { focusFullscreenWorkspace } from "../session-ui.js?v=20261011-chat-controls-repair-01";
-import { syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20261011-chat-controls-repair-01";
-import { hydrateIcons } from "../icons-tooltips.js?v=20261011-lucide-icons-repair-01";
-import { isFullscreenPageActive, getPageScrollMax, getElementPageTop, scrollPageTo } from "./chat-page-scroll.js?v=20261011-chat-controls-repair-01";
-import { isMobilePortraitChatViewport } from "./chat-layout-breakpoints.js?v=20261011-chat-controls-repair-01";
-import { isStackedSessionLayout } from "./chat-responsive-layout.js?v=20261011-chat-controls-repair-01";
+import { cancelIdentityEditing, syncNameInputWidth } from "../presence.js?v=20261011-bem-itcss-oocss-04";
+import { focusFullscreenWorkspace } from "../session-ui.js?v=20261011-bem-itcss-oocss-04";
+import { syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20261011-bem-itcss-oocss-04";
+import { hydrateIcons } from "../icons-tooltips.js?v=20261011-bem-itcss-oocss-04";
+import { isFullscreenPageActive, getPageScrollMax, getElementPageTop, scrollPageTo } from "./chat-page-scroll.js?v=20261011-bem-itcss-oocss-04";
+import { isMobilePortraitChatViewport } from "./chat-layout-breakpoints.js?v=20261011-bem-itcss-oocss-04";
+import { isStackedSessionLayout } from "./chat-responsive-layout.js?v=20261011-bem-itcss-oocss-04";
 import { chatDockTransitionState } from "./chat-layout-transition-state.js?v=20261011-chat-controls-repair-01";
-import { updateCollapseButton } from "./chat-collapse-handles.js?v=20261011-lucide-icons-repair-01";
+import { updateCollapseButton } from "./chat-collapse-handles.js?v=20261011-bem-itcss-oocss-04";
 import { CHAT_DOCK_TRANSITIONS, resolveChatDockTransition } from "./dock-transition-router.js?v=20261011-chat-controls-repair-01";
-import { getBottomToRightScrollTop, animateFullscreenBottomToRightWithNativeCollapse, animateRightToBottomWithNativeCollapse, animateRightToBottomSwitch, animateFullscreenDockSwitch, scheduleBottomToRightSwitch } from "./chat-dock-transitions.js?v=20261011-chat-controls-repair-01";
+import { getBottomToRightScrollTop, animateFullscreenBottomToRightWithNativeCollapse, animateRightToBottomWithNativeCollapse, animateRightToBottomSwitch, animateFullscreenDockSwitch, scheduleBottomToRightSwitch } from "./chat-dock-transitions.js?v=20261011-bem-itcss-oocss-04";
 
 const controllerOperations = {};
 export function configureChatDockController(operations) { Object.assign(controllerOperations, operations || {}); }
@@ -25,7 +25,7 @@ function dispatchChatDockTransition(currentDock, nextDock, options, videoScrollT
     currentDock,
     nextDock,
     skipTransition: options.skipTransition,
-    isCollapsed: dom.sessionView?.classList.contains("chat-collapsed") || false,
+    isCollapsed: dom.sessionView?.classList.contains('session-view--chat-collapsed') || false,
     isFullscreen: isFullscreenPageActive(),
     isStacked: isStackedSessionLayout(),
     isCoarsePointer: window.matchMedia("(hover: none) and (pointer: coarse)").matches,
@@ -79,7 +79,7 @@ export function setChatDock(dock, options = {}) {
 
   cancelIdentityEditing();
   dom.sessionView.dataset.chatDock = nextDock;
-  dom.sessionView.classList.remove("chat-header-collapsed");
+  dom.sessionView.classList.remove('session-view--chat-header-collapsed');
   if (nextDock === "bottom") {
     // setCollapseHandleTransitioning fija temporalmente el ancho lateral del
     // formulario para que no salte durante ese dock. Ese ancho no puede
@@ -112,13 +112,13 @@ export function setChatDock(dock, options = {}) {
   if (
     nextDock === "bottom"
     && !options.preserveScroll
-    && !dom.sessionView.classList.contains("chat-collapsed")
+    && !dom.sessionView.classList.contains('session-view--chat-collapsed')
   ) {
     getControllerOperations().lockChatScrollSnapDuringProgrammaticScroll();
     window.requestAnimationFrame(() => getControllerOperations().revealBottomDockUnion());
   }
 
-  const isFullscreen = document.body.classList.contains("fullscreen-mode") || Boolean(document.fullscreenElement);
+  const isFullscreen = document.body.classList.contains('page-context--fullscreen') || Boolean(document.fullscreenElement);
   if (isFullscreen && !options.skipFullscreenFocus) {
     focusFullscreenWorkspace();
   }

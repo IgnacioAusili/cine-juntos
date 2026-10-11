@@ -1,7 +1,7 @@
 /* En móvil el slider horizontal ocupa menos espacio; el vertical conserva su
    recorrido para que el ajuste siga siendo preciso cuando la fila no entra. */
 @media (max-width: 760px), (hover: none) and (pointer: coarse) {
-  .player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"] .player-volume-slider-wrap {
+  .player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"] .player-volume-group__slider {
     width: 48px;
     min-width: 48px;
     flex-basis: 48px;
@@ -10,14 +10,14 @@
     overflow: visible;
   }
 
-  .player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"]:hover .player-volume-slider-wrap,
-  .player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"]:focus-within .player-volume-slider-wrap,
-  .player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"].is-touch-hover .player-volume-slider-wrap,
-  .player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"].volume-hovered .player-volume-slider-wrap {
+  .player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"]:hover .player-volume-group__slider,
+  .player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"]:focus-within .player-volume-group__slider,
+  .player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"].u-touch-hover .player-volume-group__slider,
+  .player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"].player-volume-group--hovered .player-volume-group__slider {
     max-width: 48px;
   }
 
-  .player-frame .player-controls-bar .player-volume-group .player-volume-input {
+  .player-frame .player-controls-bar .player-volume-group .player-volume-group__input {
     width: 48px;
     min-width: 48px;
     /* El slider vive dentro de una pista con pan-x. Sin aislar su gesto, Chrome
@@ -34,7 +34,7 @@
     gap: var(--player-controls-item-gap);
   }
 
-  .player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"] .player-volume-slider-wrap {
+  .player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"] .player-volume-group__slider {
     max-width: 48px;
     transition: none;
   }

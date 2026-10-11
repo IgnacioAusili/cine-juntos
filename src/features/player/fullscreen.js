@@ -1,6 +1,6 @@
 import {
   dom,
-} from "../../core/dom.js?v=20261011-chat-controls-repair-01";
+} from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
 import {
   FULLSCREEN_END_GAP,
   FULLSCREEN_SNAP_DELAY_MS,
@@ -9,26 +9,26 @@ import {
 import {
   hideTooltip,
   setControlIcon,
-} from "../icons-tooltips.js?v=20261011-lucide-icons-repair-01";
-import { setSyncStatus } from "../session-ui.js?v=20261011-chat-controls-repair-01";
+} from "../icons-tooltips.js?v=20261011-bem-itcss-oocss-04";
+import { setSyncStatus } from "../session-ui.js?v=20261011-bem-itcss-oocss-04";
 import {
   logEvent,
   state,
-} from "../../core/state.js?v=20261011-chat-controls-repair-01";
-import { isMiniPlayerActive } from "./mini-player.js?v=20261011-player-skip-active-cleanup-01";
-import { wirePlayerOverlayControls } from "./player-overlay-controls.js?v=20261011-lucide-icons-repair-01";
+} from "../../core/state.js?v=20261011-bem-itcss-oocss-04";
+import { isMiniPlayerActive } from "./mini-player.js?v=20261011-bem-itcss-oocss-04";
+import { wirePlayerOverlayControls } from "./player-overlay-controls.js?v=20261011-bem-itcss-oocss-04";
 import {
   syncExternalChatCollapseHandleOffset,
   syncInsideChatPanelOffset,
   cancelExternalChatAutoCollapse,
   forceExternalChatCollapsed,
   updateCollapseButton,
-} from "../chat/chat-layout.js?v=20261011-chat-auto-switch-bem-01";
+} from "../chat/chat-layout.js?v=20261011-bem-itcss-oocss-04";
 import { withShortcutHint } from "../../core/utils.js?v=20261011-chat-controls-repair-01";
 import {
   captureFullscreenScroll,
   restoreFullscreenScroll,
-} from "./fullscreen-scroll.js?v=20261011-chat-controls-repair-01";
+} from "./fullscreen-scroll.js?v=20261011-bem-itcss-oocss-04";
 
 const PLAYER_OVERLAY_IDLE_MS = 3000;
 const PLAYER_OVERLAY_LEAVE_HIDE_DELAY_MS = 800;
@@ -114,7 +114,7 @@ export function wireFullscreenEvents(options = {}) {
       if (fullscreenScrollPreservationUntil > performance.now()) return;
       if (
         dom.sessionView?.dataset.chatDock !== "bottom"
-        || dom.sessionView?.classList.contains("chat-scroll-snap-locked")
+        || dom.sessionView?.classList.contains('session-view--chat-scroll-snap-locked')
       ) return;
       snapFullscreenScroll();
     }, FULLSCREEN_SNAP_DELAY_MS);
@@ -129,12 +129,12 @@ export function wireFullscreenEvents(options = {}) {
 let fullscreenScrollPreservationUntil = 0;
 
 function isPageFullscreenActive() {
-  return Boolean(document.fullscreenElement) || document.body.classList.contains("fullscreen-mode");
+  return Boolean(document.fullscreenElement) || document.body.classList.contains('page-context--fullscreen');
 }
 
 function isChatScrollSnapEnabled() {
   return dom.sessionView?.dataset.chatDock === "bottom"
-    && dom.sessionView.classList.contains("chat-bottom-snap-enabled");
+    && dom.sessionView.classList.contains('session-view--chat-bottom-snap-enabled');
 }
 
 function getDocumentTop(element) {
@@ -145,7 +145,7 @@ function getFullscreenSnapPoints() {
   if (!isChatScrollSnapEnabled() || !dom.workspace) return [];
 
   const maxScroll = getFullscreenScrollMax();
-  const collapsed = dom.sessionView.classList.contains("chat-collapsed");
+  const collapsed = dom.sessionView.classList.contains('session-view--chat-collapsed');
   const dock = dom.sessionView.dataset.chatDock || "right";
   const gutter = Number.parseFloat(
     getComputedStyle(dom.sessionView).getPropertyValue("--app-shell-gutter"),
@@ -275,8 +275,8 @@ export function handleFullscreenChange() {
     "F",
   );
 
-  document.documentElement.classList.toggle("fullscreen-mode", isFullscreen);
-  document.body.classList.toggle("fullscreen-mode", isFullscreen);
+  document.documentElement.classList.toggle('page-context--fullscreen', isFullscreen);
+  document.body.classList.toggle('page-context--fullscreen', isFullscreen);
   if (
     isFullscreen
     && dom.sessionView?.dataset.chatDock === "bottom"

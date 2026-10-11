@@ -1,5 +1,5 @@
-import { observePlayerControlLayouts } from "./player-controls-layout.js?v=20261011-chat-controls-repair-01";
-import { observePlayerVolumeLayouts } from "./player-volume-layout.js?v=20261011-chat-controls-repair-01";
+import { observePlayerControlLayouts } from "./player-controls-layout.js?v=20261011-bem-itcss-oocss-04";
+import { observePlayerVolumeLayouts } from "./player-volume-layout.js?v=20261011-bem-itcss-oocss-04";
 
 export function installMiniPlayerWindowStyles(targetDocument) {
   const emojiFont = targetDocument.createElement("link");
@@ -8,8 +8,8 @@ export function installMiniPlayerWindowStyles(targetDocument) {
   targetDocument.head.append(emojiFont);
 
   const stylesheets = [
-    "../../../public/styles.css?v=20261011-player-skip-active-cleanup-01",
-    "../../../public/styles/mini-player-window.css?v=20261011-chat-controls-repair-01",
+    "../../../public/styles.css?v=20261011-bem-itcss-oocss-04",
+    "../../../public/styles/mini-player-window.css?v=20261011-bem-itcss-oocss-04",
   ].map((path) => {
     const stylesheet = targetDocument.createElement("link");
     stylesheet.rel = "stylesheet";
@@ -22,7 +22,7 @@ export function installMiniPlayerWindowStyles(targetDocument) {
     });
   });
   targetDocument.fonts?.load('1rem "Noto Color Emoji"', "😂🫦").catch(() => {});
-  targetDocument.body.classList.add("app-ready");
+  targetDocument.body.classList.add('page-context--ready');
   return Promise.all(stylesheets);
 }
 
@@ -33,9 +33,9 @@ export function createMiniPlayerSurface(
   controlStyle = "line",
 ) {
   const surface = targetDocument.createElement("section");
-  surface.className = "mini-player-surface player-frame player-overlay-visible";
-  surface.classList.toggle("chat-inside-open", Boolean(chatVisible));
-  surface.classList.add("mini-player-initializing");
+  surface.className = 'mini-player-surface player-frame player-frame--overlay-visible';
+  surface.classList.toggle('u-chat-inside-open', Boolean(chatVisible));
+  surface.classList.add('mini-player-surface--initializing');
   surface.style.visibility = "hidden";
   surface.style.opacity = "0";
   surface.dataset.chatStyle = chatStyle || "float";

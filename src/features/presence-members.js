@@ -1,8 +1,8 @@
-import { dom } from "../core/dom.js?v=20261011-chat-controls-repair-01";
-import { state, getDisplayName, getTransportNow } from "../core/state.js?v=20261011-chat-controls-repair-01";
+import { dom } from "../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { state, getDisplayName, getTransportNow } from "../core/state.js?v=20261011-bem-itcss-oocss-04";
 import { makeGuestName, makeParticipantLabel } from "../core/utils.js?v=20261011-chat-controls-repair-01";
-import { syncNameInputWidth } from "./presence-name-layout.js?v=20261011-chat-controls-repair-01";
-import { configurePresenceActivity, upsertParticipantRecord, isParticipantRecentlyActive, scheduleActivityRefresh } from "./presence-activity.js?v=20261011-chat-controls-repair-01";
+import { syncNameInputWidth } from "./presence-name-layout.js?v=20261011-bem-itcss-oocss-04";
+import { configurePresenceActivity, upsertParticipantRecord, isParticipantRecentlyActive, scheduleActivityRefresh } from "./presence-activity.js?v=20261011-bem-itcss-oocss-04";
 
 export function renderDisplayName(name = getDisplayName()) {
   if (dom.nameDisplay) {

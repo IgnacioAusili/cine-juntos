@@ -1,4 +1,4 @@
-import { dom } from "../core/dom.js?v=20261010-file-size-refactor-02";
+import { dom } from "../core/dom.js?v=20261011-bem-itcss-oocss-04";
 
 let errorDialogInitialized = false;
 let confirmLoadDialogInitialized = false;

@@ -9,7 +9,7 @@ let restoreTimer = 0;
 function isLobbyInput(target) {
   return target instanceof HTMLInputElement
     && target.matches(LOBBY_INPUT_SELECTOR)
-    && document.body.classList.contains("is-lobby");
+    && document.body.classList.contains('page-context--lobby');
 }
 
 function getViewportHeight() {
@@ -19,7 +19,7 @@ function getViewportHeight() {
 function restoreLobbyScroll() {
   window.clearTimeout(restoreTimer);
   restoreTimer = window.setTimeout(() => {
-    if (!document.body.classList.contains("is-lobby")) return;
+    if (!document.body.classList.contains('page-context--lobby')) return;
 
     const maxScroll = Math.max(
       0,
@@ -44,7 +44,7 @@ function restoreLobbyScroll() {
 }
 
 function syncKeyboardViewport() {
-  if (!document.body.classList.contains("is-lobby")) return;
+  if (!document.body.classList.contains('page-context--lobby')) return;
 
   const viewportHeight = getViewportHeight();
   if (!viewportHeight || !baselineViewportHeight) return;

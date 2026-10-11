@@ -1,4 +1,4 @@
-import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
 
 const RATE_SELECT_HOVER_RESET_MS = 400;
 let rateMenuCloseTimer = null;
@@ -11,16 +11,16 @@ export function configureRateSelectMenu({ hideSeekTooltip } = {}) {
 export function initializeRateSelectMenu() {
   const select = dom.playerRateSelect;
   const wrap = select?.closest(".player-rate-select");
-  if (!select || !wrap || wrap.querySelector(".player-rate-trigger")) return;
+  if (!select || !wrap || wrap.querySelector('.player-rate-select__trigger')) return;
 
   const trigger = document.createElement("button");
   trigger.type = "button";
-  trigger.className = "player-rate-trigger";
+  trigger.className = 'player-rate-select__trigger';
   trigger.setAttribute("aria-haspopup", "listbox");
   trigger.setAttribute("aria-expanded", "false");
 
   const menu = document.createElement("div");
-  menu.className = "player-rate-menu";
+  menu.className = 'player-rate-select__menu';
   menu.hidden = true;
   menu.setAttribute("role", "listbox");
   menu.addEventListener("pointerenter", hidePlayerSeekTooltip);
@@ -29,7 +29,7 @@ export function initializeRateSelectMenu() {
   [...select.options].forEach((option) => {
     const item = document.createElement("button");
     item.type = "button";
-    item.className = "player-rate-option";
+    item.className = 'player-rate-select__option';
     item.dataset.value = option.value;
     item.textContent = option.textContent;
     item.setAttribute("role", "option");
@@ -55,8 +55,8 @@ export function initializeRateSelectMenu() {
 
   const overlayObserver = new MutationObserver(() => {
     if (
-      !dom.playerFrame?.classList.contains("player-overlay-visible")
-      || dom.playerFrame.classList.contains("player-overlay-suppressed")
+      !dom.playerFrame?.classList.contains('player-frame--overlay-visible')
+      || dom.playerFrame.classList.contains('player-frame--overlay-suppressed')
     ) {
       closeRateSelectMenu(wrap);
     }
@@ -70,14 +70,14 @@ export function initializeRateSelectMenu() {
 function queueRateSelectValueChange(select, rateSelectWrap, nextValue) {
   // Primero retiramos el hover y dejamos que el navegador lo pinte; cambiar
   // el texto después evita mezclar ambas animaciones en el mismo frame.
-  rateSelectWrap.classList.add("is-rate-changing");
+  rateSelectWrap.classList.add('player-rate-select--changing');
   closeRateSelectMenu(rateSelectWrap);
   window.requestAnimationFrame(() => {
     window.requestAnimationFrame(() => {
       select.value = nextValue;
       select.dispatchEvent(new Event("change", { bubbles: true }));
       window.setTimeout(() => {
-        rateSelectWrap.classList.remove("is-rate-changing");
+        rateSelectWrap.classList.remove('player-rate-select--changing');
       }, RATE_SELECT_HOVER_RESET_MS);
     });
   });
@@ -85,8 +85,8 @@ function queueRateSelectValueChange(select, rateSelectWrap, nextValue) {
 
 export function syncRateSelectMenu(rateSelectWrap) {
   const select = dom.playerRateSelect;
-  const trigger = rateSelectWrap.querySelector(".player-rate-trigger");
-  const menu = rateSelectWrap.querySelector(".player-rate-menu");
+  const trigger = rateSelectWrap.querySelector('.player-rate-select__trigger');
+  const menu = rateSelectWrap.querySelector('.player-rate-select__menu');
   if (!select || !trigger || !menu) return;
 
   const selectedValue = select.value;
@@ -94,9 +94,9 @@ export function syncRateSelectMenu(rateSelectWrap) {
   trigger.textContent = selectedLabel;
   trigger.disabled = select.disabled;
   trigger.setAttribute("aria-label", rateSelectWrap.dataset.tooltip || "Velocidad de reproduccion");
-  menu.querySelectorAll(".player-rate-option").forEach((option) => {
+  menu.querySelectorAll('.player-rate-select__option').forEach((option) => {
     const selected = option.dataset.value === selectedValue;
-    option.classList.toggle("selected", selected);
+    option.classList.toggle('player-rate-select__option--selected', selected);
     option.setAttribute("aria-selected", String(selected));
   });
 
@@ -125,27 +125,27 @@ function openRateSelectMenu(rateSelectWrap) {
   clearRateSelectCloseTimer();
   hidePlayerSeekTooltip();
   syncRateSelectMenu(rateSelectWrap);
-  const trigger = rateSelectWrap.querySelector(".player-rate-trigger");
-  const menu = rateSelectWrap.querySelector(".player-rate-menu");
+  const trigger = rateSelectWrap.querySelector('.player-rate-select__trigger');
+  const menu = rateSelectWrap.querySelector('.player-rate-select__menu');
   if (!trigger || !menu) return;
   menu.hidden = false;
-  rateSelectWrap.classList.add("is-open");
+  rateSelectWrap.classList.add('player-rate-select--open');
   trigger.setAttribute("aria-expanded", "true");
 }
 
 export function closeRateSelectMenu(rateSelectWrap) {
   clearRateSelectCloseTimer();
-  const trigger = rateSelectWrap.querySelector(".player-rate-trigger");
-  const menu = rateSelectWrap.querySelector(".player-rate-menu");
+  const trigger = rateSelectWrap.querySelector('.player-rate-select__trigger');
+  const menu = rateSelectWrap.querySelector('.player-rate-select__menu');
   if (!trigger || !menu) return;
   menu.hidden = true;
-  rateSelectWrap.classList.remove("is-open");
+  rateSelectWrap.classList.remove('player-rate-select--open');
   trigger.setAttribute("aria-expanded", "false");
 }
 
 function scheduleRateSelectClose(rateSelectWrap) {
   clearRateSelectCloseTimer();
-  if (rateSelectWrap.querySelector(".player-rate-menu")?.hidden) return;
+  if (rateSelectWrap.querySelector('.player-rate-select__menu')?.hidden) return;
   rateMenuCloseTimer = window.setTimeout(() => closeRateSelectMenu(rateSelectWrap), 1200);
 }
 
@@ -177,7 +177,7 @@ function measureRateLabelWidth(select, label, reference = null) {
 
 export function syncRateSelectWidth(rateSelectWrap) {
   const select = dom.playerRateSelect;
-  const trigger = rateSelectWrap?.querySelector(".player-rate-trigger");
+  const trigger = rateSelectWrap?.querySelector('.player-rate-select__trigger');
   if (!select || !rateSelectWrap || !trigger) return;
 
   syncRateSelectLayoutWidth(select, rateSelectWrap, trigger);

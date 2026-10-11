@@ -1,12 +1,12 @@
-import { dom } from "../../core/dom.js?v=20261011-chat-controls-repair-01";
-import { state } from "../../core/state.js?v=20261011-chat-controls-repair-01";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { state } from "../../core/state.js?v=20261011-bem-itcss-oocss-04";
 import { formatSeconds, withShortcutHint } from "../../core/utils.js?v=20261011-chat-controls-repair-01";
-import { refreshTooltipForTarget, setControlIcon } from "../icons-tooltips.js?v=20261011-lucide-icons-repair-01";
-import { syncMiniPlayerButton } from "./mini-player.js?v=20261011-player-skip-active-cleanup-01";
-import { closeRateSelectMenu, syncRateSelectMenu, syncRateSelectWidth } from "./player-rate-menu.js?v=20261011-chat-controls-repair-01";
-import { hideSeekTooltip } from "./player-seek-tooltip-view.js?v=20261011-lucide-icons-repair-01";
+import { refreshTooltipForTarget, setControlIcon } from "../icons-tooltips.js?v=20261011-bem-itcss-oocss-04";
+import { syncMiniPlayerButton } from "./mini-player.js?v=20261011-bem-itcss-oocss-04";
+import { closeRateSelectMenu, syncRateSelectMenu, syncRateSelectWidth } from "./player-rate-menu.js?v=20261011-bem-itcss-oocss-04";
+import { hideSeekTooltip } from "./player-seek-tooltip-view.js?v=20261011-bem-itcss-oocss-04";
 import { seekTooltipState } from "./player-seek-tooltip-state.js?v=20261011-chat-controls-repair-01";
-import { getFiniteDuration, hasLoadedMediaSource } from "./player-media.js?v=20261011-chat-auto-switch-bem-01-video-ts-group-01";
+import { getFiniteDuration, hasLoadedMediaSource } from "./player-media.js?v=20261011-bem-itcss-oocss-04";
 import { playerRuntimeState } from "./player-runtime-state.js?v=20261011-chat-controls-repair-01";
 
 const MOBILE_CENTER_BUTTON_LABELS = Object.freeze({
@@ -76,7 +76,7 @@ export function renderPlayerControls(forceSliderSync = false, controls) {
     updateSeekVisuals(Number(dom.playerSeekInput.value || 0), duration, isEnded);
     if (dom.playerSeekInput.disabled) {
       state.ui.seekDragActive = false;
-      dom.playerFrame?.classList.remove("player-seek-control-dragging");
+      dom.playerFrame?.classList.remove('player-frame--seek-control-dragging');
       seekTooltipState.pointerId = null;
       hideSeekTooltip();
     }
@@ -87,7 +87,7 @@ export function renderPlayerControls(forceSliderSync = false, controls) {
     dom.playerPlayButton.disabled = !hasMedia;
     if (playButtonCoolingDown) dom.playerPlayButton.setAttribute("aria-disabled", "true");
     else dom.playerPlayButton.removeAttribute("aria-disabled");
-    dom.playerPlayButton.classList.toggle("player-control-cooldown-disabled", playButtonCoolingDown);
+    dom.playerPlayButton.classList.toggle('video-control-button--cooldown-disabled', playButtonCoolingDown);
     const isEnded = dom.videoPlayer.ended;
     const isPaused = dom.videoPlayer.paused && !isEnded;
     const nextIcon = isEnded ? "rotate-ccw" : isPaused ? "play" : "pause";
@@ -98,9 +98,9 @@ export function renderPlayerControls(forceSliderSync = false, controls) {
     if (playButtonCoolingDown) {
       if (dom.playerPlayButton.dataset.playButtonCooldown !== "true") {
         dom.playerPlayButton.dataset.playButtonCooldown = "true";
-        dom.playerPlayButton.innerHTML = "<span class=\"play-button-cooldown\" aria-hidden=\"true\"></span>";
+        dom.playerPlayButton.innerHTML = '<span class="video-control-button__cooldown" aria-hidden="true"></span>';
       }
-      const counter = dom.playerPlayButton.querySelector(".play-button-cooldown");
+      const counter = dom.playerPlayButton.querySelector('.video-control-button__cooldown');
       if (counter) counter.textContent = String(cooldownSeconds);
     } else if (dom.playerPlayButton.dataset.playButtonCooldown === "true") {
       delete dom.playerPlayButton.dataset.playButtonCooldown;
@@ -133,7 +133,7 @@ export function renderPlayerControls(forceSliderSync = false, controls) {
     control.disabled = skipControlsDisabled;
     if (skipCoolingDown) control.setAttribute("aria-disabled", "true");
     else control.removeAttribute("aria-disabled");
-    control.classList.toggle("player-control-cooldown-disabled", skipCoolingDown);
+    control.classList.toggle('video-control-button--cooldown-disabled', skipCoolingDown);
     const direction = control === dom.playerBackButton ? "Retroceder 10 segundos" : "Avanzar 10 segundos";
     const shortcut = control === dom.playerBackButton ? "←" : "→";
     const tooltip = skipCoolingDown
@@ -190,7 +190,7 @@ export function renderPlayerControls(forceSliderSync = false, controls) {
     const currentVol = dom.videoPlayer.muted ? 0 : dom.videoPlayer.volume;
     const progress = `${currentVol * 100}%`;
     dom.playerVolumeInput.style.setProperty("--volume-progress", progress);
-    dom.playerVolumeInput.closest(".player-volume-slider-wrap")?.style.setProperty("--volume-progress", progress);
+    dom.playerVolumeInput.closest('.player-volume-group__slider')?.style.setProperty("--volume-progress", progress);
   }
 
   syncMobileCenterButtonTooltips(controls);
@@ -232,11 +232,11 @@ export function showPlaybackGestureIndicator(action, volumeLabel = "") {
   if (!indicator) return;
   indicator.dataset.action = action;
   indicator.dataset.volumeLabel = volumeLabel;
-  indicator.classList.remove("is-visible");
+  indicator.classList.remove('u-visible');
   // Reiniciar la animacion incluso cuando se pulsa varias veces seguidas.
   void indicator.offsetWidth;
-  indicator.classList.add("is-visible");
+  indicator.classList.add('u-visible');
   window.setTimeout(() => {
-    indicator.classList.remove("is-visible");
+    indicator.classList.remove('u-visible');
   }, 720);
 }

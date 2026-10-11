@@ -1,5 +1,5 @@
-import { dom } from "../core/dom.js?v=20261010-file-size-refactor-02";
-import { clearClientLog, getClientLogText, logEvent } from "../core/state.js?v=20261010-file-size-refactor-02";
+import { dom } from "../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { clearClientLog, getClientLogText, logEvent } from "../core/state.js?v=20261011-bem-itcss-oocss-04";
 
 const LOG_FILE_NAME = "cine-juntos-log.txt";
 const SHARE_TITLE = "Log de diagnóstico de Cine Juntos";

@@ -1,14 +1,14 @@
-import { dom } from "../../core/dom.js?v=20261011-chat-controls-repair-01";
-import { state, logEvent } from "../../core/state.js?v=20261011-chat-controls-repair-01";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { state, logEvent } from "../../core/state.js?v=20261011-bem-itcss-oocss-04";
 import { formatSeconds } from "../../core/utils.js?v=20261011-chat-controls-repair-01";
-import { shouldToggleMuteFromVolumeButton } from "./player-volume-layout.js?v=20261011-chat-controls-repair-01";
-import { configurePlayerMedia, handleManualLoadRequest, setVideoStatus, announceVideoActivity, announceVideoLoadCompletion } from "./player-video-source.js?v=20261011-player-empty-state-01";
-import { hasLoadedMediaSource, getFiniteDuration, rememberPlaybackPosition, updateLoadButtonState, clearSlowLoadPromptTracking, schedulePlaybackErrorConfirmation, clearPlaybackErrorTracking, persistPlaybackPosition, prepareVideoFingerprintAndPrompt } from "./player-media.js?v=20261011-chat-auto-switch-bem-01-video-ts-group-01";
-import { attemptPlaybackRecovery, cancelPendingPlaybackIssueDetection, clearPlaybackRecoveryTracking, pauseRoomForPlaybackIssue, publishState } from "./player-sync-logic.js?v=20261011-chat-auto-switch-bem-01-video-ts-group-01";
-import { wireSeekTooltipEvents } from "./player-seek-tooltip-events.js?v=20261011-lucide-icons-repair-01";
+import { shouldToggleMuteFromVolumeButton } from "./player-volume-layout.js?v=20261011-bem-itcss-oocss-04";
+import { configurePlayerMedia, handleManualLoadRequest, setVideoStatus, announceVideoActivity, announceVideoLoadCompletion } from "./player-video-source.js?v=20261011-bem-itcss-oocss-04";
+import { hasLoadedMediaSource, getFiniteDuration, rememberPlaybackPosition, updateLoadButtonState, clearSlowLoadPromptTracking, schedulePlaybackErrorConfirmation, clearPlaybackErrorTracking, persistPlaybackPosition, prepareVideoFingerprintAndPrompt } from "./player-media.js?v=20261011-bem-itcss-oocss-04";
+import { attemptPlaybackRecovery, cancelPendingPlaybackIssueDetection, clearPlaybackRecoveryTracking, pauseRoomForPlaybackIssue, publishState } from "./player-sync-logic.js?v=20261011-bem-itcss-oocss-04";
+import { wireSeekTooltipEvents } from "./player-seek-tooltip-events.js?v=20261011-bem-itcss-oocss-04";
 import { playerRuntimeState } from "./player-runtime-state.js?v=20261011-chat-controls-repair-01";
-import { wireMobilePlayerControlPlacement } from "./player.js?v=20261011-player-empty-state-01";
-import { handleGlobalPlayerKeydown, togglePlaybackFromControls, seekVideoBy, previewSeekPosition, commitSeekPosition, isSyncControlCoolingDown, registerSyncControlPress, syncPlayerControls, persistVolume } from "./player-control-actions.js?v=20261011-player-skip-active-cleanup-01";
+import { wireMobilePlayerControlPlacement } from "./player.js?v=20261011-bem-itcss-oocss-04";
+import { handleGlobalPlayerKeydown, togglePlaybackFromControls, seekVideoBy, previewSeekPosition, commitSeekPosition, isSyncControlCoolingDown, registerSyncControlPress, syncPlayerControls, persistVolume } from "./player-control-actions.js?v=20261011-bem-itcss-oocss-04";
 
 export function wirePlayerCoreEvents() {
   configurePlayerMedia({ syncPlayerControls });
@@ -84,7 +84,7 @@ export function wirePlayerCoreEvents() {
       }
       const progress = `${vol * 100}%`;
       dom.playerVolumeInput.style.setProperty("--volume-progress", progress);
-      dom.playerVolumeInput.closest(".player-volume-slider-wrap")?.style.setProperty("--volume-progress", progress);
+      dom.playerVolumeInput.closest('.player-volume-group__slider')?.style.setProperty("--volume-progress", progress);
     }
   });
 
@@ -94,21 +94,21 @@ export function wirePlayerCoreEvents() {
 
   dom.playerVolumeInput?.addEventListener("pointerup", () => {
     // Quitar el foco despues de ajustar para que la barra se cierre al alejar el cursor
-    dom.playerVolumeGroup?.classList.remove("is-dragging");
-    dom.playerFrame?.classList.remove("player-volume-control-dragging");
+    dom.playerVolumeGroup?.classList.remove('u-dragging');
+    dom.playerFrame?.classList.remove('player-frame--volume-control-dragging');
     dom.playerVolumeInput.blur();
     syncPlayerControls();
     window.dispatchEvent(new Event("player-volume-drag-end"));
   });
 
   dom.playerVolumeInput?.addEventListener("pointerdown", () => {
-    dom.playerVolumeGroup?.classList.add("is-dragging");
-    dom.playerFrame?.classList.add("player-volume-control-dragging");
+    dom.playerVolumeGroup?.classList.add('u-dragging');
+    dom.playerFrame?.classList.add('player-frame--volume-control-dragging');
     window.dispatchEvent(new Event("player-volume-drag-start"));
   });
   dom.playerVolumeInput?.addEventListener("pointercancel", () => {
-    dom.playerVolumeGroup?.classList.remove("is-dragging");
-    dom.playerFrame?.classList.remove("player-volume-control-dragging");
+    dom.playerVolumeGroup?.classList.remove('u-dragging');
+    dom.playerFrame?.classList.remove('player-frame--volume-control-dragging');
     syncPlayerControls();
     window.dispatchEvent(new Event("player-volume-drag-end"));
   });
@@ -129,7 +129,7 @@ export function wirePlayerCoreEvents() {
     if (dom.videoPlayer.volume > 0) playerRuntimeState.lastAudibleVolume = dom.videoPlayer.volume;
     persistVolume(dom.videoPlayer.volume);
     const isVolumeInputActive = document.activeElement === dom.playerVolumeInput
-      || dom.playerVolumeGroup?.classList.contains("is-dragging");
+      || dom.playerVolumeGroup?.classList.contains('u-dragging');
     if (!isVolumeInputActive) syncPlayerControls();
   });
 

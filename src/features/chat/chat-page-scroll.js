@@ -1,7 +1,7 @@
-import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
 
 export function isFullscreenPageActive() {
-  return Boolean(document.fullscreenElement) || document.body.classList.contains("fullscreen-mode");
+  return Boolean(document.fullscreenElement) || document.body.classList.contains('page-context--fullscreen');
 }
 export function getPageScrollContainer() {
   if (!isFullscreenPageActive()) return window;

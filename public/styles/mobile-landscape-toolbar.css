@@ -7,12 +7,12 @@
   /* La toolbar no debe depender del ancho animado del video. Al convertir el
      video-area en un contenedor estático, el workspace pasa a ser su bloque
      de referencia y la toolbar conserva su posición durante toda la cortina. */
-  html.viewport-landscape body:not(.is-lobby)
+  html.page-context--viewport-landscape body:not(.page-context--lobby)
   .app-shell .session-view[data-chat-dock="right"] .o-video-area {
     position: static;
   }
 
-  html.viewport-landscape body:not(.is-lobby)
+  html.page-context--viewport-landscape body:not(.page-context--lobby)
   .app-shell .session-view[data-chat-dock="right"] .session-toolbar {
     top: calc(var(--session-toolbar-height) * -1);
     right: auto;
@@ -23,7 +23,7 @@
     margin: 0;
   }
 
-  html.viewport-landscape body:not(.is-lobby)
+  html.page-context--viewport-landscape body:not(.page-context--lobby)
   .app-shell .session-view[data-chat-dock="right"] .chat-area {
     border-top-right-radius: 0;
   }
@@ -34,27 +34,27 @@
    header conserva el gutter exterior para que el tag de sala no quede pegado
    ni recortado contra los bordes. */
 @media (hover: none) and (pointer: coarse) and (max-height: 500px) and (orientation: landscape) {
-  html.viewport-landscape:not(.bottom-chat-keyboard-open):has(
-    body:not(.is-lobby) .session-view[data-chat-dock="bottom"]
+  html.page-context--viewport-landscape:not(.page-context--bottom-chat-keyboard-open):has(
+    body:not(.page-context--lobby) .session-view[data-chat-dock="bottom"]
   ) {
     scroll-snap-type: none;
   }
 
-  html.viewport-landscape body:not(.is-lobby)
+  html.page-context--viewport-landscape body:not(.page-context--lobby)
     .session-view[data-chat-dock="bottom"] .o-video-area {
     scroll-snap-align: none;
     scroll-snap-stop: normal;
     scroll-margin-top: 0;
   }
 
-  html.viewport-landscape body:not(.is-lobby)
+  html.page-context--viewport-landscape body:not(.page-context--lobby)
     .session-view[data-chat-dock="bottom"] .chat-area {
     scroll-snap-align: none;
     scroll-snap-stop: normal;
     scroll-margin-top: 0;
   }
 
-  body:not(.is-lobby):not(.fullscreen-mode) .app-shell {
+  body:not(.page-context--lobby):not(.page-context--fullscreen) .app-shell {
     width: 100vw;
     max-width: none;
     box-sizing: border-box;
@@ -64,32 +64,32 @@
     gap: var(--session-header-gap);
   }
 
-  body:not(.is-lobby):not(.fullscreen-mode) .site-header {
+  body:not(.page-context--lobby):not(.page-context--fullscreen) .site-header {
     margin-inline: var(--app-shell-gutter);
   }
 
   /* El tag de sala tiene un ajuste vertical propio para escritorio. En
      landscape móvil sus dos márgenes internos deben ser idénticos para que
      el espacio visual no pese más hacia la sesión. */
-  body:not(.is-lobby):not(.fullscreen-mode) .site-header #roomChip {
+  body:not(.page-context--lobby):not(.page-context--fullscreen) .site-header #roomChip {
     padding-block: 5px;
   }
 
-  body:not(.is-lobby) .session-view {
+  body:not(.page-context--lobby) .session-view {
     width: 100%;
     max-width: none;
     margin-inline: 0;
   }
 
-  body:not(.is-lobby) .session-view[data-chat-dock] .player-frame:not(.mini-player-surface),
-  body:not(.is-lobby) .session-view[data-chat-dock] .chat-area,
-  body:not(.is-lobby) .session-view[data-chat-dock] .chat-area::before {
+  body:not(.page-context--lobby) .session-view[data-chat-dock] .player-frame:not(.mini-player-surface),
+  body:not(.page-context--lobby) .session-view[data-chat-dock] .chat-area,
+  body:not(.page-context--lobby) .session-view[data-chat-dock] .chat-area::before {
     border: 0 !important;
     border-radius: 0 !important;
   }
 
-  body:not(.is-lobby) .session-view[data-chat-dock] .player-frame:not(.mini-player-surface),
-  body:not(.is-lobby) .session-view[data-chat-dock] .chat-area {
+  body:not(.page-context--lobby) .session-view[data-chat-dock] .player-frame:not(.mini-player-surface),
+  body:not(.page-context--lobby) .session-view[data-chat-dock] .chat-area {
     box-shadow: none !important;
   }
 }
@@ -99,7 +99,7 @@
    de fullscreen puede ganar durante el cambio de viewport y dejar el panel
    sin la misma cortina horizontal. */
 @media (hover: none) and (pointer: coarse) and (max-height: 500px) and (orientation: landscape) {
-  html.viewport-landscape body.fullscreen-mode
+  html.page-context--viewport-landscape body.page-context--fullscreen
     .session-view[data-chat-dock="right"] .o-workspace {
     display: flex !important;
     width: 100% !important;
@@ -112,7 +112,7 @@
     grid-template-areas: none !important;
   }
 
-  html.viewport-landscape body.fullscreen-mode
+  html.page-context--viewport-landscape body.page-context--fullscreen
     .session-view[data-chat-dock="right"] .o-video-area {
     flex: 1 1 auto;
     width: auto;
@@ -121,7 +121,7 @@
     min-height: 0;
   }
 
-  html.viewport-landscape body.fullscreen-mode
+  html.page-context--viewport-landscape body.page-context--fullscreen
     .session-view[data-chat-dock="right"] .chat-area {
     flex: 0 0 var(--chat-panel-width);
     width: var(--chat-panel-width);
@@ -135,7 +135,7 @@
     grid-template-rows: 34px minmax(0, 1fr);
   }
 
-  html.viewport-landscape body.fullscreen-mode
+  html.page-context--viewport-landscape body.page-context--fullscreen
     .session-view[data-chat-dock="right"] .chat-tools {
     height: 34px;
     min-height: 34px;
@@ -144,16 +144,16 @@
     padding-bottom: 0;
   }
 
-  html.viewport-landscape body.fullscreen-mode
-    .session-view.chat-collapsed[data-chat-dock="right"] .chat-area {
+  html.page-context--viewport-landscape body.page-context--fullscreen
+    .session-view.session-view--chat-collapsed[data-chat-dock="right"] .chat-area {
     flex-basis: 0;
     width: 0;
   }
 
   /* Un poco más de recorrido para el volumen sin agrandar la barra de
      controles ni cambiar el tamaño del thumb. */
-  html.viewport-landscape body:not(.is-lobby) .player-volume-slider-wrap,
-  html.viewport-landscape body:not(.is-lobby) .player-volume-input {
+  html.page-context--viewport-landscape body:not(.page-context--lobby) .player-volume-group__slider,
+  html.page-context--viewport-landscape body:not(.page-context--lobby) .player-volume-group__input {
     width: 68px;
     max-width: 68px;
   }

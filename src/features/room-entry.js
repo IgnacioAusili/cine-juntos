@@ -1,17 +1,17 @@
-import { dom } from "../core/dom.js?v=20261011-chat-controls-repair-01";
+import { dom } from "../core/dom.js?v=20261011-bem-itcss-oocss-04";
 import {
   state,
   getDisplayName,
   logEvent,
-} from "../core/state.js?v=20261011-chat-controls-repair-01";
+} from "../core/state.js?v=20261011-bem-itcss-oocss-04";
 import { MAX_ROOM_PARTICIPANTS } from "../core/utils.js?v=20261011-chat-controls-repair-01";
-import { createTransport } from "../services/transport.js?v=20261011-chat-controls-repair-01";
+import { createTransport } from "../services/transport.js?v=20261011-bem-itcss-oocss-04";
 import {
   renderMembers,
   renderPresence,
-} from "./presence.js?v=20261011-lucide-icons-repair-01";
-import { setConnection } from "./icons-tooltips.js?v=20261011-lucide-icons-repair-01";
-import { syncComponentAspectLayoutNow } from "./chat/component-aspect-layout.js?v=20261011-chat-controls-repair-01";
+} from "./presence.js?v=20261011-bem-itcss-oocss-04";
+import { setConnection } from "./icons-tooltips.js?v=20261011-bem-itcss-oocss-04";
+import { syncComponentAspectLayoutNow } from "./chat/component-aspect-layout.js?v=20261011-bem-itcss-oocss-04";
 import {
   getUserScrollIntentVersion,
   setHostBadge,
@@ -19,8 +19,8 @@ import {
   showLobby,
   showSession,
   watchRoomEntryVideoFocus,
-} from "./session-ui.js?v=20261011-chat-controls-repair-01";
-import { handleRemoteState } from "./player/index.js?v=20261011-player-empty-state-01";
+} from "./session-ui.js?v=20261011-bem-itcss-oocss-04";
+import { handleRemoteState } from "./player/index.js?v=20261011-bem-itcss-oocss-04";
 import {
   beginSystemMessageHydration,
   finishSystemMessageHydration,
@@ -31,7 +31,7 @@ import {
   resetChatHistoryPaging,
   fillChatHistoryViewport,
   setInsideChatVisible,
-} from "./chat/index.js?v=20261011-chat-auto-switch-bem-01-video-ts-group-01";
+} from "./chat/index.js?v=20261011-bem-itcss-oocss-04";
 import {
   getRoomTabLimitConflictCount,
   writeActiveTabRecord,
@@ -40,14 +40,14 @@ import {
   rememberLastRoom,
   sanitizeRoomInput,
   syncJoinRoomButtonState,
-} from "./room-input.js?v=20261011-chat-controls-repair-01";
+} from "./room-input.js?v=20261011-bem-itcss-oocss-04";
 import {
   beginRoomOperation,
   isRoomOperationCurrent,
   updateUrlRoom,
 } from "./room-navigation.js?v=20261011-chat-controls-repair-01";
-import { setInviteCopyFeedback } from "./room-invite.js?v=20261011-chat-controls-repair-01";
-import { resetRoomPlayerState } from "./room-player-state.js?v=20261011-chat-controls-repair-01";
+import { setInviteCopyFeedback } from "./room-invite.js?v=20261011-bem-itcss-oocss-04";
+import { resetRoomPlayerState } from "./room-player-state.js?v=20261011-bem-itcss-oocss-04";
 
 async function closeTransport(transport) {
   try {

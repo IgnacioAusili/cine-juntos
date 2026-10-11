@@ -1,5 +1,5 @@
 import { SYSTEM_GROUP_EXPANSION_MS, SYSTEM_GROUP_EXPANSION_STAGGER_MS, SYSTEM_GROUP_TRANSITION_MS, groupTransitions } from "./system-message-group-state.js?v=20261010-file-size-refactor-02";
-import { getGroupTransitionTarget, restoreExpansionVisualTransition } from "./system-message-group-visuals.js?v=20261010-file-size-refactor-02";
+import { getGroupTransitionTarget, restoreExpansionVisualTransition } from "./system-message-group-visuals.js?v=20261011-bem-itcss-oocss-04";
 
 export function animateGroupTransition(items, header, visualState, expanded) {
   const animations = [];
@@ -102,11 +102,11 @@ export function animateGroupTransition(items, header, visualState, expanded) {
       restoreExpansionVisualTransition(visualState);
       visualState?.layer?.remove();
       scrollAnimation?.cancel();
-      header.classList.remove("system-group-transitioning");
-      items.forEach((item) => item.classList.remove("system-group-transitioning"));
+      header.classList.remove('u-transitioning');
+      items.forEach((item) => item.classList.remove('u-transitioning'));
     },
   };
-  items.forEach((item) => item.classList.add("system-group-transitioning"));
+  items.forEach((item) => item.classList.add('u-transitioning'));
   groupTransitions.set(header, transition);
   finished.then(() => {
     if (groupTransitions.get(header) !== transition || !header.isConnected) return;

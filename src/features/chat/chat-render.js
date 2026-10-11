@@ -1,15 +1,15 @@
-import { dom } from "../../core/dom.js?v=20261011-chat-controls-repair-01";
-import { makeRoomForSystemMessage } from "./chat-system-message-retention.js?v=20261011-chat-controls-repair-01";
-import { getRenderableMessageImages } from "./chat-message-media.js?v=20261011-chat-controls-repair-01";
-import { state, logEvent } from "../../core/state.js?v=20261011-chat-controls-repair-01";
-import { markParticipantActive, rememberParticipant } from "../presence.js?v=20261011-lucide-icons-repair-01";
-import { scheduleMessageTimeAdjustmentForBubble } from "./message-time-layout.js?v=20261011-chat-controls-repair-01";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { makeRoomForSystemMessage } from "./chat-system-message-retention.js?v=20261011-bem-itcss-oocss-04";
+import { getRenderableMessageImages } from "./chat-message-media.js?v=20261011-bem-itcss-oocss-04";
+import { state, logEvent } from "../../core/state.js?v=20261011-bem-itcss-oocss-04";
+import { markParticipantActive, rememberParticipant } from "../presence.js?v=20261011-bem-itcss-oocss-04";
+import { scheduleMessageTimeAdjustmentForBubble } from "./message-time-layout.js?v=20261011-bem-itcss-oocss-04";
 import {
   handleIncomingUnread,
   handleIncomingPageUnread,
-} from "./unread-counters.js?v=20261011-chat-controls-repair-01";
-import { setExternalChatCollapsed, setInsideChatVisible } from "./chat-layout.js?v=20261011-chat-auto-switch-bem-01";
-import { appendMessageNow } from "./chat-message-render-item.js?v=20261011-lucide-icons-repair-01-video-ts-group-01";
+} from "./unread-counters.js?v=20261011-bem-itcss-oocss-04";
+import { setExternalChatCollapsed, setInsideChatVisible } from "./chat-layout.js?v=20261011-bem-itcss-oocss-04";
+import { appendMessageNow } from "./chat-message-render-item.js?v=20261011-bem-itcss-oocss-04";
 
 const SYSTEM_GROUP_MESSAGE_FRESHNESS_MS = 3000;
 const SYSTEM_GROUP_RESUME_GRACE_MS = 250;
@@ -62,10 +62,10 @@ export function renderMessage(message, options = {}) {
     handleIncomingPageUnread();
   }
   Promise.resolve(mainItem).then((item) => {
-    scheduleMessageTimeAdjustmentForBubble(item?.querySelector(".message-bubble"));
+    scheduleMessageTimeAdjustmentForBubble(item?.querySelector('.message__bubble'));
   });
   Promise.resolve(overlayItem).then((item) => {
-    scheduleMessageTimeAdjustmentForBubble(item?.querySelector(".message-bubble"));
+    scheduleMessageTimeAdjustmentForBubble(item?.querySelector('.message__bubble'));
   });
   logEvent("chat:recv", `Mensaje recibido de ${message.name || "Invitado"}.`);
   return Promise.all([mainItem, overlayItem]);

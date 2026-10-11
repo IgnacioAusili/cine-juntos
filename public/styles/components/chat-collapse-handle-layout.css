@@ -1,4 +1,4 @@
-.session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone {
+.session-view:not(.session-view--chat-collapsed)[data-chat-dock="right"] .chat-area__collapse-hover-zone {
   position: absolute;
   top: 0;
   right: calc(var(--chat-panel-width) - 6px);
@@ -10,7 +10,7 @@
   transform: none;
 }
 
-.session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-hover-zone {
+.session-view.session-view--chat-collapsed[data-chat-dock="right"] .chat-area__collapse-hover-zone {
   position: absolute;
   top: var(--chat-right-mobile-collapsed-handle-top, 50%);
   right: var(--chat-handle-gap-collapsed, 16px);
@@ -24,7 +24,7 @@
   transition: opacity 160ms ease, color 160ms ease, background 160ms ease;
 }
 
-.session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-handle {
+.session-view.session-view--chat-collapsed[data-chat-dock="right"] .chat-area__collapse-handle {
   position: relative;
   top: auto;
   right: auto;
@@ -38,20 +38,20 @@
   cursor: default;
 }
 
-.session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-hover-zone.is-transitioning .chat-collapse-handle,
-.session-view.chat-collapsed[data-chat-dock="right"] .chat-collapse-hover-zone.is-transitioning .chat-collapse-icon-anchor {
+.session-view.session-view--chat-collapsed[data-chat-dock="right"] .chat-area__collapse-hover-zone.u-transitioning .chat-area__collapse-handle,
+.session-view.session-view--chat-collapsed[data-chat-dock="right"] .chat-area__collapse-hover-zone.u-transitioning .chat-area__collapse-icon-anchor {
   visibility: visible;
   opacity: 0 !important;
 }
 
 /* La flecha lateral de expandir comparte el estado de actividad del overlay
    del reproductor, igual que la flecha del chat acoplado abajo. */
-.session-view.chat-collapsed[data-chat-dock="right"]:has(.player-frame.player-overlay-visible) .chat-collapse-handle {
+.session-view.session-view--chat-collapsed[data-chat-dock="right"]:has(.player-frame.player-frame--overlay-visible) .chat-area__collapse-handle {
   opacity: 1;
   cursor: pointer;
 }
 
-.session-view[data-chat-dock="bottom"] .chat-collapse-handle {
+.session-view[data-chat-dock="bottom"] .chat-area__collapse-handle {
   width: 34px;
   height: 22px;
   opacity: 1;
@@ -59,16 +59,16 @@
   cursor: pointer;
 }
 
-.session-view:not(.chat-collapsed)[data-chat-dock="bottom"] .chat-collapse-handle {
+.session-view:not(.session-view--chat-collapsed)[data-chat-dock="bottom"] .chat-area__collapse-handle {
   opacity: 1;
 }
 
-.session-view:not(.chat-collapsed)[data-chat-dock="bottom"]:has(.player-frame.player-overlay-visible) .chat-collapse-handle {
+.session-view:not(.session-view--chat-collapsed)[data-chat-dock="bottom"]:has(.player-frame.player-frame--overlay-visible) .chat-area__collapse-handle {
   opacity: 1;
   cursor: pointer;
 }
 
-.session-view[data-chat-dock="bottom"] .chat-collapse-hover-zone {
+.session-view[data-chat-dock="bottom"] .chat-area__collapse-hover-zone {
   z-index: 40;
   top: 0;
   left: 50%;
@@ -80,30 +80,30 @@
   transition: opacity 160ms ease, color 160ms ease, background 160ms ease;
 }
 
-.session-view.chat-collapsed[data-chat-dock="bottom"] .chat-collapse-hover-zone {
+.session-view.session-view--chat-collapsed[data-chat-dock="bottom"] .chat-area__collapse-hover-zone {
   top: var(--chat-bottom-dock-collapsed-handle-top, calc(100dvh - 16px));
   border-radius: 6px 6px 0 0;
 }
 
 /* Al expandir, la flecha sigue el mismo estado de visibilidad que los controles del video. */
-.session-view.chat-collapsed[data-chat-dock="bottom"] .chat-collapse-handle {
+.session-view.session-view--chat-collapsed[data-chat-dock="bottom"] .chat-area__collapse-handle {
   opacity: 0;
   cursor: default;
 }
 
-.session-view.chat-collapsed[data-chat-dock="bottom"] .chat-collapse-handle.is-transitioning {
+.session-view.session-view--chat-collapsed[data-chat-dock="bottom"] .chat-area__collapse-handle.u-transitioning {
   opacity: 0;
 }
 
-.session-view.chat-collapsed[data-chat-dock="bottom"] .chat-collapse-hover-zone.chat-collapse-pointer-hover .chat-collapse-handle {
+.session-view.session-view--chat-collapsed[data-chat-dock="bottom"] .chat-area__collapse-hover-zone.chat-area__collapse-hover-zone--pointer-hover .chat-area__collapse-handle {
   opacity: 0;
 }
 
-.session-view.chat-collapsed[data-chat-dock="bottom"] .chat-collapse-hover-zone.is-touch-hover .chat-collapse-handle {
+.session-view.session-view--chat-collapsed[data-chat-dock="bottom"] .chat-area__collapse-hover-zone.u-touch-hover .chat-area__collapse-handle {
   opacity: 0;
 }
 
-.session-view.chat-collapsed[data-chat-dock="bottom"]:has(.player-frame.player-overlay-visible) .chat-collapse-handle {
+.session-view.session-view--chat-collapsed[data-chat-dock="bottom"]:has(.player-frame.player-frame--overlay-visible) .chat-area__collapse-handle {
   opacity: 1;
   cursor: pointer;
 }

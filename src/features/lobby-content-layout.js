@@ -6,7 +6,7 @@ import { resetLobbyTicketPlacement, syncLobbyTicketPlacement, syncLobbyTitlePlac
 
 export function syncLobbyContentCenter() {
   lobbyCenterFrame = 0;
-  if (!document.body.classList.contains("is-lobby")) return;
+  if (!document.body.classList.contains('page-context--lobby')) return;
 
   const isColumns = document.body.dataset.lobbyLayout === "columns";
   const screen = document.querySelector("#lobbyScreen");

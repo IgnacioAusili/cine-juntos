@@ -1,7 +1,7 @@
-import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
-import { state, logEvent } from "../../core/state.js?v=20261010-file-size-refactor-02";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { state, logEvent } from "../../core/state.js?v=20261011-bem-itcss-oocss-04";
 import { MAX_CHARS, withShortcutHint } from "../../core/utils.js?v=20261010-file-size-refactor-02";
-import { refreshTooltipForTarget } from "../icons-tooltips.js?v=20261011-lucide-icons-repair-01";
+import { refreshTooltipForTarget } from "../icons-tooltips.js?v=20261011-bem-itcss-oocss-04";
 
 const sendButtonMarkup = new WeakMap();
 
@@ -260,7 +260,7 @@ export function updateCharCounter(input, isOverlay) {
     counter.setAttribute("aria-hidden", "true");
   }
 
-  form.classList.toggle("over-limit", isOver);
+  form.classList.toggle('message-form--over-limit', isOver);
   if (sendBtn) {
     const cooldownRemaining = getSpamCooldownRemaining();
     if (cooldownRemaining) {

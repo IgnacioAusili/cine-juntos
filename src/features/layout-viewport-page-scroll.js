@@ -1,6 +1,6 @@
-import { dom } from "../core/dom.js?v=20261010-file-size-refactor-02";
+import { dom } from "../core/dom.js?v=20261011-bem-itcss-oocss-04";
 import { layoutMetricsState } from "./layout-metrics-state.js?v=20261010-file-size-refactor-02";
-import { isMobileLayout, isFullscreenActive, isBottomChatInputFocused, isRightChatInputFocused } from "./layout-viewport-query.js?v=20261010-file-size-refactor-02";
+import { isMobileLayout, isFullscreenActive, isBottomChatInputFocused, isRightChatInputFocused } from "./layout-viewport-query.js?v=20261011-bem-itcss-oocss-04";
 
 function measureViewportUnit(unit) {
   if (!document.body || !window.CSS?.supports?.("height", `100${unit}`)) return 0;

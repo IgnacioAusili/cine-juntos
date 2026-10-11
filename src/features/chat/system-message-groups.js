@@ -1,10 +1,10 @@
-import { animateCollapsedSystemMessageAdvance, resetSystemMessageRowAnchor, settleSystemMessageRoll } from "./system-message-roll.js?v=20261010-file-size-refactor-02";
+import { animateCollapsedSystemMessageAdvance, resetSystemMessageRowAnchor, settleSystemMessageRoll } from "./system-message-roll.js?v=20261011-bem-itcss-oocss-04";
 import { SYSTEM_GROUP_MIN_SIZE, groupTransitions } from "./system-message-group-state.js?v=20261010-file-size-refactor-02";
-import { captureSystemTextSnapshot, clearShortGroup, ensureGroupHeader, findGroupToggle, getContiguousSystemItems, getGroupState, getLatestSystemStreak, applyGroupState, removeGroupHeader } from "./system-message-group-model.js?v=20261011-chat-interaction-fixes-01";
-import { getGroupTransitionTarget } from "./system-message-group-visuals.js?v=20261010-file-size-refactor-02";
-import { moveGroupToggle } from "./system-message-group-toggle.js?v=20261010-file-size-refactor-02";
-import { animateExpandedSystemMessageRemoval, animateExpandedSystemMessageEntry } from "./system-message-group-effects.js?v=20261010-file-size-refactor-02";
-export { animateExpandedSystemMessageRemoval } from "./system-message-group-effects.js?v=20261010-file-size-refactor-02";
+import { captureSystemTextSnapshot, clearShortGroup, ensureGroupHeader, findGroupToggle, getContiguousSystemItems, getGroupState, getLatestSystemStreak, applyGroupState, removeGroupHeader } from "./system-message-group-model.js?v=20261011-bem-itcss-oocss-04";
+import { getGroupTransitionTarget } from "./system-message-group-visuals.js?v=20261011-bem-itcss-oocss-04";
+import { moveGroupToggle } from "./system-message-group-toggle.js?v=20261011-bem-itcss-oocss-04";
+import { animateExpandedSystemMessageRemoval, animateExpandedSystemMessageEntry } from "./system-message-group-effects.js?v=20261011-bem-itcss-oocss-04";
+export { animateExpandedSystemMessageRemoval } from "./system-message-group-effects.js?v=20261011-bem-itcss-oocss-04";
 
 export function scheduleSystemMessageCollapse(container, { animateIncoming = false } = {}) {
   if (!container) return;
@@ -22,9 +22,9 @@ export function scheduleSystemMessageCollapse(container, { animateIncoming = fal
   const state = getGroupState(header);
   const wasExpanded = state?.expanded === true;
   const previousVisibleItem = hadExistingHeader && state?.expanded === false
-    ? header.closest(".message.system")
+    ? header.closest('.message.message--system')
     : null;
-  settleSystemMessageRoll(previousVisibleItem?.querySelector(".message-system-text"));
+  settleSystemMessageRoll(previousVisibleItem?.querySelector('.message__system-text'));
   const previousSnapshot = animateIncoming && previousVisibleItem && !groupTransitions.has(header)
     ? captureSystemTextSnapshot(previousVisibleItem)
     : null;
@@ -37,7 +37,7 @@ export function scheduleSystemMessageCollapse(container, { animateIncoming = fal
   if (previousSnapshot) {
     animateCollapsedSystemMessageAdvance(
       previousSnapshot,
-      items.at(-1)?.querySelector(".message-system-text"),
+      items.at(-1)?.querySelector('.message__system-text'),
     );
   }
 
@@ -47,7 +47,7 @@ export function scheduleSystemMessageCollapse(container, { animateIncoming = fal
 }
 
 export function prepareSystemMessageRemoval(container, item, { deferReanchor = false } = {}) {
-  if (!container || !item?.classList.contains("system")) return null;
+  if (!container || !item?.classList.contains('message--system')) return null;
 
   const header = findGroupToggle(getContiguousSystemItems(item));
   if (!header) return null;
@@ -56,10 +56,10 @@ export function prepareSystemMessageRemoval(container, item, { deferReanchor = f
   // el mensaje más antiguo que está por salir (que permanece oculto). En ese
   // caso no hay que moverlo a la siguiente fila oculta: hacerlo provoca el
   // parpadeo que se ve durante la limpieza del grupo.
-  if (header.closest(".message.system") !== item) return header;
+  if (header.closest('.message.message--system') !== item) return header;
 
   const nextItem = item.nextElementSibling;
-  if (!nextItem?.classList.contains("message") || !nextItem.classList.contains("system")) {
+  if (!nextItem?.classList.contains("message") || !nextItem.classList.contains('message--system')) {
     removeGroupHeader(header);
     return null;
   }
@@ -77,7 +77,7 @@ export function refreshSystemMessageGroup(header) {
 export function captureExpandedSystemMessageRemoval(item, header) {
   if (
     !item?.classList.contains("message")
-    || !item.classList.contains("system")
+    || !item.classList.contains('message--system')
     || header?.getAttribute("aria-expanded") !== "true"
   ) return null;
 
@@ -99,8 +99,8 @@ export function captureExpandedSystemMessageRemoval(item, header) {
 }
 
 export function expandSystemMessageGroupForItem(item) {
-  if (!item?.classList.contains("message") || !item.classList.contains("system")) return null;
-  if (!item.classList.contains("system-group-collapsed-item")) return null;
+  if (!item?.classList.contains("message") || !item.classList.contains('message--system')) return null;
+  if (!item.classList.contains('message--system-group-collapsed-item')) return null;
 
   const items = getContiguousSystemItems(item);
   const header = findGroupToggle(items);

@@ -1,5 +1,5 @@
-@import url("./session-fit-layout.css?v=20261011-chat-ui-fixes-02");
-@import url("./session-layout-controls.css?v=20261010-file-size-refactor-02");
+@import url("./session-fit-layout.css?v=20261011-bem-itcss-oocss-04");
+@import url("./session-layout-controls.css?v=20261011-bem-itcss-oocss-04");
 
 @media (max-width: 1100px) {
   .session-toolbar {
@@ -91,7 +91,7 @@
     white-space: normal;
   }
 
-  .player-actions {
+  .player-frame__actions {
     gap: 4px;
   }
 
@@ -110,7 +110,7 @@
     );
   }
 
-  body.fullscreen-mode .player-chat {
+  body.page-context--fullscreen .player-chat {
     right: 18px;
     left: auto;
     width: min(250px, calc(100% - 10px));

@@ -21,8 +21,8 @@
 }
 
 /* Ocultar el puntero solo cuando el reproductor ya entró en inactividad. */
-.player-frame.player-cursor-hidden,
-.player-frame.player-cursor-hidden * {
+.player-frame.player-frame--cursor-hidden,
+.player-frame.player-frame--cursor-hidden * {
   cursor: none;
 }
 
@@ -48,7 +48,7 @@ video::-webkit-media-controls-fullscreen-button {
   display: none;
 }
 
-.player-loading-overlay {
+.player-frame__loading-overlay {
   position: absolute;
   z-index: 3;
   inset: 0;
@@ -58,7 +58,7 @@ video::-webkit-media-controls-fullscreen-button {
   pointer-events: none;
 }
 
-.player-loading-spinner {
+.player-frame__loading-spinner {
   width: clamp(38px, 6vw, 66px);
   height: clamp(38px, 6vw, 66px);
   border: clamp(3px, 0.45vw, 5px) solid rgba(255, 255, 255, 0.2);
@@ -76,7 +76,7 @@ video::-webkit-media-controls-fullscreen-button {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .player-loading-spinner {
+  .player-frame__loading-spinner {
     animation-duration: 1800ms;
   }
 }
@@ -91,7 +91,7 @@ video::-webkit-media-controls-fullscreen-button {
   pointer-events: none;
 }
 
-.empty-player.hidden {
+.empty-player.u-hidden {
   display: none;
 }
 
@@ -137,15 +137,15 @@ video::-webkit-media-controls-fullscreen-button {
 }
 
 /* El badge siempre es visible cuando no hay video cargado o se está cargando. Con video cargado se oculta y reaparece con el hover del reproductor (.player-overlay-visible) */
-.player-status-badge.loaded {
+.player-status-badge.sync-status--loaded {
   opacity: 0;
   transform: translateY(-4px);
 }
 
-.player-frame.player-overlay-visible .player-status-badge.loaded,
-.player-status-badge.empty,
-.player-status-badge.loading,
-.player-status-badge.error {
+.player-frame.player-frame--overlay-visible .player-status-badge.sync-status--loaded,
+.player-status-badge.sync-status--empty,
+.player-status-badge.sync-status--loading,
+.player-status-badge.sync-status--error {
   opacity: 1;
   transform: translateY(0);
 }
@@ -164,39 +164,39 @@ video::-webkit-media-controls-fullscreen-button {
   transform: translateY(-1px);
 }
 
-.player-status-badge.video-status.empty {
+.player-status-badge.sync-status--video.sync-status--empty {
   color: rgba(255, 255, 255, 0.82);
 }
 
-.player-status-badge.video-status.empty .sync-status__dot {
+.player-status-badge.sync-status--video.sync-status--empty .sync-status__dot {
   --status-glow: rgba(255, 255, 255, 0.38);
   background: #ffffff;
 }
 
-.player-status-badge.video-status.empty .sync-status__dot::before {
+.player-status-badge.sync-status--video.sync-status--empty .sync-status__dot::before {
   opacity: 0.38;
 }
 
-.player-status-badge.video-status.loading {
+.player-status-badge.sync-status--video.sync-status--loading {
   color: rgba(255, 255, 255, 0.82);
 }
 
-.player-status-badge.video-status.loading .sync-status__dot {
+.player-status-badge.sync-status--video.sync-status--loading .sync-status__dot {
   --status-glow: rgba(245, 197, 24, 0.42);
   background: #f5c518;
 }
 
-.player-status-badge.video-status.loaded {
+.player-status-badge.sync-status--video.sync-status--loaded {
   color: rgba(255, 255, 255, 0.82);
 }
 
-.player-status-badge.video-status.loaded .sync-status__dot {
+.player-status-badge.sync-status--video.sync-status--loaded .sync-status__dot {
   --status-glow: rgba(56, 216, 121, 0.42);
   background: #38d879;
 }
 
-.player-status-badge.video-status.loading .sync-status__dot,
-.player-status-badge.video-status.player-status-live .sync-status__dot {
+.player-status-badge.sync-status--video.sync-status--loading .sync-status__dot,
+.player-status-badge.sync-status--video.sync-status--live .sync-status__dot {
   animation: playerLiveStatusPulse 1.25s ease-in-out infinite;
 }
 
@@ -213,11 +213,11 @@ video::-webkit-media-controls-fullscreen-button {
   }
 }
 
-.player-status-badge.video-status.error {
+.player-status-badge.sync-status--video.sync-status--error {
   color: rgba(255, 255, 255, 0.82);
 }
 
-.player-status-badge.video-status.error .sync-status__dot {
+.player-status-badge.sync-status--video.sync-status--error .sync-status__dot {
   --status-glow: rgba(233, 68, 68, 0.42);
   background: var(--danger);
 }

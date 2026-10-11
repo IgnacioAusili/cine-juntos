@@ -1,15 +1,15 @@
 import {
   dom,
-} from "../../core/dom.js?v=20261011-chat-controls-repair-01";
-import { state } from "../../core/state.js?v=20261011-chat-controls-repair-01";
-import { configureRateSelectMenu, initializeRateSelectMenu } from "./player-rate-menu.js?v=20261011-chat-controls-repair-01";
-import { hideSeekTooltip, updateSeekTooltipForValue } from "./player-seek-tooltip-view.js?v=20261011-lucide-icons-repair-01";
+} from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { state } from "../../core/state.js?v=20261011-bem-itcss-oocss-04";
+import { configureRateSelectMenu, initializeRateSelectMenu } from "./player-rate-menu.js?v=20261011-bem-itcss-oocss-04";
+import { hideSeekTooltip, updateSeekTooltipForValue } from "./player-seek-tooltip-view.js?v=20261011-bem-itcss-oocss-04";
 import { seekTooltipState } from "./player-seek-tooltip-state.js?v=20261011-chat-controls-repair-01";
-import { renderPlayerControls, showPlaybackGestureIndicator, updateSeekVisuals } from "./player-control-display.js?v=20261011-player-skip-active-cleanup-01";
-import { setVideoStatus } from "./player-video-source.js?v=20261011-player-empty-state-01";
-import { getFiniteDuration, hasLoadedMediaSource, clearSlowLoadPromptTracking } from "./player-media.js?v=20261011-chat-auto-switch-bem-01-video-ts-group-01";
+import { renderPlayerControls, showPlaybackGestureIndicator, updateSeekVisuals } from "./player-control-display.js?v=20261011-bem-itcss-oocss-04";
+import { setVideoStatus } from "./player-video-source.js?v=20261011-bem-itcss-oocss-04";
+import { getFiniteDuration, hasLoadedMediaSource, clearSlowLoadPromptTracking } from "./player-media.js?v=20261011-bem-itcss-oocss-04";
 import { playerRuntimeState } from "./player-runtime-state.js?v=20261011-chat-controls-repair-01";
-import { resetSyncControlCooldown, readPersistedVolume, syncPlayerControls } from "./player-control-actions.js?v=20261011-player-skip-active-cleanup-01";
+import { resetSyncControlCooldown, readPersistedVolume, syncPlayerControls } from "./player-control-actions.js?v=20261011-bem-itcss-oocss-04";
 
 const PLAYER_CONTROL_STYLES = new Set(["line"]);
 const MOBILE_PLAYER_CONTROLS_QUERY = "(max-width: 980px) and (hover: none) and (pointer: coarse)";
@@ -20,7 +20,7 @@ export function initializePlayer() {
   playerRuntimeState.pendingLoadCompletionAnimateSystemGroups = true;
   playerRuntimeState.pendingVideoActivityAnnouncement = false;
   state.ui.seekDragActive = false;
-  dom.playerFrame?.classList.remove("player-seek-control-dragging");
+  dom.playerFrame?.classList.remove('player-frame--seek-control-dragging');
   resetSyncControlCooldown("seek");
   resetSyncControlCooldown("rate");
   seekTooltipState.pointerId = null;
@@ -77,9 +77,9 @@ export function wireMobilePlayerControlPlacement() {
   centerActions.addEventListener("click", (event) => {
     const button = event.target?.closest?.("button");
     if (!button || !centerActions.contains(button) || button.disabled || button.getAttribute("aria-disabled") === "true") return;
-    button.classList.remove("is-click-bouncing");
+    button.classList.remove('video-control-button--click-bouncing');
     void button.offsetWidth;
-    button.classList.add("is-click-bouncing");
+    button.classList.add('video-control-button--click-bouncing');
   });
   mobileQuery.addEventListener?.("change", syncPlacement);
   window.addEventListener("resize", syncPlacement, { passive: true });

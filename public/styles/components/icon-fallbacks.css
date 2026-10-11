@@ -1,5 +1,5 @@
-.button svg:not(.composer-progress-ring),
-.icon-button svg:not(.composer-progress-ring),
+.button svg:not(.icon-button__progress-ring),
+.icon-button svg:not(.icon-button__progress-ring),
 .empty-player svg {
   width: 18px;
   height: 18px;

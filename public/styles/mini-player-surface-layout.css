@@ -2,7 +2,7 @@
   container: mini-player / size;
 }
 
-.mini-player-inline {
+.mini-player-surface--inline {
   position: absolute;
   z-index: 32;
   right: 16px;
@@ -16,7 +16,7 @@
 
 /* En el dock inferior el video acompaña al usuario mientras el chat ocupa el
    viewport. Es la misma superficie interactiva, pero anclada al navegador. */
-.mini-player-scroll {
+.mini-player-surface--scroll {
   position: fixed;
   z-index: 80;
   right: 24px;
@@ -33,35 +33,35 @@
   cursor: default;
 }
 
-.mini-player-surface.mini-player-initializing {
+.mini-player-surface.mini-player-surface--initializing {
   visibility: hidden;
   opacity: 0;
   pointer-events: none;
 }
 
-.mini-player-surface.mini-player-scroll,
-.mini-player-surface.mini-player-scroll * {
+.mini-player-surface.mini-player-surface--scroll,
+.mini-player-surface.mini-player-surface--scroll * {
   cursor: default;
 }
 
-.mini-player-surface.mini-player-scroll.is-dragging {
+.mini-player-surface.mini-player-surface--scroll.u-dragging {
   cursor: grabbing;
   user-select: none;
 }
 
-.mini-player-surface.mini-player-scroll.is-dragging * {
+.mini-player-surface.mini-player-surface--scroll.u-dragging * {
   cursor: grabbing;
 }
 
 /* La miniatura automática arranca limpia: los controles aparecen solo al
    pasar el cursor o entrar con teclado, sin ocupar el chat por defecto. */
-.mini-player-surface.mini-player-scroll .player-bottom-actions {
+.mini-player-surface.mini-player-surface--scroll .player-frame__bottom-actions {
   opacity: 0;
   transform: translateY(6px);
   pointer-events: none;
 }
 
-.mini-player-surface.mini-player-scroll:hover .player-bottom-actions {
+.mini-player-surface.mini-player-surface--scroll:hover .player-frame__bottom-actions {
   opacity: 1;
   transform: translateY(0);
   pointer-events: auto;
@@ -109,7 +109,7 @@
   }
 }
 
-.mini-player-surface .player-bottom-actions {
+.mini-player-surface .player-frame__bottom-actions {
   padding: 6px 8px 8px;
 }
 
@@ -131,7 +131,7 @@
   transition: opacity 160ms ease, transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.mini-player-surface.chat-inside-open .player-chat {
+.mini-player-surface.u-chat-inside-open .player-chat {
   transform: translateY(0);
 }
 
@@ -150,7 +150,7 @@
   }
 }
 
-.mini-player-surface .overlay-messages {
+.mini-player-surface .chat-message-list.chat-message-list--overlay {
   padding-right: 6px;
   padding-bottom: var(--chat-composer-reserve, 62px);
   padding-left: 18px;
@@ -159,29 +159,29 @@
 /* El selector de grupos del overlay principal sale hacia afuera para no
    ocupar espacio en un chat grande. En el mini reproductor debe quedar
    dentro del panel para que no se recorte. */
-.mini-player-surface #overlayMessages .message.system .system-group-toggle {
+.mini-player-surface #overlayMessages .message.message--system .message__system-group-toggle {
   left: -4px;
   min-width: 22px;
   width: 22px;
   height: 16px;
 }
 
-.mini-player-surface .overlay-message-form {
+.mini-player-surface .message-form.message-form--overlay {
   z-index: 12;
   padding: 0 6px 6px;
 }
 
-.mini-player-surface .overlay-message-form .input-wrapper {
+.mini-player-surface .message-form.message-form--overlay .message-form__input-wrapper {
   min-height: 32px;
   width: 100%;
   border-radius: 18px;
 }
 
-.mini-player-surface .overlay-message-form .input-wrapper[data-expanded="true"] {
+.mini-player-surface .message-form.message-form--overlay .message-form__input-wrapper[data-expanded="true"] {
   border-radius: 17px;
 }
 
-.mini-player-surface .overlay-message-form .input-wrapper textarea {
+.mini-player-surface .message-form.message-form--overlay .message-form__input-wrapper textarea {
   min-height: 27px;
   max-height: 48px;
   padding: 5px 6px;
@@ -190,9 +190,9 @@
   line-height: 1.2;
 }
 
-.mini-player-surface .overlay-message-form .input-wrapper .icon-button,
-.mini-player-surface .overlay-message-form .input-wrapper .emoji-trigger,
-.mini-player-surface .overlay-message-form .input-wrapper .icon-button--send {
+.mini-player-surface .message-form.message-form--overlay .message-form__input-wrapper .icon-button,
+.mini-player-surface .message-form.message-form--overlay .message-form__input-wrapper .icon-button--emoji-trigger,
+.mini-player-surface .message-form.message-form--overlay .message-form__input-wrapper .icon-button--send {
   width: 24px;
   min-height: 24px;
   height: 24px;
@@ -202,7 +202,7 @@
   box-shadow: none !important;
 }
 
-.mini-player-surface .overlay-message-form .input-wrapper .emoji-trigger {
+.mini-player-surface .message-form.message-form--overlay .message-form__input-wrapper .icon-button--emoji-trigger {
   right: 28px;
   top: 50%;
   bottom: auto;
@@ -210,7 +210,7 @@
   color: rgba(255, 255, 255, 0.68);
 }
 
-.mini-player-surface .overlay-message-form .input-wrapper .icon-button--send {
+.mini-player-surface .message-form.message-form--overlay .message-form__input-wrapper .icon-button--send {
   right: 3px;
   top: 50%;
   bottom: auto;

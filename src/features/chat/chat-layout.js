@@ -1,36 +1,36 @@
 // Layout del chat externo e interno: visibilidad, estilo, dock y collapse.
-import { dom } from "../../core/dom.js?v=20261011-chat-controls-repair-01";
-import { configureExternalChatCollapseOperations, lockChatScrollSnapDuringProgrammaticScroll, setExternalChatCollapsed, forceExternalChatCollapsed, restoreExternalChatCollapsed, applyExternalChatCollapsed, captureExternalChatCollapseScroll } from "./chat-external-collapse.js?v=20261011-chat-auto-switch-bem-01";
-export { setExternalChatCollapsed, forceExternalChatCollapsed, restoreExternalChatCollapsed } from "./chat-external-collapse.js?v=20261011-chat-auto-switch-bem-01";
-import { configureChatDockController, setChatDock, getBottomDockVideoScrollTop } from "./chat-dock-controller.js?v=20261011-lucide-icons-repair-01";
-export { setChatDock } from "./chat-dock-controller.js?v=20261011-lucide-icons-repair-01";
-import { isMobilePortraitChatViewport, isMobileLandscapeRightDock, isMobileLandscapeFullscreenBottomDock, isMobilePortraitRightDock, isRightChatViewportOverlay } from "./chat-layout-breakpoints.js?v=20261011-chat-controls-repair-01";
-import { syncInsideChatPanelOffset, syncExternalChatCollapseHandleOffset, updateCollapseButton } from "./chat-collapse-handles.js?v=20261011-lucide-icons-repair-01";
-export { syncInsideChatPanelOffset, syncExternalChatCollapseHandleOffset, updateCollapseButton } from "./chat-collapse-handles.js?v=20261011-lucide-icons-repair-01";
-import { configureChatVisibilityOperations, clearChatAutoCollapseTimer as clearAutoCollapseTimer, setInsideChatVisible, setInsideChatAutoExpandEnabled, setExternalChatAutoExpandEnabled, scheduleInsideChatAutoCollapse, scheduleExternalChatAutoCollapse, cancelExternalChatAutoCollapse, completeAutoOpenedChatResponse, syncChatAutoExpandControls } from "./chat-visibility.js?v=20261011-chat-auto-switch-bem-01";
-export { setInsideChatVisible, setInsideChatAutoExpandEnabled, setExternalChatAutoExpandEnabled, scheduleInsideChatAutoCollapse, scheduleExternalChatAutoCollapse, cancelExternalChatAutoCollapse, completeAutoOpenedChatResponse, syncChatAutoExpandControls } from "./chat-visibility.js?v=20261011-chat-auto-switch-bem-01";
-import { getVideoAreaRect, isStackedSessionLayout, wireResponsiveSessionLayout as wireResponsiveSessionLayoutModule } from "./chat-responsive-layout.js?v=20261011-chat-controls-repair-01";
-import { isFullscreenPageActive, getPageScrollContainer, getPageScrollTop, getPageScrollMax, getElementPageTop, scrollPageTo } from "./chat-page-scroll.js?v=20261011-chat-controls-repair-01";
-export { captureExternalChatCollapseScroll } from "./chat-external-collapse.js?v=20261011-chat-auto-switch-bem-01";
-export { getVideoAreaRect, isStackedSessionLayout } from "./chat-responsive-layout.js?v=20261011-chat-controls-repair-01";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { configureExternalChatCollapseOperations, lockChatScrollSnapDuringProgrammaticScroll, setExternalChatCollapsed, forceExternalChatCollapsed, restoreExternalChatCollapsed, applyExternalChatCollapsed, captureExternalChatCollapseScroll } from "./chat-external-collapse.js?v=20261011-bem-itcss-oocss-04";
+export { setExternalChatCollapsed, forceExternalChatCollapsed, restoreExternalChatCollapsed } from "./chat-external-collapse.js?v=20261011-bem-itcss-oocss-04";
+import { configureChatDockController, setChatDock, getBottomDockVideoScrollTop } from "./chat-dock-controller.js?v=20261011-bem-itcss-oocss-04";
+export { setChatDock } from "./chat-dock-controller.js?v=20261011-bem-itcss-oocss-04";
+import { isMobilePortraitChatViewport, isMobileLandscapeRightDock, isMobileLandscapeFullscreenBottomDock, isMobilePortraitRightDock, isRightChatViewportOverlay } from "./chat-layout-breakpoints.js?v=20261011-bem-itcss-oocss-04";
+import { syncInsideChatPanelOffset, syncExternalChatCollapseHandleOffset, updateCollapseButton } from "./chat-collapse-handles.js?v=20261011-bem-itcss-oocss-04";
+export { syncInsideChatPanelOffset, syncExternalChatCollapseHandleOffset, updateCollapseButton } from "./chat-collapse-handles.js?v=20261011-bem-itcss-oocss-04";
+import { configureChatVisibilityOperations, clearChatAutoCollapseTimer as clearAutoCollapseTimer, setInsideChatVisible, setInsideChatAutoExpandEnabled, setExternalChatAutoExpandEnabled, scheduleInsideChatAutoCollapse, scheduleExternalChatAutoCollapse, cancelExternalChatAutoCollapse, completeAutoOpenedChatResponse, syncChatAutoExpandControls } from "./chat-visibility.js?v=20261011-bem-itcss-oocss-04";
+export { setInsideChatVisible, setInsideChatAutoExpandEnabled, setExternalChatAutoExpandEnabled, scheduleInsideChatAutoCollapse, scheduleExternalChatAutoCollapse, cancelExternalChatAutoCollapse, completeAutoOpenedChatResponse, syncChatAutoExpandControls } from "./chat-visibility.js?v=20261011-bem-itcss-oocss-04";
+import { getVideoAreaRect, isStackedSessionLayout, wireResponsiveSessionLayout as wireResponsiveSessionLayoutModule } from "./chat-responsive-layout.js?v=20261011-bem-itcss-oocss-04";
+import { isFullscreenPageActive, getPageScrollContainer, getPageScrollTop, getPageScrollMax, getElementPageTop, scrollPageTo } from "./chat-page-scroll.js?v=20261011-bem-itcss-oocss-04";
+export { captureExternalChatCollapseScroll } from "./chat-external-collapse.js?v=20261011-bem-itcss-oocss-04";
+export { getVideoAreaRect, isStackedSessionLayout } from "./chat-responsive-layout.js?v=20261011-bem-itcss-oocss-04";
 import { chatDockTransitionState } from "./chat-layout-transition-state.js?v=20261011-chat-controls-repair-01";
-import { state, logEvent } from "../../core/state.js?v=20261011-chat-controls-repair-01";
+import { state, logEvent } from "../../core/state.js?v=20261011-bem-itcss-oocss-04";
 import { shouldAnchorChatCollapseHandleInHeader } from "./chat-collapse-header-layout.js?v=20261011-chat-controls-repair-01";
 import { CHAT_DOCKS, CHAT_DOCK_META, withShortcutHint } from "../../core/utils.js?v=20261011-chat-controls-repair-01";
-import { hydrateIcons, hideTooltip, refreshTooltipForTarget } from "../icons-tooltips.js?v=20261011-lucide-icons-repair-01";
-import { focusFullscreenWorkspace } from "../session-ui.js?v=20261011-chat-controls-repair-01";
+import { hydrateIcons, hideTooltip, refreshTooltipForTarget } from "../icons-tooltips.js?v=20261011-bem-itcss-oocss-04";
+import { focusFullscreenWorkspace } from "../session-ui.js?v=20261011-bem-itcss-oocss-04";
 import {
   cancelIdentityEditing,
   syncNameInputWidth,
-} from "../presence.js?v=20261011-lucide-icons-repair-01";
+} from "../presence.js?v=20261011-bem-itcss-oocss-04";
 import {
   isExternalChatVisibleToUser,
   isInsideChatVisibleToUser,
   resetInsideUnread,
   resetPageUnread,
   syncUnreadBadgesWithVisibility,
-} from "./unread-counters.js?v=20261011-chat-controls-repair-01";
-import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20261011-chat-controls-repair-01";
+} from "./unread-counters.js?v=20261011-bem-itcss-oocss-04";
+import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20261011-bem-itcss-oocss-04";
 import { focusChatInput } from "./chat-input-focus.js?v=20261011-chat-controls-repair-01";
 import { restorePageScrollAfterRightChatCollapse } from "./chat-scroll-preservation.js?v=20261011-chat-controls-repair-01";
 import {
@@ -41,9 +41,9 @@ import {
   preserveInsideChatPanelPlacementWhileClosing,
   syncInsideChatPanelPlacement,
   wireInsideChatPanelPlacement,
-} from "../player/inside-chat-layout.js?v=20261011-chat-controls-repair-01";
-import { syncComponentAspectLayoutNow } from "./component-aspect-layout.js?v=20261011-chat-controls-repair-01";
-import { configureChatDockTransitionOperations, animateFullscreenDockSwitch, animateRightToBottomWithNativeCollapse, animateFullscreenBottomToRightWithNativeCollapse, getBottomToRightScrollTop, animateRightToBottomSwitch, scheduleBottomToRightSwitch, clearBottomChatTransitionVisuals, lockBottomChatScrollAnchoring, restoreBottomChatScrollAnchoring, cancelBottomChatTransition, isDesktopBottomDock, completeDesktopBottomChatTransition, easeBottomChatCurtainProgress, setDesktopBottomChatCurtainProgress, getWorkspaceRowHeights, getWorkspaceContentHeight, setMobileBottomTransitionProgress, setDesktopBottomTransitionRowsProgress, completeMobileBottomChatTransition, stepMobileBottomChatTransition, stepDesktopBottomChatTransition, animateDesktopBottomChatCollapse, animateDesktopBottomChatExpand, animateBottomChatCollapse, animateBottomChatExpand } from "./chat-dock-transitions.js?v=20261011-chat-controls-repair-01";
+} from "../player/inside-chat-layout.js?v=20261011-bem-itcss-oocss-04";
+import { syncComponentAspectLayoutNow } from "./component-aspect-layout.js?v=20261011-bem-itcss-oocss-04";
+import { configureChatDockTransitionOperations, animateFullscreenDockSwitch, animateRightToBottomWithNativeCollapse, animateFullscreenBottomToRightWithNativeCollapse, getBottomToRightScrollTop, animateRightToBottomSwitch, scheduleBottomToRightSwitch, clearBottomChatTransitionVisuals, lockBottomChatScrollAnchoring, restoreBottomChatScrollAnchoring, cancelBottomChatTransition, isDesktopBottomDock, completeDesktopBottomChatTransition, easeBottomChatCurtainProgress, setDesktopBottomChatCurtainProgress, getWorkspaceRowHeights, getWorkspaceContentHeight, setMobileBottomTransitionProgress, setDesktopBottomTransitionRowsProgress, completeMobileBottomChatTransition, stepMobileBottomChatTransition, stepDesktopBottomChatTransition, animateDesktopBottomChatCollapse, animateDesktopBottomChatExpand, animateBottomChatCollapse, animateBottomChatExpand } from "./chat-dock-transitions.js?v=20261011-bem-itcss-oocss-04";
 import { CHAT_LAYOUT_SETTLE_MS, COLLAPSE_HANDLE_HIDE_MS, BOTTOM_DOCK_UNION_REVEAL_PX } from "./chat-layout-timing.js?v=20261011-chat-controls-repair-01";
 
 const CHAT_STYLE_KEY = "cine-juntos-chat-style";
@@ -108,7 +108,7 @@ function setCollapseHandleTransitioning(
 
   const collapseHandleButtons = [dom.collapseChatButton, dom.expandChatButton].filter(Boolean);
   const collapseHandleZones = collapseHandleButtons
-    .map((button) => button.closest(".chat-collapse-hover-zone"))
+    .map((button) => button.closest('.chat-area__collapse-hover-zone'))
     .filter(Boolean);
 
   if (state.chat.collapseHandleTransitionTimer) {
@@ -117,12 +117,12 @@ function setCollapseHandleTransitioning(
   }
 
   collapseHandleButtons.forEach((button) => {
-    button.classList.toggle("is-transitioning", isTransitioning);
+    button.classList.toggle('u-transitioning', isTransitioning);
   });
   collapseHandleZones.forEach((zone) => {
-    zone.classList.toggle("is-transitioning", isTransitioning);
+    zone.classList.toggle('u-transitioning', isTransitioning);
   });
-  dom.sessionView?.classList.toggle("chat-layout-transitioning", isTransitioning);
+  dom.sessionView?.classList.toggle('session-view--chat-layout-transitioning', isTransitioning);
   const messageForm = dom.chatArea?.querySelector(".message-form");
   if (
     isTransitioning
@@ -157,12 +157,12 @@ function setCollapseHandleTransitioning(
     }
 
     collapseHandleButtons.forEach((button) => {
-      button.classList.remove("is-transitioning");
+      button.classList.remove('u-transitioning');
     });
     collapseHandleZones.forEach((zone) => {
-      zone.classList.remove("is-transitioning");
+      zone.classList.remove('u-transitioning');
     });
-    dom.sessionView?.classList.remove("chat-layout-transitioning");
+    dom.sessionView?.classList.remove('session-view--chat-layout-transitioning');
     messageForm?.style.removeProperty("width");
     state.chat.collapseHandleTransitionTimer = null;
     syncExternalChatCollapseHandleOffset();
@@ -180,7 +180,7 @@ function keepChatDockHandlesHidden() {
     window.clearTimeout(chatDockHandleSwitchTimer);
     chatDockHandleSwitchTimer = 0;
   }
-  dom.sessionView.classList.add("chat-dock-handle-switching");
+  dom.sessionView.classList.add('session-view--chat-dock-handle-switching');
 }
 
 function scheduleChatDockHandlesReveal(delayMs) {
@@ -191,7 +191,7 @@ function scheduleChatDockHandlesReveal(delayMs) {
   }
   chatDockHandleSwitchTimer = window.setTimeout(() => {
     chatDockHandleSwitchTimer = 0;
-    dom.sessionView?.classList.remove("chat-dock-handle-switching");
+    dom.sessionView?.classList.remove('session-view--chat-dock-handle-switching');
   }, Math.max(0, delayMs));
 }
 

@@ -1,16 +1,16 @@
-import { dom } from "../../core/dom.js?v=20261011-chat-controls-repair-01";
-import { logEvent, state } from "../../core/state.js?v=20261011-chat-controls-repair-01";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { logEvent, state } from "../../core/state.js?v=20261011-bem-itcss-oocss-04";
 import { CHAT_DOCK_META } from "../../core/utils.js?v=20261011-chat-controls-repair-01";
-import { autoResizeMessageInput, handlePasteEvent, hideEmojiPicker, normalizeEmojiShortcodesInput, repositionEmojiPicker, submitMessageFrom, toggleEmojiPicker, updateCharCounter, wireFloatingComposerLayout, wireComposerScrollbar } from "./chat-input.js?v=20261011-chat-auto-switch-bem-01-video-ts-group-01";
-import { setReplyTarget } from "./chat-reply.js?v=20261011-lucide-icons-repair-01";
-import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20261011-chat-controls-repair-01";
-import { fillChatHistoryViewport, loadOlderChatHistory } from "./chat-history.js?v=20261011-chat-auto-switch-bem-01-video-ts-group-01";
-import { copyMessageText, hideMessageMenu, showMessageMenu } from "./message-menu.js?v=20261011-chat-controls-repair-01";
-import { setChatDock, setExternalChatAutoExpandEnabled, setInsideChatAutoExpandEnabled, setInsideChatStyle, setInsideChatVisible, syncChatAutoExpandControls, syncExternalChatCollapseHandleOffset, wireResponsiveSessionLayout } from "./chat-layout.js?v=20261011-chat-auto-switch-bem-01";
-import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20261011-chat-controls-repair-01";
+import { autoResizeMessageInput, handlePasteEvent, hideEmojiPicker, normalizeEmojiShortcodesInput, repositionEmojiPicker, submitMessageFrom, toggleEmojiPicker, updateCharCounter, wireFloatingComposerLayout, wireComposerScrollbar } from "./chat-input.js?v=20261011-bem-itcss-oocss-04";
+import { setReplyTarget } from "./chat-reply.js?v=20261011-bem-itcss-oocss-04";
+import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20261011-bem-itcss-oocss-04";
+import { fillChatHistoryViewport, loadOlderChatHistory } from "./chat-history.js?v=20261011-bem-itcss-oocss-04";
+import { copyMessageText, hideMessageMenu, showMessageMenu } from "./message-menu.js?v=20261011-bem-itcss-oocss-04";
+import { setChatDock, setExternalChatAutoExpandEnabled, setInsideChatAutoExpandEnabled, setInsideChatStyle, setInsideChatVisible, syncChatAutoExpandControls, syncExternalChatCollapseHandleOffset, wireResponsiveSessionLayout } from "./chat-layout.js?v=20261011-bem-itcss-oocss-04";
+import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20261011-bem-itcss-oocss-04";
 import { focusChatInput } from "./chat-input-focus.js?v=20261011-chat-controls-repair-01";
-import { hideTooltip } from "../icons-tooltips.js?v=20261011-lucide-icons-repair-01";
-import { applyDampenedWheelScroll, clearCollapsePointerHover, handleCollapseButtonClick, hasVerticalScroll, isMobileChatLayout, setCollapsePointerHover, isCollapsePointerHovered, shouldBlockWheelForComposerControl, shouldBlockWheelForContainer, shouldBlockWheelForTextarea } from "./chat-event-helpers.js?v=20261011-chat-auto-switch-bem-01";
+import { hideTooltip } from "../icons-tooltips.js?v=20261011-bem-itcss-oocss-04";
+import { applyDampenedWheelScroll, clearCollapsePointerHover, handleCollapseButtonClick, hasVerticalScroll, isMobileChatLayout, setCollapsePointerHover, isCollapsePointerHovered, shouldBlockWheelForComposerControl, shouldBlockWheelForContainer, shouldBlockWheelForTextarea } from "./chat-event-helpers.js?v=20261011-bem-itcss-oocss-04";
 
 export function wireChatComposerEvents() {
 dom.messageEmojiButton.addEventListener("click", () => {
@@ -37,7 +37,7 @@ dom.overlayEmojiButton.addEventListener("click", () => {
   popover?.addEventListener(
     "touchmove",
     (event) => {
-      if (popover.classList.contains("is-emoji-popover-paged")) return;
+      if (popover.classList.contains('emoji-popover--paged')) return;
       event.preventDefault();
       event.stopPropagation();
     },
@@ -63,7 +63,7 @@ document.addEventListener(
   (event) => {
     if (dom.emojiPopover.hidden) return;
     if (dom.emojiPopover.contains(event.target)) return;
-    if (event.target.closest(".emoji-trigger")) return;
+    if (event.target.closest('.icon-button--emoji-trigger')) return;
 
     const activeEmojiInput = state.ui.activeEmojiInput;
     hideEmojiPicker();
@@ -80,7 +80,7 @@ document.addEventListener(
 document.addEventListener("click", (event) => {
   if (dom.emojiPopover.hidden) return;
   if (dom.emojiPopover.contains(event.target)) return;
-  if (event.target.closest(".emoji-trigger")) return;
+  if (event.target.closest('.icon-button--emoji-trigger')) return;
   hideEmojiPicker();
 });
 

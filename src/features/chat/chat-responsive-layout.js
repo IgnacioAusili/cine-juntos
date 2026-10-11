@@ -1,4 +1,4 @@
-import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
 
 let responsiveSessionLayoutObserver = null;
 let responsiveSessionLayoutFrame = 0;
@@ -13,7 +13,7 @@ function releaseLayoutFitCheckAfterRestore(sessionView) {
   }
   layoutFitCheckReleaseFrame = window.requestAnimationFrame(() => {
     layoutFitCheckReleaseFrame = 0;
-    sessionView?.classList.remove("layout-fit-check");
+    sessionView?.classList.remove('session-view--layout-fit-check');
   });
 }
 
@@ -31,7 +31,7 @@ export function isStackedSessionLayout() {
 
 function setResponsiveSessionLayout(stacked) {
   if (!dom.sessionView) return;
-  dom.sessionView.classList.toggle("layout-stacked", stacked);
+  dom.sessionView.classList.toggle('session-view--layout-stacked', stacked);
   dom.sessionView.style.setProperty(
     "--session-layout-mode",
     stacked ? "stacked" : "side-by-side",
@@ -50,16 +50,16 @@ function measureResponsiveSessionLayout() {
     return;
   }
 
-  const isCollapsed = dom.sessionView.classList.contains("chat-collapsed");
+  const isCollapsed = dom.sessionView.classList.contains('session-view--chat-collapsed');
   if (
-    dom.sessionView.classList.contains("chat-layout-transitioning")
-    || dom.sessionView.classList.contains("chat-dock-switching")
+    dom.sessionView.classList.contains('session-view--chat-layout-transitioning')
+    || dom.sessionView.classList.contains('session-view--chat-dock-switching')
   ) return;
 
-  const wasStacked = dom.sessionView.classList.contains("layout-stacked");
+  const wasStacked = dom.sessionView.classList.contains('session-view--layout-stacked');
   const previousChatAreaStyle = isCollapsed ? dom.chatArea.getAttribute("style") : null;
-  dom.sessionView.classList.add("layout-fit-check");
-  dom.sessionView.classList.remove("layout-stacked");
+  dom.sessionView.classList.add('session-view--layout-fit-check');
+  dom.sessionView.classList.remove('session-view--layout-stacked');
 
   let stacked = false;
   try {
@@ -92,9 +92,9 @@ function measureResponsiveSessionLayout() {
     if (isCollapsed) {
       releaseLayoutFitCheckAfterRestore(dom.sessionView);
     } else {
-      dom.sessionView.classList.remove("layout-fit-check");
+      dom.sessionView.classList.remove('session-view--layout-fit-check');
     }
-    if (wasStacked) dom.sessionView.classList.add("layout-stacked");
+    if (wasStacked) dom.sessionView.classList.add('session-view--layout-stacked');
   }
 
   setResponsiveSessionLayout(stacked);

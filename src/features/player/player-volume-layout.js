@@ -1,6 +1,6 @@
-const VOLUME_OPEN_CLASS = "is-volume-slider-open";
+const VOLUME_OPEN_CLASS = 'player-volume-group--slider-open';
 const VOLUME_LAYOUT_ATTRIBUTE = "data-volume-slider-layout";
-const VOLUME_ARROW_OVERLAP_CLASS = "is-volume-popup-overlapping";
+const VOLUME_ARROW_OVERLAP_CLASS = 'player-volume-group--popup-overlapping';
 const VOLUME_BUTTON_ACTION_DELAY_MS = 350;
 // El popup permanece disponible unos segundos despues de la ultima
 // interaccion, y mientras el puntero o el foco sigan dentro del control.
@@ -192,7 +192,7 @@ function wireVolumeGroup(group) {
     if (group.classList.contains(VOLUME_OPEN_CLASS)) schedule();
   }, view);
   volumeLayoutSchedulers.set(group, schedule);
-  const input = group.querySelector(".player-volume-input");
+  const input = group.querySelector('.player-volume-group__input');
   let activeSliderPointerId = null;
 
   group.addEventListener("pointerenter", (event) => {
@@ -269,7 +269,7 @@ function wireVolumeGroup(group) {
   if (typeof ResizeObserver === "function") {
     const observer = new ResizeObserver(schedule);
     observer.observe(bar);
-    const zone = bar.querySelector(".player-controls-scroll-zone");
+    const zone = bar.querySelector('.player-controls-bar__scroll-zone');
     if (zone) observer.observe(zone);
     const chatHandleZone = getActiveChatHandleZone(group);
     if (chatHandleZone) observer.observe(chatHandleZone);
@@ -316,7 +316,7 @@ function openVolumeSlider(group) {
   const hasMouseHover = view.matchMedia?.("(hover: hover) and (pointer: fine)").matches
     && group.matches(":hover");
   const activeElement = group.ownerDocument.activeElement;
-  const sliderHasFocus = activeElement === group.querySelector(".player-volume-input");
+  const sliderHasFocus = activeElement === group.querySelector('.player-volume-group__input');
   if (!hasMouseHover && !sliderHasFocus) scheduleHide(group);
 }
 
@@ -343,9 +343,9 @@ function syncVolumeArrowVisibility(group) {
   overlappingVolumeArrowZones.delete(group);
   if (!group.classList.contains(VOLUME_OPEN_CLASS) || !isVolumeSliderVertical(group)) return;
 
-  const popup = group.querySelector(".player-volume-slider-wrap");
+  const popup = group.querySelector('.player-volume-group__slider');
   const button = getActiveChatHandleButton(group);
-  const handleZone = button?.closest(".chat-collapse-hover-zone");
+  const handleZone = button?.closest('.chat-area__collapse-hover-zone');
   if (!popup || !button || !handleZone) return;
 
   const popupRect = popup.getBoundingClientRect();
@@ -363,14 +363,14 @@ function syncVolumeArrowVisibility(group) {
 function getActiveChatHandleButton(group) {
   const sessionView = group.closest(".session-view");
   if (!sessionView) return null;
-  const buttonId = sessionView.classList.contains("chat-collapsed")
+  const buttonId = sessionView.classList.contains('session-view--chat-collapsed')
     ? "#expandChatButton"
     : "#collapseChatButton";
   return sessionView.querySelector(buttonId) || null;
 }
 
 function getActiveChatHandleZone(group) {
-  return getActiveChatHandleButton(group)?.closest(".chat-collapse-hover-zone") || null;
+  return getActiveChatHandleButton(group)?.closest('.chat-area__collapse-hover-zone') || null;
 }
 
 function syncVolumeButtonLabel(group) {

@@ -1,7 +1,7 @@
-import { dom } from "../core/dom.js?v=20261010-file-size-refactor-02";
-import { state } from "../core/state.js?v=20261010-file-size-refactor-02";
-import { setSyncStatus } from "./session-ui.js?v=20261010-file-size-refactor-02";
-import { sanitizeRoomInput } from "./room-input.js?v=20261010-file-size-refactor-02";
+import { dom } from "../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { state } from "../core/state.js?v=20261011-bem-itcss-oocss-04";
+import { setSyncStatus } from "./session-ui.js?v=20261011-bem-itcss-oocss-04";
+import { sanitizeRoomInput } from "./room-input.js?v=20261011-bem-itcss-oocss-04";
 
 let inviteCopyFeedbackTimer = 0;
 let inviteCopyAnimationTimer = 0;
@@ -72,7 +72,7 @@ async function copyTextToClipboard(text) {
 export function setInviteCopyFeedback(active) {
   if (!dom.copyInviteButton) return;
 
-  if (active && dom.copyInviteButton.classList.contains("is-copy-animating")) {
+  if (active && dom.copyInviteButton.classList.contains('room-chip__copy--animating')) {
     inviteCopyAnimationQueued = true;
     return;
   }
@@ -82,11 +82,11 @@ export function setInviteCopyFeedback(active) {
   clearInviteCopyAnimationEndListener();
   inviteCopyAnimationQueued = false;
   dom.copyInviteButton.dataset.copied = active ? "true" : "false";
-  dom.copyInviteButton.classList.remove("is-copy-animating");
+  dom.copyInviteButton.classList.remove('room-chip__copy--animating');
   if (!active) return;
 
   void dom.copyInviteButton.offsetWidth;
-  dom.copyInviteButton.classList.add("is-copy-animating");
+  dom.copyInviteButton.classList.add('room-chip__copy--animating');
   const animationTarget = dom.copyInviteButton.querySelector('.room-chip__copy-motion')
     || dom.copyInviteButton.querySelector('.room-chip__copy-main');
   const finishCopyAnimation = (event) => {
@@ -94,7 +94,7 @@ export function setInviteCopyFeedback(active) {
     clearInviteCopyAnimationEndListener();
     window.clearTimeout(inviteCopyAnimationTimer);
     inviteCopyAnimationTimer = 0;
-    dom.copyInviteButton?.classList.remove("is-copy-animating");
+    dom.copyInviteButton?.classList.remove('room-chip__copy--animating');
     if (inviteCopyAnimationQueued) setInviteCopyFeedback(true);
   };
 

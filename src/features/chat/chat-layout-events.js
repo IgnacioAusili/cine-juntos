@@ -1,16 +1,16 @@
-import { dom } from "../../core/dom.js?v=20261011-chat-controls-repair-01";
-import { logEvent, state } from "../../core/state.js?v=20261011-chat-controls-repair-01";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { logEvent, state } from "../../core/state.js?v=20261011-bem-itcss-oocss-04";
 import { CHAT_DOCK_META } from "../../core/utils.js?v=20261011-chat-controls-repair-01";
-import { autoResizeMessageInput, handlePasteEvent, hideEmojiPicker, normalizeEmojiShortcodesInput, repositionEmojiPicker, submitMessageFrom, toggleEmojiPicker, updateCharCounter, wireFloatingComposerLayout, wireComposerScrollbar } from "./chat-input.js?v=20261011-chat-auto-switch-bem-01-video-ts-group-01";
-import { setReplyTarget } from "./chat-reply.js?v=20261011-lucide-icons-repair-01";
-import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20261011-chat-controls-repair-01";
-import { fillChatHistoryViewport, loadOlderChatHistory } from "./chat-history.js?v=20261011-chat-auto-switch-bem-01-video-ts-group-01";
-import { copyMessageText, hideMessageMenu, showMessageMenu } from "./message-menu.js?v=20261011-chat-controls-repair-01";
-import { captureExternalChatCollapseScroll, setChatDock, setExternalChatAutoExpandEnabled, setInsideChatAutoExpandEnabled, setInsideChatStyle, setInsideChatVisible, syncChatAutoExpandControls, syncExternalChatCollapseHandleOffset, wireResponsiveSessionLayout } from "./chat-layout.js?v=20261011-chat-auto-switch-bem-01";
-import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20261011-chat-controls-repair-01";
+import { autoResizeMessageInput, handlePasteEvent, hideEmojiPicker, normalizeEmojiShortcodesInput, repositionEmojiPicker, submitMessageFrom, toggleEmojiPicker, updateCharCounter, wireFloatingComposerLayout, wireComposerScrollbar } from "./chat-input.js?v=20261011-bem-itcss-oocss-04";
+import { setReplyTarget } from "./chat-reply.js?v=20261011-bem-itcss-oocss-04";
+import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20261011-bem-itcss-oocss-04";
+import { fillChatHistoryViewport, loadOlderChatHistory } from "./chat-history.js?v=20261011-bem-itcss-oocss-04";
+import { copyMessageText, hideMessageMenu, showMessageMenu } from "./message-menu.js?v=20261011-bem-itcss-oocss-04";
+import { captureExternalChatCollapseScroll, setChatDock, setExternalChatAutoExpandEnabled, setInsideChatAutoExpandEnabled, setInsideChatStyle, setInsideChatVisible, syncChatAutoExpandControls, syncExternalChatCollapseHandleOffset, wireResponsiveSessionLayout } from "./chat-layout.js?v=20261011-bem-itcss-oocss-04";
+import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20261011-bem-itcss-oocss-04";
 import { focusChatInput } from "./chat-input-focus.js?v=20261011-chat-controls-repair-01";
-import { hideTooltip } from "../icons-tooltips.js?v=20261011-lucide-icons-repair-01";
-import { applyDampenedWheelScroll, clearCollapsePointerHover, handleCollapseButtonClick, hasVerticalScroll, isMobileChatLayout, setCollapsePointerHover, isCollapsePointerHovered, shouldBlockWheelForComposerControl, shouldBlockWheelForContainer, shouldBlockWheelForTextarea } from "./chat-event-helpers.js?v=20261011-chat-auto-switch-bem-01";
+import { hideTooltip } from "../icons-tooltips.js?v=20261011-bem-itcss-oocss-04";
+import { applyDampenedWheelScroll, clearCollapsePointerHover, handleCollapseButtonClick, hasVerticalScroll, isMobileChatLayout, setCollapsePointerHover, isCollapsePointerHovered, shouldBlockWheelForComposerControl, shouldBlockWheelForContainer, shouldBlockWheelForTextarea } from "./chat-event-helpers.js?v=20261011-bem-itcss-oocss-04";
 
 export function wireChatLayoutEvents() {
 syncChatAutoExpandControls();
@@ -20,7 +20,7 @@ wireFloatingComposerLayout();
 if ("ResizeObserver" in window && dom.workspace) {
   let pendingHandleSync = 0;
   const chatHandleResizeObserver = new ResizeObserver(() => {
-    if (dom.sessionView?.classList.contains("chat-layout-transitioning") || pendingHandleSync) return;
+    if (dom.sessionView?.classList.contains('session-view--chat-layout-transitioning') || pendingHandleSync) return;
     pendingHandleSync = window.requestAnimationFrame(() => {
       pendingHandleSync = 0;
       syncExternalChatCollapseHandleOffset();
@@ -58,7 +58,7 @@ dom.chatStyleToggle.addEventListener("click", (event) => {
 
 dom.playerChatToggleButton.addEventListener("click", () => {
   setInsideChatVisible(
-    !dom.playerFrame.classList.contains("chat-inside-open"),
+    !dom.playerFrame.classList.contains('u-chat-inside-open'),
   );
 });
 
@@ -72,10 +72,10 @@ dom.dockChatButton.addEventListener("click", () => {
 });
 
 [dom.collapseChatButton, dom.expandChatButton].filter(Boolean).forEach((button) => {
-  const hoverTarget = button.closest(".chat-collapse-hover-zone") || button;
+  const hoverTarget = button.closest('.chat-area__collapse-hover-zone') || button;
   hoverTarget.addEventListener("pointerenter", (event) => {
     if (event.pointerType === "touch") return;
-    if (dom.sessionView?.classList.contains("chat-collapsed")) {
+    if (dom.sessionView?.classList.contains('session-view--chat-collapsed')) {
       if (button !== dom.expandChatButton) return;
     } else if (button !== dom.collapseChatButton) {
       return;

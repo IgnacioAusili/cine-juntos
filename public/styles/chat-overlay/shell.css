@@ -23,7 +23,7 @@
   --chat-composer-reserve: 92px;
 }
 
-.player-frame.chat-inside-open .player-chat {
+.player-frame.u-chat-inside-open .player-chat {
   opacity: 1;
   pointer-events: auto;
 }
@@ -42,8 +42,8 @@
   max-height: var(--inside-chat-placement-max-height) !important;
 }
 
-.player-frame:not(.chat-inside-open) .player-chat,
-.player-frame:not(.chat-inside-open) .player-chat * {
+.player-frame:not(.u-chat-inside-open) .player-chat,
+.player-frame:not(.u-chat-inside-open) .player-chat * {
   pointer-events: none;
 }
 

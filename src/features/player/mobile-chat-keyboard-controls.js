@@ -1,7 +1,7 @@
-import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
 
 const isRightChatKeyboardOpen = () => Boolean(
-  document.documentElement.classList.contains("right-chat-keyboard-open")
+  document.documentElement.classList.contains('page-context--right-chat-keyboard-open')
   && dom.sessionView?.dataset.chatDock === "right"
   && !dom.sessionView?.hidden,
 );
@@ -9,7 +9,7 @@ const isMobileChatKeyboardOpen = () => Boolean(
   dom.sessionView
   && !dom.sessionView.hidden
   && (
-    (document.documentElement.classList.contains("bottom-chat-keyboard-open")
+    (document.documentElement.classList.contains('page-context--bottom-chat-keyboard-open')
       && dom.sessionView.dataset.chatDock === "bottom")
     || isRightChatKeyboardOpen()
   )
@@ -25,21 +25,21 @@ function syncPlayerControlsVisibility() {
   const keyboardJustOpened = keyboardOpen && !wasMobileChatKeyboardOpen;
   const keyboardJustClosed = wasMobileChatKeyboardOpen && !keyboardOpen;
   if (keyboardJustOpened) {
-    controlsVisibleBeforeKeyboard = dom.playerFrame?.classList.contains("player-overlay-visible");
-    cursorHiddenBeforeKeyboard = dom.playerFrame?.classList.contains("player-cursor-hidden");
+    controlsVisibleBeforeKeyboard = dom.playerFrame?.classList.contains('player-frame--overlay-visible');
+    cursorHiddenBeforeKeyboard = dom.playerFrame?.classList.contains('player-frame--cursor-hidden');
   }
-  dom.playerFrame?.classList.toggle("player-controls-keyboard-hidden", keyboardOpen);
-  if (keyboardOpen) dom.playerFrame?.classList.remove("player-cursor-hidden");
+  dom.playerFrame?.classList.toggle('player-controls-bar--keyboard-hidden', keyboardOpen);
+  if (keyboardOpen) dom.playerFrame?.classList.remove('player-frame--cursor-hidden');
   if (keyboardJustClosed) {
     if (controlsVisibleBeforeKeyboard === true) {
-      dom.playerFrame?.classList.add("player-overlay-visible");
+      dom.playerFrame?.classList.add('player-frame--overlay-visible');
     } else if (controlsVisibleBeforeKeyboard === false) {
-      dom.playerFrame?.classList.remove("player-overlay-visible");
+      dom.playerFrame?.classList.remove('player-frame--overlay-visible');
     }
     if (cursorHiddenBeforeKeyboard === true) {
-      dom.playerFrame?.classList.add("player-cursor-hidden");
+      dom.playerFrame?.classList.add('player-frame--cursor-hidden');
     } else if (cursorHiddenBeforeKeyboard === false) {
-      dom.playerFrame?.classList.remove("player-cursor-hidden");
+      dom.playerFrame?.classList.remove('player-frame--cursor-hidden');
     }
     controlsVisibleBeforeKeyboard = null;
     cursorHiddenBeforeKeyboard = null;
@@ -78,7 +78,7 @@ export function wireMobileChatKeyboardControls() {
 
   const revealControlsFromVideo = (event) => {
     if (
-      !dom.playerFrame.classList.contains("player-controls-keyboard-hidden")
+      !dom.playerFrame.classList.contains('player-controls-bar--keyboard-hidden')
       || (event.pointerType && event.pointerType !== "touch" && event.pointerType !== "pen")
     ) return;
 
@@ -87,9 +87,9 @@ export function wireMobileChatKeyboardControls() {
     // Quitar tambien el estado visible antes del pointerup permite que la
     // logica normal del player trate este toque como una revelacion.
     dom.playerFrame.classList.remove(
-      "player-controls-keyboard-hidden",
-      "player-overlay-visible",
-      "player-cursor-hidden",
+      'player-controls-bar--keyboard-hidden',
+      'player-frame--overlay-visible',
+      'player-frame--cursor-hidden',
     );
   };
   dom.videoPlayer?.addEventListener("pointerdown", revealControlsFromVideo, {

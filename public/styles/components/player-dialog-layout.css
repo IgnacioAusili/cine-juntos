@@ -63,7 +63,7 @@
 }
 
 .player-dialog__card,
-.player-inline-dialog-card {
+.player-inline-dialog__card {
   position: relative;
   width: 420px;
   max-width: calc(100vw - 32px);

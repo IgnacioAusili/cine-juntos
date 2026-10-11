@@ -1,9 +1,9 @@
-import { dom } from "../core/dom.js?v=20261010-file-size-refactor-02";
+import { dom } from "../core/dom.js?v=20261011-bem-itcss-oocss-04";
 import { layoutMetricsState } from "./layout-metrics-state.js?v=20261010-file-size-refactor-02";
-import { isMobileLayout, isFullscreenActive, isOverlayChatInputFocused, isBottomChatKeyboardTarget, isBottomChatNameEditorFocused, isBottomChatInputFocused, isBottomChatKeyboardOpen, isRightChatInputFocused } from "./layout-viewport-query.js?v=20261010-file-size-refactor-02";
-import { getLargeViewportHeight, getCurrentViewportHeight } from "./layout-viewport-page-scroll.js?v=20261010-file-size-refactor-02";
-export { isMobileLayout, isFullscreenActive, isOverlayChatInputFocused, isBottomChatKeyboardTarget, isBottomChatNameEditorFocused, isBottomChatInputFocused, isBottomChatKeyboardOpen, isRightChatInputFocused } from "./layout-viewport-query.js?v=20261010-file-size-refactor-02";
-export { getLargeViewportHeight, getCurrentViewportHeight, getNativePageScrollMax, captureOrientationScrollPosition, restoreOrientationScrollPosition, scheduleOrientationScrollRestore, rememberNativePageScrollPosition, preservePageBottomAfterViewportChange } from "./layout-viewport-page-scroll.js?v=20261010-file-size-refactor-02";
+import { isMobileLayout, isFullscreenActive, isOverlayChatInputFocused, isBottomChatKeyboardTarget, isBottomChatNameEditorFocused, isBottomChatInputFocused, isBottomChatKeyboardOpen, isRightChatInputFocused } from "./layout-viewport-query.js?v=20261011-bem-itcss-oocss-04";
+import { getLargeViewportHeight, getCurrentViewportHeight } from "./layout-viewport-page-scroll.js?v=20261011-bem-itcss-oocss-04";
+export { isMobileLayout, isFullscreenActive, isOverlayChatInputFocused, isBottomChatKeyboardTarget, isBottomChatNameEditorFocused, isBottomChatInputFocused, isBottomChatKeyboardOpen, isRightChatInputFocused } from "./layout-viewport-query.js?v=20261011-bem-itcss-oocss-04";
+export { getLargeViewportHeight, getCurrentViewportHeight, getNativePageScrollMax, captureOrientationScrollPosition, restoreOrientationScrollPosition, scheduleOrientationScrollRestore, rememberNativePageScrollPosition, preservePageBottomAfterViewportChange } from "./layout-viewport-page-scroll.js?v=20261011-bem-itcss-oocss-04";
 
 export function isRightChatKeyboardOpen(viewportHeight = getCurrentViewportHeight()) {
   const referenceHeight = layoutMetricsState.lastViewportMetrics?.height || getLargeViewportHeight();
@@ -23,7 +23,7 @@ export function captureRightChatKeyboardScroll(allowUnfocused = false) {
 }
 
 export function alignRightChatKeyboardViewport() {
-  if (!document.documentElement.classList.contains("right-chat-keyboard-open")) return;
+  if (!document.documentElement.classList.contains('page-context--right-chat-keyboard-open')) return;
 
   const targetTop = layoutMetricsState.rightChatPageScrollLockTop;
   if (targetTop === null || Math.abs((window.scrollY || 0) - targetTop) <= 1) return;
@@ -53,7 +53,7 @@ function isRightChatScrollableTarget(target) {
     && (
       target === dom.videoPlayer
       || Boolean(target.closest([
-        ".session-view[data-chat-dock=\"right\"] .messages",
+        '.session-view[data-chat-dock="right"] .chat-message-list',
         ".session-view[data-chat-dock=\"right\"] .chat-scrollbar",
         ".session-view[data-chat-dock=\"right\"] textarea",
       ].join(",")))
@@ -61,16 +61,16 @@ function isRightChatScrollableTarget(target) {
 }
 
 export function preventRightChatPageScroll(event) {
-  if (!document.documentElement.classList.contains("right-chat-keyboard-open")) return;
+  if (!document.documentElement.classList.contains('page-context--right-chat-keyboard-open')) return;
   if (isRightChatScrollableTarget(event.target)) return;
   event.preventDefault();
 }
 
 export function captureBottomChatKeyboardHandlePosition() {
-  const activeHandleButton = dom.sessionView?.classList.contains("chat-collapsed")
+  const activeHandleButton = dom.sessionView?.classList.contains('session-view--chat-collapsed')
     ? dom.expandChatButton
     : dom.collapseChatButton;
-  const handleZone = activeHandleButton?.closest(".chat-collapse-hover-zone");
+  const handleZone = activeHandleButton?.closest('.chat-area__collapse-hover-zone');
   if (
     !handleZone
     // The expanded bottom-dock arrow now belongs to the header grid. Keep it
@@ -150,7 +150,7 @@ function isBottomChatScrollableTarget(target) {
     && (
       target === dom.videoPlayer
       || Boolean(target.closest([
-        ".session-view[data-chat-dock=\"bottom\"] .messages",
+        '.session-view[data-chat-dock="bottom"] .chat-message-list',
         ".session-view[data-chat-dock=\"bottom\"] .chat-scrollbar",
         ".session-view[data-chat-dock=\"bottom\"] textarea",
       ].join(",")))

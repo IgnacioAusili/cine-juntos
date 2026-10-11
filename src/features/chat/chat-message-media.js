@@ -17,18 +17,18 @@ export function isStandaloneImageText(text) {
 export function appendMessageMedia(container, images, isStandalone = false) {
   if (!container || !Array.isArray(images) || !images.length) return null;
   const strip = document.createElement("div");
-  strip.className = "message-media-strip";
-  if (isStandalone) strip.classList.add("message-media-strip--standalone");
+  strip.className = 'message__media-strip';
+  if (isStandalone) strip.classList.add('message__media-strip--standalone');
 
   for (const imageUrl of images.slice(0, 2)) {
     const link = document.createElement("a");
-    link.className = "message-media-link";
+    link.className = 'message__media-link';
     link.href = imageUrl;
     link.target = "_blank";
     link.rel = "noreferrer";
 
     const imgElement = document.createElement("img");
-    imgElement.className = "message-media";
+    imgElement.className = 'message__media';
     imgElement.src = imageUrl;
     imgElement.alt = "Imagen adjunta";
     imgElement.loading = "lazy";

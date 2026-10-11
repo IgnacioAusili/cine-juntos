@@ -1,4 +1,4 @@
-import { checkScrollPosition } from "./unread-counters.js?v=20261011-chat-interaction-fixes-01";
+import { checkScrollPosition } from "./unread-counters.js?v=20261011-bem-itcss-oocss-04";
 
 const pendingScrollSync = new WeakMap();
 const DEFAULT_PIN_THRESHOLD = 10;

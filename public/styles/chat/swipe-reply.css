@@ -1,4 +1,4 @@
-.message-bubble-row {
+.message__bubble-row {
   --reply-swipe-reserve: 64px;
   display: flex;
   position: relative;
@@ -8,7 +8,7 @@
   isolation: isolate;
 }
 
-.message-bubble-row > .message-bubble {
+.message__bubble-row > .message__bubble {
   flex: 0 1 auto;
   max-width: 100%;
   min-width: 0;
@@ -16,36 +16,36 @@
   order: initial;
 }
 
-.message-bubble.swipe-dragging,
-.message-bubble.swipe-settling {
+.message__bubble.message--swipe-dragging,
+.message__bubble.message--swipe-settling {
   will-change: transform;
 }
 
-.message-bubble.swipe-dragging {
+.message__bubble.message--swipe-dragging {
   user-select: none;
 }
 
-.message:not(.system) {
+.message:not(.message--system) {
   touch-action: pan-y;
 }
 
-.message.mine .message-bubble-row {
+.message.message--mine .message__bubble-row {
   align-self: flex-end;
   justify-content: flex-end;
 }
 
-.message.mine .message-bubble-row > .message-bubble {
+.message.message--mine .message__bubble-row > .message__bubble {
   margin-left: 0;
 }
 
 /* Los mensajes recibidos se alinean al borde izquierdo sin margen adicional. */
-.message:not(.mine) .message-bubble-row {
+.message:not(.message--mine) .message__bubble-row {
   align-self: flex-start;
   width: fit-content;
   max-width: calc(100% - var(--reply-swipe-reserve));
 }
 
-.swipe-reply-hint-wrapper {
+.message__swipe-reply-hint-wrapper {
   position: absolute;
   top: 50%;
   right: 0;
@@ -57,13 +57,13 @@
 }
 
 /* Los mensajes recibidos muestran la flecha detrás, a la izquierda del bubble. */
-.message:not(.mine) .swipe-reply-hint-wrapper {
+.message:not(.message--mine) .message__swipe-reply-hint-wrapper {
   left: 0;
   right: auto;
 }
 
 /* Los mensajes propios muestran la flecha delante, a la derecha del bubble. */
-.message.mine .swipe-reply-hint-wrapper {
+.message.message--mine .message__swipe-reply-hint-wrapper {
   position: relative;
   top: auto;
   right: auto;
@@ -74,7 +74,7 @@
   order: -1;
 }
 
-.swipe-reply-hint {
+.message__swipe-reply-hint {
   position: absolute;
   top: 0;
   right: 0;
@@ -91,7 +91,7 @@
   z-index: 5;
 }
 
-.swipe-reply-hint svg {
+.message__swipe-reply-hint svg {
   display: block;
   width: 13px;
   height: 13px;
@@ -101,22 +101,22 @@
 }
 
 /* El anclaje del icono debe coincidir con el borde del wrapper. */
-.message:not(.mine) .swipe-reply-hint {
+.message:not(.message--mine) .message__swipe-reply-hint {
   left: 0;
   right: auto;
   transform: translate(-13px, -50%) scale(0.72);
 }
 
-.message.mine .swipe-reply-hint {
+.message.message--mine .message__swipe-reply-hint {
   right: 0;
   left: auto;
   transform: translate(13px, -50%) scale(0.72);
 }
 
-.message-bubble.swipe-ready + .swipe-reply-hint-wrapper .swipe-reply-hint {
+.message__bubble.message--swipe-ready + .message__swipe-reply-hint-wrapper .message__swipe-reply-hint {
   color: var(--accent-2);
 }
 
-.message-bubble.swipe-confirmed + .swipe-reply-hint-wrapper .swipe-reply-hint {
+.message__bubble.message--swipe-confirmed + .message__swipe-reply-hint-wrapper .message__swipe-reply-hint {
   color: var(--accent-2);
 }

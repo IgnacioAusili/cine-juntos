@@ -22,7 +22,7 @@
 
 .player-frame .player-controls-bar:is([data-control-density="compact"], [data-control-density="scroll"]) > .video-control-button,
 .player-frame .player-controls-bar:is([data-control-density="compact"], [data-control-density="scroll"]) > .player-volume-group > .video-control-button,
-.player-frame .player-controls-bar:is([data-control-density="compact"], [data-control-density="scroll"]) .player-controls-scroll-track > .video-control-button {
+.player-frame .player-controls-bar:is([data-control-density="compact"], [data-control-density="scroll"]) .player-controls-bar__scroll-track > .video-control-button {
   --player-control-button-size: 28px;
   --player-control-layout-width: var(--player-control-button-size);
   width: var(--player-control-button-size);

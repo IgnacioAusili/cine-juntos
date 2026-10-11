@@ -1,4 +1,4 @@
-import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
 
 const MOBILE_OVERLAY_TOGGLE_LOCK_MS = 320;
 
@@ -31,7 +31,7 @@ const isTouchPointer = (event) => event?.pointerType === "touch" || event?.point
     }
     // El inicio solo registra el estado. La barra se alterna al soltar, nunca
     // mientras el dedo permanece apoyado sobre el video.
-    mobileTouchHidVisibleOverlay = dom.playerFrame.classList.contains("player-overlay-visible");
+    mobileTouchHidVisibleOverlay = dom.playerFrame.classList.contains('player-frame--overlay-visible');
     activeVideoTouchGesture = {
       pointerId: event.pointerId,
       startX: event.clientX,
@@ -82,24 +82,24 @@ const isTouchPointer = (event) => event?.pointerType === "touch" || event?.point
     // El gesto se resuelve al soltar; bloquear los eventos de mouse
     // sintéticos posteriores evita que la barra rebote inmediatamente.
     touchState.suppressMobileVideoRevealUntil = Date.now() + 700;
-    if (dom.playerFrame.classList.contains("player-no-content")) {
+    if (dom.playerFrame.classList.contains('player-frame--no-content')) {
       mobileTouchHidVisibleOverlay = false;
       touchState.suppressMobileVideoRevealUntil = 0;
-      dom.playerFrame.classList.remove("player-cursor-hidden");
+      dom.playerFrame.classList.remove('player-frame--cursor-hidden');
       setOverlayVisible(true);
       return;
     }
     mobileTouchHidVisibleOverlay = false;
     clearHideTimer();
-    const isVisible = dom.playerFrame.classList.contains("player-overlay-visible");
+    const isVisible = dom.playerFrame.classList.contains('player-frame--overlay-visible');
     if (isVisible) {
       hideTooltip(true);
       setOverlayVisible(false);
-      dom.playerFrame.classList.add("player-cursor-hidden");
+      dom.playerFrame.classList.add('player-frame--cursor-hidden');
       return;
     }
 
-    dom.playerFrame.classList.remove("player-cursor-hidden");
+    dom.playerFrame.classList.remove('player-frame--cursor-hidden');
     setOverlayVisible(true);
     mobileOverlayLockedUntil = Date.now() + MOBILE_OVERLAY_TOGGLE_LOCK_MS;
     scheduleHide();
@@ -137,7 +137,7 @@ const isTouchPointer = (event) => event?.pointerType === "touch" || event?.point
         activeLegacyTouchGesture = { ...point, moved: false, blocked: true };
         return;
       }
-      mobileTouchHidVisibleOverlay = dom.playerFrame.classList.contains("player-overlay-visible");
+      mobileTouchHidVisibleOverlay = dom.playerFrame.classList.contains('player-frame--overlay-visible');
       activeLegacyTouchGesture = { ...point, moved: false };
     }, { passive: true });
     dom.videoPlayer.addEventListener("touchmove", (event) => {

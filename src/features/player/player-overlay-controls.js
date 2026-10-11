@@ -1,8 +1,8 @@
-import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
-import { state } from "../../core/state.js?v=20261010-file-size-refactor-02";
-import { hideTooltip } from "../icons-tooltips.js?v=20261011-lucide-icons-repair-01";
-import { wireMobileVideoOverlayGestures } from "./player-overlay-touch-gestures.js?v=20261010-file-size-refactor-02";
-import { wirePlayerOverlayVolumeEvents } from "./player-overlay-volume-events.js?v=20261010-file-size-refactor-02";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { state } from "../../core/state.js?v=20261011-bem-itcss-oocss-04";
+import { hideTooltip } from "../icons-tooltips.js?v=20261011-bem-itcss-oocss-04";
+import { wireMobileVideoOverlayGestures } from "./player-overlay-touch-gestures.js?v=20261011-bem-itcss-oocss-04";
+import { wirePlayerOverlayVolumeEvents } from "./player-overlay-volume-events.js?v=20261011-bem-itcss-oocss-04";
 
 const PLAYER_OVERLAY_IDLE_MS = 3000;
 const PLAYER_OVERLAY_LEAVE_HIDE_DELAY_MS = 800;
@@ -20,7 +20,7 @@ export function wirePlayerOverlayControls({ togglePlayback } = {}) {
   );
 
   const setOverlayVisible = (isVisible) => {
-    dom.playerFrame.classList.toggle("player-overlay-visible", isVisible);
+    dom.playerFrame.classList.toggle('player-frame--overlay-visible', isVisible);
   };
 
   const clearHideTimer = () => {
@@ -38,7 +38,7 @@ export function wirePlayerOverlayControls({ togglePlayback } = {}) {
     clearHideTimer();
     // Sin contenido, la barra es parte del estado vacío del reproductor y no
     // debe desaparecer por inactividad ni por una interacción con el video.
-    if (dom.playerFrame.classList.contains("player-no-content")) return;
+    if (dom.playerFrame.classList.contains('player-frame--no-content')) return;
     if (keepOverlayWhilePaused()) return;
     const safeDelay = delay > 0 ? delay : PLAYER_OVERLAY_IDLE_MS;
     hideTimer = window.setTimeout(() => {
@@ -49,12 +49,12 @@ export function wirePlayerOverlayControls({ togglePlayback } = {}) {
         scheduleHide(safeDelay);
         return;
       }
-      if (dom.playerFrame.classList.contains("player-seek-control-dragging")) {
+      if (dom.playerFrame.classList.contains('player-frame--seek-control-dragging')) {
         scheduleHide(safeDelay);
         return;
       }
       if (
-        dom.playerVolumeGroup?.classList.contains("is-dragging")
+        dom.playerVolumeGroup?.classList.contains('u-dragging')
         || volumeState.active
         || dom.playerVolumeInput?.matches(":active")
       ) {
@@ -66,7 +66,7 @@ export function wirePlayerOverlayControls({ togglePlayback } = {}) {
         dom.playerRateSelect.blur();
       }
       setOverlayVisible(false);
-      dom.playerFrame.classList.add("player-cursor-hidden");
+      dom.playerFrame.classList.add('player-frame--cursor-hidden');
     }, safeDelay);
   };
 
@@ -76,7 +76,7 @@ export function wirePlayerOverlayControls({ togglePlayback } = {}) {
     controlDragActive = false;
     suppressFocusoutHideUntil = Date.now() + 600;
     if (isInlinePlayerDialogVisible()) return;
-    dom.playerFrame.classList.remove("player-cursor-hidden");
+    dom.playerFrame.classList.remove('player-frame--cursor-hidden');
     setOverlayVisible(true);
     scheduleHide();
   };
@@ -159,16 +159,16 @@ export function wirePlayerOverlayControls({ togglePlayback } = {}) {
       && target === dom.videoPlayer
       && (event?.type === "mousedown" || event?.type === "mouseenter")
     ) return;
-    dom.playerFrame.classList.remove("player-cursor-hidden");
-    if (dom.playerFrame.classList.contains("player-no-content")) {
+    dom.playerFrame.classList.remove('player-frame--cursor-hidden');
+    if (dom.playerFrame.classList.contains('player-frame--no-content')) {
       clearHideTimer();
-      dom.playerFrame.classList.remove("player-overlay-suppressed");
+      dom.playerFrame.classList.remove('player-frame--overlay-suppressed');
       setOverlayVisible(true);
       return;
     }
     if (
       target === dom.videoPlayer
-      && dom.playerFrame.classList.contains("player-overlay-suppressed")
+      && dom.playerFrame.classList.contains('player-frame--overlay-suppressed')
     ) return;
     // En PC un clic sobre el video conserva el comportamiento anterior de
     // alternar la reproducción; este bloque solo evita revelar el overlay al
@@ -181,9 +181,9 @@ export function wirePlayerOverlayControls({ togglePlayback } = {}) {
       if (!dom.videoPlayer.paused && !dom.videoPlayer.ended) return;
       clearHideTimer();
       setOverlayVisible(false);
-      dom.playerFrame.classList.add("player-overlay-suppressed");
+      dom.playerFrame.classList.add('player-frame--overlay-suppressed');
       window.setTimeout(() => {
-        dom.playerFrame.classList.remove("player-overlay-suppressed");
+        dom.playerFrame.classList.remove('player-frame--overlay-suppressed');
       }, 700);
       return;
     }
@@ -197,18 +197,18 @@ export function wirePlayerOverlayControls({ togglePlayback } = {}) {
     if (isChatInteraction) {
       clearHideTimer();
       if (isMobileTouchDevice()) {
-        dom.playerFrame.classList.remove("player-overlay-suppressed");
+        dom.playerFrame.classList.remove('player-frame--overlay-suppressed');
         setOverlayVisible(true);
         scheduleHide();
         return;
       }
-      dom.playerFrame.classList.add("player-overlay-suppressed");
+      dom.playerFrame.classList.add('player-frame--overlay-suppressed');
       setOverlayVisible(false);
       scheduleHide();
       return;
     }
 
-    dom.playerFrame.classList.remove("player-overlay-suppressed");
+    dom.playerFrame.classList.remove('player-frame--overlay-suppressed');
     setOverlayVisible(true);
     scheduleHide();
   };
@@ -223,14 +223,14 @@ export function wirePlayerOverlayControls({ togglePlayback } = {}) {
     if (event?.pointerType && event.pointerType !== "mouse") return;
     if (isInlinePlayerDialogVisible()) return;
     clearHideTimer();
-    dom.playerFrame.classList.remove("player-cursor-hidden", "player-overlay-suppressed");
+    dom.playerFrame.classList.remove('player-frame--cursor-hidden', 'player-frame--overlay-suppressed');
     setOverlayVisible(true);
     scheduleHide();
   };
 
   [dom.collapseChatButton, dom.expandChatButton]
     .filter(Boolean)
-    .map((button) => button.closest(".chat-collapse-hover-zone"))
+    .map((button) => button.closest('.chat-area__collapse-hover-zone'))
     .filter(Boolean)
     .forEach((collapseHandleZone) => {
       collapseHandleZone.addEventListener("mouseenter", revealOverlayFromCollapseHandle);
@@ -246,7 +246,7 @@ export function wirePlayerOverlayControls({ togglePlayback } = {}) {
   dom.playerFrame.addEventListener("pointerenter", (event) => {
     if (event.pointerType === "touch") return;
     clearHideTimer();
-    dom.playerFrame.classList.remove("player-cursor-hidden");
+    dom.playerFrame.classList.remove('player-frame--cursor-hidden');
   }, { passive: true, capture: true });
 
   dom.playerFrame.addEventListener("mouseenter", revealOverlay);

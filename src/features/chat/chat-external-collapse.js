@@ -1,18 +1,18 @@
-import { dom } from "../../core/dom.js?v=20261011-chat-controls-repair-01";
-import { state } from "../../core/state.js?v=20261011-chat-controls-repair-01";
-import { cancelIdentityEditing } from "../presence.js?v=20261011-lucide-icons-repair-01";
-import { focusFullscreenWorkspace } from "../session-ui.js?v=20261011-chat-controls-repair-01";
-import { isMobileLandscapeRightDock, isMobileLandscapeFullscreenBottomDock, isRightChatViewportOverlay } from "./chat-layout-breakpoints.js?v=20261011-chat-controls-repair-01";
-import { getVideoAreaRect } from "./chat-responsive-layout.js?v=20261011-chat-controls-repair-01";
-import { isFullscreenPageActive, getPageScrollContainer, getPageScrollTop, getPageScrollMax, getElementPageTop, scrollPageTo } from "./chat-page-scroll.js?v=20261011-chat-controls-repair-01";
-import { updateCollapseButton, syncExternalChatCollapseHandleOffset } from "./chat-collapse-handles.js?v=20261011-lucide-icons-repair-01";
-import { clearChatAutoCollapseTimer as clearAutoCollapseTimer, scheduleExternalChatAutoCollapse } from "./chat-visibility.js?v=20261011-chat-auto-switch-bem-01";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { state } from "../../core/state.js?v=20261011-bem-itcss-oocss-04";
+import { cancelIdentityEditing } from "../presence.js?v=20261011-bem-itcss-oocss-04";
+import { focusFullscreenWorkspace } from "../session-ui.js?v=20261011-bem-itcss-oocss-04";
+import { isMobileLandscapeRightDock, isMobileLandscapeFullscreenBottomDock, isRightChatViewportOverlay } from "./chat-layout-breakpoints.js?v=20261011-bem-itcss-oocss-04";
+import { getVideoAreaRect } from "./chat-responsive-layout.js?v=20261011-bem-itcss-oocss-04";
+import { isFullscreenPageActive, getPageScrollContainer, getPageScrollTop, getPageScrollMax, getElementPageTop, scrollPageTo } from "./chat-page-scroll.js?v=20261011-bem-itcss-oocss-04";
+import { updateCollapseButton, syncExternalChatCollapseHandleOffset } from "./chat-collapse-handles.js?v=20261011-bem-itcss-oocss-04";
+import { clearChatAutoCollapseTimer as clearAutoCollapseTimer, scheduleExternalChatAutoCollapse } from "./chat-visibility.js?v=20261011-bem-itcss-oocss-04";
 import { restorePageScrollAfterRightChatCollapse } from "./chat-scroll-preservation.js?v=20261011-chat-controls-repair-01";
-import { syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20261011-chat-controls-repair-01";
-import { getBottomDockVideoScrollTop } from "./chat-dock-controller.js?v=20261011-lucide-icons-repair-01";
-import { animateExternalChatLayoutFrom } from "./chat-layout-visual-transition.js?v=20261011-chat-controls-repair-01";
+import { syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20261011-bem-itcss-oocss-04";
+import { getBottomDockVideoScrollTop } from "./chat-dock-controller.js?v=20261011-bem-itcss-oocss-04";
+import { animateExternalChatLayoutFrom } from "./chat-layout-visual-transition.js?v=20261011-bem-itcss-oocss-04";
 import { CHAT_LAYOUT_SETTLE_MS, COLLAPSE_HANDLE_HIDE_MS, RIGHT_CHAT_LAYOUT_TRANSITION_MS, RIGHT_CHAT_SCROLL_LOCK_MS, CHAT_SCROLL_SNAP_LOCK_MS } from "./chat-layout-timing.js?v=20261011-chat-controls-repair-01";
-import { clearBottomChatTransitionVisuals, cancelBottomChatTransition, isDesktopBottomDock, animateDesktopBottomChatCollapse, animateDesktopBottomChatExpand, animateBottomChatCollapse, animateBottomChatExpand } from "./chat-dock-transitions.js?v=20261011-chat-controls-repair-01";
+import { clearBottomChatTransitionVisuals, cancelBottomChatTransition, isDesktopBottomDock, animateDesktopBottomChatCollapse, animateDesktopBottomChatExpand, animateBottomChatCollapse, animateBottomChatExpand } from "./chat-dock-transitions.js?v=20261011-bem-itcss-oocss-04";
 
 const EXTERNAL_CHAT_COLLAPSED_KEY = "cine-juntos-chat-collapsed";
 let expandScrollTimer = 0;
@@ -29,19 +29,19 @@ function getCollapseOperations() {
 export function lockChatScrollSnapDuringProgrammaticScroll(durationMs = CHAT_SCROLL_SNAP_LOCK_MS) {
   if (!dom.sessionView) return;
 
-  dom.sessionView.classList.add("chat-scroll-snap-locked");
+  dom.sessionView.classList.add('session-view--chat-scroll-snap-locked');
   if (chatScrollSnapLockTimer) {
     window.clearTimeout(chatScrollSnapLockTimer);
   }
   chatScrollSnapLockTimer = window.setTimeout(() => {
     chatScrollSnapLockTimer = 0;
-    dom.sessionView.classList.remove("chat-scroll-snap-locked");
+    dom.sessionView.classList.remove('session-view--chat-scroll-snap-locked');
   }, durationMs);
 }
 
 export function captureExternalChatCollapseScroll() {
   pendingRightDockCollapseScrollTop =
-    !dom.sessionView?.classList.contains("chat-collapsed") && isMobileLandscapeRightDock()
+    !dom.sessionView?.classList.contains('session-view--chat-collapsed') && isMobileLandscapeRightDock()
       ? getPageScrollTop()
       : null;
 }
@@ -58,7 +58,7 @@ export function setExternalChatCollapsed(collapsed, options = {}) {
   } else {
     state.chat.autoOpenedExternal = false;
   }
-  const wasCollapsed = dom.sessionView.classList.contains("chat-collapsed");
+  const wasCollapsed = dom.sessionView.classList.contains('session-view--chat-collapsed');
   cancelBottomChatTransition();
 
   // En fullscreen apaisado móvil el chat inferior es una capa sobre el video.
@@ -108,7 +108,7 @@ export function setExternalChatCollapsed(collapsed, options = {}) {
     getPageScrollContainer,
     getPageScrollMax,
     getPageScrollTop,
-    isCollapsed: () => dom.sessionView?.classList.contains("chat-collapsed"),
+    isCollapsed: () => dom.sessionView?.classList.contains('session-view--chat-collapsed'),
     scrollPageTo,
     durationMs: isMobileLandscapeRightDock() ? RIGHT_CHAT_SCROLL_LOCK_MS : undefined,
   });
@@ -123,7 +123,7 @@ export function forceExternalChatCollapsed() {
   clearBottomChatTransitionVisuals();
   focusOutsideChatAreaBeforeHiding();
   dom.chatArea.style.setProperty("transition", "none");
-  dom.sessionView.classList.add("chat-collapsed");
+  dom.sessionView.classList.add('session-view--chat-collapsed');
   dom.chatArea.setAttribute("aria-hidden", "true");
   dom.chatArea.setAttribute("inert", "");
   updateCollapseButton();
@@ -143,7 +143,7 @@ export function applyExternalChatCollapsed(collapsed) {
     window.clearTimeout(chatScrollSnapLockTimer);
     chatScrollSnapLockTimer = 0;
   }
-  dom.sessionView.classList.remove("chat-scroll-snap-locked");
+  dom.sessionView.classList.remove('session-view--chat-scroll-snap-locked');
   if (expandScrollTimer) {
     window.clearTimeout(expandScrollTimer);
     expandScrollTimer = 0;
@@ -159,9 +159,9 @@ export function applyExternalChatCollapsed(collapsed) {
     ? RIGHT_CHAT_LAYOUT_TRANSITION_MS + 40
     : COLLAPSE_HANDLE_HIDE_MS;
   getCollapseOperations().setCollapseHandleTransitioning(true, handleSettleDelay);
-  dom.sessionView.classList.toggle("chat-collapsed", collapsed);
+  dom.sessionView.classList.toggle('session-view--chat-collapsed', collapsed);
   localStorage.setItem(EXTERNAL_CHAT_COLLAPSED_KEY, collapsed ? "1" : "0");
-  if (!collapsed) dom.sessionView.classList.remove("chat-header-collapsed");
+  if (!collapsed) dom.sessionView.classList.remove('session-view--chat-header-collapsed');
   animateExternalChatLayoutFrom(previousVideoRect);
 
   if (dom.chatArea) {
@@ -235,7 +235,7 @@ export function applyExternalChatCollapsed(collapsed) {
     return;
   }
 
-  const isFullscreen = document.body.classList.contains("fullscreen-mode") || Boolean(document.fullscreenElement);
+  const isFullscreen = document.body.classList.contains('page-context--fullscreen') || Boolean(document.fullscreenElement);
   if (isFullscreen && !(collapsed && isMobileLandscapeRightDock())) {
     focusFullscreenWorkspace();
   }
@@ -261,7 +261,7 @@ export function restoreExternalChatCollapsed() {
   if (localStorage.getItem(EXTERNAL_CHAT_COLLAPSED_KEY) !== "1") return;
 
   focusOutsideChatAreaBeforeHiding();
-  dom.sessionView.classList.add("chat-collapsed");
+  dom.sessionView.classList.add('session-view--chat-collapsed');
   dom.chatArea?.setAttribute("aria-hidden", "true");
   dom.chatArea?.setAttribute("inert", "");
   updateCollapseButton();

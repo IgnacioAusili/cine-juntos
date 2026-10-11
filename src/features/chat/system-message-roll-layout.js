@@ -2,7 +2,7 @@ export const systemMessageRowAnchorAnimations = new WeakMap();
 const systemMessageRowAnchors = new WeakMap();
 
 export function animateReducedMotionRowAnchor(target, previousSnapshot) {
-  const row = target?.closest(".system-message-row");
+  const row = target?.closest('.message__system-row');
   const previousRect = previousSnapshot.rowRect || previousSnapshot.bubbleRect;
   const currentRect = row?.getBoundingClientRect();
   if (!row || !previousRect || !currentRect) return;
@@ -34,9 +34,9 @@ export function captureSystemMessageRowAnchor(row, previousRect, reservedRect, n
 }
 
 export function resetSystemMessageRowAnchor(target) {
-  const row = target?.matches?.(".system-message-row")
+  const row = target?.matches?.('.message__system-row')
     ? target
-    : target?.querySelector?.(".system-message-row");
+    : target?.querySelector?.('.message__system-row');
   if (!row) return;
 
   const animation = systemMessageRowAnchorAnimations.get(row);

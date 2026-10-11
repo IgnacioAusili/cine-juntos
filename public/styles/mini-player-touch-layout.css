@@ -1,33 +1,33 @@
 
 
 @media (hover: none) {
-  .mini-player-surface.mini-player-scroll:hover .player-bottom-actions {
+  .mini-player-surface.mini-player-surface--scroll:hover .player-frame__bottom-actions {
     opacity: 0;
     transform: translateY(6px);
     pointer-events: none;
   }
 
-  .mini-player-surface.mini-player-scroll.is-touch-hover .player-bottom-actions {
+  .mini-player-surface.mini-player-surface--scroll.u-touch-hover .player-frame__bottom-actions {
     opacity: 1;
     transform: translateY(0);
     pointer-events: auto;
   }
 
-  .mini-player-surface .player-volume-group:hover:not(.is-touch-hover):not(.volume-hovered) {
+  .mini-player-surface .player-volume-group:hover:not(.u-touch-hover):not(.player-volume-group--hovered) {
     gap: 0;
   }
 
-  .mini-player-surface .player-volume-group:hover:not(.is-touch-hover):not(.volume-hovered) .player-volume-slider-wrap {
+  .mini-player-surface .player-volume-group:hover:not(.u-touch-hover):not(.player-volume-group--hovered) .player-volume-group__slider {
     max-width: 0;
   }
 
-  .mini-player-surface .player-volume-group.is-touch-hover,
-  .mini-player-surface .player-volume-group.volume-hovered {
+  .mini-player-surface .player-volume-group.u-touch-hover,
+  .mini-player-surface .player-volume-group.player-volume-group--hovered {
     gap: 6px;
   }
 
-  .mini-player-surface .player-volume-group.is-touch-hover .player-volume-slider-wrap,
-  .mini-player-surface .player-volume-group.volume-hovered .player-volume-slider-wrap {
+  .mini-player-surface .player-volume-group.u-touch-hover .player-volume-group__slider,
+  .mini-player-surface .player-volume-group.player-volume-group--hovered .player-volume-group__slider {
     max-width: 42px;
   }
 }
@@ -48,7 +48,7 @@
   gap: 5px;
 }
 
-.mini-player-surface .player-time {
+.mini-player-surface .player-progress-group__time {
   min-width: 28px;
   font-size: 0.64rem;
 }
@@ -67,12 +67,12 @@
 
 .mini-player-surface #playerMiniPlayerButton.video-control-button--active svg,
 .mini-player-surface [data-proxy-for="playerMiniPlayerButton"].video-control-button--active svg,
-.player-frame.mini-player-active #playerMiniPlayerButton.video-control-button--active svg {
+.player-frame.mini-player-surface--active #playerMiniPlayerButton.video-control-button--active svg {
   width: 12px;
   height: 12px;
 }
 
-.player-frame.mini-player-active #playerMiniPlayerButton.video-control-button--active,
+.player-frame.mini-player-surface--active #playerMiniPlayerButton.video-control-button--active,
 .mini-player-surface #playerMiniPlayerButton.video-control-button--active,
 .mini-player-surface [data-proxy-for="playerMiniPlayerButton"].video-control-button--active {
   background: transparent;
@@ -101,8 +101,8 @@
   stroke-width: 2.45;
 }
 
-.player-frame.mini-player-active #playerMiniPlayerButton.video-control-button--active:hover svg,
-.player-frame.mini-player-active #playerMiniPlayerButton.video-control-button--active:focus-visible svg,
+.player-frame.mini-player-surface--active #playerMiniPlayerButton.video-control-button--active:hover svg,
+.player-frame.mini-player-surface--active #playerMiniPlayerButton.video-control-button--active:focus-visible svg,
 .mini-player-surface #playerMiniPlayerButton.video-control-button--active:hover svg,
 .mini-player-surface #playerMiniPlayerButton.video-control-button--active:focus-visible svg,
 .mini-player-surface [data-proxy-for="playerMiniPlayerButton"].video-control-button--active:hover svg,
@@ -111,20 +111,20 @@
 }
 
 @media (max-width: 760px) {
-  .mini-player-return-hint {
+  .mini-player-surface__return-hint {
     left: 16px;
     right: 16px;
     width: auto;
   }
 
-  .mini-player-inline {
+  .mini-player-surface--inline {
     right: 8px;
     bottom: 8px;
     width: calc(100% - 16px);
     height: min(340px, calc(100% - 16px));
   }
 
-  .mini-player-scroll {
+  .mini-player-surface--scroll {
     right: 12px;
     top: 12px;
     bottom: auto;

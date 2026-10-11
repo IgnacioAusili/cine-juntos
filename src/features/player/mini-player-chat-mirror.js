@@ -1,20 +1,20 @@
-import { extendMessageHitArea } from "../chat/chat-message-interactions.js?v=20261011-chat-controls-repair-01";
-import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js?v=20261011-chat-auto-switch-bem-01";
-import { state } from "../../core/state.js?v=20261011-chat-controls-repair-01";
-import { wireMiniMessageReplies } from "./mini-player-chat-replies.js?v=20261011-lucide-icons-repair-01";
+import { extendMessageHitArea } from "../chat/chat-message-interactions.js?v=20261011-bem-itcss-oocss-04";
+import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js?v=20261011-bem-itcss-oocss-04";
+import { state } from "../../core/state.js?v=20261011-bem-itcss-oocss-04";
+import { wireMiniMessageReplies } from "./mini-player-chat-replies.js?v=20261011-bem-itcss-oocss-04";
 import {
   animateMiniSystemGroupTransition,
   mirroredSystemGroupStates,
   normalizeMiniSystemGroupState,
   setMiniSystemGroupVisibility,
-} from "./mini-player-chat-groups.js?v=20261010-file-size-refactor-02";
+} from "./mini-player-chat-groups.js?v=20261011-bem-itcss-oocss-04";
 export {
   animateMiniSystemGroupTransition,
   normalizeMiniSystemGroupState,
   setMiniSystemGroupVisibility,
 };
-export { wireMiniMessageReplies } from "./mini-player-chat-replies.js?v=20261011-lucide-icons-repair-01";
-export { toggleMiniEmojiPicker } from "./mini-player-chat-emoji.js?v=20261011-chat-controls-repair-01";
+export { wireMiniMessageReplies } from "./mini-player-chat-replies.js?v=20261011-bem-itcss-oocss-04";
+export { toggleMiniEmojiPicker } from "./mini-player-chat-emoji.js?v=20261011-bem-itcss-oocss-04";
 
 
 function getMirrorChatInput(element) {
@@ -55,10 +55,10 @@ export function restoreMirrorChatDraft(source, element, draft) {
 }
 
 export function wireMirrorChatScrollbar(element) {
-  const messages = element.querySelector(".overlay-messages");
-  const shell = messages?.closest(".messages-wrap");
+  const messages = element.querySelector('.chat-message-list.chat-message-list--overlay');
+  const shell = messages?.closest('.chat-message-list-shell');
   const track = shell?.querySelector(".chat-scrollbar");
-  const thumb = shell?.querySelector(".chat-scrollbar-thumb");
+  const thumb = shell?.querySelector('.chat-scrollbar__thumb');
   if (!messages || !shell || !track || !thumb) return;
 
   const syncScrollbar = () => {
@@ -80,11 +80,11 @@ export function wireMirrorChatScrollbar(element) {
 }
 
 export function syncMirroredChatMessages(source, element) {
-  const sourceMessages = source.querySelector(".overlay-messages");
-  const mirrorMessages = element.querySelector(".overlay-messages");
+  const sourceMessages = source.querySelector('.chat-message-list.chat-message-list--overlay');
+  const mirrorMessages = element.querySelector('.chat-message-list.chat-message-list--overlay');
   if (!sourceMessages || !mirrorMessages) return;
   const isInitialSync = !mirroredSystemGroupStates.has(element);
-  const previousStates = [...mirrorMessages.querySelectorAll(".system-group-toggle")]
+  const previousStates = [...mirrorMessages.querySelectorAll('.message__system-group-toggle')]
     .map((toggle) => toggle.getAttribute("aria-expanded"));
   const previousSourceStates = mirroredSystemGroupStates.get(element) || [];
   const nextSourceStates = [];
@@ -96,7 +96,7 @@ export function syncMirroredChatMessages(source, element) {
   wireMirrorChatScrollbar(element);
   wireMiniMessageReplies(sourceMessages, mirrorMessages, element);
 
-  mirrorMessages.querySelectorAll(".system-group-toggle").forEach((toggle, index) => {
+  mirrorMessages.querySelectorAll('.message__system-group-toggle').forEach((toggle, index) => {
     const previous = previousStates[index];
     const sourceExpanded = toggle.getAttribute("aria-expanded") === "true";
     const expanded = previous == null
@@ -133,10 +133,10 @@ export function handleMiniChatInteraction(element, eventTarget) {
     return;
   }
 
-  const groupToggle = eventTarget.closest?.(".system-group-toggle");
+  const groupToggle = eventTarget.closest?.('.message__system-group-toggle');
   if (groupToggle) {
-    const toggleIndex = [...element.querySelectorAll(".system-group-toggle")].indexOf(groupToggle);
-    document.querySelector("#playerChat")?.querySelectorAll(".system-group-toggle")?.[toggleIndex]?.click();
+    const toggleIndex = [...element.querySelectorAll('.message__system-group-toggle')].indexOf(groupToggle);
+    document.querySelector("#playerChat")?.querySelectorAll('.message__system-group-toggle')?.[toggleIndex]?.click();
     return;
   }
 
@@ -150,16 +150,16 @@ export function handleMiniChatInteraction(element, eventTarget) {
 
   const scrollButton = eventTarget.closest?.("#overlayScrollBottomBtn, [data-proxy-for=\"overlayScrollBottomBtn\"]");
   if (scrollButton) {
-    const messages = element.querySelector(".overlay-messages");
+    const messages = element.querySelector('.chat-message-list.chat-message-list--overlay');
     if (messages) messages.scrollTop = messages.scrollHeight;
   }
 }
 
 export function toggleMiniChatOverlay(
   surface,
-  visible = !surface.classList.contains("chat-inside-open"),
+  visible = !surface.classList.contains('u-chat-inside-open'),
 ) {
-  surface.classList.toggle("chat-inside-open", visible);
+  surface.classList.toggle('u-chat-inside-open', visible);
   const toggle = surface.querySelector("#playerChatToggleButton, [data-proxy-for=\"playerChatToggleButton\"]");
   if (toggle) {
     const label = visible ? "Ocultar chat (Tab)" : "Mostrar chat (Tab)";

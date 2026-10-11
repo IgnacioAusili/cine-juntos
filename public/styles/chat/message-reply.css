@@ -1,4 +1,4 @@
-.message-reply {
+.message__reply {
   display: flex;
   flex-direction: column;
   gap: 1px;
@@ -21,30 +21,30 @@
   transition: background 0.15s ease, border-color 0.15s ease;
 }
 
-.message-reply:hover {
+.message__reply:hover {
   background: rgba(255, 255, 255, 0.09);
   border-left-color: var(--accent-2);
 }
 
 /* La marca del reply permanece a la izquierda también en mensajes propios. */
-.message.mine .message-reply {
+.message.message--mine .message__reply {
   border-left: 2px solid rgba(255, 255, 255, 0.28);
   border-radius: 5px 5px 0 5px;
   text-align: left;
 }
 
-.message.mine .message-reply:hover {
+.message.message--mine .message__reply:hover {
   border-left-color: var(--accent-2);
 }
 
-.message-reply-name {
+.message__reply-name {
   font-size: 0.65rem;
   font-weight: 700;
   color: var(--reply-participant-accent, var(--participant-accent, var(--accent-2)));
   display: block;
 }
 
-.message-reply-body {
+.message__reply-body {
   font-size: 0.74rem;
   color: var(--muted);
   white-space: nowrap;

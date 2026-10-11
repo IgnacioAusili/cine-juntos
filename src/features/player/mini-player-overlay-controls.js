@@ -1,4 +1,4 @@
-import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
+import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
 
 const MINI_PLAYER_OVERLAY_IDLE_MS = 3000;
 const MINI_PLAYER_OVERLAY_LEAVE_HIDE_DELAY_MS = 800;
@@ -31,7 +31,7 @@ export function wireMiniPlayerOverlayControls(surface, ownerWindow, onToggleMini
     if (activeSelect?.matches?.(".player-rate-select select, [data-proxy-for=\"playerRateSelect\"]")) {
       activeSelect.blur();
     }
-    surface.classList.remove("player-overlay-visible");
+    surface.classList.remove('player-frame--overlay-visible');
   };
   const scheduleHide = (delay = MINI_PLAYER_OVERLAY_IDLE_MS) => {
     clearHideTimer();
@@ -45,7 +45,7 @@ export function wireMiniPlayerOverlayControls(surface, ownerWindow, onToggleMini
   };
   const resetHideTimerAfterControlClick = (event) => {
     const control = event.target?.closest?.(
-      ".player-controls-bar button, .player-center-actions button",
+      '.player-controls-bar button, .player-frame__center-actions button',
     );
     if (!control || control.disabled) return;
 
@@ -59,9 +59,9 @@ export function wireMiniPlayerOverlayControls(surface, ownerWindow, onToggleMini
       && event?.target === dom.videoPlayer
       && (event?.type === "mousedown" || event?.type === "mouseenter")
     ) return;
-    if (surface.classList.contains("player-overlay-suppressed")) return;
+    if (surface.classList.contains('player-frame--overlay-suppressed')) return;
     clearHideTimer();
-    surface.classList.add("player-overlay-visible");
+    surface.classList.add('player-frame--overlay-visible');
     scheduleHide();
   };
 
@@ -102,10 +102,10 @@ export function wireMiniPlayerOverlayControls(surface, ownerWindow, onToggleMini
     }
     if (!dom.videoPlayer.paused && !dom.videoPlayer.ended) return;
     clearHideTimer();
-    surface.classList.remove("player-overlay-visible");
-    surface.classList.add("player-overlay-suppressed");
+    surface.classList.remove('player-frame--overlay-visible');
+    surface.classList.add('player-frame--overlay-suppressed');
     ownerWindow.setTimeout(() => {
-      surface.classList.remove("player-overlay-suppressed");
+      surface.classList.remove('player-frame--overlay-suppressed');
     }, 700);
   };
   const toggleOverlayFromVideo = (event) => {
@@ -118,12 +118,12 @@ export function wireMiniPlayerOverlayControls(surface, ownerWindow, onToggleMini
     event.preventDefault();
     lastTouchPointerAt = Date.now();
     clearHideTimer();
-    const isVisible = surface.classList.contains("player-overlay-visible");
+    const isVisible = surface.classList.contains('player-frame--overlay-visible');
     if (isVisible) {
       hide();
       return;
     }
-    surface.classList.add("player-overlay-visible");
+    surface.classList.add('player-frame--overlay-visible');
     scheduleHide();
   };
   const handleVideoPointerUp = (event) => {
@@ -152,11 +152,11 @@ export function wireMiniPlayerOverlayControls(surface, ownerWindow, onToggleMini
     void onToggleMiniPlayer();
   };
   const handleCenterControlClick = (event) => {
-    const button = event.target?.closest?.(".player-center-actions button");
+    const button = event.target?.closest?.('.player-frame__center-actions button');
     if (!button || button.disabled) return;
-    button.classList.remove("is-click-bouncing");
+    button.classList.remove('video-control-button--click-bouncing');
     void button.offsetWidth;
-    button.classList.add("is-click-bouncing");
+    button.classList.add('video-control-button--click-bouncing');
   };
   surface.addEventListener("click", handleMiniPlayerClose, true);
   surface.addEventListener("click", resetHideTimerAfterControlClick);

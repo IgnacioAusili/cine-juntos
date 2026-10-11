@@ -1,5 +1,5 @@
 /* Ventana compacta que centra una etapa 3D sin aumentar el alto del mensaje. */
-.message.system .message-system-text.system-message-roll-viewport {
+.message.message--system .message__system-text.message__system-roll-viewport {
   position: relative;
   display: inline-block;
   overflow: visible;
@@ -10,7 +10,7 @@
   vertical-align: top;
 }
 
-.system-message-roll-stage {
+.message__system-roll-stage {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -39,7 +39,7 @@
   );
 }
 
-.system-message-roll-drum {
+.message__system-roll-drum {
   position: relative;
   display: block;
   width: var(--system-roll-visual-width, 100%);
@@ -48,7 +48,7 @@
   will-change: transform;
 }
 
-.system-message-roll-face {
+.message__system-roll-face {
   position: absolute;
   inset: 0;
   display: flex;
@@ -67,7 +67,7 @@
   -webkit-backface-visibility: hidden;
 }
 
-.system-message-roll-content {
+.message__system-roll-content {
   position: relative;
   display: block;
   width: 100%;
@@ -83,6 +83,6 @@
   -webkit-backface-visibility: hidden;
 }
 
-.message.system .system-message-row.system-message-rolling {
+.message.message--system .message__system-row.message--system-rolling {
   overflow: visible;
 }

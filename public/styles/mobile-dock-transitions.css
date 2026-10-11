@@ -4,13 +4,13 @@
    movimiento. La fila se interpola al mismo tiempo que la cortina del chat;
    así no queda una pausa entre ambos estados. */
 @media (hover: none) and (pointer: coarse) {
-  body:not(.is-lobby) .session-view[data-chat-dock="bottom"].chat-bottom-mobile-collapse-visual .o-workspace,
-  body:not(.is-lobby) .session-view[data-chat-dock="bottom"].chat-bottom-mobile-expand-visual .o-workspace {
+  body:not(.page-context--lobby) .session-view[data-chat-dock="bottom"].session-view--chat-bottom-mobile-collapse-visual .o-workspace,
+  body:not(.page-context--lobby) .session-view[data-chat-dock="bottom"].session-view--chat-bottom-mobile-expand-visual .o-workspace {
     transition: none !important;
   }
 
-  body:not(.is-lobby) .session-view[data-chat-dock="bottom"].chat-bottom-mobile-collapse-visual .chat-area,
-  body:not(.is-lobby) .session-view[data-chat-dock="bottom"].chat-bottom-mobile-expand-visual .chat-area {
+  body:not(.page-context--lobby) .session-view[data-chat-dock="bottom"].session-view--chat-bottom-mobile-collapse-visual .chat-area,
+  body:not(.page-context--lobby) .session-view[data-chat-dock="bottom"].session-view--chat-bottom-mobile-expand-visual .chat-area {
     height: 100%;
     min-height: 0;
     border: 0;
@@ -20,22 +20,22 @@
     will-change: clip-path;
   }
 
-  body:not(.is-lobby) .session-view[data-chat-dock="bottom"].chat-bottom-mobile-collapse-visual .chat-area {
+  body:not(.page-context--lobby) .session-view[data-chat-dock="bottom"].session-view--chat-bottom-mobile-collapse-visual .chat-area {
     clip-path: inset(0 0 0 0);
   }
 
-  body:not(.is-lobby) .session-view[data-chat-dock="bottom"].chat-bottom-mobile-expand-visual .chat-area {
+  body:not(.page-context--lobby) .session-view[data-chat-dock="bottom"].session-view--chat-bottom-mobile-expand-visual .chat-area {
     clip-path: inset(0 0 100% 0);
   }
 
-  body:not(.is-lobby) .session-view[data-chat-dock="bottom"].chat-bottom-mobile-collapse-visual.chat-bottom-mobile-curtain-active .chat-area {
+  body:not(.page-context--lobby) .session-view[data-chat-dock="bottom"].session-view--chat-bottom-mobile-collapse-visual.session-view--chat-bottom-mobile-curtain-active .chat-area {
     clip-path: inset(0 0 100% 0);
     /* La cortina recorta el panel desde abajo; no debe convertirse en un
        desvanecido mientras la fila del chat todavía está visible. */
     opacity: 1;
   }
 
-  body:not(.is-lobby) .session-view[data-chat-dock="bottom"].chat-bottom-mobile-expand-visual.chat-bottom-mobile-curtain-active .chat-area {
+  body:not(.page-context--lobby) .session-view[data-chat-dock="bottom"].session-view--chat-bottom-mobile-expand-visual.session-view--chat-bottom-mobile-curtain-active .chat-area {
     clip-path: inset(0 0 0 0);
     opacity: 1;
   }

@@ -7,7 +7,7 @@ export function createImageLightboxPanController({ getLightbox, getImage, getSca
   function getPanLimits() {
     const lightbox = getLightbox();
     const image = getImage();
-    const viewport = lightbox?.querySelector(".image-lightbox-viewport");
+    const viewport = lightbox?.querySelector('.image-lightbox__viewport');
     if (!viewport || !image) return { x: 0, y: 0 };
 
     const viewportStyle = getComputedStyle(viewport);
@@ -48,7 +48,7 @@ export function createImageLightboxPanController({ getLightbox, getImage, getSca
     } catch {
       // Algunos eventos sintéticos no tienen un puntero capturable.
     }
-    getImage()?.classList.add("is-dragging");
+    getImage()?.classList.add('u-dragging');
     event.preventDefault();
     event.stopPropagation();
   }
@@ -72,7 +72,7 @@ export function createImageLightboxPanController({ getLightbox, getImage, getSca
     } catch {
       // El puntero puede haber sido cancelado antes de liberar la captura.
     }
-    getImage()?.classList.remove("is-dragging");
+    getImage()?.classList.remove('u-dragging');
     activePointerId = null;
     panStart = null;
     event.stopPropagation();

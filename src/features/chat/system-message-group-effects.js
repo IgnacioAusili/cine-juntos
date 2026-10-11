@@ -1,5 +1,5 @@
 import { SYSTEM_GROUP_ENTRY_OFFSET_X, SYSTEM_GROUP_ENTRY_ROTATION, SYSTEM_GROUP_REMOVAL_MS } from "./system-message-group-state.js?v=20261010-file-size-refactor-02";
-import { getGroupTransitionTarget } from "./system-message-group-visuals.js?v=20261010-file-size-refactor-02";
+import { getGroupTransitionTarget } from "./system-message-group-visuals.js?v=20261011-bem-itcss-oocss-04";
 
 export function animateExpandedSystemMessageRemoval(visualState) {
   if (!visualState || window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) return;

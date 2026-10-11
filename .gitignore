@@ -11,3 +11,4 @@ dev-server*.log
 *.log
 *.tmp
 *.cache
+node_modules/

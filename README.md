@@ -30,6 +30,12 @@ python -m http.server 8080
 
 Ese servidor básico sirve el último `index.html` generado y no observa cambios en los parciales.
 
+## Linters
+
+Las herramientas de desarrollo se instalan con `npm install`. Se pueden ejecutar juntas con `npm run lint` o por separado con `npm run lint:js`, `npm run lint:css`, `npm run lint:html` y `npm run lint:md`.
+
+Stylelint muestra como advertencias los selectores de más de 160 caracteres, el uso de `!important`, los números directos en valores CSS y las variables CSS declaradas fuera de la sección inicial del archivo. Los nombres de clase quedan libres para conservar las convenciones actuales o adoptar BEM gradualmente.
+
 La pantalla ya trae precargado este video MP4 de ejemplo:
 
 ```text

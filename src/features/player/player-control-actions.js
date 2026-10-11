@@ -1,12 +1,12 @@
 import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
 import { state, logEvent } from "../../core/state.js?v=20261010-file-size-refactor-02";
 import { formatSeconds } from "../../core/utils.js?v=20261010-file-size-refactor-02";
-import { setInsideChatVisible } from "../chat/index.js?v=20261011-chat-ui-fixes-03";
+import { setInsideChatVisible } from "../chat/index.js?v=20261011-overlay-scroll-top-01";
 import { togglePageFullscreen } from "./fullscreen.js?v=20261011-chat-ui-fixes-03";
-import { publishState } from "./player-sync-logic.js?v=20261011-chat-ui-fixes-03";
-import { getFiniteDuration, hasLoadedMediaSource } from "./player-media.js?v=20261011-chat-ui-fixes-03";
+import { publishState } from "./player-sync-logic.js?v=20261011-overlay-scroll-top-01";
+import { getFiniteDuration, hasLoadedMediaSource } from "./player-media.js?v=20261011-overlay-scroll-top-01";
 import { hideSeekTooltip, updateSeekTooltipForValue } from "./player-seek-tooltip-view.js?v=20261011-chat-ui-fixes-03";
-import { renderPlayerControls, showPlaybackGestureIndicator, updateSeekVisuals } from "./player-control-display.js?v=20261011-chat-ui-fixes-03";
+import { renderPlayerControls, showPlaybackGestureIndicator, updateSeekVisuals } from "./player-control-display.js?v=20261011-overlay-scroll-top-01";
 import { playerRuntimeState } from "./player-runtime-state.js?v=20261010-file-size-refactor-02";
 
 const PLAYER_VOLUME_STORAGE_KEY = "cine-juntos-player-volume";

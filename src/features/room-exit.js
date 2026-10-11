@@ -13,7 +13,7 @@ import {
   renderReplyPreview,
   setInsideChatVisible,
   finishSystemMessageHydration,
-} from "./chat/index.js?v=20261011-chat-ui-fixes-03";
+} from "./chat/index.js?v=20261011-overlay-scroll-top-01";
 import { removeActiveTabRecord } from "./room-access.js?v=20261010-file-size-refactor-02";
 import { invalidateRoomOperation, isRoomOperationCurrent, clearUrlRoom } from "./room-navigation.js?v=20261010-file-size-refactor-02";
 import { syncJoinRoomButtonState } from "./room-input.js?v=20261010-file-size-refactor-02";

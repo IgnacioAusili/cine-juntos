@@ -14,6 +14,11 @@ import { scheduleSystemMessageCollapse } from "./system-message-groups.js?v=2026
 
 export function appendMessageNow(container, message, { animateSystemGroups = true, prepend = false } = {}) {
   const isMine = message.from === state.session.clientId;
+  // Un lector en el borde superior de una lista scrolleable no está siguiendo
+  // los mensajes nuevos, aunque el contenido esté a menos de 120 px del final.
+  const wasReadingFromTop = !prepend
+    && container.scrollTop <= 1
+    && container.scrollHeight > container.clientHeight + 1;
   const authorKey = String(message.from || message.name || "").trim();
   const previousMessage = prepend
     ? getFirstRenderableMessage(container)
@@ -275,7 +280,7 @@ export function appendMessageNow(container, message, { animateSystemGroups = tru
   if (
     !prepend &&
     !document.hidden &&
-    (distanceFromBottom <= threshold || message.from === state.session.clientId)
+    (message.from === state.session.clientId || (!wasReadingFromTop && distanceFromBottom <= threshold))
   ) {
     container.scrollTop = container.scrollHeight;
   } else if (!prepend && message.from !== state.session.clientId) {

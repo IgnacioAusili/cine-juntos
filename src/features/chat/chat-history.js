@@ -4,7 +4,7 @@ import {
   isExternalChatVisibleToUser,
   isInsideChatVisibleToUser,
 } from "./unread-counters.js?v=20261011-chat-interaction-fixes-01";
-import { renderMessage } from "./chat-render.js?v=20261011-chat-ui-fixes-03";
+import { renderMessage } from "./chat-render.js?v=20261011-overlay-scroll-top-01";
 
 let historyGeneration = 0;
 let historyExhausted = false;

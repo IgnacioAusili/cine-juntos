@@ -9,7 +9,7 @@ import {
   handleIncomingPageUnread,
 } from "./unread-counters.js?v=20261011-chat-interaction-fixes-01";
 import { setExternalChatCollapsed, setInsideChatVisible } from "./chat-layout.js?v=20261011-chat-ui-fixes-03";
-import { appendMessageNow } from "./chat-message-render-item.js?v=20261011-chat-ui-fixes-03";
+import { appendMessageNow } from "./chat-message-render-item.js?v=20261011-overlay-scroll-top-01";
 
 const SYSTEM_GROUP_MESSAGE_FRESHNESS_MS = 3000;
 const SYSTEM_GROUP_RESUME_GRACE_MS = 250;

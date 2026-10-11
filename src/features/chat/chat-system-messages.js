@@ -6,7 +6,7 @@ import {
 } from "../../core/state.js?v=20261010-file-size-refactor-02";
 import { formatClockTime } from "../../core/utils.js?v=20261010-file-size-refactor-02";
 import { createRandomId } from "../../core/random-id.js?v=20261010-file-size-refactor-02";
-import { renderMessage } from "./chat-render.js?v=20261011-chat-ui-fixes-03";
+import { renderMessage } from "./chat-render.js?v=20261011-overlay-scroll-top-01";
 
 /**
  * Genera y envía un mensaje de sistema al chat describiendo un evento de video.

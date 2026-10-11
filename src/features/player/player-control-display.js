@@ -6,7 +6,7 @@ import { syncMiniPlayerButton } from "./mini-player.js?v=20261011-chat-ui-fixes-
 import { closeRateSelectMenu, syncRateSelectMenu, syncRateSelectWidth } from "./player-rate-menu.js?v=20261010-file-size-refactor-02";
 import { hideSeekTooltip } from "./player-seek-tooltip-view.js?v=20261011-chat-ui-fixes-03";
 import { seekTooltipState } from "./player-seek-tooltip-state.js?v=20261010-file-size-refactor-02";
-import { getFiniteDuration, hasLoadedMediaSource } from "./player-media.js?v=20261011-chat-ui-fixes-03";
+import { getFiniteDuration, hasLoadedMediaSource } from "./player-media.js?v=20261011-overlay-scroll-top-01";
 import { playerRuntimeState } from "./player-runtime-state.js?v=20261010-file-size-refactor-02";
 
 const MOBILE_CENTER_BUTTON_LABELS = Object.freeze({

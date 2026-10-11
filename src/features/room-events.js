@@ -1,7 +1,7 @@
 import { dom } from "../core/dom.js?v=20261010-file-size-refactor-02";
 import { updateDisplayName } from "./presence.js?v=20261011-chat-ui-fixes-03";
-import { joinRoom } from "./room-entry.js?v=20261011-chat-ui-fixes-03";
-import { leaveRoom } from "./room-exit.js?v=20261011-chat-ui-fixes-03";
+import { joinRoom } from "./room-entry.js?v=20261011-overlay-scroll-top-01";
+import { leaveRoom } from "./room-exit.js?v=20261011-overlay-scroll-top-01";
 import { copyInvite } from "./room-invite.js?v=20261010-file-size-refactor-02";
 import {
   consumeRoomCreationAttempt,

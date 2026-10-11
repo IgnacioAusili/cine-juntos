@@ -1,10 +1,10 @@
 import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
 import { logEvent, state } from "../../core/state.js?v=20261010-file-size-refactor-02";
 import { CHAT_DOCK_META } from "../../core/utils.js?v=20261010-file-size-refactor-02";
-import { autoResizeMessageInput, handlePasteEvent, hideEmojiPicker, normalizeEmojiShortcodesInput, repositionEmojiPicker, submitMessageFrom, toggleEmojiPicker, updateCharCounter, wireFloatingComposerLayout, wireComposerScrollbar } from "./chat-input.js?v=20261011-chat-ui-fixes-03";
+import { autoResizeMessageInput, handlePasteEvent, hideEmojiPicker, normalizeEmojiShortcodesInput, repositionEmojiPicker, submitMessageFrom, toggleEmojiPicker, updateCharCounter, wireFloatingComposerLayout, wireComposerScrollbar } from "./chat-input.js?v=20261011-overlay-scroll-top-01";
 import { setReplyTarget } from "./chat-reply.js?v=20261011-chat-ui-fixes-03";
 import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20261011-chat-interaction-fixes-01";
-import { fillChatHistoryViewport, loadOlderChatHistory } from "./chat-history.js?v=20261011-chat-ui-fixes-03";
+import { fillChatHistoryViewport, loadOlderChatHistory } from "./chat-history.js?v=20261011-overlay-scroll-top-01";
 import { copyMessageText, hideMessageMenu, showMessageMenu } from "./message-menu.js?v=20261010-file-size-refactor-02";
 import { setChatDock, setExternalChatAutoExpandEnabled, setInsideChatAutoExpandEnabled, setInsideChatStyle, setInsideChatVisible, syncChatAutoExpandControls, syncExternalChatCollapseHandleOffset, wireResponsiveSessionLayout } from "./chat-layout.js?v=20261011-chat-ui-fixes-03";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20261010-file-size-refactor-02";

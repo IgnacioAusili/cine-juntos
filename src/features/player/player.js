@@ -5,11 +5,11 @@ import { state } from "../../core/state.js?v=20261010-file-size-refactor-02";
 import { configureRateSelectMenu, initializeRateSelectMenu } from "./player-rate-menu.js?v=20261010-file-size-refactor-02";
 import { hideSeekTooltip, updateSeekTooltipForValue } from "./player-seek-tooltip-view.js?v=20261011-chat-ui-fixes-03";
 import { seekTooltipState } from "./player-seek-tooltip-state.js?v=20261010-file-size-refactor-02";
-import { renderPlayerControls, showPlaybackGestureIndicator, updateSeekVisuals } from "./player-control-display.js?v=20261011-chat-ui-fixes-03";
-import { setVideoStatus } from "./player-video-source.js?v=20261011-chat-ui-fixes-03";
-import { getFiniteDuration, hasLoadedMediaSource, clearSlowLoadPromptTracking } from "./player-media.js?v=20261011-chat-ui-fixes-03";
+import { renderPlayerControls, showPlaybackGestureIndicator, updateSeekVisuals } from "./player-control-display.js?v=20261011-overlay-scroll-top-01";
+import { setVideoStatus } from "./player-video-source.js?v=20261011-overlay-scroll-top-01";
+import { getFiniteDuration, hasLoadedMediaSource, clearSlowLoadPromptTracking } from "./player-media.js?v=20261011-overlay-scroll-top-01";
 import { playerRuntimeState } from "./player-runtime-state.js?v=20261010-file-size-refactor-02";
-import { resetSyncControlCooldown, readPersistedVolume, syncPlayerControls } from "./player-control-actions.js?v=20261011-chat-ui-fixes-03";
+import { resetSyncControlCooldown, readPersistedVolume, syncPlayerControls } from "./player-control-actions.js?v=20261011-overlay-scroll-top-01";
 
 const PLAYER_CONTROL_STYLES = new Set(["line"]);
 const MOBILE_PLAYER_CONTROLS_QUERY = "(max-width: 980px) and (hover: none) and (pointer: coarse)";

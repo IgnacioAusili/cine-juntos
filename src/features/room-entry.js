@@ -20,7 +20,7 @@ import {
   showSession,
   watchRoomEntryVideoFocus,
 } from "./session-ui.js?v=20261010-file-size-refactor-02";
-import { handleRemoteState } from "./player/index.js?v=20261011-chat-ui-fixes-03";
+import { handleRemoteState } from "./player/index.js?v=20261011-overlay-scroll-top-01";
 import {
   beginSystemMessageHydration,
   finishSystemMessageHydration,
@@ -31,7 +31,7 @@ import {
   resetChatHistoryPaging,
   fillChatHistoryViewport,
   setInsideChatVisible,
-} from "./chat/index.js?v=20261011-chat-ui-fixes-03";
+} from "./chat/index.js?v=20261011-overlay-scroll-top-01";
 import {
   getRoomTabLimitConflictCount,
   writeActiveTabRecord,

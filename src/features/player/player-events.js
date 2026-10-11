@@ -2,13 +2,13 @@ import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
 import { state, logEvent } from "../../core/state.js?v=20261010-file-size-refactor-02";
 import { formatSeconds } from "../../core/utils.js?v=20261010-file-size-refactor-02";
 import { shouldToggleMuteFromVolumeButton } from "./player-volume-layout.js?v=20261010-file-size-refactor-02";
-import { configurePlayerMedia, handleManualLoadRequest, setVideoStatus, announceVideoActivity, announceVideoLoadCompletion } from "./player-video-source.js?v=20261011-chat-ui-fixes-03";
-import { hasLoadedMediaSource, getFiniteDuration, rememberPlaybackPosition, updateLoadButtonState, clearSlowLoadPromptTracking, schedulePlaybackErrorConfirmation, clearPlaybackErrorTracking, persistPlaybackPosition, prepareVideoFingerprintAndPrompt } from "./player-media.js?v=20261011-chat-ui-fixes-03";
-import { attemptPlaybackRecovery, cancelPendingPlaybackIssueDetection, clearPlaybackRecoveryTracking, pauseRoomForPlaybackIssue, publishState } from "./player-sync-logic.js?v=20261011-chat-ui-fixes-03";
+import { configurePlayerMedia, handleManualLoadRequest, setVideoStatus, announceVideoActivity, announceVideoLoadCompletion } from "./player-video-source.js?v=20261011-overlay-scroll-top-01";
+import { hasLoadedMediaSource, getFiniteDuration, rememberPlaybackPosition, updateLoadButtonState, clearSlowLoadPromptTracking, schedulePlaybackErrorConfirmation, clearPlaybackErrorTracking, persistPlaybackPosition, prepareVideoFingerprintAndPrompt } from "./player-media.js?v=20261011-overlay-scroll-top-01";
+import { attemptPlaybackRecovery, cancelPendingPlaybackIssueDetection, clearPlaybackRecoveryTracking, pauseRoomForPlaybackIssue, publishState } from "./player-sync-logic.js?v=20261011-overlay-scroll-top-01";
 import { wireSeekTooltipEvents } from "./player-seek-tooltip-events.js?v=20261011-chat-ui-fixes-03";
 import { playerRuntimeState } from "./player-runtime-state.js?v=20261010-file-size-refactor-02";
-import { wireMobilePlayerControlPlacement } from "./player.js?v=20261011-chat-ui-fixes-03";
-import { handleGlobalPlayerKeydown, togglePlaybackFromControls, seekVideoBy, previewSeekPosition, commitSeekPosition, isSyncControlCoolingDown, registerSyncControlPress, syncPlayerControls, persistVolume } from "./player-control-actions.js?v=20261011-chat-ui-fixes-03";
+import { wireMobilePlayerControlPlacement } from "./player.js?v=20261011-overlay-scroll-top-01";
+import { handleGlobalPlayerKeydown, togglePlaybackFromControls, seekVideoBy, previewSeekPosition, commitSeekPosition, isSyncControlCoolingDown, registerSyncControlPress, syncPlayerControls, persistVolume } from "./player-control-actions.js?v=20261011-overlay-scroll-top-01";
 
 export function wirePlayerCoreEvents() {
   configurePlayerMedia({ syncPlayerControls });

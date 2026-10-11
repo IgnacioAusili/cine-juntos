@@ -1,4 +1,4 @@
-import { dom } from "../../core/dom.js";
+import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
 
 const MOBILE_PORTRAIT_QUERY = "(max-width: 680px) and (orientation: portrait)";
 const PLACEMENT_ATTRIBUTE = "data-inside-chat-placement";

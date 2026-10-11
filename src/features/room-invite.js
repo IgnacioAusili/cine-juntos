@@ -1,7 +1,7 @@
-import { dom } from "../core/dom.js";
-import { state } from "../core/state.js?v=20261008";
-import { setSyncStatus } from "./session-ui.js?v=20261008";
-import { sanitizeRoomInput } from "./room-input.js?v=20261008";
+import { dom } from "../core/dom.js?v=20261010-file-size-refactor-02";
+import { state } from "../core/state.js?v=20261010-file-size-refactor-02";
+import { setSyncStatus } from "./session-ui.js?v=20261010-file-size-refactor-02";
+import { sanitizeRoomInput } from "./room-input.js?v=20261010-file-size-refactor-02";
 
 let inviteCopyFeedbackTimer = 0;
 let inviteCopyAnimationTimer = 0;

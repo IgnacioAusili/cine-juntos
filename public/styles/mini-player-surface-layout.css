@@ -1,0 +1,219 @@
+.mini-player-surface {
+  container: mini-player / size;
+}
+
+.mini-player-inline {
+  position: absolute;
+  z-index: 32;
+  right: 16px;
+  bottom: 16px;
+  width: min(520px, calc(100% - 32px));
+  height: min(340px, calc(100% - 32px));
+  min-height: 210px;
+  overflow: hidden;
+  border-radius: 14px;
+}
+
+/* En el dock inferior el video acompaña al usuario mientras el chat ocupa el
+   viewport. Es la misma superficie interactiva, pero anclada al navegador. */
+.mini-player-scroll {
+  position: fixed;
+  z-index: 80;
+  right: 24px;
+  top: 24px;
+  bottom: auto;
+  width: min(360px, 34vw, calc(100vw - 32px));
+  height: auto;
+  aspect-ratio: 16 / 9;
+  min-height: 0;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 14px;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.42);
+  animation: none;
+  cursor: default;
+}
+
+.mini-player-surface.mini-player-initializing {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.mini-player-surface.mini-player-scroll,
+.mini-player-surface.mini-player-scroll * {
+  cursor: default;
+}
+
+.mini-player-surface.mini-player-scroll.is-dragging {
+  cursor: grabbing;
+  user-select: none;
+}
+
+.mini-player-surface.mini-player-scroll.is-dragging * {
+  cursor: grabbing;
+}
+
+/* La miniatura automática arranca limpia: los controles aparecen solo al
+   pasar el cursor o entrar con teclado, sin ocupar el chat por defecto. */
+.mini-player-surface.mini-player-scroll .player-bottom-actions {
+  opacity: 0;
+  transform: translateY(6px);
+  pointer-events: none;
+}
+
+.mini-player-surface.mini-player-scroll:hover .player-bottom-actions {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Los controles clonados pierden el selector por id; recuperar el botón
+   circular actual del reproductor en su versión proxy. */
+.mini-player-surface [data-proxy-for="playerChatToggleButton"] {
+  position: relative;
+  width: 32px;
+  min-height: 32px;
+  flex-basis: 32px;
+  margin-top: 4px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-soft);
+  padding: 0;
+  transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.mini-player-surface [data-proxy-for="playerChatToggleButton"]:hover,
+.mini-player-surface [data-proxy-for="playerChatToggleButton"]:focus-visible {
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+  color: #ffffff;
+  transform: none;
+}
+
+.mini-player-surface [data-proxy-for="playerChatToggleButton"].active {
+  background: rgba(47, 184, 164, 0.14);
+  color: #d8fff9;
+}
+
+@keyframes scrollMiniPlayerEnter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mini-player-surface .player-bottom-actions {
+  padding: 6px 8px 8px;
+}
+
+/* En la miniatura el chat usa el mismo maximo fijo del overlay normal y queda
+   por encima de la barra de controles cuando ambas superficies coinciden. */
+.mini-player-surface .player-chat {
+  --player-chat-max-height: 330px;
+  --player-chat-bottom-inset: 8px;
+  top: auto;
+  right: 8px;
+  bottom: var(--player-chat-bottom-inset);
+  z-index: 10;
+  width: min(280px, calc(100% - 16px));
+  height: var(--player-chat-max-height);
+  max-height: calc(100% - 16px);
+  padding-inline: 3px;
+  --chat-composer-reserve: 62px;
+  transform: translateY(7px);
+  transition: opacity 160ms ease, transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.mini-player-surface.chat-inside-open .player-chat {
+  transform: translateY(0);
+}
+
+/* Cuando la ventana mini es baja, el botón de chat ocupa la esquina superior
+   derecha y el overlay se despliega a su izquierda para no quedar cortado por
+   el borde inferior. */
+@container mini-player (max-height: 250px) {
+  .mini-player-surface .player-chat {
+    --player-chat-bottom-inset: 8px;
+    top: 8px;
+    right: 42px;
+    bottom: auto;
+    width: min(280px, calc(100% - 52px));
+    height: var(--player-chat-max-height);
+    max-height: calc(100% - 16px);
+  }
+}
+
+.mini-player-surface .overlay-messages {
+  padding-right: 6px;
+  padding-bottom: var(--chat-composer-reserve, 62px);
+  padding-left: 18px;
+}
+
+/* El selector de grupos del overlay principal sale hacia afuera para no
+   ocupar espacio en un chat grande. En el mini reproductor debe quedar
+   dentro del panel para que no se recorte. */
+.mini-player-surface #overlayMessages .message.system .system-group-toggle {
+  left: -4px;
+  min-width: 22px;
+  width: 22px;
+  height: 16px;
+}
+
+.mini-player-surface .overlay-message-form {
+  z-index: 12;
+  padding: 0 6px 6px;
+}
+
+.mini-player-surface .overlay-message-form .input-wrapper {
+  min-height: 32px;
+  width: 100%;
+  border-radius: 18px;
+}
+
+.mini-player-surface .overlay-message-form .input-wrapper[data-expanded="true"] {
+  border-radius: 17px;
+}
+
+.mini-player-surface .overlay-message-form .input-wrapper textarea {
+  min-height: 27px;
+  max-height: 48px;
+  padding: 5px 6px;
+  padding-right: 52px;
+  font-size: 0.68rem;
+  line-height: 1.2;
+}
+
+.mini-player-surface .overlay-message-form .input-wrapper .icon-button,
+.mini-player-surface .overlay-message-form .input-wrapper .emoji-trigger,
+.mini-player-surface .overlay-message-form .input-wrapper .send {
+  width: 24px;
+  min-height: 24px;
+  height: 24px;
+  flex-basis: 24px;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.mini-player-surface .overlay-message-form .input-wrapper .emoji-trigger {
+  right: 28px;
+  top: 50%;
+  bottom: auto;
+  transform: translateY(-50%) !important;
+  color: rgba(255, 255, 255, 0.68);
+}
+
+.mini-player-surface .overlay-message-form .input-wrapper .send {
+  right: 3px;
+  top: 50%;
+  bottom: auto;
+  transform: translateY(-50%) !important;
+  color: var(--accent-2);
+}

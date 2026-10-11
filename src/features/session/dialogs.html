@@ -1,0 +1,178 @@
+    <dialog id="mobileDebugDialog" class="app-dialog mobile-debug-dialog" aria-labelledby="mobileDebugTitle">
+      <div class="mobile-debug-card">
+        <button id="mobileDebugCloseButton" type="button" class="dialog-close" aria-label="Cerrar">
+          <span data-lucide="x" aria-hidden="true"></span>
+        </button>
+        <h2 id="mobileDebugTitle">Registros de la página</h2>
+        <div class="mobile-debug-filter">
+          <label class="mobile-debug-filter-label" for="mobileDebugFilter">Filtrar</label>
+          <span class="mobile-debug-filter-control">
+            <input id="mobileDebugFilter" type="search" placeholder="Buscar..." autocomplete="off" />
+            <button
+              id="mobileDebugFilterClearButton"
+              type="button"
+              class="mobile-debug-filter-clear"
+              aria-label="Cancelar filtro"
+              title="Cancelar filtro"
+              hidden
+            >
+              <span data-lucide="x" aria-hidden="true"></span>
+            </button>
+          </span>
+        </div>
+        <pre id="mobileDebugLog" class="mobile-debug-log" role="textbox" aria-readonly="true" tabindex="0" aria-label="Registros de la página"></pre>
+        <div class="dialog-actions">
+          <button
+            id="mobileDebugCopyButton"
+            type="button"
+            class="button primary mobile-debug-copy-button"
+            data-copy-state="idle"
+            aria-label="Copiar"
+          >
+            <span class="mobile-debug-copy-label">Copiar</span>
+            <span class="mobile-debug-copy-status mobile-debug-copy-success" aria-hidden="true">
+              <span data-lucide="check"></span>
+            </span>
+            <span class="mobile-debug-copy-status mobile-debug-copy-error" aria-hidden="true">
+              <span data-lucide="x"></span>
+            </span>
+          </button>
+          <button id="mobileDebugShareButton" type="button" class="button">Compartir</button>
+          <button id="mobileDebugClearButton" type="button" class="button">Eliminar</button>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog
+      id="errorDialog"
+      class="app-dialog player-dialog error-dialog"
+      aria-modal="true"
+      aria-labelledby="dialogTitle"
+      aria-describedby="dialogMessage"
+    >
+      <div class="player-dialog-card">
+        <button id="closeDialogButton" type="button" class="dialog-close" aria-label="Cerrar diálogo" data-tooltip="Cerrar diálogo">
+          <span data-lucide="x" aria-hidden="true"></span>
+        </button>
+        <div class="player-dialog-header">
+          <span class="dialog-title-icon" aria-hidden="true" data-lucide="circle-alert"></span>
+          <h2 id="dialogTitle">No se pudo cargar el video</h2>
+        </div>
+        <p id="dialogMessage" class="player-dialog-message">No se pudo encontrar el video o el formato no es compatible.</p>
+        <div class="player-dialog-actions">
+          <button id="closeDialogActionButton" type="button" class="button error-action">Entendido</button>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog
+      id="aboutDialog"
+      class="app-dialog about-dialog"
+      aria-modal="true"
+      aria-labelledby="aboutDialogTitle"
+      aria-describedby="aboutDialogDescription"
+    >
+      <div class="about-dialog-card">
+        <div class="about-dialog-fixed-header">
+          <div class="about-dialog-header">
+            <span class="about-dialog-icon" aria-hidden="true" data-lucide="circle-alert"></span>
+            <div>
+              <p class="about-dialog-eyebrow">Cine Juntos</p>
+              <h2 id="aboutDialogTitle">Sobre este proyecto</h2>
+            </div>
+          </div>
+          <button id="closeAboutDialogButton" type="button" class="dialog-close" aria-label="Cerrar información" data-tooltip="Cerrar (Esc)">
+            <span data-lucide="x" aria-hidden="true"></span>
+          </button>
+        </div>
+        <div class="about-dialog-content">
+          <div id="aboutDialogDescription" class="about-dialog-intro">
+            <p class="about-dialog-description-lead">Cine Juntos es un proyecto de código abierto (open source) concebido como una base con el propósito de la visualización sincronizada de contenido entre múltiples usuarios de manera comoda y sencilla. De manera tal, permite crear salas con un chat integrado, elegir el contenido a ver y cargarlo en un reproductor que tiene sus funciones sincronizadas entre todos los usuarios: reproducción, velocidad, pausa, etc.</p>
+            <div class="about-dialog-disclosure">
+              <button class="about-dialog-disclosure-toggle" type="button" aria-expanded="false" aria-controls="aboutDialogDescriptionRest">
+                <span class="about-dialog-disclosure-label about-dialog-disclosure-label-more">Mostrar la descripción completa</span>
+                <span class="about-dialog-disclosure-control" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="m6 9 6 6 6-6" /></svg>
+                </span>
+              </button>
+              <div id="aboutDialogDescriptionRest" class="about-dialog-disclosure-content" hidden tabindex="-1">
+                <p>Las salas se crean mediante un código de acceso que puede compartirse con otras personas, la reproduccion se sincroniza mediante Firebase Realtime y se puede incorporar el contenido a partir de archivos o enlaces directos alojados en servidores o CDN. Esta demo se publica en GitHub Pages mediante GitHub Actions.</p>
+                <p>Esta página funciona como una demostración funcional del proyecto. No incorpora publicidad ni restricciones propias, más allá de las limitaciones de los servicios utilizados o que utilice el usuario. El proyecto puede modificarse, adaptarse y alojarse según las necesidades del que quiera usarlo.</p>
+              </div>
+            </div>
+          </div>
+          <dl class="about-dialog-details">
+            <div>
+              <dt>Autor</dt>
+              <dd>Ignacio Ausili</dd>
+            </div>
+            <div>
+              <dt>GitHub</dt>
+              <dd><a href="https://github.com/IgnacioAusili/cine-juntos" target="_blank" rel="noopener noreferrer">github.com/IgnacioAusili/cine-juntos</a></dd>
+            </div>
+            <div>
+              <dt>Licencia</dt>
+              <dd><a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener noreferrer">GNU GPLv3</a></dd>
+            </div>
+            <div>
+              <dt>Parte técnica</dt>
+              <dd>Frontend estático en HTML, CSS y JavaScript vanilla. Usa HTML5 Video, sincronización en tiempo real con <a href="https://firebase.google.com/docs/database/web/start?hl=es-419" target="_blank" rel="noopener noreferrer">Firebase Realtime</a> cuando está disponible y un transporte local como fallback.</dd>
+            </div>
+          </dl>
+          <p class="about-dialog-disclaimer"><strong>Disclaimer:</strong> Esta página funciona como una demostración del proyecto y no está destinada a ser un producto final. El contenido y los enlaces utilizados pertenecen a quienes los aportan. Cada usuario debe contar con los derechos necesarios y es responsable del uso que le da al servicio y de sus mensajes. Este proyecto comunitario se ofrece bajo GPLv3, sin garantía de disponibilidad o funcionamiento ininterrumpido.</p>
+        </div>
+      </div>
+      <div class="about-dialog-scrollbar" aria-hidden="true">
+        <span class="about-dialog-scrollbar-thumb"></span>
+      </div>
+    </dialog>
+
+    <dialog
+      id="slowLoadDialog"
+      class="app-dialog player-dialog slow-load-dialog"
+      aria-modal="true"
+      aria-labelledby="slowLoadDialogTitle"
+      aria-describedby="slowLoadDialogMessage"
+    >
+      <div class="player-dialog-card">
+        <button id="closeSlowLoadDialogButton" type="button" class="dialog-close" aria-label="Cerrar diálogo" data-tooltip="Cerrar diálogo (Esc)">
+          <span data-lucide="x" aria-hidden="true"></span>
+        </button>
+        <div class="player-dialog-header">
+          <span class="dialog-title-icon" aria-hidden="true" data-lucide="triangle-alert"></span>
+          <h2 id="slowLoadDialogTitle">La carga del video está tardando</h2>
+        </div>
+        <p id="slowLoadDialogMessage" class="player-dialog-message">Vaya... el video está tardando en cargar. ¿Quieres recargarlo solo para ti?</p>
+        <div class="player-dialog-actions">
+          <button id="cancelSlowLoadDialogButton" type="button" class="button" autofocus>Cancelar</button>
+          <button id="confirmSlowLoadDialogButton" type="button" class="button warning">Recargar video</button>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog
+      id="confirmLoadDialog"
+      class="app-dialog player-dialog confirm-load-dialog"
+      aria-modal="true"
+      aria-labelledby="confirmLoadDialogTitle"
+      aria-describedby="confirmLoadDialogMessage"
+    >
+      <div class="player-dialog-card">
+        <button id="closeConfirmLoadDialogButton" type="button" class="dialog-close" aria-label="Cerrar diálogo" data-tooltip="Cerrar diálogo (Esc)">
+          <span data-lucide="x" aria-hidden="true"></span>
+        </button>
+        <div class="player-dialog-header">
+          <span class="dialog-title-icon" aria-hidden="true" data-lucide="triangle-alert"></span>
+          <h2 id="confirmLoadDialogTitle">Cargar otro video</h2>
+        </div>
+        <p id="confirmLoadDialogMessage" class="player-dialog-message">Se está reproduciendo un video. ¿Quieres cargar otro ahora?</p>
+        <label class="dialog-checkbox confirm-load-checkbox" for="skipLoadConfirmCheckbox">
+          <input id="skipLoadConfirmCheckbox" type="checkbox" />
+          <span>No volver a mostrar</span>
+        </label>
+        <div class="player-dialog-actions">
+          <button id="cancelLoadDialogButton" type="button" class="button">Cancelar</button>
+          <button id="confirmLoadDialogButton" type="button" class="button primary">Cargar</button>
+        </div>
+      </div>
+    </dialog>

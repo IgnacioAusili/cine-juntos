@@ -138,11 +138,28 @@
   outline: none;
 }
 
-/* El overlay tiene menos espacio horizontal y la burbuja conserva una
-   reserva menor para el control de respuesta. Estos offsets mantienen la
-   separación visual anterior sin medir coordenadas desde JavaScript. */
-#overlayMessages .message.system .system-group-toggle {
-  left: -14px;
+/* Los grupos del overlay usan el ancho completo igual que el chat externo.
+   Así el selector conserva el mismo anclaje y la burbuja reserva el mismo
+   espacio antes de sus líneas decorativas. */
+.overlay-messages .message.system.system-group-member {
+  align-self: stretch;
+  width: 100%;
+  max-width: 100%;
+}
+
+#overlayMessages .message.system.system-group-member .system-message-row {
+  max-width: 100%;
+}
+
+#overlayMessages .message.system.system-group-member .message-system-bubble {
+  max-width: min(calc(100% - 72px), 420px);
+  transform: none;
+}
+
+#overlayMessages .message.system.system-group-member .system-group-toggle {
+  min-width: 24px;
+  width: 24px;
+  height: 16px;
 }
 
 /* En el panel translúcido el selector necesita una superficie propia para

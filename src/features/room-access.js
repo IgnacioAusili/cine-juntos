@@ -1,4 +1,4 @@
-import { createRandomId } from "../core/random-id.js?v=20261008";
+import { createRandomId } from "../core/random-id.js?v=20261010-file-size-refactor-02";
 
 const ACTIVE_TAB_KEY = "cine-juntos-active-tab";
 const ACTIVE_TAB_TTL_MS = 30000;

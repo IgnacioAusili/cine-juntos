@@ -1,4 +1,4 @@
-import { dom } from "../../core/dom.js";
+import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
 
 const isRightChatKeyboardOpen = () => Boolean(
   document.documentElement.classList.contains("right-chat-keyboard-open")

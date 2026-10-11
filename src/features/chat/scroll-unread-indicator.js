@@ -1,5 +1,5 @@
-import { dom } from "../../core/dom.js";
-import { state } from "../../core/state.js?v=20261008";
+import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
+import { state } from "../../core/state.js?v=20261010-file-size-refactor-02";
 
 export function incrementScrollIndicator(isOverlay) {
   const container = isOverlay ? dom.overlayMessages : dom.messages;

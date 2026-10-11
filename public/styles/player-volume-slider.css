@@ -1,0 +1,221 @@
+
+
+.player-volume-input::-moz-range-track {
+  height: var(--volume-track-height);
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+}
+
+.player-volume-input::-webkit-slider-thumb {
+  width: var(--volume-thumb-size);
+  height: var(--volume-thumb-size);
+  margin-top: calc((var(--volume-track-height) - var(--volume-thumb-size)) / 2);
+  appearance: none;
+  border: 0;
+  border-radius: 999px;
+  background: #fff;
+}
+
+.player-volume-input::-moz-range-thumb {
+  width: var(--volume-thumb-size);
+  height: var(--volume-thumb-size);
+  border: 0;
+  border-radius: 999px;
+  background: #fff;
+}
+
+.player-rate-select {
+  flex: 0 0 auto;
+  width: var(--player-rate-layout-width, 48px);
+  min-width: 48px;
+}
+
+.player-tool {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(17, 21, 24, 0.62);
+  backdrop-filter: blur(12px);
+}
+
+.player-select {
+  position: relative;
+  display: inline-flex;
+  height: 28px;
+  align-items: center;
+  gap: 0;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  padding: 0;
+  backdrop-filter: blur(12px);
+  cursor: pointer;
+  transition: width 180ms ease, border-color 150ms ease, background 150ms ease;
+}
+
+.player-rate-select {
+  transition: width 320ms ease-in-out;
+}
+
+.player-select::after {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  width: 4px;
+  height: 4px;
+  border-right: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  content: "";
+  pointer-events: none;
+  transform: translateY(-65%) rotate(45deg);
+  transition: transform 150ms ease;
+}
+
+.player-select:focus-within::after {
+  transform: translateY(-25%) rotate(225deg);
+}
+
+.player-rate-select select {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.player-rate-trigger {
+  --player-rate-trigger-padding-left: 6px;
+  --player-rate-trigger-padding-right: 22px;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  padding: 0 var(--player-rate-trigger-padding-right) 0 var(--player-rate-trigger-padding-left);
+  font: inherit;
+  font-family: "Arial Rounded MT Bold", "Trebuchet MS", sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.player-rate-trigger:disabled {
+  cursor: not-allowed;
+}
+
+.player-controls-bar .player-rate-select::after {
+  width: 7px;
+  height: 7px;
+  color: rgba(255, 255, 255, 0.74);
+  border-right-color: rgba(255, 255, 255, 0.74);
+  border-bottom-color: rgba(255, 255, 255, 0.74);
+  border-right-width: 2px;
+  border-bottom-width: 2px;
+}
+
+.player-controls-bar .player-rate-select:focus-within::after {
+  transform: translateY(-65%) rotate(45deg);
+}
+
+.player-controls-bar .player-rate-select.is-open::after {
+  transform: translateY(-25%) rotate(225deg);
+}
+
+.player-rate-menu {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 6px);
+  z-index: 20;
+  display: grid;
+  width: max-content;
+  min-width: 0;
+  gap: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 10px;
+  background: rgba(34, 43, 47, 0.84);
+  backdrop-filter: blur(14px) saturate(1.08);
+  -webkit-backdrop-filter: blur(14px) saturate(1.08);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.38);
+  padding: 4px;
+  transform: translateX(-50%);
+}
+
+.player-frame:not(.player-overlay-visible) .player-rate-menu,
+.player-frame.player-overlay-suppressed .player-rate-menu {
+  display: none;
+}
+
+.player-rate-option {
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #fff;
+  padding: 5px 8px;
+  font: inherit;
+  font-family: "Arial Rounded MT Bold", "Trebuchet MS", sans-serif;
+  font-size: 0.74rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  white-space: nowrap;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.player-rate-select,
+.player-rate-select select,
+.player-rate-menu {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.player-rate-option:hover,
+.player-rate-option.selected {
+  background: rgba(216, 255, 249, 0.14);
+}
+
+.player-select:hover {
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.player-select[data-disabled="true"] {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.42);
+  cursor: not-allowed;
+  box-shadow: none;
+  opacity: 0.68;
+}
+
+.player-select[data-disabled="true"]:hover {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* En pantallas táctiles algunos navegadores conservan :hover y :focus-within
+   después de seleccionar una velocidad. Mientras el menú está cerrado esos
+   estados no representan una interacción activa y no deben dejar el control
+   resaltado. */
+@media (hover: none) {
+  .player-rate-select:hover:not(.is-open) {
+    border-color: rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .player-frame[data-control-style="line"] .player-controls-bar .player-select:not([data-disabled="true"]):hover:not(.is-open),
+  .player-frame[data-control-style="line"] .player-controls-bar .player-select:not([data-disabled="true"]):focus-within:not(.is-open) {
+    color: rgba(255, 255, 255, 0.74);
+    transform: none;
+  }
+
+  .player-frame[data-control-style="line"] .player-controls-bar .player-select:not([data-disabled="true"]):hover:not(.is-open)::after,
+  .player-frame[data-control-style="line"] .player-controls-bar .player-select:not([data-disabled="true"]):focus-within:not(.is-open)::after {
+    color: rgba(255, 255, 255, 0.74);
+    border-right-color: rgba(255, 255, 255, 0.74);
+    border-bottom-color: rgba(255, 255, 255, 0.74);
+  }
+}

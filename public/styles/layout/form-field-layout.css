@@ -1,0 +1,171 @@
+
+
+.field {
+  display: grid;
+  min-width: 0;
+  flex: 1 1 auto;
+  gap: 6px;
+}
+
+.field-room {
+  flex: 0 1 190px;
+}
+
+.field span {
+  color: #eef1f3;
+  text-shadow: 0 0 7px rgba(255, 255, 255, 0.16);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.label-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding-inline-start: 0;
+  color: #eef1f3;
+  text-shadow: 0 0 7px rgba(255, 255, 255, 0.16);
+}
+
+.session-toolbar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  gap: 10px;
+  padding: 11px;
+  border: 1px solid var(--glass-border);
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  background:
+    linear-gradient(180deg, rgba(20, 24, 28, 0.75), rgba(12, 15, 18, 0.7)),
+    var(--glass-bg);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 -4px 16px rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(14px);
+  margin-bottom: 0;
+}
+
+/* Input de URL + boton de carga */
+.session-toolbar-body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  width: 100%;
+}
+
+.session-toolbar-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.session-toolbar-label {
+  display: inline-flex;
+  align-items: center;
+  color: #eef1f3;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-shadow: 0 0 7px rgba(255, 255, 255, 0.16);
+  user-select: none;
+}
+
+.session-toolbar-label-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 5px;
+}
+
+.field .help-button {
+  width: 22px;
+  height: 22px;
+  min-height: 22px;
+}
+
+.field .help-button svg {
+  width: 16px;
+  height: 16px;
+  aspect-ratio: 1 / 1;
+}
+
+.session-toolbar-body input {
+  width: calc(100% - 8px);
+  margin-inline: 4px;
+  min-width: 0;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  background: rgba(6, 8, 10, 0.4);
+  color: var(--text);
+  font-family: ui-monospace, "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+  outline: none;
+  box-shadow: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.session-toolbar-body input::placeholder {
+  color: var(--text-faint);
+}
+
+.session-toolbar-body input:focus {
+  border-color: var(--teal);
+  background: rgba(6, 8, 10, 0.6);
+  box-shadow: none;
+}
+
+.session-toolbar-body .button.primary {
+  flex-shrink: 0;
+  min-height: 38px;
+  min-width: 100px;
+  padding: 0 16px;
+  border: 1px solid rgba(240, 140, 58, 0.3);
+  border-radius: 20px;
+  background: #d4762a;
+  color: #000 !important;
+  -webkit-text-fill-color: #000 !important;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-shadow: none;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.session-toolbar-body .button.primary > .button-label,
+.session-toolbar-body .button.primary > svg {
+  color: #000 !important;
+  -webkit-text-fill-color: #000 !important;
+}
+
+.session-toolbar-body .button.primary > .button-label {
+  position: relative;
+  top: 1px;
+}
+
+.session-toolbar-body .button.primary > svg {
+  color: #000 !important;
+  -webkit-text-fill-color: #000 !important;
+}
+
+.session-toolbar-body .button.primary:hover {
+  background: #de7d31;
+  border-color: rgba(240, 140, 58, 0.38);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
+}
+
+.session-toolbar-body .button.primary:active {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
+}

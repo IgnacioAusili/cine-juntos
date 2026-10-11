@@ -1,11 +1,11 @@
-import { dom } from "../core/dom.js";
+import { dom } from "../core/dom.js?v=20261010-file-size-refactor-02";
 import {
   EXAMPLE_VIDEO_URL,
   makeGuestName,
   normalizeGuestName,
-} from "../core/utils.js";
-import { normalizeDisplayName } from "../core/name-policy.js?v=20261008";
-import { getOrCreateClientId } from "../core/random-id.js?v=20261008";
+} from "../core/utils.js?v=20261010-file-size-refactor-02";
+import { normalizeDisplayName } from "../core/name-policy.js?v=20261010-file-size-refactor-02";
+import { getOrCreateClientId } from "../core/random-id.js?v=20261010-file-size-refactor-02";
 
 export const firebaseConfig = window.CINE_JUNTOS_FIREBASE_CONFIG || {};
 const SESSION_NAME_KEY = "cine-juntos-name";

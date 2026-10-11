@@ -1,0 +1,25 @@
+              <div
+                id="resumeVideoPopup"
+                class="player-inline-dialog"
+                hidden
+                aria-modal="true"
+                aria-labelledby="resumeVideoPopupTitle"
+                aria-describedby="resumeVideoPopupMessage"
+              >
+                <div class="player-inline-dialog-card" role="document">
+                  <button id="closeResumeVideoDialogButton" type="button" class="dialog-close" aria-label="Cerrar diálogo" data-tooltip="Cerrar diálogo (Esc)">
+                    <span data-lucide="x" aria-hidden="true"></span>
+                  </button>
+                  <div class="player-dialog-header">
+                    <span class="dialog-title-icon" aria-hidden="true" data-lucide="triangle-alert"></span>
+                    <h2 id="resumeVideoPopupTitle">Retomar reproducción</h2>
+                  </div>
+                  <p id="resumeVideoPopupMessage" class="player-dialog-message">
+                    Este video ya lo has reproducido antes en <span class="resume-time-tag">0:00</span> ¿Quieres retomar desde ahí?
+                  </p>
+                  <div class="player-dialog-actions">
+                    <button id="cancelResumeVideoDialogButton" type="button" class="button">Cancelar</button>
+                    <button id="confirmResumeVideoDialogButton" type="button" class="button warning">Saltar</button>
+                  </div>
+                </div>
+              </div>

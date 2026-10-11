@@ -1,0 +1,98 @@
+
+
+.player-frame .overlay-message-form .input-wrapper .icon-button {
+  position: static;
+  right: auto;
+  bottom: auto;
+  align-self: flex-end;
+  margin: 0 0 1px;
+  transform: none;
+}
+
+.player-frame .overlay-message-form .input-wrapper .send {
+  position: relative;
+  right: auto;
+  bottom: auto;
+  align-self: flex-end;
+  margin: 0 6px 1px 0;
+  transform: none;
+}
+
+.player-frame .overlay-message-form .input-wrapper textarea {
+  padding-right: 6px;
+}
+
+.overlay-message-form .input-wrapper .send > svg.composer-progress-ring {
+  position: absolute;
+  left: calc(50% + 1px);
+  top: calc(50% - 1px);
+  width: 30px;
+  height: 30px;
+  opacity: var(--composer-progress-visible, 0);
+  transform: translate(-50%, -50%) scale(var(--composer-progress-scale, 0.78));
+  pointer-events: none;
+  transition:
+    opacity 360ms ease,
+    transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.overlay-message-form .input-wrapper .composer-progress-track,
+.overlay-message-form .input-wrapper .composer-progress-value {
+  fill: none;
+  stroke-width: 2;
+}
+
+.overlay-message-form .input-wrapper .composer-progress-track {
+  stroke: var(--composer-progress-track, rgba(255, 255, 255, 0.12));
+}
+
+.overlay-message-form .input-wrapper .composer-progress-value {
+  stroke: var(--composer-progress-color, rgba(47, 184, 164, 1));
+  stroke-linecap: round;
+  stroke-dasharray: var(--composer-progress-length, 0) 100;
+  stroke-dashoffset: 0;
+  transform: rotate(-90deg);
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: stroke-dasharray 220ms ease, stroke 180ms ease;
+}
+
+.overlay-message-form .send-cooldown {
+  display: inline-grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  color: rgba(255, 255, 255, 0.48);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+  line-height: 1;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
+  filter: grayscale(0.7);
+}
+
+.overlay-message-form .send[data-spam-cooldown="true"] {
+  pointer-events: auto;
+}
+
+.overlay-message-form .input-wrapper .send:hover {
+  opacity: 0.9;
+}
+
+.overlay-message-form .input-wrapper .send > * {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+.overlay-message-form .input-wrapper .send > svg:not(.composer-progress-ring) {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+.overlay-message-form .input-wrapper .send:disabled {
+  opacity: 0.9;
+}

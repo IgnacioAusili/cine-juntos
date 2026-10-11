@@ -1,5 +1,5 @@
-import { FIREBASE_VERSION, MAX_ROOM_PARTICIPANTS, STALE_MEMBER_TIMEOUT_MS } from "../core/utils.js";
-import { state, makeMemberPayload, logEvent } from "../core/state.js?v=20261008";
+import { FIREBASE_VERSION, MAX_ROOM_PARTICIPANTS, STALE_MEMBER_TIMEOUT_MS } from "../core/utils.js?v=20261010-file-size-refactor-02";
+import { state, makeMemberPayload, logEvent } from "../core/state.js?v=20261010-file-size-refactor-02";
 
 const INITIAL_CHAT_HISTORY_PAGE_SIZE = 8;
 const CHAT_HISTORY_PAGE_SIZE = 12;

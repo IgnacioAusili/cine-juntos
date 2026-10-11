@@ -1,0 +1,241 @@
+/* En landscape angosto el chat lateral conserva la composicion de escritorio.
+   El modo vertical sigue usando la navegacion apilada definida en mobile.css. */
+@media (hover: none) and (pointer: coarse) {
+
+  html.viewport-landscape body.fullscreen-mode .app-shell {
+    position: fixed;
+    inset: var(--app-viewport-offset-top, 0px) auto auto var(--app-viewport-offset-left, 0px);
+    display: grid;
+    width: var(--app-viewport-width, 100vw);
+    height: var(--app-viewport-height);
+    min-width: 0;
+    min-height: 0;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    gap: 0;
+    overflow: hidden;
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  html.viewport-landscape body.fullscreen-mode .topbar {
+    display: none;
+  }
+
+  html.viewport-landscape body.fullscreen-mode .session-view[data-chat-dock="right"] {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    margin: 0;
+  }
+
+  html.viewport-landscape body.fullscreen-mode .session-view[data-chat-dock="right"] .workspace {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    margin: 0;
+    flex: 1 1 auto;
+    grid-template-columns: minmax(0, 1fr) var(--chat-panel-width);
+    grid-template-rows: minmax(0, 1fr);
+    grid-template-areas: "video chat";
+  }
+
+  html.viewport-landscape body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="right"] .workspace {
+    grid-template-columns: minmax(0, 1fr) 0;
+  }
+
+  /* También en fullscreen el ancho debe animarse desde el borde derecho;
+     mobile-fullscreen-viewport sólo fija el tamaño de la superficie. */
+  html.viewport-landscape body.fullscreen-mode .session-view[data-chat-dock="right"] .workspace {
+    display: flex;
+    grid-template-columns: none;
+    grid-template-rows: none;
+    grid-template-areas: none;
+  }
+
+  html.viewport-landscape body.fullscreen-mode .session-view[data-chat-dock="right"] .chat-area {
+    flex: 0 0 var(--chat-panel-width);
+    width: var(--chat-panel-width);
+    min-width: 0;
+  }
+
+  html.viewport-landscape body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="right"] .chat-area {
+    flex-basis: 0;
+    width: 0;
+  }
+
+  html.viewport-landscape body.fullscreen-mode .session-view[data-chat-dock="right"] .video-area,
+  html.viewport-landscape body.fullscreen-mode .session-view[data-chat-dock="right"] .player-frame,
+  html.viewport-landscape body.fullscreen-mode .session-view[data-chat-dock="right"] .chat-area {
+    height: 100%;
+    min-height: 0;
+  }
+
+  html.viewport-landscape body.fullscreen-mode .session-view[data-chat-dock="right"] .session-toolbar {
+    display: none;
+  }
+
+  /* En fullscreen apaisado móvil el dock inferior se comporta como la misma
+     cortina del chat normal, pero sobre el video: no agrega una segunda fila
+     ni desplaza la página y cubre toda la superficie al terminar de abrirse. */
+  html.viewport-landscape body.fullscreen-mode
+    .session-view[data-chat-dock="bottom"] {
+    position: relative;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0;
+    margin: 0 !important;
+  }
+
+  html.viewport-landscape body.fullscreen-mode
+    .session-view[data-chat-dock="bottom"] .workspace {
+    position: relative;
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden;
+    grid-template: none !important;
+  }
+
+  html.viewport-landscape body.fullscreen-mode
+    .session-view[data-chat-dock="bottom"] .video-area {
+    position: relative;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+  }
+
+  html.viewport-landscape body.fullscreen-mode
+    .session-view[data-chat-dock="bottom"] .chat-area {
+    position: absolute;
+    top: auto;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 20;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    opacity: 1 !important;
+    transform: translateY(0);
+    transition:
+      transform 320ms ease,
+      grid-template-rows 220ms ease;
+    will-change: transform, grid-template-rows;
+  }
+
+  html.viewport-landscape body.fullscreen-mode
+    .session-view.chat-collapsed[data-chat-dock="bottom"] .chat-area {
+    transform: translateY(100%);
+    opacity: 1 !important;
+    pointer-events: none;
+  }
+
+  html.viewport-landscape body.fullscreen-mode
+    .session-view[data-chat-dock="bottom"] .chat-collapse-hover-zone {
+    z-index: 22;
+  }
+
+  /* En fullscreen la referencia visual del header incluye el separador
+     inferior; bajar solo la flecha la alinea con esa referencia sin mover el
+     resto del contenido ni cambiar el botón. */
+  html.viewport-landscape body.fullscreen-mode
+    .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
+    .chat-collapse-hover-zone[data-chat-control="collapse"] {
+    /* El botón superior no depende del rectángulo animado del chat: aparece
+       en su posición final desde el primer frame de la expansión. */
+    top: calc(38px / 2);
+    transform: translate(-50%, calc(-50% + 2px));
+  }
+
+  /* La flecha no desaparece durante la cortina. La zona puede seguir sin
+     capturar un segundo toque durante el reflow, pero el control permanece
+     visible y no deja que el nombre salte a ocupar su lugar. */
+  html.viewport-landscape body.fullscreen-mode
+    .session-view[data-chat-dock="bottom"] .chat-collapse-hover-zone.is-transitioning,
+  html.viewport-landscape body.fullscreen-mode
+    .session-view[data-chat-dock="bottom"] .chat-collapse-hover-zone.is-transitioning .chat-collapse-handle,
+  html.viewport-landscape body.fullscreen-mode
+    .session-view[data-chat-dock="bottom"] .chat-collapse-hover-zone.is-transitioning .chat-collapse-icon-anchor {
+    visibility: visible;
+    opacity: 1 !important;
+  }
+
+}
+
+/* En fullscreen apaisado el dock inferior y el lateral son superficies
+   distintas. Estas fases hacen que el cambio conserve la secuencia de PC:
+   esconder, cambiar la composición y revelar el nuevo panel. */
+@media (hover: none) and (pointer: coarse) and (orientation: landscape) {
+  html.viewport-landscape body.fullscreen-mode
+    .session-view.chat-dock-mobile-transition-out
+    .chat-area {
+    opacity: 1 !important;
+    transform: translate(0, 0) !important;
+    transition: none !important;
+    pointer-events: auto;
+    will-change: transform, opacity;
+  }
+
+  html.viewport-landscape body.fullscreen-mode
+    .session-view.chat-dock-mobile-transition-out-active[data-chat-dock="right"]
+    .chat-area {
+    opacity: 0 !important;
+    transform: translateX(100%) !important;
+    transition: transform 260ms ease, opacity 220ms ease !important;
+    pointer-events: none;
+  }
+
+  html.viewport-landscape body.fullscreen-mode
+    .session-view.chat-dock-mobile-transition-out-active[data-chat-dock="bottom"]
+    .chat-area {
+    opacity: 0 !important;
+    transform: translateY(100%) !important;
+    transition: transform 260ms ease, opacity 220ms ease !important;
+    pointer-events: none;
+  }
+
+  html.viewport-landscape body.fullscreen-mode
+    .session-view.chat-dock-mobile-transition-in[data-chat-dock="right"]
+    .chat-area {
+    opacity: 0 !important;
+    transform: translateX(100%) !important;
+    transition: none !important;
+    pointer-events: none;
+    will-change: transform, opacity;
+  }
+
+  html.viewport-landscape body.fullscreen-mode
+    .session-view.chat-dock-mobile-transition-in-active[data-chat-dock="right"]
+    .chat-area {
+    opacity: 1 !important;
+    transform: translateX(0) !important;
+    transition: transform 320ms ease, opacity 260ms ease !important;
+    pointer-events: auto;
+  }
+
+  html.viewport-landscape body.fullscreen-mode
+    .session-view.chat-dock-mobile-transition-in[data-chat-dock="bottom"]
+    .chat-area {
+    opacity: 0 !important;
+    transform: translateY(100%) !important;
+    transition: none !important;
+    pointer-events: none;
+    will-change: transform, opacity;
+  }
+
+  html.viewport-landscape body.fullscreen-mode
+    .session-view.chat-dock-mobile-transition-in-active[data-chat-dock="bottom"]
+    .chat-area {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+    transition: transform 320ms ease, opacity 260ms ease !important;
+    pointer-events: auto;
+  }
+}

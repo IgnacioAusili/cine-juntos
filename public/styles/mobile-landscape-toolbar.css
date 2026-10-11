@@ -1,0 +1,160 @@
+
+
+/* En cualquier landscape con chat lateral, la toolbar superior acompaña todo
+   el conjunto video + chat, tanto abierto como colapsado. El ajuste es
+   independiente de los radios, que solo cambian en el full-bleed móvil. */
+@media (orientation: landscape) {
+  /* La toolbar no debe depender del ancho animado del video. Al convertir el
+     video-area en un contenedor estático, el workspace pasa a ser su bloque
+     de referencia y la toolbar conserva su posición durante toda la cortina. */
+  html.viewport-landscape body:not(.is-lobby)
+  .app-shell .session-view[data-chat-dock="right"] .video-area {
+    position: static;
+  }
+
+  html.viewport-landscape body:not(.is-lobby)
+  .app-shell .session-view[data-chat-dock="right"] .session-toolbar {
+    top: calc(var(--session-toolbar-height) * -1);
+    right: auto;
+    bottom: auto;
+    left: 0;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+  }
+
+  html.viewport-landscape body:not(.is-lobby)
+  .app-shell .session-view[data-chat-dock="right"] .chat-area {
+    border-top-right-radius: 0;
+  }
+
+}
+
+/* En landscape móvil solo la sesión es una superficie de borde a borde. El
+   header conserva el gutter exterior para que el tag de sala no quede pegado
+   ni recortado contra los bordes. */
+@media (hover: none) and (pointer: coarse) and (max-height: 500px) and (orientation: landscape) {
+  html.viewport-landscape:not(.bottom-chat-keyboard-open):has(
+    body:not(.is-lobby) .session-view[data-chat-dock="bottom"]
+  ) {
+    scroll-snap-type: none;
+  }
+
+  html.viewport-landscape body:not(.is-lobby)
+    .session-view[data-chat-dock="bottom"] .video-area {
+    scroll-snap-align: none;
+    scroll-snap-stop: normal;
+    scroll-margin-top: 0;
+  }
+
+  html.viewport-landscape body:not(.is-lobby)
+    .session-view[data-chat-dock="bottom"] .chat-area {
+    scroll-snap-align: none;
+    scroll-snap-stop: normal;
+    scroll-margin-top: 0;
+  }
+
+  body:not(.is-lobby):not(.fullscreen-mode) .app-shell {
+    width: 100vw;
+    max-width: none;
+    box-sizing: border-box;
+    min-height: var(--app-viewport-height);
+    margin: 0;
+    padding: var(--app-shell-gutter) 0 0;
+    gap: var(--session-header-gap);
+  }
+
+  body:not(.is-lobby):not(.fullscreen-mode) .topbar {
+    margin-inline: var(--app-shell-gutter);
+  }
+
+  /* El tag de sala tiene un ajuste vertical propio para escritorio. En
+     landscape móvil sus dos márgenes internos deben ser idénticos para que
+     el espacio visual no pese más hacia la sesión. */
+  body:not(.is-lobby):not(.fullscreen-mode) .topbar #roomChip {
+    padding-block: 5px;
+  }
+
+  body:not(.is-lobby) .session-view {
+    width: 100%;
+    max-width: none;
+    margin-inline: 0;
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock] .player-frame:not(.mini-player-surface),
+  body:not(.is-lobby) .session-view[data-chat-dock] .chat-area,
+  body:not(.is-lobby) .session-view[data-chat-dock] .chat-area::before {
+    border: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  body:not(.is-lobby) .session-view[data-chat-dock] .player-frame:not(.mini-player-surface),
+  body:not(.is-lobby) .session-view[data-chat-dock] .chat-area {
+    box-shadow: none !important;
+  }
+}
+
+/* En fullscreen móvil apaisado el dock lateral debe conservar exactamente
+   la composición flex del modo normal. El grid vertical de la primera regla
+   de fullscreen puede ganar durante el cambio de viewport y dejar el panel
+   sin la misma cortina horizontal. */
+@media (hover: none) and (pointer: coarse) and (max-height: 500px) and (orientation: landscape) {
+  html.viewport-landscape body.fullscreen-mode
+    .session-view[data-chat-dock="right"] .workspace {
+    display: flex !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    gap: 0 !important;
+    grid-template-columns: none !important;
+    grid-template-rows: none !important;
+    grid-template-areas: none !important;
+  }
+
+  html.viewport-landscape body.fullscreen-mode
+    .session-view[data-chat-dock="right"] .video-area {
+    flex: 1 1 auto;
+    width: auto;
+    height: 100% !important;
+    min-width: 0;
+    min-height: 0;
+  }
+
+  html.viewport-landscape body.fullscreen-mode
+    .session-view[data-chat-dock="right"] .chat-area {
+    flex: 0 0 var(--chat-panel-width);
+    width: var(--chat-panel-width);
+    height: 100% !important;
+    /* states.css agrega 8px de padding al dock lateral de fullscreen para la
+       variante de escritorio. En móvil apaisado ese padding desplaza el
+       header hacia abajo y hace que la línea de colapso parezca más alta. */
+    padding: 0 !important;
+    min-width: 0;
+    min-height: 0;
+    grid-template-rows: 34px minmax(0, 1fr);
+  }
+
+  html.viewport-landscape body.fullscreen-mode
+    .session-view[data-chat-dock="right"] .chat-tools {
+    height: 34px;
+    min-height: 34px;
+    max-height: 34px;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  html.viewport-landscape body.fullscreen-mode
+    .session-view.chat-collapsed[data-chat-dock="right"] .chat-area {
+    flex-basis: 0;
+    width: 0;
+  }
+
+  /* Un poco más de recorrido para el volumen sin agrandar la barra de
+     controles ni cambiar el tamaño del thumb. */
+  html.viewport-landscape body:not(.is-lobby) .player-volume-slider-wrap,
+  html.viewport-landscape body:not(.is-lobby) .player-volume-input {
+    width: 68px;
+    max-width: 68px;
+  }
+}

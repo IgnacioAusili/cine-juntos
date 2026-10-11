@@ -1,0 +1,220 @@
+/* En landscape angosto el chat lateral conserva la composicion de escritorio.
+   El modo vertical sigue usando la navegacion apilada definida en mobile.css. */
+@media (hover: none) and (pointer: coarse) {
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-collapse-icon-anchor {
+    width: 26px;
+    height: 26px;
+    flex-basis: 26px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+    background: rgba(20, 24, 28, 0.9);
+    box-shadow:
+      0 4px 14px rgba(0, 0, 0, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] #dockChatButton {
+    width: 24px;
+    min-height: 24px;
+    height: 24px;
+    flex-basis: 24px;
+  }
+
+  /* En un reproductor apaisado bajo el chat interno se alinea con el botón
+     que lo abre y se despliega hacia su izquierda. Usa todo el alto real del
+     reproductor: la barra de controles no debe recortar ni capturar su zona
+     inferior. */
+  html.viewport-landscape body:not(.is-lobby) .player-frame:not(.mini-player-surface) > .player-chat {
+    --inside-chat-top-offset: 8px;
+    --player-chat-bottom-inset: 14px;
+    top: var(--inside-chat-top-offset);
+    right: 42px;
+    bottom: var(--player-chat-bottom-inset);
+    left: auto;
+    width: min(250px, calc(100% - 52px));
+    max-height: calc(
+      100% - var(--inside-chat-top-offset) - var(--player-chat-bottom-inset)
+    );
+    z-index: 12;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-area > .message-form .input-wrapper {
+    min-height: 30px;
+    align-items: center;
+    border-radius: 16px;
+    padding-left: 4px;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-area > .message-form .input-wrapper textarea {
+    min-height: 30px;
+    max-height: 66px;
+    padding-block: 5px;
+    padding-inline: 8px;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-area > .message-form .input-wrapper .emoji-trigger {
+    align-self: flex-end;
+    flex: 0 0 24px;
+    width: 24px;
+    min-height: 30px;
+    height: 30px;
+    margin: 0;
+    padding: 0;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-area > .message-form .input-wrapper .send {
+    align-self: flex-end;
+    flex: 0 0 34px;
+    width: 34px;
+    min-height: 30px;
+    height: 30px;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* El chat interno conserva en landscape el mismo composer compacto que
+     usa el reproductor en portrait, en lugar de heredar el tamaño del chat
+     externo lateral. */
+  html.viewport-landscape body:not(.is-lobby) .player-frame .overlay-message-form {
+    padding-inline: 8px;
+    padding-bottom: 8px;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .player-frame .overlay-message-form .input-wrapper {
+    width: 100%;
+    min-height: 30px;
+    border-radius: 16px;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock] .player-frame .overlay-message-form .input-wrapper textarea {
+    min-height: 30px;
+    max-height: 66px;
+    padding: 5px 6px;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .player-frame .overlay-message-form .input-wrapper .emoji-trigger {
+    width: 24px;
+    min-height: 30px;
+    height: 30px;
+    flex-basis: 24px;
+    margin: 0;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .player-frame .overlay-message-form .input-wrapper .send {
+    width: 34px;
+    min-height: 30px;
+    height: 30px;
+    flex-basis: 34px;
+    margin: 0;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .message-form .input-wrapper .emoji-trigger,
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .message-form .input-wrapper .send {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view.chat-collapsed[data-chat-dock="right"] .chat-area {
+    flex-basis: 0;
+    width: 0;
+  }
+
+  /* El dock lateral usa la misma cortina que escritorio: el borde derecho
+     queda anclado y el panel cambia su flex-basis desde ese borde. La grilla
+     apaisada anterior cambiaba la columna de golpe y hacía crecer el chat
+     desde la unión izquierda, además de dejar que sus hijos se recalcularan
+     durante el trayecto. */
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .workspace {
+    display: flex;
+    grid-template-columns: none;
+    grid-template-rows: none;
+    grid-template-areas: none;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-area {
+    flex: 0 0 var(--chat-panel-width);
+    width: var(--chat-panel-width);
+    min-width: 0;
+  }
+
+  html.viewport-landscape body:not(.is-lobby) .session-view.chat-collapsed[data-chat-dock="right"] .chat-area {
+    flex-basis: 0;
+    width: 0;
+  }
+
+  /* Al abrir el teclado en el chat lateral, el viewport de layout se reduce.
+     Comprimir el workspace contra ese alto mantiene video y chat anclados a
+     la misma posición de página; el scroll automático de Chrome ya no tiene
+     que subir toda la sesión para encontrar el composer. */
+  html.viewport-landscape.right-chat-keyboard-open
+    body:not(.is-lobby):not(.fullscreen-mode)
+    .session-view[data-chat-dock="right"] .workspace {
+    height: var(--right-chat-visible-height, var(--app-viewport-height)) !important;
+    max-height: var(--right-chat-visible-height, var(--app-viewport-height)) !important;
+    min-height: 0 !important;
+  }
+
+  html.viewport-landscape.right-chat-keyboard-open
+    body:not(.is-lobby):not(.fullscreen-mode)
+    .session-view[data-chat-dock="right"] .video-area,
+  html.viewport-landscape.right-chat-keyboard-open
+    body:not(.is-lobby):not(.fullscreen-mode)
+    .session-view[data-chat-dock="right"] .chat-area {
+    height: 100% !important;
+    min-height: 0 !important;
+  }
+
+  /* El teclado puede abrirse mientras el overlay del reproductor está visible.
+     La clase conserva la transición de la barra y no captura punteros, por lo
+     que un toque sobre el video sigue llegando a fullscreen.js. */
+  body:not(.is-lobby):not(.fullscreen-mode)
+    .session-view[data-chat-dock="right"] .player-frame.player-controls-keyboard-hidden
+    .player-bottom-actions,
+  body:not(.is-lobby):not(.fullscreen-mode)
+    .session-view[data-chat-dock="right"] .player-frame.player-controls-keyboard-hidden
+    .player-center-actions {
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      opacity 180ms ease,
+      transform 180ms ease;
+  }
+
+  body:not(.is-lobby):not(.fullscreen-mode)
+    .session-view[data-chat-dock="right"] .player-frame.player-controls-keyboard-hidden
+    .player-bottom-actions {
+    transform: translateY(6px);
+  }
+
+  /* Solo el landscape full-bleed móvil elimina el gutter exterior. La
+     variante de tablet conserva el marco separado y sus radios. */
+@media (hover: none) and (pointer: coarse) and (max-height: 500px) and (orientation: landscape) {
+    /* En landscape móvil el reproductor y el chat forman una sola superficie:
+       no deben recuperar los radios del layout de escritorio. La toolbar vive
+       dentro del video, pero su fondo debe continuar por encima del chat abierto
+       hasta el borde real del workspace. */
+    html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .player-frame:not(.mini-player-surface),
+    html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-area,
+    html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-area::before {
+      border-radius: 0 !important;
+    }
+
+    html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .player-frame:not(.mini-player-surface),
+    html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .player-frame:not(.mini-player-surface) video {
+      width: 100% !important;
+      max-width: 100%;
+      min-width: 0;
+    }
+
+  }
+
+  /* Fullscreen debe ser una superficie fija del viewport visible. El topbar y
+     la toolbar siguen disponibles fuera de fullscreen, pero no consumen alto
+     del video cuando la pantalla apaisada queda limitada por el teclado. */
+  html.viewport-landscape body.fullscreen-mode {
+    width: var(--app-viewport-width, 100vw);
+    height: var(--app-viewport-height);
+    min-height: 0;
+    overflow: hidden;
+  }}

@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <base href="./" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, interactive-widget=resizes-content"
+    />
+    <title>Cine Juntos | Mirar, chatear y compartir</title>
+    <meta
+      name="description"
+      content="Mirar videos juntos, chatear en vivo y disfrutar una sala compartida con reproducción sincronizada."
+    />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' https://www.gstatic.com https://apis.google.com https://cinecompartidopagina-default-rtdb.firebaseio.com https://*.firebaseio.com https://*.firebasedatabase.app; script-src-elem 'self' https://www.gstatic.com https://apis.google.com https://cinecompartidopagina-default-rtdb.firebaseio.com https://*.firebaseio.com https://*.firebasedatabase.app; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src-elem 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' http: https: data: blob:; media-src 'self' http: https: blob: data:; frame-src 'self' https://cinecompartidopagina.firebaseapp.com https://*.firebaseapp.com https://*.firebaseio.com; connect-src 'self' http://localhost:* http://127.0.0.1:* https://www.gstatic.com https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; object-src 'none'; base-uri 'self'; form-action 'self'"
+    />
+    <link rel="preconnect" href="https://www.gstatic.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap"
+    />
+    <link rel="icon" href="./public/favicon.svg" type="image/svg+xml" />
+<link rel="stylesheet" href="./public/styles.css?v=20261011-overlay-selector-size-01" />
+  </head>
+  <body class="is-lobby">
+    <div class="app-shell">
+      <!-- @include features/session/topbar.html -->
+
+      <!-- @include features/lobby/lobby-screen.html -->
+
+      <!-- @include features/session/session-view.html -->
+
+      <div class="emoji-popover" id="emojiPopover" hidden aria-label="Selector de emojis"></div>
+      <div class="message-menu" id="messageMenu" hidden>
+        <button type="button" data-action="copy">
+          <span data-lucide="copy" aria-hidden="true"></span>
+          <span>Copiar</span>
+        </button>
+        <button type="button" data-action="reply">
+          <span data-lucide="reply" aria-hidden="true"></span>
+          <span>Responder</span>
+        </button>
+      </div>
+      <div class="tooltip-layer" id="tooltipLayer" hidden></div>
+      <button
+        class="mobile-debug-button"
+        id="mobileDebugButton"
+        type="button"
+        hidden
+        aria-label="Ver logs"
+      >
+        Logs
+      </button>
+    </div>
+
+    <!-- @include features/session/dialogs.html -->
+
+    <script src="./public/dev-runtime.js?v=20261010-file-size-refactor-02"></script>
+    <script defer src="./public/vendor/lucide-0.468.0/lucide.min.js?v=20261010-file-size-refactor-02"></script>
+    <script src="./public/firebase-config.js?v=20261010-file-size-refactor-02"></script>
+    <script type="module" src="./src/features/chat/image-lightbox.js?v=20261010-file-size-refactor-02"></script>
+    <script type="module" src="./src/features/tooltip-page-lifecycle.js?v=20261011-chat-ui-fixes-03"></script>
+    <script type="module" src="./src/main.js?v=20261011-overlay-scroll-top-01"></script>
+    <script type="module" src="./src/features/chat/chat-input-layout.js?v=20261011-chat-interaction-fixes-01"></script>
+    <script type="module" src="./src/features/chat/component-aspect-layout.js?v=20261010-file-size-refactor-02"></script>
+    <script type="module" src="./src/features/chat/switch-pointer-glow.js?v=20261010-file-size-refactor-02"></script>
+  </body>
+</html>

@@ -1,0 +1,222 @@
+
+
+@media (max-width: 680px) {
+  /* En pantallas chicas la entrada usa una sola columna real: el contenido
+     no hereda el padding lateral del grid de escritorio ni el desplazamiento
+     decorativo del boleto. */
+  /* En reposo el contenido entra completo; con el teclado el documento puede
+     crecer de forma natural para que Chrome desplace solo lo imprescindible. */
+  body.is-lobby {
+    height: auto;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  body.is-lobby .app-shell {
+    height: auto;
+    min-height: 100dvh;
+    padding-bottom: 0;
+    grid-template-rows: auto auto;
+    align-content: start;
+  }
+
+  .app-shell {
+    gap: 0;
+  }
+
+  body.is-lobby .topbar {
+    display: none;
+  }
+
+  .lobby-screen {
+    height: auto;
+    min-height: max(0px, calc(100dvh - var(--app-shell-gutter)));
+    gap: 0;
+    grid-template-rows: auto auto;
+    align-content: space-between;
+    padding-bottom: 8px;
+  }
+
+  .lobby-marquee {
+    display: none;
+  }
+
+  .lobby-grid {
+    width: 100%;
+    min-height: 0;
+    gap: clamp(10px, 1.8vh, 16px);
+    align-content: start;
+    padding-inline: 0;
+    transform: translateY(-8px);
+  }
+
+  .lobby-hero {
+    width: min(360px, calc(100% - 32px));
+    position: relative;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      "icon title"
+      "description description"
+      "features features";
+    align-items: center;
+    justify-items: start;
+    column-gap: 14px;
+    row-gap: clamp(12px, 2vh, 16px);
+    text-align: left;
+    transform: translateY(-4px);
+  }
+
+  /* Una guarda editorial completa el vacío entre la descripción y el boleto.
+     Es absoluta para no aumentar la altura del lobby ni crear scroll. */
+  .lobby-hero::before,
+  .lobby-hero::after {
+    position: absolute;
+    top: calc(100% - 8px);
+    left: 50%;
+    content: "";
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .lobby-hero::before {
+    width: clamp(190px, 58vw, 242px);
+    height: 16px;
+    transform: translateX(-50%);
+    background:
+      linear-gradient(90deg, transparent, rgba(240, 140, 58, 0.54) 19%, rgba(240, 140, 58, 0.54) 43%, transparent 49%) center / 100% 1px no-repeat,
+      linear-gradient(90deg, transparent 51%, rgba(47, 184, 164, 0.58) 57%, rgba(47, 184, 164, 0.58) 81%, transparent) center / 100% 1px no-repeat;
+  }
+
+  .lobby-hero::after {
+    width: 9px;
+    height: 9px;
+    border: 1px solid rgba(240, 140, 58, 0.78);
+    background: rgba(17, 22, 25, 0.94);
+    box-shadow: 0 0 0 3px rgba(17, 22, 25, 0.88), 0 0 12px rgba(240, 140, 58, 0.2);
+    transform: translate(-50%, 3px) rotate(45deg);
+  }
+
+  .lobby-hero > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .lobby-title {
+    grid-area: title;
+    font-size: clamp(4.65rem, 18vw, 5.8rem);
+    text-align: left;
+    line-height: 0.92;
+    margin-bottom: 0;
+    align-self: center;
+  }
+
+  .lobby-mobile-title-icon {
+    grid-area: icon;
+    display: block;
+    width: 66px;
+    height: 66px;
+    margin: 0;
+    align-self: center;
+  }
+
+  .lobby-title .lobby-title-icon {
+    display: none;
+  }
+
+  .lobby-description {
+    grid-area: description;
+    justify-self: center;
+    width: calc(100% + 40px);
+    max-width: none;
+    font-size: 1.08rem;
+    line-height: 1.48;
+    text-align: center;
+    text-wrap: pretty;
+    white-space: normal;
+    transform: translateY(-2px);
+  }
+
+  /* En móvil el hero no muestra la lista de prestaciones: el boleto de
+     entrada queda como la siguiente pieza visual, sin esa franja intermedia. */
+  .lobby-features {
+    display: none;
+  }
+
+  .lobby-description-full {
+    display: none;
+  }
+
+  .lobby-description-full,
+  .lobby-disclaimer-full {
+    display: inline;
+  }
+
+  .lobby-description-mobile,
+  .lobby-disclaimer-mobile {
+    display: none;
+  }
+
+  .lobby-feature-description-mobile {
+    display: inline;
+  }
+
+  .lobby-feature-description-full {
+    display: none;
+  }
+
+  .lobby-disclaimer {
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+    transform: translateX(8px);
+    font-size: 0.56rem;
+    line-height: 1.35;
+  }
+
+  .lobby-features {
+    grid-area: features;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.1fr);
+    width: calc(100% + 16px);
+    margin-inline: -8px;
+    column-gap: 14px;
+    row-gap: 8px;
+    margin-top: 18px;
+    transform: translateY(10px);
+    padding-top: 12px;
+    justify-items: center;
+  }
+
+  .lobby-feature {
+    min-width: 0;
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
+    padding: 0 2px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    text-align: left;
+  }
+
+  .lobby-feature-icon {
+    width: 20px;
+    height: 20px;
+    flex: 0 0 auto;
+  }
+
+  .lobby-feature-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .lobby-feature-text {
+    min-width: 0;
+    flex: 1 1 auto;
+    align-items: flex-start;
+    text-align: left;
+    gap: 0;
+  }}

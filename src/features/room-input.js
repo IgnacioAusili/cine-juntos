@@ -1,10 +1,10 @@
-import { dom } from "../core/dom.js";
-import { LAST_ROOM_KEY } from "../core/state.js?v=20261008";
+import { dom } from "../core/dom.js?v=20261010-file-size-refactor-02";
+import { LAST_ROOM_KEY } from "../core/state.js?v=20261010-file-size-refactor-02";
 import {
   ROOM_CREATE_ATTEMPT_LIMIT,
   ROOM_CREATE_ATTEMPT_WINDOW_MS,
   normalizeRoomCode,
-} from "../core/utils.js";
+} from "../core/utils.js?v=20261010-file-size-refactor-02";
 
 const ROOM_CREATE_ATTEMPTS_KEY = "cine-juntos-room-create-attempts";
 

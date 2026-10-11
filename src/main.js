@@ -1,34 +1,34 @@
 // Punto de entrada: inicializa la app y conecta los modulos principales.
 import {
   dom,
-} from "./core/dom.js";
+} from "./core/dom.js?v=20261010-file-size-refactor-02";
 import {
   state,
   applyInitialDefaults,
   detectTerminalLogEndpoint,
   logEvent,
-} from "./core/state.js?v=20261008";
+} from "./core/state.js?v=20261010-file-size-refactor-02";
 import {
   normalizeRoomCode,
-} from "./core/utils.js";
+} from "./core/utils.js?v=20261010-file-size-refactor-02";
 import {
   hydrateIcons,
   initializeUi,
   setConnection,
-} from "./features/icons-tooltips.js?v=20261010-tooltip-click-guard-01";
+} from "./features/icons-tooltips.js?v=20261011-chat-ui-fixes-03";
 import {
   wireLayoutMetrics,
-} from "./features/layout-metrics.js?v=20261008";
-import { wireLobbyKeyboardRestore } from "./features/lobby-keyboard.js?v=20261008";
-import { wireAboutDialogScrollbar } from "./features/about-dialog-scrollbar.js?v=20261008";
+} from "./features/layout-metrics.js?v=20261010-file-size-refactor-02";
+import { wireLobbyKeyboardRestore } from "./features/lobby-keyboard.js?v=20261010-file-size-refactor-02";
+import { wireAboutDialogScrollbar } from "./features/about-dialog-scrollbar.js?v=20261010-file-size-refactor-02";
 import {
   renderPresence,
   wireIdentityEvents,
-} from "./features/presence.js?v=20261008";
+} from "./features/presence.js?v=20261011-chat-ui-fixes-03";
 import {
   showLobby,
   initializeAboutDialog,
-} from "./features/session-ui.js?v=20261008";
+} from "./features/session-ui.js?v=20261010-file-size-refactor-02";
 import {
   buildEmojiPicker,
   getPersistedInsideChatStyle,
@@ -40,21 +40,21 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js?v=20261010-bottom-chat-collapse-rows-controls-01";
+} from "./features/chat/index.js?v=20261011-overlay-scroll-top-01";
 import {
   initializePlayer,
   wirePlayerEvents,
-} from "./features/player/index.js?v=20261010-bottom-chat-collapse-rows-controls-01";
-import { wireMobileFullscreenOrientation } from "./features/player/mobile-fullscreen-orientation.js";
-import { wireMobileChatKeyboardControls } from "./features/player/mobile-chat-keyboard-controls.js?v=20261008";
-import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20261008";
-import { wireMobileLandscapeVideoSnap } from "./features/mobile-landscape-video-snap.js?v=20261008";
-import { joinRoom, wireRoomEvents } from "./features/room.js?v=20261010-bottom-chat-collapse-rows-controls-01";
-import { wireTouchHover } from "./core/touch-interactions.js?v=20261008";
-import { installConsoleLogCapture, wireMobileDebugTools } from "./features/mobile-debug.js?v=20261008";
-import { wireMobileKeyboardDiagnostics } from "./features/mobile-keyboard-diagnostics.js?v=20261008";
-import { openDialogTestRoute } from "./features/dialog-test-routes.js?v=20261010-bottom-chat-collapse-rows-controls-01";
-import { wireLobbyLayoutVariants } from "./features/lobby-layout-variants.js?v=20261008";
+} from "./features/player/index.js?v=20261011-overlay-scroll-top-01";
+import { wireMobileFullscreenOrientation } from "./features/player/mobile-fullscreen-orientation.js?v=20261010-file-size-refactor-02";
+import { wireMobileChatKeyboardControls } from "./features/player/mobile-chat-keyboard-controls.js?v=20261010-file-size-refactor-02";
+import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20261011-chat-ui-fixes-03";
+import { wireMobileLandscapeVideoSnap } from "./features/mobile-landscape-video-snap.js?v=20261010-file-size-refactor-02";
+import { joinRoom, wireRoomEvents } from "./features/room.js?v=20261011-overlay-scroll-top-01";
+import { wireTouchHover } from "./core/touch-interactions.js?v=20261010-file-size-refactor-02";
+import { installConsoleLogCapture, wireMobileDebugTools } from "./features/mobile-debug.js?v=20261010-file-size-refactor-02";
+import { wireMobileKeyboardDiagnostics } from "./features/mobile-keyboard-diagnostics.js?v=20261010-file-size-refactor-02";
+import { openDialogTestRoute } from "./features/dialog-test-routes.js?v=20261011-overlay-scroll-top-01";
+import { wireLobbyLayoutVariants } from "./features/lobby-layout-variants.js?v=20261010-file-size-refactor-02";
 
 const requestedRoom = normalizeRoomCode(new URLSearchParams(window.location.search).get("room") || "");
 

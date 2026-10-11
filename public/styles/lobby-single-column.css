@@ -1,0 +1,153 @@
+
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-description {
+  grid-area: description;
+  justify-self: center;
+  width: calc(100% + 40px);
+  max-width: none;
+  font-size: 1.08rem;
+  line-height: 1.48;
+  text-align: center;
+  text-wrap: pretty;
+  white-space: normal;
+  transform: translateY(-2px);
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-hero::before,
+body.is-lobby[data-lobby-flow="single-column"] .lobby-hero::after {
+  position: absolute;
+  top: calc(100% - 8px);
+  left: 50%;
+  content: "";
+  pointer-events: none;
+  z-index: 0;
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-hero::before {
+  width: clamp(190px, 58cqw, 242px);
+  height: 16px;
+  transform: translateX(-50%);
+  background:
+    linear-gradient(90deg, transparent, rgba(240, 140, 58, 0.54) 19%, rgba(240, 140, 58, 0.54) 43%, transparent 49%) center / 100% 1px no-repeat,
+    linear-gradient(90deg, transparent 51%, rgba(47, 184, 164, 0.58) 57%, rgba(47, 184, 164, 0.58) 81%, transparent) center / 100% 1px no-repeat;
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-hero::after {
+  width: 9px;
+  height: 9px;
+  border: 1px solid rgba(240, 140, 58, 0.78);
+  background: rgba(17, 22, 25, 0.94);
+  box-shadow: 0 0 0 3px rgba(17, 22, 25, 0.88), 0 0 12px rgba(240, 140, 58, 0.2);
+  transform: translate(-50%, 3px) rotate(45deg);
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+@media (min-width: 681px) and (max-width: 980px) {
+  body.is-lobby[data-lobby-layout="columns"] .lobby-ticket-body {
+    gap: 12px;
+    padding: 18px 18px 16px;
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-fields {
+    gap: 10px;
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-fields input[type="text"] {
+    height: 40px;
+    min-height: 40px;
+    line-height: 40px;
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-actions > .button {
+    min-height: 42px;
+  }
+}
+
+/* El rango intermedio conserva la composición de escritorio y la hace
+   progresiva. El breakpoint de 980px anterior mezclaba el reset de una
+   columna con el modo columns, centrando el hero y agrandando el boleto. */
+@media (min-width: 681px) and (max-width: 980px) {
+  body.is-lobby .lobby-screen {
+    align-content: start;
+  }
+
+  body.is-lobby .lobby-grid {
+    align-self: start;
+    width: 100%;
+    grid-template-columns: minmax(0, 1fr) clamp(384px, 40vw, 404px);
+    align-items: start;
+    gap: clamp(16px, 2.4vw, 28px);
+    padding-inline: clamp(8px, 1.6vw, 18px);
+    margin-top: clamp(30px, 6vh, 40px);
+  }
+
+  body.is-lobby .lobby-hero {
+    width: 100%;
+    max-width: none;
+    justify-items: start;
+    align-self: start;
+    text-align: left;
+    column-gap: clamp(20px, 2.6vw, 28px);
+    row-gap: clamp(8px, 1.5vh, 14px);
+    transform: none;
+  }
+
+  body.is-lobby .lobby-title {
+    font-size: clamp(4rem, 8.6vw, 6.8rem);
+    justify-self: start;
+    text-align: left;
+  }
+
+  body.is-lobby .lobby-title-icon {
+    width: clamp(112px, 11vw, 150px);
+    height: clamp(112px, 11vw, 150px);
+    transform: none;
+  }
+
+  body.is-lobby .lobby-description {
+    width: 100%;
+    max-width: 68ch;
+    font-size: clamp(0.98rem, 1.2vw, 1.12rem);
+    line-height: 1.5;
+    text-align: left;
+    transform: none;
+  }
+
+  body.is-lobby .lobby-features {
+    width: 100%;
+    margin-top: clamp(6px, 1vh, 12px);
+    padding-top: clamp(10px, 1.4vh, 16px);
+    transform: none;
+  }
+
+  body.is-lobby .lobby-ticket {
+    width: clamp(384px, 40vw, 404px);
+    justify-self: end;
+    align-self: start;
+    margin-top: clamp(64px, 18vh, 108px);
+    transform: none;
+  }
+
+  body.is-lobby .lobby-ticket-body {
+    gap: clamp(8px, 1.2vw, 12px);
+    padding: clamp(12px, 1.5vw, 18px);
+  }
+
+  body.is-lobby .lobby-fields {
+    gap: clamp(7px, 1vw, 10px);
+  }
+
+  body.is-lobby .lobby-fields input[type="text"] {
+    height: clamp(36px, 4vw, 40px);
+    min-height: clamp(36px, 4vw, 40px);
+    line-height: clamp(36px, 4vw, 40px);
+  }
+
+  body.is-lobby .lobby-actions > .button {
+    min-height: clamp(38px, 4.2vw, 42px);
+  }
+}

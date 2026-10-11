@@ -9,14 +9,14 @@ La pagina no necesita servidor propio. Se puede publicar gratis en GitHub Pages 
 
 1. Archivos importantes del proyecto
 ====================================
-Estos archivos deben subirse al hosting:
+Estos archivos y carpetas deben subirse al hosting:
 
 - index.html
-- public/styles.css
-- src/main.js
+- public/ completo
+- src/ completo (modulos del navegador y fuentes HTML; los parciales no se cargan en runtime)
 - public/firebase-config.js
-- public/dev-runtime.js
-- README.md
+
+Antes de publicar, ejecutar `node scripts/build-html.js`. El servidor local lo hace automáticamente y GitHub Pages lo ensambla en su workflow.
 
 No hace falta subir dev-server.log si existe.
 
@@ -207,8 +207,8 @@ Opcion A - con Git:
 3. Crear una aplicacion de Pages.
 4. Conectar tu repositorio de GitHub.
 5. Framework preset: None.
-6. Build command: dejar vacio.
-7. Build output directory: dejar en / o vacio segun la interfaz.
+6. Build command: `node scripts/build-html.js`.
+7. Build output directory: la carpeta raiz del proyecto (`.`).
 8. Deploy.
 
 Opcion B - Direct Upload:
@@ -218,6 +218,8 @@ Opcion B - Direct Upload:
 3. Elegir Direct Upload.
 4. Subir la carpeta con los archivos estaticos.
 5. Deploy.
+
+Antes de subir, ejecutar `node scripts/build-html.js` para generar el `index.html` desde el template y los parciales.
 
 Cloudflare te da una URL parecida a:
 

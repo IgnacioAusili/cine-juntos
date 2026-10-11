@@ -1,11 +1,11 @@
-import { syncComponentStackChatHandle } from "./component-stack-controls.js?v=20261008";
-import { syncComponentStackShellInsets } from "./component-stack-insets.js?v=20261008";
-import { wireComponentAspectObservers } from "./component-aspect-observers.js?v=20261008-unified-panel-layout-01";
+import { syncComponentStackChatHandle } from "./component-stack-controls.js?v=20261010-file-size-refactor-02";
+import { syncComponentStackShellInsets } from "./component-stack-insets.js?v=20261010-file-size-refactor-02";
+import { wireComponentAspectObservers } from "./component-aspect-observers.js?v=20261010-file-size-refactor-02";
 import {
   hasLoadedVideo,
   isMeasuringExpandedTarget,
   measurePanelLayoutTarget,
-} from "./component-aspect-measurement.js?v=20261008-unified-panel-layout-01";
+} from "./component-aspect-measurement.js?v=20261010-file-size-refactor-02";
 
 const sessionView = document.querySelector("#sessionView");
 const appShell = document.querySelector(".app-shell");

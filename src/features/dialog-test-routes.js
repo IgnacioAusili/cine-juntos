@@ -1,15 +1,15 @@
 import {
   dom,
-} from "../core/dom.js";
+} from "../core/dom.js?v=20261010-file-size-refactor-02";
 import {
   showErrorDialog,
   showLoadReplaceDialog,
   showResumeVideoDialog,
   showSlowLoadDialog,
   showSession,
-} from "./session-ui.js?v=20261008";
-import { setVideoStatus } from "./player/player.js?v=20261010-bottom-chat-collapse-rows-controls-01";
-import { openLightboxForTest } from "./chat/image-lightbox.js?v=20261009-image-pan-01";
+} from "./session-ui.js?v=20261010-file-size-refactor-02";
+import { setVideoStatus } from "./player/player-video-source.js?v=20261011-overlay-scroll-top-01";
+import { openLightboxForTest } from "./chat/image-lightbox.js?v=20261010-file-size-refactor-02";
 
 export const DIALOG_TEST_ROUTES = Object.freeze({
   about: "Sobre este proyecto",

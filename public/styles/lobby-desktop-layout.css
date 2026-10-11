@@ -1,0 +1,218 @@
+
+
+/* En columnas, el boleto se centra dentro de la segunda pista real del grid.
+   La decisión de pasar a otra composición queda a cargo del layout medido,
+   no de un breakpoint fijo. */
+@media (min-width: 681px) {
+  body.is-lobby[data-lobby-layout="columns"] .lobby-ticket {
+    justify-self: center;
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-grid {
+    column-gap: var(--lobby-grid-column-gap);
+    padding-inline: 0;
+  }
+}
+
+/* Cuando el espacio medido del lado derecho se agota, solo cambia la
+   orientación del stub naranja; el resto de la composición permanece igual. */
+body.is-lobby[data-lobby-ticket-stub="top"] .lobby-ticket {
+  --lobby-ticket-top-stub-height: 36px;
+  grid-template-columns: 1fr;
+  grid-template-rows: var(--lobby-ticket-fit-stub-height, var(--lobby-ticket-top-stub-height)) minmax(0, 1fr);
+  width: max(0px, calc(clamp(360px, 40vw, 404px) - 36px));
+}
+
+body.is-lobby[data-lobby-ticket-stub="top"] .lobby-ticket-stub {
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: var(--lobby-ticket-fit-stub-height, var(--lobby-ticket-top-stub-height));
+  padding: 4px 14px;
+  border-right: 0;
+  border-bottom: 0;
+  writing-mode: horizontal-tb;
+  transform: none;
+}
+
+body.is-lobby[data-lobby-ticket-stub="top"] .lobby-ticket-body {
+  grid-column: 1;
+  grid-row: 2;
+  padding-inline: var(--lobby-ticket-fit-padding-inline, 18px);
+}
+
+body.is-lobby[data-lobby-ticket-stub="top"] .lobby-ticket-perforation {
+  top: var(--lobby-ticket-fit-stub-height, var(--lobby-ticket-top-stub-height));
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  box-shadow: none;
+  transform: translate(-50%, -50%);
+}
+
+body.is-lobby[data-lobby-ticket-stub="top"] .lobby-ticket::after {
+  inset: 0;
+  left: 0;
+  width: auto;
+  height: auto;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), transparent 16%);
+  transform: none;
+}
+
+/* Ajustes derivados del layout real: en una sola columna la descripción gana
+   un poco de presencia y el texto legal se compacta para no competir con el
+   contenido principal. No depende de un breakpoint de viewport. */
+body.is-lobby[data-lobby-flow="single-column"] .lobby-description {
+  font-size: clamp(1rem, calc(1rem + 0.25cqw), 1.16rem);
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-disclaimer {
+  font-size: clamp(0.52rem, 0.68vw, 0.62rem);
+}
+
+/* El centrado se activa por la estructura calculada del hero, no por un
+   ancho fijo de viewport. */
+body.is-lobby .lobby-hero[data-title-placement="centered"] .lobby-title {
+  width: max-content;
+  max-width: 100%;
+  justify-self: center;
+  text-align: left;
+}
+
+body.is-lobby .lobby-hero[data-title-placement="centered"] {
+  position: relative;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "title"
+    "description"
+    "features";
+}
+
+body.is-lobby .lobby-hero[data-title-placement="centered"] .lobby-title-icon {
+  position: absolute;
+  margin: 0;
+  transform: none;
+}
+
+/* El margen lateral pertenece al app-shell; el grid del lobby no agrega otro. */
+body.is-lobby[data-lobby-layout] .lobby-grid {
+  padding-inline: 0;
+}
+
+/* Mantiene estable la altura del hero mientras las columnas cambian de ancho. */
+@media (min-width: 681px) {
+  body.is-lobby[data-lobby-layout="columns"] .lobby-features {
+    gap: 14px clamp(8px, 1.2vw, 14px);
+    margin-top: 0;
+    padding-top: 16px;
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-feature {
+    gap: 12px;
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-feature-icon svg {
+    width: clamp(22px, 2.4vw, 25px);
+    height: clamp(22px, 2.4vw, 25px);
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-feature-text strong {
+    font-size: clamp(0.88rem, 1.6vw, 0.98rem);
+  }
+
+  body.is-lobby[data-lobby-layout="columns"] .lobby-feature-text small {
+    font-size: clamp(0.74rem, 1.35vw, 0.82rem);
+    line-height: 1.25;
+  }
+}
+
+/* Los tres espacios visibles son iguales: el gutter del app-shell forma parte
+   de cada margen exterior y se redistribuye entre el padding del grid y el gap. */
+@media (min-width: 681px) {
+  body.is-lobby[data-lobby-layout="columns"] .lobby-grid {
+    --lobby-hero-track-max: 658px;
+    --lobby-ticket-track-size: 404px;
+    --lobby-equal-horizontal-space: clamp(
+      8px,
+      min(
+        calc(33.333333vw - 330.333333px),
+        calc(10.526316vw - 77.842105px)
+      ),
+      52.666667px
+    );
+    /* En este layout el app-shell usa 10px: se reparte 1/3 hacia los márgenes
+       interiores y 2/3 hacia el centro para no alterar el ancho del hero. */
+    --lobby-shell-gutter-third: 3.333333px;
+    --lobby-shell-gutter-two-thirds: 6.666667px;
+    --lobby-grid-side-space: calc(
+      var(--lobby-equal-horizontal-space) - var(--lobby-shell-gutter-third)
+    );
+    --lobby-balanced-column-gap: calc(
+      var(--lobby-equal-horizontal-space) + var(--lobby-shell-gutter-two-thirds)
+    );
+    padding-inline: var(--lobby-grid-side-space);
+    grid-template-columns:
+      minmax(
+        0,
+        min(
+          var(--lobby-hero-track-max),
+          calc(100% - var(--lobby-balanced-column-gap) - var(--lobby-ticket-track-size))
+        )
+      )
+      var(--lobby-ticket-track-size);
+    column-gap: var(--lobby-balanced-column-gap);
+  }
+}
+
+/* Estos valores al final de la hoja neutralizan los retoques de la composición
+   horizontal aunque el apilado se active a un ancho intermedio. */
+body.is-lobby[data-lobby-flow="single-column"] .lobby-grid {
+  gap: var(--lobby-vertical-content-gap, clamp(10px, 1.8vh, 16px));
+  padding-inline: 0;
+  transform: translateY(-8px);
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-hero {
+  width: min(580px, calc(100% - 32px));
+  max-width: none;
+  column-gap: 14px;
+  row-gap: clamp(12px, 2vh, 16px);
+  transform: none;
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-title {
+  font-size: clamp(4.65rem, 18cqw, 5.8rem);
+  line-height: 0.92;
+  margin-bottom: 0;
+  padding-bottom: 0;
+  --lobby-title-lift: 0px;
+  transform: translate(var(--lobby-title-group-shift, 0px), 0);
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-description {
+  width: var(--lobby-description-fit-width, 100%);
+  max-width: none;
+  font-size: 1rem;
+  line-height: 1.48;
+  text-align: center;
+  text-wrap: pretty;
+  white-space: normal;
+  translate: none;
+  transform: translateY(-2px);
+}
+
+body.is-lobby .lobby-description[data-lobby-text-density="compact"] {
+  font-size: 0.95rem;
+}
+
+body.is-lobby .lobby-description[data-lobby-text-density="dense"] {
+  font-size: 0.9rem;
+  line-height: 1.44;
+}
+
+body.is-lobby[data-lobby-flow="single-column"] .lobby-footer .lobby-disclaimer[data-lobby-text-density="compact"] {
+  font-size: clamp(0.49rem, 0.64vw, 0.58rem);
+}

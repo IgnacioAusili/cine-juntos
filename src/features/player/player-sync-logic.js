@@ -1,32 +1,41 @@
 // Sincronizacion del player con la sala: estado remoto, aplicacion y publicacion.
-import { dom } from "../../core/dom.js";
+import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
 import {
   state,
   getDisplayName,
   getTransportNow,
   logEvent,
-} from "../../core/state.js?v=20261008";
+} from "../../core/state.js?v=20261010-file-size-refactor-02";
 import {
   MAX_DRIFT_SECONDS,
   HARD_DRIFT_SECONDS,
   SEND_THROTTLE_MS,
   formatSeconds,
-} from "../../core/utils.js";
-import { markParticipantActive, rememberParticipant } from "../presence.js?v=20261008";
-import { setSyncStatus } from "../session-ui.js?v=20261008";
-import { sendVideoEventMessage, renderMessage } from "../chat/index.js?v=20261010-bottom-chat-collapse-rows-controls-01";
-// Import circular intencional y seguro: estas funciones se invocan en runtime,
-// no durante la carga del modulo, y player.js a su vez importa publishState.
-import { clearVideoSource, setVideoSource, waitForVideoMetadata } from "./player.js?v=20261010-bottom-chat-collapse-rows-controls-01";
+} from "../../core/utils.js?v=20261010-file-size-refactor-02";
+import { markParticipantActive, rememberParticipant } from "../presence.js?v=20261011-chat-ui-fixes-03";
+import { sendVideoEventMessage } from "../chat/index.js?v=20261011-overlay-scroll-top-01";
+import { configurePlaybackRecoveryPort, describePlaybackIssue, cancelPendingPlaybackIssueDetection, pauseRoomForPlaybackIssue, clearPlaybackRecoveryTracking, attemptPlaybackRecovery } from "./player-sync-recovery.js?v=20261011-overlay-scroll-top-01";
+export { cancelPendingPlaybackIssueDetection, pauseRoomForPlaybackIssue, clearPlaybackRecoveryTracking, attemptPlaybackRecovery } from "./player-sync-recovery.js?v=20261011-overlay-scroll-top-01";
+let playerMediaPort = null;
+
+export function configurePlayerMediaPort(port) {
+  if (!port?.clearVideoSource || !port?.setVideoSource || !port?.waitForVideoMetadata) {
+    throw new TypeError("El puerto del reproductor requiere las operaciones de carga de medio.");
+  }
+  playerMediaPort = port;
+}
+
+function getPlayerMediaPort() {
+  if (!playerMediaPort) {
+    throw new Error("El puerto de medio debe configurarse antes de recibir estado remoto.");
+  }
+  return playerMediaPort;
+}
 
 const PLAYBACK_ISSUE_SYNC_COOLDOWN_MS = 2200;
 // Los eventos waiting/stalled también se disparan por pequeños saltos de red.
 // Solo son una incidencia de sala si la falta de datos persiste este tiempo.
-const PLAYBACK_ISSUE_CONFIRMATION_MS = 1800;
-const PAUSE_TO_ISSUE_GRACE_MS = 900;
-const SEEK_TO_ISSUE_GRACE_MS = 1400;
 const REMOTE_HOLD_ISSUE_SUPPRESSION_MS = 2200;
-const PLAYBACK_RECOVERY_TIMEOUT_MS = 5 * 60 * 1000;
 
 function markRemoteSeekPending() {
   state.player.remoteSeekPending = true;
@@ -58,6 +67,7 @@ export function handleRemoteState(statePayload) {
 
 async function applyRemoteState(statePayload, force = false, { isInitialRemoteState = false } = {}) {
   if (!statePayload.src && !dom.videoPlayer.currentSrc && !dom.videoPlayer.getAttribute("src")) return;
+  const media = getPlayerMediaPort();
 
   state.player.suppressVideoEvents = true;
   state.player.remoteStateActive = true;
@@ -66,7 +76,7 @@ async function applyRemoteState(statePayload, force = false, { isInitialRemoteSt
   }
   try {
     if (statePayload.action === "video" && !statePayload.src) {
-      clearVideoSource(false);
+      media.clearVideoSource(false);
       setSyncStatus(getRemoteStatusText(statePayload));
       logEvent("sync:apply", "Video quitado para la sala.");
       return;
@@ -81,13 +91,13 @@ async function applyRemoteState(statePayload, force = false, { isInitialRemoteSt
     // aplicándose como antes.
     const isNewVideoEvent = statePayload.action === "video" && !isInitialRemoteState;
     if (statePayload.src && (sourceIsDifferent || isNewVideoEvent)) {
-      setVideoSource(statePayload.src, false, {
+      media.setVideoSource(statePayload.src, false, {
         // Cada participante anuncia su propia finalizacion de carga, porque
         // los tiempos pueden ser diferentes en cada navegador.
         announceLoadCompletion: true,
         animateSystemGroups: false,
       });
-      await waitForVideoMetadata().catch(() => {});
+      await media.waitForVideoMetadata().catch(() => {});
     }
 
     const targetTime = getRemoteTargetTime(statePayload);
@@ -150,191 +160,6 @@ function getRemoteStatusText(statePayload) {
     return `${statePayload.name || "Alguien"} detuvo la sala por ${describePlaybackIssue(statePayload.issueReason)}.`;
   }
   return `Sincronizado con ${statePayload.name || "la sala"}.`;
-}
-
-function describePlaybackIssue(reason) {
-  if (reason === "waiting") return "espera de carga";
-  if (reason === "stalled") return "video trabado";
-  if (reason === "error") return "error de reproducción";
-  return "un problema de reproducción";
-}
-
-export function cancelPendingPlaybackIssueDetection() {
-  if (state.player.playbackIssueDetectionTimerId) {
-    window.clearTimeout(state.player.playbackIssueDetectionTimerId);
-  }
-  state.player.playbackIssueDetectionTimerId = null;
-  state.player.playbackIssueDetectionReason = "";
-}
-
-export function pauseRoomForPlaybackIssue(reason, options = {}) {
-  const confirmed = Boolean(options.confirmed);
-  if (state.player.remoteStateActive || state.player.suppressVideoEvents) return;
-  if (!dom.videoPlayer.currentSrc && !dom.videoPlayer.src && !dom.videoUrlInput.value.trim()) return;
-  if (dom.videoPlayer.ended) return;
-  if (reason !== "error" && dom.videoPlayer.paused) return;
-
-  if (!confirmed && (reason === "waiting" || reason === "stalled")) {
-    if (state.player.playbackIssueDetectionReason === reason && state.player.playbackIssueDetectionTimerId) {
-      return;
-    }
-    cancelPendingPlaybackIssueDetection();
-    state.player.playbackIssueDetectionReason = reason;
-    state.player.playbackIssueDetectionTimerId = window.setTimeout(() => {
-      state.player.playbackIssueDetectionTimerId = null;
-      state.player.playbackIssueDetectionReason = "";
-      pauseRoomForPlaybackIssue(reason, { confirmed: true });
-    }, PLAYBACK_ISSUE_CONFIRMATION_MS);
-    logEvent(
-      "sync:issue",
-      `Esperando ${PLAYBACK_ISSUE_CONFIRMATION_MS} ms para confirmar incidencia (${reason}).`,
-    );
-    return;
-  }
-
-  if (
-    (reason === "waiting" || reason === "stalled") &&
-    Date.now() < Number(state.player.remotePlaybackIssueCooldownUntil || 0)
-  ) {
-    logEvent(
-      "sync:issue",
-      `Incidencia local ignorada por una pausa remota reciente (${reason}).`,
-    );
-    return;
-  }
-  if (reason === "waiting" || reason === "stalled") {
-    const lastPauseAt = Number(state.player.lastManualPauseAt || 0);
-    if (lastPauseAt && Date.now() - lastPauseAt < PAUSE_TO_ISSUE_GRACE_MS) return;
-    const lastSeekAt = Number(state.player.lastManualSeekAt || 0);
-    if (lastSeekAt && Date.now() - lastSeekAt < SEEK_TO_ISSUE_GRACE_MS) return;
-    if (dom.videoPlayer.paused || dom.videoPlayer.ended || dom.videoPlayer.seeking) return;
-    if (dom.videoPlayer.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) return;
-  }
-
-  const localNow = Date.now();
-  if (
-    state.player.lastPlaybackIssueReason === reason &&
-    (localNow - state.player.lastPlaybackIssueAt < PLAYBACK_ISSUE_SYNC_COOLDOWN_MS)
-  ) {
-    return;
-  }
-
-  state.player.lastPlaybackIssueAt = localNow;
-  state.player.lastPlaybackIssueReason = reason;
-  logEvent("sync:issue", `Incidencia local: ${describePlaybackIssue(reason)} en ${formatSeconds(dom.videoPlayer.currentTime)}.`);
-  const issueTime = getPlaybackSnapshotTime();
-  const shouldAnnounceIssue = shouldAnnouncePlaybackIssue(reason);
-
-  // Fuera de una sala no hay un evento remoto que pueda devolver el aviso;
-  // dentro de una sala lo renderiza inmediatamente sendVideoEventMessage.
-  if (shouldAnnounceIssue && (!state.session.activeRoom || !state.session.transport)) {
-    const displayName = getDisplayName();
-    const issueText = `${displayName} ${describePlaybackIssueChat(reason)} en ${formatSeconds(issueTime)}`;
-    renderMessage({
-      id: `issue-${localNow}-${reason}`,
-      from: state.session.clientId,
-      name: displayName,
-      text: issueText,
-      system: true,
-      createdAt: localNow,
-    });
-  }
-
-  if (!state.session.activeRoom || !state.session.transport) return;
-  beginPlaybackRecoveryWindow(reason);
-
-  const previousSuppress = state.player.suppressVideoEvents;
-  state.player.suppressVideoEvents = true;
-  try {
-    dom.videoPlayer.pause();
-  } finally {
-    window.setTimeout(() => {
-      if (!state.player.remoteStateActive) {
-        state.player.suppressVideoEvents = previousSuppress;
-      }
-    }, 280);
-  }
-
-  setSyncStatus(`Pausa sincronizada por ${describePlaybackIssue(reason)}.`);
-  publishState("hold", {
-    paused: true,
-    issueReason: reason,
-    time: issueTime,
-    suppressActivityMessage: !shouldAnnounceIssue,
-  });
-}
-
-function describePlaybackIssueChat(reason) {
-  return "tiene inconvenientes en el video";
-}
-
-export function clearPlaybackRecoveryTracking() {
-  if (state.player.playbackRecoveryTimeoutId) {
-    window.clearTimeout(state.player.playbackRecoveryTimeoutId);
-  }
-  state.player.playbackRecoveryPending = false;
-  state.player.playbackRecoveryAttempting = false;
-  state.player.playbackRecoveryTimeoutId = null;
-  cancelPendingPlaybackIssueDetection();
-  clearPlaybackIssueAnnouncementTracking();
-}
-
-export function attemptPlaybackRecovery(trigger) {
-  if (!state.player.playbackRecoveryPending || state.player.playbackRecoveryAttempting) return;
-  if (!state.session.activeRoom || !state.session.transport) {
-    clearPlaybackRecoveryTracking();
-    return;
-  }
-  if (state.player.remoteStateActive) return;
-  if (dom.videoPlayer.error) return;
-  if (
-    trigger !== "playing" &&
-    dom.videoPlayer.readyState < HTMLMediaElement.HAVE_FUTURE_DATA
-  ) {
-    return;
-  }
-  if (state.player.suppressVideoEvents) {
-    window.setTimeout(() => {
-      attemptPlaybackRecovery(trigger);
-    }, 320);
-    return;
-  }
-
-  state.player.playbackRecoveryAttempting = true;
-  logEvent(
-    "sync:issue",
-    `Se detectó recuperación local (${trigger}); intentando reanudar la sala.`,
-  );
-
-  dom.videoPlayer
-    .play()
-    .then(() => {
-      clearPlaybackRecoveryTracking();
-      setSyncStatus("Reanudación automática en curso.");
-    })
-    .catch((error) => {
-      state.player.playbackRecoveryAttempting = false;
-      logEvent(
-        "sync:issue",
-        `No se pudo reanudar automáticamente tras la recuperación: ${error.message || error}.`,
-      );
-      setSyncStatus("El video volvió, pero no se pudo reanudar automáticamente.");
-    });
-}
-
-function beginPlaybackRecoveryWindow(reason) {
-  clearPlaybackRecoveryTracking();
-  state.player.playbackRecoveryPending = true;
-  state.player.lastPlaybackIssueReason = reason;
-  state.player.playbackRecoveryTimeoutId = window.setTimeout(() => {
-    if (!state.player.playbackRecoveryPending) return;
-    clearPlaybackRecoveryTracking();
-    logEvent(
-      "sync:issue",
-      `La espera de recuperación automática expiró tras ${Math.round(PLAYBACK_RECOVERY_TIMEOUT_MS / 60000)} minutos.`,
-    );
-    setSyncStatus("La reanudación automática expiró.");
-  }, PLAYBACK_RECOVERY_TIMEOUT_MS);
 }
 
 export function publishState(action, overrides = {}) {
@@ -486,3 +311,10 @@ function getPlaybackSnapshotTime() {
   // reintroduce una posición vieja cuando el usuario busca hacia atrás.
   return safeCurrentTime;
 }
+
+configurePlaybackRecoveryPort({
+  publishState,
+  getPlaybackSnapshotTime,
+  shouldAnnouncePlaybackIssue,
+  clearPlaybackIssueAnnouncementTracking,
+});

@@ -4,14 +4,14 @@ import {
   startSystemRollAnimations,
   SYSTEM_ROLL_DURATION_MS,
   SYSTEM_ROLL_EASING,
-} from "./system-message-roll-visual.js?v=20261009-system-roll-compact-02";
+} from "./system-message-roll-visual.js?v=20261010-file-size-refactor-02";
 import {
   animateReducedMotionRowAnchor,
   captureSystemMessageRowAnchor,
   resetSystemMessageRowAnchor,
   systemMessageRowAnchorAnimations,
-} from "./system-message-roll-layout.js?v=20261009-system-roll-compact-02";
-import { createSystemRollCleanup } from "./system-message-roll-cleanup.js?v=20261009-system-roll-compact-02";
+} from "./system-message-roll-layout.js?v=20261010-file-size-refactor-02";
+import { createSystemRollCleanup } from "./system-message-roll-cleanup.js?v=20261010-file-size-refactor-02";
 
 const SYSTEM_ROLL_SIZE_TRANSITION_MS = 90;
 const systemRollAnimations = new WeakMap();

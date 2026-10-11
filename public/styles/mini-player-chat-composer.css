@@ -1,0 +1,200 @@
+
+
+.mini-player-surface .overlay-message-form .input-wrapper .emoji-trigger > svg,
+.mini-player-surface .overlay-message-form .input-wrapper .send > svg:not(.composer-progress-ring) {
+  width: 15px;
+  height: 15px;
+}
+
+.mini-player-surface .overlay-message-form .input-wrapper .send > svg.composer-progress-ring {
+  width: 25px;
+  height: 25px;
+}
+
+/* Evita mostrar durante un instante el estado copiado del reproductor
+   principal antes de aplicar el estado propio del mini reproductor. */
+.mini-player-surface:not(.mini-chat-state-ready) .player-chat {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.mini-player-surface.mini-player-scroll button,
+.mini-player-surface.mini-player-scroll input,
+.mini-player-surface.mini-player-scroll select {
+  cursor: pointer;
+}
+
+.mini-player-surface.mini-player-scroll button:disabled,
+.mini-player-surface.mini-player-scroll input:disabled,
+.mini-player-surface.mini-player-scroll select:disabled {
+  cursor: not-allowed;
+}
+
+.mini-player-surface.mini-player-scroll .player-volume-slider-wrap {
+  max-width: 0;
+}
+
+.mini-player-surface.mini-player-scroll .player-volume-input {
+  width: 40px;
+}
+
+.mini-player-surface.mini-player-scroll .player-volume-group:hover .player-volume-slider-wrap,
+.mini-player-surface.mini-player-scroll .player-volume-group:focus-within .player-volume-slider-wrap {
+  max-width: 40px;
+}
+
+.mini-player-return-hint {
+  position: absolute;
+  z-index: 9;
+  left: clamp(
+    16px,
+    calc(var(--mini-player-return-button-x, 50%) - 135px),
+    calc(100% - 286px)
+  );
+  right: auto;
+  bottom: 76px;
+  display: none;
+  width: min(270px, calc(100% - 32px));
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 12px;
+  background: rgba(9, 12, 14, 0.82);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.34);
+  color: rgba(255, 255, 255, 0.78);
+  padding: 10px 12px;
+  text-align: left;
+  backdrop-filter: blur(12px);
+}
+
+.player-frame.mini-player-active .mini-player-return-hint {
+  display: grid;
+  gap: 3px;
+}
+
+.mini-player-return-hint strong {
+  color: #ffffff;
+  font-size: 0.76rem;
+}
+
+.mini-player-return-arrow {
+  position: absolute;
+  z-index: 9;
+  bottom: var(--mini-player-return-arrow-bottom, 68px);
+  left: var(--mini-player-return-button-x, 50%);
+  display: none;
+  width: 2px;
+  height: 28px;
+  background: #ff8d4a;
+  color: #ff8d4a;
+  font-size: 0;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  transform: translateX(-50%);
+}
+
+.player-frame.mini-player-active .mini-player-return-arrow {
+  display: block;
+}
+
+.mini-player-return-arrow::after {
+  position: absolute;
+  top: 21px;
+  left: -5px;
+  width: 0;
+  height: 0;
+  border-top: 8px solid #ff8d4a;
+  border-right: 6px solid transparent;
+  border-left: 6px solid transparent;
+  content: "";
+}
+
+.mini-player-surface .mini-emoji-popover {
+  position: absolute;
+  z-index: 20;
+  right: 10px;
+  bottom: 48px;
+}
+
+.mini-player-surface .sync-status {
+  display: none;
+}
+
+.mini-player-surface .messages-wrap {
+  --chat-scrollbar-visual-end: calc(100% - var(--chat-composer-reserve, 92px));
+  --chat-scrollbar-visual-gap: 8px;
+  --chat-scrollbar-visual-inset: 6px;
+  overflow-y: hidden;
+}
+
+.mini-player-surface .overlay-messages {
+  height: 100%;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.mini-player-surface .overlay-messages::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+/* Igualar explícitamente la tipografía y escala de emojis del overlay
+   principal dentro de la ventana mini/Picture-in-Picture. */
+.mini-player-surface .overlay-messages .message-bubble:not(.message-bubble--emoji-only) .message-emoji {
+  font-family: var(--emoji-font-family);
+  font-size: 1.12em;
+  line-height: 1;
+  vertical-align: -0.08em;
+}
+
+.mini-player-surface .overlay-messages .message-bubble--emoji-only .message-text {
+  display: inline-block;
+  font-family: var(--emoji-font-family);
+  font-size: 1.4rem;
+  line-height: 1.25;
+}
+
+.mini-player-surface .overlay-messages .message-bubble--emoji-only-compact .message-text {
+  font-size: 1.25rem;
+}
+
+.mini-player-surface .mini-emoji-popover .emoji-option {
+  font-family: var(--emoji-font-family);
+  font-variant-emoji: emoji;
+  font-size: 0.82rem;
+  line-height: 1;
+}
+
+.mini-player-surface .chat-scrollbar {
+  right: 3px;
+  width: 4px;
+}
+
+.mini-player-surface .chat-scrollbar-thumb {
+  left: 0;
+  width: 4px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.mini-player-surface .player-controls-bar {
+  flex-wrap: nowrap;
+  gap: 6px;
+  padding: 5px 7px;
+}
+
+.mini-player-surface .player-volume-input {
+  width: 42px;
+}
+
+.mini-player-surface .player-volume-group:hover .player-volume-slider-wrap,
+.mini-player-surface .player-volume-group:focus-within .player-volume-slider-wrap {
+  max-width: 42px;
+}
+
+.mini-player-surface .player-volume-group.volume-hovered {
+  gap: 6px;
+}
+
+.mini-player-surface .player-volume-group.volume-hovered .player-volume-slider-wrap {
+  max-width: 42px;
+}

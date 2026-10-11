@@ -1,4 +1,4 @@
-import { setSystemMessageRowAnchorOffset } from "./system-message-roll-layout.js?v=20261009-system-roll-compact-02";
+import { setSystemMessageRowAnchorOffset } from "./system-message-roll-layout.js?v=20261010-file-size-refactor-02";
 
 export function createSystemRollCleanup(context) {
   const {

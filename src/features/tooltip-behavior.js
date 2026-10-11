@@ -67,7 +67,7 @@ function getTooltipAnchorRect(anchor) {
   const anchorRect = anchor.getBoundingClientRect();
   if (!anchor.classList?.contains("presence-pill")) return anchorRect;
 
-  const visibleParts = [...anchor.querySelectorAll(".presence-dot, .presence-self-label, #participantCount, #overlayParticipantCount")]
+  const visibleParts = [...anchor.querySelectorAll('.presence-pill__dot, .presence-pill__self-label, #participantCount, #overlayParticipantCount')]
     .map((part) => part.getBoundingClientRect())
     .filter((rect) => rect.width > 0 && rect.height > 0);
   if (!visibleParts.length) return anchorRect;

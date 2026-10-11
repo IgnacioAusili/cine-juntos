@@ -1,5 +1,5 @@
 import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
-import { hydrateIcons, hideTooltip } from "../icons-tooltips.js?v=20261011-chat-ui-fixes-03";
+import { hydrateIcons, hideTooltip } from "../icons-tooltips.js?v=20261011-lucide-icons-repair-01";
 import { shouldAnchorChatCollapseHandleInHeader } from "./chat-collapse-header-layout.js?v=20261010-file-size-refactor-02";
 import { isFullscreenPageActive } from "./chat-page-scroll.js?v=20261010-file-size-refactor-02";
 import { isStackedSessionLayout } from "./chat-responsive-layout.js?v=20261011-chat-ui-fixes-02";

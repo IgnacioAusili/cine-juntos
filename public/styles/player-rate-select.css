@@ -59,7 +59,7 @@
   gap: 6px;
 }
 
-.chat-style-toggle button {
+.chat-style-toggle__button {
   display: grid;
   width: 20px;
   min-height: 20px;
@@ -72,13 +72,13 @@
   padding: 0;
 }
 
-.chat-style-toggle button.active {
+.chat-style-toggle__button.chat-style-toggle__button--active {
   color: #d8fff9;
   background: rgba(255, 255, 255, 0.13);
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12);
 }
 
-.chat-style-toggle button.active::before {
+.chat-style-toggle__button.chat-style-toggle__button--active::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -87,27 +87,27 @@
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12);
 }
 
-.chat-style-toggle button.active svg {
+.chat-style-toggle__button.chat-style-toggle__button--active svg {
   position: relative;
   z-index: 1;
 }
 
-.chat-style-toggle svg {
+.chat-style-toggle__button svg {
   display: block;
   width: 14px;
   height: 14px;
   stroke-width: 2.2;
 }
 
-.chat-style-toggle button[data-chat-style="float"] svg {
+.chat-style-toggle__button[data-chat-style="float"] svg {
   fill: transparent;
 }
 
-.chat-style-toggle button[data-chat-style="panel"] svg {
+.chat-style-toggle__button[data-chat-style="panel"] svg {
   fill: currentColor;
 }
 
-.bare-icon-button {
+.icon-button--bare {
   display: grid;
   width: 28px;
   min-height: 28px;
@@ -119,12 +119,12 @@
   padding: 0;
 }
 
-.bare-icon-button:hover,
-.bare-icon-button:focus-visible {
+.icon-button--bare:hover,
+.icon-button--bare:focus-visible {
   color: #fff;
 }
 
-.bare-icon-button svg {
+.icon-button--bare svg {
   width: 18px;
   height: 18px;
 }

@@ -20,7 +20,7 @@ import { makeGuestName } from "../core/utils.js?v=20261011-chat-controls-repair-
 import {
   hideTooltip,
   setControlIcon,
-} from "./icons-tooltips.js?v=20261011-chat-controls-repair-01";
+} from "./icons-tooltips.js?v=20261011-lucide-icons-repair-01";
 import {
   isTouchPointer,
   TOUCH_LONG_PRESS_DELAY_MS,
@@ -54,8 +54,8 @@ function syncConfirmNameButtonState() {
   const isTooShort = nextName.length < DISPLAY_NAME_MIN_LENGTH;
   const isInvalid = isEditing && isTooShort;
   dom.confirmNameButton.disabled = false;
-  dom.confirmNameButton.classList.toggle("is-invalid", isInvalid);
-  dom.confirmNameButton.classList.toggle("is-valid", !isInvalid);
+  dom.confirmNameButton.classList.toggle('chat-name-confirm-button--invalid', isInvalid);
+  dom.confirmNameButton.classList.toggle('chat-name-confirm-button--valid', !isInvalid);
   setControlIcon(dom.confirmNameButton, isInvalid ? "x" : "check");
 
   if (!isEditing) {
@@ -111,7 +111,7 @@ function startConfirmNameLongPress(event) {
   if (
     !isTouchPointer(event)
     || (event.button && event.button !== 0)
-    || !dom.confirmNameButton?.classList.contains("is-invalid")
+    || !dom.confirmNameButton?.classList.contains('chat-name-confirm-button--invalid')
   ) return;
 
   clearConfirmNameLongPress();
@@ -193,7 +193,7 @@ function clearNameCommitReveal(editor = dom.chatNameField) {
     window.clearTimeout(nameCommitRevealTimer);
     nameCommitRevealTimer = null;
   }
-  editor?.classList.remove("name-commit-stable", "name-commit-reveal");
+  editor?.classList.remove('chat-name-editor--commit-stable', 'chat-name-editor--commit-reveal');
 }
 
 function setIdentityEditing(
@@ -206,8 +206,8 @@ function setIdentityEditing(
 
   if (
     isEditing
-    && (editor.classList.contains("name-commit-stable")
-      || editor.classList.contains("name-commit-reveal"))
+    && (editor.classList.contains('chat-name-editor--commit-stable')
+      || editor.classList.contains('chat-name-editor--commit-reveal'))
   ) {
     clearNameCommitReveal(editor);
     window.requestAnimationFrame(() => {
@@ -216,8 +216,8 @@ function setIdentityEditing(
     return;
   }
 
-  editor.classList.toggle("name-commit-stable", !isEditing && preserveCommittedName);
-  editor.classList.toggle("name-commit-reveal", !isEditing && preserveCommittedName && animateReveal);
+  editor.classList.toggle('chat-name-editor--commit-stable', !isEditing && preserveCommittedName);
+  editor.classList.toggle('chat-name-editor--commit-reveal', !isEditing && preserveCommittedName && animateReveal);
   editor.dataset.editing = isEditing ? "true" : "false";
   editor.parentElement?.setAttribute("data-editing", isEditing ? "true" : "false");
 
@@ -230,7 +230,7 @@ function setIdentityEditing(
         }, 780);
       } else {
         window.requestAnimationFrame(() => {
-          window.requestAnimationFrame(() => editor.classList.remove("name-commit-stable"));
+          window.requestAnimationFrame(() => editor.classList.remove('chat-name-editor--commit-stable'));
         });
       }
     }

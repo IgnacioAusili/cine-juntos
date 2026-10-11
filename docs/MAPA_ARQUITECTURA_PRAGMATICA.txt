@@ -27,9 +27,11 @@ CAPAS Y RESPONSABILIDADES ACTUALES
 ARQUITECTURA CSS: ITCSS, BEM Y OOCSS
 - ITCSS ordena `public/styles.css` desde tokens/configuracion y estilos genericos, a objetos de layout, componentes, estados/responsive y overrides finales. El orden efectivo de imports se conserva porque define la cascada.
 - BEM es la convencion para clases de componentes nuevas o migradas: bloque (`button`), elemento con `__` (`button__label`) y modificador con `--` (`button--primary`). Los modificadores se agregan junto con la clase del bloque.
-- OOCSS separa estructura reutilizable de apariencia. El componente de botones muestra esta separacion en `components/button-layout.css` y `components/button-skin.css`.
+- Dentro de cada archivo, las reglas se agrupan por componente y se ordenan por base, elementos, variantes, estados y ajustes responsive. Las variables CSS se mantienen al inicio del archivo.
+- OOCSS separa estructura reutilizable de apariencia cuando la cohesión lo justifica; `components/button-layout.css` y `components/button-skin.css` son un ejemplo, no una obligación para cada componente.
 - La migracion de clases existentes se hace por componente y actualiza en conjunto CSS, HTML fuente y referencias JavaScript.
-- El dialogo dinamico de carga conserva temporalmente el alias `.button.primary`; no crear usos nuevos y retirarlo cuando se migre su toggle JavaScript con toda su cadena de cache-burst.
+- Los componentes `button` y `video-control-button` usan sus modificadores BEM junto a su bloque; pantalla completa y mini reproductor usan `.video-control-button--active`. El cooldown de envio usa `.icon-button__send-cooldown`, el selector de estilo del chat usa `.chat-style-toggle__button--active`, el control del chat del reproductor usa `.player-chat-toggle--active` y el switch de autoexpansión usa `.chat-auto-switch__track`, `.chat-auto-switch__thumb` y `.chat-auto-switch--active`; estos estados se sincronizan en el mini reproductor. Otros estados heredados quedan para migraciones contenidas.
+- La skin activa de `.icon-button` combina bloque y modificador en `.icon-button.icon-button--active`; se retiró el alias heredado `.icon-button.active`, que no tenía consumidores en HTML ni JavaScript. También se eliminó `.player-skip-control.active`, una regla duplicada sin consumidores; queda sin selectores CSS de clase `.active`, aunque falta inventariar los demás componentes heredados para cuantificar la migración completa.
 - Las hojas siguen divididas por dominio y responsabilidad; los agregadores conservan imports anidados y su orden.
 
 REGLAS DE DEPENDENCIA
@@ -65,7 +67,7 @@ EXCEPCIONES DE TAMANO POR COHESION
 CSS, CACHE Y VALIDACION
 - Mantener el orden efectivo de imports CSS y la cascada al extraer submodulos.
 - Seguir el orden ITCSS anotado en `public/styles.css` sin reordenar overrides sensibles.
-- Aplicar BEM a clases nuevas y a los componentes migrados; separar con OOCSS las reglas estructurales de las skins visuales compartidas.
+- Aplicar BEM a clases nuevas y a los componentes migrados; usar OOCSS para separar estructura reutilizable de apariencia cuando corresponda, y conservar el orden ITCSS de las capas.
 - Las hojas grandes conservan su nombre como agregador; sus imports descriptivos siguen el orden original y permanecen junto a la hoja para conservar URLs relativas.
 - Al cambiar HTML, CSS o JavaScript, actualizar el cache-burst de toda la cadena de imports afectada.
 - Verificar `Cache-Control: no-store` en desarrollo, ausencia de service worker y URLs solicitadas actuales.

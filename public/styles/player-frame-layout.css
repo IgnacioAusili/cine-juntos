@@ -83,6 +83,7 @@ video::-webkit-media-controls-fullscreen-button {
 
 .empty-player {
   position: absolute;
+  z-index: 2;
   inset: 0;
   display: grid;
   place-items: center;
@@ -149,7 +150,7 @@ video::-webkit-media-controls-fullscreen-button {
   transform: translateY(0);
 }
 
-.player-status-badge .video-status-dot {
+.player-status-badge .sync-status__dot {
   --status-glow: rgba(255, 255, 255, 0.38);
   border-radius: 999px;
   background: #ffffff;
@@ -167,12 +168,12 @@ video::-webkit-media-controls-fullscreen-button {
   color: rgba(255, 255, 255, 0.82);
 }
 
-.player-status-badge.video-status.empty .video-status-dot {
+.player-status-badge.video-status.empty .sync-status__dot {
   --status-glow: rgba(255, 255, 255, 0.38);
   background: #ffffff;
 }
 
-.player-status-badge.video-status.empty .video-status-dot::before {
+.player-status-badge.video-status.empty .sync-status__dot::before {
   opacity: 0.38;
 }
 
@@ -180,7 +181,7 @@ video::-webkit-media-controls-fullscreen-button {
   color: rgba(255, 255, 255, 0.82);
 }
 
-.player-status-badge.video-status.loading .video-status-dot {
+.player-status-badge.video-status.loading .sync-status__dot {
   --status-glow: rgba(245, 197, 24, 0.42);
   background: #f5c518;
 }
@@ -189,13 +190,13 @@ video::-webkit-media-controls-fullscreen-button {
   color: rgba(255, 255, 255, 0.82);
 }
 
-.player-status-badge.video-status.loaded .video-status-dot {
+.player-status-badge.video-status.loaded .sync-status__dot {
   --status-glow: rgba(56, 216, 121, 0.42);
   background: #38d879;
 }
 
-.player-status-badge.video-status.loading .video-status-dot,
-.player-status-badge.video-status.player-status-live .video-status-dot {
+.player-status-badge.video-status.loading .sync-status__dot,
+.player-status-badge.video-status.player-status-live .sync-status__dot {
   animation: playerLiveStatusPulse 1.25s ease-in-out infinite;
 }
 
@@ -216,7 +217,7 @@ video::-webkit-media-controls-fullscreen-button {
   color: rgba(255, 255, 255, 0.82);
 }
 
-.player-status-badge.video-status.error .video-status-dot {
+.player-status-badge.video-status.error .sync-status__dot {
   --status-glow: rgba(233, 68, 68, 0.42);
   background: var(--danger);
 }

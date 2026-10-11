@@ -1,7 +1,7 @@
 import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
 import { state, logEvent } from "../../core/state.js?v=20261010-file-size-refactor-02";
 import { MAX_CHARS, withShortcutHint } from "../../core/utils.js?v=20261010-file-size-refactor-02";
-import { refreshTooltipForTarget } from "../icons-tooltips.js?v=20261011-chat-ui-fixes-03";
+import { refreshTooltipForTarget } from "../icons-tooltips.js?v=20261011-lucide-icons-repair-01";
 
 const sendButtonMarkup = new WeakMap();
 
@@ -154,11 +154,11 @@ function showSendCooldown(button, seconds) {
   if (!button) return;
   if (!button.dataset.spamCooldown) {
     sendButtonMarkup.set(button, button.innerHTML);
-    button.innerHTML = "<span class='send-cooldown' aria-hidden='true'></span>";
+    button.innerHTML = "<span class='icon-button__send-cooldown' aria-hidden='true'></span>";
     button.dataset.spamCooldown = "true";
   }
 
-  const counter = button.querySelector(".send-cooldown");
+  const counter = button.querySelector(".icon-button__send-cooldown");
   if (counter) counter.textContent = String(seconds);
   button.disabled = true;
   button.setAttribute("aria-disabled", "true");

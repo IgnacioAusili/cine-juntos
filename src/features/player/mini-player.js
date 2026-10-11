@@ -2,16 +2,16 @@ import { dom } from "../../core/dom.js?v=20261011-chat-controls-repair-01";
 import { wireMiniPlayerOverlayControls } from "./mini-player-overlay-controls.js?v=20261011-chat-controls-repair-01";
 import { configureScrollMiniPlayerOperations, scheduleScrollMiniPlayerSync, dismissScrollMiniPlayerForSession } from "./mini-player-scroll.js?v=20261011-chat-controls-repair-01";
 import { state, logEvent } from "../../core/state.js?v=20261011-chat-controls-repair-01";
-import { setControlIcon } from "../icons-tooltips.js?v=20261011-chat-controls-repair-01";
+import { setControlIcon } from "../icons-tooltips.js?v=20261011-lucide-icons-repair-01";
 import { setSyncStatus } from "../session-ui.js?v=20261011-chat-controls-repair-01";
 import {
   createMiniPlayerSurface,
   installMiniPlayerWindowStyles,
-} from "./mini-player-controls.js?v=20261011-chat-controls-repair-01";
+} from "./mini-player-controls.js?v=20261011-player-skip-active-cleanup-01";
 import {
   mirrorMiniPlayerChatState,
-} from "./mini-player-chat.js?v=20261011-chat-controls-repair-01";
-import { movePlayerInterface } from "./mini-player-interface.js?v=20261011-chat-controls-repair-01";
+} from "./mini-player-chat.js?v=20261011-chat-auto-switch-bem-01";
+import { movePlayerInterface } from "./mini-player-interface.js?v=20261011-chat-auto-switch-bem-01";
 import { trackMiniPlayerReturnHint } from "./mini-player-return-hint.js?v=20261011-chat-controls-repair-01";
 import { clampMiniPlayerPosition, wireMiniPlayerDrag } from "./mini-player-drag.js?v=20261011-chat-controls-repair-01";
 
@@ -22,9 +22,6 @@ let miniPlayerInterface = null;
 let stopMiniPlayerReturnHintTracking = null;
 let stopMiniPlayerDrag = null;
 let stopMiniPlayerOverlayControls = null;
-
-const MINI_PLAYER_OVERLAY_IDLE_MS = 3000;
-const MINI_PLAYER_OVERLAY_LEAVE_HIDE_DELAY_MS = 800;
 
 export function wireMiniPlayerEvents() {
   dom.playerMiniPlayerButton?.addEventListener("click", () => {
@@ -87,7 +84,7 @@ export function syncMiniPlayerButton(hasLoadedMedia) {
     ? "Cancelar mini-reproductor y volver al video"
     : "Abrir mini-reproductor";
   button.disabled = !hasLoadedMedia && !active;
-  button.classList.toggle("active", active);
+  button.classList.toggle("video-control-button--active", active);
   button.setAttribute("aria-label", label);
   button.setAttribute("aria-pressed", String(active));
   button.dataset.tooltip = active

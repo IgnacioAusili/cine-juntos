@@ -1,8 +1,8 @@
 import { dom } from "../core/dom.js?v=20261010-file-size-refactor-02";
 import { initializeAboutDialog } from "./session-about-dialog.js?v=20261010-file-size-refactor-02";
-import { showErrorDialog, showLoadReplaceDialog, showSlowLoadDialog, showResumeVideoDialog } from "./session-dialogs.js?v=20261010-file-size-refactor-02";
+import { showErrorDialog, showLoadReplaceDialog, showSlowLoadDialog, showResumeVideoDialog } from "./session-dialogs.js?v=20261011-button-bem-scope-01";
 export { initializeAboutDialog } from "./session-about-dialog.js?v=20261010-file-size-refactor-02";
-export { showErrorDialog, showLoadReplaceDialog, showSlowLoadDialog, showResumeVideoDialog } from "./session-dialogs.js?v=20261010-file-size-refactor-02";
+export { showErrorDialog, showLoadReplaceDialog, showSlowLoadDialog, showResumeVideoDialog } from "./session-dialogs.js?v=20261011-button-bem-scope-01";
 import { state, logEvent } from "../core/state.js?v=20261010-file-size-refactor-02";
 import { refreshLayoutMetrics } from "./layout-metrics.js?v=20261010-file-size-refactor-02";
 

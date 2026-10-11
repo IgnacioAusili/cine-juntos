@@ -36,7 +36,7 @@
   height: 17px;
 }
 
-.player-frame .player-controls-bar:is([data-control-density="compact"], [data-control-density="scroll"]) .primary-video-control svg {
+.player-frame .player-controls-bar:is([data-control-density="compact"], [data-control-density="scroll"]) .video-control-button--primary svg {
   width: 20px;
   height: 20px;
 }

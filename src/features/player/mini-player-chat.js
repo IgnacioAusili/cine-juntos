@@ -1,7 +1,7 @@
 import {
   syncMiniChatAutoExpand,
   toggleMiniChatOverlay,
-} from "./mini-player-chat-mirror.js?v=20261011-chat-controls-repair-01";
+} from "./mini-player-chat-mirror.js?v=20261011-chat-auto-switch-bem-01";
 import { state } from "../../core/state.js?v=20261011-chat-controls-repair-01";
 
 export function mirrorMiniPlayerChatState(surface, visible = true) {

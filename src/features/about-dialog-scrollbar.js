@@ -1,5 +1,5 @@
-const TRACK_SELECTOR = ".about-dialog-scrollbar";
-const THUMB_SELECTOR = ".about-dialog-scrollbar-thumb";
+const TRACK_SELECTOR = '.about-dialog__scrollbar';
+const THUMB_SELECTOR = '.about-dialog__scrollbar-thumb';
 
 function syncScrollbar(dialog, card, track, thumb) {
   if (!dialog.open) {
@@ -22,7 +22,7 @@ function syncScrollbar(dialog, card, track, thumb) {
 
 export function wireAboutDialogScrollbar() {
   const dialog = document.querySelector("#aboutDialog");
-  const card = dialog?.querySelector(".about-dialog-card");
+  const card = dialog?.querySelector('.about-dialog__card');
   const track = dialog?.querySelector(TRACK_SELECTOR);
   const thumb = track?.querySelector(THUMB_SELECTOR);
   if (!dialog || !card || !track || !thumb) return;

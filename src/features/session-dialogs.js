@@ -52,8 +52,8 @@ export function showLoadReplaceDialog(message, options = {}) {
   }
   if (dom.confirmLoadDialogButton) {
     dom.confirmLoadDialogButton.textContent = isRemoveAction ? "Quitar" : "Cargar";
-    dom.confirmLoadDialogButton.classList.toggle("warning", isRemoveAction);
-    dom.confirmLoadDialogButton.classList.toggle("primary", !isRemoveAction);
+    dom.confirmLoadDialogButton.classList.toggle("button--warning", isRemoveAction);
+    dom.confirmLoadDialogButton.classList.toggle("button--primary", !isRemoveAction);
   }
   if (dom.skipLoadConfirmCheckbox) {
     dom.skipLoadConfirmCheckbox.checked = false;

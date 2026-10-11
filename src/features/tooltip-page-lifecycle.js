@@ -1,4 +1,4 @@
-import { hideTooltip } from "./icons-tooltips.js?v=20261011-chat-ui-fixes-03";
+import { hideTooltip } from "./icons-tooltips.js?v=20261011-lucide-icons-repair-01";
 
 let suppressRestoredFocusTooltip = false;
 

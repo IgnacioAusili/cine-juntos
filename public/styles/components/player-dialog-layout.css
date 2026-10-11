@@ -24,7 +24,7 @@
   backdrop-filter: blur(8px);
 }
 
-.dialog-close {
+.o-dialog-close {
   position: absolute;
   top: 12px;
   right: 16px;
@@ -44,25 +44,25 @@
   transform: none;
 }
 
-.dialog-close svg {
+.o-dialog-close svg {
   width: 18px;
   height: 18px;
   stroke-width: 1.8;
 }
 
-.dialog-close:hover {
+.o-dialog-close:hover {
   color: #ff6b6b;
   transform: none;
 }
 
 @media (min-width: 681px) {
-  .about-dialog .dialog-close:hover,
-  .about-dialog .dialog-close:focus-visible {
+  .about-dialog .o-dialog-close:hover,
+  .about-dialog .o-dialog-close:focus-visible {
     transform: none;
   }
 }
 
-.player-dialog-card,
+.player-dialog__card,
 .player-inline-dialog-card {
   position: relative;
   width: 420px;
@@ -74,7 +74,7 @@
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
 }
 
-.player-dialog-header {
+.player-dialog__header {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -82,7 +82,7 @@
   padding-right: 24px;
 }
 
-.player-dialog-header h2 {
+.player-dialog__header h2 {
   margin: 0;
   font-size: 18px;
   line-height: 1.35;
@@ -90,14 +90,14 @@
   color: #fff;
 }
 
-.player-dialog-message {
+.player-dialog__message {
   margin: 0 0 24px;
   font-size: 15px;
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.65);
 }
 
-.resume-time-tag {
+.player-dialog__resume-time {
   display: inline-flex;
   align-items: center;
   padding: 0.08rem 0.45rem;
@@ -112,7 +112,7 @@
   vertical-align: baseline;
 }
 
-.dialog-title-icon {
+.o-dialog-title-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -120,37 +120,13 @@
   flex: 0 0 auto;
 }
 
-.player-dialog-actions {
+.player-dialog__actions {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
 }
 
-.button.warning {
-  min-height: 36px;
-  padding: 0 18px;
-  border: 0.5px solid rgba(240, 180, 41, 0.5);
-  background: linear-gradient(180deg, #ffd166, #f0b429);
-  color: #1c1c1e;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 800;
-  box-shadow:
-    0 0 0 1px rgba(240, 180, 41, 0.2),
-    0 8px 22px rgba(240, 180, 41, 0.28),
-    inset 0 1px 0 rgba(255, 255, 255, 0.32);
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.18);
-}
-
-.button.warning:hover {
-  background: linear-gradient(180deg, #ffe08a, #ffd166);
-  box-shadow:
-    0 0 0 1px rgba(240, 180, 41, 0.32),
-    0 12px 30px rgba(240, 180, 41, 0.42),
-    inset 0 1px 0 rgba(255, 255, 255, 0.42);
-}
-
-.slow-load-dialog .button.warning {
+.player-dialog--slow-load .button.button--warning {
   border-color: rgba(184, 145, 48, 0.5);
   background: linear-gradient(180deg, #d9bd70, #b8943d);
   box-shadow:
@@ -159,7 +135,7 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
-.slow-load-dialog .button.warning:hover {
+.player-dialog--slow-load .button.button--warning:hover {
   background: linear-gradient(180deg, #e1c985, #c3a452);
   box-shadow:
     0 0 0 1px rgba(184, 145, 48, 0.24),
@@ -167,31 +143,18 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.28);
 }
 
-.error-dialog .dialog-title-icon {
+.player-dialog--error .o-dialog-title-icon {
   color: #ff7777;
 }
 
-.error-dialog .error-action {
-  min-height: 36px;
-  min-width: 110px;
-  padding: 0 18px;
-  background: #e85d5d;
-  color: #fff;
-  border-color: rgba(255, 255, 255, 0.15);
-}
-
-.error-dialog .error-action:hover {
-  background: #f06b6b;
-}
-
-.dialog-actions {
+.o-dialog-actions {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
   width: 100%;
 }
 
-.dialog-checkbox {
+.o-dialog-checkbox {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -202,11 +165,11 @@
   user-select: none;
 }
 
-.confirm-load-checkbox {
+.player-dialog__confirm-checkbox {
   margin: -8px 0 24px;
 }
 
-.dialog-checkbox input {
+.o-dialog-checkbox input {
   width: 16px;
   height: 16px;
   margin: 0;

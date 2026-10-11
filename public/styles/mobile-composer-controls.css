@@ -175,7 +175,7 @@
     background: transparent;
   }
 
-  body:not(.is-lobby) #playerChatToggleButton.active {
+  body:not(.is-lobby) #playerChatToggleButton.player-chat-toggle--active {
     background: rgba(47, 184, 164, 0.14);
   }
 

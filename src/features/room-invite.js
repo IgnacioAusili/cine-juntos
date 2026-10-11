@@ -87,8 +87,8 @@ export function setInviteCopyFeedback(active) {
 
   void dom.copyInviteButton.offsetWidth;
   dom.copyInviteButton.classList.add("is-copy-animating");
-  const animationTarget = dom.copyInviteButton.querySelector(".room-chip-copy-motion")
-    || dom.copyInviteButton.querySelector(".room-chip-copy-main");
+  const animationTarget = dom.copyInviteButton.querySelector('.room-chip__copy-motion')
+    || dom.copyInviteButton.querySelector('.room-chip__copy-main');
   const finishCopyAnimation = (event) => {
     if (event && event.animationName !== "roomChipCopyLift") return;
     clearInviteCopyAnimationEndListener();

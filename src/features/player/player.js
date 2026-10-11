@@ -3,13 +3,13 @@ import {
 } from "../../core/dom.js?v=20261011-chat-controls-repair-01";
 import { state } from "../../core/state.js?v=20261011-chat-controls-repair-01";
 import { configureRateSelectMenu, initializeRateSelectMenu } from "./player-rate-menu.js?v=20261011-chat-controls-repair-01";
-import { hideSeekTooltip, updateSeekTooltipForValue } from "./player-seek-tooltip-view.js?v=20261011-chat-controls-repair-01";
+import { hideSeekTooltip, updateSeekTooltipForValue } from "./player-seek-tooltip-view.js?v=20261011-lucide-icons-repair-01";
 import { seekTooltipState } from "./player-seek-tooltip-state.js?v=20261011-chat-controls-repair-01";
-import { renderPlayerControls, showPlaybackGestureIndicator, updateSeekVisuals } from "./player-control-display.js?v=20261011-chat-controls-repair-01";
-import { setVideoStatus } from "./player-video-source.js?v=20261011-chat-controls-repair-01";
-import { getFiniteDuration, hasLoadedMediaSource, clearSlowLoadPromptTracking } from "./player-media.js?v=20261011-chat-controls-repair-01";
+import { renderPlayerControls, showPlaybackGestureIndicator, updateSeekVisuals } from "./player-control-display.js?v=20261011-player-skip-active-cleanup-01";
+import { setVideoStatus } from "./player-video-source.js?v=20261011-player-empty-state-01";
+import { getFiniteDuration, hasLoadedMediaSource, clearSlowLoadPromptTracking } from "./player-media.js?v=20261011-chat-auto-switch-bem-01-video-ts-group-01";
 import { playerRuntimeState } from "./player-runtime-state.js?v=20261011-chat-controls-repair-01";
-import { resetSyncControlCooldown, readPersistedVolume, syncPlayerControls } from "./player-control-actions.js?v=20261011-chat-controls-repair-01";
+import { resetSyncControlCooldown, readPersistedVolume, syncPlayerControls } from "./player-control-actions.js?v=20261011-player-skip-active-cleanup-01";
 
 const PLAYER_CONTROL_STYLES = new Set(["line"]);
 const MOBILE_PLAYER_CONTROLS_QUERY = "(max-width: 980px) and (hover: none) and (pointer: coarse)";

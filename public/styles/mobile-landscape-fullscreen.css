@@ -25,7 +25,7 @@
     grid-template-rows: minmax(0, 1fr);
   }
 
-  body.fullscreen-mode .topbar {
+  body.fullscreen-mode .site-header {
     display: none;
   }
 
@@ -37,7 +37,7 @@
     margin: 0;
   }
 
-  body.fullscreen-mode .session-view[data-chat-dock="right"] .workspace {
+  body.fullscreen-mode .session-view[data-chat-dock="right"] .o-workspace {
     display: grid;
     width: 100%;
     height: 100%;
@@ -50,17 +50,17 @@
       "chat";
   }
 
-  body.fullscreen-mode .session-view:not(.chat-collapsed)[data-chat-dock="right"] .workspace {
+  body.fullscreen-mode .session-view:not(.chat-collapsed)[data-chat-dock="right"] .o-workspace {
     grid-template-rows: 0 minmax(0, 1fr);
   }
 
-  body.fullscreen-mode .session-view[data-chat-dock="right"] .video-area,
+  body.fullscreen-mode .session-view[data-chat-dock="right"] .o-video-area,
   body.fullscreen-mode .session-view[data-chat-dock="right"] .chat-area {
     height: auto;
     min-height: 0;
   }
 
-  body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="right"] .video-area,
+  body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="right"] .o-video-area,
   body.fullscreen-mode .session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-area {
     height: 100%;
   }
@@ -73,7 +73,7 @@
     --chat-panel-width: clamp(250px, 40vw, 280px);
   }
 
-  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .workspace {
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .o-workspace {
     display: grid;
     width: 100%;
     height: var(--app-viewport-height);
@@ -85,7 +85,7 @@
     grid-template-areas: "video chat";
   }
 
-  html.viewport-landscape body:not(.is-lobby) .session-view.chat-collapsed[data-chat-dock="right"] .workspace {
+  html.viewport-landscape body:not(.is-lobby) .session-view.chat-collapsed[data-chat-dock="right"] .o-workspace {
     grid-template-columns: minmax(0, 1fr) 0;
   }
 
@@ -112,7 +112,7 @@
     flex-basis: 24px;
   }
 
-  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .workspace {
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .o-workspace {
     /* Igual que en PC: video y chat son dos superficies consecutivas del
        documento. El chat conserva un viewport propio y se alcanza mediante
        scroll, en vez de comprimirse dentro del alto del video. */
@@ -122,7 +122,7 @@
     grid-template-rows: var(--app-viewport-height) var(--app-viewport-height);
   }
 
-  html.viewport-landscape body:not(.is-lobby) .session-view.chat-collapsed[data-chat-dock="bottom"] .workspace {
+  html.viewport-landscape body:not(.is-lobby) .session-view.chat-collapsed[data-chat-dock="bottom"] .o-workspace {
     height: var(--app-viewport-height);
     padding-top: 0;
     grid-template-rows: var(--app-viewport-height) 0px;

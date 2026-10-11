@@ -53,7 +53,7 @@ body.fullscreen-mode .app-shell::-webkit-scrollbar {
   height: 0;
 }
 
-body.fullscreen-mode .topbar {
+body.fullscreen-mode .site-header {
   position: static;
   z-index: auto;
   display: flex;
@@ -81,8 +81,8 @@ body.fullscreen-mode .session-view[data-chat-dock="right"] {
   margin-inline: calc(var(--app-shell-gutter) * -1);
 }
 
-body.fullscreen-mode .session-view[data-chat-dock="right"] .workspace,
-body.fullscreen-mode .app-shell:fullscreen .session-view[data-chat-dock="right"] .workspace {
+body.fullscreen-mode .session-view[data-chat-dock="right"] .o-workspace,
+body.fullscreen-mode .app-shell:fullscreen .session-view[data-chat-dock="right"] .o-workspace {
   display: grid;
   width: 100%;
   height: var(--app-viewport-height);
@@ -95,8 +95,8 @@ body.fullscreen-mode .app-shell:fullscreen .session-view[data-chat-dock="right"]
   grid-template-areas: "video chat";
 }
 
-body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="right"] .workspace,
-body.fullscreen-mode .app-shell:fullscreen .session-view.chat-collapsed[data-chat-dock="right"] .workspace {
+body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="right"] .o-workspace,
+body.fullscreen-mode .app-shell:fullscreen .session-view.chat-collapsed[data-chat-dock="right"] .o-workspace {
   grid-template-columns: minmax(0, 1fr) 0;
   grid-template-areas: "video chat";
 }
@@ -105,8 +105,8 @@ body.fullscreen-mode .app-shell:fullscreen .session-view.chat-collapsed[data-cha
   /* En PC fullscreen la grilla debe interpolar el ancho del panel. El layout
      lateral normal deja transition en none porque usa flex; acá se restaura
      solo para la variante de grilla de pantalla completa. */
-  body.fullscreen-mode .session-view[data-chat-dock="right"] .workspace,
-  body.fullscreen-mode .app-shell:fullscreen .session-view[data-chat-dock="right"] .workspace {
+  body.fullscreen-mode .session-view[data-chat-dock="right"] .o-workspace,
+  body.fullscreen-mode .app-shell:fullscreen .session-view[data-chat-dock="right"] .o-workspace {
     transition: grid-template-columns 350ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
@@ -122,7 +122,7 @@ body.fullscreen-mode .app-shell:fullscreen .session-view.chat-collapsed[data-cha
 
 }
 
-body.fullscreen-mode .session-view[data-chat-dock="right"] .video-area {
+body.fullscreen-mode .session-view[data-chat-dock="right"] .o-video-area {
   display: flex;
 }
 
@@ -163,7 +163,7 @@ body.fullscreen-mode .session-view[data-chat-dock="right"] .messages {
 
 /* El nombre queda alineado 1px por encima del centro matemático de la fila,
    tanto en el dock lateral normal como en pantalla completa. */
-.session-view[data-chat-dock="right"] .chat-name-field {
+.session-view[data-chat-dock="right"] .chat-name-editor__field {
   transform: translateY(-1px);
 }
 

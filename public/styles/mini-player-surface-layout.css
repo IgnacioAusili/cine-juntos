@@ -92,7 +92,7 @@
   transform: none;
 }
 
-.mini-player-surface [data-proxy-for="playerChatToggleButton"].active {
+.mini-player-surface [data-proxy-for="playerChatToggleButton"].player-chat-toggle--active {
   background: rgba(47, 184, 164, 0.14);
   color: #d8fff9;
 }

@@ -1,7 +1,7 @@
 import { dom } from "../core/dom.js?v=20261011-chat-controls-repair-01";
-import { updateDisplayName } from "./presence.js?v=20261011-chat-controls-repair-01";
-import { joinRoom } from "./room-entry.js?v=20261011-chat-controls-repair-01";
-import { leaveRoom } from "./room-exit.js?v=20261011-chat-controls-repair-01";
+import { updateDisplayName } from "./presence.js?v=20261011-lucide-icons-repair-01";
+import { joinRoom } from "./room-entry.js?v=20261011-player-empty-state-01";
+import { leaveRoom } from "./room-exit.js?v=20261011-chat-auto-switch-bem-01-video-ts-group-01";
 import { copyInvite } from "./room-invite.js?v=20261011-chat-controls-repair-01";
 import {
   consumeRoomCreationAttempt,
@@ -14,7 +14,7 @@ import { state, logEvent } from "../core/state.js?v=20261011-chat-controls-repai
 import { generateRoomCode } from "../core/utils.js?v=20261011-chat-controls-repair-01";
 import { setSyncStatus } from "./session-ui.js?v=20261011-chat-controls-repair-01";
 
-const BACK_TO_LOBBY_ANIMATION_MS = 200;
+const BACK_TO_LOBBY_ANIMATION_MS = 430;
 
 export function wireRoomEvents() {
   let isLeavingRoom = false;
@@ -69,7 +69,10 @@ export function wireRoomEvents() {
     dom.backToLobbyButton.classList.add("is-leaving");
     const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
     window.setTimeout(() => {
-      void leaveRoom();
+      void leaveRoom().finally(() => {
+        dom.backToLobbyButton?.classList.remove("is-leaving");
+        isLeavingRoom = false;
+      });
     }, prefersReducedMotion ? 0 : BACK_TO_LOBBY_ANIMATION_MS);
   });
 

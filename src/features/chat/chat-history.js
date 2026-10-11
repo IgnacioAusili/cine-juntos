@@ -4,7 +4,7 @@ import {
   isExternalChatVisibleToUser,
   isInsideChatVisibleToUser,
 } from "./unread-counters.js?v=20261011-chat-controls-repair-01";
-import { renderMessage } from "./chat-render.js?v=20261011-chat-controls-repair-01";
+import { renderMessage } from "./chat-render.js?v=20261011-chat-auto-switch-bem-01-video-ts-group-01";
 
 let historyGeneration = 0;
 let historyExhausted = false;

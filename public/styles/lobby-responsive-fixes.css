@@ -6,28 +6,28 @@
     grid-template-rows: auto auto auto;
     align-content: start;
   }
-  body.is-lobby .lobby-grid {
+  body.is-lobby .lobby-screen__grid {
     gap: clamp(14px, 2.5vh, 24px);
   }
-  body.is-lobby .lobby-hero {
+  body.is-lobby .lobby-screen__hero {
     transform: none;
   }
 
-  body.is-lobby .lobby-title {
+  body.is-lobby .lobby-screen__title {
     font-size: clamp(4rem, 8vw, 6.8rem);
   }
 
-  body.is-lobby .lobby-ticket {
+  body.is-lobby .lobby-screen__ticket {
     justify-self: center;
     transform: none;
   }
 
-  body.is-lobby .lobby-footer,
-  body.is-lobby .lobby-footer .lobby-disclaimer {
+  body.is-lobby .lobby-screen__footer,
+  body.is-lobby .lobby-screen__footer .lobby-screen__disclaimer {
     transform: none;
   }
 
-  body.is-lobby .lobby-disclaimer {
+  body.is-lobby .lobby-screen__disclaimer {
     white-space: normal;
   }
 }
@@ -40,24 +40,24 @@
     padding-block: 0 10px;
   }
 
-  body.is-lobby .lobby-grid {
+  body.is-lobby .lobby-screen__grid {
     row-gap: var(--lobby-vertical-content-gap, clamp(12px, 2vh, 16px));
     transform: none;
   }
 
-  body.is-lobby .lobby-hero {
+  body.is-lobby .lobby-screen__hero {
     container-type: inline-size;
     width: min(580px, calc(100% - 32px));
     column-gap: clamp(12px, 3vw, 20px);
     transform: none;
   }
 
-  body.is-lobby .lobby-title-icon {
+  body.is-lobby .lobby-screen__title-icon {
     width: clamp(72px, 16vw, 96px);
     height: clamp(72px, 16vw, 96px);
   }
 
-  body.is-lobby .lobby-title {
+  body.is-lobby .lobby-screen__title {
     --lobby-title-size: clamp(4rem, 17cqw, 6.8rem);
     font-size: var(--lobby-title-size);
     --lobby-title-lift: 0px;
@@ -65,42 +65,42 @@
     margin-bottom: calc(-1 * var(--lobby-title-lift));
   }
 
-  body.is-lobby .lobby-title-icon {
+  body.is-lobby .lobby-screen__title-icon {
     translate: var(--lobby-title-group-shift, 0px) 0;
   }
 
-  body.is-lobby .lobby-description {
+  body.is-lobby .lobby-screen__description {
     width: 100%;
     /* La animación base controla transform; translate permite sumar el
        centrado geométrico sin que la animación lo sobrescriba. */
     translate: 0 var(--lobby-description-separator-shift, 0px);
   }
 
-  body.is-lobby .lobby-hero::before,
-  body.is-lobby .lobby-hero::after {
+  body.is-lobby .lobby-screen__hero::before,
+  body.is-lobby .lobby-screen__hero::after {
     top: calc(100% - 8px + var(--lobby-description-separator-shift, 0px));
   }
 
-  body.is-lobby .lobby-ticket {
+  body.is-lobby .lobby-screen__ticket {
     margin-top: 0;
   }
 
-  body.is-lobby .lobby-ticket-body {
+  body.is-lobby .lobby-screen__ticket-body {
     gap: 8px;
     padding: 10px 12px 8px;
   }
 
-  body.is-lobby .lobby-fields input[type="text"] {
+  body.is-lobby .lobby-screen__fields input[type="text"] {
     height: 38px;
     min-height: 38px;
     line-height: 38px;
   }
 
-  body.is-lobby .lobby-actions > .button {
+  body.is-lobby .lobby-screen__actions > .button {
     min-height: 38px;
   }
 
-  body.is-lobby .lobby-footer {
+  body.is-lobby .lobby-screen__footer {
     width: min(980px, calc(100% - 32px));
     margin-top: 4px;
     padding: 0;
@@ -108,20 +108,20 @@
     grid-template-columns: minmax(0, 1fr) 44px;
   }
 
-  body.is-lobby .lobby-footer .lobby-disclaimer {
+  body.is-lobby .lobby-screen__footer .lobby-screen__disclaimer {
     transform: none;
   }
 
-  body.is-lobby .lobby-about-button {
+  body.is-lobby .lobby-screen__about-button {
     width: 38px;
     height: 38px;
     transform: translateY(6px);
   }
 
-  body.is-lobby .lobby-about-button:hover,
-  body.is-lobby .lobby-about-button:focus-visible,
-  body.is-lobby .lobby-about-button.is-touch-hover,
-  body.is-lobby .lobby-about-button.is-touch-hover:hover {
+  body.is-lobby .lobby-screen__about-button:hover,
+  body.is-lobby .lobby-screen__about-button:focus-visible,
+  body.is-lobby .lobby-screen__about-button.is-touch-hover,
+  body.is-lobby .lobby-screen__about-button.is-touch-hover:hover {
     transform: translateY(4px);
   }
 }
@@ -135,20 +135,20 @@
     padding-block: 4px 10px;
   }
 
-  body.is-lobby .lobby-marquee {
+  body.is-lobby .lobby-screen__marquee {
     position: absolute;
     inset-inline: 0;
     top: 4px;
     z-index: 0;
   }
 
-  body.is-lobby .lobby-grid {
+  body.is-lobby .lobby-screen__grid {
     align-self: start;
     gap: 12px;
     margin-top: 0;
   }
 
-  body.is-lobby .lobby-hero {
+  body.is-lobby .lobby-screen__hero {
     grid-template-areas:
       "icon title"
       "description description"
@@ -156,55 +156,55 @@
     row-gap: clamp(6px, 1.6vh, 10px);
   }
 
-  body.is-lobby .lobby-ticket-body {
+  body.is-lobby .lobby-screen__ticket-body {
     gap: 6px;
     padding: 12px 16px 10px;
   }
 
-  body.is-lobby .lobby-fields {
+  body.is-lobby .lobby-screen__fields {
     gap: 6px;
   }
 
-  body.is-lobby .lobby-fields input[type="text"] {
+  body.is-lobby .lobby-screen__fields input[type="text"] {
     height: 34px;
     min-height: 34px;
     line-height: 34px;
   }
 
-  body.is-lobby .lobby-actions > .button {
+  body.is-lobby .lobby-screen__actions > .button {
     min-height: 36px;
   }
 
-  body.is-lobby .lobby-footer {
+  body.is-lobby .lobby-screen__footer {
     align-self: end;
     margin-top: 8px;
   }
 }
 
 @media (max-width: 680px) and (max-height: 760px) {
-  body.is-lobby .lobby-disclaimer-full {
+  body.is-lobby .lobby-screen__disclaimer--full {
     display: none;
   }
 
-  body.is-lobby .lobby-disclaimer-mobile {
+  body.is-lobby .lobby-screen__disclaimer--mobile {
     display: inline;
   }
 
-  body.is-lobby .lobby-ticket-body {
+  body.is-lobby .lobby-screen__ticket-body {
     gap: 6px;
     padding: 8px 12px 6px;
   }
 
-  body.is-lobby .lobby-fields {
+  body.is-lobby .lobby-screen__fields {
     gap: 6px;
   }
 
-  body.is-lobby .lobby-fields input[type="text"] {
+  body.is-lobby .lobby-screen__fields input[type="text"] {
     height: 36px;
     min-height: 36px;
     line-height: 36px;
   }
-  body.is-lobby .lobby-actions > .button {
+  body.is-lobby .lobby-screen__actions > .button {
     min-height: 36px;
   }
 }

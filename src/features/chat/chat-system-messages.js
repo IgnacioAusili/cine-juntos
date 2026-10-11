@@ -6,7 +6,7 @@ import {
 } from "../../core/state.js?v=20261011-chat-controls-repair-01";
 import { formatClockTime } from "../../core/utils.js?v=20261011-chat-controls-repair-01";
 import { createRandomId } from "../../core/random-id.js?v=20261011-chat-controls-repair-01";
-import { renderMessage } from "./chat-render.js?v=20261011-chat-controls-repair-01";
+import { renderMessage } from "./chat-render.js?v=20261011-chat-auto-switch-bem-01-video-ts-group-01";
 
 /**
  * Genera y envía un mensaje de sistema al chat describiendo un evento de video.

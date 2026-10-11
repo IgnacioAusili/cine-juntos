@@ -9,8 +9,8 @@ import {
 
 const sessionView = document.querySelector("#sessionView");
 const appShell = document.querySelector(".app-shell");
-const workspace = sessionView?.querySelector(".workspace");
-const videoArea = sessionView?.querySelector(".video-area");
+const workspace = sessionView?.querySelector('.o-workspace');
+const videoArea = sessionView?.querySelector('.o-video-area');
 const videoPlayer = sessionView?.querySelector("#videoPlayer");
 const playerFrame = sessionView?.querySelector(".player-frame");
 const chatArea = sessionView?.querySelector(".chat-area");

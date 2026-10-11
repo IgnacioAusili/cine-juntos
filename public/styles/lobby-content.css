@@ -1,6 +1,6 @@
 
 
-.lobby-description {
+.lobby-screen__description {
   grid-area: description;
   margin: 0;
   max-width: 68ch;
@@ -10,7 +10,7 @@
   animation: lobby-description-enter 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.lobby-description-highlight {
+.lobby-screen__description--highlight {
   color: var(--accent);
   font-weight: 700;
   background: linear-gradient(110deg, var(--accent) 0%, #fff 45%, var(--accent) 70%);
@@ -21,7 +21,7 @@
   animation: lobby-description-highlight 1100ms ease-out 450ms both;
 }
 
-.lobby-description-accent {
+.lobby-screen__description--accent {
   color: var(--teal);
   font-weight: 700;
   text-shadow: 0 0 14px var(--teal-glow);
@@ -60,15 +60,15 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .lobby-description,
-  .lobby-description-highlight,
-  .lobby-description-accent {
+  .lobby-screen__description,
+  .lobby-screen__description--highlight,
+  .lobby-screen__description--accent {
     animation: none;
   }
 }
 
 /* Feature pills */
-.lobby-features {
+.lobby-screen__features {
   grid-area: features;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -81,7 +81,7 @@
 }
 
 /* Línea decorativa separadora horizontal arriba de las 3 opciones */
-.lobby-features::before {
+.lobby-screen__features::before {
   content: "";
   position: absolute;
   top: 0;
@@ -97,7 +97,7 @@
   );
 }
 
-.lobby-feature {
+.lobby-screen__feature {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -105,7 +105,7 @@
   container-type: inline-size;
 }
 
-.lobby-feature-icon {
+.lobby-screen__feature-icon {
   display: inline-flex;
   flex: 0 0 auto;
   align-items: center;
@@ -121,12 +121,12 @@
   line-height: 0;
 }
 
-.lobby-feature-icon svg {
+.lobby-screen__feature-icon svg {
   width: 22px;
   height: 22px;
 }
 
-.lobby-feature-text {
+.lobby-screen__feature-text {
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -135,34 +135,34 @@
   min-width: 0;
 }
 
-.lobby-feature-text strong {
+.lobby-screen__feature-text strong {
   color: var(--text);
   font-size: 0.88rem;
   font-weight: 700;
 }
 
-.lobby-feature-title {
+.lobby-screen__feature-title {
   max-width: 100%;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
-.lobby-feature-title-short {
+.lobby-screen__feature-title--short {
   display: none;
 }
 
 @container (max-width: 145px) {
-  .lobby-feature-title-full {
+  .lobby-screen__feature-title--full {
     display: none;
   }
 
-  .lobby-feature-title-short {
+  .lobby-screen__feature-title--short {
     display: inline;
   }
 }
 
-.lobby-feature-text small {
+.lobby-screen__feature-text small {
   color: var(--muted-2);
   font-size: 0.74rem;
 }
@@ -170,7 +170,7 @@
 /* ============================================================
    TICKET / BOLETO (derecha)
    ============================================================ */
-.lobby-ticket {
+.lobby-screen__ticket {
   position: relative;
   display: grid;
   grid-template-columns: 36px 1fr;
@@ -186,7 +186,7 @@
 }
 
 /* Glow ambiental dentro del ticket */
-.lobby-ticket::before {
+.lobby-screen__ticket::before {
   position: absolute;
   inset: 0;
   background:
@@ -197,7 +197,7 @@
 }
 
 /* Highlight superior "luz de proyector" */
-.lobby-ticket::after {
+.lobby-screen__ticket::after {
   position: absolute;
   inset: 0;
   border-radius: inherit;
@@ -207,7 +207,7 @@
 }
 
 /* Stub lateral (la colita del boleto) */
-.lobby-ticket-stub {
+.lobby-screen__ticket-stub {
   position: relative;
   z-index: 1;
   display: block;

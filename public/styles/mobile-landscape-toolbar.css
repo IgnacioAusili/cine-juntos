@@ -8,7 +8,7 @@
      video-area en un contenedor estático, el workspace pasa a ser su bloque
      de referencia y la toolbar conserva su posición durante toda la cortina. */
   html.viewport-landscape body:not(.is-lobby)
-  .app-shell .session-view[data-chat-dock="right"] .video-area {
+  .app-shell .session-view[data-chat-dock="right"] .o-video-area {
     position: static;
   }
 
@@ -41,7 +41,7 @@
   }
 
   html.viewport-landscape body:not(.is-lobby)
-    .session-view[data-chat-dock="bottom"] .video-area {
+    .session-view[data-chat-dock="bottom"] .o-video-area {
     scroll-snap-align: none;
     scroll-snap-stop: normal;
     scroll-margin-top: 0;
@@ -64,14 +64,14 @@
     gap: var(--session-header-gap);
   }
 
-  body:not(.is-lobby):not(.fullscreen-mode) .topbar {
+  body:not(.is-lobby):not(.fullscreen-mode) .site-header {
     margin-inline: var(--app-shell-gutter);
   }
 
   /* El tag de sala tiene un ajuste vertical propio para escritorio. En
      landscape móvil sus dos márgenes internos deben ser idénticos para que
      el espacio visual no pese más hacia la sesión. */
-  body:not(.is-lobby):not(.fullscreen-mode) .topbar #roomChip {
+  body:not(.is-lobby):not(.fullscreen-mode) .site-header #roomChip {
     padding-block: 5px;
   }
 
@@ -100,7 +100,7 @@
    sin la misma cortina horizontal. */
 @media (hover: none) and (pointer: coarse) and (max-height: 500px) and (orientation: landscape) {
   html.viewport-landscape body.fullscreen-mode
-    .session-view[data-chat-dock="right"] .workspace {
+    .session-view[data-chat-dock="right"] .o-workspace {
     display: flex !important;
     width: 100% !important;
     height: 100% !important;
@@ -113,7 +113,7 @@
   }
 
   html.viewport-landscape body.fullscreen-mode
-    .session-view[data-chat-dock="right"] .video-area {
+    .session-view[data-chat-dock="right"] .o-video-area {
     flex: 1 1 auto;
     width: auto;
     height: 100% !important;

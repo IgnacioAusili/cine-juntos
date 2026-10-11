@@ -25,7 +25,7 @@
   transition: box-shadow 0.2s ease;
 }
 
-.workspace {
+.o-workspace {
   position: relative;
   display: grid;
   height: calc(var(--app-viewport-height) - (var(--app-shell-gutter) * 2));
@@ -40,11 +40,11 @@
 
 /* El ancho/alto real cambia en un único paso. El movimiento visible se hace
    con transform en el video para no reenvolver texto y controles por frame. */
-.session-view.chat-layout-transitioning[data-chat-dock="bottom"] .workspace {
+.session-view.chat-layout-transitioning[data-chat-dock="bottom"] .o-workspace {
   transition: none;
 }
 
-.session-view.chat-layout-visual-motion .video-area {
+.session-view.chat-layout-visual-motion .o-video-area {
   transform: scale(
     var(--chat-layout-video-scale-x, 1),
     var(--chat-layout-video-scale-y, 1)
@@ -65,13 +65,13 @@
   -webkit-backdrop-filter: none;
 }
 
-.session-view[data-chat-dock="right"] .workspace {
+.session-view[data-chat-dock="right"] .o-workspace {
   display: flex;
   column-gap: 0;
   transition: none;
 }
 
-.session-view[data-chat-dock="right"] .video-area {
+.session-view[data-chat-dock="right"] .o-video-area {
   flex: 1 1 auto;
   min-width: 0;
 }
@@ -89,7 +89,7 @@
 }
 
 /* El toolbar absoluto ya ocupa el espacio sobre la primera fila; no sumar otro inset arriba. */
-.session-view[data-chat-dock="bottom"] .workspace {
+.session-view[data-chat-dock="bottom"] .o-workspace {
   height: auto;
   row-gap: 0;
   /* La fila del chat cambia de alto, pero el reproductor conserva la misma
@@ -106,7 +106,7 @@
 
 /* Al pasar de abajo a lateral, el panel se extiende después del scroll suave
    y no aparece de golpe junto con el cambio de grilla. */
-.session-view.chat-dock-switching .workspace {
+.session-view.chat-dock-switching .o-workspace {
   transition:
     grid-template-columns 280ms cubic-bezier(0.22, 1, 0.36, 1),
     grid-template-rows 280ms cubic-bezier(0.22, 1, 0.36, 1);
@@ -128,7 +128,7 @@
     filter 220ms ease;
 }
 
-.session-view.chat-collapsed[data-chat-dock="right"] .workspace {
+.session-view.chat-collapsed[data-chat-dock="right"] .o-workspace {
   column-gap: 0;
 }
 
@@ -179,7 +179,7 @@ body:not(.fullscreen-mode) .app-shell:not(:fullscreen)
     opacity 400ms ease-in-out;
 }
 
-.session-view.chat-collapsed[data-chat-dock="bottom"] .workspace {
+.session-view.chat-collapsed[data-chat-dock="bottom"] .o-workspace {
   height: calc(var(--app-viewport-height) - var(--app-shell-gutter));
   min-height: 0;
   row-gap: 0;

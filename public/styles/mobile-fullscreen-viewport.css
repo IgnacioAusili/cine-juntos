@@ -15,7 +15,7 @@
   }
 
   body.fullscreen-mode .session-view .session-toolbar,
-  body.fullscreen-mode .session-view .workspace {
+  body.fullscreen-mode .session-view .o-workspace {
     margin-top: 0 !important;
   }
 
@@ -28,7 +28,7 @@
     margin-inline: 0 !important;
   }
 
-  body.fullscreen-mode .session-view[data-chat-dock="right"] .workspace {
+  body.fullscreen-mode .session-view[data-chat-dock="right"] .o-workspace {
     width: 100% !important;
     height: var(--app-viewport-height) !important;
     max-height: var(--app-viewport-height) !important;
@@ -36,25 +36,25 @@
     margin-top: 0 !important;
   }
 
-  body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="right"] .workspace {
+  body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="right"] .o-workspace {
     grid-template-columns: minmax(0, 1fr) 0 !important;
     grid-template-rows: minmax(0, 1fr) 0 !important;
     grid-template-areas: "video" "chat" !important;
   }
 
-  body.fullscreen-mode .session-view:not(.chat-collapsed)[data-chat-dock="right"] .workspace {
+  body.fullscreen-mode .session-view:not(.chat-collapsed)[data-chat-dock="right"] .o-workspace {
     grid-template-columns: minmax(0, 1fr) !important;
     grid-template-rows: 0 minmax(0, 1fr) !important;
     grid-template-areas: "video" "chat" !important;
   }
 
-  html.viewport-landscape body.fullscreen-mode .session-view[data-chat-dock="right"] .workspace {
+  html.viewport-landscape body.fullscreen-mode .session-view[data-chat-dock="right"] .o-workspace {
     grid-template-columns: minmax(0, 1fr) var(--chat-panel-width) !important;
     grid-template-rows: minmax(0, 1fr) !important;
     grid-template-areas: "video chat" !important;
   }
 
-  html.viewport-landscape body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="right"] .workspace {
+  html.viewport-landscape body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="right"] .o-workspace {
     grid-template-columns: minmax(0, 1fr) 0 !important;
     grid-template-areas: "video chat" !important;
   }

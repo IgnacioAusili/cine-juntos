@@ -47,7 +47,7 @@
   gap: 6px;
 }
 
-.chat-name-field {
+.chat-name-editor__field {
   display: grid;
   min-width: 0;
   width: fit-content;
@@ -56,7 +56,7 @@
   justify-self: center;
 }
 
-.chat-name-field[data-editing="true"] {
+.chat-name-editor__field[data-editing="true"] {
   width: 100%;
 }
 
@@ -77,8 +77,8 @@
   justify-items: center;
 }
 
-.chat-name-display-row,
-.chat-name-edit-row {
+.chat-name-editor__display-row,
+.chat-name-editor__edit-row {
   display: flex;
   grid-area: 1 / 1;
   min-width: 0;
@@ -93,11 +93,11 @@
     visibility 0s linear;
 }
 
-.chat-name-display-row {
+.chat-name-editor__display-row {
   padding: 0;
 }
 
-.chat-name-display {
+.chat-name-editor__display {
   flex: 1 1 auto;
   min-width: 0;
   max-width: 100%;
@@ -110,7 +110,7 @@
   white-space: nowrap;
 }
 
-.chat-name-edit-row {
+.chat-name-editor__edit-row {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -119,16 +119,16 @@
   max-width: 100%;
 }
 
-.chat-name-editor:not([data-editing="true"]) .chat-name-edit-row,
-.chat-name-editor[data-editing="true"] .chat-name-display-row {
+.chat-name-editor:not([data-editing="true"]) .chat-name-editor__edit-row,
+.chat-name-editor[data-editing="true"] .chat-name-editor__display-row {
   position: absolute;
   inset-block-start: 0;
   inset-inline-start: 50%;
   translate: -50% 0;
 }
 
-.chat-name-edit-row input[type="text"],
-.chat-name-edit-row input[type="search"] {
+.chat-name-editor__edit-row input[type="text"],
+.chat-name-editor__edit-row input[type="search"] {
   appearance: none;
   display: block;
   min-width: 0;
@@ -156,16 +156,16 @@
   transition: none;
 }
 
-.chat-name-edit-row input[type="text"]:focus,
-.chat-name-edit-row input[type="search"]:focus {
+.chat-name-editor__edit-row input[type="text"]:focus,
+.chat-name-editor__edit-row input[type="search"]:focus {
   border: 0 !important;
   outline: none;
   background: transparent !important;
   box-shadow: none !important;
 }
 
-.chat-name-edit-button,
-.chat-name-confirm-button {
+.chat-name-editor__edit-button,
+.chat-name-editor__confirm-button {
   display: inline-grid;
   width: 20px;
   min-height: 20px;
@@ -181,21 +181,21 @@
   transition: color 140ms ease, filter 180ms ease;
 }
 
-.chat-name-edit-button {
+.chat-name-editor__edit-button {
   width: 22px;
   min-height: 22px;
   flex: 0 0 22px;
 }
 
-.chat-name-edit-button:disabled {
+.chat-name-editor__edit-button:disabled {
   cursor: not-allowed;
   opacity: 0.42;
   color: color-mix(in srgb, var(--muted-2) 70%, var(--text-faint) 30%);
   filter: saturate(0.55);
 }
 
-.chat-name-edit-button:disabled:hover,
-.chat-name-edit-button:disabled:focus-visible {
+.chat-name-editor__edit-button:disabled:hover,
+.chat-name-editor__edit-button:disabled:focus-visible {
   color: color-mix(in srgb, var(--muted-2) 70%, var(--text-faint) 30%);
   opacity: 0.42;
   transform: none;
@@ -212,10 +212,10 @@
   }
 }
 
-.chat-name-edit-button:hover,
-.chat-name-edit-button:focus-visible,
-.chat-name-confirm-button:hover,
-.chat-name-confirm-button:focus-visible {
+.chat-name-editor__edit-button:hover,
+.chat-name-editor__edit-button:focus-visible,
+.chat-name-editor__confirm-button:hover,
+.chat-name-editor__confirm-button:focus-visible {
   border-color: transparent;
   background: transparent;
   box-shadow: none;

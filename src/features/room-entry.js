@@ -9,8 +9,8 @@ import { createTransport } from "../services/transport.js?v=20261011-chat-contro
 import {
   renderMembers,
   renderPresence,
-} from "./presence.js?v=20261011-chat-controls-repair-01";
-import { setConnection } from "./icons-tooltips.js?v=20261011-chat-controls-repair-01";
+} from "./presence.js?v=20261011-lucide-icons-repair-01";
+import { setConnection } from "./icons-tooltips.js?v=20261011-lucide-icons-repair-01";
 import { syncComponentAspectLayoutNow } from "./chat/component-aspect-layout.js?v=20261011-chat-controls-repair-01";
 import {
   getUserScrollIntentVersion,
@@ -20,7 +20,7 @@ import {
   showSession,
   watchRoomEntryVideoFocus,
 } from "./session-ui.js?v=20261011-chat-controls-repair-01";
-import { handleRemoteState } from "./player/index.js?v=20261011-chat-controls-repair-01";
+import { handleRemoteState } from "./player/index.js?v=20261011-player-empty-state-01";
 import {
   beginSystemMessageHydration,
   finishSystemMessageHydration,
@@ -31,7 +31,7 @@ import {
   resetChatHistoryPaging,
   fillChatHistoryViewport,
   setInsideChatVisible,
-} from "./chat/index.js?v=20261011-chat-controls-repair-01";
+} from "./chat/index.js?v=20261011-chat-auto-switch-bem-01-video-ts-group-01";
 import {
   getRoomTabLimitConflictCount,
   writeActiveTabRecord,

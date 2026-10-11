@@ -22,7 +22,7 @@
   white-space: nowrap;
 }
 
-.host-badge-dot {
+.host-badge__dot {
   width: 8px;
   height: 8px;
   flex: 0 0 8px;

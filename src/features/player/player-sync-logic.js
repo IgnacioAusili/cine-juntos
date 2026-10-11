@@ -12,10 +12,10 @@ import {
   SEND_THROTTLE_MS,
   formatSeconds,
 } from "../../core/utils.js?v=20261011-chat-controls-repair-01";
-import { markParticipantActive, rememberParticipant } from "../presence.js?v=20261011-chat-controls-repair-01";
-import { sendVideoEventMessage } from "../chat/index.js?v=20261011-chat-controls-repair-01";
-import { configurePlaybackRecoveryPort, describePlaybackIssue, cancelPendingPlaybackIssueDetection, pauseRoomForPlaybackIssue, clearPlaybackRecoveryTracking, attemptPlaybackRecovery } from "./player-sync-recovery.js?v=20261011-chat-controls-repair-01";
-export { cancelPendingPlaybackIssueDetection, pauseRoomForPlaybackIssue, clearPlaybackRecoveryTracking, attemptPlaybackRecovery } from "./player-sync-recovery.js?v=20261011-chat-controls-repair-01";
+import { markParticipantActive, rememberParticipant } from "../presence.js?v=20261011-lucide-icons-repair-01";
+import { sendVideoEventMessage } from "../chat/index.js?v=20261011-chat-auto-switch-bem-01-video-ts-group-01";
+import { configurePlaybackRecoveryPort, describePlaybackIssue, cancelPendingPlaybackIssueDetection, pauseRoomForPlaybackIssue, clearPlaybackRecoveryTracking, attemptPlaybackRecovery } from "./player-sync-recovery.js?v=20261011-chat-auto-switch-bem-01-video-ts-group-01";
+export { cancelPendingPlaybackIssueDetection, pauseRoomForPlaybackIssue, clearPlaybackRecoveryTracking, attemptPlaybackRecovery } from "./player-sync-recovery.js?v=20261011-chat-auto-switch-bem-01-video-ts-group-01";
 let playerMediaPort = null;
 
 export function configurePlayerMediaPort(port) {

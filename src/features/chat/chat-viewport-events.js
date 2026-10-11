@@ -1,16 +1,16 @@
 import { dom } from "../../core/dom.js?v=20261011-chat-controls-repair-01";
 import { logEvent, state } from "../../core/state.js?v=20261011-chat-controls-repair-01";
 import { CHAT_DOCK_META } from "../../core/utils.js?v=20261011-chat-controls-repair-01";
-import { autoResizeMessageInput, handlePasteEvent, hideEmojiPicker, normalizeEmojiShortcodesInput, repositionEmojiPicker, submitMessageFrom, toggleEmojiPicker, updateCharCounter, wireFloatingComposerLayout, wireComposerScrollbar } from "./chat-input.js?v=20261011-chat-controls-repair-01";
-import { setReplyTarget } from "./chat-reply.js?v=20261011-chat-controls-repair-01";
+import { autoResizeMessageInput, handlePasteEvent, hideEmojiPicker, normalizeEmojiShortcodesInput, repositionEmojiPicker, submitMessageFrom, toggleEmojiPicker, updateCharCounter, wireFloatingComposerLayout, wireComposerScrollbar } from "./chat-input.js?v=20261011-chat-auto-switch-bem-01-video-ts-group-01";
+import { setReplyTarget } from "./chat-reply.js?v=20261011-lucide-icons-repair-01";
 import { checkScrollPosition, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20261011-chat-controls-repair-01";
-import { fillChatHistoryViewport, loadOlderChatHistory } from "./chat-history.js?v=20261011-chat-controls-repair-01";
+import { fillChatHistoryViewport, loadOlderChatHistory } from "./chat-history.js?v=20261011-chat-auto-switch-bem-01-video-ts-group-01";
 import { copyMessageText, hideMessageMenu, showMessageMenu } from "./message-menu.js?v=20261011-chat-controls-repair-01";
-import { setChatDock, setExternalChatAutoExpandEnabled, setInsideChatAutoExpandEnabled, setInsideChatStyle, setInsideChatVisible, syncChatAutoExpandControls, syncExternalChatCollapseHandleOffset, wireResponsiveSessionLayout } from "./chat-layout.js?v=20261011-chat-controls-repair-01";
+import { setChatDock, setExternalChatAutoExpandEnabled, setInsideChatAutoExpandEnabled, setInsideChatStyle, setInsideChatVisible, syncChatAutoExpandControls, syncExternalChatCollapseHandleOffset, wireResponsiveSessionLayout } from "./chat-layout.js?v=20261011-chat-auto-switch-bem-01";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20261011-chat-controls-repair-01";
 import { focusChatInput } from "./chat-input-focus.js?v=20261011-chat-controls-repair-01";
-import { hideTooltip } from "../icons-tooltips.js?v=20261011-chat-controls-repair-01";
-import { applyDampenedWheelScroll, clearCollapsePointerHover, handleCollapseButtonClick, hasVerticalScroll, isMobileChatLayout, setCollapsePointerHover, isCollapsePointerHovered, shouldBlockWheelForComposerControl, shouldBlockWheelForContainer, shouldBlockWheelForTextarea } from "./chat-event-helpers.js?v=20261011-chat-controls-repair-01";
+import { hideTooltip } from "../icons-tooltips.js?v=20261011-lucide-icons-repair-01";
+import { applyDampenedWheelScroll, clearCollapsePointerHover, handleCollapseButtonClick, hasVerticalScroll, isMobileChatLayout, setCollapsePointerHover, isCollapsePointerHovered, shouldBlockWheelForComposerControl, shouldBlockWheelForContainer, shouldBlockWheelForTextarea } from "./chat-event-helpers.js?v=20261011-chat-auto-switch-bem-01";
 
 export function wireChatViewportEvents() {
 window.addEventListener("scroll", syncUnreadBadgesWithVisibility, {

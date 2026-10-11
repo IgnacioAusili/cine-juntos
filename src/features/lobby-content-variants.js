@@ -4,8 +4,8 @@ export function syncSingleColumnDescriptionPlacement(hero, ticket) {
   // Medimos desde cero para no acumular el desplazamiento al redimensionar.
   hero.style.setProperty("--lobby-description-separator-shift", "0px");
 
-  const title = hero.querySelector(".lobby-title");
-  const description = hero.querySelector(".lobby-description");
+  const title = hero.querySelector('.lobby-screen__title');
+  const description = hero.querySelector('.lobby-screen__description');
   if (!title || !description) return;
 
   const descriptionWidth = Math.max(hero.clientWidth, ticket.clientWidth);
@@ -37,7 +37,7 @@ export function resetLobbyAboutButtonContact() {
 }
 
 export function syncLobbyAboutButtonContact(ticket, footer) {
-  const button = footer?.querySelector(".lobby-about-button");
+  const button = footer?.querySelector('.lobby-screen__about-button');
   if (!ticket || !button || button.getClientRects().length === 0) {
     resetLobbyAboutButtonContact();
     return;
@@ -102,12 +102,12 @@ export function syncSingleColumnTicketPlacement(hero, ticket, footer) {
   ];
   fitProperties.forEach((property) => ticket.style.removeProperty(property));
 
-  const body = ticket.querySelector(".lobby-ticket-body");
-  const stub = ticket.querySelector(".lobby-ticket-stub");
-  const head = ticket.querySelector(".lobby-ticket-head");
-  const fields = ticket.querySelector(".lobby-fields");
+  const body = ticket.querySelector('.lobby-screen__ticket-body');
+  const stub = ticket.querySelector('.lobby-screen__ticket-stub');
+  const head = ticket.querySelector('.lobby-screen__ticket-head');
+  const fields = ticket.querySelector('.lobby-screen__fields');
   const controls = [...(fields?.querySelectorAll('input[type="text"]') || [])];
-  const actionButtons = [...ticket.querySelectorAll(".lobby-actions > .button")];
+  const actionButtons = [...ticket.querySelectorAll('.lobby-screen__actions > .button')];
   const stubRect = stub?.getBoundingClientRect();
   const hasTopStub = Boolean(stubRect && stubRect.width > stubRect.height);
   if (body && hasTopStub) {
@@ -119,7 +119,7 @@ export function syncSingleColumnTicketPlacement(hero, ticket, footer) {
   const heroRect = hero.getBoundingClientRect();
   const baseTicketHeight = ticket.getBoundingClientRect().height;
   const footerRect = footer.getBoundingClientRect();
-  const legalText = footer.querySelector(".lobby-disclaimer");
+  const legalText = footer.querySelector('.lobby-screen__disclaimer');
   const lowerVisibleBoundary = legalText?.getBoundingClientRect().top ?? footerRect.top;
   const availableHeight = Math.max(0, lowerVisibleBoundary - heroRect.bottom);
   const minimumGap = Math.min(9, availableHeight / 4);

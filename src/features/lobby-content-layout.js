@@ -10,25 +10,25 @@ export function syncLobbyContentCenter() {
 
   const isColumns = document.body.dataset.lobbyLayout === "columns";
   const screen = document.querySelector("#lobbyScreen");
-  const marquee = screen?.querySelector(".lobby-marquee");
-  const footer = screen?.querySelector(".lobby-footer");
-  const grid = screen?.querySelector(".lobby-grid");
+  const marquee = screen?.querySelector('.lobby-screen__marquee');
+  const footer = screen?.querySelector('.lobby-screen__footer');
+  const grid = screen?.querySelector('.lobby-screen__grid');
   const content = screen
-    ? [...screen.querySelectorAll(".lobby-hero, .lobby-ticket")]
+    ? [...screen.querySelectorAll('.lobby-screen__hero, .lobby-screen__ticket')]
     : [];
-  const hero = screen?.querySelector(".lobby-hero");
-  const ticket = screen?.querySelector(".lobby-ticket");
+  const hero = screen?.querySelector('.lobby-screen__hero');
+  const ticket = screen?.querySelector('.lobby-screen__ticket');
 
   // En el modo columns primero se prueba la composición real. Si un título
   // de prestaciones queda recortado en su tarjeta, el ancho restante ya no
   // alcanza para mostrar ambas columnas con claridad y el grid pasa a una.
   if (isColumns && grid) document.body.dataset.lobbyFlow = "columns";
   const gridColumns = grid ? getComputedStyle(grid).gridTemplateColumns.trim().split(/\s+/) : [];
-  const featureHeadings = hero ? [...hero.querySelectorAll(".lobby-feature-text strong")] : [];
+  const featureHeadings = hero ? [...hero.querySelectorAll('.lobby-screen__feature-text strong')] : [];
   const hasClippedFeatureHeading = featureHeadings.some((heading) => {
     if (heading.getClientRects().length === 0 || heading.clientWidth === 0) return false;
 
-    const compactTitle = heading.querySelector(".lobby-feature-title-short");
+    const compactTitle = heading.querySelector('.lobby-screen__feature-title--short');
     const compactTitleIsVisible = compactTitle?.getClientRects().length > 0;
     const isClipped = heading.scrollWidth > heading.clientWidth + 1;
 
@@ -46,7 +46,7 @@ export function syncLobbyContentCenter() {
 
   if (!grid || content.length !== 2) {
     resetLobbyAboutButtonContact();
-    resetTitleFit(screen?.querySelector(".lobby-title"));
+    resetTitleFit(screen?.querySelector('.lobby-screen__title'));
     resetLobbyTicketPlacement(screen, ticket);
     resetSingleColumnTitleLift(hero);
     resetSingleColumnTitleGroup(hero);
@@ -82,7 +82,7 @@ export function syncLobbyContentCenter() {
   resetSingleColumnTitleGroup(hero);
 
   if (!isColumns || !marquee || !footer) {
-    resetTitleFit(screen?.querySelector(".lobby-title"));
+    resetTitleFit(screen?.querySelector('.lobby-screen__title'));
     resetLobbyTicketPlacement(screen, ticket);
     grid.style.setProperty("--lobby-content-center-shift", "0px");
     return;

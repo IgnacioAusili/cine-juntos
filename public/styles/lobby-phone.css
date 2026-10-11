@@ -1,32 +1,32 @@
 
 
 @media (max-width: 680px) {
-  .lobby-title {
+  .lobby-screen__title {
     font-size: clamp(2.85rem, 12vw, 4.2rem);
   }
 
-  .lobby-title-line {
+  .lobby-screen__title-line {
     line-height: 1.02;
   }
 
-  .lobby-title-icon {
+  .lobby-screen__title-icon {
     width: clamp(72px, 22vw, 106px);
     height: clamp(72px, 22vw, 106px);
   }
 
-  .lobby-feature {
+  .lobby-screen__feature {
     justify-content: flex-start;
   }
 
-  .lobby-ticket {
+  .lobby-screen__ticket {
     grid-template-columns: 26px 1fr;
   }
 
-  .lobby-ticket-body {
+  .lobby-screen__ticket-body {
     padding: 18px 16px;
   }
 
-  .lobby-footer {
+  .lobby-screen__footer {
     width: min(440px, calc(100% - 32px));
     padding: 4px 8px;
   }
@@ -34,18 +34,18 @@
 }
 
 @media (max-width: 480px) {
-  .lobby-grid {
+  .lobby-screen__grid {
     gap: 26px;
   }
 
   /* En movil el stub pasa arriba del cuerpo, como una solapa horizontal. */
-  .lobby-ticket {
+  .lobby-screen__ticket {
     grid-template-columns: 1fr;
     grid-template-rows: 36px auto;
     border-top-color: var(--glass-border-strong);
   }
 
-  .lobby-ticket-stub {
+  .lobby-screen__ticket-stub {
     grid-column: 1;
     grid-row: 1;
     display: flex;
@@ -59,12 +59,12 @@
     transform: none;
   }
 
-  .lobby-ticket-body {
+  .lobby-screen__ticket-body {
     grid-column: 1;
     grid-row: 2;
   }
 
-  .lobby-ticket-perforation {
+  .lobby-screen__ticket-perforation {
     top: calc(36px - var(--lobby-ticket-fit-stub-inset, 0px));
     left: 50%;
     width: 14px;
@@ -73,7 +73,7 @@
     transform: translate(-50%, -50%);
   }
 
-  .lobby-ticket::after {
+  .lobby-screen__ticket::after {
     /* Conserva solo la iluminacion del boleto; la perforacion es independiente. */
     inset: 0;
     left: 0;

@@ -6,7 +6,7 @@ export function initializeAboutDialog() {
   if (aboutDialogInitialized || !dom.aboutDialog || !dom.aboutButton) return;
 
   const description = dom.aboutDialog.querySelector("#aboutDialogDescription");
-  const disclosureButton = description?.querySelector(".about-dialog-disclosure-toggle");
+  const disclosureButton = description?.querySelector('.about-dialog__disclosure-toggle');
   const disclosureContent = description?.querySelector("#aboutDialogDescriptionRest");
   let pendingDescriptionTransitionEnd = null;
 

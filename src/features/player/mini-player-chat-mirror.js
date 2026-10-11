@@ -1,11 +1,19 @@
-import { clearReplyTarget, setReplyTarget } from "../chat/chat-reply.js?v=20261011-chat-controls-repair-01";
 import { extendMessageHitArea } from "../chat/chat-message-interactions.js?v=20261011-chat-controls-repair-01";
-import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js?v=20261011-chat-controls-repair-01";
+import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js?v=20261011-chat-auto-switch-bem-01";
 import { state } from "../../core/state.js?v=20261011-chat-controls-repair-01";
-import { wireMiniMessageReplies } from "./mini-player-chat-replies.js?v=20261011-chat-controls-repair-01";
-import { mirroredSystemGroupStates, setMiniSystemGroupVisibility, animateMiniSystemGroupTransition } from "./mini-player-chat-groups.js?v=20261011-chat-controls-repair-01";
-export { normalizeMiniSystemGroupState, setMiniSystemGroupVisibility, animateMiniSystemGroupTransition } from "./mini-player-chat-groups.js?v=20261011-chat-controls-repair-01";
-export { wireMiniMessageReplies } from "./mini-player-chat-replies.js?v=20261011-chat-controls-repair-01";
+import { wireMiniMessageReplies } from "./mini-player-chat-replies.js?v=20261011-lucide-icons-repair-01";
+import {
+  animateMiniSystemGroupTransition,
+  mirroredSystemGroupStates,
+  normalizeMiniSystemGroupState,
+  setMiniSystemGroupVisibility,
+} from "./mini-player-chat-groups.js?v=20261010-file-size-refactor-02";
+export {
+  animateMiniSystemGroupTransition,
+  normalizeMiniSystemGroupState,
+  setMiniSystemGroupVisibility,
+};
+export { wireMiniMessageReplies } from "./mini-player-chat-replies.js?v=20261011-lucide-icons-repair-01";
 export { toggleMiniEmojiPicker } from "./mini-player-chat-emoji.js?v=20261011-chat-controls-repair-01";
 
 
@@ -114,10 +122,13 @@ export function handleMiniChatInteraction(element, eventTarget) {
   if (surface && styleButton) {
     surface.dataset.chatStyle = styleButton.dataset.chatStyle;
     element.querySelectorAll("[data-chat-style]").forEach((button) => {
-      button.classList.toggle("active", button === styleButton);
+      button.classList.toggle("chat-style-toggle__button--active", button === styleButton);
     });
     document.querySelector("#playerChat")?.querySelectorAll("[data-chat-style]").forEach((button) => {
-      button.classList.toggle("active", button.dataset.chatStyle === styleButton.dataset.chatStyle);
+      button.classList.toggle(
+        "chat-style-toggle__button--active",
+        button.dataset.chatStyle === styleButton.dataset.chatStyle,
+      );
     });
     return;
   }
@@ -152,7 +163,7 @@ export function toggleMiniChatOverlay(
   const toggle = surface.querySelector("#playerChatToggleButton, [data-proxy-for=\"playerChatToggleButton\"]");
   if (toggle) {
     const label = visible ? "Ocultar chat (Tab)" : "Mostrar chat (Tab)";
-    toggle.classList.toggle("active", visible);
+    toggle.classList.toggle("player-chat-toggle--active", visible);
     toggle.setAttribute("aria-pressed", String(visible));
     toggle.dataset.tooltip = label;
     toggle.setAttribute("aria-label", label);
@@ -164,6 +175,6 @@ export function syncMiniChatAutoExpand(surface, enabled = state.chat.autoExpandI
     "#insideChatAutoExpandSwitch, [data-proxy-for=\"insideChatAutoExpandSwitch\"]",
   );
   if (!toggle) return;
-  toggle.classList.toggle("active", Boolean(enabled));
+  toggle.classList.toggle("chat-auto-switch--active", Boolean(enabled));
   toggle.setAttribute("aria-checked", String(Boolean(enabled)));
 }

@@ -12,7 +12,7 @@
   white-space: nowrap;
 }
 
-.status-dot {
+.u-status-dot {
   --status-glow: rgba(120, 130, 141, 0.28);
   position: relative;
   z-index: 1;
@@ -25,7 +25,7 @@
   box-shadow: none;
 }
 
-.status-dot::before {
+.u-status-dot::before {
   content: "";
   position: absolute;
   inset: -5px;
@@ -35,11 +35,11 @@
   pointer-events: none;
 }
 
-.app-status-dot {
+.app-status__dot {
   cursor: help;
 }
 
-.app-status-label {
+.app-status__label {
   display: none;
 }
 
@@ -48,7 +48,7 @@
   color: #d8ffe8;
 }
 
-.app-status[data-state="online"] .app-status-dot {
+.app-status[data-state="online"] .app-status__dot {
   --status-glow: rgba(56, 216, 121, 0.38);
   background: #38d879;
 }
@@ -58,12 +58,12 @@
   color: #ffd8b8;
 }
 
-.app-status[data-state="local"] .app-status-dot {
+.app-status[data-state="local"] .app-status__dot {
   --status-glow: rgba(240, 140, 58, 0.37);
   background: #f08c3a;
 }
 
-.app-status[data-state="starting"] .app-status-dot {
+.app-status[data-state="starting"] .app-status__dot {
   animation: statusPulse 1.4s ease-in-out infinite;
 }
 
@@ -72,7 +72,7 @@
   color: #ffb0b0;
 }
 
-.app-status[data-state="error"] .app-status-dot {
+.app-status[data-state="error"] .app-status__dot {
   --status-glow: rgba(233, 68, 68, 0.4);
   background: var(--danger);
 }

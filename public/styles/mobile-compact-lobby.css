@@ -8,27 +8,27 @@
     grid-template-rows: auto auto;
   }
 
-  .lobby-grid {
+  .lobby-screen__grid {
     gap: clamp(10px, 1.8vh, 15px);
   }
 
-  .lobby-hero {
+  .lobby-screen__hero {
     column-gap: 12px;
     row-gap: clamp(10px, 1.8vh, 15px);
     transform: translateY(-8px);
   }
 
-  .lobby-mobile-title-icon {
+  .lobby-screen__mobile-title-icon {
     width: 58px;
     height: 58px;
   }
 
-  .lobby-title {
+  .lobby-screen__title {
     font-size: clamp(3.9rem, 16vw, 5.2rem);
     line-height: 0.92;
   }
 
-    .lobby-description {
+    .lobby-screen__description {
       width: calc(100% + 48px);
       font-size: 0.82rem;
       line-height: 1.45;
@@ -37,72 +37,72 @@
     transform: translateY(-4px);
   }
 
-  .lobby-features {
+  .lobby-screen__features {
     column-gap: 10px;
     row-gap: 6px;
     margin-top: 10px;
   }
 
-  .lobby-feature-icon {
+  .lobby-screen__feature-icon {
     width: 22px;
     height: 22px;
   }
 
-  .lobby-feature-icon svg {
+  .lobby-screen__feature-icon svg {
     width: 16px;
     height: 16px;
   }
 
-  .lobby-feature-text strong {
+  .lobby-screen__feature-text strong {
     font-size: 0.68rem;
   }
 
-  .lobby-feature-text small {
+  .lobby-screen__feature-text small {
     font-size: 0.56rem;
   }
 
-  .lobby-ticket {
+  .lobby-screen__ticket {
     width: min(372px, 100%);
   }
 
-  .lobby-ticket-body {
+  .lobby-screen__ticket-body {
     gap: 10px;
     padding: 10px 12px 8px;
   }
 
-  .lobby-ticket-head {
+  .lobby-screen__ticket-head {
     padding-bottom: 6px;
   }
 
-  .lobby-ticket-label {
+  .lobby-screen__ticket-label {
     font-size: 0.9rem;
   }
 
-  .lobby-ticket-hint {
+  .lobby-screen__ticket-hint {
     font-size: 0.68rem;
   }
 
-  .lobby-fields {
+  .lobby-screen__fields {
     gap: 8px;
   }
 
-  .lobby-fields input[type="text"] {
+  .lobby-screen__fields input[type="text"] {
     height: 36px;
     min-height: 36px;
     line-height: 36px;
   }
 
-  .lobby-actions {
+  .lobby-screen__actions {
     gap: 6px;
   }
 
-  .lobby-footer {
+  .lobby-screen__footer {
     gap: 8px;
     padding: 0;
     transform: translateY(-16px);
   }
 
-  .lobby-footer .lobby-disclaimer {
+  .lobby-screen__footer .lobby-screen__disclaimer {
     transform: translateY(10px);
   }
 

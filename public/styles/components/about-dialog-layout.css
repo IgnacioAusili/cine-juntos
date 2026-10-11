@@ -11,14 +11,14 @@
   text-decoration: underline;
 }
 
-.about-dialog-disclaimer {
+.about-dialog__disclaimer {
   margin: 18px 0 0;
   color: var(--muted-2);
   font-size: 0.72rem;
   line-height: 1.5;
 }
 
-.about-dialog-disclaimer strong {
+.about-dialog__disclaimer strong {
   color: var(--text-soft);
 }
 
@@ -30,7 +30,7 @@
     transform: scale(1.03);
   }
 
-  .about-dialog-card {
+  .about-dialog__card {
     display: flex;
     flex-direction: column;
     max-height: calc(100dvh - 66px);
@@ -38,7 +38,7 @@
     padding: 0;
   }
 
-  .about-dialog-fixed-header {
+  .about-dialog__fixed-header {
     position: relative;
     z-index: 2;
     display: flex;
@@ -48,14 +48,14 @@
     padding: 12px 12px 8px;
   }
 
-  .about-dialog-header {
+  .about-dialog__header {
     flex: 1 1 auto;
     min-width: 0;
     gap: 11px;
     padding-right: 0;
   }
 
-  .about-dialog-fixed-header .dialog-close {
+  .about-dialog__fixed-header .o-dialog-close {
     position: static;
     flex: 0 0 36px;
     width: 36px;
@@ -63,13 +63,13 @@
     margin-left: auto;
   }
 
-  .about-dialog-fixed-header .dialog-close svg {
+  .about-dialog__fixed-header .o-dialog-close svg {
     width: 28px;
     height: 28px;
     stroke-width: 2;
   }
 
-  .about-dialog-content {
+  .about-dialog__content {
     flex: 1 1 auto;
     min-height: 0;
     overflow-y: auto;
@@ -79,27 +79,27 @@
     scrollbar-color: transparent transparent;
   }
 
-  .about-dialog-content::-webkit-scrollbar {
+  .about-dialog__content::-webkit-scrollbar {
     display: none;
     width: 0;
     height: 0;
   }
 
-  .about-dialog-intro {
+  .about-dialog__intro {
     margin: 0 0 14px;
     line-height: 1.4;
   }
 
-  .about-dialog-details {
+  .about-dialog__details {
     gap: 9px;
   }
 
-  .about-dialog-details > div {
+  .about-dialog__details > div {
     gap: 12px;
     padding-bottom: 8px;
   }
 
-  .about-dialog-disclaimer {
+  .about-dialog__disclaimer {
     margin-top: 14px;
     line-height: 1.4;
   }
@@ -112,7 +112,7 @@
     max-height: calc(100dvh - 16px);
   }
 
-  .about-dialog-card {
+  .about-dialog__card {
     max-height: calc(100dvh - 16px);
     margin-right: 0;
     padding: 26px 20px 24px;
@@ -124,20 +124,20 @@
     scrollbar-color: transparent transparent;
   }
 
-  .about-dialog .dialog-close {
+  .about-dialog .o-dialog-close {
     right: 16px;
     width: 24px;
     height: 24px;
     transform: none;
   }
 
-  .about-dialog .dialog-close svg {
+  .about-dialog .o-dialog-close svg {
     width: 24px;
     height: 24px;
     stroke-width: 2;
   }
 
-  .about-dialog-eyebrow {
+  .about-dialog__eyebrow {
     font-size: 0.74rem;
   }
 
@@ -145,22 +145,22 @@
     font-size: 1.42rem;
   }
 
-  .about-dialog-intro {
+  .about-dialog__intro {
     margin-block: 22px 20px;
     font-size: 0.94rem;
     line-height: 1.6;
   }
 
-  .about-dialog-details {
+  .about-dialog__details {
     gap: 15px;
   }
 
-  .about-dialog-details > div {
+  .about-dialog__details > div {
     grid-template-columns: 60px minmax(0, 1fr);
     gap: 14px;
   }
 
-  .about-dialog-details dt {
+  .about-dialog__details dt {
     align-self: start;
     transform: translateY(-3px);
     font-size: 0.74rem;
@@ -169,28 +169,28 @@
     white-space: normal;
   }
 
-  .about-dialog-details > div:last-child dt {
+  .about-dialog__details > div:last-child dt {
     width: 60px;
   }
 
-  .about-dialog-details dd {
+  .about-dialog__details dd {
     font-size: 0.88rem;
     line-height: 1.5;
   }
 
-  .about-dialog-disclaimer {
+  .about-dialog__disclaimer {
     margin-top: 20px;
     font-size: 0.78rem;
     line-height: 1.55;
   }
 
-  .about-dialog-card::-webkit-scrollbar {
+  .about-dialog__card::-webkit-scrollbar {
     display: none;
     width: 0;
     height: 0;
   }
 
-  .about-dialog-scrollbar {
+  .about-dialog__scrollbar {
     position: absolute;
     top: 40px;
     right: 0;
@@ -207,17 +207,17 @@
     transition: opacity 120ms ease, visibility 0s linear 120ms;
   }
 
-  .about-dialog-scrollbar.is-visible {
+  .about-dialog__scrollbar.is-visible {
     opacity: 1;
     visibility: visible;
     transition-delay: 0s;
   }
 
-  .about-dialog-scrollbar[hidden] {
+  .about-dialog__scrollbar[hidden] {
     display: none;
   }
 
-  .about-dialog-scrollbar-thumb {
+  .about-dialog__scrollbar-thumb {
     position: absolute;
     top: 0;
     left: 0;

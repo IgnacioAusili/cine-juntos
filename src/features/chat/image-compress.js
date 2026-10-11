@@ -4,6 +4,23 @@ import {
   isPinnedToBottom,
   queuePinnedChatScrollSync,
 } from "./chat-scroll-sync.js?v=20261011-chat-interaction-fixes-01";
+import { createForeignDocumentIcon } from "../foreign-lucide-icon.js?v=20261011-lucide-icons-repair-01";
+
+function hydrateImagePreviewIcons(container) {
+  if (container.ownerDocument === document) {
+    window.lucide?.createIcons();
+    return;
+  }
+
+  container.querySelectorAll("[data-lucide]").forEach((placeholder) => {
+    placeholder.replaceWith(
+      createForeignDocumentIcon(
+        container.ownerDocument,
+        placeholder.getAttribute("data-lucide"),
+      ),
+    );
+  });
+}
 
 export function compressImageBase64(base64Str, maxWidth, maxHeight, quality, callback) {
   const img = new Image();
@@ -58,15 +75,13 @@ export function renderImagePreview(isOverlay) {
             <img class="message-media" src="${image}" alt="Miniatura de imagen pegada ${index + 1}" />
           </a>
           <button type="button" class="preview-remove-btn" data-index="${index}" aria-label="Quitar imagen ${index + 1}">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
+            <span data-lucide="x" aria-hidden="true"></span>
           </button>
         </div>
       `,
     )
     .join("");
+  hydrateImagePreviewIcons(container);
 
   container.querySelectorAll(".preview-remove-btn").forEach((button) => {
     button.addEventListener("click", () => {

@@ -65,16 +65,16 @@
   display: none;
 }
 
-.mini-player-surface #playerMiniPlayerButton.active svg,
-.mini-player-surface [data-proxy-for="playerMiniPlayerButton"].active svg,
-.player-frame.mini-player-active #playerMiniPlayerButton.active svg {
+.mini-player-surface #playerMiniPlayerButton.video-control-button--active svg,
+.mini-player-surface [data-proxy-for="playerMiniPlayerButton"].video-control-button--active svg,
+.player-frame.mini-player-active #playerMiniPlayerButton.video-control-button--active svg {
   width: 12px;
   height: 12px;
 }
 
-.player-frame.mini-player-active #playerMiniPlayerButton.active,
-.mini-player-surface #playerMiniPlayerButton.active,
-.mini-player-surface [data-proxy-for="playerMiniPlayerButton"].active {
+.player-frame.mini-player-active #playerMiniPlayerButton.video-control-button--active,
+.mini-player-surface #playerMiniPlayerButton.video-control-button--active,
+.mini-player-surface [data-proxy-for="playerMiniPlayerButton"].video-control-button--active {
   background: transparent;
   border-color: transparent;
   box-shadow: none;
@@ -83,8 +83,8 @@
 
 /* La salida del mini reproductor sigue la barra Linea y conserva un area de
    toque comoda, sin la capsula rectangular del estilo anterior. */
-.player-frame[data-control-style="line"] #playerMiniPlayerButton.active,
-.mini-player-surface[data-control-style="line"] [data-proxy-for="playerMiniPlayerButton"].active {
+.player-frame[data-control-style="line"] #playerMiniPlayerButton.video-control-button--active,
+.mini-player-surface[data-control-style="line"] [data-proxy-for="playerMiniPlayerButton"].video-control-button--active {
   margin-left: auto;
   width: 34px;
   min-height: 34px;
@@ -94,19 +94,19 @@
   box-shadow: none;
 }
 
-.player-frame[data-control-style="line"] #playerMiniPlayerButton.active svg,
-.mini-player-surface[data-control-style="line"] [data-proxy-for="playerMiniPlayerButton"].active svg {
+.player-frame[data-control-style="line"] #playerMiniPlayerButton.video-control-button--active svg,
+.mini-player-surface[data-control-style="line"] [data-proxy-for="playerMiniPlayerButton"].video-control-button--active svg {
   width: 22px;
   height: 22px;
   stroke-width: 2.45;
 }
 
-.player-frame.mini-player-active #playerMiniPlayerButton.active:hover svg,
-.player-frame.mini-player-active #playerMiniPlayerButton.active:focus-visible svg,
-.mini-player-surface #playerMiniPlayerButton.active:hover svg,
-.mini-player-surface #playerMiniPlayerButton.active:focus-visible svg,
-.mini-player-surface [data-proxy-for="playerMiniPlayerButton"].active:hover svg,
-.mini-player-surface [data-proxy-for="playerMiniPlayerButton"].active:focus-visible svg {
+.player-frame.mini-player-active #playerMiniPlayerButton.video-control-button--active:hover svg,
+.player-frame.mini-player-active #playerMiniPlayerButton.video-control-button--active:focus-visible svg,
+.mini-player-surface #playerMiniPlayerButton.video-control-button--active:hover svg,
+.mini-player-surface #playerMiniPlayerButton.video-control-button--active:focus-visible svg,
+.mini-player-surface [data-proxy-for="playerMiniPlayerButton"].video-control-button--active:hover svg,
+.mini-player-surface [data-proxy-for="playerMiniPlayerButton"].video-control-button--active:focus-visible svg {
   color: #ff6464;
 }
 

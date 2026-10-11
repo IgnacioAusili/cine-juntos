@@ -1,7 +1,7 @@
 /* El pie legal y el botón de información comparten siempre una única
    superficie. El texto se centra dentro de la altura real del botón. */
 
-body.is-lobby .lobby-footer {
+body.is-lobby .lobby-screen__footer {
   --lobby-about-panel-size: 36px;
   --lobby-footer-gap: 12px;
   position: fixed;
@@ -21,7 +21,7 @@ body.is-lobby .lobby-footer {
   transform: none;
 }
 
-body.is-lobby[data-lobby-flow="single-column"] .lobby-footer {
+body.is-lobby[data-lobby-flow="single-column"] .lobby-screen__footer {
   --lobby-about-panel-size: 42px;
   --lobby-footer-gap: 10px;
   padding-inline: 0;
@@ -31,18 +31,18 @@ body.is-lobby[data-lobby-flow="single-column"] .lobby-footer {
   margin-inline: 0;
 }
 
-body.is-lobby[data-lobby-flow="single-column"] .lobby-about-button svg {
+body.is-lobby[data-lobby-flow="single-column"] .lobby-screen__about-button svg {
   width: 20px;
   height: 20px;
 }
 
-body.is-lobby[data-lobby-flow="single-column"] .lobby-footer .lobby-disclaimer {
+body.is-lobby[data-lobby-flow="single-column"] .lobby-screen__footer .lobby-screen__disclaimer {
   font-size: 0.56rem;
   grid-column: 1 / -1;
   padding-inline-end: calc(var(--lobby-about-panel-size) + var(--lobby-footer-gap));
 }
 
-body.is-lobby[data-lobby-flow="single-column"] .lobby-about-button {
+body.is-lobby[data-lobby-flow="single-column"] .lobby-screen__about-button {
   /* El panel deja 10 px al borde; el botón conserva su anclaje original de 8 px. */
   position: absolute;
   right: -2px;
@@ -52,7 +52,7 @@ body.is-lobby[data-lobby-flow="single-column"] .lobby-about-button {
   justify-self: end;
 }
 
-body.is-lobby .lobby-footer .lobby-disclaimer {
+body.is-lobby .lobby-screen__footer .lobby-screen__disclaimer {
   /* El botón está fuera del flujo por ser fixed. El párrafo sigue siendo un
      bloque normal para que el enlace GPLv3 conserve el mismo flujo inline
      que el resto del texto. */
@@ -75,7 +75,7 @@ body.is-lobby .lobby-footer .lobby-disclaimer {
   transform: translateY(clamp(1px, 0.12em, 2px));
 }
 
-body.is-lobby .lobby-about-button {
+body.is-lobby .lobby-screen__about-button {
   position: fixed;
   right: 8px;
   bottom: 8px;
@@ -89,15 +89,15 @@ body.is-lobby .lobby-about-button {
   transform: none;
 }
 
-body.is-lobby .lobby-about-button:hover,
-body.is-lobby .lobby-about-button:focus-visible,
-body.is-lobby .lobby-about-button.is-touch-hover,
-body.is-lobby .lobby-about-button.is-touch-hover:hover {
+body.is-lobby .lobby-screen__about-button:hover,
+body.is-lobby .lobby-screen__about-button:focus-visible,
+body.is-lobby .lobby-screen__about-button.is-touch-hover,
+body.is-lobby .lobby-screen__about-button.is-touch-hover:hover {
   transform: translateY(-2px);
 }
 
 @media (max-width: 680px) {
-  body.is-lobby .lobby-footer {
+  body.is-lobby .lobby-screen__footer {
     --lobby-footer-gap: 10px;
     grid-template-columns: minmax(0, 1fr) var(--lobby-about-panel-size);
     width: min(980px, calc(100% - 32px));
@@ -108,8 +108,8 @@ body.is-lobby .lobby-about-button.is-touch-hover:hover {
 
 /* El pie ocupa el ancho real del viewport y conserva solo 10 px de margen
    exterior; evita acumular el padding y los márgenes de las reglas base. */
-body.is-lobby .lobby-footer,
-body.is-lobby[data-lobby-flow="single-column"] .lobby-footer {
+body.is-lobby .lobby-screen__footer,
+body.is-lobby[data-lobby-flow="single-column"] .lobby-screen__footer {
   left: 10px;
   right: 10px;
   width: auto;

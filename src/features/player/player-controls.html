@@ -19,11 +19,11 @@
                 id="playbackGestureIndicator"
                 aria-hidden="true"
               >
-                <span class="playback-gesture-icon playback-gesture-icon-play" data-lucide="play"></span>
-                <span class="playback-gesture-icon playback-gesture-icon-pause" data-lucide="pause"></span>
-                <span class="playback-gesture-icon playback-gesture-icon-volume" data-lucide="volume-2"></span>
+                <span class="playback-gesture-icon   playback-gesture-icon-play" data-lucide="play"></span>
+                <span class="playback-gesture-icon   playback-gesture-icon-pause" data-lucide="pause"></span>
+                <span class="playback-gesture-icon   playback-gesture-icon-volume" data-lucide="volume-2"></span>
               </div>
-              <div class="player-center-actions" aria-label="Controles centrales del reproductor"></div>
+              <div class="player-center-actions" role="group" aria-label="Controles centrales del reproductor"></div>
               <div class="mini-player-return-hint" aria-live="polite">
                 <span>El video está en el mini-reproductor</span>
                 <strong>Para verlo en la pantalla principal, cancelá la vista en miniatura desde este botón</strong>
@@ -34,19 +34,19 @@
               </div>
               <p
                 id="syncStatus"
-                class="sync-status video-status empty player-status-badge"
+                class="sync-status   video-status   empty   player-status-badge"
                 role="button"
                 tabindex="0"
                 title="Estado de video"
                 data-tooltip="Todavía no hay un video cargado en la sala"
               >
-                <span class="status-dot video-status-dot" id="videoStatusIcon" aria-hidden="true"></span>
+                <span class="u-status-dot   sync-status__dot" id="videoStatusIcon" aria-hidden="true"></span>
                 <span id="videoStatusText">Sin contenido</span>
               </p>
 
-              <div class="player-actions" aria-label="Controles de reproductor">
+              <div class="player-actions" role="group" aria-label="Controles de reproductor">
                   <button
-                    class="icon-button icon-button--compact-tool player-tool"
+                    class="icon-button   icon-button--compact-tool   player-tool   player-chat-toggle"
                     id="playerChatToggleButton"
                     type="button"
                     aria-label="Mostrar chat"
@@ -54,13 +54,13 @@
                     data-tooltip="Mostrar chat (Tab)"
                   >
                     <span data-lucide="message-square"></span>
-                    <span class="unread-badge player-chat-unread-badge" id="insideChatUnread" hidden><span class="player-chat-unread-count">0</span></span>
+                    <span class="unread-badge   player-chat-unread-badge" id="insideChatUnread" hidden><span class="player-chat-unread-count">0</span></span>
                 </button>
               </div>
-              <div class="player-bottom-actions" aria-label="Controles inferiores del reproductor">
+              <div class="player-bottom-actions" role="group" aria-label="Controles inferiores del reproductor">
                 <div class="player-controls-bar">
                   <button
-                    class="video-control-button player-skip-control"
+                    class="video-control-button   player-skip-control"
                     id="playerBackButton"
                     type="button"
                     aria-label="Retroceder 10 segundos"
@@ -70,7 +70,7 @@
                   </button>
 
                   <button
-                    class="video-control-button primary-video-control"
+                    class="video-control-button   video-control-button--primary"
                     id="playerPlayButton"
                     type="button"
                     aria-label="Reproducir video"
@@ -81,7 +81,7 @@
                   </button>
 
                   <button
-                    class="video-control-button player-skip-control"
+                    class="video-control-button   player-skip-control"
                     id="playerForwardButton"
                     type="button"
                     aria-label="Avanzar 10 segundos"
@@ -130,11 +130,12 @@
                       value="0"
                       aria-label="Avance del video"
                     />
-                    <button class="player-time player-time-total" id="playerDuration" type="button">0:00</button>
+                    <button class="player-time   player-time-total" id="playerDuration" type="button">0:00</button>
                   </div>
 
                   <div
                     class="player-controls-scroll-zone"
+                    role="group"
                     aria-label="Controles adicionales"
                   >
                     <div
@@ -145,8 +146,7 @@
                     >
                       <div class="player-controls-scroll-track">
                         <label
-                          class="player-select player-rate-select"
-                          for="playerRateSelect"
+                          class="player-select   player-rate-select"
                           data-player-control="rate"
                           data-tooltip="Velocidad de reproduccion"
                         >

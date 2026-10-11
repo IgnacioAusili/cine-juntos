@@ -63,7 +63,7 @@
 
 .video-control-button:not(:disabled):hover,
 .video-control-button:not(:disabled):focus-visible,
-.video-control-button.active:not(:disabled) {
+.video-control-button.video-control-button--active:not(:disabled) {
   background: rgba(255, 255, 255, 0.14);
   border-color: rgba(255, 255, 255, 0.28);
   color: #fff;
@@ -103,18 +103,18 @@
   filter: grayscale(0.7);
 }
 
-.video-control-button:not(.primary-video-control) {
+.video-control-button:not(.video-control-button--primary) {
   background: rgba(255, 255, 255, 0.08);
 }
 
-.video-control-button:not(.primary-video-control):not(:disabled):hover,
-.video-control-button:not(.primary-video-control):not(:disabled):focus-visible,
-.video-control-button:not(.primary-video-control).active:not(:disabled) {
+.video-control-button:not(.video-control-button--primary):not(:disabled):hover,
+.video-control-button:not(.video-control-button--primary):not(:disabled):focus-visible,
+.video-control-button:not(.video-control-button--primary).video-control-button--active:not(:disabled) {
   background: rgba(255, 255, 255, 0.14);
   border-color: rgba(255, 255, 255, 0.28);
 }
 
-#pageFullscreenButton.active:not(:disabled) {
+#pageFullscreenButton.video-control-button--active:not(:disabled) {
   background: transparent;
   border-color: transparent;
   color: #ffffff;
@@ -122,8 +122,8 @@
   filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.18));
 }
 
-#pageFullscreenButton.active:not(:disabled):hover,
-#pageFullscreenButton.active:not(:disabled):focus-visible {
+#pageFullscreenButton.video-control-button--active:not(:disabled):hover,
+#pageFullscreenButton.video-control-button--active:not(:disabled):focus-visible {
   background: transparent;
   border-color: transparent;
   color: #fff;
@@ -131,24 +131,24 @@
   filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.24));
 }
 
-#pageFullscreenButton.active:not(:disabled) svg {
+#pageFullscreenButton.video-control-button--active:not(:disabled) svg {
   filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.22));
 }
 
-.primary-video-control {
+.video-control-button--primary {
   border-color: rgba(240, 140, 58, 0.28);
   background: rgba(240, 140, 58, 0.15);
   color: #ffc896;
 }
 
-.primary-video-control:not(:disabled):hover {
+.video-control-button--primary:not(:disabled):hover {
   background: rgba(240, 140, 58, 0.28);
   border-color: rgba(240, 140, 58, 0.42);
   color: #ffffff;
 }
 
-.primary-video-control[data-play-button-cooldown="true"]:not(:disabled):hover,
-.primary-video-control[data-play-button-cooldown="true"]:not(:disabled):focus-visible {
+.video-control-button--primary[data-play-button-cooldown="true"]:not(:disabled):hover,
+.video-control-button--primary[data-play-button-cooldown="true"]:not(:disabled):focus-visible {
   background: rgba(240, 140, 58, 0.15);
   border-color: rgba(240, 140, 58, 0.28);
   color: #ffc896;

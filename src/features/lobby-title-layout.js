@@ -34,7 +34,7 @@ function getVisibleRect(element) {
 }
 
 function titleNeedsFitting(title, hero, ticket) {
-  const lineRects = [...title.querySelectorAll(".lobby-title-line")]
+  const lineRects = [...title.querySelectorAll('.lobby-screen__title-line')]
     .map((line) => {
       const range = document.createRange();
       range.selectNodeContents(line);
@@ -52,7 +52,7 @@ function titleNeedsFitting(title, hero, ticket) {
   }), { left: Infinity, top: Infinity, right: -Infinity, bottom: -Infinity });
   const visibleRect = getVisibleRect(title);
   const heroRect = hero.getBoundingClientRect();
-  const iconRect = hero.querySelector(".lobby-title-icon")?.getBoundingClientRect();
+  const iconRect = hero.querySelector('.lobby-screen__title-icon')?.getBoundingClientRect();
   const columnGap = Number.parseFloat(getComputedStyle(hero).columnGap) || 0;
   const ticketRect = ticket?.getBoundingClientRect();
   const rightLimit = ticketRect
@@ -92,11 +92,11 @@ function titleNeedsLayoutFitting(title, hero, ticket, layoutTicket, footer) {
 }
 
 export function syncLobbyTitleFit(screen, hero, ticket) {
-  const title = screen.querySelector(".lobby-title");
+  const title = screen.querySelector('.lobby-screen__title');
   if (!title) return;
 
-  const layoutTicket = screen.querySelector(".lobby-ticket");
-  const footer = screen.querySelector(".lobby-footer");
+  const layoutTicket = screen.querySelector('.lobby-screen__ticket');
+  const footer = screen.querySelector('.lobby-screen__footer');
   const needsFitting = (size) => {
     setTitleFitSize(title, size);
     return titleNeedsLayoutFitting(title, hero, ticket, layoutTicket, footer);
@@ -129,7 +129,7 @@ export function syncLobbyTitleFit(screen, hero, ticket) {
 }
 
 function getTitleGlyphTopOffset(title) {
-  const line = title.querySelector(".lobby-title-line");
+  const line = title.querySelector('.lobby-screen__title-line');
   if (!line) return 0;
 
   const style = getComputedStyle(title);
@@ -150,12 +150,12 @@ function getTitleGlyphTopOffset(title) {
 }
 
 export function syncSingleColumnTitleLift(hero) {
-  const title = hero?.querySelector(".lobby-title");
+  const title = hero?.querySelector('.lobby-screen__title');
   if (!title) return;
 
   title.style.removeProperty("--lobby-title-lift");
   const visible = getVisibleRect(title);
-  const line = title.querySelector(".lobby-title-line");
+  const line = title.querySelector('.lobby-screen__title-line');
   if (!line || !Number.isFinite(visible.top)) return;
 
   // La referencia es la tinta real de la fuente y el viewport visible, no una
@@ -172,8 +172,8 @@ export function syncSingleColumnTitleLift(hero) {
 }
 
 export function syncSingleColumnTitleGroup(hero) {
-  const title = hero?.querySelector(".lobby-title");
-  const icon = hero?.querySelector(".lobby-title-icon");
+  const title = hero?.querySelector('.lobby-screen__title');
+  const icon = hero?.querySelector('.lobby-screen__title-icon');
   if (!hero || !title || !icon) return;
 
   hero.style.removeProperty("--lobby-title-group-shift");
@@ -197,7 +197,7 @@ export function syncSingleColumnTitleGroup(hero) {
 }
 
 export function resetSingleColumnTitleLift(hero) {
-  hero?.querySelector(".lobby-title")?.style.removeProperty("--lobby-title-lift");
+  hero?.querySelector('.lobby-screen__title')?.style.removeProperty("--lobby-title-lift");
 }
 
 export function resetSingleColumnTitleGroup(hero) {
@@ -206,7 +206,7 @@ export function resetSingleColumnTitleGroup(hero) {
 
 export function resetSingleColumnDescriptionPlacement(hero) {
   hero?.style.removeProperty("--lobby-description-separator-shift");
-  hero?.querySelector(".lobby-description")?.style.removeProperty("--lobby-description-fit-width");
+  hero?.querySelector('.lobby-screen__description')?.style.removeProperty("--lobby-description-fit-width");
 }
 
 function getTextLineCount(element) {
@@ -229,13 +229,13 @@ function syncTextDensity(element, compactAtLines) {
 }
 
 export function syncLobbyTextDensity(hero, footer) {
-  syncTextDensity(hero?.querySelector(".lobby-description"), 3);
-  syncTextDensity(footer?.querySelector(".lobby-disclaimer"), 3);
+  syncTextDensity(hero?.querySelector('.lobby-screen__description'), 3);
+  syncTextDensity(footer?.querySelector('.lobby-screen__disclaimer'), 3);
 }
 
 export function syncLobbyTicketInlinePadding(ticket) {
-  const body = ticket?.querySelector(".lobby-ticket-body");
-  const stub = ticket?.querySelector(".lobby-ticket-stub");
+  const body = ticket?.querySelector('.lobby-screen__ticket-body');
+  const stub = ticket?.querySelector('.lobby-screen__ticket-stub');
   if (!body || !stub) return;
 
   ticket.style.removeProperty("--lobby-ticket-fit-padding-inline");

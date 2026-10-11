@@ -29,7 +29,7 @@
     clip-path: inset(var(--chat-bottom-curtain-clip, 100%) 0 0 0);
   }
 
-  body.fullscreen-mode .session-view.chat-bottom-snap-enabled[data-chat-dock="bottom"] .video-area {
+  body.fullscreen-mode .session-view.chat-bottom-snap-enabled[data-chat-dock="bottom"] .o-video-area {
     scroll-snap-align: center;
     scroll-snap-stop: normal;
   }
@@ -45,7 +45,7 @@
   }
 }
 
-body.fullscreen-mode .session-view[data-chat-dock="bottom"] .workspace {
+body.fullscreen-mode .session-view[data-chat-dock="bottom"] .o-workspace {
   display: grid;
   width: 100%;
   height: auto;
@@ -60,7 +60,7 @@ body.fullscreen-mode .session-view[data-chat-dock="bottom"] .workspace {
     "chat";
 }
 
-body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="bottom"] .workspace {
+body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="bottom"] .o-workspace {
   height: var(--app-viewport-height);
   min-height: 0;
   flex: 0 0 auto;
@@ -85,7 +85,7 @@ body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="bottom"] .work
     overflow-y: auto;
   }
 
-  body.fullscreen-mode .app-shell:has(.session-view[data-chat-dock="bottom"]) .topbar {
+  body.fullscreen-mode .app-shell:has(.session-view[data-chat-dock="bottom"]) .site-header {
     display: none;
   }
 
@@ -94,11 +94,11 @@ body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="bottom"] .work
     margin-inline: 0;
   }
 
-  body.fullscreen-mode .session-view[data-chat-dock="bottom"] .workspace {
+  body.fullscreen-mode .session-view[data-chat-dock="bottom"] .o-workspace {
     margin-top: 0;
   }
 
-  body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="bottom"] .workspace {
+  body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="bottom"] .o-workspace {
     grid-template-rows: minmax(0, 1fr) 0;
   }
 

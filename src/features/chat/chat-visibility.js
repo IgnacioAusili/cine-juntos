@@ -1,13 +1,13 @@
 import { dom } from "../../core/dom.js?v=20261011-chat-controls-repair-01";
 import { state, logEvent } from "../../core/state.js?v=20261011-chat-controls-repair-01";
 import { withShortcutHint } from "../../core/utils.js?v=20261011-chat-controls-repair-01";
-import { refreshTooltipForTarget } from "../icons-tooltips.js?v=20261011-chat-controls-repair-01";
+import { refreshTooltipForTarget } from "../icons-tooltips.js?v=20261011-lucide-icons-repair-01";
 import { resetInsideUnread, resetPageUnread, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20261011-chat-controls-repair-01";
 import { focusChatInput } from "./chat-input-focus.js?v=20261011-chat-controls-repair-01";
 import { wireInsideChatPanelPlacement, syncInsideChatPanelPlacement, preserveInsideChatPanelPlacementWhileClosing } from "../player/inside-chat-layout.js?v=20261011-chat-controls-repair-01";
 import { isMobileLandscapeFullscreenBottomDock } from "./chat-layout-breakpoints.js?v=20261011-chat-controls-repair-01";
-import { cancelIdentityEditing } from "../presence.js?v=20261011-chat-controls-repair-01";
-import { syncInsideChatPanelOffset } from "./chat-collapse-handles.js?v=20261011-chat-controls-repair-01";
+import { cancelIdentityEditing } from "../presence.js?v=20261011-lucide-icons-repair-01";
+import { syncInsideChatPanelOffset } from "./chat-collapse-handles.js?v=20261011-lucide-icons-repair-01";
 
 const AUTO_COLLAPSE_DELAY_MS = 5000;
 const AUTO_EXPAND_INSIDE_KEY = "cine-juntos-chat-auto-expand-inside";
@@ -32,7 +32,7 @@ function getAutoExpandTooltip(enabled) {
 function updateAutoExpandSwitch(button, enabled, label) {
   if (!button) return;
   const tooltip = getAutoExpandTooltip(enabled);
-  button.classList.toggle("active", enabled);
+  button.classList.toggle("chat-auto-switch--active", enabled);
   button.setAttribute("aria-checked", String(enabled));
   button.setAttribute("aria-label", `Autoexpandir ${label}`);
   button.dataset.tooltip = tooltip;
@@ -93,7 +93,7 @@ export function setInsideChatVisible(visible, options = {}) {
   } else {
     preserveInsideChatPanelPlacementWhileClosing();
   }
-  dom.playerChatToggleButton.classList.toggle("active", visible);
+  dom.playerChatToggleButton.classList.toggle("player-chat-toggle--active", visible);
   dom.playerChatToggleButton.setAttribute("aria-pressed", String(visible));
   const shortcutTooltip = withShortcutHint(visible ? "Ocultar chat" : "Mostrar chat", "Tab");
   dom.playerChatToggleButton.dataset.tooltip = shortcutTooltip;

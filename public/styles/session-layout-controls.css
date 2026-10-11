@@ -28,7 +28,7 @@
   top: var(--chat-bottom-dock-collapsed-handle-top, 0px);
 }
 
-.session-view:not(.layout-stacked):not(.chat-collapsed)[data-chat-dock="bottom"] .chat-name-field {
+.session-view:not(.layout-stacked):not(.chat-collapsed)[data-chat-dock="bottom"] .chat-name-editor__field {
   transform: none;
 }
 
@@ -61,7 +61,7 @@
   transform: translateY(-50%);
 }
 
-.session-view:not(.layout-stacked)[data-chat-dock="bottom"] .chat-name-edit-row {
+.session-view:not(.layout-stacked)[data-chat-dock="bottom"] .chat-name-editor__edit-row {
   width: 100%;
   max-width: 100%;
   justify-content: center;
@@ -69,14 +69,14 @@
   box-sizing: border-box;
 }
 
-.session-view:not(.layout-stacked)[data-chat-dock="bottom"] .chat-name-field {
+.session-view:not(.layout-stacked)[data-chat-dock="bottom"] .chat-name-editor__field {
   max-width: 100%;
 }
 
-.session-view:not(.layout-stacked)[data-chat-dock="bottom"] .chat-name-field,
-.session-view:not(.layout-stacked)[data-chat-dock="bottom"] .chat-name-edit-row input[type="text"],
-.session-view:not(.layout-stacked)[data-chat-dock="bottom"] .chat-name-edit-row input[type="search"],
-.session-view:not(.layout-stacked)[data-chat-dock="bottom"] .chat-name-confirm-button {
+.session-view:not(.layout-stacked)[data-chat-dock="bottom"] .chat-name-editor__field,
+.session-view:not(.layout-stacked)[data-chat-dock="bottom"] .chat-name-editor__edit-row input[type="text"],
+.session-view:not(.layout-stacked)[data-chat-dock="bottom"] .chat-name-editor__edit-row input[type="search"],
+.session-view:not(.layout-stacked)[data-chat-dock="bottom"] .chat-name-editor__confirm-button {
   transition: none !important;
 }
 

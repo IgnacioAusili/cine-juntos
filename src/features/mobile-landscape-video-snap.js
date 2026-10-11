@@ -16,7 +16,7 @@ function isEligible() {
 
 function getVideoSnapTarget() {
   const videoArea = document.querySelector(
-    '.session-view[data-chat-dock="bottom"] .video-area',
+    '.session-view[data-chat-dock="bottom"] .o-video-area',
   );
   if (!videoArea) return null;
 

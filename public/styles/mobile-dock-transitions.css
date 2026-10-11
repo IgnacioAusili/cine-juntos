@@ -4,8 +4,8 @@
    movimiento. La fila se interpola al mismo tiempo que la cortina del chat;
    así no queda una pausa entre ambos estados. */
 @media (hover: none) and (pointer: coarse) {
-  body:not(.is-lobby) .session-view[data-chat-dock="bottom"].chat-bottom-mobile-collapse-visual .workspace,
-  body:not(.is-lobby) .session-view[data-chat-dock="bottom"].chat-bottom-mobile-expand-visual .workspace {
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"].chat-bottom-mobile-collapse-visual .o-workspace,
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"].chat-bottom-mobile-expand-visual .o-workspace {
     transition: none !important;
   }
 

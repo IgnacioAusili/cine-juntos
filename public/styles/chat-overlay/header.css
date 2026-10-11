@@ -15,6 +15,6 @@
   min-width: 0;
 }
 
-.player-chat-header .bare-icon-button {
+.player-chat-header .icon-button--bare {
   display: none;
 }

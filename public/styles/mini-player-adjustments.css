@@ -1,6 +1,6 @@
 /* El boton de salida del mini reproductor no debe crear un segundo espacio
    automatico en la barra grande: el selector de velocidad conserva su lugar. */
-.player-frame.mini-player-active[data-control-style="line"] #playerMiniPlayerButton.active {
+.player-frame.mini-player-active[data-control-style="line"] #playerMiniPlayerButton.video-control-button--active {
   margin-left: 0;
   margin-right: -7px;
 }
@@ -58,7 +58,7 @@
 /* Durante el anti-spam el proxy conserva el ancho normal del boton mini;
    el contador queda centrado en la misma caja que ocupa el icono. */
 .mini-player-surface[data-control-style="line"] .player-controls-bar
-  .primary-video-control[data-play-button-cooldown="true"] {
+  .video-control-button--primary[data-play-button-cooldown="true"] {
   width: 30px;
   min-width: 30px;
   flex: 0 0 30px;

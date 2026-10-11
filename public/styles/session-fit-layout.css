@@ -5,16 +5,16 @@
 /* El ancho intrínseco del video depende de su resolución de origen y puede
    empujar el chat debajo al llegar loadedmetadata. Usamos una base flexible
    y mantenemos dos columnas mientras cada una pueda ocupar el ancho del chat. */
-.session-view[data-chat-dock="right"] .workspace {
+.session-view[data-chat-dock="right"] .o-workspace {
   flex-wrap: wrap;
 }
 
-.session-view[data-chat-dock="right"] .video-area {
+.session-view[data-chat-dock="right"] .o-video-area {
   flex: 1 1 0px;
   min-width: min(100%, var(--chat-panel-width));
 }
 
-.session-view.layout-fit-check[data-chat-dock="right"] .workspace,
+.session-view.layout-fit-check[data-chat-dock="right"] .o-workspace,
 .session-view.layout-fit-check[data-chat-dock="right"] .chat-area {
   transition: none !important;
 }
@@ -57,7 +57,7 @@
   opacity: 1;
 }
 
-.session-view.layout-stacked[data-chat-dock] .workspace {
+.session-view.layout-stacked[data-chat-dock] .o-workspace {
   display: grid;
   min-height: 0;
   grid-template-columns: 1fr;
@@ -72,11 +72,11 @@
   width: auto;
 }
 
-.session-view.layout-stacked[data-chat-dock="bottom"] .workspace {
+.session-view.layout-stacked[data-chat-dock="bottom"] .o-workspace {
   grid-template-rows: var(--app-viewport-height) var(--app-viewport-height);
 }
 
-.session-view.layout-stacked[data-chat-dock="bottom"] .workspace {
+.session-view.layout-stacked[data-chat-dock="bottom"] .o-workspace {
   height: auto;
   row-gap: 0;
   grid-template-rows:
@@ -84,7 +84,7 @@
     minmax(0, calc(var(--app-viewport-height) - var(--app-shell-gutter)));
 }
 
-.session-view.layout-stacked.chat-collapsed[data-chat-dock] .workspace {
+.session-view.layout-stacked.chat-collapsed[data-chat-dock] .o-workspace {
   row-gap: 0;
   grid-template-rows: minmax(0, 1fr) 0px;
   grid-template-areas:
@@ -92,18 +92,18 @@
     "chat";
 }
 
-.session-view.layout-stacked.chat-collapsed[data-chat-dock="bottom"] .workspace {
+.session-view.layout-stacked.chat-collapsed[data-chat-dock="bottom"] .o-workspace {
   grid-template-rows: var(--app-viewport-height) 0px;
 }
 
-.session-view.layout-stacked.chat-collapsed[data-chat-dock="bottom"] .workspace {
+.session-view.layout-stacked.chat-collapsed[data-chat-dock="bottom"] .o-workspace {
   grid-template-rows: minmax(0, 1fr) 0px;
 }
 
 /* En el stack inferior, el shell ya reserva el inset superior para el header;
    repetirlo en el workspace deja más espacio debajo del header que encima. */
 body:not(.is-lobby)
-.session-view.layout-component-stack[data-chat-dock="bottom"] .workspace {
+.session-view.layout-component-stack[data-chat-dock="bottom"] .o-workspace {
   --component-stack-chat-header-inset: 10px;
   --component-stack-viewport-bottom-inset:
     var(--component-stack-chat-header-inset);
@@ -167,7 +167,7 @@ body:not(.is-lobby)
 }
 
 body:not(.is-lobby)
-  .session-view.layout-component-stack.chat-collapsed[data-chat-dock="bottom"] .workspace {
+  .session-view.layout-component-stack.chat-collapsed[data-chat-dock="bottom"] .o-workspace {
   padding-bottom: 0;
   row-gap: 0;
   grid-template-rows:
@@ -198,7 +198,7 @@ body:not(.is-lobby)
   body:not(.is-lobby):not(.fullscreen-mode)
     .app-shell:not(:fullscreen)
     .session-view.chat-collapsed:not(.layout-component-stack)[data-chat-dock="bottom"]
-    .workspace {
+    .o-workspace {
     height: calc(
       var(--app-viewport-height)
       - (var(--app-shell-gutter) * 2)
@@ -206,13 +206,13 @@ body:not(.is-lobby)
   }
 
   body:not(.is-lobby):not(.fullscreen-mode)
-    .session-view.layout-component-stack[data-chat-dock="bottom"] .workspace {
+    .session-view.layout-component-stack[data-chat-dock="bottom"] .o-workspace {
     --component-stack-video-viewport-inset:
       calc(var(--component-stack-viewport-bottom-inset, var(--component-stack-chat-header-inset)) * 2);
   }
 
   body.fullscreen-mode
-    .session-view.layout-component-stack[data-chat-dock="bottom"] .workspace {
+    .session-view.layout-component-stack[data-chat-dock="bottom"] .o-workspace {
     --component-stack-video-viewport-inset: 0px;
     --component-stack-chat-viewport-inset: 0px;
   }

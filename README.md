@@ -32,9 +32,11 @@ Ese servidor básico sirve el último `index.html` generado y no observa cambios
 
 ## Linters
 
-Las herramientas de desarrollo se instalan con `npm install`. Se pueden ejecutar juntas con `npm run lint` o por separado con `npm run lint:js`, `npm run lint:css`, `npm run lint:html` y `npm run lint:md`.
+Las herramientas de desarrollo se instalan con `npm install`. Se pueden ejecutar juntas con `npm run lint` o por separado con `npm run lint:js`, `npm run lint:css`, `npm run lint:html` y `npm run lint:md`. Para regenerar explícitamente la página desde sus parciales, usar `npm run build:html`.
 
-Stylelint muestra como advertencias los selectores de más de 160 caracteres, el uso de `!important`, los números directos en valores CSS y las variables CSS declaradas fuera de la sección inicial del archivo. Los módulos del componente de botones validan BEM (`bloque__elemento`, `bloque--modificador`); el resto de clases heredadas se migra por componente.
+Stylelint muestra como advertencias los selectores de más de 160 caracteres, las cadenas de más de cuatro bloques unidos por combinadores, la anidación CSS superior a tres niveles, el uso de `!important`, los números directos en valores CSS, los colores escritos directamente en propiedades de color y las variables CSS declaradas fuera de la sección inicial del archivo. Los colores literales dentro de una variable CSS (`--color: #...`) están permitidos. `lint:css` también distingue entre valores de diseño repetidos dentro de una misma regla, en selectores distintos o en bloques separados del mismo selector —incluye colores que resuelven a través de variables distintas—, omite propiedades estructurales y advierte si un bloque BEM vuelve a una categoría anterior en el orden base, elementos, variantes, estados y responsive. Los módulos de botones y los controles del reproductor validan nombres BEM; las clases heredadas se migran por componente.
+
+`lint:html` regenera `index.html` desde sus parciales antes de validar el resultado generado y las páginas HTML independientes de `console/`.
 
 La pantalla ya trae precargado este video MP4 de ejemplo:
 

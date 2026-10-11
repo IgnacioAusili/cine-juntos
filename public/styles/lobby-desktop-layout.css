@@ -4,11 +4,11 @@
    La decisión de pasar a otra composición queda a cargo del layout medido,
    no de un breakpoint fijo. */
 @media (min-width: 681px) {
-  body.is-lobby[data-lobby-layout="columns"] .lobby-ticket {
+  body.is-lobby[data-lobby-layout="columns"] .lobby-screen__ticket {
     justify-self: center;
   }
 
-  body.is-lobby[data-lobby-layout="columns"] .lobby-grid {
+  body.is-lobby[data-lobby-layout="columns"] .lobby-screen__grid {
     column-gap: var(--lobby-grid-column-gap);
     padding-inline: 0;
   }
@@ -16,14 +16,14 @@
 
 /* Cuando el espacio medido del lado derecho se agota, solo cambia la
    orientación del stub naranja; el resto de la composición permanece igual. */
-body.is-lobby[data-lobby-ticket-stub="top"] .lobby-ticket {
+body.is-lobby[data-lobby-ticket-stub="top"] .lobby-screen__ticket {
   --lobby-ticket-top-stub-height: 36px;
   grid-template-columns: 1fr;
   grid-template-rows: var(--lobby-ticket-fit-stub-height, var(--lobby-ticket-top-stub-height)) minmax(0, 1fr);
   width: max(0px, calc(clamp(360px, 40vw, 404px) - 36px));
 }
 
-body.is-lobby[data-lobby-ticket-stub="top"] .lobby-ticket-stub {
+body.is-lobby[data-lobby-ticket-stub="top"] .lobby-screen__ticket-stub {
   grid-column: 1;
   grid-row: 1;
   display: flex;
@@ -37,13 +37,13 @@ body.is-lobby[data-lobby-ticket-stub="top"] .lobby-ticket-stub {
   transform: none;
 }
 
-body.is-lobby[data-lobby-ticket-stub="top"] .lobby-ticket-body {
+body.is-lobby[data-lobby-ticket-stub="top"] .lobby-screen__ticket-body {
   grid-column: 1;
   grid-row: 2;
   padding-inline: var(--lobby-ticket-fit-padding-inline, 18px);
 }
 
-body.is-lobby[data-lobby-ticket-stub="top"] .lobby-ticket-perforation {
+body.is-lobby[data-lobby-ticket-stub="top"] .lobby-screen__ticket-perforation {
   top: var(--lobby-ticket-fit-stub-height, var(--lobby-ticket-top-stub-height));
   left: 50%;
   width: 14px;
@@ -52,7 +52,7 @@ body.is-lobby[data-lobby-ticket-stub="top"] .lobby-ticket-perforation {
   transform: translate(-50%, -50%);
 }
 
-body.is-lobby[data-lobby-ticket-stub="top"] .lobby-ticket::after {
+body.is-lobby[data-lobby-ticket-stub="top"] .lobby-screen__ticket::after {
   inset: 0;
   left: 0;
   width: auto;
@@ -65,24 +65,24 @@ body.is-lobby[data-lobby-ticket-stub="top"] .lobby-ticket::after {
 /* Ajustes derivados del layout real: en una sola columna la descripción gana
    un poco de presencia y el texto legal se compacta para no competir con el
    contenido principal. No depende de un breakpoint de viewport. */
-body.is-lobby[data-lobby-flow="single-column"] .lobby-description {
+body.is-lobby[data-lobby-flow="single-column"] .lobby-screen__description {
   font-size: clamp(1rem, calc(1rem + 0.25cqw), 1.16rem);
 }
 
-body.is-lobby[data-lobby-flow="single-column"] .lobby-disclaimer {
+body.is-lobby[data-lobby-flow="single-column"] .lobby-screen__disclaimer {
   font-size: clamp(0.52rem, 0.68vw, 0.62rem);
 }
 
 /* El centrado se activa por la estructura calculada del hero, no por un
    ancho fijo de viewport. */
-body.is-lobby .lobby-hero[data-title-placement="centered"] .lobby-title {
+body.is-lobby .lobby-screen__hero[data-title-placement="centered"] .lobby-screen__title {
   width: max-content;
   max-width: 100%;
   justify-self: center;
   text-align: left;
 }
 
-body.is-lobby .lobby-hero[data-title-placement="centered"] {
+body.is-lobby .lobby-screen__hero[data-title-placement="centered"] {
   position: relative;
   grid-template-columns: minmax(0, 1fr);
   grid-template-areas:
@@ -91,39 +91,39 @@ body.is-lobby .lobby-hero[data-title-placement="centered"] {
     "features";
 }
 
-body.is-lobby .lobby-hero[data-title-placement="centered"] .lobby-title-icon {
+body.is-lobby .lobby-screen__hero[data-title-placement="centered"] .lobby-screen__title-icon {
   position: absolute;
   margin: 0;
   transform: none;
 }
 
 /* El margen lateral pertenece al app-shell; el grid del lobby no agrega otro. */
-body.is-lobby[data-lobby-layout] .lobby-grid {
+body.is-lobby[data-lobby-layout] .lobby-screen__grid {
   padding-inline: 0;
 }
 
 /* Mantiene estable la altura del hero mientras las columnas cambian de ancho. */
 @media (min-width: 681px) {
-  body.is-lobby[data-lobby-layout="columns"] .lobby-features {
+  body.is-lobby[data-lobby-layout="columns"] .lobby-screen__features {
     gap: 14px clamp(8px, 1.2vw, 14px);
     margin-top: 0;
     padding-top: 16px;
   }
 
-  body.is-lobby[data-lobby-layout="columns"] .lobby-feature {
+  body.is-lobby[data-lobby-layout="columns"] .lobby-screen__feature {
     gap: 12px;
   }
 
-  body.is-lobby[data-lobby-layout="columns"] .lobby-feature-icon svg {
+  body.is-lobby[data-lobby-layout="columns"] .lobby-screen__feature-icon svg {
     width: clamp(22px, 2.4vw, 25px);
     height: clamp(22px, 2.4vw, 25px);
   }
 
-  body.is-lobby[data-lobby-layout="columns"] .lobby-feature-text strong {
+  body.is-lobby[data-lobby-layout="columns"] .lobby-screen__feature-text strong {
     font-size: clamp(0.88rem, 1.6vw, 0.98rem);
   }
 
-  body.is-lobby[data-lobby-layout="columns"] .lobby-feature-text small {
+  body.is-lobby[data-lobby-layout="columns"] .lobby-screen__feature-text small {
     font-size: clamp(0.74rem, 1.35vw, 0.82rem);
     line-height: 1.25;
   }
@@ -132,7 +132,7 @@ body.is-lobby[data-lobby-layout] .lobby-grid {
 /* Los tres espacios visibles son iguales: el gutter del app-shell forma parte
    de cada margen exterior y se redistribuye entre el padding del grid y el gap. */
 @media (min-width: 681px) {
-  body.is-lobby[data-lobby-layout="columns"] .lobby-grid {
+  body.is-lobby[data-lobby-layout="columns"] .lobby-screen__grid {
     --lobby-hero-track-max: 658px;
     --lobby-ticket-track-size: 404px;
     --lobby-equal-horizontal-space: clamp(
@@ -169,13 +169,13 @@ body.is-lobby[data-lobby-layout] .lobby-grid {
 
 /* Estos valores al final de la hoja neutralizan los retoques de la composición
    horizontal aunque el apilado se active a un ancho intermedio. */
-body.is-lobby[data-lobby-flow="single-column"] .lobby-grid {
+body.is-lobby[data-lobby-flow="single-column"] .lobby-screen__grid {
   gap: var(--lobby-vertical-content-gap, clamp(10px, 1.8vh, 16px));
   padding-inline: 0;
   transform: translateY(-8px);
 }
 
-body.is-lobby[data-lobby-flow="single-column"] .lobby-hero {
+body.is-lobby[data-lobby-flow="single-column"] .lobby-screen__hero {
   width: min(580px, calc(100% - 32px));
   max-width: none;
   column-gap: 14px;
@@ -183,7 +183,7 @@ body.is-lobby[data-lobby-flow="single-column"] .lobby-hero {
   transform: none;
 }
 
-body.is-lobby[data-lobby-flow="single-column"] .lobby-title {
+body.is-lobby[data-lobby-flow="single-column"] .lobby-screen__title {
   font-size: clamp(4.65rem, 18cqw, 5.8rem);
   line-height: 0.92;
   margin-bottom: 0;
@@ -192,7 +192,7 @@ body.is-lobby[data-lobby-flow="single-column"] .lobby-title {
   transform: translate(var(--lobby-title-group-shift, 0px), 0);
 }
 
-body.is-lobby[data-lobby-flow="single-column"] .lobby-description {
+body.is-lobby[data-lobby-flow="single-column"] .lobby-screen__description {
   width: var(--lobby-description-fit-width, 100%);
   max-width: none;
   font-size: 1rem;
@@ -204,15 +204,15 @@ body.is-lobby[data-lobby-flow="single-column"] .lobby-description {
   transform: translateY(-2px);
 }
 
-body.is-lobby .lobby-description[data-lobby-text-density="compact"] {
+body.is-lobby .lobby-screen__description[data-lobby-text-density="compact"] {
   font-size: 0.95rem;
 }
 
-body.is-lobby .lobby-description[data-lobby-text-density="dense"] {
+body.is-lobby .lobby-screen__description[data-lobby-text-density="dense"] {
   font-size: 0.9rem;
   line-height: 1.44;
 }
 
-body.is-lobby[data-lobby-flow="single-column"] .lobby-footer .lobby-disclaimer[data-lobby-text-density="compact"] {
+body.is-lobby[data-lobby-flow="single-column"] .lobby-screen__footer .lobby-screen__disclaimer[data-lobby-text-density="compact"] {
   font-size: clamp(0.49rem, 0.64vw, 0.58rem);
 }

@@ -78,7 +78,7 @@
   transition: stroke-dasharray 220ms ease, stroke 180ms ease;
 }
 
-.send-cooldown {
+.icon-button__send-cooldown {
   display: inline-grid;
   width: 100%;
   height: 100%;

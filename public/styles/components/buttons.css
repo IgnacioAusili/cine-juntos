@@ -1,3 +1,3 @@
-/* OOCSS: shared button structure first, visual skins and states second. */
-@import url("./button-layout.css?v=20261011-itcss-bem-oocss-02");
-@import url("./button-skin.css?v=20261011-itcss-bem-oocss-02");
+/* Botones: reglas compartidas, variantes visuales y estados. */
+@import url("./button-layout.css?v=20261011-button-bem-scope-01");
+@import url("./button-skin.css?v=20261011-icon-button-active-specificity-01");

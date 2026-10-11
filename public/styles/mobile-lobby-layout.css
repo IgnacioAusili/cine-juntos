@@ -25,7 +25,7 @@
     gap: 0;
   }
 
-  body.is-lobby .topbar {
+  body.is-lobby .site-header {
     display: none;
   }
 
@@ -38,11 +38,11 @@
     padding-bottom: 8px;
   }
 
-  .lobby-marquee {
+  .lobby-screen__marquee {
     display: none;
   }
 
-  .lobby-grid {
+  .lobby-screen__grid {
     width: 100%;
     min-height: 0;
     gap: clamp(10px, 1.8vh, 16px);
@@ -51,7 +51,7 @@
     transform: translateY(-8px);
   }
 
-  .lobby-hero {
+  .lobby-screen__hero {
     width: min(360px, calc(100% - 32px));
     position: relative;
     display: grid;
@@ -70,8 +70,8 @@
 
   /* Una guarda editorial completa el vacío entre la descripción y el boleto.
      Es absoluta para no aumentar la altura del lobby ni crear scroll. */
-  .lobby-hero::before,
-  .lobby-hero::after {
+  .lobby-screen__hero::before,
+  .lobby-screen__hero::after {
     position: absolute;
     top: calc(100% - 8px);
     left: 50%;
@@ -80,7 +80,7 @@
     z-index: 0;
   }
 
-  .lobby-hero::before {
+  .lobby-screen__hero::before {
     width: clamp(190px, 58vw, 242px);
     height: 16px;
     transform: translateX(-50%);
@@ -89,7 +89,7 @@
       linear-gradient(90deg, transparent 51%, rgba(47, 184, 164, 0.58) 57%, rgba(47, 184, 164, 0.58) 81%, transparent) center / 100% 1px no-repeat;
   }
 
-  .lobby-hero::after {
+  .lobby-screen__hero::after {
     width: 9px;
     height: 9px;
     border: 1px solid rgba(240, 140, 58, 0.78);
@@ -98,12 +98,12 @@
     transform: translate(-50%, 3px) rotate(45deg);
   }
 
-  .lobby-hero > * {
+  .lobby-screen__hero > * {
     position: relative;
     z-index: 1;
   }
 
-  .lobby-title {
+  .lobby-screen__title {
     grid-area: title;
     font-size: clamp(4.65rem, 18vw, 5.8rem);
     text-align: left;
@@ -112,7 +112,7 @@
     align-self: center;
   }
 
-  .lobby-mobile-title-icon {
+  .lobby-screen__mobile-title-icon {
     grid-area: icon;
     display: block;
     width: 66px;
@@ -121,11 +121,11 @@
     align-self: center;
   }
 
-  .lobby-title .lobby-title-icon {
+  .lobby-screen__title .lobby-screen__title-icon {
     display: none;
   }
 
-  .lobby-description {
+  .lobby-screen__description {
     grid-area: description;
     justify-self: center;
     width: calc(100% + 40px);
@@ -140,33 +140,33 @@
 
   /* En móvil el hero no muestra la lista de prestaciones: el boleto de
      entrada queda como la siguiente pieza visual, sin esa franja intermedia. */
-  .lobby-features {
+  .lobby-screen__features {
     display: none;
   }
 
-  .lobby-description-full {
+  .lobby-screen__description--full {
     display: none;
   }
 
-  .lobby-description-full,
-  .lobby-disclaimer-full {
+  .lobby-screen__description--full,
+  .lobby-screen__disclaimer--full {
     display: inline;
   }
 
-  .lobby-description-mobile,
-  .lobby-disclaimer-mobile {
+  .lobby-screen__description--mobile,
+  .lobby-screen__disclaimer--mobile {
     display: none;
   }
 
-  .lobby-feature-description-mobile {
+  .lobby-screen__feature-description--mobile {
     display: inline;
   }
 
-  .lobby-feature-description-full {
+  .lobby-screen__feature-description--full {
     display: none;
   }
 
-  .lobby-disclaimer {
+  .lobby-screen__disclaimer {
     overflow: visible;
     text-overflow: clip;
     white-space: normal;
@@ -175,7 +175,7 @@
     line-height: 1.35;
   }
 
-  .lobby-features {
+  .lobby-screen__features {
     grid-area: features;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.1fr);
     width: calc(100% + 16px);
@@ -188,7 +188,7 @@
     justify-items: center;
   }
 
-  .lobby-feature {
+  .lobby-screen__feature {
     min-width: 0;
     width: 100%;
     flex-direction: row;
@@ -202,18 +202,18 @@
     text-align: left;
   }
 
-  .lobby-feature-icon {
+  .lobby-screen__feature-icon {
     width: 20px;
     height: 20px;
     flex: 0 0 auto;
   }
 
-  .lobby-feature-icon svg {
+  .lobby-screen__feature-icon svg {
     width: 18px;
     height: 18px;
   }
 
-  .lobby-feature-text {
+  .lobby-screen__feature-text {
     min-width: 0;
     flex: 1 1 auto;
     align-items: flex-start;

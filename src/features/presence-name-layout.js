@@ -77,8 +77,8 @@ function syncDesktopBottomNameField(textWidth, isEditing) {
   if (!geometry) return null;
 
   const row = isEditing
-    ? dom.nameInput?.closest(".chat-name-edit-row")
-    : dom.nameDisplay?.closest(".chat-name-display-row");
+    ? dom.nameInput?.closest('.chat-name-editor__edit-row')
+    : dom.nameDisplay?.closest('.chat-name-editor__display-row');
   const button = isEditing ? dom.confirmNameButton : dom.editNameButton;
   const rowStyle = row ? window.getComputedStyle(row) : null;
   const rowGap = Number.parseFloat(rowStyle?.columnGap || rowStyle?.gap || "0") || 0;
@@ -121,7 +121,7 @@ function getNameInputAvailableWidth() {
     && window.matchMedia("(min-width: 981px)").matches
   ) {
     const geometry = getDesktopBottomNameGeometry();
-    const editRow = dom.nameInput?.closest(".chat-name-edit-row");
+    const editRow = dom.nameInput?.closest('.chat-name-editor__edit-row');
     const rowStyle = editRow ? window.getComputedStyle(editRow) : null;
     const rowGap = Number.parseFloat(rowStyle?.columnGap || rowStyle?.gap || "0") || 0;
     const confirmWidth = dom.confirmNameButton?.getBoundingClientRect().width || 20;
@@ -150,7 +150,7 @@ function getNameInputAvailableWidth() {
   // El editor vive en la columna central del grid; calculamos el ancho real
   // que le queda descontando las columnas laterales y los separadores.
   const availableWidth = contentWidth - leftWidth - rightWidth - (columnGap * 2);
-  const editRow = dom.nameInput?.closest(".chat-name-edit-row");
+  const editRow = dom.nameInput?.closest('.chat-name-editor__edit-row');
   const rowStyle = editRow ? window.getComputedStyle(editRow) : null;
   const rowGap = Number.parseFloat(rowStyle?.columnGap || rowStyle?.gap || "0") || 0;
   const confirmWidth = dom.confirmNameButton?.getBoundingClientRect().width || 0;

@@ -8,7 +8,7 @@ import {
   showSlowLoadDialog,
   showSession,
 } from "./session-ui.js?v=20261011-chat-controls-repair-01";
-import { setVideoStatus } from "./player/player-video-source.js?v=20261011-chat-controls-repair-01";
+import { setVideoStatus } from "./player/player-video-source.js?v=20261011-player-empty-state-01";
 import { openLightboxForTest } from "./chat/image-lightbox.js?v=20261011-chat-controls-repair-01";
 
 export const DIALOG_TEST_ROUTES = Object.freeze({
@@ -65,7 +65,7 @@ export function openDialogTestRoute() {
     case "resume":
       showSession();
       void showResumeVideoDialog(
-        "Este video ya lo has reproducido antes en <span class=\"resume-time-tag\">1:23</span> ¿Quieres retomar desde ahí?",
+        'Este video ya lo has reproducido antes en <span class="player-dialog__resume-time">1:23</span> ¿Quieres retomar desde ahí?',
       );
       break;
     case "mobile-debug":

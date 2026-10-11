@@ -1,11 +1,11 @@
 import { dom } from "../../core/dom.js?v=20261011-chat-controls-repair-01";
 import { state, getDisplayName, logEvent } from "../../core/state.js?v=20261011-chat-controls-repair-01";
 import { formatSeconds } from "../../core/utils.js?v=20261011-chat-controls-repair-01";
-import { sendVideoEventMessage, scrollToVideoPosition } from "../chat/index.js?v=20261011-chat-controls-repair-01";
+import { sendVideoEventMessage, scrollToVideoPosition } from "../chat/index.js?v=20261011-chat-auto-switch-bem-01-video-ts-group-01";
 import { showLoadReplaceDialog } from "../session-ui.js?v=20261011-chat-controls-repair-01";
-import { clearPlaybackRecoveryTracking, publishState } from "./player-sync-logic.js?v=20261011-chat-controls-repair-01";
+import { clearPlaybackRecoveryTracking, publishState } from "./player-sync-logic.js?v=20261011-chat-auto-switch-bem-01-video-ts-group-01";
 import { playerRuntimeState } from "./player-runtime-state.js?v=20261011-chat-controls-repair-01";
-import { configurePlayerMediaSourcePort, getLoadedVideoSourceKey, getVideoSourceKey, updateLoadButtonState, clearSlowLoadPromptTracking, clearPlaybackErrorTracking, armSlowLoadPrompt, hasLoadedMediaSource, isVideoLoadCoolingDown, shouldConfirmLoadReplacement } from "./player-media.js?v=20261011-chat-controls-repair-01";
+import { configurePlayerMediaSourcePort, getLoadedVideoSourceKey, getVideoSourceKey, updateLoadButtonState, clearSlowLoadPromptTracking, clearPlaybackErrorTracking, armSlowLoadPrompt, hasLoadedMediaSource, isVideoLoadCoolingDown, shouldConfirmLoadReplacement } from "./player-media.js?v=20261011-chat-auto-switch-bem-01-video-ts-group-01";
 
 const SKIP_LOAD_REPLACE_DIALOG_KEY = "cine-juntos-skip-load-replace-dialog";
 const VIDEO_LOAD_COOLDOWN_MS = 3000;
@@ -135,7 +135,6 @@ export function setVideoSource(source, shouldAnnounce, options = {}) {
   dom.videoPlayer.src = source;
   setVideoStatus("loading", isReload ? "Recargando video" : "Cargando video");
   dom.videoPlayer.load();
-  dom.emptyPlayer.classList.add("hidden");
   dom.videoUrlInput.value = source;
   syncPlayerControlsNow(true);
   armSlowLoadPrompt(source);
@@ -158,7 +157,6 @@ export function clearVideoSource(shouldAnnounce = false) {
   dom.videoPlayer.removeAttribute("src");
   dom.videoPlayer.load();
   dom.videoUrlInput.value = "";
-  dom.emptyPlayer.classList.remove("hidden");
   setVideoStatus("empty", "Sin contenido");
   syncPlayerControlsNow(true);
   if (shouldAnnounce && state.session.activeRoom && state.session.transport) {
@@ -211,6 +209,7 @@ export function announceVideoActivity() {
 
 export function setVideoStatus(videoState, text) {
   dom.syncStatus.className = `sync-status video-status player-status-badge ${videoState}`;
+  dom.emptyPlayer?.classList.toggle("hidden", videoState !== "empty");
   dom.syncStatus.classList.toggle(
     "player-status-live",
     videoState === "loaded" && text === "En vivo",

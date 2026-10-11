@@ -9,21 +9,21 @@ import {
 import {
   hideTooltip,
   setControlIcon,
-} from "../icons-tooltips.js?v=20261011-chat-controls-repair-01";
+} from "../icons-tooltips.js?v=20261011-lucide-icons-repair-01";
 import { setSyncStatus } from "../session-ui.js?v=20261011-chat-controls-repair-01";
 import {
   logEvent,
   state,
 } from "../../core/state.js?v=20261011-chat-controls-repair-01";
-import { isMiniPlayerActive } from "./mini-player.js?v=20261011-chat-controls-repair-01";
-import { wirePlayerOverlayControls } from "./player-overlay-controls.js?v=20261011-chat-controls-repair-01";
+import { isMiniPlayerActive } from "./mini-player.js?v=20261011-player-skip-active-cleanup-01";
+import { wirePlayerOverlayControls } from "./player-overlay-controls.js?v=20261011-lucide-icons-repair-01";
 import {
   syncExternalChatCollapseHandleOffset,
   syncInsideChatPanelOffset,
   cancelExternalChatAutoCollapse,
   forceExternalChatCollapsed,
   updateCollapseButton,
-} from "../chat/chat-layout.js?v=20261011-chat-controls-repair-01";
+} from "../chat/chat-layout.js?v=20261011-chat-auto-switch-bem-01";
 import { withShortcutHint } from "../../core/utils.js?v=20261011-chat-controls-repair-01";
 import {
   captureFullscreenScroll,
@@ -286,7 +286,7 @@ export function handleFullscreenChange() {
     forceExternalChatCollapsed();
   }
   updateCollapseButton();
-  dom.pageFullscreenButton.classList.toggle("active", isFullscreen);
+  dom.pageFullscreenButton.classList.toggle("video-control-button--active", isFullscreen);
   dom.pageFullscreenButton.dataset.tooltip = tooltip;
   dom.pageFullscreenButton.removeAttribute("title");
   dom.pageFullscreenButton.setAttribute("aria-label", tooltip);

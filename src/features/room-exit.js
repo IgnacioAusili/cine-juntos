@@ -1,7 +1,7 @@
 import { dom } from "../core/dom.js?v=20261011-chat-controls-repair-01";
 import { state, getDisplayName, LAST_ROOM_KEY, logEvent } from "../core/state.js?v=20261011-chat-controls-repair-01";
-import { renderPresence } from "./presence.js?v=20261011-chat-controls-repair-01";
-import { setConnection } from "./icons-tooltips.js?v=20261011-chat-controls-repair-01";
+import { renderPresence } from "./presence.js?v=20261011-lucide-icons-repair-01";
+import { setConnection } from "./icons-tooltips.js?v=20261011-lucide-icons-repair-01";
 import {
   setHostBadge,
   setSyncStatus,
@@ -13,7 +13,7 @@ import {
   renderReplyPreview,
   setInsideChatVisible,
   finishSystemMessageHydration,
-} from "./chat/index.js?v=20261011-chat-controls-repair-01";
+} from "./chat/index.js?v=20261011-chat-auto-switch-bem-01-video-ts-group-01";
 import { removeActiveTabRecord } from "./room-access.js?v=20261011-chat-controls-repair-01";
 import { invalidateRoomOperation, isRoomOperationCurrent, clearUrlRoom } from "./room-navigation.js?v=20261011-chat-controls-repair-01";
 import { syncJoinRoomButtonState } from "./room-input.js?v=20261011-chat-controls-repair-01";

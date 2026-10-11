@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
   <head>
     <meta charset="utf-8" />
@@ -24,7 +24,7 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap"
     />
     <link rel="icon" href="./public/favicon.svg" type="image/svg+xml" />
-<link rel="stylesheet" href="./public/styles.css?v=20261011-chat-controls-repair-01" />
+    <link rel="stylesheet" href="./public/styles.css?v=20261011-player-empty-icon-layer-01" />
   </head>
   <body class="is-lobby">
     <div class="app-shell">
@@ -34,7 +34,7 @@
 
       <!-- @include features/session/session-view.html -->
 
-      <div class="emoji-popover" id="emojiPopover" hidden aria-label="Selector de emojis"></div>
+      <div class="emoji-popover" id="emojiPopover" role="dialog" hidden aria-label="Selector de emojis"></div>
       <div class="message-menu" id="messageMenu" hidden>
         <button type="button" data-action="copy">
           <span data-lucide="copy" aria-hidden="true"></span>
@@ -47,7 +47,7 @@
       </div>
       <div class="tooltip-layer" id="tooltipLayer" hidden></div>
       <button
-        class="mobile-debug-button"
+        class="mobile-debug-dialog__button"
         id="mobileDebugButton"
         type="button"
         hidden
@@ -63,8 +63,8 @@
     <script defer src="./public/vendor/lucide-0.468.0/lucide.min.js?v=20261010-file-size-refactor-02"></script>
     <script src="./public/firebase-config.js?v=20261010-file-size-refactor-02"></script>
     <script type="module" src="./src/features/chat/image-lightbox.js?v=20261010-file-size-refactor-02"></script>
-    <script type="module" src="./src/features/tooltip-page-lifecycle.js?v=20261011-chat-ui-fixes-03"></script>
-    <script type="module" src="./src/main.js?v=20261011-chat-controls-repair-01"></script>
+    <script type="module" src="./src/features/tooltip-page-lifecycle.js?v=20261011-lucide-icons-repair-01"></script>
+    <script type="module" src="./src/main.js?v=20261011-player-empty-state-01"></script>
     <script type="module" src="./src/features/chat/chat-input-layout.js?v=20261011-chat-interaction-fixes-01"></script>
     <script type="module" src="./src/features/chat/component-aspect-layout.js?v=20261010-file-size-refactor-02"></script>
     <script type="module" src="./src/features/chat/switch-pointer-glow.js?v=20261010-file-size-refactor-02"></script>

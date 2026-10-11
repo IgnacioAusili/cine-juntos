@@ -30,9 +30,18 @@
   pointer-events: none;
 }
 
-.button.button--primary,
-.button.primary {
+.button.button--primary {
   position: relative;
+}
+
+.button.button--warning,
+.button.button--danger {
+  min-height: 36px;
+  padding: 0 18px;
+}
+
+.button.button--danger {
+  min-width: 110px;
 }
 
 .button[data-loading="true"] {

@@ -1,3 +1,7 @@
 {
-  "extends": ["html-validate:recommended"]
+  "extends": ["html-validate:recommended"],
+  "rules": {
+    "prefer-native-element": "warn",
+    "void-style": ["error", { "style": "selfclose" }]
+  }
 }

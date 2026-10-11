@@ -1,3 +1,11 @@
+.message-video-ts,
+.player-frame .overlay-messages .message-video-ts,
+.mini-player-surface .overlay-messages .message-video-ts {
+  --message-video-ts-hover-lift: -1px;
+  --message-video-ts-text-offset: -0.5px;
+  --message-video-ts-motion-duration: 0.2s;
+}
+
 .messages {
   position: relative;
   z-index: 1;
@@ -58,34 +66,53 @@
 .message-video-ts,
 .player-frame .overlay-messages .message-video-ts,
 .mini-player-surface .overlay-messages .message-video-ts {
+  appearance: none;
+  display: inline-flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  background: transparent;
+  border: 0;
+  color: var(--brand-active, #2fb8a4);
+  height: 14px;
+  margin: 0;
+  padding: 0;
+  font-size: 1em;
+  line-height: 1;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color var(--message-video-ts-motion-duration) ease;
+  user-select: none;
+}
+
+.message-video-ts__visual {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
   gap: 2px;
-  background: rgba(47, 184, 164, 0.12);
-  border: 1px solid rgba(47, 184, 164, 0.3);
-  color: var(--brand-active, #2fb8a4);
-  border-radius: 4px;
   height: 14px;
   padding: 0 3px;
-  font-size: 1em;
-  line-height: 1;
-  font-weight: 500;
-  cursor: pointer;
+  border: 1px solid rgba(47, 184, 164, 0.3);
+  border-radius: 4px;
+  background: rgba(47, 184, 164, 0.12);
+  pointer-events: none;
   transition:
-    background-color 0.2s ease,
-    border-color 0.2s ease,
-    color 0.2s ease,
-    box-shadow 0.2s ease,
-    transform 0.2s ease;
-  user-select: none;
+    background-color var(--message-video-ts-motion-duration) ease,
+    border-color var(--message-video-ts-motion-duration) ease,
+    transform var(--message-video-ts-motion-duration) ease;
 }
 
 .message-video-ts:hover {
-  background: rgba(47, 184, 164, 0.22);
+  transform: none;
+}
+
+.message-video-ts:hover .message-video-ts__visual {
   border-color: rgba(47, 184, 164, 0.5);
-  transform: translateY(-1px);
+  background: rgba(47, 184, 164, 0.22);
+  transform: translateY(var(--message-video-ts-hover-lift));
 }
 
 .message-video-ts svg {
@@ -94,7 +121,9 @@
   fill: currentColor;
 }
 
-.message-video-ts span {
+.message-video-ts__time {
+  position: relative;
+  top: var(--message-video-ts-text-offset);
   display: inline-flex;
   align-items: center;
   line-height: 1;

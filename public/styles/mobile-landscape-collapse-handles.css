@@ -106,7 +106,7 @@
   html.viewport-landscape body:not(.is-lobby)
     .session-view[data-chat-dock="right"],
   html.viewport-landscape body:not(.is-lobby)
-    .session-view[data-chat-dock="right"] .workspace,
+    .session-view[data-chat-dock="right"] .o-workspace,
   html.viewport-landscape body:not(.is-lobby)
     .session-view[data-chat-dock="right"] .chat-area,
   html.viewport-landscape body:not(.is-lobby)

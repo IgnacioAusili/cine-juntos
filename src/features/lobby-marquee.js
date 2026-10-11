@@ -16,7 +16,7 @@ const LOBBY_MARQUEE_EXTRA_MESSAGES = [
 const LOBBY_MARQUEE_SPEED_PX_PER_SECOND = 26;
 
 export function wireLobbyMarqueeContent(screen) {
-  const track = screen?.querySelector(".lobby-marquee-track");
+  const track = screen?.querySelector('.lobby-screen__marquee-track');
   const sets = [...(track?.querySelectorAll(".marquee-set") || [])];
   if (sets.length < 4) return;
 

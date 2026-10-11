@@ -1,7 +1,7 @@
 import { dom } from "../../core/dom.js?v=20261011-chat-controls-repair-01";
 import { state, getDisplayName, logEvent } from "../../core/state.js?v=20261011-chat-controls-repair-01";
 import { formatSeconds } from "../../core/utils.js?v=20261011-chat-controls-repair-01";
-import { renderMessage } from "../chat/index.js?v=20261011-chat-controls-repair-01";
+import { renderMessage } from "../chat/index.js?v=20261011-chat-auto-switch-bem-01-video-ts-group-01";
 import { setSyncStatus } from "../session-ui.js?v=20261011-chat-controls-repair-01";
 
 const PLAYBACK_ISSUE_SYNC_COOLDOWN_MS = 2200;

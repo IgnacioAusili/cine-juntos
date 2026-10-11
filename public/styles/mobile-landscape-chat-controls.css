@@ -125,7 +125,7 @@
      apaisada anterior cambiaba la columna de golpe y hacía crecer el chat
      desde la unión izquierda, además de dejar que sus hijos se recalcularan
      durante el trayecto. */
-  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .workspace {
+  html.viewport-landscape body:not(.is-lobby) .session-view[data-chat-dock="right"] .o-workspace {
     display: flex;
     grid-template-columns: none;
     grid-template-rows: none;
@@ -149,7 +149,7 @@
      que subir toda la sesión para encontrar el composer. */
   html.viewport-landscape.right-chat-keyboard-open
     body:not(.is-lobby):not(.fullscreen-mode)
-    .session-view[data-chat-dock="right"] .workspace {
+    .session-view[data-chat-dock="right"] .o-workspace {
     height: var(--right-chat-visible-height, var(--app-viewport-height)) !important;
     max-height: var(--right-chat-visible-height, var(--app-viewport-height)) !important;
     min-height: 0 !important;
@@ -157,7 +157,7 @@
 
   html.viewport-landscape.right-chat-keyboard-open
     body:not(.is-lobby):not(.fullscreen-mode)
-    .session-view[data-chat-dock="right"] .video-area,
+    .session-view[data-chat-dock="right"] .o-video-area,
   html.viewport-landscape.right-chat-keyboard-open
     body:not(.is-lobby):not(.fullscreen-mode)
     .session-view[data-chat-dock="right"] .chat-area {

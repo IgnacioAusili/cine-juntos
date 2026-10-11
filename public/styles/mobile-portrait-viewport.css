@@ -9,8 +9,8 @@
     margin-inline: calc(var(--app-shell-gutter, 14px) * -1);
   }
 
-  body:not(.is-lobby) .session-view .workspace,
-  body:not(.is-lobby) .session-view .video-area,
+  body:not(.is-lobby) .session-view .o-workspace,
+  body:not(.is-lobby) .session-view .o-video-area,
   body:not(.is-lobby) .session-view .player-frame,
   body:not(.is-lobby) .session-view .player-frame video {
     width: 100% !important;
@@ -48,7 +48,7 @@
     border-top: 0 !important;
   }
 
-  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .workspace {
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .o-workspace {
     grid-template-rows:
       minmax(220px, 40%)
       minmax(0, 1fr);
@@ -74,7 +74,7 @@
      segunda fila. El video conserva toda la superficie y el panel se abre
      desde el borde derecho hacia la izquierda, igual que la cortina lateral
      de escritorio. */
-  body:not(.is-lobby) .session-view[data-chat-dock="right"] .workspace {
+  body:not(.is-lobby) .session-view[data-chat-dock="right"] .o-workspace {
     position: relative;
     display: block;
     height: var(--right-chat-visible-height, var(--app-viewport-height));
@@ -86,7 +86,7 @@
     overflow: visible;
   }
 
-  body:not(.is-lobby) .session-view[data-chat-dock="right"] .video-area {
+  body:not(.is-lobby) .session-view[data-chat-dock="right"] .o-video-area {
     position: relative;
     width: 100%;
     height: 100%;

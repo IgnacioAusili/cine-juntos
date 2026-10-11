@@ -28,7 +28,7 @@
   grid-column: 2;
 }
 
-.session-view.layout-stacked[data-chat-dock="right"] .chat-tools-leading > .chat-name-field {
+.session-view.layout-stacked[data-chat-dock="right"] .chat-tools-leading > .chat-name-editor__field {
   grid-column: 3;
 }
 
@@ -66,7 +66,7 @@
     grid-column: 2;
   }
 
-  body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-tools-leading > .chat-name-field {
+  body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-tools-leading > .chat-name-editor__field {
     grid-column: 3;
   }
 
@@ -77,7 +77,7 @@
 
 /* El nombre y su lápiz forman un grupo centrado dentro del espacio libre del
    lado izquierdo del header. */
-.chat-tools-leading > .chat-name-field {
+.chat-tools-leading > .chat-name-editor__field {
   --chat-name-control-width: 22px;
   --chat-name-control-gap: 6px;
   grid-column: 2;
@@ -91,14 +91,14 @@
   box-sizing: border-box;
 }
 
-.chat-name-field > .chat-name-editor {
+.chat-name-editor__field > .chat-name-editor {
   width: 100%;
   max-width: 100%;
   justify-items: stretch;
 }
 
-.chat-name-field .chat-name-display-row,
-.chat-name-field .chat-name-edit-row {
+.chat-name-editor__field .chat-name-editor__display-row,
+.chat-name-editor__field .chat-name-editor__edit-row {
   display: flex !important;
   align-items: center;
   justify-content: center;
@@ -108,7 +108,7 @@
   min-width: 0;
 }
 
-.chat-name-field .chat-name-display {
+.chat-name-editor__field .chat-name-editor__display {
   flex: 0 1 auto;
   text-align: center;
   width: auto;
@@ -119,13 +119,13 @@
   white-space: nowrap;
 }
 
-.chat-name-field .chat-name-edit-button,
-.chat-name-field .chat-name-confirm-button {
+.chat-name-editor__field .chat-name-editor__edit-button,
+.chat-name-editor__field .chat-name-editor__confirm-button {
   flex: 0 0 var(--chat-name-control-width);
   width: var(--chat-name-control-width);
 }
 
-.chat-name-field .chat-name-edit-row #nameInput {
+.chat-name-editor__field .chat-name-editor__edit-row #nameInput {
   flex: 0 1 auto;
   width: 20ch !important;
   min-width: 24px !important;
@@ -133,7 +133,7 @@
 }
 
 @supports (field-sizing: content) {
-  .chat-name-field .chat-name-edit-row #nameInput {
+  .chat-name-editor__field .chat-name-editor__edit-row #nameInput {
     field-sizing: content !important;
     width: auto !important;
   }

@@ -44,9 +44,19 @@ La idea general es separar responsabilidades sin meter frameworks ni refactors g
 
 - `public/styles.css` es el punto de entrada y expresa el orden ITCSS del proyecto: tokens/configuracion, estilos genericos, objetos de layout, componentes, estados/responsive y overrides finales. Mantener el orden existente de imports porque forma parte de la cascada.
 - Para clases de componentes nuevas o que se migren, usar BEM: bloque independiente (`button`), elemento interno con `__` (`button__label`) y modificador con `--` (`button--primary`). El modificador se combina con la clase del bloque.
-- Usar OOCSS para separar estructura reutilizable de apariencia. Por ejemplo, el componente de botones mantiene geometria y comportamiento en `button-layout.css`, y colores, bordes y skins en `button-skin.css`.
+- Dentro de cada archivo, agrupar las reglas por componente y usar secciones para base, elementos, variantes, estados y ajustes responsive. Mantener las variables CSS al inicio del archivo.
+- Usar OOCSS para separar estructura reutilizable de apariencia cuando la cohesión lo justifique; `button-layout.css` y `button-skin.css` son un ejemplo, no una obligación para cada componente.
 - Al migrar una clase existente, actualizar juntos sus selectores CSS, marcado fuente HTML y referencias en JavaScript. Las clases heredadas se migran por componente para conservar el comportamiento.
-- Conservar solo como compatibilidad temporal el alias `.button.primary` del dialogo dinamico de carga; no agregar usos nuevos y retirarlo al migrar su toggle JavaScript y su cadena de cache-burst.
+- El componente `button` ya usa modificadores BEM para sus variantes primaria, de advertencia y destructiva: `.button--primary`, `.button--warning` y `.button--danger`. Mantener la clase `.button` junto al modificador y no reintroducir aliases como `.button.primary`.
+- Los controles del reproductor usan `.video-control-button--primary` junto al bloque `.video-control-button`.
+- Pantalla completa y el mini reproductor expresan su estado con `.video-control-button--active` junto a `.video-control-button`; los demás estados `.active` se migran por componente.
+- El selector de estilo del chat usa `.chat-style-toggle__button` y el modificador `.chat-style-toggle__button--active`; su estado se sincroniza también en el espejo del mini reproductor.
+- El control de chat del reproductor usa `.player-chat-toggle` y `.player-chat-toggle--active`; JavaScript aplica el mismo modificador en el espejo del mini reproductor.
+- El contador de cooldown del chat usa `.icon-button__send-cooldown` dentro del bloque `.icon-button`; otros elementos heredados del chat siguen para pasadas separadas.
+- El switch de autoexpansión usa `.chat-auto-switch__track`, `.chat-auto-switch__thumb` y `.chat-auto-switch--active`; JavaScript mantiene su estado en el mini reproductor.
+- La skin activa de `.icon-button` combina bloque y modificador en `.icon-button.icon-button--active`; no reintroducir el alias `.icon-button.active`, retirado por falta de consumidores.
+- Se eliminó `.player-skip-control.active`, una regla duplicada sin consumidores; la búsqueda deja cero selectores CSS de clase `.active`, aunque falta inventariar los demás componentes heredados para cuantificar la migración BEM completa.
+- Mantener la migracion contenida por componente, actualizando en conjunto CSS, HTML fuente y JavaScript.
 - Mantener los modulos CSS cohesivos y revisar toda su cadena de `@import` y cache-burst al modificarlos.
 
 ## Funcionamiento

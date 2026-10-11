@@ -58,7 +58,7 @@ export function wireLobbyLayoutVariants() {
       // Observar solo referencias externas al ajuste. El grid, el hero, el
       // título y el boleto cambian de tamaño dentro de syncLobbyContentCenter;
       // observarlos vuelve a disparar el mismo cálculo mientras se redimensiona.
-      [...screen.querySelectorAll(".lobby-marquee, .lobby-footer")]
+      [...screen.querySelectorAll('.lobby-screen__marquee, .lobby-screen__footer')]
         .forEach((element) => observer.observe(element));
     }
   }

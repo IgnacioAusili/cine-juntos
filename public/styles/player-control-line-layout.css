@@ -1,6 +1,6 @@
 
 
-.player-frame[data-control-style="line"] .player-controls-bar .primary-video-control svg {
+.player-frame[data-control-style="line"] .player-controls-bar .video-control-button--primary svg {
   width: 22px;
   height: 22px;
   stroke-width: 2.45;
@@ -8,7 +8,7 @@
 
 /* El contador de cooldown es absoluto y no aporta ancho al botón. Reservar
    el mismo espacio que ocupa el ícono evita que el número se desplace. */
-.player-frame[data-control-style="line"] .player-controls-bar .primary-video-control[data-play-button-cooldown="true"] {
+.player-frame[data-control-style="line"] .player-controls-bar .video-control-button--primary[data-play-button-cooldown="true"] {
   width: 30px;
   min-width: 30px;
   flex: 0 0 30px;
@@ -16,7 +16,7 @@
 
 .player-frame[data-control-style="line"] .player-controls-bar .video-control-button:not(:disabled):hover,
 .player-frame[data-control-style="line"] .player-controls-bar .video-control-button:not(:disabled):focus-visible,
-.player-frame[data-control-style="line"] .player-controls-bar .video-control-button.active:not(:disabled) {
+.player-frame[data-control-style="line"] .player-controls-bar .video-control-button.video-control-button--active:not(:disabled) {
   border: 0;
   background: transparent;
   color: var(--accent-soft, #d8fff9);
@@ -49,17 +49,17 @@
 }
 
 .player-frame[data-control-style="line"] .player-controls-bar .video-control-button:not(:disabled):is(:hover, :focus-visible) > svg,
-.player-frame[data-control-style="line"] .player-controls-bar .video-control-button.active:not(:disabled) > svg,
+.player-frame[data-control-style="line"] .player-controls-bar .video-control-button.video-control-button--active:not(:disabled) > svg,
 .player-frame[data-control-style="line"] .player-controls-bar .player-select:not([data-disabled="true"]):is(:hover, :focus-within) .player-rate-trigger {
   top: -1px;
 }
 
 .player-frame[data-control-style="line"] .player-controls-bar .video-control-button:not(:disabled):is(:hover, :focus-visible) > .play-button-cooldown,
-.player-frame[data-control-style="line"] .player-controls-bar .video-control-button.active:not(:disabled) > .play-button-cooldown {
+.player-frame[data-control-style="line"] .player-controls-bar .video-control-button.video-control-button--active:not(:disabled) > .play-button-cooldown {
   transform: translateY(-1px);
 }
 
-.player-frame[data-control-style="line"] .player-controls-bar .primary-video-control {
+.player-frame[data-control-style="line"] .player-controls-bar .video-control-button--primary {
   border: 0;
   background: transparent;
   color: var(--accent);

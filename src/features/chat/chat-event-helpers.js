@@ -1,6 +1,6 @@
 import { dom } from "../../core/dom.js?v=20261011-chat-controls-repair-01";
-import { captureExternalChatCollapseScroll, setExternalChatCollapsed } from "./chat-layout.js?v=20261011-chat-controls-repair-01";
-import { hideTooltip } from "../icons-tooltips.js?v=20261011-chat-controls-repair-01";
+import { captureExternalChatCollapseScroll, setExternalChatCollapsed } from "./chat-layout.js?v=20261011-chat-auto-switch-bem-01";
+import { hideTooltip } from "../icons-tooltips.js?v=20261011-lucide-icons-repair-01";
 
 const MOBILE_CHAT_LAYOUT_QUERY = "(max-width: 980px)";
 const COLLAPSE_POINTER_HOVER_CLASS = "chat-collapse-pointer-hover";

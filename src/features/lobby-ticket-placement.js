@@ -16,7 +16,7 @@ function syncLobbyTitleIconSize(title, icon) {
 }
 
 function getTitleVisualRect(title) {
-  const lines = [...title.querySelectorAll(".lobby-title-line")];
+  const lines = [...title.querySelectorAll('.lobby-screen__title-line')];
   const rects = lines.map((line) => line.getBoundingClientRect());
   if (!rects.length) return title.getBoundingClientRect();
 
@@ -48,7 +48,7 @@ export function resetLobbyTicketPlacement(screen, ticket) {
 export function syncLobbyTicketPlacement(screen, ticket) {
   if (!screen || !ticket) return;
 
-  const grid = screen.querySelector(".lobby-grid");
+  const grid = screen.querySelector('.lobby-screen__grid');
   if (!grid) return;
 
   // El grid ya centra el boleto en su segunda pista. Quitar cualquier
@@ -74,9 +74,9 @@ export function syncLobbyTicketPlacement(screen, ticket) {
 }
 
 export function syncLobbyTitlePlacement(screen, isSingleColumn) {
-  const hero = screen?.querySelector(".lobby-hero");
-  const title = hero?.querySelector(".lobby-title");
-  const icon = hero?.querySelector(".lobby-title-icon");
+  const hero = screen?.querySelector('.lobby-screen__hero');
+  const title = hero?.querySelector('.lobby-screen__title');
+  const icon = hero?.querySelector('.lobby-screen__title-icon');
   if (!hero) return;
 
   // El título tiene dos líneas independientes; el ícono debe tomar como

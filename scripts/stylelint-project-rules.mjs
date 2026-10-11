@@ -1,6 +1,7 @@
 import stylelint from "stylelint";
 import selectorParser from "postcss-selector-parser";
 import valueParser from "postcss-value-parser";
+import noHardcodedColors from "./stylelint-no-hardcoded-colors.mjs";
 
 const {
   createPlugin,
@@ -24,6 +25,26 @@ const selectorLengthMessages = ruleMessages(selectorLengthRuleName, {
   rejected: (length, maximum) =>
     `El selector tiene ${length} caracteres; acortalo a ${maximum} o menos.`,
 });
+
+const selectorNestingDepthRuleName = "cine/selector-max-nesting-depth";
+const selectorNestingDepthMessages = ruleMessages(selectorNestingDepthRuleName, {
+  rejected: (depth, maximum) =>
+    `La regla tiene ${depth} niveles de anidación CSS; mantenela en ${maximum} o menos.`,
+});
+
+const colorFunctions = new Set([
+  "color",
+  "color-mix",
+  "hsl",
+  "hsla",
+  "hwb",
+  "lab",
+  "lch",
+  "oklab",
+  "oklch",
+  "rgb",
+  "rgba",
+]);
 
 const cssLengthUnits = new Set([
   "%",
@@ -73,20 +94,6 @@ const cssLengthUnits = new Set([
   "vmax",
   "vmin",
   "vw",
-]);
-
-const colorFunctions = new Set([
-  "color",
-  "color-mix",
-  "hsl",
-  "hsla",
-  "hwb",
-  "lab",
-  "lch",
-  "oklab",
-  "oklch",
-  "rgb",
-  "rgba",
 ]);
 
 const unitlessMagicProperties = new Set([
@@ -151,6 +158,36 @@ const selectorMaxLength = createPlugin(selectorLengthRuleName, (maximum) => {
       } catch {
         // Let Stylelint's CSS parser report malformed selectors.
       }
+    });
+  };
+});
+
+const selectorMaxNestingDepth = createPlugin(selectorNestingDepthRuleName, (maximum) => {
+  return (root, result) => {
+    if (
+      !validateOptions(result, selectorNestingDepthRuleName, {
+        actual: maximum,
+        possible: [(value) => Number.isInteger(value) && value > 0],
+      })
+    ) {
+      return;
+    }
+
+    root.walkRules((rule) => {
+      let depth = 0;
+      for (let parent = rule.parent; parent; parent = parent.parent) {
+        if (parent.type === "rule") depth += 1;
+      }
+      if (depth <= maximum) return;
+
+      report({
+        result,
+        ruleName: selectorNestingDepthRuleName,
+        message: selectorNestingDepthMessages.rejected(depth, maximum),
+        node: rule,
+        word: rule.selector,
+        severity: "warning",
+      });
     });
   };
 });
@@ -251,4 +288,10 @@ const cssVariablesFirst = createPlugin(variableOrderRuleName, (primary) => {
   };
 });
 
-export default [selectorMaxLength, noMagicNumbers, cssVariablesFirst];
+export default [
+  selectorMaxLength,
+  selectorMaxNestingDepth,
+  noMagicNumbers,
+  cssVariablesFirst,
+  noHardcodedColors,
+];

@@ -3,6 +3,7 @@ import { state } from "../../core/state.js?v=20261010-file-size-refactor-02";
 import { truncateText } from "./chat-content-parser.js?v=20261010-file-size-refactor-02";
 import { getParticipantAccent } from "./chat-participant-color.js?v=20261010-file-size-refactor-02";
 import { scrollToMessage } from "./chat-message-navigation.js?v=20261011-chat-interaction-fixes-01";
+import { createForeignDocumentIcon } from "../foreign-lucide-icon.js?v=20261011-lucide-icons-repair-01";
 
 let clearReplyTargetCallback = null;
 export function configureReplyPreviewOperations({ clearReplyTarget } = {}) { clearReplyTargetCallback = clearReplyTarget || null; }
@@ -53,8 +54,7 @@ function createReplyPreviewContent(container) {
   const close = document.createElement("button");
   close.type = "button";
   close.className = "reply-preview-close";
-  close.innerHTML =
-    "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5'><line x1='18' y1='6' x2='6' y2='18'/><line x1='6' y1='6' x2='18' y2='18'/></svg>";
+  close.innerHTML = '<span data-lucide="x" aria-hidden="true"></span>';
   close.setAttribute("aria-label", "Cancelar respuesta");
   close.addEventListener("click", clearReplyTargetFromPreview);
 
@@ -62,6 +62,22 @@ function createReplyPreviewContent(container) {
   replyContent.className = "reply-preview-content";
   replyContent.append(replyIcon, textBtn, close);
   return replyContent;
+}
+
+function hydrateReplyPreviewIcons(container) {
+  if (container.ownerDocument === document) {
+    window.lucide?.createIcons();
+    return;
+  }
+
+  container.querySelectorAll("[data-lucide]").forEach((placeholder) => {
+    placeholder.replaceWith(
+      createForeignDocumentIcon(
+        container.ownerDocument,
+        placeholder.getAttribute("data-lucide"),
+      ),
+    );
+  });
 }
 
 export function renderReplyPreview({ animate = true, preserveHeight = false } = {}) {
@@ -77,6 +93,7 @@ export function renderReplyPreview({ animate = true, preserveHeight = false } = 
     setReplyPreviewClosing(container, false);
     container.innerHTML = "";
     container.append(replyContent);
+    hydrateReplyPreviewIcons(container);
     container.style.height = "0px";
     const targetHeight = getExpandedReplyHeight(container);
     const showFrame = window.requestAnimationFrame(() => {
@@ -222,6 +239,7 @@ export function renderReplyPreview({ animate = true, preserveHeight = false } = 
     if (!animate) {
       container.innerHTML = "";
       container.append(nextReplyContent);
+      hydrateReplyPreviewIcons(container);
       container.style.setProperty("transition", "none");
       container.classList.add("reply-preview--visible");
       if (visibleHeight > 0) {

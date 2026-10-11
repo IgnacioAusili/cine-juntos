@@ -7,7 +7,7 @@ import { getRenderableMessageImages, isStandaloneImageText, appendMessageMedia }
 import { extendMessageHitArea, wireMessageInteractions } from "./chat-message-interactions.js?v=20261010-file-size-refactor-02";
 import { appendMessageContent, truncateText } from "./chat-content-parser.js?v=20261010-file-size-refactor-02";
 import { getParticipantAccent } from "./chat-participant-color.js?v=20261010-file-size-refactor-02";
-import { setReplyTarget, scrollToMessage } from "./chat-reply.js?v=20261011-chat-ui-fixes-03";
+import { setReplyTarget, scrollToMessage } from "./chat-reply.js?v=20261011-lucide-icons-repair-01";
 import { watchSystemMessageLayout, fitSystemMessageBubble } from "./chat-system-message-layout.js?v=20261010-file-size-refactor-02";
 import { incrementScrollIndicator } from "./unread-counters.js?v=20261011-chat-interaction-fixes-01";
 import { scheduleSystemMessageCollapse } from "./system-message-groups.js?v=20261011-chat-interaction-fixes-01";
@@ -61,7 +61,7 @@ export function appendMessageNow(container, message, { animateSystemGroups = tru
     tsBtn.dataset.tooltip = `Ir al minuto ${formatClockTime(message.videoTimestamp)} del video`;
     tsBtn.removeAttribute("title");
     tsBtn.setAttribute("aria-label", `Saltar a ${formatClockTime(message.videoTimestamp)} en el video`);
-    tsBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="8" height="8" aria-hidden="true"><polygon points="5,3 19,12 5,21"/></svg><span>${formatClockTime(message.videoTimestamp)}</span>`;
+    tsBtn.innerHTML = `<span class="message-video-ts__visual"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="8" height="8" aria-hidden="true"><polygon points="5,3 19,12 5,21"/></svg><span class="message-video-ts__time">${formatClockTime(message.videoTimestamp)}</span></span>`;
     tsBtn.addEventListener("click", () => {
       if (dom.videoPlayer && Number.isFinite(message.videoTimestamp)) {
         dom.videoPlayer.currentTime = message.videoTimestamp;

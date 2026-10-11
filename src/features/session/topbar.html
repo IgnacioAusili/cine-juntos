@@ -1,12 +1,12 @@
-      <header class="topbar">
-        <div class="topbar-brand">
+      <header class="site-header">
+        <div class="site-header__brand">
           <h1>Cine Juntos</h1>
         </div>
-        <div class="topbar-actions">
+        <div class="site-header__actions">
           <div class="room-chip" id="roomChip">
-            <div class="room-chip-heading">
-              <span class="room-chip-label-row">
-                <span class="room-chip-label">Sala de cine</span>
+            <div class="room-chip__heading">
+              <span class="room-chip__label-row">
+                <span class="room-chip__label">Sala de cine</span>
                 <button
                   class="help-button"
                   type="button"
@@ -16,23 +16,23 @@
                   <span data-lucide="circle-help"></span>
                 </button>
               </span>
-              <h1 class="room-chip-title">
-                <span class="app-status room-chip-status-inline" id="connectionStatus" role="button" tabindex="0" data-state="starting" data-tooltip="Conectando con la sala" aria-label="Estado de la aplicación: Iniciando. Conectando con la sala">
-                  <span class="status-dot app-status-dot" aria-hidden="true"></span>
+              <h1 class="room-chip__title">
+                <span class="app-status   room-chip__status--inline" id="connectionStatus" role="button" tabindex="0" data-state="starting" data-tooltip="Conectando con la sala" aria-label="Estado de la aplicación: Iniciando. Conectando con la sala">
+                  <span class="u-status-dot   app-status__dot" aria-hidden="true"></span>
                 </span>
-                <span class="room-chip-title-prefix">SALA</span>
-                <span class="room-chip-title-actions">
+                <span class="room-chip__title-prefix">SALA</span>
+                <span class="room-chip__title-actions">
                   <button
-                    class="room-chip-code room-chip-copy room-chip-code-button"
+                    class="room-chip__code   room-chip__copy   room-chip__code--button"
                     id="copyInviteButton"
                     type="button"
                     aria-label="Copiar enlace de invitación"
                     data-tooltip="Click para copiar código/invitación"
                   >
-                    <span class="room-chip-copy-main">
-                      <span class="room-chip-copy-motion">
-                        <span class="room-chip-code-text" id="roomBadge">Sin sala</span>
-                        <span class="room-chip-copy-confirm" aria-hidden="true">
+                    <span class="room-chip__copy-main">
+                      <span class="room-chip__copy-motion">
+                        <span class="room-chip__code-text" id="roomBadge">Sin sala</span>
+                        <span class="room-chip__copy-confirm" aria-hidden="true">
                           <span data-lucide="check"></span>
                         </span>
                       </span>
@@ -41,9 +41,9 @@
                 </span>
               </h1>
             </div>
-            <div class="room-chip-actions">
+            <div class="room-chip__actions">
               <button
-                class="room-chip-back-button"
+                class="room-chip__back-button"
                 id="backToLobbyButton"
                 type="button"
                 aria-label="Volver a la entrada"

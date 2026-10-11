@@ -10,7 +10,7 @@ import {
   clampBubbleTailCenter,
 } from "../core/continuous-bubble.js?v=20261010-file-size-refactor-02";
 import { setConnection } from "./session-ui.js?v=20261010-file-size-refactor-02";
-import { createForeignDocumentIcon } from "./foreign-lucide-icon.js?v=20261010-file-size-refactor-02";
+import { createForeignDocumentIcon } from "./foreign-lucide-icon.js?v=20261011-lucide-icons-repair-01";
 import {
   isTouchPointer,
   TOUCH_LONG_PRESS_DELAY_MS,

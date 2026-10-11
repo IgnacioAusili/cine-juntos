@@ -2,13 +2,13 @@ import { dom } from "../../core/dom.js?v=20261011-chat-controls-repair-01";
 import { state, logEvent } from "../../core/state.js?v=20261011-chat-controls-repair-01";
 import { formatSeconds } from "../../core/utils.js?v=20261011-chat-controls-repair-01";
 import { shouldToggleMuteFromVolumeButton } from "./player-volume-layout.js?v=20261011-chat-controls-repair-01";
-import { configurePlayerMedia, handleManualLoadRequest, setVideoStatus, announceVideoActivity, announceVideoLoadCompletion } from "./player-video-source.js?v=20261011-chat-controls-repair-01";
-import { hasLoadedMediaSource, getFiniteDuration, rememberPlaybackPosition, updateLoadButtonState, clearSlowLoadPromptTracking, schedulePlaybackErrorConfirmation, clearPlaybackErrorTracking, persistPlaybackPosition, prepareVideoFingerprintAndPrompt } from "./player-media.js?v=20261011-chat-controls-repair-01";
-import { attemptPlaybackRecovery, cancelPendingPlaybackIssueDetection, clearPlaybackRecoveryTracking, pauseRoomForPlaybackIssue, publishState } from "./player-sync-logic.js?v=20261011-chat-controls-repair-01";
-import { wireSeekTooltipEvents } from "./player-seek-tooltip-events.js?v=20261011-chat-controls-repair-01";
+import { configurePlayerMedia, handleManualLoadRequest, setVideoStatus, announceVideoActivity, announceVideoLoadCompletion } from "./player-video-source.js?v=20261011-player-empty-state-01";
+import { hasLoadedMediaSource, getFiniteDuration, rememberPlaybackPosition, updateLoadButtonState, clearSlowLoadPromptTracking, schedulePlaybackErrorConfirmation, clearPlaybackErrorTracking, persistPlaybackPosition, prepareVideoFingerprintAndPrompt } from "./player-media.js?v=20261011-chat-auto-switch-bem-01-video-ts-group-01";
+import { attemptPlaybackRecovery, cancelPendingPlaybackIssueDetection, clearPlaybackRecoveryTracking, pauseRoomForPlaybackIssue, publishState } from "./player-sync-logic.js?v=20261011-chat-auto-switch-bem-01-video-ts-group-01";
+import { wireSeekTooltipEvents } from "./player-seek-tooltip-events.js?v=20261011-lucide-icons-repair-01";
 import { playerRuntimeState } from "./player-runtime-state.js?v=20261011-chat-controls-repair-01";
-import { wireMobilePlayerControlPlacement } from "./player.js?v=20261011-chat-controls-repair-01";
-import { handleGlobalPlayerKeydown, togglePlaybackFromControls, seekVideoBy, previewSeekPosition, commitSeekPosition, isSyncControlCoolingDown, registerSyncControlPress, syncPlayerControls, persistVolume } from "./player-control-actions.js?v=20261011-chat-controls-repair-01";
+import { wireMobilePlayerControlPlacement } from "./player.js?v=20261011-player-empty-state-01";
+import { handleGlobalPlayerKeydown, togglePlaybackFromControls, seekVideoBy, previewSeekPosition, commitSeekPosition, isSyncControlCoolingDown, registerSyncControlPress, syncPlayerControls, persistVolume } from "./player-control-actions.js?v=20261011-player-skip-active-cleanup-01";
 
 export function wirePlayerCoreEvents() {
   configurePlayerMedia({ syncPlayerControls });
@@ -134,6 +134,7 @@ export function wirePlayerCoreEvents() {
   });
 
   dom.videoPlayer.addEventListener("play", () => {
+    if (!hasLoadedMediaSource()) return;
     rememberPlaybackPosition();
     persistPlaybackPosition();
     setVideoStatus("loaded", "En vivo");
@@ -146,7 +147,7 @@ export function wirePlayerCoreEvents() {
   });
 
   dom.videoPlayer.addEventListener("pause", () => {
-    if (dom.videoPlayer.ended) return;
+    if (!hasLoadedMediaSource() || dom.videoPlayer.ended) return;
     rememberPlaybackPosition();
     persistPlaybackPosition(true);
     setVideoStatus("loaded", "Listo");
@@ -157,6 +158,7 @@ export function wirePlayerCoreEvents() {
   });
 
   dom.videoPlayer.addEventListener("ended", () => {
+    if (!hasLoadedMediaSource()) return;
     setVideoStatus("loaded", "Listo");
     logEvent("video", "Video terminado.");
     persistPlaybackPosition(true);
@@ -187,9 +189,9 @@ export function wirePlayerCoreEvents() {
   });
 
   dom.videoPlayer.addEventListener("loadedmetadata", () => {
+    if (!hasLoadedMediaSource()) return;
     state.player.hasPlayableVideo = true;
     playerRuntimeState.isDurationShowingRemaining = false;
-    dom.emptyPlayer.classList.add("hidden");
     setVideoStatus("loading", "Cargando video");
     clearPlaybackErrorTracking();
     clearSlowLoadPromptTracking();
@@ -200,6 +202,7 @@ export function wirePlayerCoreEvents() {
   });
 
   dom.videoPlayer.addEventListener("loadeddata", () => {
+    if (!hasLoadedMediaSource()) return;
     cancelPendingPlaybackIssueDetection();
     clearPlaybackErrorTracking();
     setVideoStatus("loaded", dom.videoPlayer.paused ? "Listo" : "En vivo");
@@ -208,6 +211,7 @@ export function wirePlayerCoreEvents() {
   });
 
   dom.videoPlayer.addEventListener("canplay", () => {
+    if (!hasLoadedMediaSource()) return;
     cancelPendingPlaybackIssueDetection();
     clearPlaybackErrorTracking();
     setVideoStatus("loaded", dom.videoPlayer.paused ? "Listo" : "En vivo");
@@ -215,6 +219,7 @@ export function wirePlayerCoreEvents() {
   });
 
   dom.videoPlayer.addEventListener("playing", () => {
+    if (!hasLoadedMediaSource()) return;
     cancelPendingPlaybackIssueDetection();
     clearPlaybackErrorTracking();
     setVideoStatus("loaded", "En vivo");
@@ -232,12 +237,14 @@ export function wirePlayerCoreEvents() {
   });
 
   dom.videoPlayer.addEventListener("waiting", () => {
+    if (!hasLoadedMediaSource()) return;
     logEvent("video", `Buffering local en ${formatSeconds(dom.videoPlayer.currentTime)}.`);
     setVideoStatus("loading", "Cargando video");
     pauseRoomForPlaybackIssue("waiting");
   });
 
   dom.videoPlayer.addEventListener("stalled", () => {
+    if (!hasLoadedMediaSource()) return;
     logEvent("video", `Video trabado localmente en ${formatSeconds(dom.videoPlayer.currentTime)}.`);
     setVideoStatus("loading", "Cargando video");
     pauseRoomForPlaybackIssue("stalled");
@@ -249,6 +256,7 @@ export function wirePlayerCoreEvents() {
   });
 
   dom.videoPlayer.addEventListener("error", () => {
+    if (!hasLoadedMediaSource()) return;
     schedulePlaybackErrorConfirmation();
   });
 
@@ -257,6 +265,7 @@ export function wirePlayerCoreEvents() {
     playerRuntimeState.isDurationShowingRemaining = false;
     clearPlaybackErrorTracking();
     clearSlowLoadPromptTracking();
+    if (!hasLoadedMediaSource()) setVideoStatus("empty", "Sin contenido");
     syncPlayerControls(true);
   });
 

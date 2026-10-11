@@ -1,28 +1,28 @@
 // Layout del chat externo e interno: visibilidad, estilo, dock y collapse.
 import { dom } from "../../core/dom.js?v=20261011-chat-controls-repair-01";
-import { configureExternalChatCollapseOperations, lockChatScrollSnapDuringProgrammaticScroll, setExternalChatCollapsed, forceExternalChatCollapsed, restoreExternalChatCollapsed, applyExternalChatCollapsed, captureExternalChatCollapseScroll } from "./chat-external-collapse.js?v=20261011-chat-controls-repair-01";
-export { setExternalChatCollapsed, forceExternalChatCollapsed, restoreExternalChatCollapsed } from "./chat-external-collapse.js?v=20261011-chat-controls-repair-01";
-import { configureChatDockController, setChatDock, getBottomDockVideoScrollTop } from "./chat-dock-controller.js?v=20261011-chat-controls-repair-01";
-export { setChatDock } from "./chat-dock-controller.js?v=20261011-chat-controls-repair-01";
+import { configureExternalChatCollapseOperations, lockChatScrollSnapDuringProgrammaticScroll, setExternalChatCollapsed, forceExternalChatCollapsed, restoreExternalChatCollapsed, applyExternalChatCollapsed, captureExternalChatCollapseScroll } from "./chat-external-collapse.js?v=20261011-chat-auto-switch-bem-01";
+export { setExternalChatCollapsed, forceExternalChatCollapsed, restoreExternalChatCollapsed } from "./chat-external-collapse.js?v=20261011-chat-auto-switch-bem-01";
+import { configureChatDockController, setChatDock, getBottomDockVideoScrollTop } from "./chat-dock-controller.js?v=20261011-lucide-icons-repair-01";
+export { setChatDock } from "./chat-dock-controller.js?v=20261011-lucide-icons-repair-01";
 import { isMobilePortraitChatViewport, isMobileLandscapeRightDock, isMobileLandscapeFullscreenBottomDock, isMobilePortraitRightDock, isRightChatViewportOverlay } from "./chat-layout-breakpoints.js?v=20261011-chat-controls-repair-01";
-import { syncInsideChatPanelOffset, syncExternalChatCollapseHandleOffset, updateCollapseButton } from "./chat-collapse-handles.js?v=20261011-chat-controls-repair-01";
-export { syncInsideChatPanelOffset, syncExternalChatCollapseHandleOffset, updateCollapseButton } from "./chat-collapse-handles.js?v=20261011-chat-controls-repair-01";
-import { configureChatVisibilityOperations, clearChatAutoCollapseTimer as clearAutoCollapseTimer, setInsideChatVisible, setInsideChatAutoExpandEnabled, setExternalChatAutoExpandEnabled, scheduleInsideChatAutoCollapse, scheduleExternalChatAutoCollapse, cancelExternalChatAutoCollapse, completeAutoOpenedChatResponse, syncChatAutoExpandControls } from "./chat-visibility.js?v=20261011-chat-controls-repair-01";
-export { setInsideChatVisible, setInsideChatAutoExpandEnabled, setExternalChatAutoExpandEnabled, scheduleInsideChatAutoCollapse, scheduleExternalChatAutoCollapse, cancelExternalChatAutoCollapse, completeAutoOpenedChatResponse, syncChatAutoExpandControls } from "./chat-visibility.js?v=20261011-chat-controls-repair-01";
+import { syncInsideChatPanelOffset, syncExternalChatCollapseHandleOffset, updateCollapseButton } from "./chat-collapse-handles.js?v=20261011-lucide-icons-repair-01";
+export { syncInsideChatPanelOffset, syncExternalChatCollapseHandleOffset, updateCollapseButton } from "./chat-collapse-handles.js?v=20261011-lucide-icons-repair-01";
+import { configureChatVisibilityOperations, clearChatAutoCollapseTimer as clearAutoCollapseTimer, setInsideChatVisible, setInsideChatAutoExpandEnabled, setExternalChatAutoExpandEnabled, scheduleInsideChatAutoCollapse, scheduleExternalChatAutoCollapse, cancelExternalChatAutoCollapse, completeAutoOpenedChatResponse, syncChatAutoExpandControls } from "./chat-visibility.js?v=20261011-chat-auto-switch-bem-01";
+export { setInsideChatVisible, setInsideChatAutoExpandEnabled, setExternalChatAutoExpandEnabled, scheduleInsideChatAutoCollapse, scheduleExternalChatAutoCollapse, cancelExternalChatAutoCollapse, completeAutoOpenedChatResponse, syncChatAutoExpandControls } from "./chat-visibility.js?v=20261011-chat-auto-switch-bem-01";
 import { getVideoAreaRect, isStackedSessionLayout, wireResponsiveSessionLayout as wireResponsiveSessionLayoutModule } from "./chat-responsive-layout.js?v=20261011-chat-controls-repair-01";
 import { isFullscreenPageActive, getPageScrollContainer, getPageScrollTop, getPageScrollMax, getElementPageTop, scrollPageTo } from "./chat-page-scroll.js?v=20261011-chat-controls-repair-01";
-export { captureExternalChatCollapseScroll } from "./chat-external-collapse.js?v=20261011-chat-controls-repair-01";
+export { captureExternalChatCollapseScroll } from "./chat-external-collapse.js?v=20261011-chat-auto-switch-bem-01";
 export { getVideoAreaRect, isStackedSessionLayout } from "./chat-responsive-layout.js?v=20261011-chat-controls-repair-01";
 import { chatDockTransitionState } from "./chat-layout-transition-state.js?v=20261011-chat-controls-repair-01";
 import { state, logEvent } from "../../core/state.js?v=20261011-chat-controls-repair-01";
 import { shouldAnchorChatCollapseHandleInHeader } from "./chat-collapse-header-layout.js?v=20261011-chat-controls-repair-01";
 import { CHAT_DOCKS, CHAT_DOCK_META, withShortcutHint } from "../../core/utils.js?v=20261011-chat-controls-repair-01";
-import { hydrateIcons, hideTooltip, refreshTooltipForTarget } from "../icons-tooltips.js?v=20261011-chat-controls-repair-01";
+import { hydrateIcons, hideTooltip, refreshTooltipForTarget } from "../icons-tooltips.js?v=20261011-lucide-icons-repair-01";
 import { focusFullscreenWorkspace } from "../session-ui.js?v=20261011-chat-controls-repair-01";
 import {
   cancelIdentityEditing,
   syncNameInputWidth,
-} from "../presence.js?v=20261011-chat-controls-repair-01";
+} from "../presence.js?v=20261011-lucide-icons-repair-01";
 import {
   isExternalChatVisibleToUser,
   isInsideChatVisibleToUser,
@@ -217,7 +217,10 @@ export function setInsideChatStyle(style) {
   const nextStyle = ["float", "panel"].includes(style) ? style : "float";
   dom.playerFrame.dataset.chatStyle = nextStyle;
   dom.chatStyleToggle.querySelectorAll("[data-chat-style]").forEach((button) => {
-    button.classList.toggle("active", button.dataset.chatStyle === nextStyle);
+    button.classList.toggle(
+      "chat-style-toggle__button--active",
+      button.dataset.chatStyle === nextStyle,
+    );
   });
   localStorage.setItem(CHAT_STYLE_KEY, nextStyle);
   scheduleMessageTimeAdjustmentAfterLayout();

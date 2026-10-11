@@ -19,7 +19,7 @@
     grid-template-rows: minmax(0, 1fr);
   }
 
-  html.viewport-landscape body.fullscreen-mode .topbar {
+  html.viewport-landscape body.fullscreen-mode .site-header {
     display: none;
   }
 
@@ -31,7 +31,7 @@
     margin: 0;
   }
 
-  html.viewport-landscape body.fullscreen-mode .session-view[data-chat-dock="right"] .workspace {
+  html.viewport-landscape body.fullscreen-mode .session-view[data-chat-dock="right"] .o-workspace {
     display: grid;
     width: 100%;
     height: 100%;
@@ -43,13 +43,13 @@
     grid-template-areas: "video chat";
   }
 
-  html.viewport-landscape body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="right"] .workspace {
+  html.viewport-landscape body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="right"] .o-workspace {
     grid-template-columns: minmax(0, 1fr) 0;
   }
 
   /* También en fullscreen el ancho debe animarse desde el borde derecho;
      mobile-fullscreen-viewport sólo fija el tamaño de la superficie. */
-  html.viewport-landscape body.fullscreen-mode .session-view[data-chat-dock="right"] .workspace {
+  html.viewport-landscape body.fullscreen-mode .session-view[data-chat-dock="right"] .o-workspace {
     display: flex;
     grid-template-columns: none;
     grid-template-rows: none;
@@ -67,7 +67,7 @@
     width: 0;
   }
 
-  html.viewport-landscape body.fullscreen-mode .session-view[data-chat-dock="right"] .video-area,
+  html.viewport-landscape body.fullscreen-mode .session-view[data-chat-dock="right"] .o-video-area,
   html.viewport-landscape body.fullscreen-mode .session-view[data-chat-dock="right"] .player-frame,
   html.viewport-landscape body.fullscreen-mode .session-view[data-chat-dock="right"] .chat-area {
     height: 100%;
@@ -91,7 +91,7 @@
   }
 
   html.viewport-landscape body.fullscreen-mode
-    .session-view[data-chat-dock="bottom"] .workspace {
+    .session-view[data-chat-dock="bottom"] .o-workspace {
     position: relative;
     display: block !important;
     width: 100% !important;
@@ -104,7 +104,7 @@
   }
 
   html.viewport-landscape body.fullscreen-mode
-    .session-view[data-chat-dock="bottom"] .video-area {
+    .session-view[data-chat-dock="bottom"] .o-video-area {
     position: relative;
     width: 100% !important;
     height: 100% !important;

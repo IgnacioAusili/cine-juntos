@@ -23,7 +23,7 @@
 
 /* El boton central usa un icono mas ancho; igualar su caja a la de los otros
    comandos evita que sus dos separaciones se perciban mas abiertas. */
-.player-frame[data-control-style="line"] .player-controls-bar .primary-video-control:not([data-play-button-cooldown="true"]) {
+.player-frame[data-control-style="line"] .player-controls-bar .video-control-button--primary:not([data-play-button-cooldown="true"]) {
   width: var(--player-control-button-size);
   min-width: var(--player-control-button-size);
   flex: 0 0 var(--player-control-button-size);

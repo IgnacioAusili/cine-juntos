@@ -1,6 +1,6 @@
 
 
-.lobby-ticket-stub::before {
+.lobby-screen__ticket-stub::before {
   position: absolute;
   z-index: 0;
   inset: var(--lobby-ticket-fit-stub-inset, 0px) 0;
@@ -16,7 +16,7 @@
 }
 
 /* Cuerpo principal del boleto */
-.lobby-ticket-body {
+.lobby-screen__ticket-body {
   z-index: 1;
   display: grid;
   gap: 14px;
@@ -24,7 +24,7 @@
 }
 
 /* Perforacion del ticket: el mismo corte circular que en escritorio. */
-.lobby-ticket-perforation {
+.lobby-screen__ticket-perforation {
   position: absolute;
   z-index: 2;
   top: 50%;
@@ -39,7 +39,7 @@
   transform: translate(-50%, -50%);
 }
 
-.lobby-ticket-head {
+.lobby-screen__ticket-head {
   position: relative;
   display: flex;
   align-items: center;
@@ -48,13 +48,13 @@
   border-bottom: 1px dashed var(--glass-border-strong);
 }
 
-.lobby-ticket-meta {
+.lobby-screen__ticket-meta {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
-.lobby-ticket-label {
+.lobby-screen__ticket-label {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -64,7 +64,7 @@
   letter-spacing: -0.01em;
 }
 
-.lobby-ticket-mark {
+.lobby-screen__ticket-mark {
   display: inline-flex;
   width: 15px;
   height: 15px;
@@ -72,14 +72,14 @@
   color: var(--amber);
 }
 
-.lobby-ticket-mark svg {
+.lobby-screen__ticket-mark svg {
   display: block;
   width: 100%;
   height: 100%;
   stroke-width: 2;
 }
 
-.lobby-ticket-code {
+.lobby-screen__ticket-code {
   position: absolute;
   top: 1px;
   right: 0;
@@ -91,7 +91,7 @@
   opacity: 0.84;
 }
 
-.lobby-ticket-code-bars {
+.lobby-screen__ticket-code-bars {
   display: block;
   width: 100%;
   height: auto;
@@ -101,11 +101,11 @@
   transform-origin: center;
 }
 
-.lobby-ticket-code-bars path {
+.lobby-screen__ticket-code-bars path {
   fill: currentColor;
 }
 
-.lobby-ticket-code-serial {
+.lobby-screen__ticket-code-serial {
   color: rgba(205, 215, 215, 0.56);
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   font-size: 0.36rem;
@@ -116,7 +116,7 @@
   white-space: nowrap;
 }
 
-.lobby-ticket-hint {
+.lobby-screen__ticket-hint {
   display: inline-flex;
   flex-direction: row;
   align-items: center;
@@ -125,7 +125,7 @@
   font-size: 0.72rem;
 }
 
-.lobby-ticket-hint-icon {
+.lobby-screen__ticket-hint-icon {
   display: inline-block;
   color: var(--amber);
   line-height: 0;
@@ -135,7 +135,7 @@
   transform: translateY(1px);
 }
 
-.lobby-ticket-hint-icon svg {
+.lobby-screen__ticket-hint-icon svg {
   display: block;
   width: 100%;
   height: 100%;
@@ -145,12 +145,12 @@
 }
 
 /* Form dentro del boleto */
-.lobby-fields {
+.lobby-screen__fields {
   display: grid;
   gap: 10px;
 }
 
-.lobby-fields input[type="text"] {
+.lobby-screen__fields input[type="text"] {
   --lobby-input-offset: 3px;
   appearance: none;
   display: block;
@@ -163,11 +163,11 @@
   background: rgba(7, 9, 11, 0.5);
 }
 
-.lobby-fields input[type="text"]:focus {
+.lobby-screen__fields input[type="text"]:focus {
   box-shadow: none;
 }
 
-.lobby-fields .label-row {
+.lobby-screen__fields .o-field__label-row {
   align-items: center;
   line-height: 1;
   padding-inline-start: 0;
@@ -177,7 +177,7 @@
   pointer-events: none;
 }
 
-.lobby-fields .label-row .help-button {
+.lobby-screen__fields .o-field__label-row .help-button {
   align-self: center;
   width: 16px;
   height: 16px;
@@ -187,7 +187,7 @@
   transform: none;
 }
 
-.lobby-actions {
+.lobby-screen__actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
@@ -199,14 +199,14 @@
 }
 
 /* ===== Información legal inferior ===== */
-.lobby-footer {
+.lobby-screen__footer {
   overflow: visible;
   width: min(980px, calc(100% - 40px));
   margin-top: 14px;
   padding: 4px 16px;
 }
 
-.lobby-disclaimer {
+.lobby-screen__disclaimer {
   overflow: hidden;
   margin: 0;
   color: rgba(190, 196, 202, 0.58);

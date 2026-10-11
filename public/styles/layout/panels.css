@@ -36,7 +36,7 @@
   pointer-events: none;
 }
 
-.video-area {
+.o-video-area {
   position: relative;
   display: flex;
   flex-direction: column;

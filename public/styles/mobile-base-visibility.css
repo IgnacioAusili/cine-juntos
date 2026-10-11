@@ -1,10 +1,10 @@
 /* Ajustes de composición para teléfonos. Se carga después del resto de las
    capas para conservar intacta la geometría de escritorio. */
 
-.lobby-description-mobile,
-.lobby-disclaimer-mobile,
-.lobby-mobile-title-icon,
-.lobby-feature-description-mobile {
+.lobby-screen__description--mobile,
+.lobby-screen__disclaimer--mobile,
+.lobby-screen__mobile-title-icon,
+.lobby-screen__feature-description--mobile {
   display: none;
 }
 
@@ -17,15 +17,15 @@
     body,
     body:not(.is-lobby) .app-shell,
     body:not(.is-lobby) .session-view,
-    body:not(.is-lobby) .workspace,
-    body:not(.is-lobby) .video-area,
+    body:not(.is-lobby) .o-workspace,
+    body:not(.is-lobby) .o-video-area,
     body:not(.is-lobby) .chat-area {
       scroll-snap-type: none !important;
     }
 
     body:not(.is-lobby) .session-view,
-    body:not(.is-lobby) .workspace,
-    body:not(.is-lobby) .video-area,
+    body:not(.is-lobby) .o-workspace,
+    body:not(.is-lobby) .o-video-area,
     body:not(.is-lobby) .chat-area {
       scroll-snap-align: none !important;
       scroll-snap-stop: normal !important;
@@ -34,9 +34,9 @@
 
   /* El trazo de circle-help queda ópticamente bajo respecto de las etiquetas
      aunque la caja táctil ya esté centrada por flex/grid. */
-  .room-chip-label-row .help-button svg,
-  .session-toolbar-label-row .help-button svg,
-  .lobby-fields .label-row .help-button svg {
+  .room-chip__label-row .help-button svg,
+  .session-toolbar__label-row .help-button svg,
+  .lobby-screen__fields .o-field__label-row .help-button svg {
     transform: translateY(-1px);
   }
 

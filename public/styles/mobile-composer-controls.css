@@ -2,6 +2,28 @@
 
 @media (max-width: 680px) {
 
+  /* Los botones conservan la altura de una sola línea aunque el textarea se
+     expanda. El envío también toma el espacio libre hasta el borde derecho. */
+
+  body:not(.page-context--lobby) .session-view[data-chat-dock="bottom"] .chat-tools {
+    --chat-tools-inline-gutter: 4px;
+  }
+
+  /* La flecha de contraer queda apenas por encima de la unión video/chat;
+     la de expandir conserva su anclaje propio cuando el chat está cerrado. */
+
+  /* Al abrir el teclado el alto del chat cambia, pero la flecha del header
+     debe seguir centrada exactamente sobre la unión entre video y chat. */
+
+  /* El botón conserva su tamaño visual, pero en táctil deja una zona cómoda
+     alrededor para abrir el chat sin acertar exactamente el icono. */
+
+  /* El mini-reproductor fijo acompaña al chat inferior sin cubrir su
+     cabecera, que conserva las acciones de usuario y dock. */
+}
+
+@media (max-width: 680px) {
+
   body:not(.page-context--lobby) .session-view[data-chat-dock="bottom"] .chat-area .message-form__input-wrapper .icon-button--emoji-trigger {
     align-self: flex-end;
     flex: 0 0 24px;
@@ -75,7 +97,6 @@
 
   body:not(.page-context--lobby) .session-view[data-chat-dock="bottom"] .chat-tools {
     gap: 4px;
-    --chat-tools-inline-gutter: 4px;
     padding-inline: var(--chat-tools-inline-gutter);
   }
 

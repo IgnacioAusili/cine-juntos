@@ -1,3 +1,13 @@
+
+
+@media (max-width: 680px) {
+
+  body.page-context--lobby .lobby-screen__title {
+    --lobby-title-size: clamp(4rem, 17cqw, 6.8rem);
+    --lobby-title-lift: 0px;
+  }
+}
+
 /* Correcciones de composición del lobby para viewports intermedios y bajos.
    Se carga al final para neutralizar desplazamientos decorativos que afectan
    la posición real del contenido y el pie legal. */
@@ -58,9 +68,7 @@
   }
 
   body.page-context--lobby .lobby-screen__title {
-    --lobby-title-size: clamp(4rem, 17cqw, 6.8rem);
     font-size: var(--lobby-title-size);
-    --lobby-title-lift: 0px;
     transform: translate(var(--lobby-title-group-shift), calc(-1 * var(--lobby-title-lift)));
     margin-bottom: calc(-1 * var(--lobby-title-lift));
   }

@@ -34,27 +34,9 @@
   right: 0;
 }
 
-.chat-message-list.chat-message-list--overlay .message.message--mine {
-  align-self: flex-end;
-  align-items: flex-end;
-}
-
 .chat-message-list.chat-message-list--overlay .message__bubble-row {
   width: 100%;
   max-width: 100%;
-}
-
-.chat-message-list.chat-message-list--overlay .message.message--mine .message__bubble-row {
-  display: flex;
-  justify-content: flex-end;
-  width: 100%;
-  align-self: stretch;
-}
-
-.chat-message-list.chat-message-list--overlay .message:not(.message--mine) .message__bubble-row {
-  width: 100%;
-  max-width: 100%;
-  align-self: stretch;
 }
 
 /* Conserva el ancho natural del overlay, pero ancla la flecha a la burbuja
@@ -68,32 +50,11 @@
   align-self: center;
 }
 
-.chat-message-list.chat-message-list--overlay .message:not(.message--mine) .message__bubble-row .message__swipe-reply-hint-wrapper {
-  order: -1;
-}
-
-.chat-message-list.chat-message-list--overlay .message.message--mine .message__bubble-row .message__swipe-reply-hint-wrapper {
-  order: -1;
-}
-
-.chat-message-list.chat-message-list--overlay .message.message--mine .message__bubble-row > .message__bubble {
-  margin-left: 0;
-}
-
-.chat-message-list.chat-message-list--overlay .message:not(.message--mine) .message__bubble-row > .message__bubble {
-  margin-right: 0;
-}
-
 .chat-message-list.chat-message-list--overlay .message__meta {
   color: rgba(255, 255, 255, 0.74);
   font-size: 0.58rem;
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.72);
   padding-inline-start: 12px;
-}
-
-.chat-message-list.chat-message-list--overlay .message.message--mine .message__meta {
-  padding-inline-start: 0;
-  padding-inline-end: 12px;
 }
 
 .chat-message-list.chat-message-list--overlay .message__meta-name {
@@ -140,6 +101,13 @@
   display: contents;
 }
 
+.chat-message-list.chat-message-list--overlay .message__text {
+  display: inline;
+  min-width: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 .chat-message-list.chat-message-list--overlay .message__bubble.message__bubble--with-reply {
   display: flex;
   flex-direction: column;
@@ -162,13 +130,6 @@
   height: 100%;
   margin-left: 8px;
   shape-outside: inset(calc(100% - 19px) 0 0);
-}
-
-.chat-message-list.chat-message-list--overlay .message__text {
-  display: inline;
-  min-width: 0;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
 }
 
 .chat-message-list.chat-message-list--overlay .message__bubble:not(.message__bubble--emoji-only) .message__emoji {
@@ -204,6 +165,45 @@
 
 .chat-message-list.chat-message-list--overlay .message__bubble--emoji-only-compact .message__text {
   font-size: 1.25rem;
+}
+
+.chat-message-list.chat-message-list--overlay .message.message--mine {
+  align-self: flex-end;
+  align-items: flex-end;
+}
+
+.chat-message-list.chat-message-list--overlay .message.message--mine .message__bubble-row {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  align-self: stretch;
+}
+
+.chat-message-list.chat-message-list--overlay .message:not(.message--mine) .message__bubble-row {
+  width: 100%;
+  max-width: 100%;
+  align-self: stretch;
+}
+
+.chat-message-list.chat-message-list--overlay .message:not(.message--mine) .message__bubble-row .message__swipe-reply-hint-wrapper {
+  order: -1;
+}
+
+.chat-message-list.chat-message-list--overlay .message.message--mine .message__bubble-row .message__swipe-reply-hint-wrapper {
+  order: -1;
+}
+
+.chat-message-list.chat-message-list--overlay .message.message--mine .message__bubble-row > .message__bubble {
+  margin-left: 0;
+}
+
+.chat-message-list.chat-message-list--overlay .message:not(.message--mine) .message__bubble-row > .message__bubble {
+  margin-right: 0;
+}
+
+.chat-message-list.chat-message-list--overlay .message.message--mine .message__meta {
+  padding-inline-start: 0;
+  padding-inline-end: 12px;
 }
 
 .chat-message-list.chat-message-list--overlay .message.message--mine .message__bubble--emoji-only .message__content {

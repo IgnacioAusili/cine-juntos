@@ -1,3 +1,15 @@
+
+
+.presence-pill__dot {
+  --presence-dot-color: #38d879;
+  --status-glow: rgba(56, 216, 121, 0.38);
+}
+
+.presence-pill[data-state="solo"] .presence-pill__dot {
+  --presence-dot-color: #e06b6b;
+  --status-glow: rgba(224, 107, 107, 0.4);
+}
+
 .presence-pill {
   flex: 0 0 auto;
   display: inline-flex;
@@ -16,6 +28,11 @@
   font-weight: 700;
   line-height: 1;
   padding: 0;
+}
+
+.presence-pill__dot {
+  border-radius: 999px;
+  background: #38d879;
 }
 
 .presence-pill__icon-wrap {
@@ -71,18 +88,6 @@
   border-radius: 50%;
   background: var(--presence-dot-color);
   pointer-events: none;
-}
-
-.presence-pill__dot {
-  --presence-dot-color: #38d879;
-  --status-glow: rgba(56, 216, 121, 0.38);
-  border-radius: 999px;
-  background: #38d879;
-}
-
-.presence-pill[data-state="solo"] .presence-pill__dot {
-  --presence-dot-color: #e06b6b;
-  --status-glow: rgba(224, 107, 107, 0.4);
 }
 
 .presence-pill__self-label,

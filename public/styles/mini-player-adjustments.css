@@ -1,9 +1,4 @@
-/* El boton de salida del mini reproductor no debe crear un segundo espacio
-   automatico en la barra grande: el selector de velocidad conserva su lugar. */
-.player-frame.mini-player-surface--active[data-control-style="line"] #playerMiniPlayerButton.video-control-button--active {
-  margin-left: 0;
-  margin-right: -7px;
-}
+
 
 /* La barra mini usa una caja propia y compacta. Asi el area que recibe el
    click coincide con la posicion visible de cada control. */
@@ -12,16 +7,6 @@
   height: auto;
   box-sizing: border-box;
   padding: 6px 8px 8px;
-}
-
-/* El foco del boton de chat no cuenta como foco de los controles del video.
-   La visibilidad de la barra la gobierna el estado explicito del overlay,
-   igual que en el reproductor principal. */
-.mini-player-surface.mini-player-surface--scroll:not(.player-frame--overlay-visible):not(:hover)
-  .player-frame__bottom-actions {
-  opacity: 0;
-  transform: translateY(6px);
-  pointer-events: none;
 }
 
 .mini-player-surface.mini-player-surface--scroll.player-frame--overlay-visible:not(.player-frame--overlay-suppressed)
@@ -46,11 +31,6 @@
   transform: none;
 }
 
-.mini-player-surface.mini-player-surface--scroll .player-controls-bar .video-control-button:hover,
-.mini-player-surface.mini-player-surface--scroll .player-controls-bar .video-control-button:focus-visible {
-  transform: none;
-}
-
 .mini-player-surface.mini-player-surface--scroll .player-controls-bar .video-control-button > * {
   pointer-events: none;
 }
@@ -62,6 +42,18 @@
   width: 30px;
   min-width: 30px;
   flex: 0 0 30px;
+}
+
+/* El boton de salida del mini reproductor no debe crear un segundo espacio
+   automatico en la barra grande: el selector de velocidad conserva su lugar. */
+.player-frame.mini-player-surface--active[data-control-style="line"] #playerMiniPlayerButton.video-control-button--active {
+  margin-left: 0;
+  margin-right: -7px;
+}
+
+.mini-player-surface.mini-player-surface--scroll .player-controls-bar .video-control-button:hover,
+.mini-player-surface.mini-player-surface--scroll .player-controls-bar .video-control-button:focus-visible {
+  transform: none;
 }
 
 /* El composer del mini no necesita ocupar casi todo el ancho del video. */
@@ -103,6 +95,16 @@
    forma parte de la misma superficie. Solo el estado propio del reproductor
    debe decidir si la barra se mantiene visible. */
 .mini-player-surface.mini-player-surface--scroll.u-chat-inside-open:not(.player-frame--overlay-visible) .player-frame__bottom-actions {
+  opacity: 0;
+  transform: translateY(6px);
+  pointer-events: none;
+}
+
+/* El foco del boton de chat no cuenta como foco de los controles del video.
+   La visibilidad de la barra la gobierna el estado explicito del overlay,
+   igual que en el reproductor principal. */
+.mini-player-surface.mini-player-surface--scroll:not(.player-frame--overlay-visible):not(:hover)
+  .player-frame__bottom-actions {
   opacity: 0;
   transform: translateY(6px);
   pointer-events: none;

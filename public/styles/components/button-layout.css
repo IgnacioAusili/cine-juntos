@@ -9,25 +9,25 @@
   padding: 0 14px;
 }
 
-.button:hover,
-.icon-button:hover {
-  transform: translateY(-1px);
-}
-
-.button:disabled:hover,
-.icon-button:disabled:hover {
-  transform: none;
-}
-
-.button:not(:disabled):hover,
-.icon-button:not(:disabled):hover {
-  transform: translateY(0);
-}
-
-.button:disabled,
-.icon-button:disabled {
-  cursor: not-allowed;
+.button[data-loading="true"] {
+  position: relative;
+  cursor: progress;
   pointer-events: none;
+}
+
+.button > * {
+  display: inline-flex;
+  align-items: center;
+}
+
+.image-preview-container__source-strip .button {
+  align-self: end;
+  margin-bottom: 1px;
+}
+
+.button__spinner,
+.button > .button__spinner {
+  display: none;
 }
 
 .button.button--primary {
@@ -42,44 +42,6 @@
 
 .button.button--danger {
   min-width: 110px;
-}
-
-.button[data-loading="true"] {
-  position: relative;
-  cursor: progress;
-  pointer-events: none;
-}
-
-.button[data-loading="true"] > [data-lucide],
-.button[data-loading="true"] .button__label {
-  visibility: hidden;
-}
-
-.button__spinner,
-.button > .button__spinner {
-  display: none;
-}
-
-.button[data-loading="true"] .button__spinner {
-  display: block;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 14px;
-  height: 14px;
-  margin: 0;
-  transform: translate(-50%, -50%);
-  animation: buttonSpin 0.8s linear infinite;
-}
-
-.button > * {
-  display: inline-flex;
-  align-items: center;
-}
-
-.image-preview-container__source-strip .button {
-  align-self: end;
-  margin-bottom: 1px;
 }
 
 .button.button--compact {
@@ -114,6 +76,44 @@
   align-items: center;
   justify-content: center;
   padding: 0;
+}
+
+.button:hover,
+.icon-button:hover {
+  transform: translateY(-1px);
+}
+
+.button:disabled:hover,
+.icon-button:disabled:hover {
+  transform: none;
+}
+
+.button:not(:disabled):hover,
+.icon-button:not(:disabled):hover {
+  transform: translateY(0);
+}
+
+.button:disabled,
+.icon-button:disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.button[data-loading="true"] > [data-lucide],
+.button[data-loading="true"] .button__label {
+  visibility: hidden;
+}
+
+.button[data-loading="true"] .button__spinner {
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  transform: translate(-50%, -50%);
+  animation: buttonSpin 0.8s linear infinite;
 }
 
 .icon-button--dock:hover,

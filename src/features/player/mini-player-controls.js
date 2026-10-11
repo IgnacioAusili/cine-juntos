@@ -8,8 +8,8 @@ export function installMiniPlayerWindowStyles(targetDocument) {
   targetDocument.head.append(emojiFont);
 
   const stylesheets = [
-    "../../../public/styles.css?v=20261011-bem-itcss-oocss-04",
-    "../../../public/styles/mini-player-window.css?v=20261011-bem-itcss-oocss-04",
+    "../../../public/styles.css?v=20261011-css-order-02",
+    "../../../public/styles/mini-player-window.css?v=20261011-css-order-02",
   ].map((path) => {
     const stylesheet = targetDocument.createElement("link");
     stylesheet.rel = "stylesheet";

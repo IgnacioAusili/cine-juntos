@@ -148,24 +148,10 @@
   stroke-linejoin: round;
 }
 
-.image-lightbox__button:hover,
-.image-lightbox__button:focus-visible {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.06);
-  transform: scale(0.94);
-  outline: none;
-}
-
 .image-lightbox__zoom-controls .image-lightbox__button {
   width: 100%;
   height: 100%;
   border-radius: 0;
-  transform: none;
-}
-
-.image-lightbox__zoom-controls .image-lightbox__button:hover,
-.image-lightbox__zoom-controls .image-lightbox__button:focus-visible {
-  background: rgba(255, 255, 255, 0.06);
   transform: none;
 }
 
@@ -192,14 +178,6 @@
   box-shadow: none;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-}
-
-.image-lightbox__close:hover,
-.image-lightbox__close:focus-visible {
-  color: #ff6b6b;
-  border: 0;
-  background: rgba(255, 255, 255, 0.045);
-  transform: none;
 }
 
 .image-lightbox__zoom-label {
@@ -247,6 +225,28 @@
 
 .image-lightbox__image.u-dragging {
   cursor: grabbing;
+}
+
+.image-lightbox__button:hover,
+.image-lightbox__button:focus-visible {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.06);
+  transform: scale(0.94);
+  outline: none;
+}
+
+.image-lightbox__zoom-controls .image-lightbox__button:hover,
+.image-lightbox__zoom-controls .image-lightbox__button:focus-visible {
+  background: rgba(255, 255, 255, 0.06);
+  transform: none;
+}
+
+.image-lightbox__close:hover,
+.image-lightbox__close:focus-visible {
+  color: #ff6b6b;
+  border: 0;
+  background: rgba(255, 255, 255, 0.045);
+  transform: none;
 }
 
 @media (max-width: 680px) {

@@ -1,13 +1,10 @@
-.image-preview-container__source-strip,
-.sync-bar {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  gap: 8px;
-}
+
 
 .chat-tools {
   --chat-tools-inline-gutter: 8px;
+}
+
+.chat-tools {
   position: relative;
   z-index: 1;
   display: grid;
@@ -16,6 +13,14 @@
   grid-template-columns: auto minmax(0, 1fr) auto;
   width: 100%;
   padding: 2px var(--chat-tools-inline-gutter);
+}
+
+.image-preview-container__source-strip,
+.sync-bar {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 8px;
 }
 
 /* Aisla el layout del header del reflow del panel durante la animacion
@@ -47,19 +52,6 @@
   gap: 6px;
 }
 
-.chat-name-editor__field {
-  display: grid;
-  min-width: 0;
-  width: fit-content;
-  max-width: 100%;
-  overflow: hidden;
-  justify-self: center;
-}
-
-.chat-name-editor__field[data-editing="true"] {
-  width: 100%;
-}
-
 .chat-name-editor {
   display: grid;
   position: relative;
@@ -75,6 +67,19 @@
 .chat-name-editor[data-editing="true"] {
   width: 100%;
   justify-items: center;
+}
+
+.chat-name-editor__field {
+  display: grid;
+  min-width: 0;
+  width: fit-content;
+  max-width: 100%;
+  overflow: hidden;
+  justify-self: center;
+}
+
+.chat-name-editor__field[data-editing="true"] {
+  width: 100%;
 }
 
 .chat-name-editor__display-row,

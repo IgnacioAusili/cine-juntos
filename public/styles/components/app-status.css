@@ -1,3 +1,33 @@
+
+
+.u-status-dot {
+  --status-glow: rgba(120, 130, 141, 0.28);
+}
+
+.app-status[data-state="online"] .app-status__dot {
+  --status-glow: rgba(56, 216, 121, 0.38);
+}
+
+.app-status[data-state="local"] .app-status__dot {
+  --status-glow: rgba(240, 140, 58, 0.37);
+}
+
+.app-status[data-state="error"] .app-status__dot {
+  --status-glow: rgba(233, 68, 68, 0.4);
+}
+
+.u-status-dot {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  width: 8px;
+  height: 8px;
+  flex: 0 0 8px;
+  border-radius: 999px;
+  background: var(--muted-2);
+  box-shadow: none;
+}
+
 .app-status {
   display: inline-flex;
   min-height: 0;
@@ -12,19 +42,6 @@
   white-space: nowrap;
 }
 
-.u-status-dot {
-  --status-glow: rgba(120, 130, 141, 0.28);
-  position: relative;
-  z-index: 1;
-  isolation: isolate;
-  width: 8px;
-  height: 8px;
-  flex: 0 0 8px;
-  border-radius: 999px;
-  background: var(--muted-2);
-  box-shadow: none;
-}
-
 .u-status-dot::before {
   content: "";
   position: absolute;
@@ -35,6 +52,21 @@
   pointer-events: none;
 }
 
+.app-status[data-state="online"] {
+  border-color: rgba(56, 216, 121, 0.35);
+  color: #d8ffe8;
+}
+
+.app-status[data-state="local"] {
+  border-color: rgba(240, 140, 58, 0.35);
+  color: #ffd8b8;
+}
+
+.app-status[data-state="error"] {
+  border-color: rgba(232, 109, 109, 0.55);
+  color: #ffb0b0;
+}
+
 .app-status__dot {
   cursor: help;
 }
@@ -43,38 +75,20 @@
   display: none;
 }
 
-.app-status[data-state="online"] {
-  border-color: rgba(56, 216, 121, 0.35);
-  color: #d8ffe8;
-}
-
 .app-status[data-state="online"] .app-status__dot {
-  --status-glow: rgba(56, 216, 121, 0.38);
   background: #38d879;
 }
 
-.app-status[data-state="local"] {
-  border-color: rgba(240, 140, 58, 0.35);
-  color: #ffd8b8;
+.app-status[data-state="local"] .app-status__dot {
+  background: #f08c3a;
 }
 
-.app-status[data-state="local"] .app-status__dot {
-  --status-glow: rgba(240, 140, 58, 0.37);
-  background: #f08c3a;
+.app-status[data-state="error"] .app-status__dot {
+  background: var(--danger);
 }
 
 .app-status[data-state="starting"] .app-status__dot {
   animation: statusPulse 1.4s ease-in-out infinite;
-}
-
-.app-status[data-state="error"] {
-  border-color: rgba(232, 109, 109, 0.55);
-  color: #ffb0b0;
-}
-
-.app-status[data-state="error"] .app-status__dot {
-  --status-glow: rgba(233, 68, 68, 0.4);
-  background: var(--danger);
 }
 
 @keyframes statusPulse {

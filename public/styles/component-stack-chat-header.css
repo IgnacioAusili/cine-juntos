@@ -1,10 +1,38 @@
+
+@media (max-width: 680px) {
+  :root body:not(.page-context--lobby) .app-shell
+    .session-view[data-chat-dock="bottom"] .chat-area {
+    --component-stack-chat-header-height: 38px;
+  }
+
+  :root body:not(.page-context--lobby) .app-shell
+    .session-view[data-chat-dock="bottom"] .chat-tools {
+    --component-stack-chat-header-vertical-padding: 5px;
+    --component-stack-chat-header-visual-center-offset: 0px;
+  }
+}
+@media (min-width: 681px) {
+  :root body:not(.page-context--lobby) .app-shell:fullscreen
+    .session-view[data-chat-dock="bottom"] .chat-area,
+  :root body.page-context--fullscreen .app-shell
+    .session-view[data-chat-dock="bottom"] .chat-area {
+    --component-stack-chat-header-height: 34px;
+  }
+
+  :root body:not(.page-context--lobby) .app-shell:fullscreen
+    .session-view[data-chat-dock="bottom"] .chat-tools,
+  :root body.page-context--fullscreen .app-shell
+    .session-view[data-chat-dock="bottom"] .chat-tools {
+    --component-stack-chat-header-vertical-padding: 5px;
+    --component-stack-chat-header-visual-center-offset: 0px;
+  }
+}
 /* El dock inferior ocupa todo el ancho desde el mismo breakpoint que elimina
    el gutter lateral de la sesión. El header cambia por CSS, sin depender de
    mediciones geométricas en JavaScript. */
 @media (max-width: 680px) {
   :root body:not(.page-context--lobby) .app-shell
     .session-view[data-chat-dock="bottom"] .chat-area {
-    --component-stack-chat-header-height: 38px;
     row-gap: 0;
     grid-template-rows: var(--component-stack-chat-header-height) minmax(0, 1fr);
   }
@@ -18,8 +46,6 @@
 
   :root body:not(.page-context--lobby) .app-shell
     .session-view[data-chat-dock="bottom"] .chat-tools {
-    --component-stack-chat-header-vertical-padding: 5px;
-    --component-stack-chat-header-visual-center-offset: 0px;
     box-sizing: border-box;
     align-items: center;
     height: var(--component-stack-chat-header-height);
@@ -69,7 +95,6 @@
     .session-view[data-chat-dock="bottom"] .chat-area,
   :root body.page-context--fullscreen .app-shell
     .session-view[data-chat-dock="bottom"] .chat-area {
-    --component-stack-chat-header-height: 34px;
     row-gap: 0;
     grid-template-rows: var(--component-stack-chat-header-height) minmax(0, 1fr);
   }
@@ -78,8 +103,6 @@
     .session-view[data-chat-dock="bottom"] .chat-tools,
   :root body.page-context--fullscreen .app-shell
     .session-view[data-chat-dock="bottom"] .chat-tools {
-    --component-stack-chat-header-vertical-padding: 5px;
-    --component-stack-chat-header-visual-center-offset: 0px;
     box-sizing: border-box;
     align-items: center;
     height: var(--component-stack-chat-header-height);

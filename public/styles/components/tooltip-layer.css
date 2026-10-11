@@ -7,6 +7,19 @@
   --tooltip-arrow-size: 7px;
   --tooltip-arrow-offset: 50%;
   --tooltip-arrow-fill-color: rgba(8, 10, 12, 0.97);
+}
+
+/* Al acercarse a un extremo, la geometría compartida reduce el radio para
+   que la cola pueda seguir al disparador sin invadir la esquina. */
+.tooltip-layer[data-edge="left"] {
+  --tooltip-radius: var(--tooltip-edge-radius, 12px);
+}
+
+.tooltip-layer[data-edge="right"] {
+  --tooltip-radius: var(--tooltip-edge-radius, 12px);
+}
+
+.tooltip-layer {
   position: fixed;
   z-index: 10000;
   display: block;
@@ -83,16 +96,6 @@
   overflow-wrap: anywhere;
   white-space: pre-line;
   word-break: normal;
-}
-
-/* Al acercarse a un extremo, la geometría compartida reduce el radio para
-   que la cola pueda seguir al disparador sin invadir la esquina. */
-.tooltip-layer[data-edge="left"] {
-  --tooltip-radius: var(--tooltip-edge-radius, 12px);
-}
-
-.tooltip-layer[data-edge="right"] {
-  --tooltip-radius: var(--tooltip-edge-radius, 12px);
 }
 
 @media (prefers-reduced-motion: reduce) {

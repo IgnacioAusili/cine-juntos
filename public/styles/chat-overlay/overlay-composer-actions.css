@@ -9,31 +9,8 @@
   transform: none;
 }
 
-.player-frame .message-form.message-form--overlay .message-form__input-wrapper .icon-button--send {
-  position: relative;
-  right: auto;
-  bottom: auto;
-  align-self: flex-end;
-  margin: 0 6px 1px 0;
-  transform: none;
-}
-
 .player-frame .message-form.message-form--overlay .message-form__input-wrapper textarea {
   padding-right: 6px;
-}
-
-.message-form.message-form--overlay .message-form__input-wrapper .icon-button--send > svg.icon-button__progress-ring {
-  position: absolute;
-  left: calc(50% + 1px);
-  top: calc(50% - 1px);
-  width: 30px;
-  height: 30px;
-  opacity: var(--composer-progress-visible, 0);
-  transform: translate(-50%, -50%) scale(var(--composer-progress-scale, 0.78));
-  pointer-events: none;
-  transition:
-    opacity 360ms ease,
-    transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .message-form.message-form--overlay .message-form__input-wrapper .icon-button__progress-track,.message-form.message-form--overlay .message-form__input-wrapper .icon-button__progress-value {
@@ -70,12 +47,31 @@
   filter: grayscale(0.7);
 }
 
-.message-form.message-form--overlay .icon-button--send[data-spam-cooldown="true"] {
-  pointer-events: auto;
+.player-frame .message-form.message-form--overlay .message-form__input-wrapper .icon-button--send {
+  position: relative;
+  right: auto;
+  bottom: auto;
+  align-self: flex-end;
+  margin: 0 6px 1px 0;
+  transform: none;
 }
 
-.message-form.message-form--overlay .message-form__input-wrapper .icon-button--send:hover {
-  opacity: 0.9;
+.message-form.message-form--overlay .message-form__input-wrapper .icon-button--send > svg.icon-button__progress-ring {
+  position: absolute;
+  left: calc(50% + 1px);
+  top: calc(50% - 1px);
+  width: 30px;
+  height: 30px;
+  opacity: var(--composer-progress-visible, 0);
+  transform: translate(-50%, -50%) scale(var(--composer-progress-scale, 0.78));
+  pointer-events: none;
+  transition:
+    opacity 360ms ease,
+    transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.message-form.message-form--overlay .icon-button--send[data-spam-cooldown="true"] {
+  pointer-events: auto;
 }
 
 .message-form.message-form--overlay .message-form__input-wrapper .icon-button--send > * {
@@ -90,6 +86,10 @@
   width: 18px;
   height: 18px;
   display: block;
+}
+
+.message-form.message-form--overlay .message-form__input-wrapper .icon-button--send:hover {
+  opacity: 0.9;
 }
 
 .message-form.message-form--overlay .message-form__input-wrapper .icon-button--send:disabled {

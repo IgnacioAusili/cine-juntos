@@ -4,6 +4,7 @@
 
 - ITCSS: conservar el orden efectivo de imports en `public/styles.css`; capas settings, base, objetos, componentes, estados/responsive y overrides.
 - BEM: bloque (`button`), elemento (`button__label`) y modificador (`button--primary`); aplicar el modificador junto a su bloque.
+- Ordenar cada hoja por bloque: sección inicial de variables CSS (incluidas sus condiciones `@media`/`@container`), bloques base, elementos, variantes, estados/interacciones y ajustes responsive; los overrides globales conservan su cascada.
 - Estados propios: modificadores del bloque; estados globales de página: `page-context--*`.
 - Utilidades compartidas: prefijo `u-`; objetos de layout reutilizables: prefijo `o-`.
 - OOCSS separa estructura y apariencia cuando puedan variar independientemente; no dividir componentes por obligación.
@@ -25,6 +26,7 @@
 - QA Playwright: color de estados del badge, fondo SVG del tooltip, visor (abrir/zoom/cerrar) y preview de imagen (render/quitar).
 - Cache-burst `20261011-bem-itcss-oocss-04` verificado; recursos dev `no-store` y cero service workers/controles.
 - Build HTML regenerado y URLs v04 solicitadas en navegador.
+- QA HTML adicional: roles de estado/log y región nativa; `html-validate` con 0 errores y 0 advertencias.
 
 ## Criterio para cambios futuros
 

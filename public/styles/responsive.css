@@ -1,5 +1,17 @@
-@import url("./session-fit-layout.css?v=20261011-bem-itcss-oocss-04");
-@import url("./session-layout-controls.css?v=20261011-bem-itcss-oocss-04");
+@import url("./session-fit-layout.css?v=20261011-css-order-02");
+@import url("./session-layout-controls.css?v=20261011-css-order-02");
+
+@media (max-width: 680px) {
+  :root {
+    --app-shell-gutter: 14px;
+  }
+
+  /* En movil apilamos input + boton de carga, como en la referencia */
+
+  .player-chat {
+    --player-chat-bottom-inset: 10px;
+  }
+}
 
 @media (max-width: 1100px) {
   .session-toolbar {
@@ -13,9 +25,6 @@
 }
 
 @media (max-width: 680px) {
-  :root {
-    --app-shell-gutter: 14px;
-  }
 
   .app-shell {
     padding: var(--app-shell-gutter);
@@ -101,7 +110,6 @@
 
   .player-chat {
     right: 18px;
-    --player-chat-bottom-inset: 10px;
     bottom: var(--player-chat-bottom-inset);
     left: auto;
     width: min(250px, calc(100% - 10px));

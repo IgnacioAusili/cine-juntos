@@ -1,4 +1,8 @@
 .chat-area {
+  --chat-composer-reserve: 108px;
+}
+
+.chat-area {
   position: relative;
   height: 100%;
   min-width: 0;
@@ -18,7 +22,6 @@
     transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
   overflow-x: hidden;
   overflow-y: hidden;
-  --chat-composer-reserve: 108px;
   will-change: opacity, transform;
   contain: layout paint;
 }
@@ -93,8 +96,6 @@
   opacity: 0;
   pointer-events: none;
 }
-
-
 
 .session-view.session-view--chat-collapsed[data-chat-dock="bottom"] .chat-area {
   height: 0;

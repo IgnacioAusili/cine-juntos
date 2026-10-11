@@ -24,7 +24,7 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap"
     />
     <link rel="icon" href="./public/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="./public/styles.css?v=20261011-bem-itcss-oocss-04" />
+    <link rel="stylesheet" href="./public/styles.css?v=20261011-css-order-02" />
   </head>
   <body class="page-context--lobby">
     <div class="app-shell">
@@ -47,7 +47,7 @@
                 </button>
               </span>
               <h1 class="room-chip__title">
-                <span class="app-status   room-chip__status--inline" id="connectionStatus" role="button" tabindex="0" data-state="starting" data-tooltip="Conectando con la sala" aria-label="Estado de la aplicación: Iniciando. Conectando con la sala">
+                <span class="app-status   room-chip__status--inline" id="connectionStatus" role="status" tabindex="0" data-state="starting" data-tooltip="Conectando con la sala" aria-label="Estado de la aplicación: Iniciando. Conectando con la sala">
                   <span class="u-status-dot   app-status__dot" aria-hidden="true"></span>
                 </span>
                 <span class="room-chip__title-prefix">SALA</span>
@@ -363,7 +363,7 @@
               <p
                 id="syncStatus"
                 class="sync-status   sync-status--video   sync-status--empty   player-status-badge"
-                role="button"
+                role="status"
                 tabindex="0"
                 title="Estado de video"
                 data-tooltip="Todavía no hay un video cargado en la sala"
@@ -466,10 +466,9 @@
                     role="group"
                     aria-label="Controles adicionales"
                   >
-                    <div
+                    <section
                       class="player-controls-bar__scroll-window"
                       tabindex="0"
-                      role="region"
                       aria-label="Deslizar controles adicionales"
                     >
                       <div class="player-controls-bar__scroll-track">
@@ -513,7 +512,7 @@
                           <span data-lucide="maximize"></span>
                         </button>
                       </div>
-                    </div>
+                    </section>
 
                     <input
                       class="player-controls-bar__scroll-indicator"
@@ -913,7 +912,7 @@
             </button>
           </span>
         </div>
-        <pre id="mobileDebugLog" class="mobile-debug-dialog__log" role="textbox" aria-readonly="true" tabindex="0" aria-label="Registros de la página"></pre>
+        <pre id="mobileDebugLog" class="mobile-debug-dialog__log" role="log" aria-live="off" tabindex="0" aria-label="Registros de la página"></pre>
         <div class="o-dialog-actions">
           <button
             id="mobileDebugCopyButton"

@@ -1,3 +1,24 @@
+
+@media (hover: none) and (pointer: coarse) {
+
+  html.page-context--viewport-landscape body:not(.page-context--lobby) .session-view[data-chat-dock="right"] {
+    --chat-panel-width: clamp(250px, 40vw, 280px);
+  }
+
+  html.page-context--viewport-landscape body:not(.page-context--lobby) .session-view[data-chat-dock="bottom"] .chat-tools {
+    --chat-tools-inline-gutter: 4px;
+  }
+
+  html.page-context--viewport-landscape body:not(.page-context--lobby) .session-view[data-chat-dock="bottom"] .chat-tools {
+    /* La flecha se ancla al centro geométrico del header. El contenido
+       restante debe tener el mismo centro: padding simétrico evita que el
+       track normal quede un píxel más abajo. */
+    --chat-tools-inline-gutter: 4px;
+  }
+
+  /* Al plegarse solo el contenido del header, la flecha sigue siendo el
+     control visible para recuperar la cabecera. El ancho landscape del móvil
+     no entra en el bloque portrait de mobile.css, por eso se declara aquí. */}
 /* En landscape angosto el chat lateral conserva la composicion de escritorio.
    El modo vertical sigue usando la navegacion apilada definida en mobile.css. */
 @media (hover: none) and (pointer: coarse) {
@@ -69,10 +90,6 @@
     display: none;
   }
 
-  html.page-context--viewport-landscape body:not(.page-context--lobby) .session-view[data-chat-dock="right"] {
-    --chat-panel-width: clamp(250px, 40vw, 280px);
-  }
-
   html.page-context--viewport-landscape body:not(.page-context--lobby) .session-view[data-chat-dock="right"] .o-workspace {
     display: grid;
     width: 100%;
@@ -97,7 +114,6 @@
 
   html.page-context--viewport-landscape body:not(.page-context--lobby) .session-view[data-chat-dock="bottom"] .chat-tools {
     gap: 4px;
-    --chat-tools-inline-gutter: 4px;
     padding-inline: var(--chat-tools-inline-gutter);
   }
 
@@ -158,7 +174,6 @@
        track normal quede un píxel más abajo. */
     padding-top: 1px;
     padding-bottom: 1px;
-    --chat-tools-inline-gutter: 4px;
     padding-inline: var(--chat-tools-inline-gutter);
     gap: 4px;
     overflow: hidden;

@@ -1,3 +1,16 @@
+
+
+/* El chat lateral acerca el composer al borde del panel con el mismo margen
+   en cualquier viewport; el anclaje sigue a la caja real del contenedor. */
+.session-view[data-chat-dock="right"] .chat-area {
+  --chat-composer-edge-inset: 10px;
+}
+@media (min-width: 681px) and (hover: hover) and (pointer: fine) {
+  .session-view[data-chat-dock="bottom"] .chat-area {
+    --chat-composer-edge-inset: 10px;
+  }
+}
+
 .message-form {
   position: absolute;
   left: 18px;
@@ -16,12 +29,6 @@
   box-shadow: none;
 }
 
-/* El chat lateral acerca el composer al borde del panel con el mismo margen
-   en cualquier viewport; el anclaje sigue a la caja real del contenedor. */
-.session-view[data-chat-dock="right"] .chat-area {
-  --chat-composer-edge-inset: 10px;
-}
-
 .session-view[data-chat-dock="bottom"] .chat-area > .message-form {
   left: 64px;
   right: 64px;
@@ -30,33 +37,19 @@
   margin-inline: auto;
 }
 
-/* Durante el despliegue de escritorio, el panel y la página suben juntos.
-   Mantener el composer fijo al destino visible evita que aparezca a media
-   altura y termine de acomodarse cuando el scroll llega a la unión inferior. */
-@media (min-width: 681px) and (hover: hover) and (pointer: fine) {
-  .session-view[data-chat-dock="bottom"] .chat-area {
-    --chat-composer-edge-inset: 10px;
-  }
-
-  .session-view.session-view--chat-bottom-pc-expand-visual[data-chat-dock="bottom"] .chat-area {
-    contain: none;
-  }
-
-  body:not(.page-context--lobby)
-    .session-view.session-view--layout-component-stack.session-view--chat-bottom-pc-expand-visual[data-chat-dock="bottom"]
-    .chat-area > .message-form {
-    position: fixed;
-    left: var(--chat-bottom-pc-expand-composer-left, 0px);
-    right: auto;
-    width: var(--chat-bottom-pc-expand-composer-width, min(720px, calc(100vw - 48px)));
-    margin-inline: 0;
-    transform: none;
-    bottom: calc(
-      var(--chat-composer-edge-inset, 20px)
-      + var(--app-shell-gutter, 10px)
-      + 1px
-    );
-  }
+.message-form::after {
+  position: absolute;
+  left: 22px;
+  right: 22px;
+  bottom: 8px;
+  z-index: 0;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.64);
+  border-radius: 999px;
+  box-shadow: 0 0 20px 8px rgba(0, 0, 0, 0.22);
+  filter: blur(6px);
+  content: "";
+  pointer-events: none;
 }
 
 .message-form .message-form__input-wrapper {
@@ -85,21 +78,6 @@
     0 0 0 1px rgba(255, 255, 255, 0.04) inset;
 }
 
-.message-form::after {
-  position: absolute;
-  left: 22px;
-  right: 22px;
-  bottom: 8px;
-  z-index: 0;
-  height: 1px;
-  background: rgba(0, 0, 0, 0.64);
-  border-radius: 999px;
-  box-shadow: 0 0 20px 8px rgba(0, 0, 0, 0.22);
-  filter: blur(6px);
-  content: "";
-  pointer-events: none;
-}
-
 .message-form .message-form__textarea-shell {
   position: relative;
   flex: 1 1 auto;
@@ -119,6 +97,32 @@
     0 7px 14px -8px rgba(0, 0, 0, 0.24),
     0 0 0 1px rgba(255, 255, 255, 0.1),
     0 0 0 1px rgba(47, 184, 164, 0.12) inset;
+}
+
+/* Durante el despliegue de escritorio, el panel y la página suben juntos.
+   Mantener el composer fijo al destino visible evita que aparezca a media
+   altura y termine de acomodarse cuando el scroll llega a la unión inferior. */
+@media (min-width: 681px) and (hover: hover) and (pointer: fine) {
+
+  .session-view.session-view--chat-bottom-pc-expand-visual[data-chat-dock="bottom"] .chat-area {
+    contain: none;
+  }
+
+  body:not(.page-context--lobby)
+    .session-view.session-view--layout-component-stack.session-view--chat-bottom-pc-expand-visual[data-chat-dock="bottom"]
+    .chat-area > .message-form {
+    position: fixed;
+    left: var(--chat-bottom-pc-expand-composer-left, 0px);
+    right: auto;
+    width: var(--chat-bottom-pc-expand-composer-width, min(720px, calc(100vw - 48px)));
+    margin-inline: 0;
+    transform: none;
+    bottom: calc(
+      var(--chat-composer-edge-inset, 20px)
+      + var(--app-shell-gutter, 10px)
+      + 1px
+    );
+  }
 }
 
 .message-form .message-form__input-wrapper textarea {

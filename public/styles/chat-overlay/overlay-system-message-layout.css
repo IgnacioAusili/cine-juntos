@@ -1,5 +1,40 @@
 
 
+.chat-message-list.chat-message-list--overlay .message.message--system .message__system-bubble {
+  --system-line-reserve: 24px;
+  --system-line-gap: 7px;
+}
+
+/* Contraste del selector según el fondo real del chat-overlay. */
+.player-frame[data-chat-style="panel"] #overlayMessages .message__system-group-toggle {
+  border-color: rgba(215, 229, 232, 0.3);
+  background: rgba(24, 34, 38, 0.44);
+  color: rgba(235, 247, 247, 0.94);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.16);
+}
+
+.player-frame[data-chat-style="float"] #overlayMessages .message__system-group-toggle {
+  border-color: rgba(215, 229, 232, 0.46);
+  background: rgba(24, 34, 38, 0.28);
+  color: rgba(235, 247, 247, 0.92);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.chat-message-list.chat-message-list--overlay .message.message--system .message__system-bubble {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--system-line-gap);
+  width: fit-content;
+  max-width: min(100%, 420px);
+}
+
+/* La regla de mensajes simples usa position:absolute; los emojis necesitan flujo normal. */
+.chat-message-list.chat-message-list--overlay .message__bubble.message__bubble--emoji-only .message__time-anchor {
+  position: static;
+  right: auto;
+  bottom: auto;
+}
+
 /* La fila ocupa el ancho del mensaje y el texto se centra respecto del
    overlay completo. El control de respuesta queda fuera del flujo para no
    reservar espacio lateral que desplace el aviso. */
@@ -62,16 +97,6 @@
   background: transparent;
 }
 
-.chat-message-list.chat-message-list--overlay .message.message--system .message__system-bubble {
-  --system-line-reserve: 24px;
-  --system-line-gap: 7px;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--system-line-gap);
-  width: fit-content;
-  max-width: min(100%, 420px);
-}
-
 .chat-message-list.chat-message-list--overlay .message.message--system .message__system-line {
   display: block;
   flex: 0 0 var(--system-line-reserve);
@@ -117,13 +142,6 @@
   border-radius: 14px;
 }
 
-/* La regla de mensajes simples usa position:absolute; los emojis necesitan flujo normal. */
-.chat-message-list.chat-message-list--overlay .message__bubble.message__bubble--emoji-only .message__time-anchor {
-  position: static;
-  right: auto;
-  bottom: auto;
-}
-
 /* Los emojis standalone quedan fuera de cualquier burbuja; la hora conserva
    su propia tarjeta debajo del emoji. Este override va al final para ganar a
    los fondos específicos de los estilos float/panel. */
@@ -157,27 +175,12 @@
   background: rgba(240, 140, 58, 0.2);
 }
 
-/* Contraste del selector según el fondo real del chat-overlay. */
-.player-frame[data-chat-style="panel"] #overlayMessages .message__system-group-toggle {
-  border-color: rgba(215, 229, 232, 0.3);
-  background: rgba(24, 34, 38, 0.44);
-  color: rgba(235, 247, 247, 0.94);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.16);
-}
-
 .player-frame[data-chat-style="panel"] #overlayMessages .message__system-group-toggle:hover,
 .player-frame[data-chat-style="panel"] #overlayMessages .message__system-group-toggle:focus-visible,
 .player-frame[data-chat-style="panel"] #overlayMessages .message__system-group-toggle.u-transitioning {
   border-color: var(--accent-2);
   background: rgba(24, 73, 70, 0.92);
   color: var(--text);
-}
-
-.player-frame[data-chat-style="float"] #overlayMessages .message__system-group-toggle {
-  border-color: rgba(215, 229, 232, 0.46);
-  background: rgba(24, 34, 38, 0.28);
-  color: rgba(235, 247, 247, 0.92);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .player-frame[data-chat-style="float"] #overlayMessages .message__system-group-toggle:hover,

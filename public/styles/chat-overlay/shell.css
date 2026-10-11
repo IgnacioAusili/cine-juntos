@@ -1,6 +1,10 @@
 .player-chat {
   --player-chat-max-height: 330px;
   --player-chat-bottom-inset: 8px;
+  --chat-composer-reserve: 92px;
+}
+
+.player-chat {
   position: absolute;
   z-index: 12;
   top: var(--inside-chat-top-offset, 48px);
@@ -20,7 +24,6 @@
   filter: none;
   transition: opacity 160ms ease;
   padding-inline: 2px;
-  --chat-composer-reserve: 92px;
 }
 
 .player-frame.u-chat-inside-open .player-chat {

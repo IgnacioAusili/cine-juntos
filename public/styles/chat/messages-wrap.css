@@ -1,4 +1,10 @@
 .chat-message-list-shell {
+  --chat-scrollbar-visual-end: calc(100% - var(--chat-message-bottom-reserve, 132px) + 2px);
+  --chat-scrollbar-visual-gap: 8px;
+  --chat-scrollbar-visual-inset: 5px;
+}
+
+.chat-message-list-shell {
   position: relative;
   flex: 1 1 auto;
   min-height: 0;
@@ -8,9 +14,6 @@
   overflow-x: hidden;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  --chat-scrollbar-visual-end: calc(100% - var(--chat-message-bottom-reserve, 132px) + 2px);
-  --chat-scrollbar-visual-gap: 8px;
-  --chat-scrollbar-visual-inset: 5px;
 }
 
 .chat-message-list-shell .chat-message-list,
@@ -55,12 +58,6 @@
   opacity: 1;
 }
 
-.chat-message-list-shell[data-scrollbar-visible="true"] .chat-scrollbar:hover,
-.chat-message-list-shell.u-dragging .chat-scrollbar,
-.chat-scrollbar.u-dragging {
-  filter: brightness(1.08);
-}
-
 .chat-message-list-shell.u-dragging .chat-scrollbar,
 .chat-scrollbar.u-dragging {
   cursor: default;
@@ -77,6 +74,12 @@
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.04);
   transition: background-color 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
   pointer-events: auto;
+}
+
+.chat-message-list-shell[data-scrollbar-visible="true"] .chat-scrollbar:hover,
+.chat-message-list-shell.u-dragging .chat-scrollbar,
+.chat-scrollbar.u-dragging {
+  filter: brightness(1.08);
 }
 
 .chat-message-list-shell[data-scrollbar-visible="true"] .chat-scrollbar:hover .chat-scrollbar__thumb,

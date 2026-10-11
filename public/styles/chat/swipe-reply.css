@@ -1,5 +1,8 @@
 .message__bubble-row {
   --reply-swipe-reserve: 64px;
+}
+
+.message__bubble-row {
   display: flex;
   position: relative;
   width: 100%;
@@ -14,6 +17,34 @@
   min-width: 0;
   z-index: 1;
   order: initial;
+}
+
+.message__swipe-reply-hint-wrapper {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: 0;
+  height: 0;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.message__swipe-reply-hint {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  color: var(--accent-2);
+  opacity: 0;
+  transform: translate(13px, -50%) scale(0.72);
+  transform-origin: center;
+  pointer-events: none;
+  z-index: 5;
 }
 
 .message__bubble.message--swipe-dragging,
@@ -45,17 +76,6 @@
   max-width: calc(100% - var(--reply-swipe-reserve));
 }
 
-.message__swipe-reply-hint-wrapper {
-  position: absolute;
-  top: 50%;
-  right: 0;
-  width: 0;
-  height: 0;
-  overflow: visible;
-  pointer-events: none;
-  z-index: 2;
-}
-
 /* Los mensajes recibidos muestran la flecha detrás, a la izquierda del bubble. */
 .message:not(.message--mine) .message__swipe-reply-hint-wrapper {
   left: 0;
@@ -72,23 +92,6 @@
   flex: 0 0 0;
   align-self: center;
   order: -1;
-}
-
-.message__swipe-reply-hint {
-  position: absolute;
-  top: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 26px;
-  height: 26px;
-  color: var(--accent-2);
-  opacity: 0;
-  transform: translate(13px, -50%) scale(0.72);
-  transform-origin: center;
-  pointer-events: none;
-  z-index: 5;
 }
 
 .message__swipe-reply-hint svg {

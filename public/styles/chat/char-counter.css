@@ -21,6 +21,10 @@
   transform: none;
 }
 
+.char-counter--shake {
+  animation: counterShake 0.45s ease;
+}
+
 @keyframes counterShake {
   0%,
   100% {
@@ -42,8 +46,4 @@
   80% {
     transform: translateX(3px);
   }
-}
-
-.char-counter--shake {
-  animation: counterShake 0.45s ease;
 }

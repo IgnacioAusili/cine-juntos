@@ -1,5 +1,28 @@
 .player-frame {
   --player-control-fade-bg: linear-gradient(0deg, rgba(5, 6, 7, 0.85) 0%, rgba(5, 6, 7, 0.4) 60%, transparent 100%);
+}
+
+.player-status-badge .sync-status__dot {
+  --status-glow: rgba(255, 255, 255, 0.38);
+}
+
+.player-status-badge.sync-status--video.sync-status--empty .sync-status__dot {
+  --status-glow: rgba(255, 255, 255, 0.38);
+}
+
+.player-status-badge.sync-status--video.sync-status--loading .sync-status__dot {
+  --status-glow: rgba(245, 197, 24, 0.42);
+}
+
+.player-status-badge.sync-status--video.sync-status--loaded .sync-status__dot {
+  --status-glow: rgba(56, 216, 121, 0.42);
+}
+
+.player-status-badge.sync-status--video.sync-status--error .sync-status__dot {
+  --status-glow: rgba(233, 68, 68, 0.42);
+}
+
+.player-frame {
   position: relative;
   width: 100%;
   height: 100%;
@@ -18,12 +41,6 @@
 .player-frame .player-chat textarea,
 .player-frame .player-chat [contenteditable="true"] {
   user-select: text;
-}
-
-/* Ocultar el puntero solo cuando el reproductor ya entró en inactividad. */
-.player-frame.player-frame--cursor-hidden,
-.player-frame.player-frame--cursor-hidden * {
-  cursor: none;
 }
 
 video {
@@ -69,10 +86,10 @@ video::-webkit-media-controls-fullscreen-button {
   animation: playerLoadingSpin 850ms linear infinite;
 }
 
-@keyframes playerLoadingSpin {
-  to {
-    transform: rotate(360deg);
-  }
+/* Ocultar el puntero solo cuando el reproductor ya entró en inactividad. */
+.player-frame.player-frame--cursor-hidden,
+.player-frame.player-frame--cursor-hidden * {
+  cursor: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -136,25 +153,28 @@ video::-webkit-media-controls-fullscreen-button {
   text-overflow: clip;
 }
 
+.player-status-badge .sync-status__dot {
+  border-radius: 999px;
+  background: #ffffff;
+  transition: background 180ms ease, box-shadow 180ms ease;
+}
+
+.player-status-badge.sync-status--video.sync-status--empty .sync-status__dot {
+  background: #ffffff;
+}
+
+.player-status-badge.sync-status--video.sync-status--loaded .sync-status__dot {
+  background: #38d879;
+}
+
+.player-status-badge.sync-status--video.sync-status--error .sync-status__dot {
+  background: var(--danger);
+}
+
 /* El badge siempre es visible cuando no hay video cargado o se está cargando. Con video cargado se oculta y reaparece con el hover del reproductor (.player-overlay-visible) */
 .player-status-badge.sync-status--loaded {
   opacity: 0;
   transform: translateY(-4px);
-}
-
-.player-frame.player-frame--overlay-visible .player-status-badge.sync-status--loaded,
-.player-status-badge.sync-status--empty,
-.player-status-badge.sync-status--loading,
-.player-status-badge.sync-status--error {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.player-status-badge .sync-status__dot {
-  --status-glow: rgba(255, 255, 255, 0.38);
-  border-radius: 999px;
-  background: #ffffff;
-  transition: background 180ms ease, box-shadow 180ms ease;
 }
 
 #videoStatusText {
@@ -168,36 +188,43 @@ video::-webkit-media-controls-fullscreen-button {
   color: rgba(255, 255, 255, 0.82);
 }
 
-.player-status-badge.sync-status--video.sync-status--empty .sync-status__dot {
-  --status-glow: rgba(255, 255, 255, 0.38);
-  background: #ffffff;
-}
-
 .player-status-badge.sync-status--video.sync-status--empty .sync-status__dot::before {
   opacity: 0.38;
-}
-
-.player-status-badge.sync-status--video.sync-status--loading {
-  color: rgba(255, 255, 255, 0.82);
-}
-
-.player-status-badge.sync-status--video.sync-status--loading .sync-status__dot {
-  --status-glow: rgba(245, 197, 24, 0.42);
-  background: #f5c518;
 }
 
 .player-status-badge.sync-status--video.sync-status--loaded {
   color: rgba(255, 255, 255, 0.82);
 }
 
-.player-status-badge.sync-status--video.sync-status--loaded .sync-status__dot {
-  --status-glow: rgba(56, 216, 121, 0.42);
-  background: #38d879;
+.player-status-badge.sync-status--video.sync-status--error {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.player-frame.player-frame--overlay-visible .player-status-badge.sync-status--loaded,
+.player-status-badge.sync-status--empty,
+.player-status-badge.sync-status--loading,
+.player-status-badge.sync-status--error {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.player-status-badge.sync-status--video.sync-status--loading .sync-status__dot {
+  background: #f5c518;
+}
+
+.player-status-badge.sync-status--video.sync-status--loading {
+  color: rgba(255, 255, 255, 0.82);
 }
 
 .player-status-badge.sync-status--video.sync-status--loading .sync-status__dot,
 .player-status-badge.sync-status--video.sync-status--live .sync-status__dot {
   animation: playerLiveStatusPulse 1.25s ease-in-out infinite;
+}
+
+@keyframes playerLoadingSpin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes playerLiveStatusPulse {
@@ -211,13 +238,4 @@ video::-webkit-media-controls-fullscreen-button {
     opacity: 1;
     transform: scale(1.12);
   }
-}
-
-.player-status-badge.sync-status--video.sync-status--error {
-  color: rgba(255, 255, 255, 0.82);
-}
-
-.player-status-badge.sync-status--video.sync-status--error .sync-status__dot {
-  --status-glow: rgba(233, 68, 68, 0.42);
-  background: var(--danger);
 }

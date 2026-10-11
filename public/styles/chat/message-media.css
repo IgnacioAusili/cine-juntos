@@ -28,10 +28,6 @@
   word-break: break-all;
 }
 
-.message__link:hover {
-  text-decoration: underline;
-}
-
 .message__text + .message__media-link {
   margin-top: 8px;
 }
@@ -63,4 +59,8 @@
 
 .message__media-strip--standalone .message__media {
   max-height: 180px;
+}
+
+.message__link:hover {
+  text-decoration: underline;
 }

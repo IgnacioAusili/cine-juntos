@@ -1,5 +1,40 @@
 
 
+.message__reply-name {
+  color: var(--reply-participant-accent, var(--participant-accent, var(--accent-2)));
+}
+
+.message__media-strip {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.message__media-strip .message__media-link {
+  flex: 1 1 0;
+  max-width: calc(50% - 3px);
+}
+
+.message__media-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.message__media-row .message__swipe-reply-hint-wrapper {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  left: auto;
+  width: 0;
+  height: 0;
+  flex: 0 0 auto;
+}
+
 .message__bubble--emoji-only .message__time-anchor {
   order: 2;
   float: none;
@@ -44,41 +79,6 @@
 
 .message.message--mine .message__bubble {
   border-bottom-right-radius: 4px;
-}
-
-.message__reply-name {
-  color: var(--reply-participant-accent, var(--participant-accent, var(--accent-2)));
-}
-
-.message__media-strip {
-  display: flex;
-  gap: 6px;
-  width: 100%;
-  margin-top: 8px;
-}
-
-.message__media-strip .message__media-link {
-  flex: 1 1 0;
-  max-width: calc(50% - 3px);
-}
-
-.message__media-row {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  width: fit-content;
-  max-width: 100%;
-}
-
-.message__media-row .message__swipe-reply-hint-wrapper {
-  position: absolute;
-  top: 50%;
-  right: 0;
-  left: auto;
-  width: 0;
-  height: 0;
-  flex: 0 0 auto;
 }
 
 .message:not(.message--mine) .message__media-row .message__swipe-reply-hint-wrapper {

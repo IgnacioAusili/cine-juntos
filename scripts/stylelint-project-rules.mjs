@@ -244,6 +244,20 @@ function reportLateVariable(result, declaration) {
   });
 }
 
+function isVariableOnlyConditional(node) {
+  if (node.type !== "atrule" || !["container", "media", "supports"].includes(node.name.toLowerCase())) {
+    return false;
+  }
+
+  let declarationCount = 0;
+  let hasOrdinaryDeclaration = false;
+  node.walkDecls((declaration) => {
+    declarationCount += 1;
+    if (!declaration.prop.startsWith("--")) hasOrdinaryDeclaration = true;
+  });
+  return declarationCount > 0 && !hasOrdinaryDeclaration;
+}
+
 const cssVariablesFirst = createPlugin(variableOrderRuleName, (primary) => {
   return (root, result) => {
     if (!validateOptions(result, variableOrderRuleName, { actual: primary, possible: [true] })) {
@@ -260,7 +274,10 @@ const cssVariablesFirst = createPlugin(variableOrderRuleName, (primary) => {
       }
 
       if (node.type === "atrule") {
-        node.walkDecls(/^--/, (declaration) => reportLateVariable(result, declaration));
+        if (leadingVariableSection && isVariableOnlyConditional(node)) continue;
+        node.walkDecls(/^--/, (declaration) => {
+          reportLateVariable(result, declaration);
+        });
         leadingVariableSection = false;
         continue;
       }

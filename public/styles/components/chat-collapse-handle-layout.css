@@ -95,10 +95,6 @@
   opacity: 0;
 }
 
-.session-view.session-view--chat-collapsed[data-chat-dock="bottom"] .chat-area__collapse-hover-zone.chat-area__collapse-hover-zone--pointer-hover .chat-area__collapse-handle {
-  opacity: 0;
-}
-
 .session-view.session-view--chat-collapsed[data-chat-dock="bottom"] .chat-area__collapse-hover-zone.u-touch-hover .chat-area__collapse-handle {
   opacity: 0;
 }
@@ -106,5 +102,9 @@
 .session-view.session-view--chat-collapsed[data-chat-dock="bottom"]:has(.player-frame.player-frame--overlay-visible) .chat-area__collapse-handle {
   opacity: 1;
   cursor: pointer;
+}
+
+.session-view.session-view--chat-collapsed[data-chat-dock="bottom"] .chat-area__collapse-hover-zone.chat-area__collapse-hover-zone--pointer-hover .chat-area__collapse-handle {
+  opacity: 0;
 }
 

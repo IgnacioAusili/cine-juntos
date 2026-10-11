@@ -1,3 +1,14 @@
+
+
+.mobile-debug-dialog {
+  width: min(760px, calc(100% - 24px));
+  max-width: 760px;
+  padding: 0;
+  border: 1px solid var(--glass-border-strong);
+  border-radius: 14px;
+  background: #111619;
+}
+
 .mobile-debug-dialog__button {
   position: fixed;
   right: 14px;
@@ -12,15 +23,6 @@
   font-size: 0.76rem;
   font-weight: 800;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.32);
-}
-
-.mobile-debug-dialog {
-  width: min(760px, calc(100% - 24px));
-  max-width: 760px;
-  padding: 0;
-  border: 1px solid var(--glass-border-strong);
-  border-radius: 14px;
-  background: #111619;
 }
 
 .mobile-debug-dialog__card {
@@ -113,13 +115,6 @@
   transition: color 150ms ease, background 150ms ease;
 }
 
-.mobile-debug-dialog__filter-clear:hover,
-.mobile-debug-dialog__filter-clear:focus-visible {
-  background: rgba(255, 79, 95, 0.12);
-  color: #ff4f5f;
-  outline: none;
-}
-
 .mobile-debug-dialog__filter-clear svg {
   width: 16px;
   height: 16px;
@@ -177,14 +172,6 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.22);
 }
 
-.button.button--primary.mobile-debug-dialog__copy-button:hover {
-  background: linear-gradient(180deg, #e7a574, #d4884c);
-  box-shadow:
-    0 0 0 1px rgba(240, 140, 58, 0.18),
-    0 8px 20px rgba(240, 140, 58, 0.28),
-    inset 0 1px 0 rgba(255, 255, 255, 0.28);
-}
-
 .mobile-debug-dialog__copy-label,
 .mobile-debug-dialog__copy-status {
   display: inline-flex;
@@ -232,6 +219,21 @@
 .mobile-debug-dialog__copy-button[data-copy-state="error"] .mobile-debug-dialog__copy-error {
   opacity: 1;
   transform: scale(1) rotate(0deg);
+}
+
+.mobile-debug-dialog__filter-clear:hover,
+.mobile-debug-dialog__filter-clear:focus-visible {
+  background: rgba(255, 79, 95, 0.12);
+  color: #ff4f5f;
+  outline: none;
+}
+
+.button.button--primary.mobile-debug-dialog__copy-button:hover {
+  background: linear-gradient(180deg, #e7a574, #d4884c);
+  box-shadow:
+    0 0 0 1px rgba(240, 140, 58, 0.18),
+    0 8px 20px rgba(240, 140, 58, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
 }
 
 @media (max-width: 680px) {

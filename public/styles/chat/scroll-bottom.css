@@ -33,18 +33,6 @@
   stroke-width: 2.1;
 }
 
-.scroll-bottom-btn--visible {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-  pointer-events: auto;
-}
-
-.scroll-bottom-btn:hover {
-  background: rgba(35, 43, 44, 0.84);
-  border-color: rgba(47, 184, 164, 0.5);
-  color: var(--teal);
-}
-
 .scroll-bottom-btn__badge {
   position: absolute;
   top: -5px;
@@ -65,4 +53,16 @@
   line-height: 1;
   text-align: center;
   -webkit-text-stroke: 0;
+}
+
+.scroll-bottom-btn--visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+
+.scroll-bottom-btn:hover {
+  background: rgba(35, 43, 44, 0.84);
+  border-color: rgba(47, 184, 164, 0.5);
+  color: var(--teal);
 }

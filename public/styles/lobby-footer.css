@@ -7,11 +7,6 @@
   transition: color 160ms ease;
 }
 
-.lobby-screen__license:hover,
-.lobby-screen__license:focus-visible {
-  color: var(--amber);
-}
-
 /* ===== Acceso a información del proyecto ===== */
 .lobby-screen__about-button {
   position: fixed;
@@ -30,6 +25,22 @@
   backdrop-filter: blur(10px);
   cursor: pointer;
   transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+}
+
+.lobby-screen__about-button svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2;
+  transform: rotate(180deg);
+}
+
+body:not(.page-context--lobby) .lobby-screen__about-button {
+  display: none;
+}
+
+.lobby-screen__license:hover,
+.lobby-screen__license:focus-visible {
+  color: var(--amber);
 }
 
 .lobby-screen__about-button:hover,
@@ -54,17 +65,6 @@
   }
 }
 
-.lobby-screen__about-button svg {
-  width: 18px;
-  height: 18px;
-  stroke-width: 2;
-  transform: rotate(180deg);
-}
-
-body:not(.page-context--lobby) .lobby-screen__about-button {
-  display: none;
-}
-
 /* ===== Live badge del topbar (heredado de iteracion previa) ===== */
 .live-badge {
   display: inline-flex;
@@ -84,6 +84,10 @@ body:not(.page-context--lobby) .lobby-screen__about-button {
   backdrop-filter: blur(8px);
 }
 
+body:not(.page-context--lobby) .live-badge {
+  display: none;
+}
+
 .live-badge__dot {
   width: 6px;
   height: 6px;
@@ -91,21 +95,6 @@ body:not(.page-context--lobby) .lobby-screen__about-button {
   background: var(--teal);
   box-shadow: 0 0 8px var(--teal);
   animation: livePulse 1.8s ease-in-out infinite;
-}
-
-@keyframes livePulse {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.45;
-    transform: scale(0.78);
-  }
-}
-
-body:not(.page-context--lobby) .live-badge {
-  display: none;
 }
 
 /* ============================================================
@@ -224,4 +213,15 @@ body:not(.page-context--lobby) .live-badge {
 .lobby-screen__fields input[type="text"] {
   width: calc(100% - var(--lobby-input-offset));
   transform: translateX(var(--lobby-input-offset));
+}
+
+@keyframes livePulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.78);
+  }
 }

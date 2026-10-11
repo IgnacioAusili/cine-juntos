@@ -1,4 +1,78 @@
 
+@media (min-width: 681px) and (max-width: 980px) {
+
+  body.page-context--lobby[data-lobby-layout="columns"] .lobby-screen__title {
+    --lobby-title-size: clamp(4.75rem, 11vw, 6.8rem);
+  }
+}
+@media (min-width: 681px) {
+  body.page-context--lobby[data-lobby-layout="columns"] .lobby-screen__hero {
+    --lobby-section-gap: clamp(32px, 4.5vh, 48px);
+  }
+}
+@media (min-width: 681px) {
+  body.page-context--lobby[data-lobby-layout="columns"] .lobby-screen__title {
+    --lobby-title-size: clamp(4.75rem, 11vw, 6.8rem);
+    --lobby-title-lift: calc(var(--lobby-title-size) * 0.175);
+  }
+}
+/* Centrado del contenido dentro de la franja que ya define el layout original;
+   la marquesina y el footer conservan sus posiciones propias. */
+body.page-context--lobby .lobby-screen {
+  padding: 0;
+}
+
+/* El boleto mantiene su geometría cuando el grid pasa de dos columnas a una.
+   El ancho solo se limita si el viewport es físicamente más angosto que el
+   boleto; la separación interior y los controles no dependen del layout. */
+body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__ticket {
+  width: min(404px, 100%);
+  height: var(--lobby-ticket-fit-height, auto);
+  min-height: 0;
+  grid-template-rows: minmax(0, 1fr);
+}
+
+/* El modo apilado se activa cuando el contenido real deja de caber en las
+   dos columnas, aunque el viewport siga teniendo más de 680px de ancho. */
+body.page-context--lobby[data-lobby-layout="columns"][data-lobby-flow="single-column"] .lobby-screen__grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__ticket-body {
+  min-height: 0;
+  gap: var(--lobby-ticket-fit-body-gap, 14px);
+  padding:
+    var(--lobby-ticket-fit-padding-top, 18px)
+    var(--lobby-ticket-fit-padding-inline, 18px)
+    var(--lobby-ticket-fit-padding-bottom, 16px);
+}
+
+body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__ticket-head {
+  padding-bottom: var(--lobby-ticket-fit-head-padding, 12px);
+}
+
+body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__ticket-label {
+  font-size: 0.96rem;
+}
+
+body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__ticket-hint {
+  font-size: 0.72rem;
+}
+
+body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__fields {
+  gap: var(--lobby-ticket-fit-fields-gap, 10px);
+}
+
+body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__fields input[type="text"] {
+  height: var(--lobby-ticket-fit-control-height, 40px);
+  min-height: var(--lobby-ticket-fit-control-height, 40px);
+  line-height: var(--lobby-ticket-fit-control-height, 40px);
+}
+
+body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__actions {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 8px;
+}
 
 /* Override final del modo columns: estas reglas usan la misma especificidad
    que sus variantes anteriores para que la transición no herede el boleto
@@ -22,7 +96,6 @@
   }
 
   body.page-context--lobby[data-lobby-layout="columns"] .lobby-screen__title {
-    --lobby-title-size: clamp(4.75rem, 11vw, 6.8rem);
     font-size: var(--lobby-title-size);
     justify-self: start;
     text-align: left;
@@ -97,7 +170,6 @@
    título y las prestaciones, con el mismo espacio arriba y abajo. */
 @media (min-width: 681px) {
   body.page-context--lobby[data-lobby-layout="columns"] .lobby-screen__hero {
-    --lobby-section-gap: clamp(32px, 4.5vh, 48px);
     row-gap: var(--lobby-section-gap);
   }
 
@@ -122,18 +194,10 @@
    desplazamiento en el flujo para conservar una altura estable del hero. */
 @media (min-width: 681px) {
   body.page-context--lobby[data-lobby-layout="columns"] .lobby-screen__title {
-    --lobby-title-size: clamp(4.75rem, 11vw, 6.8rem);
     font-size: var(--lobby-title-size);
-    --lobby-title-lift: calc(var(--lobby-title-size) * 0.175);
     transform: translateY(calc(-1 * var(--lobby-title-lift)));
     margin-bottom: calc(-1 * var(--lobby-title-lift));
   }
-}
-
-/* Centrado del contenido dentro de la franja que ya define el layout original;
-   la marquesina y el footer conservan sus posiciones propias. */
-body.page-context--lobby .lobby-screen {
-  padding: 0;
 }
 
 @media (min-width: 681px) {
@@ -156,62 +220,10 @@ body.page-context--lobby .lobby-screen {
   }
 }
 
-/* El boleto mantiene su geometría cuando el grid pasa de dos columnas a una.
-   El ancho solo se limita si el viewport es físicamente más angosto que el
-   boleto; la separación interior y los controles no dependen del layout. */
-body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__ticket {
-  width: min(404px, 100%);
-  height: var(--lobby-ticket-fit-height, auto);
-  min-height: 0;
-  grid-template-rows: minmax(0, 1fr);
-}
-
-/* El modo apilado se activa cuando el contenido real deja de caber en las
-   dos columnas, aunque el viewport siga teniendo más de 680px de ancho. */
-body.page-context--lobby[data-lobby-layout="columns"][data-lobby-flow="single-column"] .lobby-screen__grid {
-  grid-template-columns: minmax(0, 1fr);
-}
-
 @media (min-width: 481px) and (max-width: 680px) {
   body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__ticket {
     grid-template-columns: 36px minmax(0, 1fr);
   }
-}
-
-body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__ticket-body {
-  min-height: 0;
-  gap: var(--lobby-ticket-fit-body-gap, 14px);
-  padding:
-    var(--lobby-ticket-fit-padding-top, 18px)
-    var(--lobby-ticket-fit-padding-inline, 18px)
-    var(--lobby-ticket-fit-padding-bottom, 16px);
-}
-
-body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__ticket-head {
-  padding-bottom: var(--lobby-ticket-fit-head-padding, 12px);
-}
-
-body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__ticket-label {
-  font-size: 0.96rem;
-}
-
-body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__ticket-hint {
-  font-size: 0.72rem;
-}
-
-body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__fields {
-  gap: var(--lobby-ticket-fit-fields-gap, 10px);
-}
-
-body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__fields input[type="text"] {
-  height: var(--lobby-ticket-fit-control-height, 40px);
-  min-height: var(--lobby-ticket-fit-control-height, 40px);
-  line-height: var(--lobby-ticket-fit-control-height, 40px);
-}
-
-body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__actions {
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 8px;
 }
 
 body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__actions > .button {

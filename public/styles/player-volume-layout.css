@@ -1,36 +1,7 @@
-/* El slider horizontal vive dentro de la fila y solo ocupa ancho cuando se
-   abre. Esto permite que el layout se mida con el espacio real disponible. */
-.player-frame .player-controls-bar .player-volume-group {
-  gap: 0;
-}
 
-/* El icono cambia entre volume-1, volume-2 y volume-x. La caja del boton no
-   debe depender del ancho natural de cada SVG porque forma parte del calculo
-   de la fila y sus cambios no son cambios de layout. */
+
 .player-frame .player-controls-bar > .player-volume-group > .video-control-button {
-  box-sizing: border-box;
   --player-control-layout-width: var(--player-control-button-size, 32px);
-  flex: 0 0 var(--player-control-button-size, 32px);
-  width: var(--player-control-button-size, 32px);
-  min-width: var(--player-control-button-size, 32px);
-}
-
-.player-frame[data-control-style="line"] .player-controls-bar > .player-volume-group > .video-control-button {
-  flex-basis: var(--player-control-button-size, 27px);
-  width: var(--player-control-button-size, 27px);
-  min-width: var(--player-control-button-size, 27px);
-  padding: 0;
-}
-
-.player-frame .player-controls-bar .player-volume-group__slider {
-  position: static;
-  z-index: 31;
-  display: flex;
-  width: 60px;
-  height: 28px;
-  align-items: center;
-  flex: 0 1 60px;
-  max-width: 0;
 }
 
 .player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="vertical"] .player-volume-group__input {
@@ -39,46 +10,33 @@
 }
 
 .player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"] .player-volume-group__slider {
-  position: relative;
   --volume-track-height: 5px;
   --volume-progress: 100%;
 }
 
-.player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"] .player-volume-group__slider::before {
-  content: "";
-  position: absolute;
-  z-index: 0;
-  top: 50%;
-  right: 0;
-  left: 0;
-  height: var(--volume-track-height);
-  border-radius: 999px;
-  background: linear-gradient(
-    90deg,
-    var(--accent-2) 0,
-    var(--accent-2) var(--volume-progress),
-    rgba(255, 255, 255, 0.18) var(--volume-progress),
-    rgba(255, 255, 255, 0.18) 100%
-  );
-  pointer-events: none;
-  transform: translateY(-50%);
+.player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="vertical"] .player-volume-group__slider {
+  --volume-track-height: 3px;
+  --volume-progress: 100%;
 }
 
-.player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"] .player-volume-group__input {
+/* El icono cambia entre volume-1, volume-2 y volume-x. La caja del boton no
+   debe depender del ancho natural de cada SVG porque forma parte del calculo
+   de la fila y sus cambios no son cambios de layout. */
+.player-frame .player-controls-bar > .player-volume-group > .video-control-button {
+  box-sizing: border-box;
+  flex: 0 0 var(--player-control-button-size, 32px);
+  width: var(--player-control-button-size, 32px);
+  min-width: var(--player-control-button-size, 32px);
+}
+
+/* El slider horizontal vive dentro de la fila y solo ocupa ancho cuando se
+   abre. Esto permite que el layout se mida con el espacio real disponible. */
+.player-frame .player-controls-bar .player-volume-group {
+  gap: 0;
+}
+
+.player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"] .player-volume-group__slider {
   position: relative;
-  z-index: 1;
-  background: transparent;
-}
-
-.player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"]:is(:hover, :focus-within, .u-touch-hover, .player-volume-group--hovered) {
-  gap: var(--player-controls-item-gap);
-}
-
-.player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"]:hover .player-volume-group__slider,
-.player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"]:focus-within .player-volume-group__slider,
-.player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"].u-touch-hover .player-volume-group__slider,
-.player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"].player-volume-group--hovered .player-volume-group__slider {
-  max-width: 60px;
 }
 
 /* En barras muy estrechas el volumen se abre como un popup sobre la barra,
@@ -90,8 +48,6 @@
   left: 50%;
   width: 22px;
   height: 74px;
-  --volume-track-height: 3px;
-  --volume-progress: 100%;
   flex: 0 0 22px;
   max-width: 22px;
   max-height: 74px;
@@ -118,6 +74,50 @@
      arriba, como una cortina, sin alterar su posicion horizontal. */
   clip-path: inset(100% 0 0 0);
   transition: clip-path 180ms ease, opacity 150ms ease;
+}
+
+.player-frame[data-control-style="line"] .player-controls-bar > .player-volume-group > .video-control-button {
+  flex-basis: var(--player-control-button-size, 27px);
+  width: var(--player-control-button-size, 27px);
+  min-width: var(--player-control-button-size, 27px);
+  padding: 0;
+}
+
+.player-frame .player-controls-bar .player-volume-group__slider {
+  position: static;
+  z-index: 31;
+  display: flex;
+  width: 60px;
+  height: 28px;
+  align-items: center;
+  flex: 0 1 60px;
+  max-width: 0;
+}
+
+.player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"] .player-volume-group__slider::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: 50%;
+  right: 0;
+  left: 0;
+  height: var(--volume-track-height);
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--accent-2) 0,
+    var(--accent-2) var(--volume-progress),
+    rgba(255, 255, 255, 0.18) var(--volume-progress),
+    rgba(255, 255, 255, 0.18) 100%
+  );
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"] .player-volume-group__input {
+  position: relative;
+  z-index: 1;
+  background: transparent;
 }
 
 .player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="vertical"] .player-volume-group__slider::before {
@@ -157,24 +157,6 @@
   transform-origin: center;
 }
 
-.player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="vertical"].player-volume-group--slider-open .player-volume-group__slider {
-  visibility: visible;
-  opacity: 1;
-  pointer-events: auto;
-  clip-path: inset(0);
-}
-
-.session-view[data-chat-dock] .chat-area__collapse-hover-zone.player-volume-group--popup-overlapping {
-  pointer-events: none !important;
-}
-
-.session-view[data-chat-dock] .chat-area__collapse-hover-zone.player-volume-group--popup-overlapping .chat-area__collapse-handle,
-.session-view[data-chat-dock] .chat-area__collapse-hover-zone.player-volume-group--popup-overlapping .chat-area__collapse-icon-anchor {
-  visibility: hidden !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
-}
-
 .player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="vertical"] .player-volume-group__input::-webkit-slider-runnable-track {
   height: var(--volume-track-height);
 }
@@ -192,4 +174,33 @@
 .player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="vertical"] .player-volume-group__input::-moz-range-thumb {
   width: var(--volume-thumb-size);
   height: var(--volume-thumb-size);
+}
+
+.player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="vertical"].player-volume-group--slider-open .player-volume-group__slider {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+  clip-path: inset(0);
+}
+
+.session-view[data-chat-dock] .chat-area__collapse-hover-zone.player-volume-group--popup-overlapping {
+  pointer-events: none !important;
+}
+
+.player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"]:is(:hover, :focus-within, .u-touch-hover, .player-volume-group--hovered) {
+  gap: var(--player-controls-item-gap);
+}
+
+.player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"]:hover .player-volume-group__slider,
+.player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"]:focus-within .player-volume-group__slider,
+.player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"].u-touch-hover .player-volume-group__slider,
+.player-frame .player-controls-bar .player-volume-group[data-volume-slider-layout="horizontal"].player-volume-group--hovered .player-volume-group__slider {
+  max-width: 60px;
+}
+
+.session-view[data-chat-dock] .chat-area__collapse-hover-zone.player-volume-group--popup-overlapping .chat-area__collapse-handle,
+.session-view[data-chat-dock] .chat-area__collapse-hover-zone.player-volume-group--popup-overlapping .chat-area__collapse-icon-anchor {
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }

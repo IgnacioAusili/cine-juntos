@@ -9,87 +9,11 @@
   gap: 6px;
 }
 
-/* El selector se posiciona fuera del flujo; la fila conserva todo su ancho
-   para que la línea y el texto queden centrados respecto del chat. */
-#messages .message.message--system .message__system-row,
-#overlayMessages .message.message--system .message__system-row {
-  width: 100%;
-  max-width: 100%;
-}
-
-#messages .message.message--system .message__system-bubble,
-#overlayMessages .message.message--system .message__system-bubble {
-  max-width: min(calc(100% - 48px), 560px);
-}
-
-/* En el panel, el ancho disponible debe contar también el espacio visual de
-   las dos líneas decorativas. Así una racha multilínea no deja una reserva
-   lateral extra que aleje los separadores del texto. */
-#messages .message.message--system .message__system-bubble {
-  max-width: min(calc(100% - 72px), 560px);
-}
-
-/* Los avisos de sincronización se realzan apenas al pasar el mouse. El
-   estado de transición lo desactiva para que la copia animada sea la única
-   representación visible durante el cambio de layout. */
-.message--system-group-member:not(.u-transitioning):hover .message__system-bubble,
-.message--system-group-member.message-menu--open:not(.u-transitioning) .message__system-bubble {
-  color: var(--muted);
-  filter: none;
-}
-
-.message--system-group-member .message__system-text {
-  transition: filter 140ms ease;
-}
-
-.message--system-group-member:not(.u-transitioning):hover .message__system-text,
-.message--system-group-member.message-menu--open:not(.u-transitioning) .message__system-text {
-  filter: brightness(1.18);
-}
-
-.message--system-group-member {
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.message--system-group-member .message__system-bubble,
-.message--system-group-member .message__system-bubble * {
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.message--system-group-member:not(.u-transitioning):hover .message__system-line,
-.message--system-group-member.message-menu--open:not(.u-transitioning) .message__system-line {
-  background: linear-gradient(90deg, transparent, rgba(165, 176, 184, 0.82), transparent);
-}
-
-.message--system-group-member .message__system-bubble {
-  transition: color 140ms ease, filter 140ms ease;
-}
-
-.message--system-group-member.u-transitioning .message__system-bubble,
-.message--system-group-member.u-transitioning .message__system-text {
-  transition: none;
-  filter: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .message--system-group-member .message__system-bubble,
-  .message--system-group-member .message__system-text {
-    transition: none;
-  }
-}
-
 .message__system-row .message__swipe-reply-hint-wrapper {
   position: absolute;
   right: -18px;
   left: auto;
   width: 0;
-}
-
-.message.message--system:not(.message--mine) .message__system-row .message__swipe-reply-hint-wrapper {
-  right: auto;
-  left: -18px;
 }
 
 .message__system-row .message__swipe-reply-hint {
@@ -129,13 +53,95 @@
   transform: translateY(-50%);
 }
 
-.message__system-group-toggle:hover,
-.message__system-group-toggle:focus-visible,
-.message__system-group-toggle.u-transitioning {
-  border-color: var(--accent-2);
-  background: rgba(47, 184, 164, 0.16);
-  color: var(--text);
-  outline: none;
+/* En el panel translúcido el selector necesita una superficie propia para
+   conservar contraste sobre el fondo del reproductor. */
+.player-frame[data-chat-style="panel"] .message__system-group-toggle {
+  border-color: rgba(215, 229, 232, 0.34);
+  background: rgba(24, 34, 38, 0.86);
+  color: rgba(235, 247, 247, 0.88);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+}
+
+.message__system-group-toggle svg {
+  display: block;
+  flex: 0 0 10px;
+  width: 10px;
+  height: 10px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+.message__system-group-toggle-count {
+  display: inline-flex;
+  min-width: 6px;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.5rem;
+  line-height: 1;
+}
+
+.chat-message-list.chat-message-list--overlay .message__system-row .message__swipe-reply-hint-wrapper,
+#overlayMessages .message__system-row .message__swipe-reply-hint-wrapper {
+  right: -15px;
+}
+
+#overlayMessages .message__system-row {
+  display: flex;
+  width: 100%;
+}
+
+/* El selector se posiciona fuera del flujo; la fila conserva todo su ancho
+   para que la línea y el texto queden centrados respecto del chat. */
+#messages .message.message--system .message__system-row,
+#overlayMessages .message.message--system .message__system-row {
+  width: 100%;
+  max-width: 100%;
+}
+
+#messages .message.message--system .message__system-bubble,
+#overlayMessages .message.message--system .message__system-bubble {
+  max-width: min(calc(100% - 48px), 560px);
+}
+
+/* En el panel, el ancho disponible debe contar también el espacio visual de
+   las dos líneas decorativas. Así una racha multilínea no deja una reserva
+   lateral extra que aleje los separadores del texto. */
+#messages .message.message--system .message__system-bubble {
+  max-width: min(calc(100% - 72px), 560px);
+}
+
+.message--system-group-member .message__system-text {
+  transition: filter 140ms ease;
+}
+
+.message--system-group-member {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.message--system-group-member .message__system-bubble,
+.message--system-group-member .message__system-bubble * {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.message--system-group-member .message__system-bubble {
+  transition: color 140ms ease, filter 140ms ease;
+}
+
+.message--system-group-member.u-transitioning .message__system-bubble,
+.message--system-group-member.u-transitioning .message__system-text {
+  transition: none;
+  filter: none;
+}
+
+.message.message--system:not(.message--mine) .message__system-row .message__swipe-reply-hint-wrapper {
+  right: auto;
+  left: -18px;
 }
 
 /* Los grupos del overlay usan el ancho completo igual que el chat externo.
@@ -162,13 +168,52 @@
   height: 16px;
 }
 
-/* En el panel translúcido el selector necesita una superficie propia para
-   conservar contraste sobre el fondo del reproductor. */
-.player-frame[data-chat-style="panel"] .message__system-group-toggle {
-  border-color: rgba(215, 229, 232, 0.34);
-  background: rgba(24, 34, 38, 0.86);
-  color: rgba(235, 247, 247, 0.88);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+#messages .message.message--system.message--system-group-collapsed-item,
+#overlayMessages .message.message--system.message--system-group-collapsed-item {
+  display: none;
+}
+
+.chat-message-list.chat-message-list--overlay .message__system-row,
+#overlayMessages .message.message--system .message__system-row {
+  max-width: min(100%, 420px);
+}
+
+.chat-message-list.chat-message-list--overlay .message.message--system:not(.message--mine) .message__system-row .message__swipe-reply-hint-wrapper,
+#overlayMessages .message.message--system:not(.message--mine) .message__system-row .message__swipe-reply-hint-wrapper {
+  right: auto;
+  left: -15px;
+}
+
+#overlayMessages .message.message--system .message__system-bubble {
+  max-width: min(calc(100% - 36px), 420px);
+}
+
+/* Los avisos de sincronización se realzan apenas al pasar el mouse. El
+   estado de transición lo desactiva para que la copia animada sea la única
+   representación visible durante el cambio de layout. */
+.message--system-group-member:not(.u-transitioning):hover .message__system-bubble,
+.message--system-group-member.message-menu--open:not(.u-transitioning) .message__system-bubble {
+  color: var(--muted);
+  filter: none;
+}
+
+.message--system-group-member:not(.u-transitioning):hover .message__system-text,
+.message--system-group-member.message-menu--open:not(.u-transitioning) .message__system-text {
+  filter: brightness(1.18);
+}
+
+.message--system-group-member:not(.u-transitioning):hover .message__system-line,
+.message--system-group-member.message-menu--open:not(.u-transitioning) .message__system-line {
+  background: linear-gradient(90deg, transparent, rgba(165, 176, 184, 0.82), transparent);
+}
+
+.message__system-group-toggle:hover,
+.message__system-group-toggle:focus-visible,
+.message__system-group-toggle.u-transitioning {
+  border-color: var(--accent-2);
+  background: rgba(47, 184, 164, 0.16);
+  color: var(--text);
+  outline: none;
 }
 
 .player-frame[data-chat-style="panel"] .message__system-group-toggle:hover,
@@ -179,60 +224,15 @@
   color: var(--text);
 }
 
-.message__system-group-toggle svg {
-  display: block;
-  flex: 0 0 10px;
-  width: 10px;
-  height: 10px;
-  fill: none;
-  stroke: currentColor;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 2;
-}
-
-.message__system-group-toggle-count {
-  display: inline-flex;
-  min-width: 6px;
-  height: 100%;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.5rem;
-  line-height: 1;
-}
-
-#messages .message.message--system.message--system-group-collapsed-item,
-#overlayMessages .message.message--system.message--system-group-collapsed-item {
-  display: none;
+@media (prefers-reduced-motion: reduce) {
+  .message--system-group-member .message__system-bubble,
+  .message--system-group-member .message__system-text {
+    transition: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .message__system-group-toggle {
     transition: none;
   }
-}
-
-.chat-message-list.chat-message-list--overlay .message__system-row,
-#overlayMessages .message.message--system .message__system-row {
-  max-width: min(100%, 420px);
-}
-
-.chat-message-list.chat-message-list--overlay .message__system-row .message__swipe-reply-hint-wrapper,
-#overlayMessages .message__system-row .message__swipe-reply-hint-wrapper {
-  right: -15px;
-}
-
-.chat-message-list.chat-message-list--overlay .message.message--system:not(.message--mine) .message__system-row .message__swipe-reply-hint-wrapper,
-#overlayMessages .message.message--system:not(.message--mine) .message__system-row .message__swipe-reply-hint-wrapper {
-  right: auto;
-  left: -15px;
-}
-
-#overlayMessages .message__system-row {
-  display: flex;
-  width: 100%;
-}
-
-#overlayMessages .message.message--system .message__system-bubble {
-  max-width: min(calc(100% - 36px), 420px);
 }

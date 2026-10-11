@@ -1,10 +1,33 @@
-/* Los controles esenciales permanecen fijos; la pista adicional se desplaza
-   dentro de la misma fila cuando el ancho no alcanza. */
 .player-controls-bar {
   --player-controls-item-gap: 8px;
   --player-controls-comfortable-gap: 8px;
   --player-controls-default-button-size: 32px;
   --player-control-button-size: var(--player-controls-default-button-size);
+}
+
+.player-frame[data-control-style="line"] .player-controls-bar {
+  --player-controls-item-gap: 10px;
+  --player-controls-comfortable-gap: 10px;
+  --player-controls-default-button-size: 27px;
+  --player-control-button-size: var(--player-controls-default-button-size);
+}
+
+.mini-player-surface .player-controls-bar {
+  --player-controls-item-gap: 6px;
+}
+
+.player-controls-bar > .video-control-button,
+.player-controls-bar__scroll-track > .video-control-button {
+  --player-control-layout-width: var(--player-control-button-size, 32px);
+}
+
+.player-frame[data-control-style="line"] .player-controls-bar .video-control-button:not([data-play-button-cooldown="true"]) {
+  --player-control-layout-width: var(--player-control-button-size, 27px);
+}
+
+/* Los controles esenciales permanecen fijos; la pista adicional se desplaza
+   dentro de la misma fila cuando el ancho no alcanza. */
+.player-controls-bar {
   position: relative;
   min-width: 0;
   box-sizing: border-box;
@@ -14,24 +37,25 @@
 }
 
 .player-frame[data-control-style="line"] .player-controls-bar {
-  --player-controls-item-gap: 10px;
-  --player-controls-comfortable-gap: 10px;
-  --player-controls-default-button-size: 27px;
-  --player-control-button-size: var(--player-controls-default-button-size);
   gap: var(--player-controls-item-gap);
 }
 
-/* El boton central usa un icono mas ancho; igualar su caja a la de los otros
-   comandos evita que sus dos separaciones se perciban mas abiertas. */
-.player-frame[data-control-style="line"] .player-controls-bar .video-control-button--primary:not([data-play-button-cooldown="true"]) {
-  width: var(--player-control-button-size);
-  min-width: var(--player-control-button-size);
-  flex: 0 0 var(--player-control-button-size);
-  padding: 0;
+/* Cada boton tiene una reserva de layout independiente de su SVG actual.
+   Asi los estados normales (play/pause, volumen y sus variantes) no mueven
+   los controles vecinos mientras cambia el icono. */
+.player-controls-bar > .video-control-button,
+.player-controls-bar__scroll-track > .video-control-button {
+  box-sizing: border-box;
+  flex: 0 0 var(--player-control-button-size, 32px);
+  width: var(--player-control-button-size, 32px);
+  min-width: var(--player-control-button-size, 32px);
 }
 
-.mini-player-surface .player-controls-bar {
-  --player-controls-item-gap: 6px;
+.player-frame[data-control-style="line"] .player-controls-bar .video-control-button:not([data-play-button-cooldown="true"]) {
+  flex: 0 0 var(--player-control-button-size, 27px);
+  width: var(--player-control-button-size, 27px);
+  min-width: var(--player-control-button-size, 27px);
+  padding: 0;
 }
 
 .player-controls-bar > .video-control-button,
@@ -40,23 +64,12 @@
   margin-inline: 0 !important;
 }
 
-/* Cada boton tiene una reserva de layout independiente de su SVG actual.
-   Asi los estados normales (play/pause, volumen y sus variantes) no mueven
-   los controles vecinos mientras cambia el icono. */
-.player-controls-bar > .video-control-button,
-.player-controls-bar__scroll-track > .video-control-button {
-  --player-control-layout-width: var(--player-control-button-size, 32px);
-  box-sizing: border-box;
-  flex: 0 0 var(--player-control-button-size, 32px);
-  width: var(--player-control-button-size, 32px);
-  min-width: var(--player-control-button-size, 32px);
-}
-
-.player-frame[data-control-style="line"] .player-controls-bar .video-control-button:not([data-play-button-cooldown="true"]) {
-  --player-control-layout-width: var(--player-control-button-size, 27px);
-  flex: 0 0 var(--player-control-button-size, 27px);
-  width: var(--player-control-button-size, 27px);
-  min-width: var(--player-control-button-size, 27px);
+/* El boton central usa un icono mas ancho; igualar su caja a la de los otros
+   comandos evita que sus dos separaciones se perciban mas abiertas. */
+.player-frame[data-control-style="line"] .player-controls-bar .video-control-button--primary:not([data-play-button-cooldown="true"]) {
+  width: var(--player-control-button-size);
+  min-width: var(--player-control-button-size);
+  flex: 0 0 var(--player-control-button-size);
   padding: 0;
 }
 
@@ -87,11 +100,6 @@
 
 .player-controls-bar__scroll-window::-webkit-scrollbar {
   display: none;
-}
-
-.player-controls-bar__scroll-window:focus-visible {
-  border-radius: 999px;
-  box-shadow: 0 0 0 2px rgba(216, 255, 249, 0.25);
 }
 
 /* El menu propio de velocidad debe poder salir por arriba de la pista sin
@@ -177,6 +185,11 @@
   border-radius: 999px;
   background: var(--accent-soft, #d8fff9);
   box-shadow: 0 0 0 2px rgba(8, 11, 13, 0.55);
+}
+
+.player-controls-bar__scroll-window:focus-visible {
+  border-radius: 999px;
+  box-shadow: 0 0 0 2px rgba(216, 255, 249, 0.25);
 }
 
 .player-controls-bar__scroll-indicator:focus-visible {

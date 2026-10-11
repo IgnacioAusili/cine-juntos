@@ -1,11 +1,4 @@
-.chat-area__collapse-hover-zone {
-  position: absolute;
-  z-index: 12;
-  display: grid;
-  place-items: center;
-  pointer-events: auto;
-  outline: none;
-}
+
 
 /* El reproductor puede tener descendientes con z-index propio. El panel
    abierto debe formar una capa superior para que el handle no quede debajo
@@ -24,6 +17,15 @@
 .session-view:not(.session-view--chat-collapsed)[data-chat-dock="right"] .chat-area {
   overflow: visible;
   contain: layout;
+}
+
+.chat-area__collapse-hover-zone {
+  position: absolute;
+  z-index: 12;
+  display: grid;
+  place-items: center;
+  pointer-events: auto;
+  outline: none;
 }
 
 /* The seam handle extends into the message viewport. Keep its header above
@@ -116,15 +118,6 @@
   transition: none !important;
 }
 
-.chat-area__collapse-handle.chat-area__collapse-hover-zone--pointer-hover,
-.chat-area__collapse-hover-zone.chat-area__collapse-hover-zone--pointer-hover .chat-area__collapse-handle,
-.chat-area__collapse-handle.u-touch-hover,
-.chat-area__collapse-hover-zone.u-touch-hover .chat-area__collapse-handle,
-.chat-area__collapse-handle:focus-visible {
-  color: #fff;
-  background: transparent;
-}
-
 .session-view:not(.session-view--chat-collapsed)[data-chat-dock="right"] .chat-area__collapse-handle {
   position: relative;
   top: auto;
@@ -138,11 +131,20 @@
   opacity: 1;
 }
 
+.session-view:not(.session-view--chat-collapsed)[data-chat-dock="right"] .chat-area__collapse-hover-zone.u-touch-hover .chat-area__collapse-handle {
+  opacity: 1;
+}
+
 .session-view:not(.session-view--chat-collapsed)[data-chat-dock="right"] .chat-area__collapse-hover-zone.chat-area__collapse-hover-zone--pointer-hover .chat-area__collapse-handle {
   opacity: 1;
 }
 
-.session-view:not(.session-view--chat-collapsed)[data-chat-dock="right"] .chat-area__collapse-hover-zone.u-touch-hover .chat-area__collapse-handle {
-  opacity: 1;
+.chat-area__collapse-handle.chat-area__collapse-hover-zone--pointer-hover,
+.chat-area__collapse-hover-zone.chat-area__collapse-hover-zone--pointer-hover .chat-area__collapse-handle,
+.chat-area__collapse-handle.u-touch-hover,
+.chat-area__collapse-hover-zone.u-touch-hover .chat-area__collapse-handle,
+.chat-area__collapse-handle:focus-visible {
+  color: #fff;
+  background: transparent;
 }
 

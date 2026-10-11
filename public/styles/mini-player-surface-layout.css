@@ -1,3 +1,31 @@
+
+
+.mini-player-surface .player-chat {
+  --player-chat-max-height: 330px;
+  --player-chat-bottom-inset: 8px;
+  --chat-composer-reserve: 62px;
+}
+@container mini-player (max-height: 250px) {
+  .mini-player-surface .player-chat {
+    --player-chat-bottom-inset: 8px;
+  }
+}
+
+/* En la miniatura el chat usa el mismo maximo fijo del overlay normal y queda
+   por encima de la barra de controles cuando ambas superficies coinciden. */
+.mini-player-surface .player-chat {
+  top: auto;
+  right: 8px;
+  bottom: var(--player-chat-bottom-inset);
+  z-index: 10;
+  width: min(280px, calc(100% - 16px));
+  height: var(--player-chat-max-height);
+  max-height: calc(100% - 16px);
+  padding-inline: 3px;
+  transform: translateY(7px);
+  transition: opacity 160ms ease, transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 .mini-player-surface {
   container: mini-player / size;
 }
@@ -61,12 +89,6 @@
   pointer-events: none;
 }
 
-.mini-player-surface.mini-player-surface--scroll:hover .player-frame__bottom-actions {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
-}
-
 /* Los controles clonados pierden el selector por id; recuperar el botón
    circular actual del reproductor en su versión proxy. */
 .mini-player-surface [data-proxy-for="playerChatToggleButton"] {
@@ -97,38 +119,14 @@
   color: #d8fff9;
 }
 
-@keyframes scrollMiniPlayerEnter {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 .mini-player-surface .player-frame__bottom-actions {
   padding: 6px 8px 8px;
 }
 
-/* En la miniatura el chat usa el mismo maximo fijo del overlay normal y queda
-   por encima de la barra de controles cuando ambas superficies coinciden. */
-.mini-player-surface .player-chat {
-  --player-chat-max-height: 330px;
-  --player-chat-bottom-inset: 8px;
-  top: auto;
-  right: 8px;
-  bottom: var(--player-chat-bottom-inset);
-  z-index: 10;
-  width: min(280px, calc(100% - 16px));
-  height: var(--player-chat-max-height);
-  max-height: calc(100% - 16px);
-  padding-inline: 3px;
-  --chat-composer-reserve: 62px;
-  transform: translateY(7px);
-  transition: opacity 160ms ease, transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+.mini-player-surface.mini-player-surface--scroll:hover .player-frame__bottom-actions {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
 }
 
 .mini-player-surface.u-chat-inside-open .player-chat {
@@ -140,7 +138,6 @@
    el borde inferior. */
 @container mini-player (max-height: 250px) {
   .mini-player-surface .player-chat {
-    --player-chat-bottom-inset: 8px;
     top: 8px;
     right: 42px;
     bottom: auto;
@@ -216,4 +213,16 @@
   bottom: auto;
   transform: translateY(-50%) !important;
   color: var(--accent-2);
+}
+
+@keyframes scrollMiniPlayerEnter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

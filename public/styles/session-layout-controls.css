@@ -40,25 +40,8 @@
   grid-template-columns: auto minmax(0, 1fr) 140px;
 }
 
-/* El modo apilado agrega un píxel vertical arriba y abajo al header. Mantener
-   esa misma separación mientras la página conserva su gutter evita que el
-   cambio de proporción del reproductor compacte el chat antes de tiempo. */
-@media (min-width: 681px) {
-  .session-view:not(.session-view--layout-stacked)[data-chat-dock="bottom"] .chat-tools {
-    padding-top: 5px;
-    padding-bottom: 5px;
-  }
-}
-
 .session-view:not(.session-view--layout-stacked)[data-chat-dock="bottom"] .chat-tools > * {
   transform: none;
-}
-
-.session-view:not(.session-view--layout-stacked)[data-chat-dock="bottom"] .chat-tools__actions {
-  position: absolute;
-  top: 50%;
-  right: var(--chat-tools-inline-gutter, 8px);
-  transform: translateY(-50%);
 }
 
 .session-view:not(.session-view--layout-stacked)[data-chat-dock="bottom"] .chat-name-editor__edit-row {
@@ -121,6 +104,23 @@
 .session-view.session-view--chat-collapse-in-header:not(.session-view--chat-collapsed)[data-chat-dock="right"] .chat-tools {
   box-sizing: border-box !important;
   padding-inline-start: 38px !important;
+}
+
+.session-view:not(.session-view--layout-stacked)[data-chat-dock="bottom"] .chat-tools__actions {
+  position: absolute;
+  top: 50%;
+  right: var(--chat-tools-inline-gutter, 8px);
+  transform: translateY(-50%);
+}
+
+/* El modo apilado agrega un píxel vertical arriba y abajo al header. Mantener
+   esa misma separación mientras la página conserva su gutter evita que el
+   cambio de proporción del reproductor compacte el chat antes de tiempo. */
+@media (min-width: 681px) {
+  .session-view:not(.session-view--layout-stacked)[data-chat-dock="bottom"] .chat-tools {
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
 }
 
 .session-view.session-view--chat-collapse-in-header:not(.session-view--chat-collapsed)[data-chat-dock="right"] .chat-area__collapse-hover-zone {

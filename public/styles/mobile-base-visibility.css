@@ -1,3 +1,51 @@
+
+
+@media (hover: none) and (pointer: coarse) {
+  /* En móvil vertical el documento debe seguir exactamente el recorrido que
+     hace el dedo. Ningún contenedor de la composición puede atraerlo a una
+     sección cercana al terminar el gesto. */
+
+  /* El trazo de circle-help queda ópticamente bajo respecto de las etiquetas
+     aunque la caja táctil ya esté centrada por flex/grid. */
+
+  /* El chat interno debe quedar por encima de los controles centrales y de la
+     barra inferior cuando el video y el overlay comparten la superficie. */
+
+  /* El overlay tiene un tamaño máximo propio. Solo se reduce si no entra
+     entre sus dos bordes del reproductor; la barra de controles no participa
+     en este cálculo y puede quedar debajo del overlay. */
+  body:not(.page-context--lobby) .player-frame:not(.mini-player-surface) > .player-chat {
+    --player-chat-bottom-inset: 8px;
+  }
+
+  /* El disparador del overlay conserva acceso táctil aunque el panel abierto
+     llegue a solaparse con su esquina superior derecha. */
+
+  /* El video debe poder iniciar el desplazamiento vertical de la página. El
+     toque corto se resuelve en JS; los arrastres no deben quedar bloqueados
+     por los eventos del reproductor. */
+
+  /* iOS Safari amplía la página al enfocar controles de texto menores a
+     16px. La línea explícita también centra el placeholder dentro de la
+     altura compacta del composer sin alterar el layout de escritorio. */
+
+  /* Todos los compositores externos usan la misma caja que el dock inferior:
+     el shell ocupa la altura disponible y el textarea conserva su línea y
+     padding vertical para que el texto quede centrado en cualquier dock u
+     orientación móvil. */
+
+  /* El ancho temporal que se conserva durante el cambio desde el dock
+     lateral no debe sobrevivir en el dock inferior: sus márgenes laterales
+     son los que centran el compositor. Mientras la cortina está activa se
+     mantiene el ancho estable para evitar un salto visual. */
+
+  /* Los botones conservan el alto de una línea aun cuando el textarea crece.
+     El ancho extra queda dentro del botón, por lo que también es táctil. */
+
+  /* El control móvil actual siempre lleva su flecha dentro del círculo. Esta
+     regla debe cubrir también landscape, cuyo ancho puede superar 680px. */
+}
+
 /* Ajustes de composición para teléfonos. Se carga después del resto de las
    capas para conservar intacta la geometría de escritorio. */
 
@@ -50,7 +98,6 @@
      entre sus dos bordes del reproductor; la barra de controles no participa
      en este cálculo y puede quedar debajo del overlay. */
   body:not(.page-context--lobby) .player-frame:not(.mini-player-surface) > .player-chat {
-    --player-chat-bottom-inset: 8px;
     bottom: var(--player-chat-bottom-inset);
     max-height: calc(
       100% - var(--inside-chat-top-offset, 48px) - var(--player-chat-bottom-inset)

@@ -1,5 +1,21 @@
 
 
+.lobby-screen__fields input[type="text"] {
+  --lobby-input-offset: 3px;
+}
+
+.lobby-screen__fields input[type="text"] {
+  appearance: none;
+  display: block;
+  height: 40px;
+  min-height: 40px;
+  padding-block: 0;
+  line-height: 40px;
+  text-align: start;
+  box-shadow: none;
+  background: rgba(7, 9, 11, 0.5);
+}
+
 .lobby-screen__ticket-stub::before {
   position: absolute;
   z-index: 0;
@@ -148,19 +164,6 @@
 .lobby-screen__fields {
   display: grid;
   gap: 10px;
-}
-
-.lobby-screen__fields input[type="text"] {
-  --lobby-input-offset: 3px;
-  appearance: none;
-  display: block;
-  height: 40px;
-  min-height: 40px;
-  padding-block: 0;
-  line-height: 40px;
-  text-align: start;
-  box-shadow: none;
-  background: rgba(7, 9, 11, 0.5);
 }
 
 .lobby-screen__fields input[type="text"]:focus {

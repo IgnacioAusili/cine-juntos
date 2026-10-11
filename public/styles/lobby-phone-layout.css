@@ -3,6 +3,19 @@
 @media (max-width: 480px) {
   body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__ticket {
     --lobby-ticket-top-stub-height: 32px;
+  }
+}
+
+body.page-context--lobby .lobby-screen__about-button {
+  transition: scale 160ms ease, transform 160ms ease, background 160ms ease, border-color 160ms ease;
+}
+
+body.page-context--lobby[data-lobby-about-contact="true"] .lobby-screen__about-button {
+  scale: 0.9;
+}
+
+@media (max-width: 480px) {
+  body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__ticket {
     grid-template-rows: var(--lobby-ticket-fit-stub-height, var(--lobby-ticket-top-stub-height)) minmax(0, 1fr);
   }
 
@@ -14,12 +27,4 @@
   body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__ticket-perforation {
     top: var(--lobby-ticket-fit-stub-height, var(--lobby-ticket-top-stub-height));
   }
-}
-
-body.page-context--lobby .lobby-screen__about-button {
-  transition: scale 160ms ease, transform 160ms ease, background 160ms ease, border-color 160ms ease;
-}
-
-body.page-context--lobby[data-lobby-about-contact="true"] .lobby-screen__about-button {
-  scale: 0.9;
 }

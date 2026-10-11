@@ -1,18 +1,5 @@
 
 
-body.page-context--fullscreen .session-view[data-chat-dock="right"] .chat-area__collapse-hover-zone {
-  position: absolute;
-  grid-area: auto;
-  top: 50%;
-  right: auto;
-  bottom: auto;
-  left: calc(100% - var(--chat-panel-width) - 12px);
-  width: 24px;
-  height: 52px;
-  min-width: 0;
-  transform: translateY(-50%);
-}
-
 body.page-context--fullscreen .player-chat {
   top: var(--inside-chat-top-offset, 56px);
   right: 24px;
@@ -101,27 +88,6 @@ body.page-context--fullscreen .app-shell:fullscreen .session-view.session-view--
   grid-template-areas: "video chat";
 }
 
-@media (min-width: 981px) {
-  /* En PC fullscreen la grilla debe interpolar el ancho del panel. El layout
-     lateral normal deja transition en none porque usa flex; acá se restaura
-     solo para la variante de grilla de pantalla completa. */
-  body.page-context--fullscreen .session-view[data-chat-dock="right"] .o-workspace,
-  body.page-context--fullscreen .app-shell:fullscreen .session-view[data-chat-dock="right"] .o-workspace {
-    transition: grid-template-columns 350ms cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  /* La grilla controla el ancho del panel durante la animación. Mantener el
-     contenido del chat como un item de grilla evita que width: 0 lo oculte de
-     golpe antes de que termine el cierre. */
-  body.page-context--fullscreen .session-view[data-chat-dock="right"] .chat-area,
-  body.page-context--fullscreen .app-shell:fullscreen .session-view[data-chat-dock="right"] .chat-area {
-    flex: none;
-    width: auto;
-    min-width: 0;
-  }
-
-}
-
 body.page-context--fullscreen .session-view[data-chat-dock="right"] .o-video-area {
   display: flex;
 }
@@ -155,6 +121,40 @@ body.page-context--fullscreen .session-view[data-chat-dock="right"] .chat-area {
   background: var(--glass-bg);
   box-shadow: none;
   backdrop-filter: blur(16px);
+}
+
+body.page-context--fullscreen .session-view[data-chat-dock="right"] .chat-area__collapse-hover-zone {
+  position: absolute;
+  grid-area: auto;
+  top: 50%;
+  right: auto;
+  bottom: auto;
+  left: calc(100% - var(--chat-panel-width) - 12px);
+  width: 24px;
+  height: 52px;
+  min-width: 0;
+  transform: translateY(-50%);
+}
+
+@media (min-width: 981px) {
+  /* En PC fullscreen la grilla debe interpolar el ancho del panel. El layout
+     lateral normal deja transition en none porque usa flex; acá se restaura
+     solo para la variante de grilla de pantalla completa. */
+  body.page-context--fullscreen .session-view[data-chat-dock="right"] .o-workspace,
+  body.page-context--fullscreen .app-shell:fullscreen .session-view[data-chat-dock="right"] .o-workspace {
+    transition: grid-template-columns 350ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* La grilla controla el ancho del panel durante la animación. Mantener el
+     contenido del chat como un item de grilla evita que width: 0 lo oculte de
+     golpe antes de que termine el cierre. */
+  body.page-context--fullscreen .session-view[data-chat-dock="right"] .chat-area,
+  body.page-context--fullscreen .app-shell:fullscreen .session-view[data-chat-dock="right"] .chat-area {
+    flex: none;
+    width: auto;
+    min-width: 0;
+  }
+
 }
 
 body.page-context--fullscreen .session-view[data-chat-dock="right"] .chat-message-list {

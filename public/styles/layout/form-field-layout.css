@@ -7,10 +7,6 @@
   gap: 6px;
 }
 
-.o-field--room {
-  flex: 0 1 190px;
-}
-
 .o-field span {
   color: #eef1f3;
   text-shadow: 0 0 7px rgba(255, 255, 255, 0.16);
@@ -27,6 +23,10 @@
   padding-inline-start: 0;
   color: #eef1f3;
   text-shadow: 0 0 7px rgba(255, 255, 255, 0.16);
+}
+
+.o-field--room {
+  flex: 0 1 190px;
 }
 
 .session-toolbar {

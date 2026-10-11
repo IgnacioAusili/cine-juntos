@@ -1,3 +1,9 @@
+
+
+.lobby-screen__grid {
+  --lobby-grid-column-gap: 10px;
+}
+
 /* ============================================================
    LOBBY — "La antesala del cine"
    Layout: hero dramático (izq) + boleto/ticket perforado (der)
@@ -12,6 +18,16 @@
   justify-items: center;
   gap: 14px;
   padding-block: 4px 18px;
+}
+
+/* ===== Grid principal: hero | ticket ===== */
+.lobby-screen__grid {
+  display: grid;
+  width: min(1220px, 100%);
+  align-items: center;
+  grid-template-columns: minmax(0, 1fr) minmax(420px, 0.9fr);
+  column-gap: var(--lobby-grid-column-gap);
+  row-gap: clamp(36px, 4vw, 64px);
 }
 
 /* ===== Marquesina superior (banner en movimiento) ===== */
@@ -83,17 +99,6 @@
   animation-delay: 140ms;
 }
 
-@keyframes marqueeEmojiPop {
-  from {
-    opacity: 0;
-    transform: translateY(5px) scale(0.65) rotate(-12deg);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1) rotate(0);
-  }
-}
-
 .lobby-screen__marquee-track span.lobby-screen__marquee-live {
   color: var(--teal);
 }
@@ -117,30 +122,9 @@
   flex-shrink: 0;
 }
 
-.lobby-screen__marquee-track span.lobby-screen__marquee-message--premiere {
-  color: #ff5364;
-  font-family: Impact, "Arial Narrow", sans-serif;
-  font-size: 1.08em;
-  font-weight: 900;
-  letter-spacing: 0.16em;
-  text-shadow: 0 0 0.25em rgb(255 62 82 / 24%);
-  transform: translateY(0.045em);
-}
-
 .lobby-screen__marquee-track span.u-spacer {
   display: inline-block;
   width: 64px;
-}
-
-/* ===== Grid principal: hero | ticket ===== */
-.lobby-screen__grid {
-  --lobby-grid-column-gap: 10px;
-  display: grid;
-  width: min(1220px, 100%);
-  align-items: center;
-  grid-template-columns: minmax(0, 1fr) minmax(420px, 0.9fr);
-  column-gap: var(--lobby-grid-column-gap);
-  row-gap: clamp(36px, 4vw, 64px);
 }
 
 /* Composición base: hero centrado dentro de su columna y ticket a la derecha. */
@@ -199,6 +183,16 @@
   filter: none;
 }
 
+.lobby-screen__marquee-track span.lobby-screen__marquee-message--premiere {
+  color: #ff5364;
+  font-family: Impact, "Arial Narrow", sans-serif;
+  font-size: 1.08em;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-shadow: 0 0 0.25em rgb(255 62 82 / 24%);
+  transform: translateY(0.045em);
+}
+
 .lobby-screen__title--accent {
   background: linear-gradient(120deg, var(--amber) 10%, #ffd9a8 45%, var(--amber) 80%);
   background-size: 200% auto;
@@ -209,6 +203,17 @@
   animation: shimmerAmber 6s ease-in-out infinite;
   /* Reserva aire tras la tinta para que el último glifo no toque el borde. */
   padding-inline-end: 0.08em;
+}
+
+@keyframes marqueeEmojiPop {
+  from {
+    opacity: 0;
+    transform: translateY(5px) scale(0.65) rotate(-12deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0);
+  }
 }
 
 @keyframes shimmerAmber {

@@ -1,41 +1,5 @@
 
 
-.player-frame.player-frame--overlay-suppressed .player-frame__bottom-actions {
-  opacity: 0 !important;
-  /* Al ocultar por una reproducción solo debe desvanecerse; mover la barra
-     unos píxeles produce un salto perceptible al cambiar play/pausa. */
-  transform: translateY(0);
-  pointer-events: none;
-}
-
-/* El arrastre del volumen mantiene visibles los controles aunque otro evento
-   del reproductor intente ocultar el overlay durante el movimiento. */
-.player-frame.player-frame--volume-control-dragging .player-frame__bottom-actions {
-  opacity: 1 !important;
-  transform: translateY(0);
-  pointer-events: auto;
-}
-
-/* El range puede perder el foco y el hover durante un gesto táctil; el
-   estado explícito del arrastre mantiene la barra disponible hasta soltar. */
-.player-frame.player-frame--seek-control-dragging .player-frame__bottom-actions {
-  opacity: 1 !important;
-  transform: translateY(0);
-  pointer-events: auto;
-}
-
-/* El range nativo puede conservar :active aunque se pierda la captura del
-   puntero; mientras ese estado exista, la barra tampoco debe desaparecer. */
-.player-frame:has(.player-volume-group__input:active) .player-frame__bottom-actions {
-  opacity: 1 !important;
-  transform: translateY(0);
-  pointer-events: auto;
-}
-
-.player-frame.player-frame--no-content .player-progress-group__seek-input {
-  transition: none;
-}
-
 .player-controls-bar {
   display: flex;
   width: 100%;
@@ -102,19 +66,6 @@
   height: 16px;
 }
 
-.player-frame[data-control-style="line"] .player-progress-group .player-progress-group__time {
-  display: none;
-}
-
-.player-frame[data-control-style="line"] .player-progress-group__seek-input {
-  position: relative;
-  z-index: 2;
-  height: 14px;
-  width: calc(100% + 14px);
-  margin-left: -7px;
-  background: transparent;
-}
-
 .player-frame__gesture-indicator {
   position: absolute;
   z-index: 6;
@@ -148,18 +99,50 @@
   stroke-width: 1.8;
 }
 
-.player-frame__gesture-indicator[data-action="play"] .player-frame__gesture-icon--play,
-.player-frame__gesture-indicator[data-action="pause"] .player-frame__gesture-icon--pause,
-.player-frame__gesture-indicator[data-action^="volume-"] .player-frame__gesture-icon--volume {
-  display: block;
-}
-
 .player-frame__gesture-indicator[data-action^="volume-"]::after {
   position: absolute;
   bottom: 12px;
   content: attr(data-volume-label);
   font-size: 0.78rem;
   font-weight: 750;
+}
+
+.player-frame__gesture-indicator[data-action="play"] .player-frame__gesture-icon--play,
+.player-frame__gesture-indicator[data-action="pause"] .player-frame__gesture-icon--pause,
+.player-frame__gesture-indicator[data-action^="volume-"] .player-frame__gesture-icon--volume {
+  display: block;
+}
+
+.player-frame.player-frame--overlay-suppressed .player-frame__bottom-actions {
+  opacity: 0 !important;
+  /* Al ocultar por una reproducción solo debe desvanecerse; mover la barra
+     unos píxeles produce un salto perceptible al cambiar play/pausa. */
+  transform: translateY(0);
+  pointer-events: none;
+}
+
+/* El arrastre del volumen mantiene visibles los controles aunque otro evento
+   del reproductor intente ocultar el overlay durante el movimiento. */
+.player-frame.player-frame--volume-control-dragging .player-frame__bottom-actions {
+  opacity: 1 !important;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* El range puede perder el foco y el hover durante un gesto táctil; el
+   estado explícito del arrastre mantiene la barra disponible hasta soltar. */
+.player-frame.player-frame--seek-control-dragging .player-frame__bottom-actions {
+  opacity: 1 !important;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* El range nativo puede conservar :active aunque se pierda la captura del
+   puntero; mientras ese estado exista, la barra tampoco debe desaparecer. */
+.player-frame:has(.player-volume-group__input:active) .player-frame__bottom-actions {
+  opacity: 1 !important;
+  transform: translateY(0);
+  pointer-events: auto;
 }
 
 .player-frame[data-control-style="line"] .player-progress-group::before {
@@ -184,6 +167,23 @@
   transform: translateY(-50%) scaleY(1);
   transform-origin: center;
   transition: transform 180ms ease-out;
+}
+
+.player-frame.player-frame--no-content .player-progress-group__seek-input {
+  transition: none;
+}
+
+.player-frame[data-control-style="line"] .player-progress-group .player-progress-group__time {
+  display: none;
+}
+
+.player-frame[data-control-style="line"] .player-progress-group__seek-input {
+  position: relative;
+  z-index: 2;
+  height: 14px;
+  width: calc(100% + 14px);
+  margin-left: -7px;
+  background: transparent;
 }
 
 .player-frame[data-control-style="line"] .player-progress-group:has(.player-progress-group__seek-input:not(:disabled)):hover::before,

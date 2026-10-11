@@ -1,3 +1,40 @@
+
+@media (hover: none) and (pointer: coarse) {
+
+  /* En un reproductor apaisado bajo el chat interno se alinea con el botón
+     que lo abre y se despliega hacia su izquierda. Usa todo el alto real del
+     reproductor: la barra de controles no debe recortar ni capturar su zona
+     inferior. */
+  html.page-context--viewport-landscape body:not(.page-context--lobby) .player-frame:not(.mini-player-surface) > .player-chat {
+    --inside-chat-top-offset: 8px;
+    --player-chat-bottom-inset: 14px;
+  }
+
+  /* El chat interno conserva en landscape el mismo composer compacto que
+     usa el reproductor en portrait, en lugar de heredar el tamaño del chat
+     externo lateral. */
+
+  /* El dock lateral usa la misma cortina que escritorio: el borde derecho
+     queda anclado y el panel cambia su flex-basis desde ese borde. La grilla
+     apaisada anterior cambiaba la columna de golpe y hacía crecer el chat
+     desde la unión izquierda, además de dejar que sus hijos se recalcularan
+     durante el trayecto. */
+
+  /* Al abrir el teclado en el chat lateral, el viewport de layout se reduce.
+     Comprimir el workspace contra ese alto mantiene video y chat anclados a
+     la misma posición de página; el scroll automático de Chrome ya no tiene
+     que subir toda la sesión para encontrar el composer. */
+
+  /* El teclado puede abrirse mientras el overlay del reproductor está visible.
+     La clase conserva la transición de la barra y no captura punteros, por lo
+     que un toque sobre el video sigue llegando a fullscreen.js. */
+
+  /* Solo el landscape full-bleed móvil elimina el gutter exterior. La
+     variante de tablet conserva el marco separado y sus radios. */
+
+  /* Fullscreen debe ser una superficie fija del viewport visible. El topbar y
+     la toolbar siguen disponibles fuera de fullscreen, pero no consumen alto
+     del video cuando la pantalla apaisada queda limitada por el teclado. */}
 /* En landscape angosto el chat lateral conserva la composicion de escritorio.
    El modo vertical sigue usando la navegacion apilada definida en mobile.css. */
 @media (hover: none) and (pointer: coarse) {
@@ -26,8 +63,6 @@
      reproductor: la barra de controles no debe recortar ni capturar su zona
      inferior. */
   html.page-context--viewport-landscape body:not(.page-context--lobby) .player-frame:not(.mini-player-surface) > .player-chat {
-    --inside-chat-top-offset: 8px;
-    --player-chat-bottom-inset: 14px;
     top: var(--inside-chat-top-offset);
     right: 42px;
     bottom: var(--player-chat-bottom-inset);

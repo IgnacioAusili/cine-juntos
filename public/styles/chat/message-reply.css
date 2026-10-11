@@ -21,22 +21,6 @@
   transition: background 0.15s ease, border-color 0.15s ease;
 }
 
-.message__reply:hover {
-  background: rgba(255, 255, 255, 0.09);
-  border-left-color: var(--accent-2);
-}
-
-/* La marca del reply permanece a la izquierda también en mensajes propios. */
-.message.message--mine .message__reply {
-  border-left: 2px solid rgba(255, 255, 255, 0.28);
-  border-radius: 5px 5px 0 5px;
-  text-align: left;
-}
-
-.message.message--mine .message__reply:hover {
-  border-left-color: var(--accent-2);
-}
-
 .message__reply-name {
   font-size: 0.65rem;
   font-weight: 700;
@@ -51,4 +35,20 @@
   overflow: hidden;
   text-overflow: ellipsis;
   display: block;
+}
+
+/* La marca del reply permanece a la izquierda también en mensajes propios. */
+.message.message--mine .message__reply {
+  border-left: 2px solid rgba(255, 255, 255, 0.28);
+  border-radius: 5px 5px 0 5px;
+  text-align: left;
+}
+
+.message__reply:hover {
+  background: rgba(255, 255, 255, 0.09);
+  border-left-color: var(--accent-2);
+}
+
+.message.message--mine .message__reply:hover {
+  border-left-color: var(--accent-2);
 }

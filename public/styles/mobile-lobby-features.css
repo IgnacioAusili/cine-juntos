@@ -2,6 +2,33 @@
 
 @media (max-width: 680px) {
 
+  .lobby-screen__fields input[type="text"] {
+    --lobby-input-offset: 3px;
+  }
+
+  /* Cargar usa el estado nativo de presión: evita que JS y :hover compitan
+     durante una pulsación táctil prolongada. */
+
+  /* La toolbar es absoluta sobre el video y en una pantalla angosta crece a
+     dos filas. Reservamos su alto real para que no tape las acciones de sala. */
+
+  /* El header conserva el gutter lateral; video y chat ocupan todo el ancho
+     disponible y llegan hasta el borde inferior de la pantalla. */
+
+  /* El dock lateral usa una sola superficie de viewport. Limitar el shell a
+     esa superficie deja que el workspace ocupe lo que queda tras el header y
+     la barra de sala, sin sumar otro viewport debajo de ellos. */
+
+  /* Cuando el chat está contraído, no reservar su segunda fila. En móvil el
+     dock lateral también se apila debajo del video, por lo que ambos docks
+     deben recuperar todo el alto disponible de la pantalla. */
+
+  /* En una ventana angosta el reproductor y el dock lateral comparten el
+     alto del viewport realmente visible, no solo el espacio restante bajo
+     el header. El chat se monta sobre esa misma superficie. */}
+
+@media (max-width: 680px) {
+
   .lobby-screen__feature-text strong {
     font-size: 0.72rem;
     line-height: 1.15;
@@ -55,7 +82,6 @@
   }
 
   .lobby-screen__fields input[type="text"] {
-    --lobby-input-offset: 3px;
     width: calc(100% - var(--lobby-input-offset));
     transform: translateX(var(--lobby-input-offset));
   }

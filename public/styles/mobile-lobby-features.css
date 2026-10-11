@@ -109,21 +109,21 @@
 
   /* Cargar usa el estado nativo de presión: evita que JS y :hover compitan
      durante una pulsación táctil prolongada. */
-  .session-toolbar-body .button.primary:hover:not(:active):not(:disabled) {
+  .session-toolbar-body .button.button--primary:hover:not(:active):not(:disabled) {
     background: #d4762a;
     border-color: rgba(240, 140, 58, 0.3);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
     transform: none;
   }
 
-  .session-toolbar-body .button.primary {
+  .session-toolbar-body .button.button--primary {
     /* Al liberar fuera del botón no debe interpolar un frame oscuro entre
        :active y el estado normal. */
     transition: none;
   }
 
-  .session-toolbar-body .button.primary:active,
-  .session-toolbar-body .button.primary:active:hover {
+  .session-toolbar-body .button.button--primary:active,
+  .session-toolbar-body .button.button--primary:active:hover {
     background: linear-gradient(180deg, #ffb070, var(--amber));
     border-color: rgba(240, 140, 58, 0.32);
     box-shadow:

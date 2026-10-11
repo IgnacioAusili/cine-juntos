@@ -1,12 +1,12 @@
 
 
 .mini-player-surface .overlay-message-form .input-wrapper .emoji-trigger > svg,
-.mini-player-surface .overlay-message-form .input-wrapper .send > svg:not(.composer-progress-ring) {
+.mini-player-surface .overlay-message-form .input-wrapper .icon-button--send > svg:not(.composer-progress-ring) {
   width: 15px;
   height: 15px;
 }
 
-.mini-player-surface .overlay-message-form .input-wrapper .send > svg.composer-progress-ring {
+.mini-player-surface .overlay-message-form .input-wrapper .icon-button--send > svg.composer-progress-ring {
   width: 25px;
   height: 25px;
 }

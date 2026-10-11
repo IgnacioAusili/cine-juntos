@@ -1,17 +1,17 @@
-import { dom } from "../core/dom.js?v=20261010-file-size-refactor-02";
+import { dom } from "../core/dom.js?v=20261011-chat-controls-repair-01";
 import {
   state,
   getDisplayName,
   logEvent,
-} from "../core/state.js?v=20261010-file-size-refactor-02";
-import { MAX_ROOM_PARTICIPANTS } from "../core/utils.js?v=20261010-file-size-refactor-02";
-import { createTransport } from "../services/transport.js?v=20261010-file-size-refactor-02";
+} from "../core/state.js?v=20261011-chat-controls-repair-01";
+import { MAX_ROOM_PARTICIPANTS } from "../core/utils.js?v=20261011-chat-controls-repair-01";
+import { createTransport } from "../services/transport.js?v=20261011-chat-controls-repair-01";
 import {
   renderMembers,
   renderPresence,
-} from "./presence.js?v=20261011-chat-ui-fixes-03";
-import { setConnection } from "./icons-tooltips.js?v=20261011-chat-ui-fixes-03";
-import { syncComponentAspectLayoutNow } from "./chat/component-aspect-layout.js?v=20261010-file-size-refactor-02";
+} from "./presence.js?v=20261011-chat-controls-repair-01";
+import { setConnection } from "./icons-tooltips.js?v=20261011-chat-controls-repair-01";
+import { syncComponentAspectLayoutNow } from "./chat/component-aspect-layout.js?v=20261011-chat-controls-repair-01";
 import {
   getUserScrollIntentVersion,
   setHostBadge,
@@ -19,8 +19,8 @@ import {
   showLobby,
   showSession,
   watchRoomEntryVideoFocus,
-} from "./session-ui.js?v=20261010-file-size-refactor-02";
-import { handleRemoteState } from "./player/index.js?v=20261011-overlay-scroll-top-01";
+} from "./session-ui.js?v=20261011-chat-controls-repair-01";
+import { handleRemoteState } from "./player/index.js?v=20261011-chat-controls-repair-01";
 import {
   beginSystemMessageHydration,
   finishSystemMessageHydration,
@@ -31,23 +31,23 @@ import {
   resetChatHistoryPaging,
   fillChatHistoryViewport,
   setInsideChatVisible,
-} from "./chat/index.js?v=20261011-overlay-scroll-top-01";
+} from "./chat/index.js?v=20261011-chat-controls-repair-01";
 import {
   getRoomTabLimitConflictCount,
   writeActiveTabRecord,
-} from "./room-access.js?v=20261010-file-size-refactor-02";
+} from "./room-access.js?v=20261011-chat-controls-repair-01";
 import {
   rememberLastRoom,
   sanitizeRoomInput,
   syncJoinRoomButtonState,
-} from "./room-input.js?v=20261010-file-size-refactor-02";
+} from "./room-input.js?v=20261011-chat-controls-repair-01";
 import {
   beginRoomOperation,
   isRoomOperationCurrent,
   updateUrlRoom,
-} from "./room-navigation.js?v=20261010-file-size-refactor-02";
-import { setInviteCopyFeedback } from "./room-invite.js?v=20261010-file-size-refactor-02";
-import { resetRoomPlayerState } from "./room-player-state.js?v=20261010-file-size-refactor-02";
+} from "./room-navigation.js?v=20261011-chat-controls-repair-01";
+import { setInviteCopyFeedback } from "./room-invite.js?v=20261011-chat-controls-repair-01";
+import { resetRoomPlayerState } from "./room-player-state.js?v=20261011-chat-controls-repair-01";
 
 async function closeTransport(transport) {
   try {

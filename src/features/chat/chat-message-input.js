@@ -1,19 +1,19 @@
-import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
-import { state, getDisplayName, getTransportNow, logEvent } from "../../core/state.js?v=20261010-file-size-refactor-02";
-import { MAX_CHARS, replaceEmojiShortcodes } from "../../core/utils.js?v=20261010-file-size-refactor-02";
-import { createRandomId } from "../../core/random-id.js?v=20261010-file-size-refactor-02";
-import { setSyncStatus } from "../session-ui.js?v=20261010-file-size-refactor-02";
-import { markParticipantActive } from "../presence.js?v=20261011-chat-ui-fixes-03";
-import { clearReplyTarget } from "./chat-reply.js?v=20261011-chat-ui-fixes-03";
-import { renderMessage } from "./chat-render.js?v=20261011-overlay-scroll-top-01";
-import { completeAutoOpenedChatResponse } from "./chat-layout.js?v=20261011-chat-ui-fixes-03";
-import { queuePinnedChatScrollSync } from "./chat-scroll-sync.js?v=20261011-chat-interaction-fixes-01";
-import { focusChatInput } from "./chat-input-focus.js?v=20261010-file-size-refactor-02";
-import { compressImageBase64, renderImagePreview, clearPendingImage } from "./image-compress.js?v=20261011-chat-interaction-fixes-01";
-import { isMobileLayout, logMobileInteraction } from "./chat-input-debug.js?v=20261010-file-size-refactor-02";
-import { normalizeEmojiShortcodesInput } from "./emoji-picker.js?v=20261010-file-size-refactor-02";
-import { getSpamCooldownRemaining, hashImageFingerprint, registerMessageForSpamCheck, updateCharCounter, updateSpamCooldownButtons } from "./chat-spam-guard.js?v=20261011-chat-ui-fixes-03";
-import { autoResizeMessageInput } from "./chat-input-layout.js?v=20261011-chat-interaction-fixes-01";
+import { dom } from "../../core/dom.js?v=20261011-chat-controls-repair-01";
+import { state, getDisplayName, getTransportNow, logEvent } from "../../core/state.js?v=20261011-chat-controls-repair-01";
+import { MAX_CHARS, replaceEmojiShortcodes } from "../../core/utils.js?v=20261011-chat-controls-repair-01";
+import { createRandomId } from "../../core/random-id.js?v=20261011-chat-controls-repair-01";
+import { setSyncStatus } from "../session-ui.js?v=20261011-chat-controls-repair-01";
+import { markParticipantActive } from "../presence.js?v=20261011-chat-controls-repair-01";
+import { clearReplyTarget } from "./chat-reply.js?v=20261011-chat-controls-repair-01";
+import { renderMessage } from "./chat-render.js?v=20261011-chat-controls-repair-01";
+import { completeAutoOpenedChatResponse } from "./chat-layout.js?v=20261011-chat-controls-repair-01";
+import { queuePinnedChatScrollSync } from "./chat-scroll-sync.js?v=20261011-chat-controls-repair-01";
+import { focusChatInput } from "./chat-input-focus.js?v=20261011-chat-controls-repair-01";
+import { compressImageBase64, renderImagePreview, clearPendingImage } from "./image-compress.js?v=20261011-chat-controls-repair-01";
+import { isMobileLayout, logMobileInteraction } from "./chat-input-debug.js?v=20261011-chat-controls-repair-01";
+import { normalizeEmojiShortcodesInput } from "./emoji-picker.js?v=20261011-chat-controls-repair-01";
+import { getSpamCooldownRemaining, hashImageFingerprint, registerMessageForSpamCheck, updateCharCounter, updateSpamCooldownButtons } from "./chat-spam-guard.js?v=20261011-chat-controls-repair-01";
+import { autoResizeMessageInput } from "./chat-input-layout.js?v=20261011-chat-controls-repair-01";
 
 export function sendMessage(text, attachedImage) {
   if (!state.session.activeRoom || !state.session.transport) {

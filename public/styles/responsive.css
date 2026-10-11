@@ -80,7 +80,7 @@
     width: calc(100% - 8px);
   }
 
-  .session-toolbar-body .button.primary {
+  .session-toolbar-body .button.button--primary {
     width: 100%;
     justify-content: center;
   }

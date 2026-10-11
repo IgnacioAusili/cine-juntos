@@ -1,30 +1,30 @@
-import { dom } from "../core/dom.js?v=20261010-file-size-refactor-02";
-import { renderDisplayName, renderMembers, rememberParticipant, renderPresence, cancelIdentityEditing } from "./presence-members.js?v=20261010-file-size-refactor-02";
-export { renderMembers, rememberParticipant, renderPresence } from "./presence-members.js?v=20261010-file-size-refactor-02";
-import { upsertParticipantRecord, markParticipantActive } from "./presence-activity.js?v=20261010-file-size-refactor-02";
-export { markParticipantActive } from "./presence-activity.js?v=20261010-file-size-refactor-02";
-import { syncNameInputWidth } from "./presence-name-layout.js?v=20261010-file-size-refactor-02";
-export { syncNameInputWidth } from "./presence-name-layout.js?v=20261010-file-size-refactor-02";
+import { dom } from "../core/dom.js?v=20261011-chat-controls-repair-01";
+import { renderDisplayName, renderPresence } from "./presence-members.js?v=20261011-chat-controls-repair-01";
+export { renderMembers, rememberParticipant, renderPresence } from "./presence-members.js?v=20261011-chat-controls-repair-01";
+import { upsertParticipantRecord } from "./presence-activity.js?v=20261011-chat-controls-repair-01";
+export { markParticipantActive } from "./presence-activity.js?v=20261011-chat-controls-repair-01";
+import { syncNameInputWidth } from "./presence-name-layout.js?v=20261011-chat-controls-repair-01";
+export { syncNameInputWidth } from "./presence-name-layout.js?v=20261011-chat-controls-repair-01";
 import {
   state,
   getDisplayName,
   logEvent,
-} from "../core/state.js?v=20261010-file-size-refactor-02";
+} from "../core/state.js?v=20261011-chat-controls-repair-01";
 import {
   DISPLAY_NAME_MAX_LENGTH,
   DISPLAY_NAME_MIN_LENGTH,
   NAME_CHANGE_LIMIT,
   normalizeDisplayName,
-} from "../core/name-policy.js?v=20261010-file-size-refactor-02";
-import { makeGuestName, makeParticipantLabel } from "../core/utils.js?v=20261010-file-size-refactor-02";
+} from "../core/name-policy.js?v=20261011-chat-controls-repair-01";
+import { makeGuestName } from "../core/utils.js?v=20261011-chat-controls-repair-01";
 import {
   hideTooltip,
   setControlIcon,
-} from "./icons-tooltips.js?v=20261011-chat-ui-fixes-03";
+} from "./icons-tooltips.js?v=20261011-chat-controls-repair-01";
 import {
   isTouchPointer,
   TOUCH_LONG_PRESS_DELAY_MS,
-} from "../core/touch-interactions.js?v=20261010-file-size-refactor-02";
+} from "../core/touch-interactions.js?v=20261011-chat-controls-repair-01";
 
 // El heartbeat llega cada 10 s. La ventana anterior de 12 s dejaba solo
 // 2 s para tolerar latencia o una actualización demorada de Firebase, lo
@@ -33,7 +33,6 @@ import {
 // limpiándose por el timeout del transporte.
 const CONFIRM_NAME_HOLD_MOVE_TOLERANCE_PX = 10;
 
-let activityRefreshTimer = null;
 let nameInputResizeObserver = null;
 let confirmNameLongPressTimer = null;
 let confirmNameLongPressPointerId = null;
@@ -41,8 +40,6 @@ let confirmNameLongPressStart = null;
 let suppressNextConfirmNameClick = false;
 let suppressNextConfirmNameClickResetTimer = null;
 let nameCommitRevealTimer = null;
-const recentActivityByParticipantId = new Map();
-
 function getPendingDisplayName() {
   return normalizeDisplayName(dom.nameInput?.value);
 }
@@ -191,6 +188,118 @@ export function updateDisplayName(value, sourceInput, { allowLobbyEdit = false }
   renderPresence();
 }
 
+function clearNameCommitReveal(editor = dom.chatNameField) {
+  if (nameCommitRevealTimer !== null) {
+    window.clearTimeout(nameCommitRevealTimer);
+    nameCommitRevealTimer = null;
+  }
+  editor?.classList.remove("name-commit-stable", "name-commit-reveal");
+}
+
+function setIdentityEditing(
+  isEditing,
+  { preserveCommittedName = false, animateReveal = false } = {},
+) {
+  const editor = dom.chatNameField;
+  if (!editor) return;
+  if (isEditing && state.chat.nameChangeCount >= NAME_CHANGE_LIMIT) return;
+
+  if (
+    isEditing
+    && (editor.classList.contains("name-commit-stable")
+      || editor.classList.contains("name-commit-reveal"))
+  ) {
+    clearNameCommitReveal(editor);
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => setIdentityEditing(true));
+    });
+    return;
+  }
+
+  editor.classList.toggle("name-commit-stable", !isEditing && preserveCommittedName);
+  editor.classList.toggle("name-commit-reveal", !isEditing && preserveCommittedName && animateReveal);
+  editor.dataset.editing = isEditing ? "true" : "false";
+  editor.parentElement?.setAttribute("data-editing", isEditing ? "true" : "false");
+
+  if (!isEditing) {
+    if (preserveCommittedName) {
+      if (animateReveal) {
+        nameCommitRevealTimer = window.setTimeout(() => {
+          nameCommitRevealTimer = null;
+          if (editor.dataset.editing !== "true") clearNameCommitReveal(editor);
+        }, 780);
+      } else {
+        window.requestAnimationFrame(() => {
+          window.requestAnimationFrame(() => editor.classList.remove("name-commit-stable"));
+        });
+      }
+    }
+    dom.nameInput.value = getDisplayName();
+    syncNameInputWidth();
+    syncConfirmNameButtonState();
+    return;
+  }
+
+  dom.nameInput.value = getDisplayName();
+  dom.nameInput.setCustomValidity("");
+  syncConfirmNameButtonState();
+  syncNameInputWidth();
+  window.requestAnimationFrame(() => {
+    syncNameInputWidth();
+    dom.nameInput.focus();
+    dom.nameInput.select();
+  });
+}
+
+export function cancelIdentityEditing() {
+  if (dom.chatNameField?.dataset.editing !== "true") return;
+  delete dom.nameInput.dataset.commitOnBlur;
+  setIdentityEditing(false, { preserveCommittedName: true });
+  dom.nameInput.blur();
+}
+
+function commitDisplayNameChange() {
+  delete dom.nameInput.dataset.commitOnBlur;
+  if (state.chat.nameChangeCount >= NAME_CHANGE_LIMIT) {
+    setIdentityEditing(false);
+    return;
+  }
+
+  const previousName = getDisplayName();
+  const requestedName = getPendingDisplayName();
+  if (requestedName === previousName) {
+    setIdentityEditing(false, { preserveCommittedName: true });
+    return;
+  }
+  if (requestedName.length < DISPLAY_NAME_MIN_LENGTH) {
+    dom.nameInput.setCustomValidity("");
+    if (dom.nameInput) dom.nameInput.value = previousName;
+    if (dom.lobbyNameInput) dom.lobbyNameInput.value = previousName;
+    syncNameInputWidth();
+    renderDisplayName(previousName);
+    renderPresence();
+    syncConfirmNameButtonState();
+    setIdentityEditing(false);
+    return;
+  }
+
+  dom.nameInput.setCustomValidity("");
+  updateDisplayName(requestedName, dom.nameInput);
+  const confirmedName = getDisplayName();
+  dom.nameInput.value = confirmedName;
+  syncNameInputWidth();
+  if (dom.lobbyNameInput) dom.lobbyNameInput.value = confirmedName;
+  const nameChanged = confirmedName !== previousName;
+  if (nameChanged) {
+    state.session.transport?.updateMember?.(confirmedName);
+    state.chat.nameChangeCount += 1;
+    logEvent("user", `Nombre actualizado: ${confirmedName}`);
+  }
+  syncEditNameButtonState();
+  syncConfirmNameButtonState();
+  setIdentityEditing(false, { preserveCommittedName: true, animateReveal: nameChanged });
+}
+
 export function wireIdentityEvents() {
   renderDisplayName();
   dom.nameInput.value = getDisplayName();
@@ -266,5 +375,3 @@ export function wireIdentityEvents() {
     nameInputResizeObserver.observe(chatTools);
   }
 }
-
-export { cancelIdentityEditing };

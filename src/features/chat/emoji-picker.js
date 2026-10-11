@@ -1,9 +1,9 @@
-import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
-import { state } from "../../core/state.js?v=20261010-file-size-refactor-02";
-import { EMOJI_PICKER_ITEMS, replaceEmojiShortcodes } from "../../core/utils.js?v=20261010-file-size-refactor-02";
-import { focusChatInput } from "./chat-input-focus.js?v=20261010-file-size-refactor-02";
-import { isMobileLayout, logMobileInteraction } from "./chat-input-debug.js?v=20261010-file-size-refactor-02";
-import { EMOJI_PAGE_COLUMNS, isLandscapeKeyboardEmojiLayout, positionEmojiPopover, rebuildEmojiPopoverPages, syncEmojiPopoverLayout } from "./emoji-picker-layout.js?v=20261010-file-size-refactor-02";
+import { dom } from "../../core/dom.js?v=20261011-chat-controls-repair-01";
+import { state } from "../../core/state.js?v=20261011-chat-controls-repair-01";
+import { EMOJI_PICKER_ITEMS, replaceEmojiShortcodes } from "../../core/utils.js?v=20261011-chat-controls-repair-01";
+import { focusChatInput } from "./chat-input-focus.js?v=20261011-chat-controls-repair-01";
+import { isMobileLayout, logMobileInteraction } from "./chat-input-debug.js?v=20261011-chat-controls-repair-01";
+import { EMOJI_PAGE_COLUMNS, positionEmojiPopover } from "./emoji-picker-layout.js?v=20261011-chat-controls-repair-01";
 
 const EMOJI_POPOVER_TRANSITION_MS = 150;
 
@@ -90,7 +90,7 @@ function cancelEmojiPopoverHide() {
 
 function showEmojiPopover(popover) {
   cancelEmojiPopoverHide();
-  const track = getEmojiPopoverTrack(popover);
+  const track = popover.querySelector(".emoji-popover-track");
   if (track) track.scrollLeft = 0;
   popover.hidden = false;
   popover.classList.remove("is-emoji-popover-closing");

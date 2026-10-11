@@ -24,7 +24,7 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap"
     />
     <link rel="icon" href="./public/favicon.svg" type="image/svg+xml" />
-<link rel="stylesheet" href="./public/styles.css?v=20261011-overlay-selector-size-01" />
+<link rel="stylesheet" href="./public/styles.css?v=20261011-chat-controls-repair-01" />
   </head>
   <body class="is-lobby">
     <div class="app-shell">
@@ -241,15 +241,15 @@
                 </div>
                 <div class="lobby-actions">
                   <button
-                    class="button primary"
+                    class="button button--primary"
                     id="createRoomButton"
                     type="button"
                     title="Crear una sala nueva"
                     data-tooltip="Crear una sala nueva"
                   >
                     <span data-lucide="plus"></span>
-                    <span class="button-label">Crear sala</span>
-                    <span class="button-spinner" aria-hidden="true"></span>
+                    <span class="button__label">Crear sala</span>
+                    <span class="button__spinner" aria-hidden="true"></span>
                   </button>
                   <button
                     class="button"
@@ -259,8 +259,8 @@
                     data-tooltip="Entrar con el codigo o enlace (Enter)"
                   >
                     <span data-lucide="log-in"></span>
-                    <span class="button-label">Entrar</span>
-                    <span class="button-spinner" aria-hidden="true"></span>
+                    <span class="button__label">Entrar</span>
+                    <span class="button__spinner" aria-hidden="true"></span>
                   </button>
                 </div>
               </div>
@@ -314,15 +314,15 @@
                   />
                 </div>
                 <button
-                  class="button primary"
+                  class="button button--primary"
                   id="loadVideoButton"
                   type="button"
                   title="Cargar el video en la sala"
                   data-tooltip="Cargar el video en la sala"
                 >
                   <span data-lucide="play-square"></span>
-                  <span class="button-label">Cargar</span>
-                  <span class="button-spinner" aria-hidden="true"></span>
+                  <span class="button__label">Cargar</span>
+                  <span class="button__spinner" aria-hidden="true"></span>
                 </button>
               </div>
             </section>
@@ -375,7 +375,7 @@
 
               <div class="player-actions" aria-label="Controles de reproductor">
                   <button
-                    class="icon-button player-tool compact-tool"
+                    class="icon-button icon-button--compact-tool player-tool"
                     id="playerChatToggleButton"
                     type="button"
                     aria-label="Mostrar chat"
@@ -658,7 +658,7 @@
                     </div>
                   </div>
                     <button
-                      class="icon-button ghost emoji-trigger"
+                      class="icon-button icon-button--ghost emoji-trigger"
                       id="overlayEmojiButton"
                       type="button"
                       aria-label="Abrir emojis"
@@ -667,7 +667,7 @@
                     >
                       <span data-lucide="smile-plus"></span>
                     </button>
-                    <button class="icon-button send" id="overlayMessageSend" type="submit" aria-label="Enviar mensaje" data-tooltip="Enviar mensaje (Enter)">
+                    <button class="icon-button icon-button--send" id="overlayMessageSend" type="submit" aria-label="Enviar mensaje" data-tooltip="Enviar mensaje (Enter)">
                       <svg class="composer-progress-ring" viewBox="0 0 44 44" aria-hidden="true" focusable="false">
                         <circle class="composer-progress-track" cx="22" cy="22" r="18.5" pathLength="100"></circle>
                         <circle class="composer-progress-value" cx="22" cy="22" r="18.5" pathLength="100"></circle>
@@ -785,7 +785,7 @@
                   </span>
                 </button>
                 <button
-                  class="icon-button dock-button"
+                  class="icon-button icon-button--dock"
                   id="dockChatButton"
                   type="button"
                   aria-label="Mover chat"
@@ -827,7 +827,7 @@
                   </div>
                 </div>
                 <button
-                  class="icon-button ghost emoji-trigger"
+                  class="icon-button icon-button--ghost emoji-trigger"
                   id="messageEmojiButton"
                   type="button"
                   aria-label="Abrir emojis"
@@ -836,7 +836,7 @@
                 >
                   <span data-lucide="smile-plus"></span>
                 </button>
-                <button class="icon-button send" id="mainMessageSend" type="submit" aria-label="Enviar mensaje" data-tooltip="Enviar mensaje (Enter)">
+                <button class="icon-button icon-button--send" id="mainMessageSend" type="submit" aria-label="Enviar mensaje" data-tooltip="Enviar mensaje (Enter)">
                   <svg class="composer-progress-ring" viewBox="0 0 44 44" aria-hidden="true" focusable="false">
                     <circle class="composer-progress-track" cx="22" cy="22" r="18.5" pathLength="100"></circle>
                     <circle class="composer-progress-value" cx="22" cy="22" r="18.5" pathLength="100"></circle>
@@ -917,7 +917,7 @@
           <button
             id="mobileDebugCopyButton"
             type="button"
-            class="button primary mobile-debug-copy-button"
+            class="button button--primary mobile-debug-copy-button"
             data-copy-state="idle"
             aria-label="Copiar"
           >
@@ -1074,7 +1074,7 @@
     <script src="./public/firebase-config.js?v=20261010-file-size-refactor-02"></script>
     <script type="module" src="./src/features/chat/image-lightbox.js?v=20261010-file-size-refactor-02"></script>
     <script type="module" src="./src/features/tooltip-page-lifecycle.js?v=20261011-chat-ui-fixes-03"></script>
-    <script type="module" src="./src/main.js?v=20261011-overlay-scroll-top-01"></script>
+    <script type="module" src="./src/main.js?v=20261011-chat-controls-repair-01"></script>
     <script type="module" src="./src/features/chat/chat-input-layout.js?v=20261011-chat-interaction-fixes-01"></script>
     <script type="module" src="./src/features/chat/component-aspect-layout.js?v=20261010-file-size-refactor-02"></script>
     <script type="module" src="./src/features/chat/switch-pointer-glow.js?v=20261010-file-size-refactor-02"></script>

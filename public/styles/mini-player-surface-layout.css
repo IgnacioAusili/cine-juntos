@@ -192,7 +192,7 @@
 
 .mini-player-surface .overlay-message-form .input-wrapper .icon-button,
 .mini-player-surface .overlay-message-form .input-wrapper .emoji-trigger,
-.mini-player-surface .overlay-message-form .input-wrapper .send {
+.mini-player-surface .overlay-message-form .input-wrapper .icon-button--send {
   width: 24px;
   min-height: 24px;
   height: 24px;
@@ -210,7 +210,7 @@
   color: rgba(255, 255, 255, 0.68);
 }
 
-.mini-player-surface .overlay-message-form .input-wrapper .send {
+.mini-player-surface .overlay-message-form .input-wrapper .icon-button--send {
   right: 3px;
   top: 50%;
   bottom: auto;

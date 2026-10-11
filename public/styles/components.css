@@ -1,7 +1,7 @@
 @import url("./components/app-status.css?v=20261010-file-size-refactor-02");
 @import url("./components/room-chip.css?v=20261010-file-size-refactor-02");
 @import url("./components/host-badge.css?v=20261010-file-size-refactor-02");
-@import url("./components/buttons.css?v=20261010-file-size-refactor-02");
+@import url("./components/buttons.css?v=20261011-itcss-bem-oocss-02");
 @import url("./components/chat-collapse-handle.css?v=20261010-file-size-refactor-02");
 @import url("./components/chat-collapse-handle-layout.css?v=20261010-file-size-refactor-02");
 @import url("./components/chat-collapse-handle-visual.css?v=20261010-file-size-refactor-02");
@@ -12,4 +12,4 @@
 @import url("./components/emoji-popover.css?v=20261010-file-size-refactor-02");
 @import url("./components/tooltip-layer.css?v=20261010-file-size-refactor-02");
 @import url("./components/dialogs.css?v=20261010-file-size-refactor-02");
-@import url("./components/mobile-debug.css?v=20261010-file-size-refactor-02");
+@import url("./components/mobile-debug.css?v=20261011-itcss-bem-oocss-02");

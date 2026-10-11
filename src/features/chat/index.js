@@ -2,34 +2,34 @@ export {
   buildEmojiPicker,
   updateCharCounter,
   sendMessage,
-} from "./chat-input.js?v=20261011-overlay-scroll-top-01";
+} from "./chat-input.js?v=20261011-chat-controls-repair-01";
 export {
   beginSystemMessageHydration,
   finishSystemMessageHydration,
   renderMessage,
-} from "./chat-render.js?v=20261011-overlay-scroll-top-01";
+} from "./chat-render.js?v=20261011-chat-controls-repair-01";
 export {
   fillChatHistoryViewport,
   loadOlderChatHistory,
   resetChatHistoryPaging,
-} from "./chat-history.js?v=20261011-overlay-scroll-top-01";
+} from "./chat-history.js?v=20261011-chat-controls-repair-01";
 export {
   clearReplyTarget,
   renderReplyPreview,
   scrollToMessage,
   setReplyTarget,
-} from "./chat-reply.js?v=20261011-chat-ui-fixes-03";
-export { sendVideoEventMessage } from "./chat-system-messages.js?v=20261011-overlay-scroll-top-01";
+} from "./chat-reply.js?v=20261011-chat-controls-repair-01";
+export { sendVideoEventMessage } from "./chat-system-messages.js?v=20261011-chat-controls-repair-01";
 export {
   checkScrollPosition,
   resetInsideUnread,
   resetPageUnread,
-} from "./unread-counters.js?v=20261011-chat-interaction-fixes-01";
+} from "./unread-counters.js?v=20261011-chat-controls-repair-01";
 export {
   copyMessageText,
   hideMessageMenu,
   showMessageMenu,
-} from "./message-menu.js?v=20261010-file-size-refactor-02";
+} from "./message-menu.js?v=20261011-chat-controls-repair-01";
 export {
   getPersistedInsideChatStyle,
   restoreExternalChatCollapsed,
@@ -42,6 +42,6 @@ export {
   setInsideChatVisible,
   syncChatAutoExpandControls,
   updateCollapseButton,
-} from "./chat-layout.js?v=20261011-chat-ui-fixes-03";
+} from "./chat-layout.js?v=20261011-chat-controls-repair-01";
 
-export { wireChatEvents } from "./chat-events.js?v=20261011-overlay-scroll-top-01";
+export { wireChatEvents } from "./chat-events.js?v=20261011-chat-controls-repair-01";

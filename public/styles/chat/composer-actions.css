@@ -1,7 +1,7 @@
 
 
 .chat-area .input-wrapper .emoji-trigger,
-.chat-area .input-wrapper .send {
+.chat-area .input-wrapper .icon-button--send {
   position: static;
   transform: none;
   flex: 0 0 32px;
@@ -25,7 +25,7 @@
   color: var(--text);
 }
 
-.chat-area .input-wrapper .send {
+.chat-area .input-wrapper .icon-button--send {
   position: relative;
   flex: 0 0 32px;
   width: 32px;
@@ -42,7 +42,7 @@
   isolation: isolate;
 }
 
-.chat-area .input-wrapper .send > svg.composer-progress-ring {
+.chat-area .input-wrapper .icon-button--send > svg.composer-progress-ring {
   position: absolute;
   left: calc(50% + 1px);
   top: calc(50% - 1px);
@@ -92,11 +92,11 @@
   filter: grayscale(0.7);
 }
 
-.message-form .send[data-spam-cooldown="true"] {
+.message-form .icon-button--send[data-spam-cooldown="true"] {
   pointer-events: auto;
 }
 
-.chat-area .input-wrapper .send > * {
+.chat-area .input-wrapper .icon-button--send > * {
   position: absolute;
   left: 50%;
   top: 50%;
@@ -104,18 +104,18 @@
   z-index: 1;
 }
 
-.chat-area .input-wrapper .send > svg:not(.composer-progress-ring) {
+.chat-area .input-wrapper .icon-button--send > svg:not(.composer-progress-ring) {
   width: 18px;
   height: 18px;
   display: block;
 }
 
-.icon-button.send {
+.icon-button--send {
   border-color: rgba(47, 184, 164, 0.35);
   background: var(--accent-2);
   color: #071412;
 }
 
-.chat-area .input-wrapper .send:disabled {
+.chat-area .input-wrapper .icon-button--send:disabled {
   opacity: 0.9;
 }

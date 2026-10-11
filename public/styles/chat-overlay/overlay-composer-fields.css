@@ -83,7 +83,7 @@
 }
 
 .overlay-message-form .input-wrapper[data-expanded="true"] .icon-button,
-.overlay-message-form .input-wrapper[data-expanded="true"] .send {
+.overlay-message-form .input-wrapper[data-expanded="true"] .icon-button--send {
   margin-top: 0;
 }
 
@@ -201,7 +201,7 @@
   opacity: 0.82;
 }
 
-.overlay-message-form .input-wrapper .send {
+.overlay-message-form .input-wrapper .icon-button--send {
   position: absolute;
   right: 6px;
   bottom: 2px;

@@ -9,7 +9,7 @@
   transform: none;
 }
 
-.player-frame .overlay-message-form .input-wrapper .send {
+.player-frame .overlay-message-form .input-wrapper .icon-button--send {
   position: relative;
   right: auto;
   bottom: auto;
@@ -22,7 +22,7 @@
   padding-right: 6px;
 }
 
-.overlay-message-form .input-wrapper .send > svg.composer-progress-ring {
+.overlay-message-form .input-wrapper .icon-button--send > svg.composer-progress-ring {
   position: absolute;
   left: calc(50% + 1px);
   top: calc(50% - 1px);
@@ -71,15 +71,15 @@
   filter: grayscale(0.7);
 }
 
-.overlay-message-form .send[data-spam-cooldown="true"] {
+.overlay-message-form .icon-button--send[data-spam-cooldown="true"] {
   pointer-events: auto;
 }
 
-.overlay-message-form .input-wrapper .send:hover {
+.overlay-message-form .input-wrapper .icon-button--send:hover {
   opacity: 0.9;
 }
 
-.overlay-message-form .input-wrapper .send > * {
+.overlay-message-form .input-wrapper .icon-button--send > * {
   position: absolute;
   left: 50%;
   top: 50%;
@@ -87,12 +87,12 @@
   z-index: 1;
 }
 
-.overlay-message-form .input-wrapper .send > svg:not(.composer-progress-ring) {
+.overlay-message-form .input-wrapper .icon-button--send > svg:not(.composer-progress-ring) {
   width: 18px;
   height: 18px;
   display: block;
 }
 
-.overlay-message-form .input-wrapper .send:disabled {
+.overlay-message-form .input-wrapper .icon-button--send:disabled {
   opacity: 0.9;
 }

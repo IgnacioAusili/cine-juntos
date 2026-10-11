@@ -24,6 +24,14 @@ CAPAS Y RESPONSABILIDADES ACTUALES
 - `public/styles.css`: entrada CSS; `public/styles/` contiene estilos por dominio, componente y variante.
 - Los includes HTML solo se resuelven antes de publicar; el navegador recibe una unica pagina estatica.
 
+ARQUITECTURA CSS: ITCSS, BEM Y OOCSS
+- ITCSS ordena `public/styles.css` desde tokens/configuracion y estilos genericos, a objetos de layout, componentes, estados/responsive y overrides finales. El orden efectivo de imports se conserva porque define la cascada.
+- BEM es la convencion para clases de componentes nuevas o migradas: bloque (`button`), elemento con `__` (`button__label`) y modificador con `--` (`button--primary`). Los modificadores se agregan junto con la clase del bloque.
+- OOCSS separa estructura reutilizable de apariencia. El componente de botones muestra esta separacion en `components/button-layout.css` y `components/button-skin.css`.
+- La migracion de clases existentes se hace por componente y actualiza en conjunto CSS, HTML fuente y referencias JavaScript.
+- El dialogo dinamico de carga conserva temporalmente el alias `.button.primary`; no crear usos nuevos y retirarlo cuando se migre su toggle JavaScript con toda su cadena de cache-burst.
+- Las hojas siguen divididas por dominio y responsabilidad; los agregadores conservan imports anidados y su orden.
+
 REGLAS DE DEPENDENCIA
 - `main.js` compone la app; los modulos no deben importar el arranque para coordinarse.
 - Cada slice puede exponer su API publica desde `index.js` cuando tenga consumidores externos.
@@ -56,6 +64,8 @@ EXCEPCIONES DE TAMANO POR COHESION
 
 CSS, CACHE Y VALIDACION
 - Mantener el orden efectivo de imports CSS y la cascada al extraer submodulos.
+- Seguir el orden ITCSS anotado en `public/styles.css` sin reordenar overrides sensibles.
+- Aplicar BEM a clases nuevas y a los componentes migrados; separar con OOCSS las reglas estructurales de las skins visuales compartidas.
 - Las hojas grandes conservan su nombre como agregador; sus imports descriptivos siguen el orden original y permanecen junto a la hoja para conservar URLs relativas.
 - Al cambiar HTML, CSS o JavaScript, actualizar el cache-burst de toda la cadena de imports afectada.
 - Verificar `Cache-Control: no-store` en desarrollo, ausencia de service worker y URLs solicitadas actuales.

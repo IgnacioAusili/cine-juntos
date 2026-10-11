@@ -1,5 +1,5 @@
-import { observePlayerControlLayouts } from "./player-controls-layout.js?v=20261010-file-size-refactor-02";
-import { observePlayerVolumeLayouts } from "./player-volume-layout.js?v=20261010-file-size-refactor-02";
+import { observePlayerControlLayouts } from "./player-controls-layout.js?v=20261011-chat-controls-repair-01";
+import { observePlayerVolumeLayouts } from "./player-volume-layout.js?v=20261011-chat-controls-repair-01";
 
 export function installMiniPlayerWindowStyles(targetDocument) {
   const emojiFont = targetDocument.createElement("link");
@@ -8,8 +8,8 @@ export function installMiniPlayerWindowStyles(targetDocument) {
   targetDocument.head.append(emojiFont);
 
   const stylesheets = [
-    "../../../public/styles.css?v=20261011-chat-ui-fixes-02",
-    "../../../public/styles/mini-player-window.css?v=20261010-file-size-refactor-02",
+    "../../../public/styles.css?v=20261011-chat-controls-repair-01",
+    "../../../public/styles/mini-player-window.css?v=20261011-chat-controls-repair-01",
   ].map((path) => {
     const stylesheet = targetDocument.createElement("link");
     stylesheet.rel = "stylesheet";

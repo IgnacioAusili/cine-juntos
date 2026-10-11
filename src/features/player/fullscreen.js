@@ -1,34 +1,34 @@
 import {
   dom,
-} from "../../core/dom.js?v=20261010-file-size-refactor-02";
+} from "../../core/dom.js?v=20261011-chat-controls-repair-01";
 import {
   FULLSCREEN_END_GAP,
   FULLSCREEN_SNAP_DELAY_MS,
   FULLSCREEN_SNAP_THRESHOLD,
-} from "../../core/utils.js?v=20261010-file-size-refactor-02";
+} from "../../core/utils.js?v=20261011-chat-controls-repair-01";
 import {
   hideTooltip,
   setControlIcon,
-} from "../icons-tooltips.js?v=20261011-chat-ui-fixes-03";
-import { setSyncStatus } from "../session-ui.js?v=20261010-file-size-refactor-02";
+} from "../icons-tooltips.js?v=20261011-chat-controls-repair-01";
+import { setSyncStatus } from "../session-ui.js?v=20261011-chat-controls-repair-01";
 import {
   logEvent,
   state,
-} from "../../core/state.js?v=20261010-file-size-refactor-02";
-import { isMiniPlayerActive } from "./mini-player.js?v=20261011-chat-ui-fixes-03";
-import { wirePlayerOverlayControls } from "./player-overlay-controls.js?v=20261011-chat-ui-fixes-03";
+} from "../../core/state.js?v=20261011-chat-controls-repair-01";
+import { isMiniPlayerActive } from "./mini-player.js?v=20261011-chat-controls-repair-01";
+import { wirePlayerOverlayControls } from "./player-overlay-controls.js?v=20261011-chat-controls-repair-01";
 import {
   syncExternalChatCollapseHandleOffset,
   syncInsideChatPanelOffset,
   cancelExternalChatAutoCollapse,
   forceExternalChatCollapsed,
   updateCollapseButton,
-} from "../chat/chat-layout.js?v=20261011-chat-ui-fixes-03";
-import { withShortcutHint } from "../../core/utils.js?v=20261010-file-size-refactor-02";
+} from "../chat/chat-layout.js?v=20261011-chat-controls-repair-01";
+import { withShortcutHint } from "../../core/utils.js?v=20261011-chat-controls-repair-01";
 import {
   captureFullscreenScroll,
   restoreFullscreenScroll,
-} from "./fullscreen-scroll.js?v=20261010-file-size-refactor-02";
+} from "./fullscreen-scroll.js?v=20261011-chat-controls-repair-01";
 
 const PLAYER_OVERLAY_IDLE_MS = 3000;
 const PLAYER_OVERLAY_LEAVE_HIDE_DELAY_MS = 800;

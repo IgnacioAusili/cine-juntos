@@ -1,23 +1,23 @@
-import { dom } from "../core/dom.js?v=20261010-file-size-refactor-02";
-import { state, getDisplayName, LAST_ROOM_KEY, logEvent } from "../core/state.js?v=20261010-file-size-refactor-02";
-import { renderPresence } from "./presence.js?v=20261011-chat-ui-fixes-03";
-import { setConnection } from "./icons-tooltips.js?v=20261011-chat-ui-fixes-03";
+import { dom } from "../core/dom.js?v=20261011-chat-controls-repair-01";
+import { state, getDisplayName, LAST_ROOM_KEY, logEvent } from "../core/state.js?v=20261011-chat-controls-repair-01";
+import { renderPresence } from "./presence.js?v=20261011-chat-controls-repair-01";
+import { setConnection } from "./icons-tooltips.js?v=20261011-chat-controls-repair-01";
 import {
   setHostBadge,
   setSyncStatus,
   showLobby,
-} from "./session-ui.js?v=20261010-file-size-refactor-02";
+} from "./session-ui.js?v=20261011-chat-controls-repair-01";
 import {
   resetInsideUnread,
   resetPageUnread,
   renderReplyPreview,
   setInsideChatVisible,
   finishSystemMessageHydration,
-} from "./chat/index.js?v=20261011-overlay-scroll-top-01";
-import { removeActiveTabRecord } from "./room-access.js?v=20261010-file-size-refactor-02";
-import { invalidateRoomOperation, isRoomOperationCurrent, clearUrlRoom } from "./room-navigation.js?v=20261010-file-size-refactor-02";
-import { syncJoinRoomButtonState } from "./room-input.js?v=20261010-file-size-refactor-02";
-import { setInviteCopyFeedback } from "./room-invite.js?v=20261010-file-size-refactor-02";
+} from "./chat/index.js?v=20261011-chat-controls-repair-01";
+import { removeActiveTabRecord } from "./room-access.js?v=20261011-chat-controls-repair-01";
+import { invalidateRoomOperation, isRoomOperationCurrent, clearUrlRoom } from "./room-navigation.js?v=20261011-chat-controls-repair-01";
+import { syncJoinRoomButtonState } from "./room-input.js?v=20261011-chat-controls-repair-01";
+import { setInviteCopyFeedback } from "./room-invite.js?v=20261011-chat-controls-repair-01";
 
 export async function leaveRoom() {
   const operationId = invalidateRoomOperation();

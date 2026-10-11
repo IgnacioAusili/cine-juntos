@@ -40,6 +40,15 @@ La app sigue una arquitectura simple y modular en JavaScript vanilla. El punto d
 
 La idea general es separar responsabilidades sin meter frameworks ni refactors grandes: estado centralizado, modulos por feature y servicios aislados para no mezclar logica de interfaz con sincronizacion o transporte.
 
+## CSS: ITCSS, BEM y OOCSS
+
+- `public/styles.css` es el punto de entrada y expresa el orden ITCSS del proyecto: tokens/configuracion, estilos genericos, objetos de layout, componentes, estados/responsive y overrides finales. Mantener el orden existente de imports porque forma parte de la cascada.
+- Para clases de componentes nuevas o que se migren, usar BEM: bloque independiente (`button`), elemento interno con `__` (`button__label`) y modificador con `--` (`button--primary`). El modificador se combina con la clase del bloque.
+- Usar OOCSS para separar estructura reutilizable de apariencia. Por ejemplo, el componente de botones mantiene geometria y comportamiento en `button-layout.css`, y colores, bordes y skins en `button-skin.css`.
+- Al migrar una clase existente, actualizar juntos sus selectores CSS, marcado fuente HTML y referencias en JavaScript. Las clases heredadas se migran por componente para conservar el comportamiento.
+- Conservar solo como compatibilidad temporal el alias `.button.primary` del dialogo dinamico de carga; no agregar usos nuevos y retirarlo al migrar su toggle JavaScript y su cadena de cache-burst.
+- Mantener los modulos CSS cohesivos y revisar toda su cadena de `@import` y cache-burst al modificarlos.
+
 ## Funcionamiento
 
 - Cada sala sincroniza mensajes, presencia, video cargado y eventos de reproduccion.
@@ -48,7 +57,6 @@ La idea general es separar responsabilidades sin meter frameworks ni refactors g
 - El chat externo y el chat interno del reproductor son dos vistas del mismo chat y pueden estar visibles al mismo tiempo.
 - El chat renderiza enlaces clickeables, imagenes, GIFs y videos remotos cuando el mensaje contiene una URL compatible.
 - Para evitar crecimiento indefinido, la interfaz conserva hasta 100 mensajes renderizados.
-
 
 ## Tener en cuenta
 

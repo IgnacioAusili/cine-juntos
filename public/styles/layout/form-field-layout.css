@@ -125,7 +125,7 @@
   box-shadow: none;
 }
 
-.session-toolbar-body .button.primary {
+.session-toolbar-body .button.button--primary {
   flex-shrink: 0;
   min-height: 38px;
   min-width: 100px;
@@ -144,28 +144,28 @@
   transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
 }
 
-.session-toolbar-body .button.primary > .button-label,
-.session-toolbar-body .button.primary > svg {
+.session-toolbar-body .button.button--primary > .button__label,
+.session-toolbar-body .button.button--primary > svg {
   color: #000 !important;
   -webkit-text-fill-color: #000 !important;
 }
 
-.session-toolbar-body .button.primary > .button-label {
+.session-toolbar-body .button.button--primary > .button__label {
   position: relative;
   top: 1px;
 }
 
-.session-toolbar-body .button.primary > svg {
+.session-toolbar-body .button.button--primary > svg {
   color: #000 !important;
   -webkit-text-fill-color: #000 !important;
 }
 
-.session-toolbar-body .button.primary:hover {
+.session-toolbar-body .button.button--primary:hover {
   background: #de7d31;
   border-color: rgba(240, 140, 58, 0.38);
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
 }
 
-.session-toolbar-body .button.primary:active {
+.session-toolbar-body .button.button--primary:active {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
 }

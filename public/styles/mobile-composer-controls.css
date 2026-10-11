@@ -12,7 +12,7 @@
     padding: 0;
   }
 
-  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-area .input-wrapper .send {
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-area .input-wrapper .icon-button--send {
     align-self: flex-end;
     flex: 0 0 34px;
     width: 34px;
@@ -22,7 +22,7 @@
     padding: 0;
   }
 
-  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-area .input-wrapper .send > * {
+  body:not(.is-lobby) .session-view[data-chat-dock="bottom"] .chat-area .input-wrapper .icon-button--send > * {
     left: calc(50% - 3px);
   }
 
@@ -55,7 +55,7 @@
     margin: 0;
   }
 
-  body:not(.is-lobby) .player-frame .overlay-message-form .input-wrapper .send {
+  body:not(.is-lobby) .player-frame .overlay-message-form .input-wrapper .icon-button--send {
     width: 34px;
     min-height: 30px;
     height: 30px;
@@ -63,7 +63,7 @@
     margin: 0;
   }
 
-  body:not(.is-lobby) .player-frame .overlay-message-form .input-wrapper .send > * {
+  body:not(.is-lobby) .player-frame .overlay-message-form .input-wrapper .icon-button--send > * {
     left: calc(50% - 3px);
   }
 

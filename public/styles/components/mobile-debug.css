@@ -166,7 +166,7 @@
   margin-top: 14px;
 }
 
-.button.primary.mobile-debug-copy-button {
+.button.button--primary.mobile-debug-copy-button {
   position: relative;
   min-width: 92px;
   border-color: rgba(240, 140, 58, 0.32);
@@ -177,7 +177,7 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.22);
 }
 
-.button.primary.mobile-debug-copy-button:hover {
+.button.button--primary.mobile-debug-copy-button:hover {
   background: linear-gradient(180deg, #e7a574, #d4884c);
   box-shadow:
     0 0 0 1px rgba(240, 140, 58, 0.18),

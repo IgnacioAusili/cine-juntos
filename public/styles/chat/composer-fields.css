@@ -196,7 +196,7 @@
   .session-view[data-chat-dock] .chat-area > .message-form
     .input-wrapper:not([data-expanded="true"]) .emoji-trigger,
   .session-view[data-chat-dock] .chat-area > .message-form
-    .input-wrapper:not([data-expanded="true"]) .send {
+    .input-wrapper:not([data-expanded="true"]) .icon-button--send {
     margin-bottom: 0;
   }
 }

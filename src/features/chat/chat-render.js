@@ -1,15 +1,15 @@
-import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
-import { makeRoomForSystemMessage } from "./chat-system-message-retention.js?v=20261011-chat-interaction-fixes-01";
-import { getRenderableMessageImages } from "./chat-message-media.js?v=20261010-file-size-refactor-02";
-import { state, logEvent } from "../../core/state.js?v=20261010-file-size-refactor-02";
-import { markParticipantActive, rememberParticipant } from "../presence.js?v=20261011-chat-ui-fixes-03";
-import { scheduleMessageTimeAdjustmentForBubble } from "./message-time-layout.js?v=20261010-file-size-refactor-02";
+import { dom } from "../../core/dom.js?v=20261011-chat-controls-repair-01";
+import { makeRoomForSystemMessage } from "./chat-system-message-retention.js?v=20261011-chat-controls-repair-01";
+import { getRenderableMessageImages } from "./chat-message-media.js?v=20261011-chat-controls-repair-01";
+import { state, logEvent } from "../../core/state.js?v=20261011-chat-controls-repair-01";
+import { markParticipantActive, rememberParticipant } from "../presence.js?v=20261011-chat-controls-repair-01";
+import { scheduleMessageTimeAdjustmentForBubble } from "./message-time-layout.js?v=20261011-chat-controls-repair-01";
 import {
   handleIncomingUnread,
   handleIncomingPageUnread,
-} from "./unread-counters.js?v=20261011-chat-interaction-fixes-01";
-import { setExternalChatCollapsed, setInsideChatVisible } from "./chat-layout.js?v=20261011-chat-ui-fixes-03";
-import { appendMessageNow } from "./chat-message-render-item.js?v=20261011-overlay-scroll-top-01";
+} from "./unread-counters.js?v=20261011-chat-controls-repair-01";
+import { setExternalChatCollapsed, setInsideChatVisible } from "./chat-layout.js?v=20261011-chat-controls-repair-01";
+import { appendMessageNow } from "./chat-message-render-item.js?v=20261011-chat-controls-repair-01";
 
 const SYSTEM_GROUP_MESSAGE_FRESHNESS_MS = 3000;
 const SYSTEM_GROUP_RESUME_GRACE_MS = 250;

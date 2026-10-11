@@ -120,7 +120,7 @@
   }
 
   body:not(.is-lobby) .message-form .input-wrapper .emoji-trigger,
-  body:not(.is-lobby) .message-form .input-wrapper .send {
+  body:not(.is-lobby) .message-form .input-wrapper .icon-button--send {
     min-height: 30px !important;
     height: 30px !important;
   }

@@ -1,16 +1,16 @@
 import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
 import { CHAT_DOCKS, CHAT_DOCK_META } from "../../core/utils.js?v=20261010-file-size-refactor-02";
-import { cancelIdentityEditing, syncNameInputWidth } from "../presence.js?v=20261010-file-size-refactor-02";
+import { cancelIdentityEditing, syncNameInputWidth } from "../presence.js?v=20261011-chat-ui-fixes-03";
 import { focusFullscreenWorkspace } from "../session-ui.js?v=20261010-file-size-refactor-02";
-import { syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20261010-file-size-refactor-02";
-import { hydrateIcons } from "../icons-tooltips.js?v=20261010-file-size-refactor-02";
+import { syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20261011-chat-interaction-fixes-01";
+import { hydrateIcons } from "../icons-tooltips.js?v=20261011-chat-ui-fixes-03";
 import { isFullscreenPageActive, getPageScrollMax, getElementPageTop, scrollPageTo } from "./chat-page-scroll.js?v=20261010-file-size-refactor-02";
-import { isMobilePortraitChatViewport } from "./chat-layout-breakpoints.js?v=20261010-file-size-refactor-02";
-import { isStackedSessionLayout } from "./chat-responsive-layout.js?v=20261010-file-size-refactor-02";
+import { isMobilePortraitChatViewport } from "./chat-layout-breakpoints.js?v=20261011-chat-ui-fixes-02";
+import { isStackedSessionLayout } from "./chat-responsive-layout.js?v=20261011-chat-ui-fixes-02";
 import { chatDockTransitionState } from "./chat-layout-transition-state.js?v=20261010-file-size-refactor-02";
-import { updateCollapseButton } from "./chat-collapse-handles.js?v=20261010-file-size-refactor-02";
+import { updateCollapseButton } from "./chat-collapse-handles.js?v=20261011-chat-ui-fixes-03";
 import { CHAT_DOCK_TRANSITIONS, resolveChatDockTransition } from "./dock-transition-router.js?v=20261010-file-size-refactor-02";
-import { getBottomToRightScrollTop, animateFullscreenBottomToRightWithNativeCollapse, animateRightToBottomWithNativeCollapse, animateRightToBottomSwitch, animateFullscreenDockSwitch, scheduleBottomToRightSwitch } from "./chat-dock-transitions.js?v=20261010-file-size-refactor-02";
+import { getBottomToRightScrollTop, animateFullscreenBottomToRightWithNativeCollapse, animateRightToBottomWithNativeCollapse, animateRightToBottomSwitch, animateFullscreenDockSwitch, scheduleBottomToRightSwitch } from "./chat-dock-transitions.js?v=20261011-chat-ui-fixes-02";
 
 const controllerOperations = {};
 export function configureChatDockController(operations) { Object.assign(controllerOperations, operations || {}); }

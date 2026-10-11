@@ -111,6 +111,12 @@ export function syncTooltipChrome() {
   );
 }
 
+export function setTooltipChromeTransition(value) {
+  if (!tooltipChrome) return;
+  if (value) tooltipChrome.style.setProperty("transition", value);
+  else tooltipChrome.style.removeProperty("transition");
+}
+
 function syncEmojiPopoverChrome(popover) {
   const chrome = emojiPopoverChromes.get(popover);
   if (!chrome || !popover) return;

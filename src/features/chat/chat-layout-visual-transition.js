@@ -1,5 +1,5 @@
 import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
-import { getVideoAreaRect, isStackedSessionLayout } from "./chat-responsive-layout.js?v=20261010-file-size-refactor-02";
+import { getVideoAreaRect, isStackedSessionLayout } from "./chat-responsive-layout.js?v=20261011-chat-ui-fixes-02";
 import { CHAT_LAYOUT_SETTLE_MS } from "./chat-layout-timing.js?v=20261010-file-size-refactor-02";
 let externalChatVisualMotionTimer = 0;
 

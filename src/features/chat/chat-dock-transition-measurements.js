@@ -1,5 +1,5 @@
 import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
-import { isStackedSessionLayout } from "./chat-responsive-layout.js?v=20261010-file-size-refactor-02";
+import { isStackedSessionLayout } from "./chat-responsive-layout.js?v=20261011-chat-ui-fixes-02";
 
 export function isDesktopBottomDock() {
   const isLandscapeMobile = isStackedSessionLayout()

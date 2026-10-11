@@ -1,18 +1,18 @@
 import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
 import { state } from "../../core/state.js?v=20261010-file-size-refactor-02";
-import { cancelIdentityEditing } from "../presence.js?v=20261010-file-size-refactor-02";
+import { cancelIdentityEditing } from "../presence.js?v=20261011-chat-ui-fixes-03";
 import { focusFullscreenWorkspace } from "../session-ui.js?v=20261010-file-size-refactor-02";
-import { isMobileLandscapeRightDock, isMobileLandscapeFullscreenBottomDock, isRightChatViewportOverlay } from "./chat-layout-breakpoints.js?v=20261010-file-size-refactor-02";
-import { getVideoAreaRect } from "./chat-responsive-layout.js?v=20261010-file-size-refactor-02";
+import { isMobileLandscapeRightDock, isMobileLandscapeFullscreenBottomDock, isRightChatViewportOverlay } from "./chat-layout-breakpoints.js?v=20261011-chat-ui-fixes-02";
+import { getVideoAreaRect } from "./chat-responsive-layout.js?v=20261011-chat-ui-fixes-02";
 import { isFullscreenPageActive, getPageScrollContainer, getPageScrollTop, getPageScrollMax, getElementPageTop, scrollPageTo } from "./chat-page-scroll.js?v=20261010-file-size-refactor-02";
-import { updateCollapseButton, syncExternalChatCollapseHandleOffset } from "./chat-collapse-handles.js?v=20261010-file-size-refactor-02";
-import { clearChatAutoCollapseTimer as clearAutoCollapseTimer, scheduleExternalChatAutoCollapse } from "./chat-visibility.js?v=20261010-file-size-refactor-02";
+import { updateCollapseButton, syncExternalChatCollapseHandleOffset } from "./chat-collapse-handles.js?v=20261011-chat-ui-fixes-03";
+import { clearChatAutoCollapseTimer as clearAutoCollapseTimer, scheduleExternalChatAutoCollapse } from "./chat-visibility.js?v=20261011-chat-ui-fixes-03";
 import { restorePageScrollAfterRightChatCollapse } from "./chat-scroll-preservation.js?v=20261010-file-size-refactor-02";
-import { syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20261010-file-size-refactor-02";
-import { getBottomDockVideoScrollTop } from "./chat-dock-controller.js?v=20261010-file-size-refactor-02";
-import { animateExternalChatLayoutFrom } from "./chat-layout-visual-transition.js?v=20261010-file-size-refactor-02";
+import { syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20261011-chat-interaction-fixes-01";
+import { getBottomDockVideoScrollTop } from "./chat-dock-controller.js?v=20261011-chat-ui-fixes-03";
+import { animateExternalChatLayoutFrom } from "./chat-layout-visual-transition.js?v=20261011-chat-ui-fixes-02";
 import { CHAT_LAYOUT_SETTLE_MS, COLLAPSE_HANDLE_HIDE_MS, RIGHT_CHAT_LAYOUT_TRANSITION_MS, RIGHT_CHAT_SCROLL_LOCK_MS, CHAT_SCROLL_SNAP_LOCK_MS } from "./chat-layout-timing.js?v=20261010-file-size-refactor-02";
-import { clearBottomChatTransitionVisuals, cancelBottomChatTransition, isDesktopBottomDock, animateDesktopBottomChatCollapse, animateDesktopBottomChatExpand, animateBottomChatCollapse, animateBottomChatExpand } from "./chat-dock-transitions.js?v=20261010-file-size-refactor-02";
+import { clearBottomChatTransitionVisuals, cancelBottomChatTransition, isDesktopBottomDock, animateDesktopBottomChatCollapse, animateDesktopBottomChatExpand, animateBottomChatCollapse, animateBottomChatExpand } from "./chat-dock-transitions.js?v=20261011-chat-ui-fixes-02";
 
 const EXTERNAL_CHAT_COLLAPSED_KEY = "cine-juntos-chat-collapsed";
 let expandScrollTimer = 0;

@@ -1,8 +1,8 @@
 import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
 import { state } from "../../core/state.js?v=20261010-file-size-refactor-02";
 import { formatSeconds } from "../../core/utils.js?v=20261010-file-size-refactor-02";
-import { hideTooltip } from "../icons-tooltips.js?v=20261010-file-size-refactor-02";
-import { hideSeekTooltip, showSeekTooltip } from "./player-seek-tooltip-view.js?v=20261010-file-size-refactor-02";
+import { hideTooltip } from "../icons-tooltips.js?v=20261011-chat-ui-fixes-03";
+import { hideSeekTooltip, showSeekTooltip } from "./player-seek-tooltip-view.js?v=20261011-chat-ui-fixes-03";
 import { seekTooltipState } from "./player-seek-tooltip-state.js?v=20261010-file-size-refactor-02";
 
 const SEEK_THUMB_WIDTH = 14;

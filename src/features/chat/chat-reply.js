@@ -1,14 +1,14 @@
 import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
 import { state } from "../../core/state.js?v=20261010-file-size-refactor-02";
-import { hideTooltip } from "../icons-tooltips.js?v=20261010-file-size-refactor-02";
+import { hideTooltip } from "../icons-tooltips.js?v=20261011-chat-ui-fixes-03";
 import { focusChatInput } from "./chat-input-focus.js?v=20261010-file-size-refactor-02";
 import {
   configureReplyPreviewOperations,
   renderReplyPreview,
-} from "./chat-reply-preview.js?v=20261010-file-size-refactor-02";
+} from "./chat-reply-preview.js?v=20261011-chat-interaction-fixes-01";
 
-export { renderReplyPreview } from "./chat-reply-preview.js?v=20261010-file-size-refactor-02";
-export { scrollToMessage } from "./chat-message-navigation.js?v=20261010-file-size-refactor-02";
+export { renderReplyPreview } from "./chat-reply-preview.js?v=20261011-chat-interaction-fixes-01";
+export { scrollToMessage } from "./chat-message-navigation.js?v=20261011-chat-interaction-fixes-01";
 
 export function setReplyTarget(message, focusInput = dom.messageInput) {
   const hadReplyTarget = Boolean(state.chat.replyTarget);

@@ -20,7 +20,7 @@ import { makeGuestName, makeParticipantLabel } from "../core/utils.js?v=20261010
 import {
   hideTooltip,
   setControlIcon,
-} from "./icons-tooltips.js?v=20261010-file-size-refactor-02";
+} from "./icons-tooltips.js?v=20261011-chat-ui-fixes-03";
 import {
   isTouchPointer,
   TOUCH_LONG_PRESS_DELAY_MS,

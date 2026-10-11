@@ -1,4 +1,4 @@
-import { clearReplyTarget, setReplyTarget } from "../chat/chat-reply.js?v=20261010-file-size-refactor-02";
+import { clearReplyTarget, setReplyTarget } from "../chat/chat-reply.js?v=20261011-chat-ui-fixes-03";
 import { wireMessageInteractions } from "../chat/chat-message-interactions.js?v=20261010-file-size-refactor-02";
 import { setMiniSystemGroupVisibility, animateMiniSystemGroupTransition } from "./mini-player-chat-groups.js?v=20261010-file-size-refactor-02";
 import { state } from "../../core/state.js?v=20261010-file-size-refactor-02";

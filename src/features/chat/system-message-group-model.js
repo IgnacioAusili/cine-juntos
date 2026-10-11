@@ -1,4 +1,4 @@
-import { SYSTEM_GROUP_MIN_SIZE, groupStates } from "./system-message-group-state.js?v=20261010-file-size-refactor-02";
+import { SYSTEM_GROUP_MIN_SIZE, groupStates, groupTransitions } from "./system-message-group-state.js?v=20261010-file-size-refactor-02";
 import { cancelGroupTransition, animateGroupTransition } from "./system-message-group-transitions.js?v=20261010-file-size-refactor-02";
 import { getGroupTransitionTarget, prepareCollapseVisualTransition, prepareExpansionVisualTransition } from "./system-message-group-visuals.js?v=20261010-file-size-refactor-02";
 import { cancelGroupToggleAnimation, moveGroupToggle } from "./system-message-group-toggle.js?v=20261010-file-size-refactor-02";

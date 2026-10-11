@@ -7,10 +7,10 @@ import { getRenderableMessageImages, isStandaloneImageText, appendMessageMedia }
 import { extendMessageHitArea, wireMessageInteractions } from "./chat-message-interactions.js?v=20261010-file-size-refactor-02";
 import { appendMessageContent, truncateText } from "./chat-content-parser.js?v=20261010-file-size-refactor-02";
 import { getParticipantAccent } from "./chat-participant-color.js?v=20261010-file-size-refactor-02";
-import { setReplyTarget, scrollToMessage } from "./chat-reply.js?v=20261010-file-size-refactor-02";
+import { setReplyTarget, scrollToMessage } from "./chat-reply.js?v=20261011-chat-ui-fixes-03";
 import { watchSystemMessageLayout, fitSystemMessageBubble } from "./chat-system-message-layout.js?v=20261010-file-size-refactor-02";
-import { incrementScrollIndicator } from "./unread-counters.js?v=20261010-file-size-refactor-02";
-import { scheduleSystemMessageCollapse } from "./system-message-groups.js?v=20261010-file-size-refactor-02";
+import { incrementScrollIndicator } from "./unread-counters.js?v=20261011-chat-interaction-fixes-01";
+import { scheduleSystemMessageCollapse } from "./system-message-groups.js?v=20261011-chat-interaction-fixes-01";
 
 export function appendMessageNow(container, message, { animateSystemGroups = true, prepend = false } = {}) {
   const isMine = message.from === state.session.clientId;

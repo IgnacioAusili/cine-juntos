@@ -9,8 +9,8 @@ import { createTransport } from "../services/transport.js?v=20261010-file-size-r
 import {
   renderMembers,
   renderPresence,
-} from "./presence.js?v=20261010-file-size-refactor-02";
-import { setConnection } from "./icons-tooltips.js?v=20261010-file-size-refactor-02";
+} from "./presence.js?v=20261011-chat-ui-fixes-03";
+import { setConnection } from "./icons-tooltips.js?v=20261011-chat-ui-fixes-03";
 import { syncComponentAspectLayoutNow } from "./chat/component-aspect-layout.js?v=20261010-file-size-refactor-02";
 import {
   getUserScrollIntentVersion,
@@ -20,7 +20,7 @@ import {
   showSession,
   watchRoomEntryVideoFocus,
 } from "./session-ui.js?v=20261010-file-size-refactor-02";
-import { handleRemoteState } from "./player/index.js?v=20261010-file-size-refactor-02";
+import { handleRemoteState } from "./player/index.js?v=20261011-chat-ui-fixes-03";
 import {
   beginSystemMessageHydration,
   finishSystemMessageHydration,
@@ -31,7 +31,7 @@ import {
   resetChatHistoryPaging,
   fillChatHistoryViewport,
   setInsideChatVisible,
-} from "./chat/index.js?v=20261010-file-size-refactor-02";
+} from "./chat/index.js?v=20261011-chat-ui-fixes-03";
 import {
   getRoomTabLimitConflictCount,
   writeActiveTabRecord,

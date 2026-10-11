@@ -1,9 +1,9 @@
 import { dom } from "../core/dom.js?v=20261010-file-size-refactor-02";
-import { initializeBubbleChrome } from "./tooltip-bubble-chrome.js?v=20261010-file-size-refactor-02";
-import { wireTooltipEvents } from "./tooltip-events.js?v=20261010-file-size-refactor-02";
-import { hideTooltip, refreshTooltipForTarget } from "./tooltip-behavior.js?v=20261010-file-size-refactor-02";
-export { wireTooltipEvents } from "./tooltip-events.js?v=20261010-file-size-refactor-02";
-export { hideTooltip, refreshTooltipForTarget } from "./tooltip-behavior.js?v=20261010-file-size-refactor-02";
+import { initializeBubbleChrome } from "./tooltip-bubble-chrome.js?v=20261011-chat-interaction-fixes-01";
+import { wireTooltipEvents } from "./tooltip-events.js?v=20261011-chat-ui-fixes-03";
+import { hideTooltip, refreshTooltipForTarget } from "./tooltip-behavior.js?v=20261011-chat-ui-fixes-03";
+export { wireTooltipEvents } from "./tooltip-events.js?v=20261011-chat-ui-fixes-03";
+export { hideTooltip, refreshTooltipForTarget } from "./tooltip-behavior.js?v=20261011-chat-ui-fixes-03";
 import { state } from "../core/state.js?v=20261010-file-size-refactor-02";
 import {
   buildContinuousBubblePath,

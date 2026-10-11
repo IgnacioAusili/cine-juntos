@@ -16,9 +16,9 @@ import {
   toggleMiniEmojiPicker,
   toggleMiniChatOverlay,
   wireMirrorChatScrollbar,
-} from "./mini-player-chat-mirror.js?v=20261010-file-size-refactor-02";
-import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js?v=20261010-file-size-refactor-02";
-import { wireMiniPlayerShortcuts } from "./mini-player-shortcuts.js?v=20261010-file-size-refactor-02";
+} from "./mini-player-chat-mirror.js?v=20261011-chat-ui-fixes-03";
+import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js?v=20261011-chat-ui-fixes-03";
+import { wireMiniPlayerShortcuts } from "./mini-player-shortcuts.js?v=20261011-chat-ui-fixes-03";
 import { wireTouchHover } from "../../core/touch-interactions.js?v=20261010-file-size-refactor-02";
 
 const VIDEO_EVENTS = ["play", "pause", "ended", "timeupdate", "seeked", "ratechange", "volumechange"];

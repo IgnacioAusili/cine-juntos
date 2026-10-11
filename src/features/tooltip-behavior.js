@@ -3,8 +3,8 @@ import { tooltipState } from "./tooltip-state.js?v=20261010-file-size-refactor-0
 import { state } from "../core/state.js?v=20261010-file-size-refactor-02";
 import { setConnection } from "./session-ui.js?v=20261010-file-size-refactor-02";
 import { isTouchPointer, TOUCH_LONG_PRESS_DELAY_MS } from "../core/touch-interactions.js?v=20261010-file-size-refactor-02";
-import { syncTooltipChrome } from "./tooltip-bubble-chrome.js?v=20261010-file-size-refactor-02";
-import { TOOLTIP_ANCHOR_SELECTOR, TOOLTIP_VIEWPORT_PADDING, TOOLTIP_GAP, TOOLTIP_SHOW_DELAY_MS, HELP_TOOLTIP_SHOW_DELAY_MS, PRESENCE_TOOLTIP_SHOW_DELAY_MS, TOOLTIP_HIDE_ANIMATION_MS, TOUCH_FOCUS_SUPPRESSION_MS, TOUCH_TOOLTIP_MOVE_TOLERANCE_PX, TOUCH_HELP_TOOLTIP_MAX_VISIBLE_MS } from "./tooltip-constants.js?v=20261010-file-size-refactor-02";
+import { setTooltipChromeTransition, syncTooltipChrome } from "./tooltip-bubble-chrome.js?v=20261011-chat-interaction-fixes-01";
+import { TOOLTIP_ANCHOR_SELECTOR, TOOLTIP_VIEWPORT_PADDING, TOOLTIP_GAP, TOOLTIP_BORDER_WIDTH_PX, TOOLTIP_RADIUS_PX, TOOLTIP_TAIL_WIDTH_PX, TOOLTIP_TAIL_HEIGHT_PX, TOOLTIP_SHOW_DELAY_MS, HELP_TOOLTIP_SHOW_DELAY_MS, PRESENCE_TOOLTIP_SHOW_DELAY_MS, TOOLTIP_HIDE_ANIMATION_MS, TOUCH_FOCUS_SUPPRESSION_MS, TOUCH_TOOLTIP_MOVE_TOLERANCE_PX, TOUCH_HELP_TOOLTIP_MAX_VISIBLE_MS } from "./tooltip-constants.js?v=20261010-file-size-refactor-02";
 
 
 export function suppressTouchTooltipClick(anchor) {
@@ -144,7 +144,7 @@ export function showTooltip(context) {
   setTooltipTouchHover(context.anchor, true);
   dom.tooltipLayer.textContent = text;
   dom.tooltipLayer.style.setProperty("transition", "none");
-  tooltipChrome?.style.setProperty("transition", "none");
+  setTooltipChromeTransition("none");
   dom.tooltipLayer.hidden = false;
   dom.tooltipLayer.style.visibility = "hidden";
   dom.tooltipLayer.style.left = "0px";
@@ -161,7 +161,7 @@ export function showTooltip(context) {
     window.requestAnimationFrame(() => {
       if (state.ui.tooltipTarget !== context.anchor || dom.tooltipLayer.hidden) return;
       dom.tooltipLayer.style.removeProperty("transition");
-      tooltipChrome?.style.removeProperty("transition");
+      setTooltipChromeTransition("");
       dom.tooltipLayer.dataset.animationState = "visible";
     });
   });
@@ -214,7 +214,7 @@ export function hideTooltip(force = false) {
     dom.tooltipLayer.style.visibility = "";
     dom.tooltipLayer.style.removeProperty("--tooltip-arrow-offset");
     dom.tooltipLayer.style.removeProperty("transition");
-    tooltipChrome?.style.removeProperty("transition");
+    setTooltipChromeTransition("");
     dom.tooltipLayer.removeAttribute("data-animation-state");
     dom.tooltipLayer.removeAttribute("data-placement");
   };
@@ -226,7 +226,7 @@ export function hideTooltip(force = false) {
   }
 
   dom.tooltipLayer.style.removeProperty("transition");
-  tooltipChrome?.style.removeProperty("transition");
+  setTooltipChromeTransition("");
   dom.tooltipLayer.dataset.animationState = "leaving";
   tooltipState.tooltipHideTimer = window.setTimeout(finishHide, TOOLTIP_HIDE_ANIMATION_MS);
 }

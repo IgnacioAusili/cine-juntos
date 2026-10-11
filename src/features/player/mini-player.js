@@ -2,16 +2,16 @@ import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
 import { wireMiniPlayerOverlayControls } from "./mini-player-overlay-controls.js?v=20261010-file-size-refactor-02";
 import { configureScrollMiniPlayerOperations, scheduleScrollMiniPlayerSync, dismissScrollMiniPlayerForSession } from "./mini-player-scroll.js?v=20261010-file-size-refactor-02";
 import { state, logEvent } from "../../core/state.js?v=20261010-file-size-refactor-02";
-import { setControlIcon } from "../icons-tooltips.js?v=20261010-file-size-refactor-02";
+import { setControlIcon } from "../icons-tooltips.js?v=20261011-chat-ui-fixes-03";
 import { setSyncStatus } from "../session-ui.js?v=20261010-file-size-refactor-02";
 import {
   createMiniPlayerSurface,
   installMiniPlayerWindowStyles,
-} from "./mini-player-controls.js?v=20261010-file-size-refactor-02";
+} from "./mini-player-controls.js?v=20261011-chat-ui-fixes-02";
 import {
   mirrorMiniPlayerChatState,
-} from "./mini-player-chat.js?v=20261010-file-size-refactor-02";
-import { movePlayerInterface } from "./mini-player-interface.js?v=20261010-file-size-refactor-02";
+} from "./mini-player-chat.js?v=20261011-chat-ui-fixes-03";
+import { movePlayerInterface } from "./mini-player-interface.js?v=20261011-chat-ui-fixes-03";
 import { trackMiniPlayerReturnHint } from "./mini-player-return-hint.js?v=20261010-file-size-refactor-02";
 import { clampMiniPlayerPosition, wireMiniPlayerDrag } from "./mini-player-drag.js?v=20261010-file-size-refactor-02";
 

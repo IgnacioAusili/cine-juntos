@@ -1,6 +1,6 @@
 import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
 import { isFullscreenPageActive } from "./chat-page-scroll.js?v=20261010-file-size-refactor-02";
-import { isStackedSessionLayout } from "./chat-responsive-layout.js?v=20261010-file-size-refactor-02";
+import { isStackedSessionLayout } from "./chat-responsive-layout.js?v=20261011-chat-ui-fixes-02";
 
 export function isMobilePortraitChatViewport() {
   return window.matchMedia("(max-width: 680px) and (orientation: portrait)").matches;

@@ -1,8 +1,8 @@
 import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
-import { isStackedSessionLayout } from "./chat-responsive-layout.js?v=20261010-file-size-refactor-02";
+import { isStackedSessionLayout } from "./chat-responsive-layout.js?v=20261011-chat-ui-fixes-02";
 import { getElementPageTop, getPageScrollContainer, getPageScrollMax, getPageScrollTop, isFullscreenPageActive, scrollPageTo } from "./chat-page-scroll.js?v=20261010-file-size-refactor-02";
 import { chatDockTransitionState, getChatDockOperations } from "./chat-layout-transition-state.js?v=20261010-file-size-refactor-02";
-import { easeBottomChatCurtainProgress, getWorkspaceRowHeights, getWorkspaceContentHeight, isDesktopBottomDock } from "./chat-dock-transition-measurements.js?v=20261010-file-size-refactor-02";
+import { easeBottomChatCurtainProgress, getWorkspaceRowHeights, getWorkspaceContentHeight, isDesktopBottomDock } from "./chat-dock-transition-measurements.js?v=20261011-chat-ui-fixes-02";
 import { BOTTOM_CHAT_CURTAIN_MS, BOTTOM_CHAT_SCROLL_TIMEOUT_MS } from "./chat-layout-timing.js?v=20261010-file-size-refactor-02";
 
 export function clearBottomChatTransitionVisuals() {

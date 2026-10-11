@@ -1,13 +1,13 @@
 import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
 import { state, logEvent } from "../../core/state.js?v=20261010-file-size-refactor-02";
 import { withShortcutHint } from "../../core/utils.js?v=20261010-file-size-refactor-02";
-import { refreshTooltipForTarget } from "../icons-tooltips.js?v=20261010-file-size-refactor-02";
-import { resetInsideUnread, resetPageUnread, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20261010-file-size-refactor-02";
+import { refreshTooltipForTarget } from "../icons-tooltips.js?v=20261011-chat-ui-fixes-03";
+import { resetInsideUnread, resetPageUnread, syncUnreadBadgesWithVisibility } from "./unread-counters.js?v=20261011-chat-interaction-fixes-01";
 import { focusChatInput } from "./chat-input-focus.js?v=20261010-file-size-refactor-02";
 import { wireInsideChatPanelPlacement, syncInsideChatPanelPlacement, preserveInsideChatPanelPlacementWhileClosing } from "../player/inside-chat-layout.js?v=20261010-file-size-refactor-02";
-import { isMobileLandscapeFullscreenBottomDock } from "./chat-layout-breakpoints.js?v=20261010-file-size-refactor-02";
-import { cancelIdentityEditing } from "../presence.js?v=20261010-file-size-refactor-02";
-import { syncInsideChatPanelOffset } from "./chat-collapse-handles.js?v=20261010-file-size-refactor-02";
+import { isMobileLandscapeFullscreenBottomDock } from "./chat-layout-breakpoints.js?v=20261011-chat-ui-fixes-02";
+import { cancelIdentityEditing } from "../presence.js?v=20261011-chat-ui-fixes-03";
+import { syncInsideChatPanelOffset } from "./chat-collapse-handles.js?v=20261011-chat-ui-fixes-03";
 
 const AUTO_COLLAPSE_DELAY_MS = 5000;
 const AUTO_EXPAND_INSIDE_KEY = "cine-juntos-chat-auto-expand-inside";

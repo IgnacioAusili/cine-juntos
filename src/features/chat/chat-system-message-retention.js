@@ -1,4 +1,4 @@
-import { animateExpandedSystemMessageRemoval, captureExpandedSystemMessageRemoval, prepareSystemMessageRemoval, refreshSystemMessageGroup, scheduleSystemMessageCollapse } from "./system-message-groups.js?v=20261010-file-size-refactor-02";
+import { animateExpandedSystemMessageRemoval, captureExpandedSystemMessageRemoval, prepareSystemMessageRemoval, refreshSystemMessageGroup, scheduleSystemMessageCollapse } from "./system-message-groups.js?v=20261011-chat-interaction-fixes-01";
 
 const SYSTEM_MESSAGE_STREAK_LIMIT = 10;
 const SYSTEM_MESSAGE_EXIT_MS = 380;

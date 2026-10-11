@@ -2,7 +2,20 @@ import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
 
 let responsiveSessionLayoutObserver = null;
 let responsiveSessionLayoutFrame = 0;
+let layoutFitCheckReleaseFrame = 0;
 let syncCollapseHandleOffset = () => {};
+
+function releaseLayoutFitCheckAfterRestore(sessionView) {
+  // Mantener las transiciones apagadas hasta que el ancho real contraído se
+  // aplique; quitarlas de inmediato anima el ancho temporal de la medición.
+  if (layoutFitCheckReleaseFrame) {
+    window.cancelAnimationFrame(layoutFitCheckReleaseFrame);
+  }
+  layoutFitCheckReleaseFrame = window.requestAnimationFrame(() => {
+    layoutFitCheckReleaseFrame = 0;
+    sessionView?.classList.remove("layout-fit-check");
+  });
+}
 
 export function getVideoAreaRect() {
   if (!dom.videoArea) return null;
@@ -76,7 +89,11 @@ function measureResponsiveSessionLayout() {
         dom.chatArea.setAttribute("style", previousChatAreaStyle);
       }
     }
-    dom.sessionView.classList.remove("layout-fit-check");
+    if (isCollapsed) {
+      releaseLayoutFitCheckAfterRestore(dom.sessionView);
+    } else {
+      dom.sessionView.classList.remove("layout-fit-check");
+    }
     if (wasStacked) dom.sessionView.classList.add("layout-stacked");
   }
 

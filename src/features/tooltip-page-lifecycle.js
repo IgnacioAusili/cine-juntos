@@ -1,4 +1,4 @@
-import { hideTooltip } from "./icons-tooltips.js?v=20261010-file-size-refactor-02";
+import { hideTooltip } from "./icons-tooltips.js?v=20261011-chat-ui-fixes-03";
 
 let suppressRestoredFocusTooltip = false;
 

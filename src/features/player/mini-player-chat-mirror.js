@@ -1,11 +1,11 @@
-import { clearReplyTarget, setReplyTarget } from "../chat/chat-reply.js?v=20261010-file-size-refactor-02";
+import { clearReplyTarget, setReplyTarget } from "../chat/chat-reply.js?v=20261011-chat-ui-fixes-03";
 import { extendMessageHitArea } from "../chat/chat-message-interactions.js?v=20261010-file-size-refactor-02";
-import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js?v=20261010-file-size-refactor-02";
+import { setInsideChatAutoExpandEnabled } from "../chat/chat-layout.js?v=20261011-chat-ui-fixes-03";
 import { state } from "../../core/state.js?v=20261010-file-size-refactor-02";
-import { wireMiniMessageReplies } from "./mini-player-chat-replies.js?v=20261010-file-size-refactor-02";
+import { wireMiniMessageReplies } from "./mini-player-chat-replies.js?v=20261011-chat-ui-fixes-03";
 import { mirroredSystemGroupStates, setMiniSystemGroupVisibility, animateMiniSystemGroupTransition } from "./mini-player-chat-groups.js?v=20261010-file-size-refactor-02";
 export { normalizeMiniSystemGroupState, setMiniSystemGroupVisibility, animateMiniSystemGroupTransition } from "./mini-player-chat-groups.js?v=20261010-file-size-refactor-02";
-export { wireMiniMessageReplies } from "./mini-player-chat-replies.js?v=20261010-file-size-refactor-02";
+export { wireMiniMessageReplies } from "./mini-player-chat-replies.js?v=20261011-chat-ui-fixes-03";
 export { toggleMiniEmojiPicker } from "./mini-player-chat-emoji.js?v=20261010-file-size-refactor-02";
 
 

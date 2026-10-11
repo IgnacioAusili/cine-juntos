@@ -1,6 +1,6 @@
 import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
 import { hideEmojiPicker } from "./emoji-picker.js?v=20261010-file-size-refactor-02";
-import { isPinnedToBottom, queuePinnedChatScrollSync } from "./chat-scroll-sync.js?v=20261010-file-size-refactor-02";
+import { isPinnedToBottom, queuePinnedChatScrollSync } from "./chat-scroll-sync.js?v=20261011-chat-interaction-fixes-01";
 import { wireChatScrollbar, syncChatScrollbar, syncComposerScrollbar } from "./chat-scrollbar.js?v=20261010-file-size-refactor-02";
 import { isMobileLayout } from "./chat-input-debug.js?v=20261010-file-size-refactor-02";
 

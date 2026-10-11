@@ -9,21 +9,21 @@ import {
 import {
   hideTooltip,
   setControlIcon,
-} from "../icons-tooltips.js?v=20261010-file-size-refactor-02";
+} from "../icons-tooltips.js?v=20261011-chat-ui-fixes-03";
 import { setSyncStatus } from "../session-ui.js?v=20261010-file-size-refactor-02";
 import {
   logEvent,
   state,
 } from "../../core/state.js?v=20261010-file-size-refactor-02";
-import { isMiniPlayerActive } from "./mini-player.js?v=20261010-file-size-refactor-02";
-import { wirePlayerOverlayControls } from "./player-overlay-controls.js?v=20261010-file-size-refactor-02";
+import { isMiniPlayerActive } from "./mini-player.js?v=20261011-chat-ui-fixes-03";
+import { wirePlayerOverlayControls } from "./player-overlay-controls.js?v=20261011-chat-ui-fixes-03";
 import {
   syncExternalChatCollapseHandleOffset,
   syncInsideChatPanelOffset,
   cancelExternalChatAutoCollapse,
   forceExternalChatCollapsed,
   updateCollapseButton,
-} from "../chat/chat-layout.js?v=20261010-file-size-refactor-02";
+} from "../chat/chat-layout.js?v=20261011-chat-ui-fixes-03";
 import { withShortcutHint } from "../../core/utils.js?v=20261010-file-size-refactor-02";
 import {
   captureFullscreenScroll,

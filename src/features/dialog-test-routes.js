@@ -8,7 +8,7 @@ import {
   showSlowLoadDialog,
   showSession,
 } from "./session-ui.js?v=20261010-file-size-refactor-02";
-import { setVideoStatus } from "./player/player-video-source.js?v=20261010-file-size-refactor-02";
+import { setVideoStatus } from "./player/player-video-source.js?v=20261011-chat-ui-fixes-03";
 import { openLightboxForTest } from "./chat/image-lightbox.js?v=20261010-file-size-refactor-02";
 
 export const DIALOG_TEST_ROUTES = Object.freeze({

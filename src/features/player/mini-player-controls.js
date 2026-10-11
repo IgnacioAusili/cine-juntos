@@ -8,7 +8,7 @@ export function installMiniPlayerWindowStyles(targetDocument) {
   targetDocument.head.append(emojiFont);
 
   const stylesheets = [
-    "../../../public/styles.css?v=20261010-file-size-refactor-02",
+    "../../../public/styles.css?v=20261011-chat-ui-fixes-02",
     "../../../public/styles/mini-player-window.css?v=20261010-file-size-refactor-02",
   ].map((path) => {
     const stylesheet = targetDocument.createElement("link");

@@ -1,7 +1,7 @@
 import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
 import { state, logEvent } from "../../core/state.js?v=20261010-file-size-refactor-02";
 import { MAX_CHARS, withShortcutHint } from "../../core/utils.js?v=20261010-file-size-refactor-02";
-import { refreshTooltipForTarget } from "../icons-tooltips.js?v=20261010-file-size-refactor-02";
+import { refreshTooltipForTarget } from "../icons-tooltips.js?v=20261011-chat-ui-fixes-03";
 
 const sendButtonMarkup = new WeakMap();
 

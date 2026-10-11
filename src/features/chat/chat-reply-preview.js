@@ -2,7 +2,7 @@ import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
 import { state } from "../../core/state.js?v=20261010-file-size-refactor-02";
 import { truncateText } from "./chat-content-parser.js?v=20261010-file-size-refactor-02";
 import { getParticipantAccent } from "./chat-participant-color.js?v=20261010-file-size-refactor-02";
-import { scrollToMessage } from "./chat-message-navigation.js?v=20261010-file-size-refactor-02";
+import { scrollToMessage } from "./chat-message-navigation.js?v=20261011-chat-interaction-fixes-01";
 
 let clearReplyTargetCallback = null;
 export function configureReplyPreviewOperations({ clearReplyTarget } = {}) { clearReplyTargetCallback = clearReplyTarget || null; }

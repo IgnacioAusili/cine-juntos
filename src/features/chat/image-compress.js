@@ -3,7 +3,7 @@ import { state } from "../../core/state.js?v=20261010-file-size-refactor-02";
 import {
   isPinnedToBottom,
   queuePinnedChatScrollSync,
-} from "./chat-scroll-sync.js?v=20261010-file-size-refactor-02";
+} from "./chat-scroll-sync.js?v=20261011-chat-interaction-fixes-01";
 
 export function compressImageBase64(base64Str, maxWidth, maxHeight, quality, callback) {
   const img = new Image();

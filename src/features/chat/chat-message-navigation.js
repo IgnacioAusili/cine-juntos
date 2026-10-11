@@ -1,5 +1,5 @@
 import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
-import { expandSystemMessageGroupForItem } from "./system-message-groups.js?v=20261010-file-size-refactor-02";
+import { expandSystemMessageGroupForItem } from "./system-message-groups.js?v=20261011-chat-interaction-fixes-01";
 
 const pendingOverlayHighlights = new WeakMap();
 const pendingOverlayHighlightTimers = new WeakMap();

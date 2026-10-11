@@ -1,6 +1,6 @@
 import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
-import { captureExternalChatCollapseScroll, setExternalChatCollapsed } from "./chat-layout.js?v=20261010-file-size-refactor-02";
-import { hideTooltip } from "../icons-tooltips.js?v=20261010-file-size-refactor-02";
+import { captureExternalChatCollapseScroll, setExternalChatCollapsed } from "./chat-layout.js?v=20261011-chat-ui-fixes-03";
+import { hideTooltip } from "../icons-tooltips.js?v=20261011-chat-ui-fixes-03";
 
 const MOBILE_CHAT_LAYOUT_QUERY = "(max-width: 980px)";
 const COLLAPSE_POINTER_HOVER_CLASS = "chat-collapse-pointer-hover";

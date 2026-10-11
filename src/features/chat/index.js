@@ -2,29 +2,29 @@ export {
   buildEmojiPicker,
   updateCharCounter,
   sendMessage,
-} from "./chat-input.js?v=20261010-file-size-refactor-02";
+} from "./chat-input.js?v=20261011-chat-ui-fixes-03";
 export {
   beginSystemMessageHydration,
   finishSystemMessageHydration,
   renderMessage,
-} from "./chat-render.js?v=20261010-file-size-refactor-02";
+} from "./chat-render.js?v=20261011-chat-ui-fixes-03";
 export {
   fillChatHistoryViewport,
   loadOlderChatHistory,
   resetChatHistoryPaging,
-} from "./chat-history.js?v=20261010-file-size-refactor-02";
+} from "./chat-history.js?v=20261011-chat-ui-fixes-03";
 export {
   clearReplyTarget,
   renderReplyPreview,
   scrollToMessage,
   setReplyTarget,
-} from "./chat-reply.js?v=20261010-file-size-refactor-02";
-export { sendVideoEventMessage } from "./chat-system-messages.js?v=20261010-file-size-refactor-02";
+} from "./chat-reply.js?v=20261011-chat-ui-fixes-03";
+export { sendVideoEventMessage } from "./chat-system-messages.js?v=20261011-chat-ui-fixes-03";
 export {
   checkScrollPosition,
   resetInsideUnread,
   resetPageUnread,
-} from "./unread-counters.js?v=20261010-file-size-refactor-02";
+} from "./unread-counters.js?v=20261011-chat-interaction-fixes-01";
 export {
   copyMessageText,
   hideMessageMenu,
@@ -42,6 +42,6 @@ export {
   setInsideChatVisible,
   syncChatAutoExpandControls,
   updateCollapseButton,
-} from "./chat-layout.js?v=20261010-file-size-refactor-02";
+} from "./chat-layout.js?v=20261011-chat-ui-fixes-03";
 
-export { wireChatEvents } from "./chat-events.js?v=20261010-file-size-refactor-02";
+export { wireChatEvents } from "./chat-events.js?v=20261011-chat-ui-fixes-03";

@@ -1,7 +1,7 @@
 // Controla la cabecera del chat en pantallas tactiles.
 import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
 import { state } from "../../core/state.js?v=20261010-file-size-refactor-02";
-import { hideTooltip } from "../icons-tooltips.js?v=20261010-file-size-refactor-02";
+import { hideTooltip } from "../icons-tooltips.js?v=20261011-chat-ui-fixes-03";
 import { wireMobileChatHeaderGestures } from "./mobile-chat-header-gestures.js?v=20261010-file-size-refactor-02";
 
 const MOBILE_QUERY = "(hover: none) and (pointer: coarse)";

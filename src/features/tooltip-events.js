@@ -3,7 +3,7 @@ import { state } from "../core/state.js?v=20261010-file-size-refactor-02";
 import { tooltipState } from "./tooltip-state.js?v=20261010-file-size-refactor-02";
 import { isTouchPointer, TOUCH_LONG_PRESS_DELAY_MS } from "../core/touch-interactions.js?v=20261010-file-size-refactor-02";
 import { TOOLTIP_SHOW_DELAY_MS, TOUCH_FOCUS_SUPPRESSION_MS, TOUCH_TOOLTIP_MOVE_TOLERANCE_PX, TOUCH_HELP_TOOLTIP_MAX_VISIBLE_MS } from "./tooltip-constants.js?v=20261010-file-size-refactor-02";
-import { hideTooltip, showTooltip, refreshTooltipForTarget, getTooltipContext, isPointInsideElement, isButtonTooltipContext, isSelectTooltipContext, isPresenceTooltipContext, isStatusTooltipContext, scheduleTooltip, cancelScheduledTooltip, clearTouchTooltipPress, setTooltipTouchHover, suppressTouchTooltipClick } from "./tooltip-behavior.js?v=20261010-file-size-refactor-02";
+import { hideTooltip, showTooltip, refreshTooltipForTarget, getTooltipContext, isPointInsideElement, isButtonTooltipContext, isSelectTooltipContext, isPresenceTooltipContext, isStatusTooltipContext, scheduleTooltip, cancelScheduledTooltip, clearTouchTooltipPress, setTooltipTouchHover, suppressTouchTooltipClick } from "./tooltip-behavior.js?v=20261011-chat-ui-fixes-03";
 
 export function wireTooltipEvents() {
   if (!dom.tooltipLayer) return;

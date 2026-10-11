@@ -1,11 +1,11 @@
 import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
 import { focusFullscreenWorkspace } from "../session-ui.js?v=20261010-file-size-refactor-02";
-import { isStackedSessionLayout } from "./chat-responsive-layout.js?v=20261010-file-size-refactor-02";
+import { isStackedSessionLayout } from "./chat-responsive-layout.js?v=20261011-chat-ui-fixes-02";
 import { getElementPageTop, getPageScrollContainer, getPageScrollMax, getPageScrollTop, isFullscreenPageActive, scrollPageTo } from "./chat-page-scroll.js?v=20261010-file-size-refactor-02";
 import { syncComponentAspectLayoutNow } from "./component-aspect-layout.js?v=20261010-file-size-refactor-02";
 import { chatDockTransitionState, getChatDockOperations } from "./chat-layout-transition-state.js?v=20261010-file-size-refactor-02";
-import { clearBottomChatTransitionVisuals, lockBottomChatScrollAnchoring, restoreBottomChatScrollAnchoring, cancelBottomChatTransition, completeDesktopBottomChatTransition, setDesktopBottomChatCurtainProgress, setMobileBottomTransitionProgress, setDesktopBottomTransitionRowsProgress, completeMobileBottomChatTransition, stepMobileBottomChatTransition, stepDesktopBottomChatTransition, animateDesktopBottomChatCollapse, animateDesktopBottomChatExpand, animateBottomChatCollapse, animateBottomChatExpand } from "./chat-dock-transition-core.js?v=20261010-file-size-refactor-02";
-import { isDesktopBottomDock, easeBottomChatCurtainProgress, getWorkspaceRowHeights, getWorkspaceContentHeight } from "./chat-dock-transition-measurements.js?v=20261010-file-size-refactor-02";
+import { clearBottomChatTransitionVisuals, lockBottomChatScrollAnchoring, restoreBottomChatScrollAnchoring, cancelBottomChatTransition, completeDesktopBottomChatTransition, setDesktopBottomChatCurtainProgress, setMobileBottomTransitionProgress, setDesktopBottomTransitionRowsProgress, completeMobileBottomChatTransition, stepMobileBottomChatTransition, stepDesktopBottomChatTransition, animateDesktopBottomChatCollapse, animateDesktopBottomChatExpand, animateBottomChatCollapse, animateBottomChatExpand } from "./chat-dock-transition-core.js?v=20261011-chat-ui-fixes-02";
+import { isDesktopBottomDock, easeBottomChatCurtainProgress, getWorkspaceRowHeights, getWorkspaceContentHeight } from "./chat-dock-transition-measurements.js?v=20261011-chat-ui-fixes-02";
 import { BOTTOM_CHAT_CURTAIN_MS, BOTTOM_CHAT_SCROLL_TIMEOUT_MS, RIGHT_CHAT_LAYOUT_TRANSITION_MS, BOTTOM_TO_RIGHT_SCROLL_TIMEOUT_MS, BOTTOM_TO_RIGHT_LAYOUT_MS, FULLSCREEN_DOCK_OUT_MS, FULLSCREEN_DOCK_IN_MS } from "./chat-layout-timing.js?v=20261010-file-size-refactor-02";
 
 export function animateFullscreenDockSwitch(nextDock) {

@@ -1,35 +1,35 @@
 // Layout del chat externo e interno: visibilidad, estilo, dock y collapse.
 import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
-import { configureExternalChatCollapseOperations, lockChatScrollSnapDuringProgrammaticScroll, setExternalChatCollapsed, forceExternalChatCollapsed, restoreExternalChatCollapsed, applyExternalChatCollapsed, captureExternalChatCollapseScroll } from "./chat-external-collapse.js?v=20261010-file-size-refactor-02";
-export { setExternalChatCollapsed, forceExternalChatCollapsed, restoreExternalChatCollapsed } from "./chat-external-collapse.js?v=20261010-file-size-refactor-02";
-import { configureChatDockController, setChatDock, getBottomDockVideoScrollTop } from "./chat-dock-controller.js?v=20261010-file-size-refactor-02";
-export { setChatDock } from "./chat-dock-controller.js?v=20261010-file-size-refactor-02";
-import { isMobilePortraitChatViewport, isMobileLandscapeRightDock, isMobileLandscapeFullscreenBottomDock, isMobilePortraitRightDock, isRightChatViewportOverlay } from "./chat-layout-breakpoints.js?v=20261010-file-size-refactor-02";
-import { syncInsideChatPanelOffset, syncExternalChatCollapseHandleOffset, updateCollapseButton } from "./chat-collapse-handles.js?v=20261010-file-size-refactor-02";
-export { syncInsideChatPanelOffset, syncExternalChatCollapseHandleOffset, updateCollapseButton } from "./chat-collapse-handles.js?v=20261010-file-size-refactor-02";
-import { configureChatVisibilityOperations, clearChatAutoCollapseTimer as clearAutoCollapseTimer, setInsideChatVisible, setInsideChatAutoExpandEnabled, setExternalChatAutoExpandEnabled, scheduleInsideChatAutoCollapse, scheduleExternalChatAutoCollapse, cancelExternalChatAutoCollapse, completeAutoOpenedChatResponse, syncChatAutoExpandControls } from "./chat-visibility.js?v=20261010-file-size-refactor-02";
-export { setInsideChatVisible, setInsideChatAutoExpandEnabled, setExternalChatAutoExpandEnabled, scheduleInsideChatAutoCollapse, scheduleExternalChatAutoCollapse, cancelExternalChatAutoCollapse, completeAutoOpenedChatResponse, syncChatAutoExpandControls } from "./chat-visibility.js?v=20261010-file-size-refactor-02";
-import { getVideoAreaRect, isStackedSessionLayout, wireResponsiveSessionLayout as wireResponsiveSessionLayoutModule } from "./chat-responsive-layout.js?v=20261010-file-size-refactor-02";
+import { configureExternalChatCollapseOperations, lockChatScrollSnapDuringProgrammaticScroll, setExternalChatCollapsed, forceExternalChatCollapsed, restoreExternalChatCollapsed, applyExternalChatCollapsed, captureExternalChatCollapseScroll } from "./chat-external-collapse.js?v=20261011-chat-ui-fixes-03";
+export { setExternalChatCollapsed, forceExternalChatCollapsed, restoreExternalChatCollapsed } from "./chat-external-collapse.js?v=20261011-chat-ui-fixes-03";
+import { configureChatDockController, setChatDock, getBottomDockVideoScrollTop } from "./chat-dock-controller.js?v=20261011-chat-ui-fixes-03";
+export { setChatDock } from "./chat-dock-controller.js?v=20261011-chat-ui-fixes-03";
+import { isMobilePortraitChatViewport, isMobileLandscapeRightDock, isMobileLandscapeFullscreenBottomDock, isMobilePortraitRightDock, isRightChatViewportOverlay } from "./chat-layout-breakpoints.js?v=20261011-chat-ui-fixes-02";
+import { syncInsideChatPanelOffset, syncExternalChatCollapseHandleOffset, updateCollapseButton } from "./chat-collapse-handles.js?v=20261011-chat-ui-fixes-03";
+export { syncInsideChatPanelOffset, syncExternalChatCollapseHandleOffset, updateCollapseButton } from "./chat-collapse-handles.js?v=20261011-chat-ui-fixes-03";
+import { configureChatVisibilityOperations, clearChatAutoCollapseTimer as clearAutoCollapseTimer, setInsideChatVisible, setInsideChatAutoExpandEnabled, setExternalChatAutoExpandEnabled, scheduleInsideChatAutoCollapse, scheduleExternalChatAutoCollapse, cancelExternalChatAutoCollapse, completeAutoOpenedChatResponse, syncChatAutoExpandControls } from "./chat-visibility.js?v=20261011-chat-ui-fixes-03";
+export { setInsideChatVisible, setInsideChatAutoExpandEnabled, setExternalChatAutoExpandEnabled, scheduleInsideChatAutoCollapse, scheduleExternalChatAutoCollapse, cancelExternalChatAutoCollapse, completeAutoOpenedChatResponse, syncChatAutoExpandControls } from "./chat-visibility.js?v=20261011-chat-ui-fixes-03";
+import { getVideoAreaRect, isStackedSessionLayout, wireResponsiveSessionLayout as wireResponsiveSessionLayoutModule } from "./chat-responsive-layout.js?v=20261011-chat-ui-fixes-02";
 import { isFullscreenPageActive, getPageScrollContainer, getPageScrollTop, getPageScrollMax, getElementPageTop, scrollPageTo } from "./chat-page-scroll.js?v=20261010-file-size-refactor-02";
-export { captureExternalChatCollapseScroll } from "./chat-external-collapse.js?v=20261010-file-size-refactor-02";
-export { getVideoAreaRect, isStackedSessionLayout } from "./chat-responsive-layout.js?v=20261010-file-size-refactor-02";
+export { captureExternalChatCollapseScroll } from "./chat-external-collapse.js?v=20261011-chat-ui-fixes-03";
+export { getVideoAreaRect, isStackedSessionLayout } from "./chat-responsive-layout.js?v=20261011-chat-ui-fixes-02";
 import { chatDockTransitionState } from "./chat-layout-transition-state.js?v=20261010-file-size-refactor-02";
 import { state, logEvent } from "../../core/state.js?v=20261010-file-size-refactor-02";
 import { shouldAnchorChatCollapseHandleInHeader } from "./chat-collapse-header-layout.js?v=20261010-file-size-refactor-02";
 import { CHAT_DOCKS, CHAT_DOCK_META, withShortcutHint } from "../../core/utils.js?v=20261010-file-size-refactor-02";
-import { hydrateIcons, hideTooltip, refreshTooltipForTarget } from "../icons-tooltips.js?v=20261010-file-size-refactor-02";
+import { hydrateIcons, hideTooltip, refreshTooltipForTarget } from "../icons-tooltips.js?v=20261011-chat-ui-fixes-03";
 import { focusFullscreenWorkspace } from "../session-ui.js?v=20261010-file-size-refactor-02";
 import {
   cancelIdentityEditing,
   syncNameInputWidth,
-} from "../presence.js?v=20261010-file-size-refactor-02";
+} from "../presence.js?v=20261011-chat-ui-fixes-03";
 import {
   isExternalChatVisibleToUser,
   isInsideChatVisibleToUser,
   resetInsideUnread,
   resetPageUnread,
   syncUnreadBadgesWithVisibility,
-} from "./unread-counters.js?v=20261010-file-size-refactor-02";
+} from "./unread-counters.js?v=20261011-chat-interaction-fixes-01";
 import { scheduleMessageTimeAdjustment } from "./message-time-layout.js?v=20261010-file-size-refactor-02";
 import { focusChatInput } from "./chat-input-focus.js?v=20261010-file-size-refactor-02";
 import { restorePageScrollAfterRightChatCollapse } from "./chat-scroll-preservation.js?v=20261010-file-size-refactor-02";
@@ -43,7 +43,7 @@ import {
   wireInsideChatPanelPlacement,
 } from "../player/inside-chat-layout.js?v=20261010-file-size-refactor-02";
 import { syncComponentAspectLayoutNow } from "./component-aspect-layout.js?v=20261010-file-size-refactor-02";
-import { configureChatDockTransitionOperations, animateFullscreenDockSwitch, animateRightToBottomWithNativeCollapse, animateFullscreenBottomToRightWithNativeCollapse, getBottomToRightScrollTop, animateRightToBottomSwitch, scheduleBottomToRightSwitch, clearBottomChatTransitionVisuals, lockBottomChatScrollAnchoring, restoreBottomChatScrollAnchoring, cancelBottomChatTransition, isDesktopBottomDock, completeDesktopBottomChatTransition, easeBottomChatCurtainProgress, setDesktopBottomChatCurtainProgress, getWorkspaceRowHeights, getWorkspaceContentHeight, setMobileBottomTransitionProgress, setDesktopBottomTransitionRowsProgress, completeMobileBottomChatTransition, stepMobileBottomChatTransition, stepDesktopBottomChatTransition, animateDesktopBottomChatCollapse, animateDesktopBottomChatExpand, animateBottomChatCollapse, animateBottomChatExpand } from "./chat-dock-transitions.js?v=20261010-file-size-refactor-02";
+import { configureChatDockTransitionOperations, animateFullscreenDockSwitch, animateRightToBottomWithNativeCollapse, animateFullscreenBottomToRightWithNativeCollapse, getBottomToRightScrollTop, animateRightToBottomSwitch, scheduleBottomToRightSwitch, clearBottomChatTransitionVisuals, lockBottomChatScrollAnchoring, restoreBottomChatScrollAnchoring, cancelBottomChatTransition, isDesktopBottomDock, completeDesktopBottomChatTransition, easeBottomChatCurtainProgress, setDesktopBottomChatCurtainProgress, getWorkspaceRowHeights, getWorkspaceContentHeight, setMobileBottomTransitionProgress, setDesktopBottomTransitionRowsProgress, completeMobileBottomChatTransition, stepMobileBottomChatTransition, stepDesktopBottomChatTransition, animateDesktopBottomChatCollapse, animateDesktopBottomChatExpand, animateBottomChatCollapse, animateBottomChatExpand } from "./chat-dock-transitions.js?v=20261011-chat-ui-fixes-02";
 import { CHAT_LAYOUT_SETTLE_MS, COLLAPSE_HANDLE_HIDE_MS, BOTTOM_DOCK_UNION_REVEAL_PX } from "./chat-layout-timing.js?v=20261010-file-size-refactor-02";
 
 const CHAT_STYLE_KEY = "cine-juntos-chat-style";

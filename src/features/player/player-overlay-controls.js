@@ -1,6 +1,6 @@
 import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
 import { state } from "../../core/state.js?v=20261010-file-size-refactor-02";
-import { hideTooltip } from "../icons-tooltips.js?v=20261010-file-size-refactor-02";
+import { hideTooltip } from "../icons-tooltips.js?v=20261011-chat-ui-fixes-03";
 import { wireMobileVideoOverlayGestures } from "./player-overlay-touch-gestures.js?v=20261010-file-size-refactor-02";
 import { wirePlayerOverlayVolumeEvents } from "./player-overlay-volume-events.js?v=20261010-file-size-refactor-02";
 

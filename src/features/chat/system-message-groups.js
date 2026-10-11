@@ -1,6 +1,6 @@
 import { animateCollapsedSystemMessageAdvance, resetSystemMessageRowAnchor, settleSystemMessageRoll } from "./system-message-roll.js?v=20261010-file-size-refactor-02";
 import { SYSTEM_GROUP_MIN_SIZE, groupTransitions } from "./system-message-group-state.js?v=20261010-file-size-refactor-02";
-import { captureSystemTextSnapshot, clearShortGroup, ensureGroupHeader, findGroupToggle, getContiguousSystemItems, getGroupState, getLatestSystemStreak, applyGroupState, removeGroupHeader } from "./system-message-group-model.js?v=20261010-file-size-refactor-02";
+import { captureSystemTextSnapshot, clearShortGroup, ensureGroupHeader, findGroupToggle, getContiguousSystemItems, getGroupState, getLatestSystemStreak, applyGroupState, removeGroupHeader } from "./system-message-group-model.js?v=20261011-chat-interaction-fixes-01";
 import { getGroupTransitionTarget } from "./system-message-group-visuals.js?v=20261010-file-size-refactor-02";
 import { moveGroupToggle } from "./system-message-group-toggle.js?v=20261010-file-size-refactor-02";
 import { animateExpandedSystemMessageRemoval, animateExpandedSystemMessageEntry } from "./system-message-group-effects.js?v=20261010-file-size-refactor-02";

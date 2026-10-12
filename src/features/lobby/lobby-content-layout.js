@@ -1,7 +1,7 @@
 let lobbyCenterFrame = 0;
 
-import { resetTitleFit, syncLobbyTitleFit, syncSingleColumnTitleLift, syncSingleColumnTitleGroup, resetSingleColumnTitleLift, resetSingleColumnTitleGroup, resetSingleColumnDescriptionPlacement, syncLobbyTextDensity, syncLobbyTicketInlinePadding } from "./lobby-title-layout.js";
-import { syncSingleColumnDescriptionPlacement, resetLobbyAboutButtonContact, syncLobbyAboutButtonContact, syncSingleColumnContentGap, syncSingleColumnTicketPlacement } from "./lobby-content-variants.js";
+import { resetTitleFit, syncLobbyTitleFit, syncSingleColumnTitleGroup, resetSingleColumnTitleLift, resetSingleColumnTitleGroup, resetSingleColumnDescriptionPlacement, syncLobbyTextDensity, syncLobbyTicketInlinePadding } from "./lobby-title-layout.js";
+import { syncSingleColumnDescriptionPlacement, resetLobbyAboutButtonContact, syncLobbyAboutButtonContact, syncSingleColumnContentCenter, syncSingleColumnContentGap, syncSingleColumnTicketPlacement } from "./lobby-content-variants.js";
 import { resetLobbyTicketPlacement, syncLobbyTicketPlacement, syncLobbyTitlePlacement } from "./lobby-ticket-placement.js";
 
 export function syncLobbyContentCenter() {
@@ -73,6 +73,7 @@ export function syncLobbyContentCenter() {
     syncLobbyTicketInlinePadding(ticket);
     syncSingleColumnContentGap(grid, ticket, footer);
     syncSingleColumnTicketPlacement(hero, ticket, footer);
+    syncSingleColumnContentCenter(screen, grid, hero, ticket, footer);
     syncLobbyAboutButtonContact(ticket, footer);
     return;
   }

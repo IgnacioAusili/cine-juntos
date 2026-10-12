@@ -1,6 +1,6 @@
 
 
-.player-frame .overlay-message-form .input-wrapper .icon-button {
+.player-frame .message-form.message-form--overlay .message-form__input-wrapper .icon-button {
   position: static;
   right: auto;
   bottom: auto;
@@ -9,44 +9,20 @@
   transform: none;
 }
 
-.player-frame .overlay-message-form .input-wrapper .send {
-  position: relative;
-  right: auto;
-  bottom: auto;
-  align-self: flex-end;
-  margin: 0 6px 1px 0;
-  transform: none;
-}
-
-.player-frame .overlay-message-form .input-wrapper textarea {
+.player-frame .message-form.message-form--overlay .message-form__input-wrapper textarea {
   padding-right: 6px;
 }
 
-.overlay-message-form .input-wrapper .send > svg.composer-progress-ring {
-  position: absolute;
-  left: calc(50% + 1px);
-  top: calc(50% - 1px);
-  width: 30px;
-  height: 30px;
-  opacity: var(--composer-progress-visible, 0);
-  transform: translate(-50%, -50%) scale(var(--composer-progress-scale, 0.78));
-  pointer-events: none;
-  transition:
-    opacity 360ms ease,
-    transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.overlay-message-form .input-wrapper .composer-progress-track,
-.overlay-message-form .input-wrapper .composer-progress-value {
+.message-form.message-form--overlay .message-form__input-wrapper .icon-button__progress-track,.message-form.message-form--overlay .message-form__input-wrapper .icon-button__progress-value {
   fill: none;
   stroke-width: 2;
 }
 
-.overlay-message-form .input-wrapper .composer-progress-track {
+.message-form.message-form--overlay .message-form__input-wrapper .icon-button__progress-track {
   stroke: var(--composer-progress-track, rgba(255, 255, 255, 0.12));
 }
 
-.overlay-message-form .input-wrapper .composer-progress-value {
+.message-form.message-form--overlay .message-form__input-wrapper .icon-button__progress-value {
   stroke: var(--composer-progress-color, rgba(47, 184, 164, 1));
   stroke-linecap: round;
   stroke-dasharray: var(--composer-progress-length, 0) 100;
@@ -57,7 +33,7 @@
   transition: stroke-dasharray 220ms ease, stroke 180ms ease;
 }
 
-.overlay-message-form .send-cooldown {
+.message-form.message-form--overlay .icon-button__send-cooldown {
   display: inline-grid;
   width: 100%;
   height: 100%;
@@ -71,15 +47,34 @@
   filter: grayscale(0.7);
 }
 
-.overlay-message-form .send[data-spam-cooldown="true"] {
+.player-frame .message-form.message-form--overlay .message-form__input-wrapper .icon-button--send {
+  position: relative;
+  right: auto;
+  bottom: auto;
+  align-self: flex-end;
+  margin: 0 6px 1px 0;
+  transform: none;
+}
+
+.message-form.message-form--overlay .message-form__input-wrapper .icon-button--send > svg.icon-button__progress-ring {
+  position: absolute;
+  left: calc(50% + 1px);
+  top: calc(50% - 1px);
+  width: 30px;
+  height: 30px;
+  opacity: var(--composer-progress-visible, 0);
+  transform: translate(-50%, -50%) scale(var(--composer-progress-scale, 0.78));
+  pointer-events: none;
+  transition:
+    opacity 360ms ease,
+    transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.message-form.message-form--overlay .icon-button--send[data-spam-cooldown="true"] {
   pointer-events: auto;
 }
 
-.overlay-message-form .input-wrapper .send:hover {
-  opacity: 0.9;
-}
-
-.overlay-message-form .input-wrapper .send > * {
+.message-form.message-form--overlay .message-form__input-wrapper .icon-button--send > * {
   position: absolute;
   left: 50%;
   top: 50%;
@@ -87,12 +82,16 @@
   z-index: 1;
 }
 
-.overlay-message-form .input-wrapper .send > svg:not(.composer-progress-ring) {
+.message-form.message-form--overlay .message-form__input-wrapper .icon-button--send > svg:not(.icon-button__progress-ring) {
   width: 18px;
   height: 18px;
   display: block;
 }
 
-.overlay-message-form .input-wrapper .send:disabled {
+.message-form.message-form--overlay .message-form__input-wrapper .icon-button--send:hover {
+  opacity: 0.9;
+}
+
+.message-form.message-form--overlay .message-form__input-wrapper .icon-button--send:disabled {
   opacity: 0.9;
 }

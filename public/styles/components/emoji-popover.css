@@ -10,6 +10,16 @@
   --emoji-popover-arrow-fill-color: var(--emoji-popover-background);
   --emoji-popover-transition-duration: 150ms;
   --emoji-popover-close-duration: 150ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .emoji-popover {
+    --emoji-popover-transition-duration: 0ms;
+    --emoji-popover-close-duration: 0ms;
+  }
+}
+
+.emoji-popover {
   position: fixed;
   z-index: 9000;
   display: block;
@@ -35,39 +45,17 @@
   pointer-events: none;
 }
 
-.emoji-popover.is-emoji-popover-open {
-  opacity: 1;
-  visibility: visible;
-  transition-delay: 0s;
-  pointer-events: auto;
-}
-
-.emoji-popover.is-emoji-popover-closing {
-  opacity: 0;
-  visibility: visible;
-  transition-duration: var(--emoji-popover-close-duration), 0s;
-  transition-delay: 0s, var(--emoji-popover-close-duration);
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .emoji-popover {
-    --emoji-popover-transition-duration: 0ms;
-    --emoji-popover-close-duration: 0ms;
-  }
-}
-
-.emoji-popover-fog {
+.emoji-popover__fog {
   display: none;
 }
 
-.emoji-popover-track {
+.emoji-popover__track {
   display: block;
   width: 100%;
   overflow: hidden;
 }
 
-.emoji-popover-page {
+.emoji-popover__page {
   display: grid;
   width: 100%;
   grid-template-columns: repeat(var(--emoji-page-columns, 7), minmax(0, 1fr));
@@ -76,35 +64,7 @@
   align-content: start;
 }
 
-.emoji-popover.is-emoji-popover-paged {
-  touch-action: pan-x;
-}
-
-.emoji-popover.is-emoji-popover-paged .emoji-popover-track {
-  display: flex;
-  height: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
-  overscroll-behavior-x: contain;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
-  touch-action: pan-x;
-}
-
-.emoji-popover.is-emoji-popover-paged .emoji-popover-track::-webkit-scrollbar {
-  display: none;
-}
-
-.emoji-popover.is-emoji-popover-paged .emoji-popover-page {
-  flex: 0 0 100%;
-  height: 100%;
-  grid-template-rows: repeat(var(--emoji-page-rows, 1), minmax(0, 1fr));
-  align-content: stretch;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
-}
-
-.emoji-popover-svg {
+.emoji-popover__svg {
   position: fixed;
   z-index: 0;
   top: 0;
@@ -114,29 +74,24 @@
   pointer-events: none;
 }
 
-.app-shell:fullscreen .emoji-popover-track {
+.app-shell:fullscreen .emoji-popover__track {
   position: relative;
   z-index: 1;
 }
 
-.emoji-popover .emoji-option {
+.emoji-popover .emoji-popover__option {
   position: relative;
   z-index: 1;
 }
 
-.emoji-popover.is-emoji-popover-paged .emoji-option {
-  min-height: 0;
-  aspect-ratio: auto;
-}
-
-.emoji-popover-svg path {
+.emoji-popover__svg path {
   fill: var(--emoji-popover-background, rgb(29, 36, 40));
   stroke: var(--emoji-popover-border, rgb(59, 65, 69));
   stroke-width: var(--emoji-popover-border-width, 1px);
   stroke-linejoin: round;
 }
 
-.emoji-option {
+.emoji-popover__option {
   display: grid;
   width: 100%;
   aspect-ratio: 1;
@@ -153,7 +108,55 @@
   overflow: visible;
 }
 
-.emoji-option:hover,
-.emoji-option:focus-visible {
+.emoji-popover.emoji-popover--closing {
+  opacity: 0;
+  visibility: visible;
+  transition-duration: var(--emoji-popover-close-duration), 0s;
+  transition-delay: 0s, var(--emoji-popover-close-duration);
+  pointer-events: none;
+}
+
+.emoji-popover.emoji-popover--paged {
+  touch-action: pan-x;
+}
+
+.emoji-popover.emoji-popover--paged .emoji-popover__track {
+  display: flex;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  touch-action: pan-x;
+}
+
+.emoji-popover.emoji-popover--paged .emoji-popover__track::-webkit-scrollbar {
+  display: none;
+}
+
+.emoji-popover.emoji-popover--paged .emoji-popover__page {
+  flex: 0 0 100%;
+  height: 100%;
+  grid-template-rows: repeat(var(--emoji-page-rows, 1), minmax(0, 1fr));
+  align-content: stretch;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+.emoji-popover.emoji-popover--paged .emoji-popover__option {
+  min-height: 0;
+  aspect-ratio: auto;
+}
+
+.emoji-popover.emoji-popover--open {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+  pointer-events: auto;
+}
+
+.emoji-popover__option:hover,
+.emoji-popover__option:focus-visible {
   background: rgba(255, 255, 255, 0.09);
 }

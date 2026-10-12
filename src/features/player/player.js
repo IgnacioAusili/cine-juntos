@@ -1,15 +1,15 @@
 import {
   dom,
-} from "../../core/dom.js?v=20261010-file-size-refactor-02";
-import { state } from "../../core/state.js?v=20261010-file-size-refactor-02";
-import { configureRateSelectMenu, initializeRateSelectMenu } from "./player-rate-menu.js?v=20261010-file-size-refactor-02";
-import { hideSeekTooltip, updateSeekTooltipForValue } from "./player-seek-tooltip-view.js?v=20261011-chat-ui-fixes-03";
-import { seekTooltipState } from "./player-seek-tooltip-state.js?v=20261010-file-size-refactor-02";
-import { renderPlayerControls, showPlaybackGestureIndicator, updateSeekVisuals } from "./player-control-display.js?v=20261011-overlay-scroll-top-01";
-import { setVideoStatus } from "./player-video-source.js?v=20261011-overlay-scroll-top-01";
-import { getFiniteDuration, hasLoadedMediaSource, clearSlowLoadPromptTracking } from "./player-media.js?v=20261011-overlay-scroll-top-01";
-import { playerRuntimeState } from "./player-runtime-state.js?v=20261010-file-size-refactor-02";
-import { resetSyncControlCooldown, readPersistedVolume, syncPlayerControls } from "./player-control-actions.js?v=20261011-overlay-scroll-top-01";
+} from "../../core/dom.js";
+import { state } from "../../core/state.js";
+import { configureRateSelectMenu, initializeRateSelectMenu } from "./controls/player-rate-menu.js";
+import { hideSeekTooltip, updateSeekTooltipForValue } from "./controls/player-seek-tooltip-view.js";
+import { seekTooltipState } from "./controls/player-seek-tooltip-state.js";
+import { renderPlayerControls, showPlaybackGestureIndicator, updateSeekVisuals } from "./controls/player-control-display.js";
+import { setVideoStatus } from "./player-video-source.js";
+import { getFiniteDuration, hasLoadedMediaSource, clearSlowLoadPromptTracking } from "./player-media.js";
+import { playerRuntimeState } from "./player-runtime-state.js";
+import { resetSyncControlCooldown, readPersistedVolume, syncPlayerControls } from "./controls/player-control-actions.js";
 
 const PLAYER_CONTROL_STYLES = new Set(["line"]);
 const MOBILE_PLAYER_CONTROLS_QUERY = "(max-width: 980px) and (hover: none) and (pointer: coarse)";
@@ -20,7 +20,7 @@ export function initializePlayer() {
   playerRuntimeState.pendingLoadCompletionAnimateSystemGroups = true;
   playerRuntimeState.pendingVideoActivityAnnouncement = false;
   state.ui.seekDragActive = false;
-  dom.playerFrame?.classList.remove("player-seek-control-dragging");
+  dom.playerFrame?.classList.remove('player-frame--seek-control-dragging');
   resetSyncControlCooldown("seek");
   resetSyncControlCooldown("rate");
   seekTooltipState.pointerId = null;
@@ -77,9 +77,9 @@ export function wireMobilePlayerControlPlacement() {
   centerActions.addEventListener("click", (event) => {
     const button = event.target?.closest?.("button");
     if (!button || !centerActions.contains(button) || button.disabled || button.getAttribute("aria-disabled") === "true") return;
-    button.classList.remove("is-click-bouncing");
+    button.classList.remove('video-control-button--click-bouncing');
     void button.offsetWidth;
-    button.classList.add("is-click-bouncing");
+    button.classList.add('video-control-button--click-bouncing');
   });
   mobileQuery.addEventListener?.("change", syncPlacement);
   window.addEventListener("resize", syncPlacement, { passive: true });

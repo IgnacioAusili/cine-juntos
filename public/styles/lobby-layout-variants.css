@@ -1,5 +1,5 @@
-@import url("./lobby-layout-picker.css?v=20261010-file-size-refactor-02");
-@import url("./lobby-single-column.css?v=20261010-file-size-refactor-02");
-@import url("./lobby-tablet-layout.css?v=20261010-file-size-refactor-02");
-@import url("./lobby-desktop-layout.css?v=20261010-file-size-refactor-02");
-@import url("./lobby-phone-layout.css?v=20261010-file-size-refactor-02");
+@import url("./lobby/lobby-layout-picker.css");
+@import url("./lobby/lobby-single-column.css");
+@import url("./lobby/lobby-tablet-layout.css");
+@import url("./lobby/lobby-desktop-layout.css");
+@import url("./lobby/lobby-phone-layout.css");

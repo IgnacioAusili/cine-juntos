@@ -1,20 +1,42 @@
-/* En layouts apilados, el primer carril del header queda reservado aunque la
-   flecha esté momentáneamente fuera del header durante la transición. */
-.chat-tools > .chat-collapse-header-slot {
-  display: none;
+
+
+.session-view.session-view--layout-stacked[data-chat-dock="right"] .chat-tools {
+  --chat-collapse-header-slot-width: 28px;
 }
 
-.session-view.layout-stacked[data-chat-dock="right"] .chat-tools {
-  --chat-collapse-header-slot-width: 28px;
+.chat-tools__leading > .chat-name-editor__field {
+  --chat-name-control-width: 22px;
+  --chat-name-control-gap: 6px;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .session-view.session-view--layout-stacked[data-chat-dock="right"] .chat-tools {
+    --chat-collapse-header-slot-width: 30px;
+  }
+}
+@media (max-width: 680px) {
+  body:not(.page-context--lobby) .session-view[data-chat-dock="right"] .chat-tools,
+  body:not(.page-context--lobby) .session-view.session-view--chat-collapse-in-header:not(.session-view--chat-collapsed)[data-chat-dock="right"] .chat-tools {
+    --chat-collapse-header-slot-width: 30px;
+  }
+}
+
+.session-view.session-view--layout-stacked[data-chat-dock="right"] .chat-tools {
   grid-template-columns: var(--chat-collapse-header-slot-width) auto minmax(0, 1fr) auto;
   padding-inline-start: 4px !important;
 }
 
-.session-view.layout-stacked.chat-collapse-in-header:not(.chat-collapsed)[data-chat-dock="right"] .chat-tools {
+/* En layouts apilados, el primer carril del header queda reservado aunque la
+   flecha esté momentáneamente fuera del header durante la transición. */
+.chat-tools > .chat-area__collapse-header-slot {
+  display: none;
+}
+
+.session-view.session-view--layout-stacked.session-view--chat-collapse-in-header:not(.session-view--chat-collapsed)[data-chat-dock="right"] .chat-tools {
   padding-inline-start: 4px !important;
 }
 
-.session-view.layout-stacked[data-chat-dock="right"] .chat-tools > .chat-collapse-header-slot {
+.session-view.session-view--layout-stacked[data-chat-dock="right"] .chat-tools > .chat-area__collapse-header-slot {
   display: block;
   grid-column: 1;
   grid-row: 1;
@@ -24,62 +46,19 @@
   pointer-events: none;
 }
 
-.session-view.layout-stacked[data-chat-dock="right"] .chat-tools-leading > .presence-pill {
+.session-view.session-view--layout-stacked[data-chat-dock="right"] .chat-tools__leading > .presence-pill {
   grid-column: 2;
 }
 
-.session-view.layout-stacked[data-chat-dock="right"] .chat-tools-leading > .chat-name-field {
-  grid-column: 3;
-}
-
-.session-view.layout-stacked[data-chat-dock="right"] .chat-tools-actions {
-  grid-column: 4;
-}
-
-@media (hover: none) and (pointer: coarse) {
-  .session-view.layout-stacked[data-chat-dock="right"] .chat-tools {
-    --chat-collapse-header-slot-width: 30px;
-  }
-}
-
-/* En viewports angostos el dock derecho ocupa el viewport aunque el cálculo
-   estructural no lo marque como layout-stacked. El carril sigue fijo ahí. */
-@media (max-width: 680px) {
-  body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-tools,
-  body:not(.is-lobby) .session-view.chat-collapse-in-header:not(.chat-collapsed)[data-chat-dock="right"] .chat-tools {
-    --chat-collapse-header-slot-width: 30px;
-    grid-template-columns: var(--chat-collapse-header-slot-width) auto minmax(0, 1fr) auto;
-    padding-inline-start: 4px !important;
-  }
-
-  body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-tools > .chat-collapse-header-slot {
-    display: block;
-    grid-column: 1;
-    grid-row: 1;
-    width: 100%;
-    height: 100%;
-    min-width: 0;
-    pointer-events: none;
-  }
-
-  body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-tools-leading > .presence-pill {
-    grid-column: 2;
-  }
-
-  body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-tools-leading > .chat-name-field {
-    grid-column: 3;
-  }
-
-  body:not(.is-lobby) .session-view[data-chat-dock="right"] .chat-tools-actions {
-    grid-column: 4;
-  }
+.chat-name-editor__field > .chat-name-editor {
+  width: 100%;
+  max-width: 100%;
+  justify-items: stretch;
 }
 
 /* El nombre y su lápiz forman un grupo centrado dentro del espacio libre del
    lado izquierdo del header. */
-.chat-tools-leading > .chat-name-field {
-  --chat-name-control-width: 22px;
-  --chat-name-control-gap: 6px;
+.chat-tools__leading > .chat-name-editor__field {
   grid-column: 2;
   min-width: 0;
   width: auto;
@@ -91,14 +70,12 @@
   box-sizing: border-box;
 }
 
-.chat-name-field > .chat-name-editor {
-  width: 100%;
-  max-width: 100%;
-  justify-items: stretch;
+.session-view.session-view--layout-stacked[data-chat-dock="right"] .chat-tools__leading > .chat-name-editor__field {
+  grid-column: 3;
 }
 
-.chat-name-field .chat-name-display-row,
-.chat-name-field .chat-name-edit-row {
+.chat-name-editor__field .chat-name-editor__display-row,
+.chat-name-editor__field .chat-name-editor__edit-row {
   display: flex !important;
   align-items: center;
   justify-content: center;
@@ -108,7 +85,7 @@
   min-width: 0;
 }
 
-.chat-name-field .chat-name-display {
+.chat-name-editor__field .chat-name-editor__display {
   flex: 0 1 auto;
   text-align: center;
   width: auto;
@@ -119,13 +96,13 @@
   white-space: nowrap;
 }
 
-.chat-name-field .chat-name-edit-button,
-.chat-name-field .chat-name-confirm-button {
+.chat-name-editor__field .chat-name-editor__edit-button,
+.chat-name-editor__field .chat-name-editor__confirm-button {
   flex: 0 0 var(--chat-name-control-width);
   width: var(--chat-name-control-width);
 }
 
-.chat-name-field .chat-name-edit-row #nameInput {
+.chat-name-editor__field .chat-name-editor__edit-row #nameInput {
   flex: 0 1 auto;
   width: 20ch !important;
   min-width: 24px !important;
@@ -133,21 +110,22 @@
 }
 
 @supports (field-sizing: content) {
-  .chat-name-field .chat-name-edit-row #nameInput {
+  .chat-name-editor__field .chat-name-editor__edit-row #nameInput {
     field-sizing: content !important;
     width: auto !important;
   }
 }
 
-/* La barra al borde sólo se usa cuando los dos paneles caben en el viewport. */
-body:not(.is-lobby)
-  .session-view.bottom-dock-panels-fit-viewport:not(.chat-collapsed)[data-chat-dock="bottom"]
-  .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-bottom-actions {
+/* Cuando ambos paneles caben, quitar la reserva extra del riel mantiene su
+   alineación con el borde del reproductor. */
+body:not(.page-context--lobby)
+  .session-view.session-view--bottom-dock-panels-fit-viewport:not(.session-view--chat-collapsed)[data-chat-dock="bottom"]
+  .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-frame__bottom-actions {
   min-height: 0;
 }
 
-body:not(.is-lobby)
-  .session-view.bottom-dock-panels-fit-viewport:not(.chat-collapsed)[data-chat-dock="bottom"]
+body:not(.page-context--lobby)
+  .session-view.session-view--bottom-dock-panels-fit-viewport:not(.session-view--chat-collapsed)[data-chat-dock="bottom"]
   .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-progress-group {
   right: 0;
   bottom: 100%;
@@ -155,10 +133,11 @@ body:not(.is-lobby)
   z-index: 2;
 }
 
-/* En vertical móvil, alinear la pista con el borde inferior del reproductor. */
+/* En vertical móvil con ambos paneles visibles, alinear la pista con el borde
+   inferior del reproductor. */
 @media (max-width: 680px) and (orientation: portrait) {
-  body:not(.is-lobby)
-    .session-view.bottom-dock-panels-fit-viewport:not(.chat-collapsed)[data-chat-dock="bottom"]
+  body:not(.page-context--lobby)
+    .session-view.session-view--bottom-dock-panels-fit-viewport:not(.session-view--chat-collapsed)[data-chat-dock="bottom"]
   .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-progress-group {
     right: 16px;
     bottom: -9px;
@@ -167,40 +146,26 @@ body:not(.is-lobby)
   }
 }
 
-.session-view.component-layout-measuring,
-.session-view.component-layout-measuring *,
-.session-view.component-layout-measuring::before,
-.session-view.component-layout-measuring::after,
-.session-view.component-layout-measuring *::before,
-.session-view.component-layout-measuring *::after {
+.session-view.session-view--layout-measuring,
+.session-view.session-view--layout-measuring *,
+.session-view.session-view--layout-measuring::before,
+.session-view.session-view--layout-measuring::after,
+.session-view.session-view--layout-measuring *::before,
+.session-view.session-view--layout-measuring *::after {
   transition: none !important;
 }
 
 /* El dock inferior reparte el header en tres zonas iguales a los lados de la
    flecha. La zona izquierda pone presencia y nombre en flujo. */
-body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"] .chat-tools {
+body:not(.page-context--lobby) .session-view:not(.session-view--chat-collapsed)[data-chat-dock="bottom"] .chat-tools {
   position: relative;
   grid-template-columns: minmax(0, 1fr) 48px minmax(0, 1fr);
   grid-template-rows: minmax(0, 1fr);
   padding-inline-end: var(--chat-tools-inline-gutter, 8px);
 }
 
-.session-view[data-chat-dock="right"] .chat-tools-leading {
-  display: contents;
-}
-
-.session-view:not(.chat-collapsed)[data-chat-dock="bottom"] .chat-tools-leading {
-  display: flex;
-  grid-column: 1;
-  grid-row: 1;
-  min-width: 0;
-  width: 100%;
-  align-items: center;
-  gap: 4px;
-}
-
-.session-view:not(.chat-collapsed):not(.chat-header-collapsed)[data-chat-dock="bottom"]
-  .chat-tools > .chat-collapse-hover-zone[data-chat-control="collapse"] {
+.session-view:not(.session-view--chat-collapsed):not(.session-view--chat-header-collapsed)[data-chat-dock="bottom"]
+  .chat-tools > .chat-area__collapse-hover-zone[data-chat-control="collapse"] {
   position: static;
   grid-column: 2;
   grid-row: 1;
@@ -215,41 +180,29 @@ body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"] 
   transform: none;
 }
 
-.session-view:not(.chat-collapsed):not(.chat-header-collapsed)[data-chat-dock="bottom"]
-  .chat-tools > .chat-collapse-hover-zone[data-chat-control="collapse"] .chat-collapse-handle {
+.session-view:not(.session-view--chat-collapsed):not(.session-view--chat-header-collapsed)[data-chat-dock="bottom"]
+  .chat-tools > .chat-area__collapse-hover-zone[data-chat-control="collapse"] .chat-area__collapse-handle {
   width: 100%;
   height: 100%;
   min-height: 0;
   grid-template-rows: minmax(0, 1fr);
 }
 
-.session-view:not(.chat-collapsed):not(.chat-header-collapsed)[data-chat-dock="bottom"]
-  .chat-tools > .chat-collapse-hover-zone[data-chat-control="collapse"] .chat-collapse-icon-anchor {
+.session-view:not(.session-view--chat-collapsed):not(.session-view--chat-header-collapsed)[data-chat-dock="bottom"]
+  .chat-tools > .chat-area__collapse-hover-zone[data-chat-control="collapse"] .chat-area__collapse-icon-anchor {
   width: 28px;
   height: 28px;
   flex-basis: 28px;
 }
 
-body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
-  .chat-tools > .chat-tools-actions {
-  position: static;
-  grid-column: 3;
-  grid-row: 1;
-  top: auto;
-  right: auto;
-  align-self: center;
-  justify-self: end;
-  transform: none !important;
-}
-
 /* Cuando el header se pliega en móvil, la flecha sigue accesible en el borde
    superior del panel; en el estado normal su alineación la da el flujo. */
-.session-view.chat-header-collapsed:not(.chat-collapsed)[data-chat-dock="bottom"] .chat-tools {
+.session-view.session-view--chat-header-collapsed:not(.session-view--chat-collapsed)[data-chat-dock="bottom"] .chat-tools {
   overflow: visible;
 }
 
-.session-view.chat-header-collapsed:not(.chat-collapsed)[data-chat-dock="bottom"]
-  .chat-tools > .chat-collapse-hover-zone[data-chat-control="collapse"] {
+.session-view.session-view--chat-header-collapsed:not(.session-view--chat-collapsed)[data-chat-dock="bottom"]
+  .chat-tools > .chat-area__collapse-hover-zone[data-chat-control="collapse"] {
   position: absolute;
   top: 0;
   right: auto;
@@ -267,17 +220,78 @@ body:not(.is-lobby) .session-view:not(.chat-collapsed)[data-chat-dock="bottom"]
 
 /* En el dock lateral con los paneles lado a lado, el header no debe ser el
    marco de la flecha: el handle se alinea con la unión usando el chat-area. */
-body:not(.is-lobby) .app-shell
-  .session-view:not(.layout-stacked):not(.chat-collapse-in-header):not(.chat-collapsed)[data-chat-dock="right"]
+body:not(.page-context--lobby) .app-shell
+  .session-view:not(.session-view--layout-stacked):not(.session-view--chat-collapse-in-header):not(.session-view--chat-collapsed)[data-chat-dock="right"]
   .chat-tools {
   position: static;
   contain: inline-size;
 }
 
+.session-view.session-view--layout-stacked[data-chat-dock="right"] .chat-tools__actions {
+  grid-column: 4;
+}
+
+.session-view[data-chat-dock="right"] .chat-tools__leading {
+  display: contents;
+}
+
+.session-view:not(.session-view--chat-collapsed)[data-chat-dock="bottom"] .chat-tools__leading {
+  display: flex;
+  grid-column: 1;
+  grid-row: 1;
+  min-width: 0;
+  width: 100%;
+  align-items: center;
+  gap: 4px;
+}
+
+body:not(.page-context--lobby) .session-view:not(.session-view--chat-collapsed)[data-chat-dock="bottom"]
+  .chat-tools > .chat-tools__actions {
+  position: static;
+  grid-column: 3;
+  grid-row: 1;
+  top: auto;
+  right: auto;
+  align-self: center;
+  justify-self: end;
+  transform: none !important;
+}
+
+/* En viewports angostos el dock derecho ocupa el viewport aunque el cálculo
+   estructural no lo marque como layout-stacked. El carril sigue fijo ahí. */
+@media (max-width: 680px) {
+  body:not(.page-context--lobby) .session-view[data-chat-dock="right"] .chat-tools,
+  body:not(.page-context--lobby) .session-view.session-view--chat-collapse-in-header:not(.session-view--chat-collapsed)[data-chat-dock="right"] .chat-tools {
+    grid-template-columns: var(--chat-collapse-header-slot-width) auto minmax(0, 1fr) auto;
+    padding-inline-start: 4px !important;
+  }
+
+  body:not(.page-context--lobby) .session-view[data-chat-dock="right"] .chat-tools > .chat-area__collapse-header-slot {
+    display: block;
+    grid-column: 1;
+    grid-row: 1;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    pointer-events: none;
+  }
+
+  body:not(.page-context--lobby) .session-view[data-chat-dock="right"] .chat-tools__leading > .presence-pill {
+    grid-column: 2;
+  }
+
+  body:not(.page-context--lobby) .session-view[data-chat-dock="right"] .chat-tools__leading > .chat-name-editor__field {
+    grid-column: 3;
+  }
+
+  body:not(.page-context--lobby) .session-view[data-chat-dock="right"] .chat-tools__actions {
+    grid-column: 4;
+  }
+}
+
 /* El espacio extra queda dentro del shell del texto para que los botones
    mantengan intactas su posición y su zona táctil. */
-.message-form .textarea-shell,
-.overlay-message-form .textarea-shell {
+.message-form .message-form__textarea-shell,.message-form.message-form--overlay .message-form__textarea-shell {
   box-sizing: border-box;
   padding-inline-start: 3px;
 }

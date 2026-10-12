@@ -1,5 +1,17 @@
-@import url("./session-fit-layout.css?v=20261011-chat-ui-fixes-02");
-@import url("./session-layout-controls.css?v=20261010-file-size-refactor-02");
+@import url("./session/session-fit-layout.css");
+@import url("./session/session-layout-controls.css");
+
+@media (max-width: 680px) {
+  :root {
+    --app-shell-gutter: 14px;
+  }
+
+  /* En movil apilamos input + boton de carga, como en la referencia */
+
+  .player-chat {
+    --player-chat-bottom-inset: 10px;
+  }
+}
 
 @media (max-width: 1100px) {
   .session-toolbar {
@@ -13,20 +25,17 @@
 }
 
 @media (max-width: 680px) {
-  :root {
-    --app-shell-gutter: 14px;
-  }
 
   .app-shell {
     padding: var(--app-shell-gutter);
   }
 
-  .topbar {
+  .site-header {
     align-items: start;
     flex-direction: column;
   }
 
-  .topbar-actions {
+  .site-header__actions {
     width: 100%;
     flex: 0 0 auto;
     justify-content: flex-start;
@@ -39,22 +48,22 @@
     padding-bottom: 4px;
   }
 
-  .room-chip-title {
+  .room-chip__title {
     gap: 8px;
     font-size: 2rem;
   }
 
-  .room-chip-title-actions {
+  .room-chip__title-actions {
     gap: 8px;
   }
 
-  .room-chip-actions {
+  .room-chip__actions {
     width: auto;
     flex: 0 0 auto;
     justify-content: flex-end;
   }
 
-  .lobby-actions,
+  .lobby-screen__actions,
   .sync-bar {
     align-items: stretch;
     flex-direction: column;
@@ -71,16 +80,16 @@
   }
 
   /* En movil apilamos input + boton de carga, como en la referencia */
-  .session-toolbar-body {
+  .session-toolbar__body {
     flex-direction: column;
     align-items: stretch;
   }
 
-  .session-toolbar-body input {
+  .session-toolbar__body input {
     width: calc(100% - 8px);
   }
 
-  .session-toolbar-body .button.primary {
+  .session-toolbar__body .button.button--primary {
     width: 100%;
     justify-content: center;
   }
@@ -91,7 +100,7 @@
     white-space: normal;
   }
 
-  .player-actions {
+  .player-frame__actions {
     gap: 4px;
   }
 
@@ -101,7 +110,6 @@
 
   .player-chat {
     right: 18px;
-    --player-chat-bottom-inset: 10px;
     bottom: var(--player-chat-bottom-inset);
     left: auto;
     width: min(250px, calc(100% - 10px));
@@ -110,7 +118,7 @@
     );
   }
 
-  body.fullscreen-mode .player-chat {
+  body.page-context--fullscreen .player-chat {
     right: 18px;
     left: auto;
     width: min(250px, calc(100% - 10px));

@@ -18,7 +18,9 @@ node scripts/dev-server.js --port 8080
 
 Abrir `http://localhost:8080`. El servidor genera `index.html` al iniciar y lo vuelve a generar cuando se guarda una fuente HTML.
 
-El marcado se edita en `src/index.template.html` y en parciales dentro de `src/features/`. GitHub Pages y Cloudflare Pages por Git deben ejecutar `node scripts/build-html.js` antes de publicar el `index.html` estático. Para una carga directa, ejecutar ese comando antes de subir los archivos.
+El marcado se edita en `src/index.template.html` y en los parciales `src/features/<feature>/templates/*.html`. `scripts/build-html.js` ensambla esos parciales; después Vite agrupa el HTML, CSS y JavaScript y genera nombres de recursos con hash de contenido. Para publicar, ejecutar `npm run build` y subir el contenido de `dist/`. GitHub Pages lo hace automáticamente desde su workflow; en Cloudflare Pages, usar `npm run build` como comando y `dist` como directorio de salida.
+
+El hash de cada recurso depende de su contenido: si el favicon u otro icono no cambia, conserva el mismo nombre entre builds. Las fuentes de Google se sirven desde Google Fonts y no se renombran en el build local.
 
 Con `scripts/dev-server.js`, los logs del cliente se imprimen en la terminal que corre el servidor. En GitHub Pages o Cloudflare Pages no hay una terminal del dispositivo disponible, asi que los logs quedan en la consola del navegador.
 
@@ -29,6 +31,14 @@ python -m http.server 8080
 ```
 
 Ese servidor básico sirve el último `index.html` generado y no observa cambios en los parciales.
+
+## Linters
+
+Las herramientas de desarrollo se instalan con `npm install`. Se pueden ejecutar juntas con `npm run lint` o por separado con `npm run lint:js`, `npm run lint:css`, `npm run lint:html` y `npm run lint:md`. Para regenerar explícitamente la página desde sus parciales, usar `npm run build:html`.
+
+Stylelint muestra como advertencias los selectores de más de 160 caracteres, las cadenas de más de cuatro bloques unidos por combinadores, la anidación CSS superior a tres niveles, el uso de `!important`, los números directos en valores CSS, los colores escritos directamente en propiedades de color y las variables CSS declaradas fuera de la sección inicial del archivo. Los colores literales dentro de una variable CSS (`--color: #...`) están permitidos. `lint:css` también distingue entre valores de diseño repetidos dentro de una misma regla, en selectores distintos o en bloques separados del mismo selector —incluye colores que resuelven a través de variables distintas—, omite propiedades estructurales y advierte si un bloque BEM vuelve a una categoría anterior en el orden base, elementos, variantes, estados y responsive. Los módulos de botones y los controles del reproductor validan nombres BEM; las clases heredadas se migran por componente.
+
+`lint:html` regenera `index.html` desde sus parciales antes de validar el resultado generado y las páginas HTML independientes de `console/`.
 
 La pantalla ya trae precargado este video MP4 de ejemplo:
 
@@ -97,12 +107,39 @@ El link debe ser un archivo reproducible por el navegador, por ejemplo `.mp4`, `
     state/
     services/
     features/
-      chat/*.html
-      lobby/*.html
-      player/*.html
-      session/*.html
+      chat/
+        templates/
+          *.html
+        dock/
+        composer/
+        messages/
+        system-messages/
+      diagnostics/
+      layout/
+      lobby/
+        templates/
+          *.html
+      player/
+        templates/
+          *.html
+        controls/
+        fullscreen/
+        mini-player/
+      presence/
+      room/
+      session/
+        templates/
+          *.html
+      tooltip/
   public/
     styles.css
+    styles/
+      chat/
+      lobby/
+      mini-player/
+      mobile/
+      player/
+      session/
     firebase-config.js
     dev-runtime.js
   scripts/

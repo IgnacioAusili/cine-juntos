@@ -1,3 +1,15 @@
+
+
+.presence-pill__dot {
+  --presence-dot-color: #38d879;
+  --status-glow: rgba(56, 216, 121, 0.38);
+}
+
+.presence-pill[data-state="solo"] .presence-pill__dot {
+  --presence-dot-color: #e06b6b;
+  --status-glow: rgba(224, 107, 107, 0.4);
+}
+
 .presence-pill {
   flex: 0 0 auto;
   display: inline-flex;
@@ -18,7 +30,12 @@
   padding: 0;
 }
 
-.presence-icon-wrap {
+.presence-pill__dot {
+  border-radius: 999px;
+  background: #38d879;
+}
+
+.presence-pill__icon-wrap {
   position: relative;
   display: inline-flex;
   width: 18px;
@@ -28,14 +45,14 @@
   justify-content: center;
 }
 
-.presence-users-icon,
-.presence-users-icon svg {
+.presence-pill__users-icon,
+.presence-pill__users-icon svg {
   display: block;
   width: 18px;
   height: 26px;
 }
 
-.presence-pill .presence-dot {
+.presence-pill .presence-pill__dot {
   position: absolute;
   inset: 0;
   z-index: 2;
@@ -45,7 +62,7 @@
   background: transparent;
 }
 
-.presence-pill .presence-dot::before {
+.presence-pill .presence-pill__dot::before {
   inset: auto;
   top: -1px;
   right: -1px;
@@ -58,7 +75,7 @@
   filter: blur(1.5px);
 }
 
-.presence-pill .presence-dot::after {
+.presence-pill .presence-pill__dot::after {
   content: "";
   position: absolute;
   top: -1px;
@@ -73,26 +90,14 @@
   pointer-events: none;
 }
 
-.presence-dot {
-  --presence-dot-color: #38d879;
-  --status-glow: rgba(56, 216, 121, 0.38);
-  border-radius: 999px;
-  background: #38d879;
-}
-
-.presence-pill[data-state="solo"] .presence-dot {
-  --presence-dot-color: #e06b6b;
-  --status-glow: rgba(224, 107, 107, 0.4);
-}
-
-.presence-self-label,
+.presence-pill__self-label,
 .presence-pill span:last-child {
   display: inline-grid;
   min-width: 0.75rem;
   place-items: center;
 }
 
-.presence-self-label {
+.presence-pill__self-label {
   color: var(--text);
   font-weight: 800;
 }
@@ -106,11 +111,11 @@
   transform: translateY(1px);
 }
 
-.chat-tools-controls input[type="text"] {
+.chat-tools__controls input[type="text"] {
   min-height: 36px;
   padding: 0 10px;
 }
 
-.source-strip input[type="url"] {
+.image-preview-container__source-strip input[type="url"] {
   min-height: 36px;
 }

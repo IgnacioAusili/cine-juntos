@@ -1,69 +1,167 @@
 
 
-.chat-name-edit-row input[type="search"]::-webkit-search-cancel-button {
+.chat-name-editor__edit-row input[type="search"]::-webkit-search-cancel-button {
   appearance: none;
   display: none;
 }
 
-.chat-name-confirm-button.is-valid,
-.chat-name-confirm-button.is-valid:hover,
-.chat-name-confirm-button.is-valid:focus-visible {
+.chat-name-editor__edit-button svg,
+.chat-name-editor__confirm-button svg {
+  width: 14px;
+  height: 14px;
+}
+
+.chat-name-editor__edit-button svg {
+  width: 16px;
+  height: 16px;
+}
+
+.chat-name-editor__confirm-button svg {
+  width: 16px;
+  height: 16px;
+}
+
+.chat-name-editor[data-editing="true"] .chat-name-editor__confirm-button.chat-name-confirm-button--valid svg {
+  animation: chat-name-confirm-check-appear 240ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.chat-name-editor[data-editing="true"] .chat-name-editor__confirm-button.chat-name-confirm-button--invalid svg {
+  animation: chat-name-confirm-invalid-appear 240ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.chat-name-editor[data-editing="true"] .chat-name-editor__display-row {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.chat-name-editor[data-editing="true"] .chat-name-editor__edit-row {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  translate: none;
+  transition-delay: 0s;
+}
+
+.chat-name-editor:not([data-editing="true"]) .chat-name-editor__edit-row,
+.chat-name-editor[data-editing="true"] .chat-name-editor__display-row {
+  transition-delay: 0s, 140ms;
+}
+
+.chat-name-editor[data-editing="true"] .chat-name-editor__edit-row,
+.chat-name-editor:not([data-editing="true"]) .chat-name-editor__display-row {
+  transition-delay: 0s;
+}
+
+/* Al confirmar, mostrar el nombre guardado sin animar su opacidad desde cero. */
+.chat-name-editor.chat-name-editor--commit-stable:not([data-editing="true"]) .chat-name-editor__display-row {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition: none;
+}
+
+.chat-name-editor.chat-name-editor--commit-stable:not([data-editing="true"]) .chat-name-editor__edit-row {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: none;
+}
+
+.chat-name-editor.chat-name-editor--commit-reveal:not([data-editing="true"]) .chat-name-editor__display {
+  animation: chat-name-curtain-reveal 720ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.chat-name-editor.chat-name-editor--commit-reveal:not([data-editing="true"]) .chat-name-editor__edit-button {
+  animation: chat-name-control-appear 140ms ease both;
+}
+
+.chat-name-editor__confirm-button.chat-name-confirm-button--valid,
+.chat-name-editor__confirm-button.chat-name-confirm-button--valid:hover,
+.chat-name-editor__confirm-button.chat-name-confirm-button--valid:focus-visible {
   color: #38d879;
 }
 
-.chat-name-confirm-button.is-invalid,
-.chat-name-confirm-button.is-invalid:hover,
-.chat-name-confirm-button.is-invalid:focus-visible {
+.chat-name-editor__confirm-button.chat-name-confirm-button--invalid,
+.chat-name-editor__confirm-button.chat-name-confirm-button--invalid:hover,
+.chat-name-editor__confirm-button.chat-name-confirm-button--invalid:focus-visible {
   color: var(--danger);
 }
 
-.chat-name-confirm-button:hover,
-.chat-name-confirm-button:focus-visible,
-.chat-name-confirm-button.is-touch-hover {
+.chat-name-editor__confirm-button:hover,
+.chat-name-editor__confirm-button:focus-visible,
+.chat-name-editor__confirm-button.u-touch-hover {
   filter: brightness(1.18);
 }
 
-.chat-name-edit-button:not(:disabled):hover,
-.chat-name-edit-button:not(:disabled):focus-visible,
-.chat-name-edit-button:not(:disabled).is-touch-hover {
+.chat-name-editor__edit-button:not(:disabled):hover,
+.chat-name-editor__edit-button:not(:disabled):focus-visible,
+.chat-name-editor__edit-button:not(:disabled).u-touch-hover {
   color: #ffffff;
   filter: brightness(1.08) drop-shadow(0 0 3px rgba(255, 255, 255, 0.82));
 }
 
 @media (hover: none) {
-  .chat-name-edit-button:not(:disabled):hover:not(.is-touch-hover),
-  .chat-name-confirm-button:hover:not(.is-touch-hover) {
+  .chat-name-editor__edit-button:not(:disabled):hover:not(.u-touch-hover),
+  .chat-name-editor__confirm-button:hover:not(.u-touch-hover) {
     filter: none;
   }
 
-  .chat-name-edit-button:not(:disabled).is-touch-hover,
-  .chat-name-edit-button:not(:disabled).is-touch-hover:hover,
-  .chat-name-confirm-button.is-touch-hover,
-  .chat-name-confirm-button.is-touch-hover:hover {
+  .chat-name-editor__edit-button:not(:disabled).u-touch-hover,
+  .chat-name-editor__edit-button:not(:disabled).u-touch-hover:hover,
+  .chat-name-editor__confirm-button.u-touch-hover,
+  .chat-name-editor__confirm-button.u-touch-hover:hover {
     filter: brightness(1.18);
   }
 
-  .chat-name-edit-button:not(:disabled).is-touch-hover,
-  .chat-name-edit-button:not(:disabled).is-touch-hover:hover {
+  .chat-name-editor__edit-button:not(:disabled).u-touch-hover,
+  .chat-name-editor__edit-button:not(:disabled).u-touch-hover:hover {
     color: #ffffff;
     filter: brightness(1.08) drop-shadow(0 0 3px rgba(255, 255, 255, 0.82));
   }
 }
 
-.chat-name-edit-button svg,
-.chat-name-confirm-button svg {
-  width: 14px;
-  height: 14px;
+@media (prefers-reduced-motion: reduce) {
+  .chat-name-editor__display-row,
+  .chat-name-editor__edit-row {
+    transition: none;
+  }
+
+  .chat-name-editor__confirm-button svg {
+    animation: none !important;
+  }
+
+  .chat-name-editor.chat-name-editor--commit-reveal:not([data-editing="true"]) .chat-name-editor__display {
+    animation: none;
+  }
+
+  .chat-name-editor.chat-name-editor--commit-reveal:not([data-editing="true"]) .chat-name-editor__edit-button {
+    animation: none;
+  }
 }
 
-.chat-name-edit-button svg {
-  width: 16px;
-  height: 16px;
+.image-preview-container__source-strip {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, 188px);
+  align-items: end;
+  gap: 12px;
+  width: 100%;
 }
 
-.chat-name-confirm-button svg {
-  width: 16px;
-  height: 16px;
+.o-input-group {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  align-items: center;
+}
+
+.o-input-group input {
+  flex: 1;
+  min-width: 0;
+}
+
+.o-input-group button {
+  flex-shrink: 0;
 }
 
 @keyframes chat-name-confirm-check-appear {
@@ -100,53 +198,6 @@
   }
 }
 
-.chat-name-editor[data-editing="true"] .chat-name-confirm-button.is-valid svg {
-  animation: chat-name-confirm-check-appear 240ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-}
-
-.chat-name-editor[data-editing="true"] .chat-name-confirm-button.is-invalid svg {
-  animation: chat-name-confirm-invalid-appear 240ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-}
-
-.chat-name-editor[data-editing="true"] .chat-name-display-row {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-
-.chat-name-editor[data-editing="true"] .chat-name-edit-row {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-  translate: none;
-  transition-delay: 0s;
-}
-
-.chat-name-editor:not([data-editing="true"]) .chat-name-edit-row,
-.chat-name-editor[data-editing="true"] .chat-name-display-row {
-  transition-delay: 0s, 140ms;
-}
-
-.chat-name-editor[data-editing="true"] .chat-name-edit-row,
-.chat-name-editor:not([data-editing="true"]) .chat-name-display-row {
-  transition-delay: 0s;
-}
-
-/* Al confirmar, mostrar el nombre guardado sin animar su opacidad desde cero. */
-.chat-name-editor.name-commit-stable:not([data-editing="true"]) .chat-name-display-row {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-  transition: none;
-}
-
-.chat-name-editor.name-commit-stable:not([data-editing="true"]) .chat-name-edit-row {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition: none;
-}
-
 @keyframes chat-name-curtain-reveal {
   from {
     clip-path: inset(100% 0 0);
@@ -165,55 +216,4 @@
   to {
     opacity: 1;
   }
-}
-
-.chat-name-editor.name-commit-reveal:not([data-editing="true"]) .chat-name-display {
-  animation: chat-name-curtain-reveal 720ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-.chat-name-editor.name-commit-reveal:not([data-editing="true"]) .chat-name-edit-button {
-  animation: chat-name-control-appear 140ms ease both;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .chat-name-display-row,
-  .chat-name-edit-row {
-    transition: none;
-  }
-
-  .chat-name-confirm-button svg {
-    animation: none !important;
-  }
-
-  .chat-name-editor.name-commit-reveal:not([data-editing="true"]) .chat-name-display {
-    animation: none;
-  }
-
-  .chat-name-editor.name-commit-reveal:not([data-editing="true"]) .chat-name-edit-button {
-    animation: none;
-  }
-}
-
-.source-strip {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(150px, 188px);
-  align-items: end;
-  gap: 12px;
-  width: 100%;
-}
-
-.input-with-button {
-  display: flex;
-  gap: 8px;
-  width: 100%;
-  align-items: center;
-}
-
-.input-with-button input {
-  flex: 1;
-  min-width: 0;
-}
-
-.input-with-button button {
-  flex-shrink: 0;
 }

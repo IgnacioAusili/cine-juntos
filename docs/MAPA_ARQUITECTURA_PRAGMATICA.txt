@@ -16,13 +16,24 @@ CAPAS Y RESPONSABILIDADES ACTUALES
 - `src/main.js`: composition root; inicializa y conecta los modulos de la app.
 - `src/features/`: capacidades por dominio, como chat, player, sala, presencia y sesion.
 - `src/index.template.html` y los parciales HTML de `src/features/`: marcado fuente organizado por capacidad.
-- `scripts/build-html.js`: resuelve los includes fuente y genera el `index.html` estatico; el servidor local observa cambios y Pages ensambla antes de publicar.
+- `scripts/build-html.js`: resuelve los includes fuente y genera el `index.html` estatico; Vite compila esa salida y sus imports CSS/JS con nombres con hash en `dist/`.
 - `index.html`: salida generada que conserva el shell unico requerido por el hosting estatico.
 - `src/state/appState.js`: estado de aplicacion agrupado en session, player, chat y ui.
 - `src/core/`: referencias DOM, compatibilidad de estado y utilidades compartidas del navegador.
 - `src/services/`: fabrica de transporte y adaptadores Firebase/local.
 - `public/styles.css`: entrada CSS; `public/styles/` contiene estilos por dominio, componente y variante.
 - Los includes HTML solo se resuelven antes de publicar; el navegador recibe una unica pagina estatica.
+
+ARQUITECTURA CSS: ITCSS, BEM Y OOCSS
+- ITCSS ordena `public/styles.css` desde tokens/configuracion y estilos genericos, a objetos de layout, componentes, estados/responsive y overrides finales. El orden efectivo de imports se conserva porque define la cascada.
+- BEM es la convencion para clases de componentes nuevas o migradas: bloque (`button`), elemento con `__` (`button__label`) y modificador con `--` (`button--primary`). Los modificadores se agregan junto con la clase del bloque.
+- Dentro de cada archivo, las reglas se agrupan por componente y se ordenan por base, elementos, variantes, estados y ajustes responsive. Las variables CSS se mantienen al inicio del archivo.
+- OOCSS separa estructura reutilizable de apariencia cuando la cohesión lo justifica; `components/button-layout.css` y `components/button-skin.css` son un ejemplo, no una obligación para cada componente.
+- La migración de clases quedó completa por dominio: CSS, HTML fuente y referencias JavaScript, incluidos templates dinámicos, se actualizaron en conjunto. La auditoría final no encontró referencias heredadas.
+- Componentes, elementos y estados usan BEM; utilidades compartidas usan `u-`, los objetos de layout `o-` y los estados globales de página `page-context--*`.
+- Se conservaron las clases requeridas por Lucide y el orden efectivo de cascada. OOCSS separa estructura y skin en patrones compartidos cuando pueden variar de forma independiente.
+- El resultado y el contrato vigente están en `docs/CONTRATO_CSS_ITCSS_BEM.md`; los inventarios por clase y por hoja ITCSS están en `docs/MAPA_CLASES_CSS.csv` y `docs/MAPA_ITCSS_CSS.csv`.
+- Las hojas siguen divididas por dominio y responsabilidad; los agregadores conservan imports anidados y su orden.
 
 REGLAS DE DEPENDENCIA
 - `main.js` compone la app; los modulos no deben importar el arranque para coordinarse.
@@ -56,8 +67,10 @@ EXCEPCIONES DE TAMANO POR COHESION
 
 CSS, CACHE Y VALIDACION
 - Mantener el orden efectivo de imports CSS y la cascada al extraer submodulos.
+- Seguir el orden ITCSS anotado en `public/styles.css` sin reordenar overrides sensibles.
+- Aplicar BEM a clases nuevas y a los componentes migrados; usar OOCSS para separar estructura reutilizable de apariencia cuando corresponda, y conservar el orden ITCSS de las capas.
 - Las hojas grandes conservan su nombre como agregador; sus imports descriptivos siguen el orden original y permanecen junto a la hoja para conservar URLs relativas.
-- Al cambiar HTML, CSS o JavaScript, actualizar el cache-burst de toda la cadena de imports afectada.
+- Al cambiar HTML, CSS o JavaScript, ejecutar `npm run build` y publicar `dist/`; Vite versiona los recursos propios mediante hashes de contenido.
 - Verificar `Cache-Control: no-store` en desarrollo, ausencia de service worker y URLs solicitadas actuales.
 - Validar el mismo viewport y variante de layout afectados; medir posiciones responsive con limites reales del DOM.
 - Trabajar en pasos chicos y validar cada grupo antes de seguir.

@@ -1,0 +1,129 @@
+body.page-context--lobby .lobby-screen__footer {
+  --lobby-about-panel-size: 36px;
+  --lobby-footer-gap: 12px;
+}
+
+body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__footer {
+  --lobby-about-panel-size: 42px;
+  --lobby-footer-gap: 10px;
+}
+
+@media (max-width: 680px) {
+  body.page-context--lobby .lobby-screen__footer {
+    --lobby-footer-gap: 10px;
+  }
+}
+
+/* El pie legal y el botón de información comparten siempre una única
+   superficie. El texto se centra dentro de la altura real del botón. */
+
+body.page-context--lobby .lobby-screen__footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 8px;
+  z-index: 7;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--lobby-about-panel-size);
+  align-items: center;
+  gap: var(--lobby-footer-gap);
+  width: min(980px, calc(100% - 40px));
+  height: var(--lobby-about-panel-size);
+  margin: 0 auto;
+  padding-block: 0;
+  box-sizing: border-box;
+  transform: none;
+}
+
+body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__footer {
+  padding-inline: 0;
+  left: var(--app-shell-gutter, 10px);
+  right: 8px;
+  width: auto;
+  margin-inline: 0;
+}
+
+body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__about-button svg {
+  width: 20px;
+  height: 20px;
+}
+
+body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__footer .lobby-screen__disclaimer {
+  font-size: 0.56rem;
+  grid-column: 1 / -1;
+  padding-inline-end: calc(var(--lobby-about-panel-size) + var(--lobby-footer-gap));
+}
+
+body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__about-button {
+  /* El panel deja 10 px al borde; el botón conserva su anclaje original de 8 px. */
+  position: absolute;
+  right: -2px;
+  bottom: 0;
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: end;
+}
+
+body.page-context--lobby .lobby-screen__footer .lobby-screen__disclaimer {
+  /* El botón está fuera del flujo por ser fixed. El párrafo sigue siendo un
+     bloque normal para que el enlace GPLv3 conserve el mismo flujo inline
+     que el resto del texto. */
+  grid-column: 1 / -1;
+  grid-row: 1;
+  display: block;
+  align-self: center;
+  justify-self: stretch;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  max-height: 100%;
+  margin: 0;
+  padding-inline-end: calc(var(--lobby-about-panel-size) + var(--lobby-footer-gap));
+  box-sizing: border-box;
+  overflow: hidden;
+  line-height: 1.15;
+  /* Este pequeño ajuste compensa el
+     centro óptico de la línea monoespaciada, que visualmente cae un poco alto. */
+  transform: translateY(clamp(1px, 0.12em, 2px));
+}
+
+body.page-context--lobby .lobby-screen__about-button {
+  position: fixed;
+  right: 8px;
+  bottom: 8px;
+  z-index: 8;
+  grid-column: 2;
+  grid-row: 1;
+  width: var(--lobby-about-panel-size);
+  height: var(--lobby-about-panel-size);
+  min-height: var(--lobby-about-panel-size);
+  margin: 0;
+  transform: none;
+}
+
+/* El pie ocupa el ancho real del viewport y conserva solo 10 px de margen
+   exterior; evita acumular el padding y los márgenes de las reglas base. */
+body.page-context--lobby .lobby-screen__footer,
+body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__footer {
+  left: 10px;
+  right: 10px;
+  width: auto;
+  margin-inline: 0;
+  padding-inline: 0;
+}
+
+body.page-context--lobby .lobby-screen__about-button:hover,
+body.page-context--lobby .lobby-screen__about-button:focus-visible,
+body.page-context--lobby .lobby-screen__about-button.u-touch-hover,
+body.page-context--lobby .lobby-screen__about-button.u-touch-hover:hover {
+  transform: translateY(-2px);
+}
+
+@media (max-width: 680px) {
+  body.page-context--lobby .lobby-screen__footer {
+    grid-template-columns: minmax(0, 1fr) var(--lobby-about-panel-size);
+    width: min(980px, calc(100% - 32px));
+    bottom: 10px;
+    padding: 0;
+  }
+}

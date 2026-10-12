@@ -1,19 +1,19 @@
 /* Los botones del overlay siguen en el flujo del flex, igual que los del chat
    externo; el shell termina antes de ellos y el scrollbar queda junto a ese
    borde. */
-.overlay-message-form .composer-scrollbar {
+.message-form.message-form--overlay .composer-scrollbar {
   right: 1px;
   z-index: 2;
 }
 
 /* En el chat normal el shell termina justo antes de los botones que siguen
    en el flujo; acercar la barra a ese borde deja más aire junto al texto. */
-.message-form:not(.overlay-message-form) .composer-scrollbar {
+.message-form:not(.message-form.message-form--overlay) .composer-scrollbar {
   right: 1px;
 }
 
 /* El placeholder queda centrado en la fila compacta. */
-.overlay-message-form .input-wrapper textarea {
+.message-form.message-form--overlay .message-form__input-wrapper textarea {
   padding-top: 5px;
   padding-bottom: 5px;
 }
@@ -26,7 +26,7 @@
 }
 
 @media (max-width: 980px) {
-  .overlay-message-form .input-wrapper textarea {
+  .message-form.message-form--overlay .message-form__input-wrapper textarea {
     padding-top: 5px;
     padding-bottom: 5px;
   }
@@ -35,13 +35,13 @@
     max-height: calc(3lh + 10px);
   }
 
-  .overlay-message-form .composer-scrollbar {
+  .message-form.message-form--overlay .composer-scrollbar {
     right: 1px;
   }
 }
 
 /* En el mini reproductor los controles son más angostos y están más cerca
    del borde derecho. */
-.mini-player-surface .overlay-message-form .composer-scrollbar {
+.mini-player-surface .message-form.message-form--overlay .composer-scrollbar {
   right: 54px;
 }

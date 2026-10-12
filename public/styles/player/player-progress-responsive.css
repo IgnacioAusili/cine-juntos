@@ -1,0 +1,33 @@
+/* En la vista normal, la pista sigue alineada con la fila de controles. */
+@media (max-width: 680px) and (orientation: portrait) {
+  body:not(.page-context--lobby) .session-view:not(.session-view--chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-controls-bar {
+    position: relative;
+    z-index: auto;
+  }
+
+  body:not(.page-context--lobby) .session-view:not(.session-view--chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-progress-group {
+    right: 0;
+    left: 0;
+  }
+
+  body:not(.page-context--lobby) .session-view.session-view--bottom-dock-panels-fit-viewport:not(.session-view--chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-progress-group::before {
+    top: calc(50% - 1px);
+    height: 1px;
+    transform: translateY(-50%);
+  }
+
+  /* Cuando el video y el chat caben juntos, anclar sólo la pista al pie de
+     ancho completo permite que la línea toque el borde del reproductor. */
+  body:not(.page-context--lobby) .session-view.session-view--bottom-dock-panels-fit-viewport:not(.session-view--chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-controls-bar {
+    position: static;
+  }
+
+  body:not(.page-context--lobby) .session-view.session-view--bottom-dock-panels-fit-viewport:not(.session-view--chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-progress-group::before {
+    top: calc(50% - 1px);
+  }
+}

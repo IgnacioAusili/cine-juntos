@@ -1,4 +1,4 @@
-import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
+import { dom } from "../../core/dom.js";
 
 const MOBILE_PORTRAIT_QUERY = "(max-width: 680px) and (orientation: portrait)";
 const PLACEMENT_ATTRIBUTE = "data-inside-chat-placement";
@@ -44,7 +44,7 @@ function clamp(value, min, max) {
 export function syncInsideChatPanelPlacement() {
   if (!dom.playerFrame || !dom.playerChat || !dom.playerChatToggleButton) return;
 
-  if (!dom.playerFrame.classList.contains("chat-inside-open")) {
+  if (!dom.playerFrame.classList.contains('u-chat-inside-open')) {
     if (preservePlacementWhileClosing) return;
     clearPlacement();
     return;
@@ -121,7 +121,7 @@ export function preserveInsideChatPanelPlacementWhileClosing() {
   placementCleanupTimer = window.setTimeout(() => {
     placementCleanupTimer = 0;
     preservePlacementWhileClosing = false;
-    if (!dom.playerFrame?.classList.contains("chat-inside-open")) clearPlacement();
+    if (!dom.playerFrame?.classList.contains('u-chat-inside-open')) clearPlacement();
   }, CLOSE_PLACEMENT_CLEANUP_DELAY_MS);
 }
 

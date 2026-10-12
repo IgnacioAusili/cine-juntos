@@ -1,17 +1,13 @@
 
 
-.field {
+.o-field {
   display: grid;
   min-width: 0;
   flex: 1 1 auto;
   gap: 6px;
 }
 
-.field-room {
-  flex: 0 1 190px;
-}
-
-.field span {
+.o-field span {
   color: #eef1f3;
   text-shadow: 0 0 7px rgba(255, 255, 255, 0.16);
   font-size: 0.76rem;
@@ -20,13 +16,17 @@
   text-transform: uppercase;
 }
 
-.label-row {
+.o-field__label-row {
   display: inline-flex;
   align-items: center;
   gap: 4px;
   padding-inline-start: 0;
   color: #eef1f3;
   text-shadow: 0 0 7px rgba(255, 255, 255, 0.16);
+}
+
+.o-field--room {
+  flex: 0 1 190px;
 }
 
 .session-toolbar {
@@ -50,7 +50,7 @@
 }
 
 /* Input de URL + boton de carga */
-.session-toolbar-body {
+.session-toolbar__body {
   position: relative;
   z-index: 1;
   display: flex;
@@ -59,7 +59,7 @@
   width: 100%;
 }
 
-.session-toolbar-field {
+.session-toolbar__field {
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -67,7 +67,7 @@
   min-width: 0;
 }
 
-.session-toolbar-label {
+.session-toolbar__label {
   display: inline-flex;
   align-items: center;
   color: #eef1f3;
@@ -79,26 +79,26 @@
   user-select: none;
 }
 
-.session-toolbar-label-row {
+.session-toolbar__label-row {
   display: inline-flex;
   align-items: center;
   gap: 4px;
   margin-bottom: 5px;
 }
 
-.field .help-button {
+.o-field .help-button {
   width: 22px;
   height: 22px;
   min-height: 22px;
 }
 
-.field .help-button svg {
+.o-field .help-button svg {
   width: 16px;
   height: 16px;
   aspect-ratio: 1 / 1;
 }
 
-.session-toolbar-body input {
+.session-toolbar__body input {
   width: calc(100% - 8px);
   margin-inline: 4px;
   min-width: 0;
@@ -115,17 +115,17 @@
   transition: border-color 0.2s, background 0.2s;
 }
 
-.session-toolbar-body input::placeholder {
+.session-toolbar__body input::placeholder {
   color: var(--text-faint);
 }
 
-.session-toolbar-body input:focus {
+.session-toolbar__body input:focus {
   border-color: var(--teal);
   background: rgba(6, 8, 10, 0.6);
   box-shadow: none;
 }
 
-.session-toolbar-body .button.primary {
+.session-toolbar__body .button.button--primary {
   flex-shrink: 0;
   min-height: 38px;
   min-width: 100px;
@@ -144,28 +144,28 @@
   transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
 }
 
-.session-toolbar-body .button.primary > .button-label,
-.session-toolbar-body .button.primary > svg {
+.session-toolbar__body .button.button--primary > .button__label,
+.session-toolbar__body .button.button--primary > svg {
   color: #000 !important;
   -webkit-text-fill-color: #000 !important;
 }
 
-.session-toolbar-body .button.primary > .button-label {
+.session-toolbar__body .button.button--primary > .button__label {
   position: relative;
   top: 1px;
 }
 
-.session-toolbar-body .button.primary > svg {
+.session-toolbar__body .button.button--primary > svg {
   color: #000 !important;
   -webkit-text-fill-color: #000 !important;
 }
 
-.session-toolbar-body .button.primary:hover {
+.session-toolbar__body .button.button--primary:hover {
   background: #de7d31;
   border-color: rgba(240, 140, 58, 0.38);
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
 }
 
-.session-toolbar-body .button.primary:active {
+.session-toolbar__body .button.button--primary:active {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
 }

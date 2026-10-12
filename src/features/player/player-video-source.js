@@ -1,11 +1,11 @@
-import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
-import { state, getDisplayName, logEvent } from "../../core/state.js?v=20261010-file-size-refactor-02";
-import { formatSeconds } from "../../core/utils.js?v=20261010-file-size-refactor-02";
-import { sendVideoEventMessage, scrollToVideoPosition } from "../chat/index.js?v=20261011-overlay-scroll-top-01";
-import { showLoadReplaceDialog } from "../session-ui.js?v=20261010-file-size-refactor-02";
-import { clearPlaybackRecoveryTracking, publishState } from "./player-sync-logic.js?v=20261011-overlay-scroll-top-01";
-import { playerRuntimeState } from "./player-runtime-state.js?v=20261010-file-size-refactor-02";
-import { configurePlayerMediaSourcePort, getLoadedVideoSourceKey, getVideoSourceKey, updateLoadButtonState, clearSlowLoadPromptTracking, clearPlaybackErrorTracking, armSlowLoadPrompt, hasLoadedMediaSource, isVideoLoadCoolingDown, shouldConfirmLoadReplacement } from "./player-media.js?v=20261011-overlay-scroll-top-01";
+import { dom } from "../../core/dom.js";
+import { state, getDisplayName, logEvent } from "../../core/state.js";
+import { formatSeconds } from "../../core/utils.js";
+import { sendVideoEventMessage, scrollToVideoPosition } from "../chat/index.js";
+import { showLoadReplaceDialog } from "../session/session-ui.js";
+import { clearPlaybackRecoveryTracking, publishState } from "./player-sync-logic.js";
+import { playerRuntimeState } from "./player-runtime-state.js";
+import { configurePlayerMediaSourcePort, getLoadedVideoSourceKey, getVideoSourceKey, updateLoadButtonState, clearSlowLoadPromptTracking, clearPlaybackErrorTracking, armSlowLoadPrompt, hasLoadedMediaSource, isVideoLoadCoolingDown, shouldConfirmLoadReplacement } from "./player-media.js";
 
 const SKIP_LOAD_REPLACE_DIALOG_KEY = "cine-juntos-skip-load-replace-dialog";
 const VIDEO_LOAD_COOLDOWN_MS = 3000;
@@ -135,7 +135,6 @@ export function setVideoSource(source, shouldAnnounce, options = {}) {
   dom.videoPlayer.src = source;
   setVideoStatus("loading", isReload ? "Recargando video" : "Cargando video");
   dom.videoPlayer.load();
-  dom.emptyPlayer.classList.add("hidden");
   dom.videoUrlInput.value = source;
   syncPlayerControlsNow(true);
   armSlowLoadPrompt(source);
@@ -158,7 +157,6 @@ export function clearVideoSource(shouldAnnounce = false) {
   dom.videoPlayer.removeAttribute("src");
   dom.videoPlayer.load();
   dom.videoUrlInput.value = "";
-  dom.emptyPlayer.classList.remove("hidden");
   setVideoStatus("empty", "Sin contenido");
   syncPlayerControlsNow(true);
   if (shouldAnnounce && state.session.activeRoom && state.session.transport) {
@@ -210,12 +208,13 @@ export function announceVideoActivity() {
 }
 
 export function setVideoStatus(videoState, text) {
-  dom.syncStatus.className = `sync-status video-status player-status-badge ${videoState}`;
+  dom.syncStatus.className = `sync-status sync-status--video player-status-badge sync-status--${videoState}`;
+  dom.emptyPlayer?.classList.toggle('u-hidden', videoState !== "empty");
   dom.syncStatus.classList.toggle(
-    "player-status-live",
+    'sync-status--live',
     videoState === "loaded" && text === "En vivo",
   );
-  dom.playerFrame?.classList.toggle("player-no-content", videoState === "empty");
+  dom.playerFrame?.classList.toggle('player-frame--no-content', videoState === "empty");
   if (dom.playerLoadingOverlay) {
     dom.playerLoadingOverlay.hidden = videoState !== "loading";
     dom.playerLoadingOverlay.setAttribute(
@@ -224,8 +223,8 @@ export function setVideoStatus(videoState, text) {
     );
   }
   if (videoState === "empty") {
-    dom.playerFrame?.classList.remove("player-overlay-suppressed", "player-cursor-hidden");
-    dom.playerFrame?.classList.add("player-overlay-visible");
+    dom.playerFrame?.classList.remove('player-frame--overlay-suppressed', 'player-frame--cursor-hidden');
+    dom.playerFrame?.classList.add('player-frame--overlay-visible');
   }
   const tooltipKey = videoState === "loaded" && text === "En vivo" ? "playing" : videoState;
   const tooltip = VIDEO_STATUS_TOOLTIPS[tooltipKey] || "Estado actual del video en la sala";

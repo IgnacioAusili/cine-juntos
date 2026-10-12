@@ -1,0 +1,248 @@
+
+
+/* Esta anulación queda al final de la hoja para ganar también sobre el borde
+   estructural del frame definido en la variante de viewport móvil compacto. */
+@media (hover: none) and (pointer: coarse) and (orientation: portrait) {
+  body:not(.page-context--lobby) .session-view .player-frame:not(.mini-player-surface) {
+    border-top: 0 !important;
+  }
+}
+
+/* Cuando el dock inferior está expandido, la pista se ancla a la unión entre
+   video y chat aunque el conjunto necesite scroll; la fila de controles queda
+   por encima de la línea. */
+@media (max-width: 680px) and (orientation: portrait) {
+  /* Mantener la pista anclada al mismo contenedor en ambas disposiciones. Si
+     la barra pasa de relative a static al expandir el chat, cambia su bloque
+     de referencia y la línea salta antes de que termine la cortina. */
+  body:not(.page-context--lobby) .session-view:not(.session-view--layout-component-stack).session-view--chat-collapsed[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-controls-bar {
+    position: static;
+    z-index: auto;
+  }
+
+  body:not(.page-context--lobby) .session-view:not(.session-view--layout-component-stack).session-view--chat-collapsed[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-progress-group {
+    right: 18px;
+    bottom: 52px;
+    left: 18px;
+  }
+
+  body:not(.page-context--lobby) .session-view:is(
+    .session-view--chat-bottom-mobile-expand-visual,
+    .session-view--chat-bottom-mobile-collapse-visual
+  )[data-chat-dock="bottom"] .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-progress-group {
+    transition:
+      bottom 320ms cubic-bezier(0.22, 1, 0.36, 1),
+      left 320ms cubic-bezier(0.22, 1, 0.36, 1),
+      right 320ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* En escritorio la pista y cada control se interpolan desde su rectángulo
+     real con FLIP; evitar una segunda animación de bottom/left/right para que
+     no parpadeen ni recorran dos trayectorias a la vez. */
+  body:not(.page-context--lobby) .session-view:is(
+    .session-view--chat-bottom-pc-expand-controls-transition,
+    .session-view--chat-bottom-pc-collapse-controls-transition
+  )[data-chat-dock="bottom"] .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-progress-group {
+    transition: none;
+  }
+
+  /* Al expandir, el layout tarda unos frames en marcar que ambos paneles
+     caben. La pista ya debe quedar sobre el chat desde el primer frame, no
+     recién cuando aparece esa clase al final del reflujo. */
+  body:not(.page-context--lobby) .session-view:not(.session-view--layout-component-stack):not(.session-view--chat-collapsed).session-view--chat-bottom-pc-expand-controls-transition.session-view--chat-bottom-pc-expand-visual[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-progress-group {
+    z-index: 42;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    body:not(.page-context--lobby) .session-view:is(
+      .session-view--chat-bottom-pc-expand-visual,
+      .session-view--chat-bottom-pc-expand-controls-transition,
+      .session-view--chat-bottom-pc-collapse-visual,
+      .session-view--chat-bottom-mobile-expand-visual,
+      .session-view--chat-bottom-mobile-collapse-visual
+    )[data-chat-dock="bottom"] .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-progress-group {
+      transition-duration: 0s;
+    }
+  }
+
+  body:not(.page-context--lobby) .session-view:not(.session-view--layout-component-stack):not(.session-view--chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface) {
+    /* La pista sobresale unos píxeles para que su centro quede sobre la unión
+       video/chat; el frame no debe recortarla. */
+    overflow: visible;
+    overflow-x: clip;
+    /* El blur crea un contexto de apilado que arrastraba también al video por
+       encima de la flecha. La superficie móvil no necesita ese blur para sus
+       bordes y así la pista puede elevarse por separado. */
+    z-index: auto;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  body:not(.page-context--lobby) .session-view:not(.session-view--layout-component-stack):not(.session-view--chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface) .player-frame__bottom-actions {
+    /* El chat y su flecha deben quedar por encima del video; la pista queda
+       debajo de esa capa y se mantiene dentro del borde del reproductor. */
+    z-index: auto;
+    transform: none;
+    padding-bottom: 4px;
+    background:
+      linear-gradient(
+        180deg,
+        rgba(4, 7, 8, 0) 0%,
+        rgba(4, 7, 8, 0.14) 38%,
+        rgba(4, 7, 8, 0.42) 100%
+      );
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.025),
+      inset 0 8px 18px rgba(0, 0, 0, 0.08);
+  }
+
+  /* La pista debe poder quedar sobre el borde del chat, mientras la flecha
+     sigue siendo el elemento superior. Estas propiedades evitan que el blur,
+     el containment y el will-change del panel lo encierren en otra capa. */
+  body:not(.page-context--lobby) .session-view:not(.session-view--layout-component-stack):not(.session-view--chat-collapsed)[data-chat-dock="bottom"] .chat-area {
+    z-index: auto;
+    contain: none !important;
+    will-change: auto;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  body:not(.page-context--lobby) .session-view:not(.session-view--layout-component-stack):not(.session-view--chat-collapsed)[data-chat-dock="bottom"]
+    .chat-area > .chat-area__collapse-hover-zone {
+    z-index: 41;
+  }
+
+  body:not(.page-context--lobby) .session-view:not(.session-view--layout-component-stack):not(.session-view--chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-controls-bar {
+    position: static;
+    z-index: auto;
+  }
+
+  /* Estos controles deben quedar sobre el video, pero debajo de la flecha del
+     chat. El contenedor no puede recibir z-index porque encerraría la pista. */
+  body:not(.page-context--lobby) .session-view:not(.session-view--layout-component-stack):not(.session-view--chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"]
+    .player-controls-bar > .video-control-button,
+  body:not(.page-context--lobby) .session-view:not(.session-view--layout-component-stack):not(.session-view--chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"]
+    .player-controls-bar > .player-volume-group,
+  body:not(.page-context--lobby) .session-view:not(.session-view--layout-component-stack):not(.session-view--chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"]
+    .player-controls-bar > .player-controls-bar__scroll-zone {
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Al abrir velocidad, esta pista debe superar al botón central de avance
+     (que vive en otra capa), sin alterar el orden de la toolbar. */
+  body:not(.page-context--lobby) .session-view:not(.session-view--layout-component-stack):not(.session-view--chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"]
+    .player-controls-bar > .player-controls-bar__scroll-zone:has(.player-rate-select.player-rate-select--open) {
+    z-index: 8;
+  }
+
+  body:not(.page-context--lobby) .session-view:not(.session-view--layout-component-stack):not(.session-view--chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-progress-group {
+    right: 16px;
+    bottom: -9px;
+    left: 16px;
+    z-index: 39;
+  }
+
+  /* Durante el cierre, conservar el mismo bloque de referencia y destino de
+     la pista que en el estado contraído; así no hay un salto al quitar esta
+     clase al finalizar la cortina. */
+  body:not(.page-context--lobby) .session-view.session-view--bottom-dock-panels-fit-viewport.session-view--chat-bottom-pc-collapse-controls-transition:not(.session-view--chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-controls-bar {
+    position: static;
+    z-index: auto;
+  }
+
+  body:not(.page-context--lobby) .session-view.session-view--bottom-dock-panels-fit-viewport.session-view--chat-bottom-pc-collapse-controls-transition:not(.session-view--chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-progress-group {
+    right: 18px;
+    bottom: 52px;
+    left: 18px;
+    z-index: auto;
+  }
+
+  body:not(.page-context--lobby) .session-view.session-view--bottom-dock-panels-fit-viewport.session-view--chat-bottom-pc-collapse-controls-transition:not(.session-view--chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-frame__bottom-actions {
+    min-height: 112px;
+    padding-bottom: 10px;
+  }
+
+  /* En esta disposición el avance deshabilitado comparte el borde entre
+     video y chat: conserva la línea, pero deja pasar el puntero. */
+  body:not(.page-context--lobby) .session-view:not(.session-view--layout-component-stack):not(.session-view--chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"]
+    .player-progress-group:has(.player-progress-group__seek-input:disabled) {
+    pointer-events: none;
+  }
+
+  /* La pista queda como un hilo en reposo y aumenta sólo mientras se
+     interactúa con ella. */
+  body:not(.page-context--lobby) .session-view:not(.session-view--layout-component-stack):not(.session-view--chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-progress-group::before {
+    top: calc(50% - 1px);
+    height: 1px;
+    transform: translateY(-50%);
+    transition: height 180ms ease-out, top 180ms ease-out;
+  }
+
+  body:not(.page-context--lobby) .session-view:not(.session-view--layout-component-stack):not(.session-view--chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface).player-frame--seek-control-dragging[data-control-style="line"]
+    .player-progress-group::before,
+  body:not(.page-context--lobby) .session-view:not(.session-view--layout-component-stack):not(.session-view--chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"]
+    .player-progress-group:has(.player-progress-group__seek-input:active)::before,
+  body:not(.page-context--lobby) .session-view:not(.session-view--layout-component-stack):not(.session-view--chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"]
+    .player-progress-group:has(.player-progress-group__seek-input:not(:disabled)):focus-within::before,
+  body:not(.page-context--lobby) .session-view:not(.session-view--layout-component-stack):not(.session-view--chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"]
+    .player-progress-group:has(.player-progress-group__seek-input:not(:disabled)):hover::before {
+    top: calc(50% - 2.5px);
+    height: 3px;
+    transform: translateY(-50%) scaleY(1);
+  }
+
+  body:not(.page-context--lobby) .session-view:not(.session-view--layout-component-stack):not(.session-view--chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"]
+    .player-progress-group:has(.player-progress-group__seek-input:active) .player-progress-group__seek-input,
+  body:not(.page-context--lobby) .session-view:not(.session-view--layout-component-stack):not(.session-view--chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"]
+    .player-progress-group:has(.player-progress-group__seek-input:not(:disabled)):focus-within .player-progress-group__seek-input,
+  body:not(.page-context--lobby) .session-view:not(.session-view--layout-component-stack):not(.session-view--chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"]
+    .player-progress-group:has(.player-progress-group__seek-input:not(:disabled)):hover .player-progress-group__seek-input,
+  body:not(.page-context--lobby) .session-view:not(.session-view--layout-component-stack):not(.session-view--chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface).player-frame--seek-control-dragging[data-control-style="line"]
+    .player-progress-group__seek-input {
+    opacity: 1;
+    transform: translateY(-1.5px);
+  }
+
+  body:not(.page-context--lobby) .session-view:not(.session-view--layout-component-stack):not(.session-view--chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-progress-group__seek-input {
+    background: transparent !important;
+    background-image: none !important;
+    opacity: 0.68;
+    transition: opacity 180ms ease-out, transform 180ms ease-out;
+  }
+
+  body:not(.page-context--lobby) .session-view:not(.session-view--layout-component-stack):not(.session-view--chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"]
+    .player-progress-group__seek-input::-webkit-slider-runnable-track,
+  body:not(.page-context--lobby) .session-view:not(.session-view--layout-component-stack):not(.session-view--chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"]
+    .player-progress-group__seek-input::-moz-range-track {
+    background: transparent !important;
+    background-image: none !important;
+  }
+}

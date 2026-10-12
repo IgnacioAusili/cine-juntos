@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
   <head>
     <meta charset="utf-8" />
@@ -24,17 +24,17 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap"
     />
     <link rel="icon" href="./public/favicon.svg" type="image/svg+xml" />
-<link rel="stylesheet" href="./public/styles.css?v=20261011-overlay-selector-size-01" />
+  <link rel="stylesheet" href="./public/styles.css" />
   </head>
-  <body class="is-lobby">
+  <body class="page-context--lobby">
     <div class="app-shell">
-      <!-- @include features/session/topbar.html -->
+      <!-- @include features/session/templates/topbar.html -->
 
-      <!-- @include features/lobby/lobby-screen.html -->
+      <!-- @include features/lobby/templates/lobby-screen.html -->
 
-      <!-- @include features/session/session-view.html -->
+      <!-- @include features/session/templates/session-view.html -->
 
-      <div class="emoji-popover" id="emojiPopover" hidden aria-label="Selector de emojis"></div>
+      <div class="emoji-popover" id="emojiPopover" role="dialog" hidden aria-label="Selector de emojis"></div>
       <div class="message-menu" id="messageMenu" hidden>
         <button type="button" data-action="copy">
           <span data-lucide="copy" aria-hidden="true"></span>
@@ -47,7 +47,7 @@
       </div>
       <div class="tooltip-layer" id="tooltipLayer" hidden></div>
       <button
-        class="mobile-debug-button"
+        class="mobile-debug-dialog__button"
         id="mobileDebugButton"
         type="button"
         hidden
@@ -57,16 +57,15 @@
       </button>
     </div>
 
-    <!-- @include features/session/dialogs.html -->
+    <!-- @include features/session/templates/dialogs.html -->
 
-    <script src="./public/dev-runtime.js?v=20261010-file-size-refactor-02"></script>
-    <script defer src="./public/vendor/lucide-0.468.0/lucide.min.js?v=20261010-file-size-refactor-02"></script>
-    <script src="./public/firebase-config.js?v=20261010-file-size-refactor-02"></script>
-    <script type="module" src="./src/features/chat/image-lightbox.js?v=20261010-file-size-refactor-02"></script>
-    <script type="module" src="./src/features/tooltip-page-lifecycle.js?v=20261011-chat-ui-fixes-03"></script>
-    <script type="module" src="./src/main.js?v=20261011-overlay-scroll-top-01"></script>
-    <script type="module" src="./src/features/chat/chat-input-layout.js?v=20261011-chat-interaction-fixes-01"></script>
-    <script type="module" src="./src/features/chat/component-aspect-layout.js?v=20261010-file-size-refactor-02"></script>
-    <script type="module" src="./src/features/chat/switch-pointer-glow.js?v=20261010-file-size-refactor-02"></script>
+    <script src="./public/dev-runtime.js"></script>
+    <script defer src="./public/vendor/lucide-0.468.0/lucide.min.js"></script>
+    <script type="module" src="./src/features/chat/messages/image-lightbox.js"></script>
+    <script type="module" src="./src/features/tooltip/tooltip-page-lifecycle.js"></script>
+    <script type="module" src="./src/main.js"></script>
+    <script type="module" src="./src/features/chat/composer/chat-input-layout.js"></script>
+    <script type="module" src="./src/features/chat/dock/component-aspect-layout.js"></script>
+    <script type="module" src="./src/features/chat/dock/switch-pointer-glow.js"></script>
   </body>
 </html>

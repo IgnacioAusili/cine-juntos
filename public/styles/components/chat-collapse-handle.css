@@ -1,4 +1,25 @@
-.chat-collapse-hover-zone {
+
+
+/* El reproductor puede tener descendientes con z-index propio. El panel
+   abierto debe formar una capa superior para que el handle no quede debajo
+   del video en móvil, tablet ni PC. En el dock lateral también debe poder
+   sobresalir del borde del panel. */
+.session-view:not(.session-view--chat-collapsed) .chat-area {
+  z-index: 14;
+}
+
+.session-view:not(.session-view--chat-collapsed)[data-chat-dock="bottom"] .chat-area {
+  z-index: 40;
+  overflow: visible;
+  contain: layout;
+}
+
+.session-view:not(.session-view--chat-collapsed)[data-chat-dock="right"] .chat-area {
+  overflow: visible;
+  contain: layout;
+}
+
+.chat-area__collapse-hover-zone {
   position: absolute;
   z-index: 12;
   display: grid;
@@ -7,37 +28,18 @@
   outline: none;
 }
 
-/* El reproductor puede tener descendientes con z-index propio. El panel
-   abierto debe formar una capa superior para que el handle no quede debajo
-   del video en móvil, tablet ni PC. En el dock lateral también debe poder
-   sobresalir del borde del panel. */
-.session-view:not(.chat-collapsed) .chat-area {
-  z-index: 14;
-}
-
-.session-view:not(.chat-collapsed)[data-chat-dock="bottom"] .chat-area {
-  z-index: 40;
-  overflow: visible;
-  contain: layout;
-}
-
-.session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-area {
-  overflow: visible;
-  contain: layout;
-}
-
 /* The seam handle extends into the message viewport. Keep its header above
    positioned message content so the visible half remains clickable. */
-.session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-tools {
+.session-view:not(.session-view--chat-collapsed)[data-chat-dock="right"] .chat-tools {
   z-index: 2;
 }
 
 /* Cada estado tiene su propio control: el botón de contraer vive en el
    header y el de expandir conserva su anclaje junto a la barra del video. */
-.session-view:not(.chat-collapsed)
-  .chat-collapse-hover-zone[data-chat-control="expand"],
-.session-view.chat-collapsed
-  .chat-collapse-hover-zone[data-chat-control="collapse"] {
+.session-view:not(.session-view--chat-collapsed)
+  .chat-area__collapse-hover-zone[data-chat-control="expand"],
+.session-view.session-view--chat-collapsed
+  .chat-area__collapse-hover-zone[data-chat-control="collapse"] {
   display: none;
 }
 
@@ -48,7 +50,7 @@
   z-index: 13;
 }
 
-.chat-collapse-handle {
+.chat-area__collapse-handle {
   position: relative;
   z-index: auto;
   display: grid;
@@ -65,7 +67,7 @@
   transition: opacity 160ms ease, color 160ms ease, background 160ms ease;
 }
 
-.chat-collapse-icon-anchor {
+.chat-area__collapse-icon-anchor {
   display: inline-flex;
   width: 24px;
   height: 24px;
@@ -74,30 +76,30 @@
   flex: 0 0 24px;
 }
 
-.chat-collapse-handle svg {
+.chat-area__collapse-handle svg {
   width: 22px;
   height: 22px;
   stroke-width: 2.2px;
   transition: color 0.2s ease;
 }
 
-.chat-collapse-handle.is-transitioning .chat-collapse-icon-anchor {
+.chat-area__collapse-handle.u-transitioning .chat-area__collapse-icon-anchor {
   opacity: 0;
   transform: none;
 }
 
-.chat-collapse-handle.is-transitioning svg {
+.chat-area__collapse-handle.u-transitioning svg {
   transition: none;
 }
 
 /* El control cambia de anclaje mientras la grilla se contrae. Ocultarlo
    durante ese reflow evita que aparezca en posiciones intermedias. */
-.chat-collapse-hover-zone.is-transitioning {
+.chat-area__collapse-hover-zone.u-transitioning {
   pointer-events: none;
 }
 
-.chat-collapse-hover-zone.is-transitioning .chat-collapse-handle,
-.chat-collapse-hover-zone.is-transitioning .chat-collapse-icon-anchor {
+.chat-area__collapse-hover-zone.u-transitioning .chat-area__collapse-handle,
+.chat-area__collapse-hover-zone.u-transitioning .chat-area__collapse-icon-anchor {
   visibility: hidden;
   opacity: 0 !important;
   transform: none;
@@ -107,25 +109,16 @@
 /* Durante un cambio de dock ninguna flecha pertenece a la vista activa.
    Este bloqueo cubre también el instante posterior al colapso nativo, cuando
    el chat desmontado volvería a mostrar su control de expansión. */
-.session-view.chat-dock-handle-switching .chat-collapse-hover-zone,
-.session-view.chat-dock-handle-switching .chat-collapse-handle,
-.session-view.chat-dock-handle-switching .chat-collapse-icon-anchor {
+.session-view.session-view--chat-dock-handle-switching .chat-area__collapse-hover-zone,
+.session-view.session-view--chat-dock-handle-switching .chat-area__collapse-handle,
+.session-view.session-view--chat-dock-handle-switching .chat-area__collapse-icon-anchor {
   visibility: hidden !important;
   opacity: 0 !important;
   pointer-events: none !important;
   transition: none !important;
 }
 
-.chat-collapse-handle.chat-collapse-pointer-hover,
-.chat-collapse-hover-zone.chat-collapse-pointer-hover .chat-collapse-handle,
-.chat-collapse-handle.is-touch-hover,
-.chat-collapse-hover-zone.is-touch-hover .chat-collapse-handle,
-.chat-collapse-handle:focus-visible {
-  color: #fff;
-  background: transparent;
-}
-
-.session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-handle {
+.session-view:not(.session-view--chat-collapsed)[data-chat-dock="right"] .chat-area__collapse-handle {
   position: relative;
   top: auto;
   right: auto;
@@ -138,11 +131,20 @@
   opacity: 1;
 }
 
-.session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone.chat-collapse-pointer-hover .chat-collapse-handle {
+.session-view:not(.session-view--chat-collapsed)[data-chat-dock="right"] .chat-area__collapse-hover-zone.u-touch-hover .chat-area__collapse-handle {
   opacity: 1;
 }
 
-.session-view:not(.chat-collapsed)[data-chat-dock="right"] .chat-collapse-hover-zone.is-touch-hover .chat-collapse-handle {
+.session-view:not(.session-view--chat-collapsed)[data-chat-dock="right"] .chat-area__collapse-hover-zone.chat-area__collapse-hover-zone--pointer-hover .chat-area__collapse-handle {
   opacity: 1;
+}
+
+.chat-area__collapse-handle.chat-area__collapse-hover-zone--pointer-hover,
+.chat-area__collapse-hover-zone.chat-area__collapse-hover-zone--pointer-hover .chat-area__collapse-handle,
+.chat-area__collapse-handle.u-touch-hover,
+.chat-area__collapse-hover-zone.u-touch-hover .chat-area__collapse-handle,
+.chat-area__collapse-handle:focus-visible {
+  color: #fff;
+  background: transparent;
 }
 

@@ -1,5 +1,5 @@
-@import url("./mobile-landscape-fullscreen.css?v=20261010-file-size-refactor-02");
-@import url("./mobile-landscape-collapse-handles.css?v=20261010-file-size-refactor-02");
-@import url("./mobile-landscape-chat-controls.css?v=20261010-file-size-refactor-02");
-@import url("./mobile-landscape-app-shell.css?v=20261010-file-size-refactor-02");
-@import url("./mobile-landscape-toolbar.css?v=20261010-file-size-refactor-02");
+@import url("./mobile/mobile-landscape-fullscreen.css");
+@import url("./mobile/mobile-landscape-collapse-handles.css");
+@import url("./mobile/mobile-landscape-chat-controls.css");
+@import url("./mobile/mobile-landscape-app-shell.css");
+@import url("./mobile/mobile-landscape-toolbar.css");

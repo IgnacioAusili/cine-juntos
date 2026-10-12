@@ -1,27 +1,36 @@
-@import url("./styles/tokens.css?v=20261010-file-size-refactor-02");
-@import url("./styles/base.css?v=20261010-file-size-refactor-02");
-@import url("./styles/layout.css?v=20261010-file-size-refactor-02");
-@import url("./styles/components.css?v=20261010-file-size-refactor-02");
-@import url("./styles/lobby.css?v=20261010-file-size-refactor-02");
-@import url("./styles/player.css?v=20261010-file-size-refactor-02");
-@import url("./styles/chat.css?v=20261011-overlay-selector-size-01");
-@import url("./styles/chat-overlay.css?v=20261011-overlay-selector-size-01");
-@import url("./styles/chat/image-lightbox.css?v=20261010-file-size-refactor-02");
-@import url("./styles/states.css?v=20261010-file-size-refactor-02");
-@import url("./styles/responsive.css?v=20261011-chat-ui-fixes-02");
-@import url("./styles/mini-player.css?v=20261010-file-size-refactor-02");
-@import url("./styles/mobile.css?v=20261010-file-size-refactor-02");
-  @import url("./styles/mobile-landscape.css?v=20261010-file-size-refactor-02");
-@import url("./styles/mobile-fullscreen-viewport.css?v=20261010-file-size-refactor-02");
-@import url("./styles/mini-player-adjustments.css?v=20261010-file-size-refactor-02");
-@import url("./styles/player-controls-layout.css?v=20261010-file-size-refactor-02");
-@import url("./styles/player-controls-density.css?v=20261010-file-size-refactor-02");
-@import url("./styles/player-volume-layout.css?v=20261010-file-size-refactor-02");
-@import url("./styles/player-volume-mobile.css?v=20261010-file-size-refactor-02");
-@import url("./styles/lobby-responsive-fixes.css?v=20261010-file-size-refactor-02");
-@import url("./styles/lobby-layout-variants.css?v=20261010-file-size-refactor-02");
-@import url("./styles/lobby-footer-panel.css?v=20261010-file-size-refactor-02");
-@import url("./styles/player-progress-responsive.css?v=20261010-file-size-refactor-02");
-@import url("./styles/component-stack-chat-header.css?v=20261010-file-size-refactor-02");
-@import url("./styles/bottom-chat-visible-viewport.css?v=20261010-file-size-refactor-02");
-@import url("./styles/late-overrides.css?v=20261010-file-size-refactor-02");
+/* ITCSS: Settings */
+@import url("./styles/tokens.css");
+
+/* ITCSS: Generic styles and element defaults */
+@import url("./styles/base.css");
+
+/* ITCSS: Layout objects */
+@import url("./styles/layout.css");
+
+/* ITCSS: Reusable components, ordered to preserve the existing cascade */
+@import url("./styles/components.css");
+@import url("./styles/lobby.css");
+@import url("./styles/player.css");
+@import url("./styles/chat.css");
+@import url("./styles/chat-overlay.css");
+@import url("./styles/chat/image-lightbox.css");
+/* ITCSS: Component states and responsive layers */
+@import url("./styles/states.css");
+@import url("./styles/responsive.css");
+@import url("./styles/mini-player.css");
+@import url("./styles/mobile.css");
+  @import url("./styles/mobile-landscape.css");
+@import url("./styles/mobile/mobile-fullscreen-viewport.css");
+@import url("./styles/mini-player/mini-player-adjustments.css");
+@import url("./styles/player/player-controls-layout.css");
+@import url("./styles/player/player-controls-density.css");
+@import url("./styles/player/player-volume-layout.css");
+@import url("./styles/player/player-volume-mobile.css");
+@import url("./styles/lobby/lobby-responsive-fixes.css");
+@import url("./styles/lobby-layout-variants.css");
+@import url("./styles/lobby/lobby-footer-panel.css");
+@import url("./styles/player/player-progress-responsive.css");
+@import url("./styles/chat/component-stack-chat-header.css");
+@import url("./styles/chat/bottom-chat-visible-viewport.css");
+/* ITCSS: Final compatibility overrides */
+@import url("./styles/late-overrides.css");

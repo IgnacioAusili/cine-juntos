@@ -1,0 +1,134 @@
+
+
+@media (hover: none) {
+  .mini-player-surface.mini-player-surface--scroll:hover .player-frame__bottom-actions {
+    opacity: 0;
+    transform: translateY(6px);
+    pointer-events: none;
+  }
+
+  .mini-player-surface.mini-player-surface--scroll.u-touch-hover .player-frame__bottom-actions {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .mini-player-surface .player-volume-group:hover:not(.u-touch-hover):not(.player-volume-group--hovered) {
+    gap: 0;
+  }
+
+  .mini-player-surface .player-volume-group:hover:not(.u-touch-hover):not(.player-volume-group--hovered) .player-volume-group__slider {
+    max-width: 0;
+  }
+
+  .mini-player-surface .player-volume-group.u-touch-hover,
+  .mini-player-surface .player-volume-group.player-volume-group--hovered {
+    gap: 6px;
+  }
+
+  .mini-player-surface .player-volume-group.u-touch-hover .player-volume-group__slider,
+  .mini-player-surface .player-volume-group.player-volume-group--hovered .player-volume-group__slider {
+    max-width: 42px;
+  }
+}
+
+.mini-player-surface .player-volume-group .video-control-button {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.mini-player-surface .player-rate-select {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.mini-player-surface .player-progress-group {
+  order: initial;
+  width: auto;
+  gap: 5px;
+}
+
+.mini-player-surface .player-progress-group__time {
+  min-width: 28px;
+  font-size: 0.64rem;
+}
+
+.mini-player-surface .video-control-button {
+  width: 28px;
+  min-height: 28px;
+  flex-basis: 28px;
+}
+
+.mini-player-surface .player-rate-select,
+.mini-player-surface #pageFullscreenButton,
+.mini-player-surface [data-proxy-for="pageFullscreenButton"] {
+  display: none;
+}
+
+.mini-player-surface #playerMiniPlayerButton.video-control-button--active svg,
+.mini-player-surface [data-proxy-for="playerMiniPlayerButton"].video-control-button--active svg,
+.player-frame.mini-player-surface--active #playerMiniPlayerButton.video-control-button--active svg {
+  width: 12px;
+  height: 12px;
+}
+
+.player-frame.mini-player-surface--active #playerMiniPlayerButton.video-control-button--active,
+.mini-player-surface #playerMiniPlayerButton.video-control-button--active,
+.mini-player-surface [data-proxy-for="playerMiniPlayerButton"].video-control-button--active {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+/* La salida del mini reproductor sigue la barra Linea y conserva un area de
+   toque comoda, sin la capsula rectangular del estilo anterior. */
+.player-frame[data-control-style="line"] #playerMiniPlayerButton.video-control-button--active,
+.mini-player-surface[data-control-style="line"] [data-proxy-for="playerMiniPlayerButton"].video-control-button--active {
+  margin-left: auto;
+  width: 34px;
+  min-height: 34px;
+  flex-basis: 34px;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.player-frame[data-control-style="line"] #playerMiniPlayerButton.video-control-button--active svg,
+.mini-player-surface[data-control-style="line"] [data-proxy-for="playerMiniPlayerButton"].video-control-button--active svg {
+  width: 22px;
+  height: 22px;
+  stroke-width: 2.45;
+}
+
+.player-frame.mini-player-surface--active #playerMiniPlayerButton.video-control-button--active:hover svg,
+.player-frame.mini-player-surface--active #playerMiniPlayerButton.video-control-button--active:focus-visible svg,
+.mini-player-surface #playerMiniPlayerButton.video-control-button--active:hover svg,
+.mini-player-surface #playerMiniPlayerButton.video-control-button--active:focus-visible svg,
+.mini-player-surface [data-proxy-for="playerMiniPlayerButton"].video-control-button--active:hover svg,
+.mini-player-surface [data-proxy-for="playerMiniPlayerButton"].video-control-button--active:focus-visible svg {
+  color: #ff6464;
+}
+
+@media (max-width: 760px) {
+  .mini-player-surface__return-hint {
+    left: 16px;
+    right: 16px;
+    width: auto;
+  }
+
+  .mini-player-surface--inline {
+    right: 8px;
+    bottom: 8px;
+    width: calc(100% - 16px);
+    height: min(340px, calc(100% - 16px));
+  }
+
+  .mini-player-surface--scroll {
+    right: 12px;
+    top: 12px;
+    bottom: auto;
+    width: min(320px, 72vw, calc(100vw - 24px));
+    height: auto;
+  }
+}

@@ -1,5 +1,5 @@
-const TRACK_SELECTOR = ".about-dialog-scrollbar";
-const THUMB_SELECTOR = ".about-dialog-scrollbar-thumb";
+const TRACK_SELECTOR = '.about-dialog__scrollbar';
+const THUMB_SELECTOR = '.about-dialog__scrollbar-thumb';
 
 function syncScrollbar(dialog, card, track, thumb) {
   if (!dialog.open) {
@@ -22,7 +22,7 @@ function syncScrollbar(dialog, card, track, thumb) {
 
 export function wireAboutDialogScrollbar() {
   const dialog = document.querySelector("#aboutDialog");
-  const card = dialog?.querySelector(".about-dialog-card");
+  const card = dialog?.querySelector('.about-dialog__card');
   const track = dialog?.querySelector(TRACK_SELECTOR);
   const thumb = track?.querySelector(THUMB_SELECTOR);
   if (!dialog || !card || !track || !thumb) return;
@@ -38,10 +38,10 @@ export function wireAboutDialogScrollbar() {
   };
 
   const showWhileScrolling = () => {
-    track.classList.add("is-visible");
+    track.classList.add('u-visible');
     window.clearTimeout(hideTimer);
     hideTimer = window.setTimeout(() => {
-      track.classList.remove("is-visible");
+      track.classList.remove('u-visible');
     }, 700);
   };
 
@@ -52,7 +52,7 @@ export function wireAboutDialogScrollbar() {
   window.addEventListener("resize", scheduleSync, { passive: true });
   dialog.addEventListener("close", () => {
     window.clearTimeout(hideTimer);
-    track.classList.remove("is-visible");
+    track.classList.remove('u-visible');
     track.hidden = true;
   });
   document.addEventListener("click", (event) => {

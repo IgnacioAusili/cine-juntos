@@ -1,15 +1,20 @@
+
+
+.session-view[data-chat-dock="bottom"] {
+  --chat-bottom-dock-gap: 0px;
+  --chat-bottom-header-arrow-offset: 8px;
+}
+
+.session-view[data-chat-dock="bottom"] {
+  padding-bottom: 0;
+}
+
 .session-view {
   display: flex;
   flex: 1;
   min-height: 0;
   flex-direction: column;
   gap: 0;
-}
-
-.session-view[data-chat-dock="bottom"] {
-  --chat-bottom-dock-gap: 0px;
-  --chat-bottom-header-arrow-offset: 8px;
-  padding-bottom: 0;
 }
 
 /* El borde inferior del shell agrega un gutter. La fila del chat lo descuenta
@@ -25,7 +30,7 @@
   transition: box-shadow 0.2s ease;
 }
 
-.workspace {
+.o-workspace {
   position: relative;
   display: grid;
   height: calc(var(--app-viewport-height) - (var(--app-shell-gutter) * 2));
@@ -40,11 +45,11 @@
 
 /* El ancho/alto real cambia en un único paso. El movimiento visible se hace
    con transform en el video para no reenvolver texto y controles por frame. */
-.session-view.chat-layout-transitioning[data-chat-dock="bottom"] .workspace {
+.session-view.session-view--chat-layout-transitioning[data-chat-dock="bottom"] .o-workspace {
   transition: none;
 }
 
-.session-view.chat-layout-visual-motion .video-area {
+.session-view.session-view--chat-layout-visual-motion .o-video-area {
   transform: scale(
     var(--chat-layout-video-scale-x, 1),
     var(--chat-layout-video-scale-y, 1)
@@ -54,24 +59,22 @@
   will-change: transform;
 }
 
-
-
 /* El desenfoque de vidrio se vuelve muy costoso mientras cambia el ancho de
    la grilla. Durante ese movimiento el fondo opaco conserva la lectura del
    panel y evita repintar toda la superficie en cada frame. */
-.session-view.chat-layout-transitioning .chat-area,
-.session-view.chat-layout-transitioning .chat-area::before {
+.session-view.session-view--chat-layout-transitioning .chat-area,
+.session-view.session-view--chat-layout-transitioning .chat-area::before {
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
 
-.session-view[data-chat-dock="right"] .workspace {
+.session-view[data-chat-dock="right"] .o-workspace {
   display: flex;
   column-gap: 0;
   transition: none;
 }
 
-.session-view[data-chat-dock="right"] .video-area {
+.session-view[data-chat-dock="right"] .o-video-area {
   flex: 1 1 auto;
   min-width: 0;
 }
@@ -89,7 +92,7 @@
 }
 
 /* El toolbar absoluto ya ocupa el espacio sobre la primera fila; no sumar otro inset arriba. */
-.session-view[data-chat-dock="bottom"] .workspace {
+.session-view[data-chat-dock="bottom"] .o-workspace {
   height: auto;
   row-gap: 0;
   /* La fila del chat cambia de alto, pero el reproductor conserva la misma
@@ -106,19 +109,19 @@
 
 /* Al pasar de abajo a lateral, el panel se extiende después del scroll suave
    y no aparece de golpe junto con el cambio de grilla. */
-.session-view.chat-dock-switching .workspace {
+.session-view.session-view--chat-dock-switching .o-workspace {
   transition:
     grid-template-columns 280ms cubic-bezier(0.22, 1, 0.36, 1),
     grid-template-rows 280ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.session-view.chat-dock-switching .chat-area {
+.session-view.session-view--chat-dock-switching .chat-area {
   opacity: 0;
   transform: translateX(18px) scale(0.985);
   filter: blur(2px);
 }
 
-.session-view.chat-dock-switching.chat-dock-switching-entered .chat-area {
+.session-view.session-view--chat-dock-switching.session-view--chat-dock-switching-entered .chat-area {
   opacity: 1;
   transform: translateX(0) scale(1);
   filter: blur(0);
@@ -128,11 +131,11 @@
     filter 220ms ease;
 }
 
-.session-view.chat-collapsed[data-chat-dock="right"] .workspace {
+.session-view.session-view--chat-collapsed[data-chat-dock="right"] .o-workspace {
   column-gap: 0;
 }
 
-.session-view.chat-collapsed[data-chat-dock="right"] .chat-area {
+.session-view.session-view--chat-collapsed[data-chat-dock="right"] .chat-area {
   flex-basis: 0;
   width: 0;
   min-width: 0;
@@ -147,20 +150,20 @@
 /* El borde derecho del reproductor queda visualmente más abierto cuando el
    chat lateral está colapsado. Extendemos solo el frame unos píxeles para
    equilibrar ambos márgenes sin mover el borde izquierdo. */
-.session-view.chat-collapsed[data-chat-dock="right"] .player-frame {
+.session-view.session-view--chat-collapsed[data-chat-dock="right"] .player-frame {
   width: calc(100% + 2px);
 }
 
 /* Al cerrar el chat, el reproductor recupera sus dos esquinas derechas.
    En pantalla completa los bordes del reproductor deben seguir planos. */
-body:not(.fullscreen-mode) .app-shell:not(:fullscreen)
-  .session-view.chat-collapsed[data-chat-dock="right"] .player-frame {
+body:not(.page-context--fullscreen) .app-shell:not(:fullscreen)
+  .session-view.session-view--chat-collapsed[data-chat-dock="right"] .player-frame {
   border-bottom-right-radius: var(--radius-md);
 }
 
 /* Al cambiar del dock inferior al lateral, la apertura debe ser la misma
    cortina horizontal que dispara la flecha de expandir. */
-.session-view.chat-dock-switching[data-chat-dock="right"] .chat-area {
+.session-view.session-view--chat-dock-switching[data-chat-dock="right"] .chat-area {
   flex-basis: 0;
   width: 0;
   opacity: 0;
@@ -168,7 +171,7 @@ body:not(.fullscreen-mode) .app-shell:not(:fullscreen)
   filter: none;
 }
 
-.session-view.chat-dock-switching.chat-dock-switching-entered[data-chat-dock="right"] .chat-area {
+.session-view.session-view--chat-dock-switching.session-view--chat-dock-switching-entered[data-chat-dock="right"] .chat-area {
   flex-basis: var(--chat-panel-width);
   width: var(--chat-panel-width);
   opacity: 1;
@@ -179,7 +182,7 @@ body:not(.fullscreen-mode) .app-shell:not(:fullscreen)
     opacity 400ms ease-in-out;
 }
 
-.session-view.chat-collapsed[data-chat-dock="bottom"] .workspace {
+.session-view.session-view--chat-collapsed[data-chat-dock="bottom"] .o-workspace {
   height: calc(var(--app-viewport-height) - var(--app-shell-gutter));
   min-height: 0;
   row-gap: 0;

@@ -1,9 +1,9 @@
-import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
-import { state, logEvent } from "../../core/state.js?v=20261010-file-size-refactor-02";
-import { formatSeconds, formatClockTime, PLAYBACK_ERROR_CONFIRMATION_MS } from "../../core/utils.js?v=20261010-file-size-refactor-02";
-import { showErrorDialog, showResumeVideoDialog, showSlowLoadDialog } from "../session-ui.js?v=20261010-file-size-refactor-02";
-import { pauseRoomForPlaybackIssue } from "./player-sync-logic.js?v=20261011-overlay-scroll-top-01";
-import { playerRuntimeState } from "./player-runtime-state.js?v=20261010-file-size-refactor-02";
+import { dom } from "../../core/dom.js";
+import { state, logEvent } from "../../core/state.js";
+import { formatSeconds, formatClockTime, PLAYBACK_ERROR_CONFIRMATION_MS } from "../../core/utils.js";
+import { showErrorDialog, showResumeVideoDialog, showSlowLoadDialog } from "../session/session-ui.js";
+import { pauseRoomForPlaybackIssue } from "./player-sync-logic.js";
+import { playerRuntimeState } from "./player-runtime-state.js";
 
 const VIDEO_RESUME_STORAGE_KEY = "cine-juntos-video-resume-times";
 const SLOW_LOAD_DIALOG_DELAY_MS = 5 * 60 * 1000;
@@ -132,7 +132,7 @@ export async function prepareVideoFingerprintAndPrompt() {
   }
 
   const confirmed = await showResumeVideoDialog(
-    `Este video ya lo has reproducido antes en <span class="resume-time-tag">${formatClockTime(resumeTime)}</span> ¿Quieres retomar desde ahí?`,
+    `Este video ya lo has reproducido antes en <span class="player-dialog__resume-time">${formatClockTime(resumeTime)}</span> ¿Quieres retomar desde ahí?`,
   );
   if (!confirmed || getCurrentVideoSourceKey() !== sourceKey) return;
 

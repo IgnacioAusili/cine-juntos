@@ -1,6 +1,6 @@
-html.fullscreen-mode,
-html.fullscreen-mode:fullscreen,
-body.fullscreen-mode {
+html.page-context--fullscreen,
+html.page-context--fullscreen:fullscreen,
+body.page-context--fullscreen {
   width: 100vw;
   height: var(--app-viewport-height);
   min-width: 100vw;
@@ -11,17 +11,17 @@ body.fullscreen-mode {
   scrollbar-width: none;
 }
 
-html.fullscreen-mode::-webkit-scrollbar,
-body.fullscreen-mode::-webkit-scrollbar {
+html.page-context--fullscreen::-webkit-scrollbar,
+body.page-context--fullscreen::-webkit-scrollbar {
   width: 0;
   height: 0;
 }
 
-body.fullscreen-mode {
+body.page-context--fullscreen {
   background: transparent;
 }
 
-body.fullscreen-mode .app-shell {
+body.page-context--fullscreen .app-shell {
   display: grid;
   position: fixed;
   inset: 0;
@@ -36,7 +36,7 @@ body.fullscreen-mode .app-shell {
   grid-template-rows: auto minmax(0, 1fr);
 }
 
-body.fullscreen-mode .topbar {
+body.page-context--fullscreen .site-header {
   position: relative;
   z-index: 25;
   display: flex;
@@ -45,7 +45,7 @@ body.fullscreen-mode .topbar {
   padding: 6px var(--app-shell-gutter);
 }
 
-body.fullscreen-mode .session-view {
+body.page-context--fullscreen .session-view {
   display: flex;
   height: auto;
   min-height: 0;
@@ -54,12 +54,12 @@ body.fullscreen-mode .session-view {
   padding: 0;
 }
 
-body.fullscreen-mode .session-view[data-chat-dock="bottom"] {
+body.page-context--fullscreen .session-view[data-chat-dock="bottom"] {
   padding-bottom: 0;
 }
 
-body.fullscreen-mode .workspace,
-body.fullscreen-mode .session-view[data-chat-dock] .workspace {
+body.page-context--fullscreen .o-workspace,
+body.page-context--fullscreen .session-view[data-chat-dock] .o-workspace {
   display: grid;
   width: 100%;
   height: auto;
@@ -69,7 +69,7 @@ body.fullscreen-mode .session-view[data-chat-dock] .workspace {
   padding: 0;
 }
 
-body.fullscreen-mode .session-view[data-chat-dock] .workspace {
+body.page-context--fullscreen .session-view[data-chat-dock] .o-workspace {
   grid-template-columns: 1fr;
   grid-template-rows: var(--app-viewport-height) var(--app-viewport-height);
   grid-template-areas:
@@ -77,8 +77,8 @@ body.fullscreen-mode .session-view[data-chat-dock] .workspace {
     "chat";
 }
 
-body.fullscreen-mode .session-view[data-chat-dock="right"] .workspace,
-body.fullscreen-mode .app-shell:fullscreen .session-view[data-chat-dock="right"] .workspace {
+body.page-context--fullscreen .session-view[data-chat-dock="right"] .o-workspace,
+body.page-context--fullscreen .app-shell:fullscreen .session-view[data-chat-dock="right"] .o-workspace {
   column-gap: 0;
   height: 100%;
   min-height: 0;
@@ -87,11 +87,11 @@ body.fullscreen-mode .app-shell:fullscreen .session-view[data-chat-dock="right"]
   grid-template-areas: "video chat";
 }
 
-body.fullscreen-mode:has(.session-view[data-chat-dock="right"]) {
+body.page-context--fullscreen:has(.session-view[data-chat-dock="right"]) {
   overflow: hidden;
 }
 
-body.fullscreen-mode .session-view[data-chat-dock="right"] {
+body.page-context--fullscreen .session-view[data-chat-dock="right"] {
   position: relative;
   inset: auto;
   z-index: auto;
@@ -101,7 +101,7 @@ body.fullscreen-mode .session-view[data-chat-dock="right"] {
   gap: 0;
 }
 
-body.fullscreen-mode .session-view[data-chat-dock="right"] .workspace {
+body.page-context--fullscreen .session-view[data-chat-dock="right"] .o-workspace {
   width: 100%;
   height: 100%;
   margin-top: 0;
@@ -110,13 +110,13 @@ body.fullscreen-mode .session-view[data-chat-dock="right"] .workspace {
 /* En fullscreen la barra de enlace participa del layout del video. Antes
    estaba posicionada fuera del reproductor (bottom: 100%), por lo que se
    superponia con la cabecera de la sala al dejarla visible. */
-body.fullscreen-mode .session-view[data-chat-dock="right"] .video-area {
+body.page-context--fullscreen .session-view[data-chat-dock="right"] .o-video-area {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   row-gap: 0;
 }
 
-body.fullscreen-mode .session-view[data-chat-dock="right"] .session-toolbar {
+body.page-context--fullscreen .session-view[data-chat-dock="right"] .session-toolbar {
   position: static;
   inset: auto;
   align-self: start;
@@ -124,7 +124,7 @@ body.fullscreen-mode .session-view[data-chat-dock="right"] .session-toolbar {
   margin: 0 16px 0 16px;
 }
 
-body.fullscreen-mode .session-view[data-chat-dock="right"] .player-frame {
+body.page-context--fullscreen .session-view[data-chat-dock="right"] .player-frame {
   min-height: 0;
 }
 
@@ -151,7 +151,7 @@ body.fullscreen-mode .session-view[data-chat-dock="right"] .player-frame {
   min-height: 0;
 }
 
-.app-shell:fullscreen .session-view[data-chat-dock="right"] .workspace {
+.app-shell:fullscreen .session-view[data-chat-dock="right"] .o-workspace {
   width: 100%;
   height: 100%;
   min-height: 0;
@@ -159,19 +159,19 @@ body.fullscreen-mode .session-view[data-chat-dock="right"] .player-frame {
   grid-template-rows: minmax(0, 1fr);
 }
 
-body.fullscreen-mode .session-view[data-chat-dock="right"] .chat-area {
+body.page-context--fullscreen .session-view[data-chat-dock="right"] .chat-area {
   border: 0;
   border-radius: 0;
 }
 
-body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="right"] .workspace,
-body.fullscreen-mode .app-shell:fullscreen .session-view.chat-collapsed[data-chat-dock="right"] .workspace {
+body.page-context--fullscreen .session-view.session-view--chat-collapsed[data-chat-dock="right"] .o-workspace,
+body.page-context--fullscreen .app-shell:fullscreen .session-view.session-view--chat-collapsed[data-chat-dock="right"] .o-workspace {
   column-gap: 0;
   grid-template-columns: minmax(0, 1fr) 0px;
   grid-template-areas: "video chat";
 }
 
-body.fullscreen-mode .video-area {
+body.page-context--fullscreen .o-video-area {
   height: 100%;
   min-height: 0;
   border: 0;
@@ -179,7 +179,7 @@ body.fullscreen-mode .video-area {
   background: transparent;
 }
 
-body.fullscreen-mode .player-frame {
+body.page-context--fullscreen .player-frame {
   position: relative;
   width: 100%;
   height: 100%;
@@ -190,12 +190,12 @@ body.fullscreen-mode .player-frame {
   backdrop-filter: none;
 }
 
-body.fullscreen-mode .chat-area {
+body.page-context--fullscreen .chat-area {
   min-height: 0;
   margin: 0;
 }
 
-body.fullscreen-mode .session-view[data-chat-dock="bottom"] .workspace {
+body.page-context--fullscreen .session-view[data-chat-dock="bottom"] .o-workspace {
   padding-top: 0;
   row-gap: var(--chat-bottom-dock-gap);
   grid-template-rows:
@@ -203,7 +203,7 @@ body.fullscreen-mode .session-view[data-chat-dock="bottom"] .workspace {
     minmax(0, var(--app-viewport-height));
 }
 
-body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="bottom"] .workspace {
+body.page-context--fullscreen .session-view.session-view--chat-collapsed[data-chat-dock="bottom"] .o-workspace {
   height: var(--app-viewport-height);
   min-height: 0;
   padding-top: 0;
@@ -211,7 +211,7 @@ body.fullscreen-mode .session-view.chat-collapsed[data-chat-dock="bottom"] .work
   grid-template-rows: minmax(0, 1fr) 0px;
 }
 
-body.fullscreen-mode .player-actions {
+body.page-context--fullscreen .player-frame__actions {
   top: 12px;
   right: 12px;
   flex-direction: column;

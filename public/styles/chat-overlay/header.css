@@ -1,4 +1,4 @@
-.player-chat-header {
+.player-chat__header {
   position: relative;
   display: flex;
   align-items: center;
@@ -7,7 +7,7 @@
   padding: 0 8px 0 10px;
 }
 
-.player-chat-header-actions {
+.player-chat__header-actions {
   display: flex;
   flex: 1 1 auto;
   align-items: center;
@@ -15,6 +15,6 @@
   min-width: 0;
 }
 
-.player-chat-header .bare-icon-button {
+.player-chat__header .icon-button--bare {
   display: none;
 }

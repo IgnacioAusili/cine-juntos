@@ -2,27 +2,27 @@
   display: none;
 }
 
-.message-form.over-limit .char-counter,
-.overlay-message-form.over-limit .char-counter {
+.message-form.message-form--over-limit .char-counter,.message-form.message-form--overlay.message-form--over-limit .char-counter {
   display: none;
 }
 
-.message-form.over-limit .input-wrapper,
-.overlay-message-form.over-limit .input-wrapper {
+.message-form.message-form--over-limit .message-form__input-wrapper,.message-form.message-form--overlay.message-form--over-limit .message-form__input-wrapper {
   border-color: rgba(233, 68, 68, 0.65);
   box-shadow: none;
 }
 
-.message-form.over-limit .send,
-.overlay-message-form.over-limit .send {
+.message-form.message-form--over-limit .icon-button--send,.message-form.message-form--overlay.message-form--over-limit .icon-button--send {
   opacity: 0.9;
   cursor: not-allowed;
   pointer-events: auto;
 }
 
-.message-form.over-limit .send:hover,
-.overlay-message-form.over-limit .send:hover {
+.message-form.message-form--over-limit .icon-button--send:hover,.message-form.message-form--overlay.message-form--over-limit .icon-button--send:hover {
   transform: none;
+}
+
+.char-counter--shake {
+  animation: counterShake 0.45s ease;
 }
 
 @keyframes counterShake {
@@ -46,8 +46,4 @@
   80% {
     transform: translateX(3px);
   }
-}
-
-.char-counter--shake {
-  animation: counterShake 0.45s ease;
 }

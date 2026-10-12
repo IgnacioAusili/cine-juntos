@@ -1,0 +1,61 @@
+/* El fullscreen movil debe resolver video y chat contra el viewport visual. */
+@media (hover: none) and (pointer: coarse) {
+  body.page-context--fullscreen .app-shell {
+    width: var(--app-viewport-width, 100vw) !important;
+    height: var(--app-viewport-height) !important;
+    max-height: var(--app-viewport-height) !important;
+  }
+
+  /* La vista normal agrega un gutter negativo al session-view para llegar al
+     borde del teléfono. En fullscreen el shell ya es la superficie completa;
+     conservar ese margen ensancha el contenido al rotar a landscape. */
+  body.page-context--fullscreen .session-view {
+    width: 100% !important;
+    margin-inline: 0 !important;
+  }
+
+  body.page-context--fullscreen .session-view .session-toolbar,
+  body.page-context--fullscreen .session-view .o-workspace {
+    margin-top: 0 !important;
+  }
+
+  body.page-context--fullscreen .session-view .session-toolbar {
+    display: none !important;
+  }
+
+  body.page-context--fullscreen .session-view[data-chat-dock="right"] {
+    width: 100% !important;
+    margin-inline: 0 !important;
+  }
+
+  body.page-context--fullscreen .session-view[data-chat-dock="right"] .o-workspace {
+    width: 100% !important;
+    height: var(--app-viewport-height) !important;
+    max-height: var(--app-viewport-height) !important;
+    min-height: 0 !important;
+    margin-top: 0 !important;
+  }
+
+  body.page-context--fullscreen .session-view.session-view--chat-collapsed[data-chat-dock="right"] .o-workspace {
+    grid-template-columns: minmax(0, 1fr) 0 !important;
+    grid-template-rows: minmax(0, 1fr) 0 !important;
+    grid-template-areas: "video" "chat" !important;
+  }
+
+  body.page-context--fullscreen .session-view:not(.session-view--chat-collapsed)[data-chat-dock="right"] .o-workspace {
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: 0 minmax(0, 1fr) !important;
+    grid-template-areas: "video" "chat" !important;
+  }
+
+  html.page-context--viewport-landscape body.page-context--fullscreen .session-view[data-chat-dock="right"] .o-workspace {
+    grid-template-columns: minmax(0, 1fr) var(--chat-panel-width) !important;
+    grid-template-rows: minmax(0, 1fr) !important;
+    grid-template-areas: "video chat" !important;
+  }
+
+  html.page-context--viewport-landscape body.page-context--fullscreen .session-view.session-view--chat-collapsed[data-chat-dock="right"] .o-workspace {
+    grid-template-columns: minmax(0, 1fr) 0 !important;
+    grid-template-areas: "video chat" !important;
+  }
+}

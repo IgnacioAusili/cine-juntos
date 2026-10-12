@@ -1,21 +1,21 @@
 // Sincronizacion del player con la sala: estado remoto, aplicacion y publicacion.
-import { dom } from "../../core/dom.js?v=20261010-file-size-refactor-02";
+import { dom } from "../../core/dom.js";
 import {
   state,
   getDisplayName,
   getTransportNow,
   logEvent,
-} from "../../core/state.js?v=20261010-file-size-refactor-02";
+} from "../../core/state.js";
 import {
   MAX_DRIFT_SECONDS,
   HARD_DRIFT_SECONDS,
   SEND_THROTTLE_MS,
   formatSeconds,
-} from "../../core/utils.js?v=20261010-file-size-refactor-02";
-import { markParticipantActive, rememberParticipant } from "../presence.js?v=20261011-chat-ui-fixes-03";
-import { sendVideoEventMessage } from "../chat/index.js?v=20261011-overlay-scroll-top-01";
-import { configurePlaybackRecoveryPort, describePlaybackIssue, cancelPendingPlaybackIssueDetection, pauseRoomForPlaybackIssue, clearPlaybackRecoveryTracking, attemptPlaybackRecovery } from "./player-sync-recovery.js?v=20261011-overlay-scroll-top-01";
-export { cancelPendingPlaybackIssueDetection, pauseRoomForPlaybackIssue, clearPlaybackRecoveryTracking, attemptPlaybackRecovery } from "./player-sync-recovery.js?v=20261011-overlay-scroll-top-01";
+} from "../../core/utils.js";
+import { markParticipantActive, rememberParticipant } from "../presence/index.js";
+import { sendVideoEventMessage } from "../chat/index.js";
+import { configurePlaybackRecoveryPort, describePlaybackIssue, cancelPendingPlaybackIssueDetection, pauseRoomForPlaybackIssue, clearPlaybackRecoveryTracking, attemptPlaybackRecovery } from "./player-sync-recovery.js";
+export { cancelPendingPlaybackIssueDetection, pauseRoomForPlaybackIssue, clearPlaybackRecoveryTracking, attemptPlaybackRecovery } from "./player-sync-recovery.js";
 let playerMediaPort = null;
 
 export function configurePlayerMediaPort(port) {

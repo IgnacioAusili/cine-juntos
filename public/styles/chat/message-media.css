@@ -1,4 +1,4 @@
-.message-media-link {
+.message__media-link {
   display: block;
   max-width: min(100%, 260px);
   overflow: hidden;
@@ -6,7 +6,7 @@
   color: inherit;
 }
 
-.message-media {
+.message__media {
   display: block;
   width: 100%;
   max-height: 210px;
@@ -14,7 +14,7 @@
   background: rgba(0, 0, 0, 0.18);
 }
 
-.message-video {
+.message__video {
   display: block;
   width: min(100%, 340px);
   max-height: 240px;
@@ -22,33 +22,29 @@
   background: #050607;
 }
 
-.message-link {
+.message__link {
   color: #9ee9dd;
   text-decoration: none;
   word-break: break-all;
 }
 
-.message-link:hover {
-  text-decoration: underline;
-}
-
-.message-text + .message-media-link {
+.message__text + .message__media-link {
   margin-top: 8px;
 }
 
-.message-media-strip {
+.message__media-strip {
   display: flex;
   gap: 6px;
   width: 100%;
   margin-top: 8px;
 }
 
-.message-media-strip .message-media-link {
+.message__media-strip .message__media-link {
   flex: 1 1 0;
   max-width: calc(50% - 3px);
 }
 
-.message-media-strip--standalone {
+.message__media-strip--standalone {
   width: fit-content;
   max-width: min(100%, 320px);
   margin-top: 0;
@@ -56,11 +52,15 @@
   align-items: flex-start;
 }
 
-.message-media-strip--standalone .message-media-link {
+.message__media-strip--standalone .message__media-link {
   flex: 0 1 260px;
   max-width: min(100%, 260px);
 }
 
-.message-media-strip--standalone .message-media {
+.message__media-strip--standalone .message__media {
   max-height: 180px;
+}
+
+.message__link:hover {
+  text-decoration: underline;
 }

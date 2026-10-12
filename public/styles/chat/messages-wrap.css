@@ -1,4 +1,10 @@
-.messages-wrap {
+.chat-message-list-shell {
+  --chat-scrollbar-visual-end: calc(100% - var(--chat-message-bottom-reserve, 132px) + 2px);
+  --chat-scrollbar-visual-gap: 8px;
+  --chat-scrollbar-visual-inset: 5px;
+}
+
+.chat-message-list-shell {
   position: relative;
   flex: 1 1 auto;
   min-height: 0;
@@ -8,19 +14,16 @@
   overflow-x: hidden;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  --chat-scrollbar-visual-end: calc(100% - var(--chat-message-bottom-reserve, 132px) + 2px);
-  --chat-scrollbar-visual-gap: 8px;
-  --chat-scrollbar-visual-inset: 5px;
 }
 
-.messages-wrap .messages,
-.messages-wrap .overlay-messages {
+.chat-message-list-shell .chat-message-list,
+.chat-message-list-shell .chat-message-list.chat-message-list--overlay {
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
 
-.messages-wrap .messages::-webkit-scrollbar,
-.messages-wrap .overlay-messages::-webkit-scrollbar {
+.chat-message-list-shell .chat-message-list::-webkit-scrollbar,
+.chat-message-list-shell .chat-message-list.chat-message-list--overlay::-webkit-scrollbar {
   width: 0;
   height: 0;
 }
@@ -40,33 +43,27 @@
   user-select: none;
 }
 
-.messages-wrap::-webkit-scrollbar {
+.chat-message-list-shell::-webkit-scrollbar {
   width: 0;
   height: 0;
 }
 
 /* El historial sigue desplazándose con rueda y gesto, pero nunca muestra una
    pista lateral personalizada dentro del chat. */
-.messages-wrap > .chat-scrollbar {
+.chat-message-list-shell > .chat-scrollbar {
   display: none;
 }
 
-.messages-wrap[data-scrollbar-visible="true"] .chat-scrollbar {
+.chat-message-list-shell[data-scrollbar-visible="true"] .chat-scrollbar {
   opacity: 1;
 }
 
-.messages-wrap[data-scrollbar-visible="true"] .chat-scrollbar:hover,
-.messages-wrap.is-dragging .chat-scrollbar,
-.chat-scrollbar.is-dragging {
-  filter: brightness(1.08);
-}
-
-.messages-wrap.is-dragging .chat-scrollbar,
-.chat-scrollbar.is-dragging {
+.chat-message-list-shell.u-dragging .chat-scrollbar,
+.chat-scrollbar.u-dragging {
   cursor: default;
 }
 
-.chat-scrollbar-thumb {
+.chat-scrollbar__thumb {
   position: absolute;
   top: 0;
   left: 1px;
@@ -79,15 +76,21 @@
   pointer-events: auto;
 }
 
-.messages-wrap[data-scrollbar-visible="true"] .chat-scrollbar:hover .chat-scrollbar-thumb,
-.messages-wrap.is-dragging .chat-scrollbar-thumb,
-.chat-scrollbar.is-dragging .chat-scrollbar-thumb {
+.chat-message-list-shell[data-scrollbar-visible="true"] .chat-scrollbar:hover,
+.chat-message-list-shell.u-dragging .chat-scrollbar,
+.chat-scrollbar.u-dragging {
+  filter: brightness(1.08);
+}
+
+.chat-message-list-shell[data-scrollbar-visible="true"] .chat-scrollbar:hover .chat-scrollbar__thumb,
+.chat-message-list-shell.u-dragging .chat-scrollbar__thumb,
+.chat-scrollbar.u-dragging .chat-scrollbar__thumb {
   background: rgba(255, 255, 255, 0.28);
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.09), 0 0 10px rgba(255, 255, 255, 0.12);
   filter: brightness(1.06);
 }
 
-.messages-wrap .messages,
-.messages-wrap .overlay-messages {
+.chat-message-list-shell .chat-message-list,
+.chat-message-list-shell .chat-message-list.chat-message-list--overlay {
   flex: 1 1 auto;
 }

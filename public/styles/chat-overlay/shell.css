@@ -1,6 +1,10 @@
 .player-chat {
   --player-chat-max-height: 330px;
   --player-chat-bottom-inset: 8px;
+  --chat-composer-reserve: 92px;
+}
+
+.player-chat {
   position: absolute;
   z-index: 12;
   top: var(--inside-chat-top-offset, 48px);
@@ -20,10 +24,9 @@
   filter: none;
   transition: opacity 160ms ease;
   padding-inline: 2px;
-  --chat-composer-reserve: 92px;
 }
 
-.player-frame.chat-inside-open .player-chat {
+.player-frame.u-chat-inside-open .player-chat {
   opacity: 1;
   pointer-events: auto;
 }
@@ -42,8 +45,8 @@
   max-height: var(--inside-chat-placement-max-height) !important;
 }
 
-.player-frame:not(.chat-inside-open) .player-chat,
-.player-frame:not(.chat-inside-open) .player-chat * {
+.player-frame:not(.u-chat-inside-open) .player-chat,
+.player-frame:not(.u-chat-inside-open) .player-chat * {
   pointer-events: none;
 }
 

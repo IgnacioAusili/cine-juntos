@@ -1,0 +1,32 @@
+{
+  "name": "cine-juntos",
+  "version": "1.0.0",
+  "private": true,
+  "overrides": {
+    "katex": "^0.18.2",
+    "smol-toml": "^1.9.0"
+  },
+  "scripts": {
+    "lint": "npm run lint:js && npm run lint:css && npm run lint:html && npm run lint:md",
+    "lint:js": "eslint \"src/**/*.js\" \"public/**/*.js\" \"console/**/*.js\" \"scripts/**/*.js\" \"scripts/**/*.mjs\" \"*.config.mjs\"",
+    "lint:css": "stylelint \"public/**/*.css\" && node scripts/lint-css-shared-values.mjs && node scripts/lint-css-component-order.mjs",
+    "build:html": "node scripts/build-html.js",
+    "build": "npm run build:html && vite build && node scripts/copy-deployment-files.js",
+    "preview": "vite preview",
+    "lint:html": "npm run build:html && html-validate \"index.html\" \"console/**/*.html\"",
+    "lint:md": "markdownlint-cli2 \"README.md\" \"AGENT.md\" \"AGENTS.md\""
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.12.0",
+    "globals": "^17.13.0",
+    "html-validate": "^11.16.2",
+    "markdownlint-cli2": "^0.23.3",
+    "postcss": "^8.5.29",
+    "postcss-selector-parser": "^7.1.6",
+    "postcss-value-parser": "^4.2.0",
+    "stylelint": "^17.16.0",
+    "stylelint-config-recommended": "^18.0.0",
+    "vite": "^8.3.4"
+  }
+}

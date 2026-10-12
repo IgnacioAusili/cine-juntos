@@ -1,7 +1,7 @@
-@import url("./player-frame-layout.css?v=20261010-file-size-refactor-02");
-@import url("./player-empty-state.css?v=20261010-file-size-refactor-02");
-@import url("./player-overlay-states.css?v=20261010-file-size-refactor-02");
-@import url("./player-control-line-layout.css?v=20261010-file-size-refactor-02");
-@import url("./player-seek-slider.css?v=20261010-file-size-refactor-02");
-@import url("./player-volume-slider.css?v=20261010-file-size-refactor-02");
-@import url("./player-rate-select.css?v=20261010-file-size-refactor-02");
+@import url("./player/player-frame-layout.css");
+@import url("./player/player-empty-state.css");
+@import url("./player/player-overlay-states.css");
+@import url("./player/player-control-line-layout.css");
+@import url("./player/player-seek-slider.css");
+@import url("./player/player-volume-slider.css");
+@import url("./player/player-rate-select.css");

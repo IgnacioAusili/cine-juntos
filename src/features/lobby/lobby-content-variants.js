@@ -85,8 +85,36 @@ export function syncSingleColumnContentGap(grid, ticket, footer) {
   grid.style.setProperty("--lobby-vertical-content-gap", `${gap.toFixed(2)}px`);
 }
 
+export function syncSingleColumnContentCenter(screen, grid, hero, ticket, footer) {
+  if (!screen || !grid || !hero || !ticket || !footer) return;
+
+  grid.style.setProperty("--lobby-content-center-shift", "0px");
+
+  const screenRect = screen.getBoundingClientRect();
+  const footerRect = footer.getBoundingClientRect();
+  const topInset = Number.parseFloat(getComputedStyle(grid).paddingBlockStart) || 0;
+  const contentRects = [hero, ticket].map((element) => element.getBoundingClientRect());
+  const contentTop = Math.min(...contentRects.map((rect) => rect.top));
+  const contentBottom = Math.max(...contentRects.map((rect) => rect.bottom));
+  const availableTop = Math.max(screenRect.top, 0);
+  const minimumTopShift = screenRect.top + topInset - contentTop;
+  const availableCenter = (availableTop + footerRect.top) / 2;
+  const contentCenter = (contentTop + contentBottom) / 2;
+  const contentShift = Math.max(0, minimumTopShift, availableCenter - contentCenter);
+
+  // En viewports cortos, el grupo queda en su posición inicial para que el
+  // ajuste del boleto y el scroll sigan teniendo prioridad sobre el centrado.
+  if (Number.isFinite(contentShift)) {
+    grid.style.setProperty("--lobby-content-center-shift", `${contentShift.toFixed(2)}px`);
+  }
+}
+
 export function syncSingleColumnTicketPlacement(hero, ticket, footer) {
   if (!hero || !ticket || !footer) return;
+
+  // En una columna, el boleto sigue el flujo natural. El espacio libre se usa
+  // para centrar el conjunto completo, no para separar el boleto del hero.
+  ticket.style.removeProperty("translate");
 
   const fitProperties = [
     "--lobby-ticket-fit-height",
@@ -219,12 +247,4 @@ export function syncSingleColumnTicketPlacement(hero, ticket, footer) {
     }
   }
 
-  const ticketRect = ticket.getBoundingClientRect();
-  const freeSpace = lowerVisibleBoundary - heroRect.bottom - ticketRect.height;
-  const targetTicketTop = heroRect.bottom + Math.max(0, freeSpace / 2);
-
-  const ticketShift = targetTicketTop - ticketRect.top;
-  if (Number.isFinite(ticketShift)) {
-    ticket.style.setProperty("translate", `0px ${ticketShift.toFixed(2)}px`);
-  }
 }

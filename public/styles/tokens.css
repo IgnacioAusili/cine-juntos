@@ -11,6 +11,10 @@
   --danger: #e94444;
   --shadow: 0 18px 45px rgba(0, 0, 0, 0.28);
   --app-shell-gutter: 10px;
+  --lobby-phone-content-gap: clamp(24px, 3.5dvh, 36px);
+  --lobby-phone-top-inset: clamp(20px, 2.5dvh, 28px);
+  --lobby-phone-hero-gap: clamp(18px, 2.5dvh, 24px);
+  --lobby-phone-title-size: clamp(5rem, 9dvh, 6.8rem);
   --session-header-gap: var(--app-shell-gutter);
   --workspace-gap: 10px;
   --chat-handle-gap: 22px;

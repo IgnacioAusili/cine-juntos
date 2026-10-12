@@ -31,7 +31,7 @@ body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen {
 
 body.page-context--lobby[data-lobby-flow="single-column"] .site-header,
 body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__marquee,
-body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__features {
+body.page-context--lobby[data-lobby-flow="single-column"][data-lobby-layout] .lobby-screen__features {
   display: none;
 }
 

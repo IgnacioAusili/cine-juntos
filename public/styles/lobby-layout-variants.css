@@ -3,3 +3,23 @@
 @import url("./lobby/lobby-tablet-layout.css");
 @import url("./lobby/lobby-desktop-layout.css");
 @import url("./lobby/lobby-phone-layout.css");
+
+/* En mobile vertical el boleto y el encabezado forman un único bloque.
+   Los mínimos crecen con el viewport y el centrado usa el espacio que dejan
+   el pie fijo y las medidas reales de ambas piezas. */
+@media (max-width: 680px) {
+  body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__grid {
+    row-gap: var(--lobby-vertical-content-gap, var(--lobby-phone-content-gap));
+    padding-block-start: var(--lobby-phone-top-inset);
+    transform: none;
+    translate: 0 var(--lobby-content-center-shift, 0px);
+  }
+
+  body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__hero {
+    row-gap: var(--lobby-phone-hero-gap);
+  }
+
+  body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__title {
+    font-size: var(--lobby-phone-title-size);
+  }
+}

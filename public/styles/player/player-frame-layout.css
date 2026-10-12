@@ -160,7 +160,7 @@ video::-webkit-media-controls-fullscreen-button {
 }
 
 .player-status-badge.sync-status--video.sync-status--empty .sync-status__dot {
-  background: #ffffff;
+  background: currentColor;
 }
 
 .player-status-badge.sync-status--video.sync-status--loaded .sync-status__dot {

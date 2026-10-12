@@ -1,6 +1,7 @@
 import { dom } from "../../../core/dom.js";
 import { isStackedSessionLayout } from "./chat-responsive-layout.js";
 import { getElementPageTop, getPageScrollContainer, getPageScrollMax, getPageScrollTop, isFullscreenPageActive, scrollPageTo } from "./chat-page-scroll.js";
+import { syncComponentAspectLayoutNow } from "./component-aspect-layout.js";
 import { chatDockTransitionState, getChatDockOperations } from "./chat-layout-transition-state.js";
 import { easeBottomChatCurtainProgress, easeBottomChatRevealProgress, getWorkspaceRowHeights, getWorkspaceContentHeight, getCollapsedWorkspaceContentHeight, isDesktopBottomDock } from "./chat-dock-transition-measurements.js";
 import { BOTTOM_CHAT_CURTAIN_MS, BOTTOM_CHAT_SCROLL_TIMEOUT_MS } from "./chat-layout-timing.js";
@@ -10,6 +11,64 @@ function shouldAnimateBottomChatRows() {
     && !dom.sessionView.classList.contains('session-view--layout-component-stack');
   return dom.sessionView?.classList.contains('session-view--bottom-dock-panels-fit-viewport')
     || isEdgeToEdgeBottomDock;
+}
+
+function captureBottomControlsBounds() {
+  const progress = dom.playerFrame?.querySelector(".player-progress-group");
+  const controls = dom.playerFrame?.querySelector(".player-controls-bar");
+  const elements = [
+    ...(progress ? [{ element: progress, stretchX: true }] : []),
+    ...Array.from(controls?.children || [])
+      .filter((element) => !element.matches(".player-progress-group"))
+      .map((element) => ({ element, stretchX: false })),
+  ];
+
+  return elements.flatMap(({ element, stretchX }) => {
+    const bounds = element.getBoundingClientRect();
+    if (!bounds.width || !bounds.height) return [];
+    return [{ element, stretchX, x: bounds.x, y: bounds.y, width: bounds.width }];
+  });
+}
+
+function animateBottomControlsLayout(transition) {
+  const starts = transition.controlsBounds;
+  if (!transition.animateRows || !starts?.length) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  const easing = transition.collapsed
+    ? "cubic-bezier(0.22, 1, 0.36, 1)"
+    : "cubic-bezier(0.42, 0, 0.58, 1)";
+  transition.controlsAnimations = starts.flatMap((start) => {
+    if (typeof start.element.animate !== "function") return [];
+    const end = start.element.getBoundingClientRect();
+    if (!end.width || !end.height) return [];
+
+    const translateX = start.x - end.x;
+    const translateY = start.y - end.y;
+    const scaleX = start.stretchX ? start.width / end.width : 1;
+    if (
+      Math.abs(translateX) < 0.5
+      && Math.abs(translateY) < 0.5
+      && Math.abs(scaleX - 1) < 0.005
+    ) return [];
+
+    const initialTransform = `translate(${translateX}px, ${translateY}px) scale(${scaleX}, 1)`;
+    return [start.element.animate(
+      [
+        { transformOrigin: "0 50%", transform: initialTransform },
+        { transformOrigin: "0 50%", transform: "none" },
+      ],
+      { duration: BOTTOM_CHAT_CURTAIN_MS, easing },
+    )];
+  });
+}
+
+function settleBottomControlsLayout(transition) {
+  for (const animation of transition?.controlsAnimations || []) {
+    if (animation.playState === "running") animation.finish();
+    animation.cancel();
+  }
+  if (transition) transition.controlsAnimations = [];
 }
 
 export function clearBottomChatTransitionVisuals() {
@@ -67,9 +126,11 @@ export function restoreBottomChatScrollAnchoring(transition) {
 
 export function cancelBottomChatTransition() {
   if (chatDockTransitionState.bottomChatTransition) {
-    window.cancelAnimationFrame(chatDockTransitionState.bottomChatTransition.frameId);
-    window.clearTimeout(chatDockTransitionState.bottomChatTransition.timeoutId);
-    restoreBottomChatScrollAnchoring(chatDockTransitionState.bottomChatTransition);
+    const transition = chatDockTransitionState.bottomChatTransition;
+    window.cancelAnimationFrame(transition.frameId);
+    window.clearTimeout(transition.timeoutId);
+    for (const animation of transition.controlsAnimations || []) animation.cancel();
+    restoreBottomChatScrollAnchoring(transition);
     chatDockTransitionState.bottomChatTransition = null;
   }
   clearBottomChatTransitionVisuals();
@@ -80,6 +141,7 @@ export function completeDesktopBottomChatTransition(transition) {
 
   window.cancelAnimationFrame(transition.frameId);
   window.clearTimeout(transition.timeoutId);
+  settleBottomControlsLayout(transition);
   restoreBottomChatScrollAnchoring(transition);
   chatDockTransitionState.bottomChatTransition = null;
   getChatDockOperations().setCollapseHandleTransitioning(false);
@@ -211,6 +273,7 @@ export function animateDesktopBottomChatCollapse(targetScrollTop) {
   const transition = {
     collapsed: true,
     animateRows,
+    controlsBounds: animateRows ? captureBottomControlsBounds() : null,
     frameId: 0,
     timeoutId: 0,
     startedAt: performance.now(),
@@ -237,6 +300,7 @@ export function animateDesktopBottomChatCollapse(targetScrollTop) {
     );
   }
   void dom.chatArea.offsetWidth;
+  animateBottomControlsLayout(transition);
   transition.frameId = window.requestAnimationFrame(() => {
     if (chatDockTransitionState.bottomChatTransition !== transition) return;
     stepDesktopBottomChatTransition(transition);
@@ -256,6 +320,7 @@ export function animateDesktopBottomChatExpand() {
   const transition = {
     collapsed: false,
     animateRows,
+    controlsBounds: animateRows ? captureBottomControlsBounds() : null,
     frameId: 0,
     timeoutId: 0,
     startedAt: performance.now(),
@@ -278,6 +343,10 @@ export function animateDesktopBottomChatExpand() {
   // Se reserva la fila completa con la cortina cerrada. Desde el primer frame
   // el scroll y la apertura recorren juntos la distancia hasta la unión.
   getChatDockOperations().applyExternalChatCollapsed(false);
+  // Resolver aquí el estado final de ajuste al viewport. Si se deja al observer,
+  // la clase de ajuste llega durante la cortina y cambia de golpe la altura del
+  // riel inferior, desplazando la pista después de que ya empezó a animarse.
+  if (animateRows) syncComponentAspectLayoutNow({ allowDuringChatTransition: true });
   if (animateRows) transition.targetRows = getWorkspaceRowHeights();
   const messageForm = dom.chatArea.querySelector(".message-form");
   const composerBounds = messageForm?.getBoundingClientRect();
@@ -316,6 +385,7 @@ export function animateDesktopBottomChatExpand() {
   // primer repintado, para que la cortina y el scroll recorran una sola fase.
   scrollPageTo(transition.startScrollTop, "auto");
   void dom.chatArea.offsetWidth;
+  animateBottomControlsLayout(transition);
   transition.startedAt = performance.now();
   transition.frameId = window.requestAnimationFrame(() => {
     stepDesktopBottomChatTransition(transition);

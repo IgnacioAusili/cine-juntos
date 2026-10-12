@@ -209,7 +209,6 @@ Opcion A - con Git:
 5. Framework preset: None.
 6. Build command: `npm run build`.
 7. Build output directory: `dist`.
-7. Build output directory: la carpeta raiz del proyecto (`.`).
 8. Deploy.
 
 Opcion B - Direct Upload:

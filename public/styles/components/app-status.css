@@ -9,7 +9,7 @@
 }
 
 .app-status[data-state="local"] .app-status__dot {
-  --status-glow: rgba(240, 140, 58, 0.37);
+  --status-glow: color-mix(in srgb, var(--accent-2) 38%, transparent);
 }
 
 .app-status[data-state="error"] .app-status__dot {
@@ -80,7 +80,7 @@
 }
 
 .app-status[data-state="local"] .app-status__dot {
-  background: #f08c3a;
+  background: var(--accent-2);
 }
 
 .app-status[data-state="error"] .app-status__dot {

@@ -29,9 +29,6 @@
   }
 
   body:not(.page-context--lobby) .session-view:is(
-    .session-view--chat-bottom-pc-expand-visual,
-    .session-view--chat-bottom-pc-expand-controls-transition,
-    .session-view--chat-bottom-pc-collapse-visual,
     .session-view--chat-bottom-mobile-expand-visual,
     .session-view--chat-bottom-mobile-collapse-visual
   )[data-chat-dock="bottom"] .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-progress-group {
@@ -39,6 +36,24 @@
       bottom 320ms cubic-bezier(0.22, 1, 0.36, 1),
       left 320ms cubic-bezier(0.22, 1, 0.36, 1),
       right 320ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* En escritorio la pista y cada control se interpolan desde su rectángulo
+     real con FLIP; evitar una segunda animación de bottom/left/right para que
+     no parpadeen ni recorran dos trayectorias a la vez. */
+  body:not(.page-context--lobby) .session-view:is(
+    .session-view--chat-bottom-pc-expand-controls-transition,
+    .session-view--chat-bottom-pc-collapse-controls-transition
+  )[data-chat-dock="bottom"] .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-progress-group {
+    transition: none;
+  }
+
+  /* Al expandir, el layout tarda unos frames en marcar que ambos paneles
+     caben. La pista ya debe quedar sobre el chat desde el primer frame, no
+     recién cuando aparece esa clase al final del reflujo. */
+  body:not(.page-context--lobby) .session-view:not(.session-view--layout-component-stack):not(.session-view--chat-collapsed).session-view--chat-bottom-pc-expand-controls-transition.session-view--chat-bottom-pc-expand-visual[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-progress-group {
+    z-index: 42;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -154,6 +169,12 @@
     bottom: 52px;
     left: 18px;
     z-index: auto;
+  }
+
+  body:not(.page-context--lobby) .session-view.session-view--bottom-dock-panels-fit-viewport.session-view--chat-bottom-pc-collapse-controls-transition:not(.session-view--chat-collapsed)[data-chat-dock="bottom"]
+    .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-frame__bottom-actions {
+    min-height: 112px;
+    padding-bottom: 10px;
   }
 
   /* En esta disposición el avance deshabilitado comparte el borde entre

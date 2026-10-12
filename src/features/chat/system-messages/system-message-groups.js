@@ -1,9 +1,9 @@
-import { animateCollapsedSystemMessageAdvance, resetSystemMessageRowAnchor, settleSystemMessageRoll } from "./system-message-roll.js";
+import { animateCollapsedSystemMessageAdvance, settleSystemMessageRoll } from "./system-message-roll.js";
 import { SYSTEM_GROUP_MIN_SIZE, groupTransitions } from "./system-message-group-state.js";
 import { captureSystemTextSnapshot, clearShortGroup, ensureGroupHeader, findGroupToggle, getContiguousSystemItems, getGroupState, getLatestSystemStreak, applyGroupState, removeGroupHeader } from "./system-message-group-model.js";
 import { getGroupTransitionTarget } from "./system-message-group-visuals.js";
 import { moveGroupToggle } from "./system-message-group-toggle.js";
-import { animateExpandedSystemMessageRemoval, animateExpandedSystemMessageEntry } from "./system-message-group-effects.js";
+import { animateExpandedSystemMessageEntry } from "./system-message-group-effects.js";
 export { animateExpandedSystemMessageRemoval } from "./system-message-group-effects.js";
 
 export function scheduleSystemMessageCollapse(container, { animateIncoming = false } = {}) {
@@ -31,6 +31,7 @@ export function scheduleSystemMessageCollapse(container, { animateIncoming = fal
   // Durante la ruleta el centro del renglón queda fijo; no hagas que el
   // selector persiga el cambio de altura del texto.
   applyGroupState(header, state?.expanded ?? false, {
+    animate: animateIncoming && !hadExistingHeader,
     animateSelector: !previousSnapshot,
   });
 

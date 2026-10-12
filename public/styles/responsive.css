@@ -1,5 +1,5 @@
-@import url("./session-fit-layout.css?v=20261011-css-order-02");
-@import url("./session-layout-controls.css?v=20261011-css-order-02");
+@import url("./session/session-fit-layout.css");
+@import url("./session/session-layout-controls.css");
 
 @media (max-width: 680px) {
   :root {

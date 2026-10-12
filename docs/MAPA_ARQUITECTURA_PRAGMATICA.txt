@@ -16,7 +16,7 @@ CAPAS Y RESPONSABILIDADES ACTUALES
 - `src/main.js`: composition root; inicializa y conecta los modulos de la app.
 - `src/features/`: capacidades por dominio, como chat, player, sala, presencia y sesion.
 - `src/index.template.html` y los parciales HTML de `src/features/`: marcado fuente organizado por capacidad.
-- `scripts/build-html.js`: resuelve los includes fuente y genera el `index.html` estatico; el servidor local observa cambios y Pages ensambla antes de publicar.
+- `scripts/build-html.js`: resuelve los includes fuente y genera el `index.html` estatico; Vite compila esa salida y sus imports CSS/JS con nombres con hash en `dist/`.
 - `index.html`: salida generada que conserva el shell unico requerido por el hosting estatico.
 - `src/state/appState.js`: estado de aplicacion agrupado en session, player, chat y ui.
 - `src/core/`: referencias DOM, compatibilidad de estado y utilidades compartidas del navegador.
@@ -70,7 +70,7 @@ CSS, CACHE Y VALIDACION
 - Seguir el orden ITCSS anotado en `public/styles.css` sin reordenar overrides sensibles.
 - Aplicar BEM a clases nuevas y a los componentes migrados; usar OOCSS para separar estructura reutilizable de apariencia cuando corresponda, y conservar el orden ITCSS de las capas.
 - Las hojas grandes conservan su nombre como agregador; sus imports descriptivos siguen el orden original y permanecen junto a la hoja para conservar URLs relativas.
-- Al cambiar HTML, CSS o JavaScript, actualizar el cache-burst de toda la cadena de imports afectada.
+- Al cambiar HTML, CSS o JavaScript, ejecutar `npm run build` y publicar `dist/`; Vite versiona los recursos propios mediante hashes de contenido.
 - Verificar `Cache-Control: no-store` en desarrollo, ausencia de service worker y URLs solicitadas actuales.
 - Validar el mismo viewport y variante de layout afectados; medir posiciones responsive con limites reales del DOM.
 - Trabajar en pasos chicos y validar cada grupo antes de seguir.

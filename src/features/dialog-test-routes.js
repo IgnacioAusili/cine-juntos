@@ -1,15 +1,15 @@
 import {
   dom,
-} from "../core/dom.js?v=20261011-bem-itcss-oocss-04";
+} from "../core/dom.js";
 import {
   showErrorDialog,
   showLoadReplaceDialog,
   showResumeVideoDialog,
   showSlowLoadDialog,
   showSession,
-} from "./session-ui.js?v=20261011-bem-itcss-oocss-04";
-import { setVideoStatus } from "./player/player-video-source.js?v=20261011-bem-itcss-oocss-04";
-import { openLightboxForTest } from "./chat/image-lightbox.js?v=20261011-bem-itcss-oocss-04";
+} from "./session/session-ui.js";
+import { setVideoStatus } from "./player/player-video-source.js";
+import { openLightboxForTest } from "./chat/messages/image-lightbox.js";
 
 export const DIALOG_TEST_ROUTES = Object.freeze({
   about: "Sobre este proyecto",

@@ -18,7 +18,7 @@ node scripts/dev-server.js --port 8080
 
 Abrir `http://localhost:8080`. El servidor genera `index.html` al iniciar y lo vuelve a generar cuando se guarda una fuente HTML.
 
-El marcado se edita en `src/index.template.html` y en parciales dentro de `src/features/`. GitHub Pages y Cloudflare Pages por Git deben ejecutar `node scripts/build-html.js` antes de publicar el `index.html` estático. Para una carga directa, ejecutar ese comando antes de subir los archivos.
+El marcado se edita en `src/index.template.html` y en los parciales `src/features/<feature>/templates/*.html`. `scripts/build-html.js` ensambla esos parciales; después Vite agrupa el HTML, CSS y JavaScript y genera nombres de recursos con hash de contenido. Para publicar, ejecutar `npm run build` y subir el contenido de `dist/`. GitHub Pages lo hace automáticamente desde su workflow; en Cloudflare Pages, usar `npm run build` como comando y `dist` como directorio de salida.
 
 Con `scripts/dev-server.js`, los logs del cliente se imprimen en la terminal que corre el servidor. En GitHub Pages o Cloudflare Pages no hay una terminal del dispositivo disponible, asi que los logs quedan en la consola del navegador.
 
@@ -105,12 +105,39 @@ El link debe ser un archivo reproducible por el navegador, por ejemplo `.mp4`, `
     state/
     services/
     features/
-      chat/*.html
-      lobby/*.html
-      player/*.html
-      session/*.html
+      chat/
+        templates/
+          *.html
+        dock/
+        composer/
+        messages/
+        system-messages/
+      diagnostics/
+      layout/
+      lobby/
+        templates/
+          *.html
+      player/
+        templates/
+          *.html
+        controls/
+        fullscreen/
+        mini-player/
+      presence/
+      room/
+      session/
+        templates/
+          *.html
+      tooltip/
   public/
     styles.css
+    styles/
+      chat/
+      lobby/
+      mini-player/
+      mobile/
+      player/
+      session/
     firebase-config.js
     dev-runtime.js
   scripts/

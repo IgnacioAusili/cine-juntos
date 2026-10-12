@@ -31,5 +31,5 @@
 ## Criterio para cambios futuros
 
 - Mantener la convención y ampliar los mapas al agregar o renombrar clases.
-- Revisar la cadena de imports/cache-burst afectada y validar la interacción principal del dominio modificado.
+- Revisar la cadena de imports y su orden; Vite genera automáticamente el hash CSS durante `npm run build`. Validar la interacción principal del dominio modificado.
 - Para cambios futuros, revisar `no-store`, ausencia de service worker y URLs actuales en navegador.

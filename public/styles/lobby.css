@@ -1,5 +1,5 @@
-@import url("./lobby-shell.css?v=20261011-css-order-02");
-@import url("./lobby-content.css?v=20261011-css-order-02");
-@import url("./lobby-ticket.css?v=20261011-css-order-02");
-@import url("./lobby-footer.css?v=20261011-css-order-02");
-@import url("./lobby-phone.css?v=20261011-css-order-02");
+@import url("./lobby/lobby-shell.css");
+@import url("./lobby/lobby-content.css");
+@import url("./lobby/lobby-ticket.css");
+@import url("./lobby/lobby-footer.css");
+@import url("./lobby/lobby-phone.css");

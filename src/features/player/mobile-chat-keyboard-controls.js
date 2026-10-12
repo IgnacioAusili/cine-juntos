@@ -1,4 +1,4 @@
-import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { dom } from "../../core/dom.js";
 
 const isRightChatKeyboardOpen = () => Boolean(
   document.documentElement.classList.contains('page-context--right-chat-keyboard-open')

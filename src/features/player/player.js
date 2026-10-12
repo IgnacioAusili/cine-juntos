@@ -1,15 +1,15 @@
 import {
   dom,
-} from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
-import { state } from "../../core/state.js?v=20261011-bem-itcss-oocss-04";
-import { configureRateSelectMenu, initializeRateSelectMenu } from "./player-rate-menu.js?v=20261011-bem-itcss-oocss-04";
-import { hideSeekTooltip, updateSeekTooltipForValue } from "./player-seek-tooltip-view.js?v=20261011-bem-itcss-oocss-04";
-import { seekTooltipState } from "./player-seek-tooltip-state.js?v=20261011-chat-controls-repair-01";
-import { renderPlayerControls, showPlaybackGestureIndicator, updateSeekVisuals } from "./player-control-display.js?v=20261011-bem-itcss-oocss-04";
-import { setVideoStatus } from "./player-video-source.js?v=20261011-bem-itcss-oocss-04";
-import { getFiniteDuration, hasLoadedMediaSource, clearSlowLoadPromptTracking } from "./player-media.js?v=20261011-bem-itcss-oocss-04";
-import { playerRuntimeState } from "./player-runtime-state.js?v=20261011-chat-controls-repair-01";
-import { resetSyncControlCooldown, readPersistedVolume, syncPlayerControls } from "./player-control-actions.js?v=20261011-bem-itcss-oocss-04";
+} from "../../core/dom.js";
+import { state } from "../../core/state.js";
+import { configureRateSelectMenu, initializeRateSelectMenu } from "./controls/player-rate-menu.js";
+import { hideSeekTooltip, updateSeekTooltipForValue } from "./controls/player-seek-tooltip-view.js";
+import { seekTooltipState } from "./controls/player-seek-tooltip-state.js";
+import { renderPlayerControls, showPlaybackGestureIndicator, updateSeekVisuals } from "./controls/player-control-display.js";
+import { setVideoStatus } from "./player-video-source.js";
+import { getFiniteDuration, hasLoadedMediaSource, clearSlowLoadPromptTracking } from "./player-media.js";
+import { playerRuntimeState } from "./player-runtime-state.js";
+import { resetSyncControlCooldown, readPersistedVolume, syncPlayerControls } from "./controls/player-control-actions.js";
 
 const PLAYER_CONTROL_STYLES = new Set(["line"]);
 const MOBILE_PLAYER_CONTROLS_QUERY = "(max-width: 980px) and (hover: none) and (pointer: coarse)";

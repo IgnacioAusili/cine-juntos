@@ -1,11 +1,11 @@
-import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
-import { state, getDisplayName, logEvent } from "../../core/state.js?v=20261011-bem-itcss-oocss-04";
-import { formatSeconds } from "../../core/utils.js?v=20261011-chat-controls-repair-01";
-import { sendVideoEventMessage, scrollToVideoPosition } from "../chat/index.js?v=20261011-bem-itcss-oocss-04";
-import { showLoadReplaceDialog } from "../session-ui.js?v=20261011-bem-itcss-oocss-04";
-import { clearPlaybackRecoveryTracking, publishState } from "./player-sync-logic.js?v=20261011-bem-itcss-oocss-04";
-import { playerRuntimeState } from "./player-runtime-state.js?v=20261011-chat-controls-repair-01";
-import { configurePlayerMediaSourcePort, getLoadedVideoSourceKey, getVideoSourceKey, updateLoadButtonState, clearSlowLoadPromptTracking, clearPlaybackErrorTracking, armSlowLoadPrompt, hasLoadedMediaSource, isVideoLoadCoolingDown, shouldConfirmLoadReplacement } from "./player-media.js?v=20261011-bem-itcss-oocss-04";
+import { dom } from "../../core/dom.js";
+import { state, getDisplayName, logEvent } from "../../core/state.js";
+import { formatSeconds } from "../../core/utils.js";
+import { sendVideoEventMessage, scrollToVideoPosition } from "../chat/index.js";
+import { showLoadReplaceDialog } from "../session/session-ui.js";
+import { clearPlaybackRecoveryTracking, publishState } from "./player-sync-logic.js";
+import { playerRuntimeState } from "./player-runtime-state.js";
+import { configurePlayerMediaSourcePort, getLoadedVideoSourceKey, getVideoSourceKey, updateLoadButtonState, clearSlowLoadPromptTracking, clearPlaybackErrorTracking, armSlowLoadPrompt, hasLoadedMediaSource, isVideoLoadCoolingDown, shouldConfirmLoadReplacement } from "./player-media.js";
 
 const SKIP_LOAD_REPLACE_DIALOG_KEY = "cine-juntos-skip-load-replace-dialog";
 const VIDEO_LOAD_COOLDOWN_MS = 3000;

@@ -1,20 +1,20 @@
-import { dom } from "../core/dom.js?v=20261011-bem-itcss-oocss-04";
-import { initializeBubbleChrome } from "./tooltip-bubble-chrome.js?v=20261011-bem-itcss-oocss-04";
-import { wireTooltipEvents } from "./tooltip-events.js?v=20261011-bem-itcss-oocss-04";
-import { hideTooltip, refreshTooltipForTarget } from "./tooltip-behavior.js?v=20261011-bem-itcss-oocss-04";
-export { wireTooltipEvents } from "./tooltip-events.js?v=20261011-bem-itcss-oocss-04";
-export { hideTooltip, refreshTooltipForTarget } from "./tooltip-behavior.js?v=20261011-bem-itcss-oocss-04";
-import { state } from "../core/state.js?v=20261011-bem-itcss-oocss-04";
+import { dom } from "../core/dom.js";
+import { initializeBubbleChrome } from "./tooltip/tooltip-bubble-chrome.js";
+import { wireTooltipEvents } from "./tooltip/tooltip-events.js";
+import { hideTooltip, refreshTooltipForTarget } from "./tooltip/tooltip-behavior.js";
+export { wireTooltipEvents } from "./tooltip/tooltip-events.js";
+export { hideTooltip, refreshTooltipForTarget } from "./tooltip/tooltip-behavior.js";
+import { state } from "../core/state.js";
 import {
   buildContinuousBubblePath,
   clampBubbleTailCenter,
-} from "../core/continuous-bubble.js?v=20261010-file-size-refactor-02";
-import { setConnection } from "./session-ui.js?v=20261011-bem-itcss-oocss-04";
-import { createForeignDocumentIcon } from "./foreign-lucide-icon.js?v=20261011-lucide-icons-repair-01";
+} from "../core/continuous-bubble.js";
+import { setConnection } from "./session/session-ui.js";
+import { createForeignDocumentIcon } from "./foreign-lucide-icon.js";
 import {
   isTouchPointer,
   TOUCH_LONG_PRESS_DELAY_MS,
-} from "../core/touch-interactions.js?v=20261010-file-size-refactor-02";
+} from "../core/touch-interactions.js";
 
 
 

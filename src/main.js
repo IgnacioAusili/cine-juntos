@@ -1,34 +1,36 @@
 // Punto de entrada: inicializa la app y conecta los modulos principales.
+import "../public/firebase-config.js";
+
 import {
   dom,
-} from "./core/dom.js?v=20261011-bem-itcss-oocss-04";
+} from "./core/dom.js";
 import {
   state,
   applyInitialDefaults,
   detectTerminalLogEndpoint,
   logEvent,
-} from "./core/state.js?v=20261011-bem-itcss-oocss-04";
+} from "./core/state.js";
 import {
   normalizeRoomCode,
-} from "./core/utils.js?v=20261011-chat-controls-repair-01";
+} from "./core/utils.js";
 import {
   hydrateIcons,
   initializeUi,
   setConnection,
-} from "./features/icons-tooltips.js?v=20261011-bem-itcss-oocss-04";
+} from "./features/icons-tooltips.js";
 import {
   wireLayoutMetrics,
-} from "./features/layout-metrics.js?v=20261011-bem-itcss-oocss-04";
-import { wireLobbyKeyboardRestore } from "./features/lobby-keyboard.js?v=20261011-bem-itcss-oocss-04";
-import { wireAboutDialogScrollbar } from "./features/about-dialog-scrollbar.js?v=20261011-bem-itcss-oocss-04";
+} from "./features/layout/index.js";
+import { wireLobbyKeyboardRestore } from "./features/lobby/lobby-keyboard.js";
+import { wireAboutDialogScrollbar } from "./features/about-dialog-scrollbar.js";
 import {
   renderPresence,
   wireIdentityEvents,
-} from "./features/presence.js?v=20261011-bem-itcss-oocss-04";
+} from "./features/presence/index.js";
 import {
   showLobby,
   initializeAboutDialog,
-} from "./features/session-ui.js?v=20261011-bem-itcss-oocss-04";
+} from "./features/session/session-ui.js";
 import {
   buildEmojiPicker,
   getPersistedInsideChatStyle,
@@ -40,21 +42,21 @@ import {
   updateCollapseButton,
   updateCharCounter,
   wireChatEvents,
-} from "./features/chat/index.js?v=20261011-bem-itcss-oocss-04";
+} from "./features/chat/index.js";
 import {
   initializePlayer,
   wirePlayerEvents,
-} from "./features/player/index.js?v=20261011-bem-itcss-oocss-04";
-import { wireMobileFullscreenOrientation } from "./features/player/mobile-fullscreen-orientation.js?v=20261011-bem-itcss-oocss-04";
-import { wireMobileChatKeyboardControls } from "./features/player/mobile-chat-keyboard-controls.js?v=20261011-bem-itcss-oocss-04";
-import { wireMobileBottomChatHeader } from "./features/chat/mobile-chat-header.js?v=20261011-bem-itcss-oocss-04";
-import { wireMobileLandscapeVideoSnap } from "./features/mobile-landscape-video-snap.js?v=20261011-bem-itcss-oocss-04";
-import { joinRoom, wireRoomEvents } from "./features/room.js?v=20261011-bem-itcss-oocss-04";
-import { wireTouchHover } from "./core/touch-interactions.js?v=20261011-chat-controls-repair-01";
-import { installConsoleLogCapture, wireMobileDebugTools } from "./features/mobile-debug.js?v=20261011-bem-itcss-oocss-04";
-import { wireMobileKeyboardDiagnostics } from "./features/mobile-keyboard-diagnostics.js?v=20261011-bem-itcss-oocss-04";
-import { openDialogTestRoute } from "./features/dialog-test-routes.js?v=20261011-bem-itcss-oocss-04";
-import { wireLobbyLayoutVariants } from "./features/lobby-layout-variants.js?v=20261011-bem-itcss-oocss-04";
+} from "./features/player/index.js";
+import { wireMobileFullscreenOrientation } from "./features/player/fullscreen/mobile-fullscreen-orientation.js";
+import { wireMobileChatKeyboardControls } from "./features/player/mobile-chat-keyboard-controls.js";
+import { wireMobileBottomChatHeader } from "./features/chat/dock/mobile-chat-header.js";
+import { wireMobileLandscapeVideoSnap } from "./features/player/mobile-landscape-video-snap.js";
+import { joinRoom, wireRoomEvents } from "./features/room/index.js";
+import { wireTouchHover } from "./core/touch-interactions.js";
+import { installConsoleLogCapture, wireMobileDebugTools } from "./features/diagnostics/mobile-debug.js";
+import { wireMobileKeyboardDiagnostics } from "./features/diagnostics/mobile-keyboard-diagnostics.js";
+import { openDialogTestRoute } from "./features/dialog-test-routes.js";
+import { wireLobbyLayoutVariants } from "./features/lobby/lobby-layout-variants.js";
 
 const requestedRoom = normalizeRoomCode(new URLSearchParams(window.location.search).get("room") || "");
 

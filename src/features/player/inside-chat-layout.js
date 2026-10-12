@@ -1,4 +1,4 @@
-import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
+import { dom } from "../../core/dom.js";
 
 const MOBILE_PORTRAIT_QUERY = "(max-width: 680px) and (orientation: portrait)";
 const PLACEMENT_ATTRIBUTE = "data-inside-chat-placement";

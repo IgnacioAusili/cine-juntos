@@ -1,9 +1,9 @@
-import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
-import { state, logEvent } from "../../core/state.js?v=20261011-bem-itcss-oocss-04";
-import { formatSeconds, formatClockTime, PLAYBACK_ERROR_CONFIRMATION_MS } from "../../core/utils.js?v=20261011-chat-controls-repair-01";
-import { showErrorDialog, showResumeVideoDialog, showSlowLoadDialog } from "../session-ui.js?v=20261011-bem-itcss-oocss-04";
-import { pauseRoomForPlaybackIssue } from "./player-sync-logic.js?v=20261011-bem-itcss-oocss-04";
-import { playerRuntimeState } from "./player-runtime-state.js?v=20261011-chat-controls-repair-01";
+import { dom } from "../../core/dom.js";
+import { state, logEvent } from "../../core/state.js";
+import { formatSeconds, formatClockTime, PLAYBACK_ERROR_CONFIRMATION_MS } from "../../core/utils.js";
+import { showErrorDialog, showResumeVideoDialog, showSlowLoadDialog } from "../session/session-ui.js";
+import { pauseRoomForPlaybackIssue } from "./player-sync-logic.js";
+import { playerRuntimeState } from "./player-runtime-state.js";
 
 const VIDEO_RESUME_STORAGE_KEY = "cine-juntos-video-resume-times";
 const SLOW_LOAD_DIALOG_DELAY_MS = 5 * 60 * 1000;

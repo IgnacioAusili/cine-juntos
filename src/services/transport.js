@@ -1,7 +1,7 @@
-import { firebaseConfig, logEvent } from "../core/state.js?v=20261011-bem-itcss-oocss-04";
-import { hasFirebaseConfig } from "../core/utils.js?v=20261010-file-size-refactor-02";
-import { createFirebaseTransport } from "./firebaseTransport.js?v=20261011-bem-itcss-oocss-04";
-import { createLocalTransport } from "./localTransport.js?v=20261011-bem-itcss-oocss-04";
+import { firebaseConfig, logEvent } from "../core/state.js";
+import { hasFirebaseConfig } from "../core/utils.js";
+import { createFirebaseTransport } from "./firebaseTransport.js";
+import { createLocalTransport } from "./localTransport.js";
 
 export async function createTransport(roomCode) {
   let firebaseError = null;
@@ -18,4 +18,4 @@ export async function createTransport(roomCode) {
   return createLocalTransport(roomCode, firebaseError);
 }
 
-export { createLocalTransport } from "./localTransport.js?v=20261011-bem-itcss-oocss-04";
+export { createLocalTransport } from "./localTransport.js";

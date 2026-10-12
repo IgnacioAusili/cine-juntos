@@ -12,3 +12,4 @@ dev-server*.log
 *.tmp
 *.cache
 node_modules/
+dist/

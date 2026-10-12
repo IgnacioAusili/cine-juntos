@@ -1,14 +1,14 @@
-import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
-import { state, logEvent } from "../../core/state.js?v=20261011-bem-itcss-oocss-04";
-import { formatSeconds } from "../../core/utils.js?v=20261011-chat-controls-repair-01";
-import { shouldToggleMuteFromVolumeButton } from "./player-volume-layout.js?v=20261011-bem-itcss-oocss-04";
-import { configurePlayerMedia, handleManualLoadRequest, setVideoStatus, announceVideoActivity, announceVideoLoadCompletion } from "./player-video-source.js?v=20261011-bem-itcss-oocss-04";
-import { hasLoadedMediaSource, getFiniteDuration, rememberPlaybackPosition, updateLoadButtonState, clearSlowLoadPromptTracking, schedulePlaybackErrorConfirmation, clearPlaybackErrorTracking, persistPlaybackPosition, prepareVideoFingerprintAndPrompt } from "./player-media.js?v=20261011-bem-itcss-oocss-04";
-import { attemptPlaybackRecovery, cancelPendingPlaybackIssueDetection, clearPlaybackRecoveryTracking, pauseRoomForPlaybackIssue, publishState } from "./player-sync-logic.js?v=20261011-bem-itcss-oocss-04";
-import { wireSeekTooltipEvents } from "./player-seek-tooltip-events.js?v=20261011-bem-itcss-oocss-04";
-import { playerRuntimeState } from "./player-runtime-state.js?v=20261011-chat-controls-repair-01";
-import { wireMobilePlayerControlPlacement } from "./player.js?v=20261011-bem-itcss-oocss-04";
-import { handleGlobalPlayerKeydown, togglePlaybackFromControls, seekVideoBy, previewSeekPosition, commitSeekPosition, isSyncControlCoolingDown, registerSyncControlPress, syncPlayerControls, persistVolume } from "./player-control-actions.js?v=20261011-bem-itcss-oocss-04";
+import { dom } from "../../core/dom.js";
+import { state, logEvent } from "../../core/state.js";
+import { formatSeconds } from "../../core/utils.js";
+import { shouldToggleMuteFromVolumeButton } from "./controls/player-volume-layout.js";
+import { configurePlayerMedia, handleManualLoadRequest, setVideoStatus, announceVideoActivity, announceVideoLoadCompletion } from "./player-video-source.js";
+import { hasLoadedMediaSource, getFiniteDuration, rememberPlaybackPosition, updateLoadButtonState, clearSlowLoadPromptTracking, schedulePlaybackErrorConfirmation, clearPlaybackErrorTracking, persistPlaybackPosition, prepareVideoFingerprintAndPrompt } from "./player-media.js";
+import { attemptPlaybackRecovery, cancelPendingPlaybackIssueDetection, clearPlaybackRecoveryTracking, pauseRoomForPlaybackIssue, publishState } from "./player-sync-logic.js";
+import { wireSeekTooltipEvents } from "./controls/player-seek-tooltip-events.js";
+import { playerRuntimeState } from "./player-runtime-state.js";
+import { wireMobilePlayerControlPlacement } from "./player.js";
+import { handleGlobalPlayerKeydown, togglePlaybackFromControls, seekVideoBy, previewSeekPosition, commitSeekPosition, isSyncControlCoolingDown, registerSyncControlPress, syncPlayerControls, persistVolume } from "./controls/player-control-actions.js";
 
 export function wirePlayerCoreEvents() {
   configurePlayerMedia({ syncPlayerControls });

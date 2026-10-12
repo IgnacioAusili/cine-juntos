@@ -116,7 +116,8 @@
   }
 }
 
-/* La barra al borde sólo se usa cuando los dos paneles caben en el viewport. */
+/* Cuando ambos paneles caben, quitar la reserva extra del riel mantiene su
+   alineación con el borde del reproductor. */
 body:not(.page-context--lobby)
   .session-view.session-view--bottom-dock-panels-fit-viewport:not(.session-view--chat-collapsed)[data-chat-dock="bottom"]
   .player-frame:not(.mini-player-surface)[data-control-style="line"] .player-frame__bottom-actions {
@@ -132,7 +133,8 @@ body:not(.page-context--lobby)
   z-index: 2;
 }
 
-/* En vertical móvil, alinear la pista con el borde inferior del reproductor. */
+/* En vertical móvil con ambos paneles visibles, alinear la pista con el borde
+   inferior del reproductor. */
 @media (max-width: 680px) and (orientation: portrait) {
   body:not(.page-context--lobby)
     .session-view.session-view--bottom-dock-panels-fit-viewport:not(.session-view--chat-collapsed)[data-chat-dock="bottom"]

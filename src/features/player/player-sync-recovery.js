@@ -1,8 +1,8 @@
-import { dom } from "../../core/dom.js?v=20261011-bem-itcss-oocss-04";
-import { state, getDisplayName, logEvent } from "../../core/state.js?v=20261011-bem-itcss-oocss-04";
-import { formatSeconds } from "../../core/utils.js?v=20261011-chat-controls-repair-01";
-import { renderMessage } from "../chat/index.js?v=20261011-bem-itcss-oocss-04";
-import { setSyncStatus } from "../session-ui.js?v=20261011-bem-itcss-oocss-04";
+import { dom } from "../../core/dom.js";
+import { state, getDisplayName, logEvent } from "../../core/state.js";
+import { formatSeconds } from "../../core/utils.js";
+import { renderMessage } from "../chat/index.js";
+import { setSyncStatus } from "../session/session-ui.js";
 
 const PLAYBACK_ISSUE_SYNC_COOLDOWN_MS = 2200;
 const PLAYBACK_ISSUE_CONFIRMATION_MS = 1800;

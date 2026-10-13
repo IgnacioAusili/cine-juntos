@@ -125,8 +125,7 @@
   }
 
   .player-frame.player-frame--no-content .player-frame__center-actions {
-    opacity: 1;
-    pointer-events: auto;
+    display: none;
   }
 
   .player-frame__center-actions .video-control-button {

@@ -29,4 +29,9 @@ if (fs.existsSync(favicon)) {
   copyFile(favicon, path.join(outputRoot, "favicon.ico"));
 }
 
+copyFile(
+  path.join(projectRoot, "public", "social-preview.png"),
+  path.join(outputRoot, "public", "social-preview.png"),
+);
+
 console.log("Recursos estáticos y consola copiados a dist/.");

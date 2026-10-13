@@ -13,6 +13,10 @@
     overflow-y: auto;
   }
 
+  body.page-context--lobby[data-lobby-keyboard-open="true"] {
+    padding-bottom: var(--lobby-keyboard-scroll-space, 0px);
+  }
+
   body.page-context--lobby .app-shell {
     height: auto;
     min-height: 100dvh;

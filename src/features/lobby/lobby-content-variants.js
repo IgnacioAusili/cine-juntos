@@ -89,6 +89,10 @@ export function syncSingleColumnContentCenter(screen, grid, hero, ticket, footer
   if (!screen || !grid || !hero || !ticket || !footer) return;
 
   grid.style.setProperty("--lobby-content-center-shift", "0px");
+  if (
+    document.body.dataset.lobbyInputFocused === "true"
+    || document.body.dataset.lobbyKeyboardOpen === "true"
+  ) return;
 
   const screenRect = screen.getBoundingClientRect();
   const footerRect = footer.getBoundingClientRect();
@@ -129,6 +133,13 @@ export function syncSingleColumnTicketPlacement(hero, ticket, footer) {
     "--lobby-ticket-fit-stub-inset",
   ];
   fitProperties.forEach((property) => ticket.style.removeProperty(property));
+
+  // El teclado reduce el viewport visible, pero el boleto debe conservar su
+  // tamaño. La página se desplaza hasta el campo enfocado en vez de comprimirlo.
+  if (
+    document.body.dataset.lobbyInputFocused === "true"
+    || document.body.dataset.lobbyKeyboardOpen === "true"
+  ) return;
 
   const body = ticket.querySelector('.lobby-screen__ticket-body');
   const stub = ticket.querySelector('.lobby-screen__ticket-stub');

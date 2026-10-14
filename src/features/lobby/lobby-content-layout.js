@@ -65,7 +65,11 @@ export function syncLobbyContentCenter() {
     grid.style.removeProperty("--lobby-vertical-content-gap");
     // En una sola columna el boleto está debajo; no debe limitar el título
     // como si ocupara una segunda columna lateral.
-    syncLobbyTitleFit(screen, hero, null);
+    if (window.matchMedia("(max-width: 680px)").matches) {
+      resetTitleFit(screen.querySelector('.lobby-screen__title'));
+    } else {
+      syncLobbyTitleFit(screen, hero, null);
+    }
     syncLobbyTitlePlacement(screen, true);
     syncSingleColumnTitleGroup(hero);
     syncSingleColumnDescriptionPlacement(hero, ticket);

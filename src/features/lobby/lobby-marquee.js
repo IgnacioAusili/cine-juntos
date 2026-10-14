@@ -1,5 +1,5 @@
 const LOBBY_MARQUEE_EXTRA_MESSAGES = [
-  "Dale play",
+  "Pone play",
   "¿Qué vemos hoy?",
   "Estreno",
   "Luz, cámara, acción",

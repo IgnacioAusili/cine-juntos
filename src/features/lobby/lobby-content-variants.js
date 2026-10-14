@@ -3,6 +3,7 @@ export function syncSingleColumnDescriptionPlacement(hero, ticket) {
 
   // Medimos desde cero para no acumular el desplazamiento al redimensionar.
   hero.style.setProperty("--lobby-description-separator-shift", "0px");
+  hero.style.removeProperty("--lobby-description-separator-top");
 
   const title = hero.querySelector('.lobby-screen__title');
   const description = hero.querySelector('.lobby-screen__description');
@@ -11,6 +12,16 @@ export function syncSingleColumnDescriptionPlacement(hero, ticket) {
   const descriptionWidth = Math.max(hero.clientWidth, ticket.clientWidth);
   if (descriptionWidth > 0) {
     description.style.setProperty("--lobby-description-fit-width", `${descriptionWidth.toFixed(2)}px`);
+  }
+
+  if (window.matchMedia("(max-width: 680px)").matches) {
+    const heroRect = hero.getBoundingClientRect();
+    const descriptionRect = description.getBoundingClientRect();
+    const separatorTop = descriptionRect.bottom - heroRect.top + 6;
+    if (Number.isFinite(separatorTop)) {
+      hero.style.setProperty("--lobby-description-separator-top", `${separatorTop.toFixed(2)}px`);
+    }
+    return;
   }
 
   const separatorStyle = getComputedStyle(hero, "::before");
@@ -88,6 +99,8 @@ export function syncSingleColumnContentGap(grid, ticket, footer) {
 export function syncSingleColumnContentCenter(screen, grid, hero, ticket, footer) {
   if (!screen || !grid || !hero || !ticket || !footer) return;
 
+  const appInvite = screen.querySelector('.lobby-screen__app-invite');
+  appInvite?.style.removeProperty("--lobby-app-invite-ticket-shift");
   grid.style.setProperty("--lobby-content-center-shift", "0px");
   if (
     document.body.dataset.lobbyInputFocused === "true"
@@ -96,6 +109,34 @@ export function syncSingleColumnContentCenter(screen, grid, hero, ticket, footer
 
   const screenRect = screen.getBoundingClientRect();
   const footerRect = footer.getBoundingClientRect();
+  if (window.matchMedia("(max-width: 680px)").matches) {
+    const heroRect = hero.getBoundingClientRect();
+    const ticketRect = ticket.getBoundingClientRect();
+    const footerLegal = footer.querySelector('.lobby-screen__disclaimer');
+    const lowerVisibleBoundary = footerLegal?.getBoundingClientRect().top ?? footerRect.top;
+    const gridGap = Number.parseFloat(getComputedStyle(grid).rowGap) || 0;
+    const visualViewport = window.visualViewport;
+    const viewportTop = Math.max(screenRect.top, visualViewport?.offsetTop ?? 0);
+    const viewportBottom = Math.min(
+      screenRect.bottom,
+      (visualViewport?.offsetTop ?? 0) + (visualViewport?.height ?? window.innerHeight),
+    );
+    const availableCenter = (viewportTop + viewportBottom) / 2;
+    const centeredTop = availableCenter - ticketRect.height / 2;
+    const minimumTop = heroRect.bottom + gridGap;
+    const maximumTop = lowerVisibleBoundary - ticketRect.height - gridGap;
+    const targetTop = maximumTop >= minimumTop
+      ? Math.min(maximumTop, Math.max(minimumTop, centeredTop))
+      : centeredTop;
+    const ticketShift = targetTop - ticketRect.top;
+
+    if (Number.isFinite(ticketShift)) {
+      ticket.style.setProperty("translate", `0px ${ticketShift.toFixed(2)}px`);
+      appInvite?.style.setProperty("--lobby-app-invite-ticket-shift", `${ticketShift.toFixed(2)}px`);
+    }
+    return;
+  }
+
   const topInset = Number.parseFloat(getComputedStyle(grid).paddingBlockStart) || 0;
   const contentRects = [hero, ticket].map((element) => element.getBoundingClientRect());
   const contentTop = Math.min(...contentRects.map((rect) => rect.top));

@@ -1,0 +1,258 @@
+body.page-context--lobby .lobby-screen__app-invite {
+  display: none;
+}
+
+body.page-context--lobby .lobby-screen__app-invite[hidden] {
+  display: none;
+}
+
+@media (max-width: 680px) {
+  body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__app-invite {
+    display: grid;
+    grid-template-columns: 62px minmax(0, 1fr);
+    align-items: center;
+    gap: 10px;
+    width: min(360px, 100%);
+    min-height: 112px;
+    margin: clamp(28px, 3.8vh, 34px) auto 0;
+    padding: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    background:
+      radial-gradient(ellipse at 14% 55%, rgba(240, 140, 58, 0.11), transparent 37%),
+      linear-gradient(145deg, rgba(255, 255, 255, 0.045), rgba(11, 17, 19, 0.88));
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.17), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    overflow: hidden;
+    position: relative;
+    translate: 0 var(--lobby-app-invite-ticket-shift, 0px);
+  }
+
+  body.page-context--lobby .lobby-screen__app-invite-art {
+    position: relative;
+    display: grid;
+    width: 62px;
+    height: 94px;
+    place-items: center;
+    isolation: isolate;
+  }
+
+  body.page-context--lobby .lobby-screen__app-invite-glow {
+    position: absolute;
+    z-index: -1;
+    width: 55px;
+    height: 70px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(240, 140, 58, 0.22), rgba(38, 184, 164, 0.08) 49%, transparent 74%);
+    filter: blur(6px);
+  }
+
+  body.page-context--lobby .lobby-screen__app-invite-phone {
+    position: relative;
+    display: flex;
+    width: 48px;
+    height: 86px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border: 1px solid rgba(255, 239, 219, 0.48);
+    border-radius: 11px;
+    background: linear-gradient(160deg, rgba(37, 46, 47, 0.98), rgba(9, 14, 16, 0.98));
+    box-shadow: 0 5px 14px rgba(0, 0, 0, 0.3), inset 0 0 0 2px rgba(255, 255, 255, 0.035);
+  }
+
+  body.page-context--lobby .lobby-screen__app-invite-phone::before,
+  body.page-context--lobby .lobby-screen__app-invite-phone::after {
+    position: absolute;
+    left: 50%;
+    border-radius: 2px;
+    background: rgba(255, 239, 219, 0.48);
+    content: "";
+    transform: translateX(-50%);
+  }
+
+  body.page-context--lobby .lobby-screen__app-invite-phone::before {
+    top: 4px;
+    width: 12px;
+    height: 2px;
+  }
+
+  body.page-context--lobby .lobby-screen__app-invite-phone::after {
+    bottom: 4px;
+    width: 13px;
+    height: 2px;
+    opacity: 0.65;
+  }
+
+  body.page-context--lobby .lobby-screen__app-invite-icon {
+    position: relative;
+    display: grid;
+    width: 29px;
+    height: 29px;
+    place-items: center;
+    border-radius: 8px;
+    background: linear-gradient(145deg, #ffcf5c, #ff7a59 62%, #f24e1e);
+    box-shadow: 0 0 15px rgba(240, 140, 58, 0.28);
+  }
+
+  body.page-context--lobby .lobby-screen__app-invite-icon span {
+    width: 0;
+    height: 0;
+    margin-left: 2px;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 7px solid #10131a;
+  }
+
+  body.page-context--lobby .lobby-screen__app-invite-line {
+    width: 22px;
+    height: 2px;
+    border-radius: 2px;
+    background: rgba(255, 239, 219, 0.34);
+  }
+
+  body.page-context--lobby .lobby-screen__app-invite-line--short {
+    width: 15px;
+    opacity: 0.65;
+  }
+
+  body.page-context--lobby .lobby-screen__app-invite-spark {
+    position: absolute;
+    top: 8px;
+    right: 2px;
+    width: 7px;
+    height: 7px;
+    border: 1px solid rgba(255, 207, 92, 0.85);
+    transform: rotate(45deg);
+  }
+
+  body.page-context--lobby .lobby-screen__app-invite-content {
+    display: grid;
+    min-width: 0;
+    align-content: center;
+    justify-items: start;
+    gap: 3px;
+  }
+
+  body.page-context--lobby .lobby-screen__app-invite-eyebrow {
+    color: var(--teal);
+    font-size: 0.47rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    line-height: 1.2;
+  }
+
+  body.page-context--lobby .lobby-screen__app-invite-content h2 {
+    margin: 0;
+    color: var(--text);
+    font-size: 0.88rem;
+    font-weight: 800;
+    line-height: 1.12;
+  }
+
+  body.page-context--lobby .lobby-screen__app-invite-content > p:not(.lobby-screen__app-invite-help) {
+    margin: 0;
+    color: var(--muted-2);
+    font-size: 0.58rem;
+    line-height: 1.2;
+  }
+
+  body.page-context--lobby .lobby-screen__app-invite-button {
+    display: inline-flex;
+    min-height: 23px;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    margin-top: 2px;
+    padding: 3px 8px;
+    border: 1px solid rgba(240, 140, 58, 0.38);
+    border-radius: 7px;
+    background: rgba(240, 140, 58, 0.14);
+    color: #ffd3a1;
+    font-size: 0.57rem;
+    font-weight: 750;
+    line-height: 1;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  body.page-context--lobby .lobby-screen__app-invite-button svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  body.page-context--lobby .lobby-screen__app-invite-button:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 2px;
+  }
+
+  body.page-context--lobby .lobby-screen__app-invite-help {
+    max-width: 100%;
+    margin: 2px 0 0;
+    color: var(--text-soft);
+    font-size: 0.57rem;
+    line-height: 1.25;
+  }
+
+  body.page-context--lobby .lobby-screen__app-invite-help[hidden] {
+    display: none;
+  }
+
+  body.page-context--lobby .lobby-screen__app-invite.is-help-open {
+    min-height: 120px;
+    height: auto;
+  }
+}
+
+@media (display-mode: standalone) {
+  body.page-context--lobby .lobby-screen__app-invite {
+    display: none;
+  }
+}
+@media (max-width: 680px) {
+  body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__grid {
+    gap: clamp(12px, 1.8vh, 18px);
+    margin-top: clamp(16px, 2vh, 24px);
+    transform: none;
+  }
+
+  body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__hero {
+    width: min(360px, calc(100% - 32px));
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "title"
+      "description"
+      "features";
+    justify-items: center;
+    row-gap: clamp(8px, 1.5vh, 14px);
+    text-align: center;
+    transform: none;
+  }
+
+  body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__hero::before,
+  body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__hero::after {
+    top: var(--lobby-description-separator-top, calc(100% + 10px + var(--lobby-description-separator-shift, 0px)));
+  }
+
+  body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__title {
+    width: max-content;
+    max-width: 100%;
+    justify-self: center;
+    font-size: clamp(2.45rem, 11.5cqw, 2.8rem);
+    line-height: 0.92;
+    text-align: center;
+  }
+
+  body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__description {
+    width: min(100%, 360px);
+    margin-block-start: clamp(3px, 0.5vh, 5px);
+    font-size: 0.8rem;
+    line-height: 1.32;
+    transform: none;
+  }
+
+  body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__ticket {
+    margin-top: 0;
+  }
+
+}

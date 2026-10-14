@@ -1,4 +1,12 @@
 
+@media (max-width: 680px) {
+  body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__ticket {
+    width: min(360px, 100%);
+    min-height: min(clamp(330px, 40vh, 348px), var(--lobby-ticket-fit-height, 100vh));
+    justify-self: center;
+  }
+}
+
 
 @media (max-width: 480px) {
   body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__ticket {

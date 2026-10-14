@@ -56,6 +56,12 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap"
     />
+    <meta name="theme-color" content="#10131a" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="manifest" href="./public/manifest.webmanifest" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./public/icons/apple-touch-icon-180.png" />
     <link rel="icon" href="./public/favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="./public/styles.css" />
   </head>
@@ -92,7 +98,7 @@
 
     <!-- @include features/session/templates/dialogs.html -->
 
-    <script src="./public/dev-runtime.js"></script>
+    <script type="module" src="./public/dev-runtime.js"></script>
     <script defer src="./public/vendor/lucide-0.468.0/lucide.min.js"></script>
     <script type="module" src="./src/features/chat/messages/image-lightbox.js"></script>
     <script type="module" src="./src/features/tooltip/tooltip-page-lifecycle.js"></script>

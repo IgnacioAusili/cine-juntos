@@ -34,3 +34,4 @@
 @import url("./styles/chat/bottom-chat-visible-viewport.css");
 /* ITCSS: Final compatibility overrides */
 @import url("./styles/late-overrides.css");
+@import url("./styles/lobby/lobby-mobile-compositions.css");

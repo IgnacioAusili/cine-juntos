@@ -7,6 +7,9 @@ export default defineConfig({
   // scripts/dev-server.js. El build los agrupa desde index.html y el paso
   // posterior conserva la carpeta para referencias dinámicas del runtime.
   publicDir: false,
+  server: {
+    headers: { "Cache-Control": "no-store" },
+  },
   build: {
     outDir: "dist",
     emptyOutDir: true,

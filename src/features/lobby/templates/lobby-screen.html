@@ -185,29 +185,85 @@
           <div class="lobby-screen__app-invite-art" aria-hidden="true">
             <span class="lobby-screen__app-invite-glow"></span>
             <span class="lobby-screen__app-invite-phone">
-              <span class="lobby-screen__app-invite-icon"><span></span></span>
+              <span class="lobby-screen__app-invite-icon">
+                <svg class="lobby-screen__app-invite-mark-default" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M12 5v14M5 12h14" />
+                </svg>
+              </span>
               <span class="lobby-screen__app-invite-line"></span>
               <span class="lobby-screen__app-invite-line lobby-screen__app-invite-line--short"></span>
             </span>
+            <svg class="lobby-screen__app-invite-mark-compact" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+              <path d="M10 7.5h28a4.5 4.5 0 0 1 4.5 4.5v24a4.5 4.5 0 0 1-4.5 4.5H10A4.5 4.5 0 0 1 5.5 36V12A4.5 4.5 0 0 1 10 7.5Z" fill="#121a1c" stroke="#e9c9a6" stroke-width="2" />
+              <path d="M6.5 15h35" fill="none" stroke="#e9c9a6" stroke-width="2" />
+              <circle cx="11" cy="11.3" r="1.2" fill="#ffad55" />
+              <circle cx="15.5" cy="11.3" r="1.2" fill="#39d0b5" />
+              <path d="M24 21v13m-6.5-6.5h13" fill="none" stroke="#ffad55" stroke-linecap="round" stroke-width="3" />
+            </svg>
             <span class="lobby-screen__app-invite-spark"></span>
           </div>
           <div class="lobby-screen__app-invite-content">
-            <span class="lobby-screen__app-invite-eyebrow">UNA VENTANA PROPIA</span>
             <h2 id="lobbyAppInviteTitle">Probala como app</h2>
-            <p>Sumala a tu inicio y abrila aparte.</p>
+            <p class="lobby-screen__app-invite-description">
+              <span class="lobby-screen__app-invite-copy-full">Podés instalarla desde el menú del navegador para una experiencia más cómoda</span>
+              <span class="lobby-screen__app-invite-copy-compact">Disfrutá de una mejor experiencia</span>
+              <span class="lobby-screen__app-invite-copy-minimal">Usala como app para más comodidad</span>
+            </p>
             <button
               class="lobby-screen__app-invite-button"
               id="lobbyAppInstallButton"
               type="button"
-              aria-controls="lobbyAppInstallHelp"
+              aria-controls="lobbyAppInstallDialog"
+              aria-haspopup="dialog"
               aria-expanded="false"
             >
-              <span data-lucide="download" aria-hidden="true"></span>
+              <span data-lucide="circle-help" aria-hidden="true"></span>
               <span data-lobby-install-label>Ver cómo</span>
             </button>
-            <p class="lobby-screen__app-invite-help" id="lobbyAppInstallHelp" aria-live="polite" hidden></p>
           </div>
         </section>
+
+        <dialog class="lobby-app-install-dialog" id="lobbyAppInstallDialog" aria-labelledby="lobbyAppInstallTitleDialog" aria-describedby="lobbyAppInstallDescription">
+          <header class="lobby-app-install-dialog__header">
+            <div class="lobby-app-install-dialog__heading">
+              <h2 id="lobbyAppInstallTitleDialog">Más espacio para el video</h2>
+              <p id="lobbyAppInstallDescription">
+                En modo app desaparece la barra del navegador y la página se disfruta con más comodidad y fluidez.
+              </p>
+            </div>
+            <button class="lobby-app-install-dialog__close" type="button" aria-label="Cerrar guía" data-lobby-install-close>×</button>
+          </header>
+
+          <ol class="lobby-app-install-dialog__steps">
+            <li class="lobby-app-install-dialog__step">
+              <span class="lobby-app-install-dialog__number" aria-hidden="true">1</span>
+              <div class="lobby-app-install-dialog__step-content">
+                <h3>Buscá esta opción</h3>
+                <p>Abrí el menú ⋮ o Compartir del navegador.</p>
+                <div class="lobby-app-install-dialog__browser-shot lobby-app-install-dialog__browser-shot--menu" aria-hidden="true">
+                  <div class="lobby-app-install-dialog__address"><span>cinejuntos.com</span><span>↻</span></div>
+                  <div class="lobby-app-install-dialog__toolbar"><span class="lobby-app-install-dialog__menu-mark">⋮</span><span>Menú / Compartir</span></div>
+                </div>
+              </div>
+            </li>
+            <li class="lobby-app-install-dialog__step">
+              <span class="lobby-app-install-dialog__number" aria-hidden="true">2</span>
+              <div class="lobby-app-install-dialog__step-content">
+                <h3>Agregala al inicio</h3>
+                <p>Elegí “Instalar app” o “Agregar a pantalla de inicio”.</p>
+                <div class="lobby-app-install-dialog__browser-shot lobby-app-install-dialog__browser-shot--options" aria-hidden="true">
+                  <span><b>↗</b> Instalar app <i>›</i></span>
+                  <span><b>＋</b> Agregar a pantalla de inicio <i>›</i></span>
+                </div>
+              </div>
+            </li>
+          </ol>
+
+          <p class="lobby-app-install-dialog__note">El nombre de la opción puede variar según el navegador.</p>
+          <footer class="lobby-app-install-dialog__actions">
+            <button class="lobby-app-install-dialog__done" type="button" data-lobby-install-close>Listo</button>
+          </footer>
+        </dialog>
 
         <footer class="lobby-screen__footer" aria-label="Información legal y licencia">
           <p class="lobby-screen__disclaimer">© 2026 Cine Juntos · Código abierto bajo <a class="lobby-screen__license" href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener noreferrer">GPLv3</a> - No aloja ni distribuye videos · El creador no se responsabiliza por el contenido reproducido</p>

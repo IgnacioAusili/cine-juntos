@@ -96,69 +96,105 @@ export function syncSingleColumnContentGap(grid, ticket, footer) {
   grid.style.setProperty("--lobby-vertical-content-gap", `${gap.toFixed(2)}px`);
 }
 
+function centerHeroInAvailableSpace(hero, availableTop, availableBottom) {
+  const heroRect = hero.getBoundingClientRect();
+  const availableHeight = availableBottom - availableTop;
+  if (availableHeight < heroRect.height) return;
+
+  const minimumShift = availableTop - heroRect.top;
+  const maximumShift = availableBottom - heroRect.bottom;
+  const centeredShift = (availableTop + availableBottom - heroRect.top - heroRect.bottom) / 2;
+  const shift = Math.min(maximumShift, Math.max(minimumShift, centeredShift));
+
+  if (Number.isFinite(shift)) {
+    hero.style.setProperty("translate", `0px ${shift.toFixed(2)}px`);
+  }
+}
+
 export function syncSingleColumnContentCenter(screen, grid, hero, ticket, footer) {
   if (!screen || !grid || !hero || !ticket || !footer) return;
 
   const appInvite = screen.querySelector('.lobby-screen__app-invite');
-  appInvite?.style.removeProperty("--lobby-app-invite-ticket-shift");
+  appInvite?.style.removeProperty("--lobby-app-invite-center-shift");
+  appInvite?.removeAttribute("data-density");
   grid.style.setProperty("--lobby-content-center-shift", "0px");
   if (
     document.body.dataset.lobbyInputFocused === "true"
     || document.body.dataset.lobbyKeyboardOpen === "true"
   ) return;
 
+  hero.style.setProperty("translate", "0px 0px");
   const screenRect = screen.getBoundingClientRect();
   const footerRect = footer.getBoundingClientRect();
-  if (window.matchMedia("(max-width: 680px)").matches) {
-    const heroRect = hero.getBoundingClientRect();
-    const ticketRect = ticket.getBoundingClientRect();
-    const footerLegal = footer.querySelector('.lobby-screen__disclaimer');
-    const lowerVisibleBoundary = footerLegal?.getBoundingClientRect().top ?? footerRect.top;
-    const gridGap = Number.parseFloat(getComputedStyle(grid).rowGap) || 0;
-    const visualViewport = window.visualViewport;
-    const viewportTop = Math.max(screenRect.top, visualViewport?.offsetTop ?? 0);
-    const viewportBottom = Math.min(
-      screenRect.bottom,
-      (visualViewport?.offsetTop ?? 0) + (visualViewport?.height ?? window.innerHeight),
-    );
-    const availableCenter = (viewportTop + viewportBottom) / 2;
-    const centeredTop = availableCenter - ticketRect.height / 2;
-    const minimumTop = heroRect.bottom + gridGap;
-    const maximumTop = lowerVisibleBoundary - ticketRect.height - gridGap;
-    const targetTop = maximumTop >= minimumTop
-      ? Math.min(maximumTop, Math.max(minimumTop, centeredTop))
-      : centeredTop;
-    const ticketShift = targetTop - ticketRect.top;
+  const visualViewport = window.visualViewport;
+  const viewportTop = visualViewport?.offsetTop ?? 0;
+  const viewportBottom = viewportTop + (visualViewport?.height ?? window.innerHeight);
+  const availableTop = Math.max(screenRect.top, viewportTop);
+  const availableBottom = Math.min(screenRect.bottom, viewportBottom);
+  const availableCenter = (availableTop + availableBottom) / 2;
+  const footerLegal = footer.querySelector('.lobby-screen__disclaimer');
+  const contentBottom = Math.min(
+    availableBottom,
+    footerLegal?.getBoundingClientRect().top ?? footerRect.top,
+  );
+  const heroRect = hero.getBoundingClientRect();
+  const ticketRect = ticket.getBoundingClientRect();
+  const heroTicketGap = Math.max(0, ticketRect.top - heroRect.bottom);
+  const minimumTop = availableTop + heroRect.height + heroTicketGap;
 
-    if (Number.isFinite(ticketShift)) {
-      ticket.style.setProperty("translate", `0px ${ticketShift.toFixed(2)}px`);
-      appInvite?.style.setProperty("--lobby-app-invite-ticket-shift", `${ticketShift.toFixed(2)}px`);
+  // El boleto conserva su centro vertical. El panel se acomoda después dentro
+  // del espacio restante entre el boleto y el pie legal.
+  const centeredTop = availableCenter - ticketRect.height / 2;
+  const maximumTop = contentBottom - ticketRect.height;
+  let targetTop = Math.min(maximumTop, Math.max(minimumTop, centeredTop));
+  let inviteRect = null;
+
+  if (appInvite?.getClientRects().length) {
+    const ticketBottom = ticketRect.bottom + targetTop - ticketRect.top;
+    const availableInviteHeight = Math.max(0, contentBottom - ticketBottom);
+    inviteRect = appInvite.getBoundingClientRect();
+
+    if (inviteRect.height > availableInviteHeight) {
+      appInvite.dataset.density = "compact";
+      inviteRect = appInvite.getBoundingClientRect();
+
+      if (inviteRect.height > availableInviteHeight) {
+        appInvite.dataset.density = "minimal";
+        inviteRect = appInvite.getBoundingClientRect();
+      }
     }
-    return;
+
+    if (inviteRect.height > availableInviteHeight) {
+      const ticketTopWithInvite = contentBottom - ticketRect.height - inviteRect.height;
+      if (ticketTopWithInvite >= minimumTop && ticketTopWithInvite < targetTop) {
+        targetTop = ticketTopWithInvite;
+      }
+    }
   }
 
-  const topInset = Number.parseFloat(getComputedStyle(grid).paddingBlockStart) || 0;
-  const contentRects = [hero, ticket].map((element) => element.getBoundingClientRect());
-  const contentTop = Math.min(...contentRects.map((rect) => rect.top));
-  const contentBottom = Math.max(...contentRects.map((rect) => rect.bottom));
-  const availableTop = Math.max(screenRect.top, 0);
-  const minimumTopShift = screenRect.top + topInset - contentTop;
-  const availableCenter = (availableTop + footerRect.top) / 2;
-  const contentCenter = (contentTop + contentBottom) / 2;
-  const contentShift = Math.max(0, minimumTopShift, availableCenter - contentCenter);
-
-  // En viewports cortos, el grupo queda en su posición inicial para que el
-  // ajuste del boleto y el scroll sigan teniendo prioridad sobre el centrado.
-  if (Number.isFinite(contentShift)) {
-    grid.style.setProperty("--lobby-content-center-shift", `${contentShift.toFixed(2)}px`);
+  const ticketShift = targetTop - ticketRect.top;
+  if (Number.isFinite(ticketShift)) {
+    ticket.style.setProperty("translate", `0px ${ticketShift.toFixed(2)}px`);
   }
+
+  if (appInvite?.getClientRects().length && inviteRect) {
+    const ticketBottom = ticketRect.bottom + ticketShift;
+    const availableInviteCenter = (ticketBottom + contentBottom) / 2;
+    const currentInviteRect = appInvite.getBoundingClientRect();
+    const currentInviteCenter = (currentInviteRect.top + currentInviteRect.bottom) / 2;
+    const inviteShift = availableInviteCenter - currentInviteCenter;
+    if (Number.isFinite(inviteShift)) {
+      appInvite.style.setProperty("--lobby-app-invite-center-shift", `${inviteShift.toFixed(2)}px`);
+    }
+  }
+  centerHeroInAvailableSpace(hero, availableTop, targetTop - heroTicketGap);
 }
 
 export function syncSingleColumnTicketPlacement(hero, ticket, footer) {
   if (!hero || !ticket || !footer) return;
 
-  // En una columna, el boleto sigue el flujo natural. El espacio libre se usa
-  // para centrar el conjunto completo, no para separar el boleto del hero.
+  // En una columna, el boleto se centra por separado. Cada ciclo limpia el
+  // desplazamiento previo para medirlo desde la posición natural del flujo.
   ticket.style.removeProperty("translate");
 
   const fitProperties = [

@@ -1,16 +1,8 @@
 
 @media (max-width: 680px) {
   body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__ticket {
-    width: min(360px, 100%);
-    min-height: min(clamp(330px, 40vh, 348px), var(--lobby-ticket-fit-height, 100vh));
+    grid-template-columns: 36px minmax(0, 1fr);
     justify-self: center;
-  }
-}
-
-
-@media (max-width: 480px) {
-  body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__ticket {
-    --lobby-ticket-top-stub-height: 32px;
   }
 }
 
@@ -20,19 +12,4 @@ body.page-context--lobby .lobby-screen__about-button {
 
 body.page-context--lobby[data-lobby-about-contact="true"] .lobby-screen__about-button {
   scale: 0.9;
-}
-
-@media (max-width: 480px) {
-  body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__ticket {
-    grid-template-rows: var(--lobby-ticket-fit-stub-height, var(--lobby-ticket-top-stub-height)) minmax(0, 1fr);
-  }
-
-  body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__ticket-stub {
-    min-height: var(--lobby-ticket-fit-stub-height, var(--lobby-ticket-top-stub-height));
-    padding: 4px 14px;
-  }
-
-  body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__ticket-perforation {
-    top: var(--lobby-ticket-fit-stub-height, var(--lobby-ticket-top-stub-height));
-  }
 }

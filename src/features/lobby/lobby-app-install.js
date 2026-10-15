@@ -1,22 +1,9 @@
-function getInstallInstructions() {
-  const userAgent = navigator.userAgent;
-  const isAppleMobile = /iPhone|iPad|iPod/.test(userAgent)
-    || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-
-  if (isAppleMobile) {
-    return "En Safari, tocá Compartir y elegí “Agregar a pantalla de inicio”.";
-  }
-
-  return "Abrí el menú del navegador y buscá “Instalar app” o “Agregar a pantalla de inicio”.";
-}
-
 export function wireLobbyAppInstall() {
   const card = document.querySelector("#lobbyAppInvite");
   const button = document.querySelector("#lobbyAppInstallButton");
-  const label = button?.querySelector("[data-lobby-install-label]");
-  const help = document.querySelector("#lobbyAppInstallHelp");
+  const dialog = document.querySelector("#lobbyAppInstallDialog");
 
-  if (!card || !button || !label || !help) return;
+  if (!card || !button || !dialog) return;
 
   const isStandalone = window.matchMedia("(display-mode: standalone)").matches
     || navigator.standalone === true;
@@ -26,41 +13,29 @@ export function wireLobbyAppInstall() {
     return;
   }
 
-  let installPrompt = null;
-
   window.addEventListener("beforeinstallprompt", (event) => {
     event.preventDefault();
-    installPrompt = event;
-    label.textContent = "Instalar app";
   });
 
-  button.addEventListener("click", async () => {
-    if (installPrompt) {
-      const prompt = installPrompt;
-      installPrompt = null;
+  button.addEventListener("click", () => {
+    if (!dialog.open) dialog.showModal();
+    button.setAttribute("aria-expanded", "true");
+  });
 
-      try {
-        await prompt.prompt();
-        const choice = await prompt.userChoice;
-        if (choice?.outcome === "accepted") {
-          card.hidden = true;
-          return;
-        }
-      } catch {
-        // Si el navegador no acepta la solicitud, se muestran las instrucciones manuales.
-      }
+  dialog.querySelectorAll("[data-lobby-install-close]").forEach((closeButton) => {
+    closeButton.addEventListener("click", () => dialog.close());
+  });
 
-      label.textContent = "Ver cómo";
-    }
+  dialog.addEventListener("click", (event) => {
+    if (event.target === dialog) dialog.close();
+  });
 
-    const shouldOpenHelp = help.hidden;
-    help.textContent = getInstallInstructions();
-    help.hidden = !shouldOpenHelp;
-    button.setAttribute("aria-expanded", String(shouldOpenHelp));
-    card.classList.toggle("is-help-open", shouldOpenHelp);
+  dialog.addEventListener("close", () => {
+    button.setAttribute("aria-expanded", "false");
   });
 
   window.addEventListener("appinstalled", () => {
     card.hidden = true;
+    if (dialog.open) dialog.close();
   });
 }

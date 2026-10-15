@@ -2,7 +2,7 @@ let lobbyCenterFrame = 0;
 
 import { resetTitleFit, syncLobbyTitleFit, syncSingleColumnTitleGroup, resetSingleColumnTitleLift, resetSingleColumnTitleGroup, resetSingleColumnDescriptionPlacement, syncLobbyTextDensity, syncLobbyTicketInlinePadding } from "./lobby-title-layout.js";
 import { syncSingleColumnDescriptionPlacement, resetLobbyAboutButtonContact, syncLobbyAboutButtonContact, syncSingleColumnContentCenter, syncSingleColumnContentGap, syncSingleColumnTicketPlacement } from "./lobby-content-variants.js";
-import { resetLobbyTicketPlacement, syncLobbyTicketPlacement, syncLobbyTitlePlacement } from "./lobby-ticket-placement.js";
+import { resetLobbyTicketPlacement, syncLobbyTicketPlacement, syncLobbyTitlePlacement, syncSingleColumnTicketStub } from "./lobby-ticket-placement.js";
 
 export function syncLobbyContentCenter() {
   lobbyCenterFrame = 0;
@@ -59,6 +59,7 @@ export function syncLobbyContentCenter() {
 
   if (isSingleColumn) {
     resetLobbyTicketPlacement(screen, ticket);
+    syncSingleColumnTicketStub(ticket);
     grid.style.setProperty("--lobby-content-center-shift", "0px");
     resetSingleColumnTitleLift(hero);
     resetSingleColumnTitleGroup(hero);
@@ -85,6 +86,7 @@ export function syncLobbyContentCenter() {
   resetSingleColumnDescriptionPlacement(hero);
   resetSingleColumnTitleLift(hero);
   resetSingleColumnTitleGroup(hero);
+  hero?.style.removeProperty("translate");
 
   if (!isColumns || !marquee || !footer) {
     resetTitleFit(screen?.querySelector('.lobby-screen__title'));

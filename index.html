@@ -13,6 +13,39 @@
       content="Mirar videos juntos, chatear en vivo y disfrutar una sala compartida con reproducción sincronizada."
     />
     <meta
+      name="keywords"
+      content="Cine Juntos, videos sincronizados, ver videos juntos, sala compartida, chat integrado, reproducción sincronizada, mirar videos con amigos"
+    />
+    <link rel="canonical" href="https://ignacioausili.github.io/cine-juntos-demo/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Cine Juntos" />
+    <meta property="og:locale" content="es_AR" />
+    <meta property="og:title" content="Cine Juntos | Mirar, chatear y compartir" />
+    <meta
+      property="og:description"
+      content="Mirar videos juntos, chatear en vivo y disfrutar una sala compartida con reproducción sincronizada."
+    />
+    <meta property="og:url" content="https://ignacioausili.github.io/cine-juntos-demo/" />
+    <meta
+      property="og:image"
+      content="https://ignacioausili.github.io/cine-juntos-demo/public/social-preview.png"
+    />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Cine Juntos: mirar, chatear y compartir videos en una sala sincronizada." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Cine Juntos | Mirar, chatear y compartir" />
+    <meta
+      name="twitter:description"
+      content="Mirar videos juntos, chatear en vivo y disfrutar una sala compartida con reproducción sincronizada."
+    />
+    <meta
+      name="twitter:image"
+      content="https://ignacioausili.github.io/cine-juntos-demo/public/social-preview.png"
+    />
+    <meta name="twitter:image:alt" content="Cine Juntos: mirar, chatear y compartir videos en una sala sincronizada." />
+    <meta
       http-equiv="Content-Security-Policy"
       content="default-src 'self'; script-src 'self' https://www.gstatic.com https://apis.google.com https://cinecompartidopagina-default-rtdb.firebaseio.com https://*.firebaseio.com https://*.firebasedatabase.app; script-src-elem 'self' https://www.gstatic.com https://apis.google.com https://cinecompartidopagina-default-rtdb.firebaseio.com https://*.firebaseio.com https://*.firebasedatabase.app; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src-elem 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' http: https: data: blob:; media-src 'self' http: https: blob: data:; frame-src 'self' https://cinecompartidopagina.firebaseapp.com https://*.firebaseapp.com https://*.firebaseio.com; connect-src 'self' http://localhost:* http://127.0.0.1:* https://www.gstatic.com https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; object-src 'none'; base-uri 'self'; form-action 'self'"
     />
@@ -23,6 +56,12 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap"
     />
+    <meta name="theme-color" content="#10131a" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="manifest" href="./public/manifest.webmanifest" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./public/icons/apple-touch-icon-180.png" />
     <link rel="icon" href="./public/favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="./public/styles.css" />
   </head>
@@ -89,7 +128,7 @@
       <section class="lobby-screen" id="lobbyScreen" aria-label="Entrada a sala">
         <div class="lobby-screen__marquee" aria-hidden="true">
           <span class="lobby-screen__marquee-track">
-            <span class="lobby-screen__marquee-set"><span class="lobby-screen__marquee-live">En vivo</span><span class="lobby-screen__marquee-message">Salas publicas</span><span class="lobby-screen__marquee-message">Chat integrado</span><span class="lobby-screen__marquee-message">Elegí lo que querés ver</span><span class="lobby-screen__marquee-message">Compartí con amigos</span><span class="lobby-screen__marquee-message">Disfrutá</span><span class="lobby-screen__marquee-emojis" data-emojis="🎬,🍿,✨,🎥,💬,💚,🌟" aria-hidden="true">🎬 🍿 ✨</span><span class="u-spacer"></span></span><span class="lobby-screen__marquee-set"><span class="lobby-screen__marquee-live">En vivo</span><span class="lobby-screen__marquee-message">Salas publicas</span><span class="lobby-screen__marquee-message">Chat integrado</span><span class="lobby-screen__marquee-message">Elegí lo que querés ver</span><span class="lobby-screen__marquee-message">Compartí con amigos</span><span class="lobby-screen__marquee-message">Disfrutá</span><span class="lobby-screen__marquee-emojis" data-emojis="🎬,🍿,✨,🎥,💬,💚,🌟" aria-hidden="true">🎬 🍿 ✨</span><span class="u-spacer"></span></span><span class="lobby-screen__marquee-set"><span class="lobby-screen__marquee-live">En vivo</span><span class="lobby-screen__marquee-message">Salas publicas</span><span class="lobby-screen__marquee-message">Chat integrado</span><span class="lobby-screen__marquee-message">Elegí lo que querés ver</span><span class="lobby-screen__marquee-message">Compartí con amigos</span><span class="lobby-screen__marquee-message">Disfrutá</span><span class="lobby-screen__marquee-emojis" data-emojis="🎬,🍿,✨,🎥,💬,💚,🌟" aria-hidden="true">🎬 🍿 ✨</span><span class="u-spacer"></span></span><span class="lobby-screen__marquee-set"><span class="lobby-screen__marquee-live">En vivo</span><span class="lobby-screen__marquee-message">Salas publicas</span><span class="lobby-screen__marquee-message">Chat integrado</span><span class="lobby-screen__marquee-message">Elegí lo que querés ver</span><span class="lobby-screen__marquee-message">Compartí con amigos</span><span class="lobby-screen__marquee-message">Disfrutá</span><span class="lobby-screen__marquee-emojis" data-emojis="🎬,🍿,✨,🎥,💬,💚,🌟" aria-hidden="true">🎬 🍿 ✨</span><span class="u-spacer"></span></span>
+            <span class="lobby-screen__marquee-set"><span class="lobby-screen__marquee-live">En vivo</span><span class="lobby-screen__marquee-message">Salas publicas</span><span class="lobby-screen__marquee-message">Chatea</span><span class="lobby-screen__marquee-message">Elegí lo que querés ver</span><span class="lobby-screen__marquee-message">Compartí con amigos</span><span class="lobby-screen__marquee-message">Disfrutá</span><span class="lobby-screen__marquee-emojis" data-emojis="🎬,🍿,✨,🎥,💬,💚,🌟" aria-hidden="true">🎬 🍿 ✨</span><span class="u-spacer"></span></span><span class="lobby-screen__marquee-set"><span class="lobby-screen__marquee-live">En vivo</span><span class="lobby-screen__marquee-message">Salas publicas</span><span class="lobby-screen__marquee-message">Chatea</span><span class="lobby-screen__marquee-message">Elegí lo que querés ver</span><span class="lobby-screen__marquee-message">Compartí con amigos</span><span class="lobby-screen__marquee-message">Disfrutá</span><span class="lobby-screen__marquee-emojis" data-emojis="🎬,🍿,✨,🎥,💬,💚,🌟" aria-hidden="true">🎬 🍿 ✨</span><span class="u-spacer"></span></span><span class="lobby-screen__marquee-set"><span class="lobby-screen__marquee-live">En vivo</span><span class="lobby-screen__marquee-message">Salas publicas</span><span class="lobby-screen__marquee-message">Chatea</span><span class="lobby-screen__marquee-message">Elegí lo que querés ver</span><span class="lobby-screen__marquee-message">Compartí con amigos</span><span class="lobby-screen__marquee-message">Disfrutá</span><span class="lobby-screen__marquee-emojis" data-emojis="🎬,🍿,✨,🎥,💬,💚,🌟" aria-hidden="true">🎬 🍿 ✨</span><span class="u-spacer"></span></span><span class="lobby-screen__marquee-set"><span class="lobby-screen__marquee-live">En vivo</span><span class="lobby-screen__marquee-message">Salas publicas</span><span class="lobby-screen__marquee-message">Chatea</span><span class="lobby-screen__marquee-message">Elegí lo que querés ver</span><span class="lobby-screen__marquee-message">Compartí con amigos</span><span class="lobby-screen__marquee-message">Disfrutá</span><span class="lobby-screen__marquee-emojis" data-emojis="🎬,🍿,✨,🎥,💬,💚,🌟" aria-hidden="true">🎬 🍿 ✨</span><span class="u-spacer"></span></span>
           </span>
         </div>
 
@@ -107,10 +146,10 @@
             </h1>
             <p class="lobby-screen__description">
               <span class="lobby-screen__description--full">
-                Espacio compartido para <span class="lobby-screen__description--highlight">ver</span>, junto a <span class="lobby-screen__description--accent">otras personas</span> y en tiempo real, el <span class="lobby-screen__description--accent">contenido</span> que quieran, mientras <span class="lobby-screen__description--highlight">conversan</span> sobre lo que están viendo
+                Un lugar para <span class="lobby-screen__description--highlight">ver lo que quieras</span>, <span class="lobby-screen__description--accent">compartirlo</span> y <span class="lobby-screen__description--highlight">conversarlo</span> con otros
               </span>
               <span class="lobby-screen__description--mobile">
-                Espacio compartido para <span class="lobby-screen__description--highlight">ver</span>, junto a <span class="lobby-screen__description--accent">otras personas</span> y en tiempo real, el <span class="lobby-screen__description--accent">contenido</span> que quieran, mientras <span class="lobby-screen__description--highlight">conversan</span> sobre lo que están viendo
+                Un lugar para <span class="lobby-screen__description--highlight">ver lo que quieras</span>, <span class="lobby-screen__description--accent">compartirlo</span> y <span class="lobby-screen__description--highlight">conversarlo</span> con otros
               </span>
             </p>
             <ul class="lobby-screen__features">
@@ -268,6 +307,90 @@
             <div class="lobby-screen__ticket-perforation" aria-hidden="true"></div>
           </aside>
         </div>
+
+        <section class="lobby-screen__app-invite" id="lobbyAppInvite" aria-labelledby="lobbyAppInviteTitle">
+          <div class="lobby-screen__app-invite-art" aria-hidden="true">
+            <span class="lobby-screen__app-invite-glow"></span>
+            <span class="lobby-screen__app-invite-phone">
+              <span class="lobby-screen__app-invite-icon">
+                <svg class="lobby-screen__app-invite-mark-default" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M12 5v14M5 12h14" />
+                </svg>
+              </span>
+              <span class="lobby-screen__app-invite-line"></span>
+              <span class="lobby-screen__app-invite-line lobby-screen__app-invite-line--short"></span>
+            </span>
+            <svg class="lobby-screen__app-invite-mark-compact" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+              <path d="M10 7.5h28a4.5 4.5 0 0 1 4.5 4.5v24a4.5 4.5 0 0 1-4.5 4.5H10A4.5 4.5 0 0 1 5.5 36V12A4.5 4.5 0 0 1 10 7.5Z" fill="#121a1c" stroke="#e9c9a6" stroke-width="2" />
+              <path d="M6.5 15h35" fill="none" stroke="#e9c9a6" stroke-width="2" />
+              <circle cx="11" cy="11.3" r="1.2" fill="#ffad55" />
+              <circle cx="15.5" cy="11.3" r="1.2" fill="#39d0b5" />
+              <path d="M24 21v13m-6.5-6.5h13" fill="none" stroke="#ffad55" stroke-linecap="round" stroke-width="3" />
+            </svg>
+            <span class="lobby-screen__app-invite-spark"></span>
+          </div>
+          <div class="lobby-screen__app-invite-content">
+            <h2 id="lobbyAppInviteTitle">Probala como app</h2>
+            <p class="lobby-screen__app-invite-description">
+              <span class="lobby-screen__app-invite-copy-full">Podés instalarla desde el menú del navegador para una experiencia más cómoda</span>
+              <span class="lobby-screen__app-invite-copy-compact">Disfrutá de una mejor experiencia</span>
+              <span class="lobby-screen__app-invite-copy-minimal">Usala como app para más comodidad</span>
+            </p>
+            <button
+              class="lobby-screen__app-invite-button"
+              id="lobbyAppInstallButton"
+              type="button"
+              aria-controls="lobbyAppInstallDialog"
+              aria-haspopup="dialog"
+              aria-expanded="false"
+            >
+              <span data-lucide="circle-help" aria-hidden="true"></span>
+              <span data-lobby-install-label>Ver cómo</span>
+            </button>
+          </div>
+        </section>
+
+        <dialog class="lobby-app-install-dialog" id="lobbyAppInstallDialog" aria-labelledby="lobbyAppInstallTitleDialog" aria-describedby="lobbyAppInstallDescription">
+          <header class="lobby-app-install-dialog__header">
+            <div class="lobby-app-install-dialog__heading">
+              <h2 id="lobbyAppInstallTitleDialog">Más espacio para el video</h2>
+              <p id="lobbyAppInstallDescription">
+                En modo app desaparece la barra del navegador y la página se disfruta con más comodidad y fluidez.
+              </p>
+            </div>
+            <button class="lobby-app-install-dialog__close" type="button" aria-label="Cerrar guía" data-lobby-install-close>×</button>
+          </header>
+
+          <ol class="lobby-app-install-dialog__steps">
+            <li class="lobby-app-install-dialog__step">
+              <span class="lobby-app-install-dialog__number" aria-hidden="true">1</span>
+              <div class="lobby-app-install-dialog__step-content">
+                <h3>Buscá esta opción</h3>
+                <p>Abrí el menú ⋮ o Compartir del navegador.</p>
+                <div class="lobby-app-install-dialog__browser-shot lobby-app-install-dialog__browser-shot--menu" aria-hidden="true">
+                  <div class="lobby-app-install-dialog__address"><span>cinejuntos.com</span><span>↻</span></div>
+                  <div class="lobby-app-install-dialog__toolbar"><span class="lobby-app-install-dialog__menu-mark">⋮</span><span>Menú / Compartir</span></div>
+                </div>
+              </div>
+            </li>
+            <li class="lobby-app-install-dialog__step">
+              <span class="lobby-app-install-dialog__number" aria-hidden="true">2</span>
+              <div class="lobby-app-install-dialog__step-content">
+                <h3>Agregala al inicio</h3>
+                <p>Elegí “Instalar app” o “Agregar a pantalla de inicio”.</p>
+                <div class="lobby-app-install-dialog__browser-shot lobby-app-install-dialog__browser-shot--options" aria-hidden="true">
+                  <span><b>↗</b> Instalar app <i>›</i></span>
+                  <span><b>＋</b> Agregar a pantalla de inicio <i>›</i></span>
+                </div>
+              </div>
+            </li>
+          </ol>
+
+          <p class="lobby-app-install-dialog__note">El nombre de la opción puede variar según el navegador.</p>
+          <footer class="lobby-app-install-dialog__actions">
+            <button class="lobby-app-install-dialog__done" type="button" data-lobby-install-close>Listo</button>
+          </footer>
+        </dialog>
 
         <footer class="lobby-screen__footer" aria-label="Información legal y licencia">
           <p class="lobby-screen__disclaimer">© 2026 Cine Juntos · Código abierto bajo <a class="lobby-screen__license" href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener noreferrer">GPLv3</a> - No aloja ni distribuye videos · El creador no se responsabiliza por el contenido reproducido</p>
@@ -1000,7 +1123,7 @@
             </div>
             <div>
               <dt>GitHub</dt>
-              <dd><a href="https://github.com/IgnacioAusili/cine-juntos" target="_blank" rel="noopener noreferrer">github.com/IgnacioAusili/cine-juntos</a></dd>
+              <dd><a href="https://github.com/IgnacioAusili/cine-juntos-demo" target="_blank" rel="noopener noreferrer">github.com/IgnacioAusili/cine-juntos-demo</a></dd>
             </div>
             <div>
               <dt>Licencia</dt>
@@ -1069,7 +1192,7 @@
       </div>
     </dialog>
 
-    <script src="./public/dev-runtime.js"></script>
+    <script type="module" src="./public/dev-runtime.js"></script>
     <script defer src="./public/vendor/lucide-0.468.0/lucide.min.js"></script>
     <script type="module" src="./src/features/chat/messages/image-lightbox.js"></script>
     <script type="module" src="./src/features/tooltip/tooltip-page-lifecycle.js"></script>

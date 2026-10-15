@@ -1,0 +1,33 @@
+{
+  "id": "../",
+  "name": "Cine Juntos",
+  "short_name": "Cine Juntos",
+  "description": "Mirá videos juntos, chateá y compartí una sala sincronizada.",
+  "lang": "es-AR",
+  "start_url": "../",
+  "scope": "../",
+  "display": "standalone",
+  "background_color": "#10131a",
+  "theme_color": "#10131a",
+  "categories": ["entertainment", "social"],
+  "icons": [
+    {
+      "src": "../public/icons/cine-juntos-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "../public/icons/cine-juntos-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "../public/icons/cine-juntos-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

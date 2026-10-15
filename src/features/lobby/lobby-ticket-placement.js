@@ -1,6 +1,7 @@
 const TITLE_ICON_SCALE = 1.085;
 const TITLE_ICON_MIN_SIZE_PX = 56;
 const TITLE_ICON_MAX_SIZE_PX = 160;
+const LOBBY_TICKET_TOP_STUB_MAX_SIDE_WIDTH_PX = 360;
 
 function syncLobbyTitleIconSize(title, icon) {
   const fontSize = Number.parseFloat(getComputedStyle(title).fontSize);
@@ -43,6 +44,15 @@ export function resetLobbyTicketPlacement(screen, ticket) {
   document.body.removeAttribute("data-lobby-ticket-stub");
   ticket?.style.removeProperty("translate");
   screen?.style.removeProperty("--lobby-ticket-right-shift");
+}
+
+export function syncSingleColumnTicketStub(ticket) {
+  if (!ticket) return;
+
+  document.body.removeAttribute("data-lobby-ticket-stub");
+  if (ticket.getBoundingClientRect().width <= LOBBY_TICKET_TOP_STUB_MAX_SIDE_WIDTH_PX) {
+    document.body.dataset.lobbyTicketStub = "top";
+  }
 }
 
 export function syncLobbyTicketPlacement(screen, ticket) {
@@ -90,20 +100,16 @@ export function syncLobbyTitlePlacement(screen, isSingleColumn) {
     return;
   }
 
-  syncLobbyTitleIconSize(title, icon);
-
   if (!isSingleColumn) {
     delete hero.dataset.titlePlacement;
     icon.style.removeProperty("position");
     icon.style.removeProperty("left");
     icon.style.removeProperty("top");
-  }
+    syncLobbyTitleIconSize(title, icon);
 
-  const titleRect = getTitleVisualRect(title);
-  const baseTransform = getComputedStyle(icon).transform;
-  const iconRect = icon.getBoundingClientRect();
-
-  if (!isSingleColumn) {
+    const titleRect = getTitleVisualRect(title);
+    const baseTransform = getComputedStyle(icon).transform;
+    const iconRect = icon.getBoundingClientRect();
     const titleCenter = (titleRect.top + titleRect.bottom) / 2;
     const iconCenter = (iconRect.top + iconRect.bottom) / 2;
     const verticalShift = titleCenter - iconCenter;
@@ -115,12 +121,11 @@ export function syncLobbyTitlePlacement(screen, isSingleColumn) {
   }
 
   hero.dataset.titlePlacement = "centered";
-  // Evita medir con el desplazamiento del ciclo anterior al recolocar el ícono.
   hero.style.removeProperty("--lobby-title-group-shift");
+  icon.style.removeProperty("width");
+  icon.style.removeProperty("height");
+  icon.style.removeProperty("position");
   icon.style.removeProperty("left");
   icon.style.removeProperty("top");
-  const heroRect = hero.getBoundingClientRect();
-  const gap = Number.parseFloat(getComputedStyle(hero).columnGap) || 14;
-  icon.style.setProperty("left", `${titleRect.left - heroRect.left - iconRect.width - gap}px`);
-  icon.style.setProperty("top", `${titleRect.top - heroRect.top + (titleRect.height - iconRect.height) / 2}px`);
+  icon.style.removeProperty("transform");
 }

@@ -73,7 +73,7 @@ body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__hero {
 
 body.page-context--lobby[data-lobby-flow="single-column"] .lobby-screen__title {
   grid-area: title;
-  font-size: clamp(4.65rem, 18cqw, 5.8rem);
+  font-size: clamp(3.5rem, 13.7cqw, 4.35rem);
   line-height: 0.92;
   margin-bottom: 0;
   align-self: center;

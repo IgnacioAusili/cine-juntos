@@ -1,6 +1,7 @@
 import { dom } from "../../core/dom.js";
 import { layoutMetricsState } from "./layout-metrics-state.js";
 import { isMobileLayout, isFullscreenActive, isBottomChatInputFocused, isRightChatInputFocused } from "./layout-viewport-query.js";
+import { isRightChatKeyboardOpen } from "./layout-viewport-interactions.js";
 
 function measureViewportUnit(unit) {
   if (!document.body || !window.CSS?.supports?.("height", `100${unit}`)) return 0;

@@ -2,7 +2,7 @@ let lobbyCenterFrame = 0;
 
 import { resetTitleFit, syncLobbyTitleFit, syncSingleColumnTitleGroup, resetSingleColumnTitleLift, resetSingleColumnTitleGroup, resetSingleColumnDescriptionPlacement, syncLobbyTextDensity, syncLobbyTicketInlinePadding } from "./lobby-title-layout.js";
 import { syncSingleColumnDescriptionPlacement, resetLobbyAboutButtonContact, syncLobbyAboutButtonContact, syncSingleColumnContentCenter, syncSingleColumnContentGap, syncSingleColumnTicketPlacement } from "./lobby-content-variants.js";
-import { resetLobbyTicketPlacement, syncLobbyTicketPlacement, syncLobbyTitlePlacement } from "./lobby-ticket-placement.js";
+import { resetLobbyTicketPlacement, syncLobbyTicketPlacement, syncLobbyTitlePlacement, syncSingleColumnTicketStub } from "./lobby-ticket-placement.js";
 
 export function syncLobbyContentCenter() {
   lobbyCenterFrame = 0;
@@ -59,13 +59,18 @@ export function syncLobbyContentCenter() {
 
   if (isSingleColumn) {
     resetLobbyTicketPlacement(screen, ticket);
+    syncSingleColumnTicketStub(ticket);
     grid.style.setProperty("--lobby-content-center-shift", "0px");
     resetSingleColumnTitleLift(hero);
     resetSingleColumnTitleGroup(hero);
     grid.style.removeProperty("--lobby-vertical-content-gap");
     // En una sola columna el boleto está debajo; no debe limitar el título
     // como si ocupara una segunda columna lateral.
-    syncLobbyTitleFit(screen, hero, null);
+    if (window.matchMedia("(max-width: 680px)").matches) {
+      resetTitleFit(screen.querySelector('.lobby-screen__title'));
+    } else {
+      syncLobbyTitleFit(screen, hero, null);
+    }
     syncLobbyTitlePlacement(screen, true);
     syncSingleColumnTitleGroup(hero);
     syncSingleColumnDescriptionPlacement(hero, ticket);
@@ -81,6 +86,7 @@ export function syncLobbyContentCenter() {
   resetSingleColumnDescriptionPlacement(hero);
   resetSingleColumnTitleLift(hero);
   resetSingleColumnTitleGroup(hero);
+  hero?.style.removeProperty("translate");
 
   if (!isColumns || !marquee || !footer) {
     resetTitleFit(screen?.querySelector('.lobby-screen__title'));

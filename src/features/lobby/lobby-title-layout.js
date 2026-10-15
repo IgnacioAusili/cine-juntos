@@ -1,5 +1,6 @@
 const TITLE_FIT_MIN_SCALE = 0.68;
 const TITLE_FIT_MIN_SIZE_PX = 48;
+const TITLE_FIT_SINGLE_COLUMN_MIN_SIZE_PX = 44;
 const TITLE_FIT_MAX_SIZE_REM = 6.8;
 const TITLE_FIT_GAP_PX = 12;
 const TITLE_FIT_SAFE_SPACE_PX = 8;
@@ -61,9 +62,15 @@ function titleNeedsFitting(title, hero, ticket) {
 
   const availableLeft = Math.max(visibleRect.left, heroRect.left);
   const availableRight = Math.min(visibleRect.right, rightLimit);
+  const visualWidth = visualRect.right - visualRect.left;
+  const iconSharesTitleRow = iconRect
+    && iconRect.top < visualRect.bottom
+    && iconRect.bottom > visualRect.top;
   const groupWidth = iconRect
-    ? iconRect.width + columnGap + (visualRect.right - visualRect.left)
-    : visualRect.right - visualRect.left;
+    ? iconSharesTitleRow
+      ? iconRect.width + columnGap + visualWidth
+      : Math.max(iconRect.width, visualWidth)
+    : visualWidth;
 
   return visualRect.left < availableLeft - 1
     || visualRect.top < visibleRect.top
@@ -105,12 +112,19 @@ export function syncLobbyTitleFit(screen, hero, ticket) {
   resetTitleFit(title);
   const baseSize = Number.parseFloat(getComputedStyle(title).fontSize);
   const rootFontSize = Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
-  const maximumSize = Number.isFinite(rootFontSize)
+  const isSingleColumn = document.body.dataset.lobbyFlow === "single-column";
+  const viewportMaximumSize = Number.isFinite(rootFontSize)
     ? rootFontSize * TITLE_FIT_MAX_SIZE_REM
     : baseSize;
+  const maximumSize = isSingleColumn
+    ? Math.min(baseSize, viewportMaximumSize)
+    : viewportMaximumSize;
+  const minimumSize = isSingleColumn
+    ? TITLE_FIT_SINGLE_COLUMN_MIN_SIZE_PX
+    : TITLE_FIT_MIN_SIZE_PX;
   if (!Number.isFinite(baseSize) || !Number.isFinite(maximumSize)) return;
 
-  const lowLimit = Math.min(maximumSize, Math.max(TITLE_FIT_MIN_SIZE_PX, baseSize * TITLE_FIT_MIN_SCALE));
+  const lowLimit = Math.min(maximumSize, Math.max(minimumSize, baseSize * TITLE_FIT_MIN_SCALE));
   if (!needsFitting(maximumSize)) return;
 
   let low = lowLimit;
@@ -176,6 +190,11 @@ export function syncSingleColumnTitleGroup(hero) {
   const icon = hero?.querySelector('.lobby-screen__title-icon');
   if (!hero || !title || !icon) return;
 
+  if (hero.dataset.titlePlacement !== "centered") {
+    hero.style.removeProperty("--lobby-title-group-shift");
+    return;
+  }
+
   hero.style.removeProperty("--lobby-title-group-shift");
   const heroRect = hero.getBoundingClientRect();
   const titleRect = title.getBoundingClientRect();
@@ -185,11 +204,11 @@ export function syncSingleColumnTitleGroup(hero) {
   const groupRight = Math.max(titleRect.right, iconRect.right);
   const leftLimit = Math.max(heroRect.left, visible.left);
   const rightLimit = Math.min(heroRect.right, visible.right);
-  const shift = groupLeft < leftLimit
-    ? leftLimit - groupLeft
-    : groupRight > rightLimit
-      ? rightLimit - groupRight
-      : 0;
+  const minShift = leftLimit - groupLeft;
+  const maxShift = rightLimit - groupRight;
+  const shift = minShift <= maxShift
+    ? Math.min(maxShift, Math.max(minShift, 0))
+    : 0;
 
   if (Number.isFinite(shift)) {
     hero.style.setProperty("--lobby-title-group-shift", `${shift.toFixed(2)}px`);
@@ -206,6 +225,7 @@ export function resetSingleColumnTitleGroup(hero) {
 
 export function resetSingleColumnDescriptionPlacement(hero) {
   hero?.style.removeProperty("--lobby-description-separator-shift");
+  hero?.style.removeProperty("--lobby-description-separator-top");
   hero?.querySelector('.lobby-screen__description')?.style.removeProperty("--lobby-description-fit-width");
 }
 

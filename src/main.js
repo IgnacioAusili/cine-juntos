@@ -22,6 +22,7 @@ import {
   wireLayoutMetrics,
 } from "./features/layout/index.js";
 import { wireLobbyKeyboardRestore } from "./features/lobby/lobby-keyboard.js";
+import { wireLobbyAppInstall } from "./features/lobby/lobby-app-install.js";
 import { wireAboutDialogScrollbar } from "./features/about-dialog-scrollbar.js";
 import {
   renderPresence,
@@ -61,6 +62,7 @@ import { wireLobbyLayoutVariants } from "./features/lobby/lobby-layout-variants.
 const requestedRoom = normalizeRoomCode(new URLSearchParams(window.location.search).get("room") || "");
 
 installConsoleLogCapture();
+wireLobbyAppInstall();
 
 document.body.classList.remove('page-context--ready');
 applyInitialDefaults();
